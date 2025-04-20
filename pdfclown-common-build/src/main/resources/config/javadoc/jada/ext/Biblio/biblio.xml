@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<biblio
+  xmlns="https://pdfclown.org/ns/biblio"
+  version="1.0">
+  <spec
+    id="CSS"
+    title="Cascading Style Sheets specification">
+    <part
+      id="2.1"
+      year="2011"
+      title="Cascading Style Sheets, Level 2, Revision 1"
+      publisher="W3C"
+      src="https://www.w3.org/TR/CSS21/"/>
+    <part
+      id="CASCADE-5"
+      year="2022"
+      title="Cascading Style Sheets - Cascading and Inheritance Module, Level 5"
+      publisher="W3C"
+      src="https://www.w3.org/TR/css-cascade-5/"/>
+    <part
+      id="FONTS-4"
+      year="2021"
+      title="Cascading Style Sheets - Fonts Module, Level 4"
+      publisher="W3C"
+      src="https://www.w3.org/TR/css-fonts-4/"/>
+    <part
+      id="PAGE-3"
+      year="2018"
+      title="Cascading Style Sheets - Paged Media Module, Level 3"
+      publisher="W3C"
+      src="https://www.w3.org/TR/css-page-3/"/>
+    <part
+      id="SYNTAX-3"
+      year="2021"
+      title="Cascading Style Sheets - Syntax Module, Level 3"
+      publisher="W3C"
+      src="https://www.w3.org/TR/css-syntax-3/"/>
+  </spec>
+  <spec
+    id="HTML"
+    title="HyperText Markup Language (HTML) Specification">
+    <see url="https://en.wikipedia.org/wiki/HTML"/>
+    <version
+      id="4.01"
+      year="1999"
+      publisher="W3C"
+      src="https://www.w3.org/TR/html401/"/>
+    <version
+      id="4.01~ISO"
+      name="ISO/IEC 15445"
+      year="2000"
+      edition="1"
+      publisher="ISO"
+      url="https://www.iso.org/standard/27688.html"/>
+    <version
+      id="5"
+      year="2014-"
+      publisher="WHATWG"
+      src="https://html.spec.whatwg.org/multipage/">
+      <see url="https://developer.mozilla.org/en-US/docs/Web/HTML"/>
+    </version>
+  </spec>
+  <spec
+    id="JAVA"
+    title="Java Language Specification"
+    publisher="Oracle America Inc"
+    url="https://docs.oracle.com/javase/specs/">
+    <version
+      id="21"
+      name="Java SE 21 (JSR-396)"
+      year="2023"
+      edition="2023-08-23"
+      author="Gosling, Joy, Steele, Bracha, Buckley, Smith, Bierman"
+      src="https://docs.oracle.com/javase/specs/jls/se21/jls21.pdf"/>
+    <version
+      id="17"
+      name="Java SE 17 (JSR-392)"
+      year="2021"
+      edition="2021-08-09"
+      author="Gosling, Joy, Steele, Bracha, Buckley, Smith, Bierman"
+      src="https://docs.oracle.com/javase/specs/jls/se17/jls17.pdf"/>
+    <version
+      id="11"
+      name="Java SE 11 (JSR-384)"
+      year="2018"
+      edition="2018-08-21"
+      author="Gosling, Joy, Steele, Bracha, Buckley, Smith"
+      src="https://docs.oracle.com/javase/specs/jls/se11/jls11.pdf"/>
+    <version
+      id="8"
+      name="Java SE 8 (JSR-337)"
+      year="2014"
+      edition="2015-02-13"
+      author="Gosling, Joy, Steele, Bracha, Buckley"
+      src="https://docs.oracle.com/javase/specs/jls/se8/jls8.pdf"/>
+  </spec>
+  <spec
+    id="MIME"
+    name="RFC 2045"
+    year="1996"
+    title="Multipurpose Internet Mail Extensions (MIME), Part One: Format of Internet Message Bodies"
+    src="http://www.ietf.org/rfc/rfc2045.txt">
+    <see url="https://en.wikipedia.org/wiki/Media_type"/>
+  </spec>
+  <spec
+    id="UCS"
+    name="aka ISO/IEC 10646"
+    version="15.0"
+    year="2022"
+    title="The Unicode Standard"
+    publisher="Unicode Consortium"
+    src="https://www.unicode.org/versions/Unicode15.0.0/UnicodeStandard-15.0.pdf"
+    url="https://www.unicode.org/versions/Unicode15.0.0/">
+    <see
+      url="https://standards.iso.org/ittf/PubliclyAvailableStandards/c076835_ISO_IEC_10646_2020(E).zip"
+      title="ISO/IEC 10646:2020 (UCS 13.0) - Publicly Available Standard"/>
+  </spec>
+  <spec
+    id="URI"
+    name="RFC 2396"
+    year="1998"
+    title="Uniform Resource Identifiers (URI): Generic Syntax"
+    src="http://www.ietf.org/rfc/rfc2396.txt"/>
+  <spec
+    id="W3C-EBNF"
+    year="2008"
+    edition="5"
+    title="Extended Backus-Naur Form (EBNF) notation for XML specification"
+    author="Bray, Paoli, Sperberg-McQueen, Maler, Yergeau"
+    publisher="W3C"
+    src="https://www.w3.org/TR/REC-xml/#sec-notation"/>
+  <spec
+    id="XML-SS"
+    version="1.0"
+    year="2010"
+    title="Associating Style Sheets with XML documents"
+    publisher="W3C"
+    src="https://www.w3.org/TR/xml-stylesheet/"/>
+
+  <doc
+    id="ITA"
+    year="2001"
+    edition="2"
+    title="Introduction to Algorithms"
+    author="Cormen, Leiserson, Rivest, Stein"
+    publisher="MIT Press">
+    <see url="http://en.wikipedia.org/wiki/Introduction_to_Algorithms"/>
+  </doc>
+
+  <ref
+    id="JDK-BUGS"
+    title="Java Bug Database"
+    url="https://bugs.java.com/bugdatabase/view_bug?bug_id={}"/>
+</biblio>

@@ -1,0 +1,210 @@
+/*
+  SPDX-FileCopyrightText: © 2023-2025 Stefano Chizzolini and contributors -
+  <https://github.com/pdfclown/pdfclown-common>
+  SPDX-License-Identifier: LGPL-3.0-or-later
+
+  Copyright 2023-2025 Stefano Chizzolini and contributors -
+  <https://github.com/pdfclown/pdfclown-common>
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
+  partially) this file, you MUST add your own copyright notice in a separate comment block above
+  this file header, listing the main changes you applied to the original source.
+
+  This file (Strings.java) is part of pdfclown-common-build module in pdfClown Common project (this
+  Program).
+
+  This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
+  Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
+  3 of the License, or (at your option) any later version.
+
+  This Program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with this Program.
+  If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
+package org.pdfclown.common.build.internal.util;
+
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * String utilities.
+ *
+ * @author Stefano Chizzolini
+ */
+public final class Strings {
+  /* [upstream] org.pdfclown.common.util.Strings.BACKSLASH */
+  public static final char BACKSLASH = '\\';
+  /* [upstream] org.pdfclown.common.util.Strings.COMMA */
+  public static final char COMMA = ',';
+  /* [upstream] org.pdfclown.common.util.Strings.DOT */
+  public static final char DOT = '.';
+  /* [upstream] org.pdfclown.common.util.Strings.DQUOTE */
+  /**
+   * Double quote (aka quotation mark).
+   */
+  public static final char DQUOTE = '\"';
+  /* [upstream] org.pdfclown.common.util.Strings.PIPE */
+  /**
+   * Vertical bar.
+   */
+  public static final char PIPE = '|';
+  /* [upstream] org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE */
+  public static final char ROUND_BRACKET_CLOSE = ')';
+  /* [upstream] org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN */
+  public static final char ROUND_BRACKET_OPEN = '(';
+  /* [upstream] org.pdfclown.common.util.Strings.SLASH */
+  public static final char SLASH = '/';
+  /* [upstream] org.pdfclown.common.util.Strings.SPACE */
+  public static final char SPACE = ' ';
+  /* [upstream] org.pdfclown.common.util.Strings.SQUOTE */
+  /**
+   * Single quote (aka apostrophe).
+   */
+  public static final char SQUOTE = '\'';
+  /* [upstream] org.pdfclown.common.util.Strings.UNDERSCORE */
+  public static final char UNDERSCORE = '_';
+
+  public static final String ELLIPSIS = "...";
+  /* [upstream] org.pdfclown.common.util.Strings.EMPTY */
+  /**
+   * Empty string.
+   */
+  public static final String EMPTY = "";
+  /* [upstream] org.pdfclown.common.util.Strings.EOL */
+  /**
+   * System-dependent line separator ({@link System#lineSeparator()} alias).
+   */
+  public static final String EOL = System.lineSeparator();
+  /* [upstream] org.pdfclown.common.util.Strings.S */
+  /**
+   * Empty string, used as a marker to conveniently force the compiler to treat the following
+   * concatenated character as a string.
+   * <p>
+   * Example:
+   * </p>
+   * <pre>
+   *String str = S + HYPHEN;</pre>
+   */
+  public static final String S = EMPTY;
+
+  /* [upstream] org.pdfclown.common.util.Strings.abbreviateMultiline(..) */
+  /**
+   * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
+   * substring with a standard ellipsis.
+   *
+   * @param value
+   *          String to clip.
+   * @param maxLineCount
+   *          Maximum number of lines.
+   * @param averageLineLength
+   *          Average line length (used along with {@code maxLineCount} to calculate the overall
+   *          maximum string length).
+   * @see StringUtils#abbreviate(String, int)
+   */
+  public static String abbreviateMultiline(String value, int maxLineCount, int averageLineLength) {
+    return abbreviateMultiline(value, maxLineCount, averageLineLength, "...");
+  }
+
+  /* [upstream] org.pdfclown.common.util.Strings.abbreviateMultiline(..) */
+  /**
+   * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
+   * substring with a marker.
+   * <p>
+   * The string is clipped by {@code maxLineCount}, then by overall string length.
+   * </p>
+   *
+   * @param value
+   *          String to clip.
+   * @param maxLineCount
+   *          Maximum number of lines.
+   * @param averageLineLength
+   *          Average line length (used along with {@code maxLineCount} to calculate the overall
+   *          maximum string length).
+   * @param marker
+   *          Replacement marker.
+   * @see StringUtils#abbreviate(String, String, int)
+   */
+  public static String abbreviateMultiline(String value, int maxLineCount, int averageLineLength,
+      String marker) {
+    if (maxLineCount <= 0 && averageLineLength <= 0)
+      return value;
+
+    String ret = value;
+    {
+      int pos = -1;
+      int lineCount = 1;
+      while ((pos = ret.indexOf('\n', pos + 1)) >= 0) {
+        if (maxLineCount > 0 && lineCount == maxLineCount) {
+          ret = ret.substring(0, pos);
+          break;
+        }
+
+        lineCount++;
+      }
+
+      int maxLength = lineCount * averageLineLength;
+      if (ret.length() > maxLength) {
+        ret = ret.substring(0, maxLength);
+      }
+    }
+    if (ret != value) {
+      ret += marker;
+    }
+    return ret;
+  }
+
+  /* [upstream] org.pdfclown.common.util.Strings.uncapitalizeMultichar(..) */
+  /**
+   * Ensures leading characters are lower-case.
+   * <p>
+   * Contrary to {@link StringUtils#uncapitalize(String)}, this method lowers all consecutive
+   * leading upper-case characters except the last one if followed by a lower-case letter. Eg:
+   * </p>
+   * <ul>
+   * <li>{@code "Capitalized"} to {@code "capitalized"}</li>
+   * <li>{@code "EOF"} to {@code "eof"}</li>
+   * <li>{@code "XObject"} to {@code "xObject"}</li>
+   * <li>{@code "IOException"} to {@code "ioException"}</li>
+   * <li>{@code "UTF8Test"} to {@code "utf8Test"}</li>
+   * <li>{@code "UTF8TEST"} to {@code "utf8TEST"}</li>
+   * <li>{@code "UNDERSCORE_TEST"} to {@code "underscore_TEST"}</li>
+   * </ul>
+   */
+  public static String uncapitalizeMultichar(String value) {
+    char[] valueChars = value.toCharArray();
+    for (int i = 0, limit = valueChars.length - 1; i <= limit; i++) {
+      /*-
+       * Not upper-case letter?
+       *
+       * Eg, "UTF8Test" --> "utf8Test"
+       *         ^
+       */
+      if (!Character.isUpperCase(valueChars[i])) {
+        // Unchanged?
+        if (i == 0)
+          return value;
+        // Changed.
+        else {
+          break;
+        }
+      }
+      /*-
+       * Non-initial upper-case letter followed by lower-case letter?
+       *
+       * Eg, "IOException" --> "ioException"
+       *        ^
+       */
+      else if (i > 0 && i < limit && Character.isLowerCase(valueChars[i + 1])) {
+        break;
+      }
+
+      valueChars[i] = Character.toLowerCase(valueChars[i]);
+    }
+    return new String(valueChars);
+  }
+
+  private Strings() {
+  }
+}

@@ -1,0 +1,869 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.pdfclown</groupId>
+  <artifactId>pdfclown-common-parent</artifactId>
+  <version>0.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>${project.artifactId}</name>
+  <description>Common configuration for pdfClown.org projects</description>
+  <inceptionYear>2023</inceptionYear>
+  <url>${project.root.url}</url>
+
+  <organization>
+    <name>pdfClown.org</name>
+    <url>https://pdfclown.org</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License (LGPL), version 3</name>
+      <url>https://www.gnu.org/licenses/lgpl-3.0.html</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>stechio</id>
+      <name>Stefano Chizzolini</name>
+      <url>https://stefanochizzolini.it</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <scm
+    child.scm.connection.inherit.append.path="false"
+    child.scm.developerConnection.inherit.append.path="false"
+    child.scm.url.inherit.append.path="false">
+    <connection>${project.scm.connection}</connection>
+    <developerConnection>${project.scm.dev.connection}</developerConnection>
+    <url>${project.scm.url}</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>${project.issues.url}</url>
+  </issueManagement>
+
+  <properties>
+    <!--
+      ROOT-PROJECT-SPECIFIC PROPERTIES
+
+      These properties MUST be specified in every root POM inheriting from this one.
+    -->
+    <!--
+      NOTE: Because of cyclic reference, pdfclown-common-maven-plugin's version MUST lag one release
+      behind this project's. Consequently, projects using this POM as parent SHOULD override this
+      property with the latest version.
+
+      TODO: Whenever `pdfclown-common` project version changes, this version MUST be updated to the
+      preceding one.
+    -->
+<!--
+    <pdfclown.common.maven.version>0.1-SNAPSHOT</pdfclown.common.maven.version>
+-->
+    <project.issues.url />
+    <project.root.url />
+    <project.scm.connection />
+    <project.scm.dev.connection />
+    <project.scm.url />
+
+    <!--
+      PROJECT-SPECIFIC PROPERTIES
+
+      These properties MUST be specified in every POM inheriting from this one.
+    -->
+    <!--
+      Path to the root project directory.
+
+      This is an ugly workaround to the notorious lack of a standard way to point to the root project
+      directory no matter the current project building in the reactor.
+    -->
+    <rootdir>${project.basedir}</rootdir>
+
+    <!--
+      THIRD-PARTY PROPERTIES
+    -->
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!--
+      CUSTOM PROPERTIES
+    -->
+    <build.resources.directory>${project.build.directory}/build-resources</build.resources.directory>
+    <!--
+      NOTE: Build resources are unpacked on 'validate' phase in order to prepare the stylesheet
+      for maven-checkstyle-plugin (otherwise, checkstyle would kick in before its
+      resources are available...).
+    -->
+    <build.resources.unpack.phase>validate</build.resources.unpack.phase>
+    <checkstyle.skip>false</checkstyle.skip>
+
+    <!--
+      VERSIONS
+    -->
+    <checkstyle.version>3.6.0</checkstyle.version>
+    <checkstyle.puppycrawl.version>10.23.0</checkstyle.puppycrawl.version>
+    <codehaus.xml.version>1.0.2</codehaus.xml.version>
+    <commons.io.version>2.18.0</commons.io.version>
+    <commons.lang.version>3.17.0</commons.lang.version>
+    <commons.text.version>1.10.0</commons.text.version>
+    <java.version>11</java.version>
+    <jspecify.version>1.0.0</jspecify.version>
+    <log4j.version>2.19.0</log4j.version>
+    <m2e.lifecycle.version>1.0.0</m2e.lifecycle.version>
+    <maven.version>3.9.9</maven.version>
+    <maven.bundle.version>5.1.1</maven.bundle.version>
+    <maven.compiler.version>3.13.0</maven.compiler.version>
+    <maven.failsafe.version>3.5.2</maven.failsafe.version>
+    <maven.gpg.version>3.2.7</maven.gpg.version>
+    <maven.help.version>3.2.0</maven.help.version>
+    <maven.invoker.version>3.7.0</maven.invoker.version>
+    <maven.jar.version>3.4.2</maven.jar.version>
+    <maven.javadoc.version>3.11.2</maven.javadoc.version>
+    <maven.plugin.annotations.version>3.15.1</maven.plugin.annotations.version>
+    <maven.plugin.plugin.version>3.15.1</maven.plugin.plugin.version>
+    <maven.plugin.testing.version>3.3.0</maven.plugin.testing.version>
+    <maven.project.version>2.2.1</maven.project.version>
+    <maven.remoteresources.version>3.0.0</maven.remoteresources.version>
+    <maven.source.version>3.3.1</maven.source.version>
+    <maven.surefire.version>3.5.2</maven.surefire.version>
+    <!--
+      TODO: Whenever pdfclown-common-parent version is updated, `pdfclown.common.version` MUST be
+      updated as well.
+    -->
+    <pdfclown.common.version>0.0.0-SNAPSHOT</pdfclown.common.version>
+    <revelc.formatter.version>2.23.0</revelc.formatter.version>
+    <sisu.version>0.3.5</sisu.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <sonatype.central.publishing.version>0.7.0</sonatype.central.publishing.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Self -->
+      <dependency>
+        <groupId>org.pdfclown</groupId>
+        <artifactId>pdfclown-common-util</artifactId>
+        <version>${pdfclown.common.version}</version>
+      </dependency>
+
+      <!-- Language -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons.lang.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>${commons.text.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jspecify</groupId>
+        <artifactId>jspecify</artifactId>
+        <version>${jspecify.version}</version>
+      </dependency>
+
+      <!-- I/O -->
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons.io.version}</version>
+      </dependency>
+
+      <!-- Logging -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${log4j.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Maven -->
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>${maven.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-project</artifactId>
+        <version>${maven.project.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugin-tools</groupId>
+        <artifactId>maven-plugin-annotations</artifactId>
+        <version>${maven.plugin.annotations.version}</version>
+        <!--
+          NOTE: At Maven extension level (AbstractMavenLifecycleParticipant implementation), this
+          library isn't available on the classpath (ClassNotFoundException), so we have to
+          explicitly bring it in.
+        -->
+        <scope>compile</scope>
+      </dependency>
+
+      <!--
+        TESTING
+      -->
+      <dependency>
+        <groupId>org.pdfclown</groupId>
+        <artifactId>pdfclown-common-build</artifactId>
+        <version>${pdfclown.common.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- Maven -->
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-compat</artifactId>
+        <version>${maven.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugin-testing</groupId>
+        <artifactId>maven-plugin-testing-harness</artifactId>
+        <version>${maven.plugin.testing.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <!-- Resources -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- Code formatting -->
+      <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+
+      <!-- Packaging -->
+<!--
+      <plugin>
+        <groupId>org.pdfclown</groupId>
+        <artifactId>pdfclown-common-maven-plugin</artifactId>
+      </plugin>
+-->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+
+      <!-- Testing -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <!--
+            [#CodeFormat] Code formatter.
+
+            [Manual] Before any commit, code MUST be formatted (and verified):
+              mvn formatter:format
+          -->
+          <groupId>net.revelc.code.formatter</groupId>
+          <artifactId>formatter-maven-plugin</artifactId>
+          <version>${revelc.formatter.version}</version>
+          <executions>
+            <execution>
+              <id>sources-format</id>
+              <phase>process-sources</phase>
+              <goals>
+                <goal>format</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <configFile>${build.resources.directory}/config/eclipse/java-style.xml</configFile>
+            <configHtmlFile>${build.resources.directory}/config/jsoup/html.properties</configHtmlFile>
+            <configXmlFile>${build.resources.directory}/config/eclipse/xml.properties</configXmlFile>
+            <lineEnding>LF</lineEnding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <!--
+            [#CodeFormat] Checkstyle.
+
+            IMPORTANT: This plugin works along with formatter-maven-plugin: whenever check rules
+            change, code format MUST be updated accordingly.
+
+            [Manual] To generate a report:
+              mvn checkstyle:checkstyle
+          -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${checkstyle.version}</version>
+          <executions>
+            <execution>
+              <id>sources-checkstyle</id>
+              <phase>process-sources</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${checkstyle.puppycrawl.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <excludeGeneratedSources>true</excludeGeneratedSources>
+            <failOnViolation>true</failOnViolation>
+            <includeResources>false</includeResources>
+            <includeTestResources>false</includeTestResources>
+            <linkXRef>false</linkXRef>
+            <propertiesLocation>${rootdir}/src/checkstyle/checkstyle.properties</propertiesLocation>
+            <suppressionsLocation>${rootdir}/src/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+            <configLocation>${build.resources.directory}/config/checkstyle/checkstyle-checks.xml</configLocation>
+            <skip>${checkstyle.skip}</skip>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven.plugin.plugin.version}</version>
+          <executions>
+            <execution>
+              <id>mojo-descriptor-generate</id>
+              <goals>
+                <goal>descriptor</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>help-mojo-generate</id>
+              <goals>
+                <goal>helpmojo</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven.compiler.version}</version>
+          <configuration>
+            <useIncrementalCompilation>false</useIncrementalCompilation>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven.surefire.version}</version>
+          <configuration>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <reportsDirectory>${project.build.directory}/test-logs/surefire</reportsDirectory>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven.failsafe.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+            <reportsDirectory>${project.build.directory}/test-logs/failsafe</reportsDirectory>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.eclipse.sisu</groupId>
+          <artifactId>sisu-maven-plugin</artifactId>
+          <version>${sisu.version}</version>
+          <executions>
+            <execution>
+              <id>sisu-index-generate</id>
+              <goals>
+                <goal>main-index</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <!--
+            [#PackageManifest] Basic package manifest.
+          -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven.jar.version}</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              </manifest>
+              <manifestEntries>
+                <Built-By>${user.name}</Built-By>
+                <SCM-Url>${project.scm.url}</SCM-Url>
+                <X-Builder>Maven ${maven.version}</X-Builder>
+                <X-Build-Os>${os.name}</X-Build-Os>
+                <X-Build-Time>${maven.build.timestamp}</X-Build-Time>
+                <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
+                <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
+              </manifestEntries>
+              <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <!--
+            [#PackageManifest] OSGI-enhanced package manifest.
+          -->
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>${maven.bundle.version}</version>
+          <extensions>true</extensions>
+          <executions>
+            <execution>
+              <id>bundle-manifest-generate</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>manifest</goal>
+              </goals>
+              <configuration>
+                <supportIncrementalBuild>true</supportIncrementalBuild>
+              </configuration>
+            </execution>
+          </executions>
+          <configuration>
+            <instructions>
+              <Export-Package>*</Export-Package>
+            </instructions>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>${maven.remoteresources.version}</version>
+          <executions>
+            <!--
+              pdfClown build resources unpacking.
+            -->
+            <execution>
+              <id>build-resources-unpack</id>
+              <!--
+                TIP: Activate on phase 'validate'.
+              -->
+              <phase>${build.resources.unpack.phase}</phase>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <configuration>
+                <resourceBundles>
+                  <resourceBundle>org.pdfclown:pdfclown-common-build:${pdfclown.common.version}</resourceBundle>
+                </resourceBundles>
+                <outputDirectory>${build.resources.directory}</outputDirectory>
+                <attachToMain>false</attachToMain>
+                <attachToTest>false</attachToTest>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>xml-maven-plugin</artifactId>
+          <version>${codehaus.xml.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven.source.version}</version>
+          <executions>
+            <execution>
+              <id>sources-attach</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven.javadoc.version}</version>
+          <executions>
+            <execution>
+              <id>javadoc-jar-generate</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>default-test-javadoc</id>
+              <configuration>
+                <sourcepath>${project.basedir}/src/test/java</sourcepath>
+              </configuration>
+            </execution>
+          </executions>
+          <configuration>
+            <!--
+              SOURCES (selection and representation)
+            -->
+            <excludePackageNames>*.internal:*.internal*</excludePackageNames>
+            <!--
+              FIXME: `sourcepath` was necessary because of an apparent bug affecting
+              maven-javadoc-plugin (when automatic module name (see "Automatic-Module-Name" property
+              herein) is enabled, maven javadoc plugin fails ("error: No source files for package")
+              - see also
+              <https://github.com/prometheus/client_java/issues/884#issuecomment-1791560944>).
+            -->
+            <sourcepath>${project.build.sourceDirectory}</sourcepath>
+
+            <additionalOptions>
+              <additionalOption>-tag "implSpec:a:Implementation Requirements:"</additionalOption>
+              <additionalOption>-tag "implNote:a:Implementation Note:"</additionalOption>
+              <additionalOption>-tag "apiNote:a:API Note:"</additionalOption>
+            </additionalOptions>
+<!--
+            <stylesheetfile>${build.resources.directory}/config/javadoc/main.css</stylesheetfile>
+-->
+
+            <!--
+              CONTENTS (layout and resources)
+            -->
+            <!--
+              NOTE: Weirdly enough, projects inheriting from this POM don't retrieve the text of the
+              source overview.html file unless explicitly declared via `overview` parameter, despite
+              its default path should be just this one.
+            -->
+            <overview>${basedir}/src/main/javadoc/overview.html</overview>
+            <top>
+<![CDATA[
+<div class="header-top">
+  <small>
+    <a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}">${project.groupId}:${project.artifactId}</a>:<a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/pom">${project.version}</a>
+  </small>
+</div>
+]]>
+            </top>
+            <bottom>
+<![CDATA[
+Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<p class="footer-right">${maven.build.timestamp}</p>
+]]>
+            </bottom>
+
+            <detectLinks>true</detectLinks>
+            <dependencyLinks>
+              <dependencyLink>
+                <groupId>org.jspecify</groupId>
+                <artifactId>jspecify</artifactId>
+                <url>https://www.javadoc.io/static/org.jspecify/jspecify/${jspecify.version}/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <url>https://www.javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}/</url>
+              </dependencyLink>
+            </dependencyLinks>
+            <!--
+              NOTE: Disabling offline-links detection prevents their automatic synthesis (which is
+              based on the arbitrary construct "{project.url}/apidocs") from interfering with their
+              explicit configuration.
+            -->
+            <detectOfflineLinks>false</detectOfflineLinks>
+
+            <nohelp>true</nohelp>
+            <noindex>false</noindex>
+
+            <archive>
+              <addMavenDescriptor>true</addMavenDescriptor>
+            </archive>
+
+            <!--
+              SYSTEM
+            -->
+            <!--
+              NOTE: Missing comments are ignored.
+            -->
+<!--
+            <doclint>all,-missing</doclint>
+-->
+			<doclint>none</doclint>
+            <quiet>true</quiet>
+          </configuration>
+        </plugin>
+
+<!--
+        <plugin>
+          <groupId>org.pdfclown</groupId>
+          <artifactId>pdfclown-common-maven-plugin</artifactId>
+          <version>${pdfclown.common.maven.version}</version>
+          <extensions>true</extensions>
+          <executions>
+            <execution>
+              <id>maven-descriptor-normalize</id>
+              <goals>
+                <goal>normalizeMavenDescriptor</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+-->
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-invoker-plugin</artifactId>
+          <version>${maven.invoker.version}</version>
+          <executions>
+            <execution>
+              <id>integration-test</id>
+              <goals>
+                <goal>integration-test</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <addTestClassPath>true</addTestClassPath>
+            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+            <debug>true</debug>
+            <preBuildHookScript>pre-build</preBuildHookScript>
+            <postBuildHookScript>post-build</postBuildHookScript>
+            <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
+            <settingsFile>src/it/settings.xml</settingsFile>
+          </configuration>
+        </plugin>
+
+        <!--
+          IDE-specific configuration (I know, this is NOT the place for IDE configuration, but we
+          have to pragmatically cope with common idiosyncrasies).
+        -->
+        <plugin>
+          <!-- See https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html -->
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${m2e.lifecycle.version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-help-plugin</artifactId>
+                    <versionRange>*</versionRange>
+                    <goals>
+                      <goal>effective-pom</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute>
+                      <runOnIncremental>true</runOnIncremental>
+                    </execute>
+                  </action>
+                </pluginExecution>
+
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <versionRange>*</versionRange>
+                    <goals>
+                      <goal>check</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <versionRange>*</versionRange>
+                    <goals>
+                      <goal>bundle</goal>
+                      <goal>generate-resources</goal>
+                      <goal>process</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <!-- MANUAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <profile>
+      <id>install</id>
+      <!--
+        FULL INSTALLATION PROFILE
+
+        For convenience, the installation of ancillary artifacts (javadoc and source jars) on
+        local repository is disabled by default: this profile activates them.
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>deploy</id>
+      <!--
+        DEPLOYMENT PROFILE
+
+        central-publishing-maven-plugin transparently manages both public releases and snapshots.
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${maven.gpg.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <bestPractices>true</bestPractices>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>${sonatype.central.publishing.version}</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- AUTOMATED PROFILES  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <profile>
+      <id>maven-plugin</id>
+      <activation>
+        <property>
+          <name>packaging</name>
+          <value>maven-plugin</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <archive>
+                <!--
+                  Force MANIFEST generation!
+
+                  NOTE: pdfClown-related manifest generation is delegated to
+                  org.apache.felix:maven-bundle-plugin; since that plugin doesn't support
+                  'maven-plugin' packaging, in such case we have to restore the default manifest
+                  generator.
+                -->
+                <manifestFile combine.self="override" />
+              </archive>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>pom</id>
+      <activation>
+        <property>
+          <name>packaging</name>
+          <value>pom</value>
+        </property>
+      </activation>
+      <properties>
+        <build.resources.unpack.phase>none</build.resources.unpack.phase>
+        <checkstyle.skip>true</checkstyle.skip>
+      </properties>
+    </profile>
+  </profiles>
+</project>

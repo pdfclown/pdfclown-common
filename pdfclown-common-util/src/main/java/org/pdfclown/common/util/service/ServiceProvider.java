@@ -1,0 +1,135 @@
+/*
+  SPDX-FileCopyrightText: © 2023-2025 Stefano Chizzolini and contributors -
+  <https://github.com/pdfclown/pdfclown-common>
+  SPDX-License-Identifier: LGPL-3.0-or-later
+
+  Copyright 2023-2025 Stefano Chizzolini and contributors -
+  <https://github.com/pdfclown/pdfclown-common>
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
+  partially) this file, you MUST add your own copyright notice in a separate comment block above
+  this file header, listing the main changes you applied to the original source.
+
+  This file (ServiceProvider.java) is part of pdfclown-common-util module in pdfClown Common project
+  (this Program).
+
+  This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
+  Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
+  3 of the License, or (at your option) any later version.
+
+  This Program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with this Program.
+  If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
+package org.pdfclown.common.util.service;
+
+import static java.util.stream.Collectors.toUnmodifiableList;
+
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.stream.Stream;
+import org.pdfclown.common.util.lang.Immutable;
+
+/**
+ * Pluggable extension based on the {@link ServiceLoader} mechanism.
+ * <p>
+ * Services consumed by pdfClown are expected to comply with this protocol.
+ * </p>
+ *
+ * @author Stefano Chizzolini
+ */
+@Immutable
+public interface ServiceProvider {
+  /**
+   * Retrieves available providers of the given type, sorted by priority.
+   *
+   * @param <T>
+   * @param providerType
+   * @return Immutable list, sorted by ascending priority (the lower the priority, the better).
+   */
+  public static <T extends ServiceProvider> List<T> discover(Class<T> providerType) {
+    return collect(providerType, doDiscover(providerType).filter($ -> $.isAvailable()));
+  }
+
+  /**
+   * Retrieves all the providers of the given type, whatever their status, sorted by priority.
+   * <p>
+   * Useful to reveal unavailable providers for diagnostic purposes.
+   * </p>
+   *
+   * @param <T>
+   * @param providerType
+   * @return Immutable list, sorted by ascending priority (the lower the priority, the better).
+   */
+  public static <T extends ServiceProvider> List<T> discoverAll(Class<T> providerType) {
+    return collect(providerType, doDiscover(providerType));
+  }
+
+  /**
+   * Retrieves the best available provider of the given type.
+   *
+   * @param <T>
+   * @param providerType
+   */
+  public static <T extends ServiceProvider> T discoverBest(Class<T> providerType) {
+    List<T> providers = discover(providerType);
+    return !providers.isEmpty() ? providers.get(0) : null;
+  }
+
+  private static <T extends ServiceProvider> List<T> collect(Class<T> providerType,
+      Stream<T> providerStream) {
+    var ret = providerStream.collect(toUnmodifiableList());
+
+    if (Util.serviceProviderLog.isInfoEnabled()) {
+      var b = new StringBuilder("DISCOVERED ").append(providerType.getName())
+          .append(" implementations:");
+      if (ret.isEmpty()) {
+        b.append(" NONE");
+      } else {
+        for (T provider : ret) {
+          b.append("\n  - ").append(provider.getClass().getName()).append(" (status: ")
+              .append(provider.isAvailable() ? "OK" : "N/A").append("; priority: ")
+              .append(provider.getPriority()).append(")");
+        }
+      }
+      Util.serviceProviderLog.info(b.toString());
+    }
+
+    return ret;
+  }
+
+  private static <T extends ServiceProvider> Stream<T> doDiscover(Class<T> providerType) {
+    return ServiceLoader.load(providerType).stream().map($ -> $.get())
+        .sorted(($1, $2) -> $1.getPriority() - $2.getPriority());
+  }
+
+  /**
+   * Implementation priority, ie a capability index used to rank available implementations (the
+   * lesser the better — zero means full capability).
+   * <p>
+   * Each implementation is expected to declare a priority comparable to other implementations of
+   * the same {@linkplain ServiceProvider provider type}. Eg:
+   * </p>
+   * <ul>
+   * <li>hyphenators would return their average error rate</li>
+   * <li>barcode renderers would return their level of graphical inaccuracy (a ZXing-based renderer
+   * is, despite equivalent encoding accuracy, less refined than an Okapi-based renderer as, eg,
+   * only the latter differentiates bar lengths in 1D labels and adjusts the placement of
+   * human-readable symbols at character level, making for a more professionally-looking
+   * rendering)</li>
+   * </ul>
+   */
+  int getPriority();
+
+  /**
+   * Whether this implementation is available.
+   * <p>
+   * An implementation may require resources (such as optional dependencies) which can be checked at
+   * runtime only.
+   * </p>
+   */
+  boolean isAvailable();
+}

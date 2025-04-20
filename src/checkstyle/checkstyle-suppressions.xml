@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+<!-- COMMON -->
+  <!-- Allow special abbreviations.
+    NOTE: AbbreviationAsWordInName currently (checkstyle 10.1) is incapable to recognize
+    digit-terminated abbreviations [1].
+
+    [1] https://github.com/checkstyle/checkstyle/issues/6694#issuecomment-1086919616
+  -->
+  <suppress
+    checks="AbbreviationAsWordInName"
+    message="MCID'" />
+  <!-- Allow free indentation of formatter-tag comments.
+    This is a temporary fix to the faulty behavior of SuppressionCommentFilter, which currently
+    (checkstyle 10.1) excludes closing tag comment (onComment) from suppression [1].
+
+    [1] https://github.com/checkstyle/checkstyle/issues/11504
+  -->
+  <suppress
+    checks="CommentsIndentation"
+    message="Comment has incorrect indentation level 0" />
+  <!-- Allow special method names. -->
+  <suppress
+    checks="MethodName"
+    message="'TODO'|'EOF'" />
+  <!-- Allow empty javadoc summaries (sometimes they are simply redundant, such as in setters). -->
+  <suppress
+    checks="SummaryJavadoc"
+    message="Summary javadoc is missing" />
+
+  <!-- Allow regular line wrapping indentation on inline variable assignment.
+    This is a temporary fix to the faulty behavior of IndentationCheck, which currently
+    (checkstyle 10.12) applies wrong indentation to them [1].
+
+    [1] https://github.com/checkstyle/checkstyle/issues/13405
+  -->
+  <suppress
+    checks="Indentation"
+    message="'new' has incorrect indentation" />
+
+<!-- MODULES -->
+  <!-- MODULE: pdfclown-common-build -->
+  <suppress
+    checks=".*"
+    files="org/pdfclown/common/build/internal/jsonassert" />
+</suppressions>

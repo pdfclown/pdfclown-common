@@ -1,0 +1,65 @@
+h1.title:not([title]):only-child {
+  font-size: 32px;
+}
+
+h1.title:not([title]):only-child:before {
+  content: url('../images/logo.png');
+  display: inline-block;
+  vertical-align: middle;
+}
+
+cite {
+  font-size: smaller;
+  font-style: normal;
+}
+
+dt {
+  margin-top: .25em;
+}
+
+li>p {
+  margin: 0;
+}
+
+pre {
+  margin: 1em;
+}
+
+th {
+  white-space: nowrap;
+}
+
+.biblio-author {
+  font-variant: small-caps;
+}
+
+.biblio-resources-extra {
+  font-size: smaller;
+}
+
+.uml {
+  margin: 1em 0;
+}
+
+.header-top {
+  padding: 3px 10px;
+}
+
+.footer-right {
+  float: right;
+  margin: 0;
+  padding: 10px;
+}
+
+.important {
+  background-color: yellow;
+  color: black;
+}
+
+.warning {
+  color: red;
+}
+
+#all-packages-table {
+  margin-top: 2em;
+}

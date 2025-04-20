@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.pdfclown</groupId>
+    <artifactId>pdfclown-common-parent</artifactId>
+    <version>0.0.0-SNAPSHOT</version>
+    <relativePath>pdfclown-common-parent/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>pdfclown-common</artifactId>
+  <version>0.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>${project.artifactId}</name>
+  <description>Common functionalities for pdfClown.org projects</description>
+  <inceptionYear>2023</inceptionYear>
+  <url>${project.root.url}</url>
+
+  <organization>
+    <name>pdfClown.org</name>
+    <url>https://pdfclown.org</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License (LGPL), version 3</name>
+      <url>https://www.gnu.org/licenses/lgpl-3.0.html</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>stechio</id>
+      <name>Stefano Chizzolini</name>
+      <url>https://stefanochizzolini.it</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>pdfclown-common-build</module>
+    <module>pdfclown-common-maven-plugin</module>
+    <module>pdfclown-common-parent</module>
+    <module>pdfclown-common-util</module>
+  </modules>
+
+  <properties>
+    <!--
+      OVERRIDDEN PROPERTIES
+    -->
+    <project.issues.url>https://github.com/pdfclown/pdfclown-common/issues</project.issues.url>
+    <project.root.url>https://github.com/pdfclown/pdfclown-common</project.root.url>
+    <project.scm.connection>scm:git:git://github.com/pdfclown/pdfclown-common.git</project.scm.connection>
+    <project.scm.dev.connection>scm:git:git://github.com/pdfclown/pdfclown-common.git</project.scm.dev.connection>
+    <project.scm.url>https://github.com/pdfclown/pdfclown-common</project.scm.url>
+
+    <!--
+      CUSTOM PROPERTIES
+    -->
+    <!--
+      Automatic module name (JPMS).
+
+      NOTE: Each module MUST define its own unique JPMS name.
+    -->
+    <project.jpms.name />
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>${project.jpms.name}</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

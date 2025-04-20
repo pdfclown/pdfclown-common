@@ -1,0 +1,219 @@
+html {
+  scroll-padding-top: 100px;
+}
+
+body {
+  color: inherit;
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 17px;
+}
+
+h5 {
+  font-size: 15px;
+}
+
+h6 {
+  font-size: 14px;
+}
+
+:not(h1, h2, h3, h4, h5, h6)>code, :not(h1, h2, h3, h4, h5, h6)>tt {
+  line-height: inherit;
+}
+
+.legal-copy {
+  float: left;
+  margin: 0;
+  padding: 10px;
+}
+
+/*
+ * Styles for navigation bar.
+ */
+.top-nav {
+  background-color: #4072b1;
+  min-height: inherit;
+  padding: 0;
+}
+
+.sub-nav {
+  background-color: #bdd0e8;
+}
+
+.sub-nav div {
+  padding: 0;
+}
+
+ul.sub-nav-list {
+  margin: 0;
+  padding: 5px 15px;
+}
+
+ul.nav-list li {
+  padding: 7px 15px;
+}
+
+ul.sub-nav-list li {
+  padding-top: 0;
+}
+
+.nav-bar-cell1-rev {
+  margin: 0;
+}
+
+/*
+ * Styles for headings.
+ */
+body.class-declaration-page .summary h2, body.class-declaration-page .details h2, body.class-use-page  h2,
+  body.module-declaration-page  .block-list h2 {
+  font-style: inherit;
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+}
+
+body.class-declaration-page .summary h3, body.class-declaration-page .details h3, body.class-declaration-page .summary .inherited-list h2
+  {
+  background-color: #869ab2;
+  border: 0;
+  color: white;
+  padding: 7px 10px;
+  color: white;
+}
+
+/*
+ * Styles for page layout containers.
+ */
+dl.notes>dt {
+  font-family: inherit;
+}
+
+dl.notes>dd {
+  font-family: inherit;
+  margin: revert;
+}
+
+/*
+ * Styles for lists.
+ */
+ul
+.block-list>li, ul.details-list>li, ul.member-list>li, ul.summary-list>li {
+  line-height: inherit;
+}
+
+ul.block-list, ul.details-list, ul.member-list, ul.summary-list {
+  margin: 0;
+}
+
+/*
+ * Styles for tables.
+ */
+.summary-table, .details-table {
+  border: 0;
+  margin-bottom: 10px;
+}
+
+.caption span {
+  padding: 5px 20px;
+}
+
+div.table-tabs {
+  padding: inherit;
+}
+
+div.table-tabs>button {
+  padding: 5px 20px;
+}
+
+.summary-table>div, .details-table>div {
+  padding: 5px;
+}
+
+.table-header {
+  background-color: #869ab2;
+  color: white;
+}
+
+.table-sub-heading-color {
+  background-color: inherit;
+}
+
+.even-row-color, .even-row-color .table-header, .odd-row-color, .odd-row-color .table-header {
+  background-color: inherit;
+  border-top: 1px #b0b0b0 solid;
+}
+
+/*
+ * Styles for contents.
+ */
+div.block {
+  font-family: inherit;
+}
+
+.module-signature, .package-signature, .type-signature, .member-signature {
+  font-size: 16px;
+}
+
+.block {
+  margin: inherit;
+  color: inherit;
+}
+
+/*
+ * Styles specific to HTML5 elements.
+ */
+section.class-description {
+  line-height: inherit;
+}
+
+.summary section[class$="-summary"], .details section[class$="-details"], .class-uses .detail,
+  .serialized-class-details {
+  background-color: inherit;
+  border: 0;
+  padding: inherit;
+}
+
+.inherited-list, section[class$="-details"] .detail {
+  background-color: inherit;
+  border: inherit;
+  padding: 0 0 0 8px;
+}
+
+div.inherited-list h2, div.inherited-list h3 {
+  text-align: left !important;
+}
+
+.nav-list-search label {
+  color: black;
+}
+
+.sub-nav .nav-list-search {
+  padding: 3px 15px 0;
+}
+
+#reset-button {
+  right: 20px;
+  top: 8px;
+}
+
+ul.ui-autocomplete {
+  background-color: revert;
+}
+
+.ui-autocomplete-category {
+  background-color: #4072b1;
+}

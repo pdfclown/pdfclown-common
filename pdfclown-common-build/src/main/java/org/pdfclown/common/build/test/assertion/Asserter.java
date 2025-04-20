@@ -1,0 +1,447 @@
+/*
+  SPDX-FileCopyrightText: © 2023-2025 Stefano Chizzolini and contributors -
+  <https://github.com/pdfclown/pdfclown-common>
+  SPDX-License-Identifier: LGPL-3.0-or-later
+
+  Copyright 2023-2025 Stefano Chizzolini and contributors -
+  <https://github.com/pdfclown/pdfclown-common>
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
+  partially) this file, you MUST add your own copyright notice in a separate comment block above
+  this file header, listing the main changes you applied to the original source.
+
+  This file (Asserter.java) is part of pdfclown-common-build module in pdfClown Common project (this
+  Program).
+
+  This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
+  Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
+  3 of the License, or (at your option) any later version.
+
+  This Program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with this Program.
+  If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
+package org.pdfclown.common.build.test.assertion;
+
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
+import static org.pdfclown.common.build.internal.util.Strings.COMMA;
+import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util.Strings.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.build.internal.util.Strings.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.build.internal.util.Strings.S;
+import static org.pdfclown.common.build.internal.util.Strings.SLASH;
+import static org.pdfclown.common.build.internal.util.Strings.abbreviateMultiline;
+import static org.pdfclown.common.build.internal.util.regex.Patterns.globToRegex;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Support for assertions based on automatically managed state.
+ * <p>
+ * The expected state (typically persisted as resource file) is automatically managed to ensure easy
+ * and robust test maintenance, providing testers with CLI hints to fix unexpected output and update
+ * the corresponding resources.
+ * </p>
+ * <p>
+ * In case of error, full assertion reports are written to a dedicated log file
+ * ({@code target/test-logs/pdfclown/assert.log}).
+ * </p>
+ *
+ * @author Stefano Chizzolini
+ */
+public abstract class Asserter {
+  /**
+   * {@link Asserter} configuration.
+   *
+   * @author Stefano Chizzolini
+   */
+  public static class Config implements Cloneable {
+    final TestEnvironment env;
+    @Nullable
+    String testId;
+
+    public Config(TestEnvironment env) {
+      this.env = requireNonNull(env);
+    }
+
+    @Override
+    public Config clone() {
+      try {
+        return (Config) super.clone();
+      } catch (CloneNotSupportedException ex) {
+        throw new RuntimeException(ex);
+      }
+    }
+
+    public TestEnvironment getEnv() {
+      return env;
+    }
+
+    public @Nullable String getTestId() {
+      return testId;
+    }
+
+    public Config setTestId(String value) {
+      testId = value;
+      return this;
+    }
+  }
+
+  /**
+   * Error message builder.
+   *
+   * @author Stefano Chizzolini
+   */
+  public static class ErrorMessageBuilder {
+    private StringBuilder base = new StringBuilder();
+
+    /**
+     * Appends the {@linkplain Object#toString() string representation} of the given object to the
+     * current error entry.
+     */
+    public ErrorMessageBuilder append(Object obj) {
+      base.append(Objects.toString(obj));
+      return this;
+    }
+
+    /**
+     * Appends the given text to the current error entry.
+     */
+    public ErrorMessageBuilder append(String text) {
+      base.append(text);
+      return this;
+    }
+
+    /**
+     * Begins a new error entry.
+     */
+    public ErrorMessageBuilder error(String text) {
+      if (base.length() > 0) {
+        base.append("\n");
+      }
+      return append(text);
+    }
+
+    /**
+     * Whether this message is empty.
+     */
+    public boolean isEmpty() {
+      return base.length() == 0;
+    }
+
+    /**
+     * Begins a new page-related error entry.
+     */
+    public ErrorMessageBuilder pageError(int pageIndex) {
+      return error("Page ").append(pageIndex).append(": ");
+    }
+
+    @Override
+    public String toString() {
+      return base.toString();
+    }
+  }
+
+  private static final Logger log = LoggerFactory.getLogger(Asserter.class);
+
+  /**
+   * CLI parameter specifying whether automatic assertion resource building is enabled for run
+   * tests.
+   * <p>
+   * The value of this CLI parameter is a boolean which can be omitted (default: {@code true}).
+   * </p>
+   * <p>
+   * Assertion resources represent the expected state used to validate the corresponding actual
+   * state generated by the current project code. In case a resource is missing, or corrupted, or
+   * its validation is a false negative because the current project code innovated the expected
+   * state, this asserter can regenerate such resource on condition it is explicitly enabled by the
+   * tester via this CLI parameter.
+   * </p>
+   *
+   * @apiNote Common usage examples:
+   *          <ul>
+   *          <li>to regenerate all the mismatching resources, no matter the tests they belong to:
+   *          <pre>
+   * mvn verify -Dpdfclown.assert.update</pre></li>
+   *          <li>to regenerate the mismatching resources belonging to specific test classes (eg,
+   *          "MyObjectIT"): <pre>
+   * mvn verify -Dpdfclown.assert.update -Dtest=MyObjectIT</pre></li>
+   *          <li>to regenerate the mismatching resources belonging to specific test cases (eg,
+   *          "MyObjectIT.myTest"): <pre>
+   * mvn verify -Dpdfclown.assert.update -Dtest=MyObjectIT#myTest</pre></li>
+   *          <li>to regenerate the mismatching resources belonging to multiple test classes (eg,
+   *          MyObjectIT and MyOtherObjectIT), they can be specified as a comma-separated list:<pre>
+   * mvn verify -Dpdfclown.assert.update -Dtest=MyObjectIT,MyOtherObjectIT</pre></li>
+   *          </ul>
+   *          <p>
+   *          NOTE: {@code test} CLI parameter is typically mapped by maven plugins (such as
+   *          surefire) to the corresponding JUnit system property which allows fine-grained test
+   *          selection (see the relevant documentation); if your maven plugin for test execution
+   *          doesn't support it, adjust your commands accordingly. Furthermore, if the names of
+   *          your test cases are overridden (ie, their names are different from the corresponding
+   *          test methods), it's up to you to use the actual name, since it is internally resolved
+   *          by JUnit.
+   *          </p>
+   */
+  public static final String PARAM_NAME__BUILDABLE = "pdfclown.assert.update";
+  private static final Predicate<String> FILTER__BUILDABLE = fqnFilter(PARAM_NAME__BUILDABLE);
+
+  /**
+   * Builds the predicate corresponding to the given CLI parameter, whose value is a string of
+   * comma-separated FQNs.
+   * <p>
+   * The predicate is expected to evaluate fully-qualified test identifiers (eg,
+   * "/org/pdfclown/layout/LayoutIT_testPdfAConformance.pdf").
+   * </p>
+   *
+   * @param paramName
+   *          CLI parameter.
+   * @return Truth predicate if {@code paramName} has no specified CLI value.
+   */
+  protected static Predicate<String> fqnFilter(String paramName) {
+    String regex = null;
+    boolean defaultResult = false;
+    {
+      String paramValue = System.getProperty(paramName);
+      if (paramValue != null) {
+        try {
+          switch (paramValue) {
+            // Any FQN.
+            /*
+             * NOTE: Unfortunately, System.getProperty() doesn't document the implicit value of
+             * parameters specified on CLI (eg, `-Dpdfclown.assert.update`); typically, it is an
+             * empty string BUT, oddly enough, running on OpenJDK (build 17.0.4+8-Ubuntu-122.04)
+             * returned "true" (sic!). Hopefully, there are no other weird implementations out
+             * there...
+             */
+            case EMPTY:
+            case "true":
+              defaultResult = true;
+              break;
+            // Specific FQNs.
+            default:
+              var b = new StringBuilder();
+              String[] paramValueItems = paramValue.split(S + COMMA);
+              for (int i = 0; i < paramValueItems.length; i++) {
+                if (i > 0) {
+                  b.append('|');
+                }
+                if (!paramValueItems[i].contains(S + SLASH)) {
+                  paramValueItems[i] = "/**" + paramValueItems[i];
+                }
+                b.append(ROUND_BRACKET_OPEN).append(globToRegex(paramValueItems[i]))
+                    .append(ROUND_BRACKET_CLOSE);
+              }
+              regex = b.toString();
+          }
+        } catch (Exception ex) {
+          log.error("{} CLI parameter initialization FAILED", paramName, ex);
+        }
+      }
+    }
+    log.info("{} CLI parameter: {}", paramName,
+        regex != null ? regex : defaultResult ? "ANY" : "NONE");
+
+    if (regex != null)
+      return Pattern.compile(regex).asMatchPredicate();
+    else {
+      final var result = defaultResult;
+      return $ -> result;
+    }
+  }
+
+  /**
+   * Evaluates the assertion result and throws an assertion error in case of failure.
+   * <p>
+   * This method is expected to be invoked at the end of the assertion, after all the detected
+   * errors were combined in the given message:
+   * </p>
+   * <ul>
+   * <li>if {@code message} is empty, the assertion succeeded: this method quietly returns</li>
+   * <li>if {@code message} is not empty, the assertion failed: this method enters the full content
+   * of {@code message} into the assertion log, then throws its shortened version as
+   * {@link AssertionError}</li>
+   * </ul>
+   *
+   * @param testId
+   *          Test identifier (either simple or fully-qualified). Typically corresponds to the
+   *          test-unit-specific resource name of the expected file (eg,
+   *          "LayoutIT_testPdfAConformance.pdf", or fully-qualified
+   *          "/org/pdfclown/layout/LayoutIT_testPdfAConformance.pdf").
+   * @param message
+   *          Assertion error message (if empty, no error is thrown).
+   * @param expectedFile
+   *          Expected test result (resource file).
+   * @param actualFile
+   *          Actual test result (output file).
+   * @throws AssertionError
+   *           If {@code message} is not empty.
+   */
+  protected void evalAssertionError(String testId, String message, File expectedFile,
+      File actualFile) throws AssertionError {
+    if (StringUtils.isEmpty(message))
+      return;
+
+    var testAnnotationTypes = Set.of(Test.class, ParameterizedTest.class);
+    @SuppressWarnings("null")
+    String testName = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+        .walk($frames -> $frames
+            .skip(2)
+            .<Optional<Method>>map($ -> {
+              try {
+                return Optional.of($.getDeclaringClass().getDeclaredMethod($.getMethodName(),
+                    $.getMethodType().parameterArray()));
+              } catch (NoSuchMethodException e) {
+                return Optional.ofNullable(null);
+              }
+            })
+            .filter($ -> $
+                .map($$ -> Stream.of($$.getDeclaredAnnotations())
+                    .filter($$$ -> testAnnotationTypes.contains($$$.annotationType()))
+                    .findAny()
+                    .isPresent())
+                .orElse(false))
+            .findFirst()
+            .map($ -> $
+                .map($$ -> $$.getDeclaringClass().getSimpleName() + "#" + $$.getName())
+                .get())
+            .orElse(EMPTY));
+    if (testName.isEmpty())
+      throw new RuntimeException(String.format(
+          "Failed test method NOT FOUND on stack trace (should be marked with any of these "
+              + "annotations: %s)",
+          testAnnotationTypes.stream().map(Class::getName).collect(toList())));
+
+    message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message.strip());
+    String hint = String.format(Locale.ROOT,
+        "\nCompared files:\n"
+            + " * EXPECTED: %s\n"
+            + " * ACTUAL: %s\n"
+            + "To retry, enter this command:\n"
+            + "  mvn verify -Dmaven.javadoc.skip=true -Dtest=\"%s\"\n"
+            + "To confirm the actual changes as expected (and to generate missing resources), "
+            + "enter this command:\n"
+            + "  mvn verify -Dmaven.javadoc.skip=true -D%s=\"%s\" -Dtest=\"%s\"\n",
+        expectedFile, actualFile, testName, PARAM_NAME__BUILDABLE, testId, testName);
+
+    // Log (full message).
+    getLog().error(LogMarker.VERBOSE, "{}\n{}", message, hint);
+
+    // Exception (shortened message).
+    throw new AssertionError(
+        String.format("%s\n"
+            + "(see pdfclown/assert.log for further information)\n"
+            + "%s", abbreviateMultiline(message, 5, 100), hint));
+  }
+
+  /**
+   * Implementation-specific logger.
+   */
+  protected abstract Logger getLog();
+
+  /**
+   * Resolves the test identifier.
+   * <p>
+   * The {@linkplain Config#getTestId() configured identifier} has priority over the default one.
+   * </p>
+   */
+  @SuppressWarnings("null")
+  protected String getTestId(Supplier<String> defaultSupplier, Config config) {
+    return config.getTestId() != null ? config.getTestId() : defaultSupplier.get();
+  }
+
+  /**
+   * Gets whether the expected resources associated to the given ID can be overwritten in case of
+   * mismatch with their actual counterparts.
+   */
+  protected boolean isUpdateable(String testId) {
+    return FILTER__BUILDABLE.test(testId);
+  }
+
+  /**
+   * Writes the expected resource on both source and target sides.
+   *
+   * @param resourceName
+   *          Resource to write.
+   * @param writer
+   *          Resource generator.
+   * @param config
+   *          Assertion configuration.
+   * @throws IOException
+   */
+  protected void writeExpectedFile(String resourceName, Consumer<File> writer, Config config)
+      throws IOException {
+    // Source file.
+    File sourceFile = config.getEnv().resourceSrcFile(resourceName);
+    try {
+      File parentFile = sourceFile.getParentFile();
+      assert parentFile != null;
+      parentFile.mkdirs();
+      writer.accept(sourceFile);
+    } catch (RuntimeException ex) {
+      throw new RuntimeException("Expected resource build FAILED: " + sourceFile,
+          ex.getCause() != null ? ex.getCause() : ex);
+    }
+    getLog().info("Expected resource BUILT at {}", sourceFile);
+
+    // Target file.
+    File targetFile = config.getEnv().resourceFile(resourceName);
+    try {
+      File parentFile = targetFile.getParentFile();
+      assert parentFile != null;
+      parentFile.mkdirs();
+      Files.copy(sourceFile.toPath(), targetFile.toPath(),
+          StandardCopyOption.REPLACE_EXISTING);
+    } catch (RuntimeException ex) {
+      throw new RuntimeException("Expected resource copy to target FAILED "
+          + "(re-running tests should fix it): " + targetFile, ex);
+    }
+    getLog().info("Expected resource COPIED to target ({})", targetFile);
+  }
+
+  /**
+   * Writes the expected resource on both source and target sides.
+   *
+   * @param resourceName
+   *          Resource to write.
+   * @param actualFile
+   *          Actual file to overwrite the expected resource.
+   * @param config
+   *          Assertion configuration.
+   * @throws IOException
+   */
+  protected void writeExpectedFile(String resourceName, File actualFile, Config config)
+      throws IOException {
+    writeExpectedFile(resourceName,
+        $ -> {
+          try {
+            Files.copy(actualFile.toPath(), $.toPath(), StandardCopyOption.REPLACE_EXISTING);
+          } catch (IOException ex) {
+            throw new RuntimeException(ex);
+          }
+        }, config);
+  }
+}

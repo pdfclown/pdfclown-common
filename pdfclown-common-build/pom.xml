@@ -1,0 +1,234 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.pdfclown</groupId>
+    <artifactId>pdfclown-common</artifactId>
+    <version>0.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>pdfclown-common-build</artifactId>
+  <packaging>jar</packaging>
+
+  <name>${project.artifactId}</name>
+  <description>Common build utilities for pdfClown.org projects</description>
+  <url>${project.root.url}</url>
+
+  <properties>
+    <!--
+      OVERRIDDEN PROPERTIES
+    -->
+    <build.resources.directory>${project.basedir}/src/main/resources</build.resources.directory>
+    <build.resources.unpack.phase>none</build.resources.unpack.phase>
+    <project.jpms.name>org.pdfclown.common.build</project.jpms.name>
+    <rootdir>${project.basedir}/..</rootdir>
+
+    <!--
+      CUSTOM PROPERTIES
+    -->
+
+    <!--
+      VERSIONS
+    -->
+    <hamcrest.version>3.0</hamcrest.version>
+    <jimfs.version>1.3.0</jimfs.version>
+    <junit.version>5.11.4</junit.version>
+    <mockito.version>5.14.2</mockito.version>
+    <openjson.version>1.0.11</openjson.version>
+    <reflections.version>0.10.2</reflections.version>
+  </properties>
+
+  <dependencies>
+    <!-- Language -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>${reflections.version}</version>
+    </dependency>
+
+    <!-- I/O -->
+    <dependency>
+      <groupId>com.github.openjson</groupId>
+      <artifactId>openjson</artifactId>
+      <version>${openjson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.jimfs</groupId>
+      <artifactId>jimfs</artifactId>
+      <version>${jimfs.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+    </dependency>
+    <!-- Support to legacy (JUnit 4) tests -->
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${hamcrest.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>config\/**</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <!--
+              [#EclipseConfigNorm] Normalizes Eclipse profiles.
+
+              [Manual] Execute every time Eclipse profiles are updated:
+                mvn xml:transform@normalize-eclipse-styles
+            -->
+            <id>normalize-eclipse-styles</id>
+            <configuration>
+              <transformationSets>
+                <transformationSet>
+                  <dir>src/main/resources/config/eclipse</dir>
+                  <includes>
+                    <include>java-cleanup.xml</include>
+                    <include>java-style.xml</include>
+                  </includes>
+                  <outputDir>src/main/resources/config/eclipse</outputDir>
+                  <stylesheet>src/eclipse/profile-normalize.xsl</stylesheet>
+                </transformationSet>
+              </transformationSets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <configuration>
+            <dependencyLinks combine.children="append">
+              <dependencyLink>
+                <groupId>com.google.jimfs</groupId>
+                <artifactId>jimfs</artifactId>
+                <url>https://www.javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <url>https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-api/${log4j.version}/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <url>
+                  https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-core/${log4j.version}/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <url>
+                  https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-slf4j-impl/${log4j.version}/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <url>https://javadoc.io/doc/org.hamcrest/hamcrest/${hamcrest.version}/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <url>https://junit.org/junit5/docs/${junit.version}/api/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <url>https://javadoc.io/doc/org.junit.vintage/junit-vintage-engine/${junit.version}/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <url>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <url>https://javadoc.io/doc/org.reflections/reflections/${reflections.version}/</url>
+              </dependencyLink>
+            </dependencyLinks>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

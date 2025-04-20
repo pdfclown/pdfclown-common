@@ -1,0 +1,146 @@
+/*
+  SPDX-FileCopyrightText: © 2023-2025 Stefano Chizzolini and contributors -
+  <https://github.com/pdfclown/pdfclown-common>
+  SPDX-License-Identifier: LGPL-3.0-or-later
+
+  Copyright 2023-2025 Stefano Chizzolini and contributors -
+  <https://github.com/pdfclown/pdfclown-common>
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
+  partially) this file, you MUST add your own copyright notice in a separate comment block above
+  this file header, listing the main changes you applied to the original source.
+
+  This file (Patterns.java) is part of pdfclown-common-build module in pdfClown Common project (this
+  Program).
+
+  This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
+  Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
+  3 of the License, or (at your option) any later version.
+
+  This Program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with this Program.
+  If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ */
+package org.pdfclown.common.build.internal.util.regex;
+
+/**
+ * Regular-expression utilities.
+ *
+ * @author Stefano Chizzolini
+ */
+public final class Patterns {
+  /* [upstream] org.pdfclown.common.util.regex.Patterns.globToRegex(..) */
+  /**
+   * Converts the given (filesystem-aware) glob to regex.
+   *
+   * @param glob
+   *          Glob pattern interpreted according to the classic
+   *          <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob</a> algorithm, which
+   *          is filesystem-aware. In particular, it supports the globstar ({@code **}).<br>
+   *          NOTE: Character classes ({@code [...]}) are NOT supported.
+   * @implNote This method was spurred by the current lack of native support (see
+   *           <a href="https://bugs.openjdk.org/browse/JDK-8241641">JDK-8241641</a>).
+   */
+  public static String globToRegex(String glob) {
+    return globToRegex(glob, true);
+  }
+
+  /* [upstream] org.pdfclown.common.util.regex.Patterns.wildcardToRegex(..) */
+  /**
+   * Converts the given wildcard pattern to regex.
+   *
+   * @param pattern
+   *          Wildcard pattern supporting
+   *          <a href="https://en.wikipedia.org/wiki/Glob_(programming)">globbing</a> metacharacters
+   *          ({@code ?}, {@code *}).<br>
+   *          NOTE: Character classes ({@code [...]}) are NOT supported.
+   * @implNote This method was spurred by the current lack of native support (see
+   *           <a href="https://bugs.openjdk.org/browse/JDK-8241641">JDK-8241641</a>).
+   */
+  public static String wildcardToRegex(String pattern) {
+    return globToRegex(pattern, false);
+  }
+
+  /* [upstream] org.pdfclown.common.util.regex.Patterns.globToRegex(..) */
+  /**
+   * @param glob
+   *          Glob pattern.
+   * @param fileSystemAware
+   *          Whether {@code glob} must be interpreted according to the classic
+   *          <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob</a> algorithm, which
+   *          is filesystem-aware. In particular, it supports the globstar ({@code **}).
+   */
+  private static String globToRegex(String glob, boolean fileSystemAware) {
+    var b = new StringBuilder();
+    int i = 0;
+    while (i < glob.length()) {
+      char c = glob.charAt(i);
+      mainSwitch: switch (c) {
+        // Reserved regex symbol.
+        case '.':
+        case '(':
+        case ')':
+        case '[':
+        case ']':
+        case '{':
+        case '}':
+        case '^':
+        case '$':
+        case '+':
+        case '|':
+          // Escape reserved regex symbol!
+          b.append('\\').append(c);
+          break;
+        // Glob escape symbol.
+        case '\\': {
+          int i1 = i + 1;
+          if (glob.length() > i1) {
+            char c1 = glob.charAt(i1);
+            switch (c1) {
+              // Escaped reserved glob symbol.
+              case '?':
+              case '*':
+                // Escape reserved regex symbol!
+                b.append('\\').append(c1);
+                i = i1;
+                break mainSwitch;
+              default:
+            }
+          }
+          // Literal backslash.
+          b.append('\\').append(c);
+          break;
+        }
+        // `?` operator.
+        case '?':
+          b.append('.');
+          break;
+        // `*` operator.
+        case '*':
+          if (fileSystemAware) {
+            int i1 = i + 1;
+            if (glob.length() > i1 && glob.charAt(i1) == '*') {
+              b.append(".*") /* Any (including level separator) */;
+              i = i1;
+            } else {
+              b.append("[^/]*") /* Any but level separator */;
+            }
+          } else {
+            b.append(".*");
+          }
+          break;
+        default:
+          b.append(c);
+          break;
+      }
+      i++;
+    }
+    return b.toString();
+  }
+
+  private Patterns() {
+  }
+}
