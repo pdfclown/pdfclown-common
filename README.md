@@ -1,4 +1,4 @@
-# pdfClown Common
+# ![logo](src/main/javadoc/jada/attach/common/resources/images/logo.png) pdfClown Common
 
 Common functionalities for pdfClown.org projects.
 
