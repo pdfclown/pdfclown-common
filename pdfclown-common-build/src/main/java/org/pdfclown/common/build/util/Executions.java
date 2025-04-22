@@ -1,17 +1,14 @@
 /*
-  SPDX-FileCopyrightText: © 2023-2025 Stefano Chizzolini and contributors -
-  <https://github.com/pdfclown/pdfclown-common>
-  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-FileCopyrightText: © 2025 Stefano Chizzolini and contributors
 
-  Copyright 2023-2025 Stefano Chizzolini and contributors -
-  <https://github.com/pdfclown/pdfclown-common>
+  SPDX-License-Identifier: LGPL-3.0-or-later
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
   partially) this file, you MUST add your own copyright notice in a separate comment block above
   this file header, listing the main changes you applied to the original source.
 
   This file (Executions.java) is part of pdfclown-common-build module in pdfClown Common project
-  (this Program).
+  <https://github.com/pdfclown/pdfclown-common> (this Program).
 
   This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
   Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
@@ -23,31 +20,6 @@
 
   You should have received a copy of the GNU Lesser General Public License along with this Program.
   If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
- */
-/*
-  THIRD-PARTY CODE
-
-  This file incorporates work covered by the copyright and license notices here below:
-    - Apache License 2.0:
-      - interceptSystemStreams
-        Original FQN: nl.talsmasoftware.umldoclet.issues.Issue267Test.interceptSystemOut
-        Source: https://github.com/talsma-ict/umldoclet/blob/a1776aa4b3c9af1b073c31969721e867233fe727/src/test/java/nl/talsmasoftware/umldoclet/issues/Issue267Test.java
-        Changes: adaptation
-*/
-/*
- * Copyright 2016-2022 Talsma ICT
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 package org.pdfclown.common.build.util;
 
@@ -163,6 +135,12 @@ public final class Executions {
     return outRef.getValue();
   }
 
+  // SPDX-SnippetBegin
+  // SPDX-SnippetCopyrightText: © 2016-2022 Talsma ICT
+  // SPDX-License-Identifier: Apache-2.0
+  //
+  // SourceFQN: nl.talsmasoftware.umldoclet.issues.Issue267Test.interceptSystemOut
+  // Source: https://github.com/talsma-ict/umldoclet/blob/a1776aa4b3c9af1b073c31969721e867233fe727/src/test/java/nl/talsmasoftware/umldoclet/issues/Issue267Test.java
   /**
    * Executes the given task, intercepting the output from the standard streams.
    *
@@ -175,6 +153,8 @@ public final class Executions {
    * @param merged
    *          Whether the output of both standard streams has to be merged into a single result (in
    *          this case, both {@code outRef} and {@code errRef} are filled with the same value).
+   * @author Sjoerd Talsma (original implementation)
+   * @author Stefano Chizzolini (adaptation to pdfClown)
    * @implNote The output is diverted from the standard streams, temporarily replacing their default
    *           implementations with ad-hoc ones.
    */
@@ -223,6 +203,7 @@ public final class Executions {
       }
     }
   }
+  // SPDX-SnippetEnd
 
   private Executions() {
   }

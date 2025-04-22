@@ -1,6 +1,12 @@
+<!--
+  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-or-later
+-->
+
 # pdfclown-common-build
 
-Common build utilities for pdfClown.org projects.
+Common build utilities for pdfClown projects.
 
 Because of the following reasons, this module integrates an adaptation of [JSONassert](https://github.com/skyscreamer/JSONassert) (org.skyscreamer:jsonassert:1.5.1), which should be replaced with its corresponding dependency when, hopefully, fixed upstream:
 

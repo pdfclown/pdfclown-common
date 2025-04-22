@@ -1,0 +1,10 @@
+SPDX-FileCopyrightText: 2006-2025 Stefano Chizzolini <https://stefanochizzolini.it/>
+SPDX-License-Identifier: LicenseRef-pdfClownTM-1.0
+Description: pdfClown logo, overlaid with [1].
+
+[1]
+SPDX-FileCopyrightText: Openclipart library <http://www.openclipart.org/>
+SPDX-License-Identifier: CC0-1.0
+Description: Wrench and hammer.
+Source: <https://it.m.wikipedia.org/wiki/File:Tools.svg>
+Changes: Colorized and transformed.

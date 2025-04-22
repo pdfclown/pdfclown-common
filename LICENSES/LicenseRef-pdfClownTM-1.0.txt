@@ -1,0 +1,26 @@
+PDFCLOWN TRADEMARK LICENSE
+version 1.0
+
+0. Definitions
+
+  - The `pdfClown™ logos` are the property of Stefano Chizzolini
+    <https://stefanochizzolini.it/> (the Licensor).
+
+  - The `upstream repositories` are the original pdfClown.org SCM repositories
+    where the pdfClown™ logo files are hosted.
+
+1. Usage
+
+  The pdfClown™ logos:
+
+  a. shall never be altered
+
+  b. shall never be used outside the context of their upstream repositories.
+
+     Derivative repositories (so-called forks) can retain those logos as long as
+     they are operated for contributions (pull requests) to the upstream
+     repositories, or for personal unmalicious usage which doesn't alter the
+     purpose of the source code; in any other case, derivative repositories shall
+     remove those logos in order not to be mistaken for their upstream
+     repositories. Furthermore, derivative repositories are strictly prohibited
+     from publishing artifacts containing those logos.

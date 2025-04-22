@@ -1,3 +1,8 @@
+<!--
+  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -15,8 +20,8 @@
   <packaging>pom</packaging>
 
   <name>${project.artifactId}</name>
-  <description>Common functionalities for pdfClown.org projects</description>
-  <inceptionYear>2023</inceptionYear>
+  <description>Common functionalities for pdfClown projects</description>
+  <inceptionYear>2025</inceptionYear>
   <url>${project.root.url}</url>
 
   <organization>

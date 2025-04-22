@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors <https://github.com/pdfclown/pdfclown-common>
+  SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 <!--
   This stylesheet prepares MAVEN DESCRIPTOR (ie, metadata embedded in non-'pom' artifacts) for
   distribution, purging any irrelevant content.

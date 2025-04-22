@@ -1,3 +1,8 @@
+<!--
+  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -9,8 +14,8 @@
   <packaging>pom</packaging>
 
   <name>${project.artifactId}</name>
-  <description>Common configuration for pdfClown.org projects</description>
-  <inceptionYear>2023</inceptionYear>
+  <description>Common configuration for pdfClown projects</description>
+  <inceptionYear>2025</inceptionYear>
   <url>${project.root.url}</url>
 
   <organization>
@@ -566,13 +571,19 @@
             <sourcepath>${project.build.sourceDirectory}</sourcepath>
 
             <additionalOptions>
+              <!--
+                NOTE: Idiotic maven-javadoc-plugin doesn't accept absolute paths in
+                `addStylesheets` property, so we have to feed it directly.
+              -->
+<?ignore
+              <additionalOption>--add-stylesheet
+                "${build.resources.directory}/config/javadoc/extend.css"</additionalOption>
+?>
+
               <additionalOption>-tag "implSpec:a:Implementation Requirements:"</additionalOption>
               <additionalOption>-tag "implNote:a:Implementation Note:"</additionalOption>
               <additionalOption>-tag "apiNote:a:API Note:"</additionalOption>
             </additionalOptions>
-<!--
-            <stylesheetfile>${build.resources.directory}/config/javadoc/main.css</stylesheetfile>
--->
 
             <!--
               CONTENTS (layout and resources)

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-or-later
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -14,7 +19,7 @@
   <packaging>maven-plugin</packaging>
 
   <name>${project.artifactId}</name>
-  <description>Maven plugin for pdfClown.org projects</description>
+  <description>Maven plugin for pdfClown projects</description>
   <url>${project.root.url}</url>
 
   <prerequisites>

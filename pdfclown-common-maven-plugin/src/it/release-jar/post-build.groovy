@@ -1,3 +1,8 @@
+/*
+  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-or-later
+ */
 import java.nio.file.*
 import java.util.zip.*
 
