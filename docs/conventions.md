@@ -4,12 +4,12 @@
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
 
-# Project conventions
+# Project Conventions
 
 This is a collection of conventions adopted by pdfClown projects for their design, implementation and maintenance; although lots of them conform to well-established industry standards, they are herein documented to ensure any contributor is on our same page.
 
 - [Specifications](#specifications)
-- [Third-party code reuse](third-party.md)
+- [Third-party Code Reuse](third-party.md)
 
 ## Specifications
 

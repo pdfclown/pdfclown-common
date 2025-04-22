@@ -21,7 +21,7 @@ This project adheres to the following specifications:
 - [REUSE 3.3](https://reuse.software/spec-3.3/)
 - [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 
-See [Conventions](docs/conventions.md) for further information.
+See [Project Conventions](docs/conventions.md) for further information.
 
 ## License
 

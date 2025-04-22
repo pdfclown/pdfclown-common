@@ -4,7 +4,7 @@
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
 
-# Third-party code reuse
+# Third-party Code Reuse
 
 Source code from third-party projects is incorporated according to [REUSE 3.3](https://reuse.software/spec-3.3/) specification.
 
