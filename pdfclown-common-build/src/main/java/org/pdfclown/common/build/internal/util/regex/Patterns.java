@@ -29,7 +29,7 @@ package org.pdfclown.common.build.internal.util.regex;
  * @author Stefano Chizzolini
  */
 public final class Patterns {
-  /* [upstream] org.pdfclown.common.util.regex.Patterns.globToRegex(..) */
+  /* SourceFQN: org.pdfclown.common.util.regex.Patterns.globToRegex(..) */
   /**
    * Converts the given (filesystem-aware) glob to regex.
    *
@@ -45,7 +45,7 @@ public final class Patterns {
     return globToRegex(glob, true);
   }
 
-  /* [upstream] org.pdfclown.common.util.regex.Patterns.wildcardToRegex(..) */
+  /* SourceFQN: org.pdfclown.common.util.regex.Patterns.wildcardToRegex(..) */
   /**
    * Converts the given wildcard pattern to regex.
    *
@@ -61,7 +61,7 @@ public final class Patterns {
     return globToRegex(pattern, false);
   }
 
-  /* [upstream] org.pdfclown.common.util.regex.Patterns.globToRegex(..) */
+  /* SourceFQN: org.pdfclown.common.util.regex.Patterns.globToRegex(..) */
   /**
    * @param glob
    *          Glob pattern.

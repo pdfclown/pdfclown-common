@@ -33,7 +33,7 @@ import java.util.stream.Stream;
  * @author Stefano Chizzolini
  */
 public final class Aggregations {
-  /* [upstream] org.pdfclown.common.util.Aggregations.cartesianProduct(..) */
+  /* SourceFQN: org.pdfclown.common.util.Aggregations.cartesianProduct(..) */
   /**
    * Gets the Cartesian product of the given lists.
    *

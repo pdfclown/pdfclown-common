@@ -31,50 +31,50 @@ import org.apache.commons.lang3.StringUtils;
  * @author Stefano Chizzolini
  */
 public final class Strings {
-  /* [upstream] org.pdfclown.common.util.Strings.BACKSLASH */
+  /* SourceFQN: org.pdfclown.common.util.Strings.BACKSLASH */
   public static final char BACKSLASH = '\\';
-  /* [upstream] org.pdfclown.common.util.Strings.COMMA */
+  /* SourceFQN: org.pdfclown.common.util.Strings.COMMA */
   public static final char COMMA = ',';
-  /* [upstream] org.pdfclown.common.util.Strings.DOT */
+  /* SourceFQN: org.pdfclown.common.util.Strings.DOT */
   public static final char DOT = '.';
-  /* [upstream] org.pdfclown.common.util.Strings.DQUOTE */
+  /* SourceFQN: org.pdfclown.common.util.Strings.DQUOTE */
   /**
    * Double quote (aka quotation mark).
    */
   public static final char DQUOTE = '\"';
-  /* [upstream] org.pdfclown.common.util.Strings.PIPE */
+  /* SourceFQN: org.pdfclown.common.util.Strings.PIPE */
   /**
    * Vertical bar.
    */
   public static final char PIPE = '|';
-  /* [upstream] org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE */
+  /* SourceFQN: org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE */
   public static final char ROUND_BRACKET_CLOSE = ')';
-  /* [upstream] org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN */
+  /* SourceFQN: org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN */
   public static final char ROUND_BRACKET_OPEN = '(';
-  /* [upstream] org.pdfclown.common.util.Strings.SLASH */
+  /* SourceFQN: org.pdfclown.common.util.Strings.SLASH */
   public static final char SLASH = '/';
-  /* [upstream] org.pdfclown.common.util.Strings.SPACE */
+  /* SourceFQN: org.pdfclown.common.util.Strings.SPACE */
   public static final char SPACE = ' ';
-  /* [upstream] org.pdfclown.common.util.Strings.SQUOTE */
+  /* SourceFQN: org.pdfclown.common.util.Strings.SQUOTE */
   /**
    * Single quote (aka apostrophe).
    */
   public static final char SQUOTE = '\'';
-  /* [upstream] org.pdfclown.common.util.Strings.UNDERSCORE */
+  /* SourceFQN: org.pdfclown.common.util.Strings.UNDERSCORE */
   public static final char UNDERSCORE = '_';
 
   public static final String ELLIPSIS = "...";
-  /* [upstream] org.pdfclown.common.util.Strings.EMPTY */
+  /* SourceFQN: org.pdfclown.common.util.Strings.EMPTY */
   /**
    * Empty string.
    */
   public static final String EMPTY = "";
-  /* [upstream] org.pdfclown.common.util.Strings.EOL */
+  /* SourceFQN: org.pdfclown.common.util.Strings.EOL */
   /**
    * System-dependent line separator ({@link System#lineSeparator()} alias).
    */
   public static final String EOL = System.lineSeparator();
-  /* [upstream] org.pdfclown.common.util.Strings.S */
+  /* SourceFQN: org.pdfclown.common.util.Strings.S */
   /**
    * Empty string, used as a marker to conveniently force the compiler to treat the following
    * concatenated character as a string.
@@ -86,7 +86,7 @@ public final class Strings {
    */
   public static final String S = EMPTY;
 
-  /* [upstream] org.pdfclown.common.util.Strings.abbreviateMultiline(..) */
+  /* SourceFQN: org.pdfclown.common.util.Strings.abbreviateMultiline(..) */
   /**
    * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
    * substring with a standard ellipsis.
@@ -104,7 +104,7 @@ public final class Strings {
     return abbreviateMultiline(value, maxLineCount, averageLineLength, "...");
   }
 
-  /* [upstream] org.pdfclown.common.util.Strings.abbreviateMultiline(..) */
+  /* SourceFQN: org.pdfclown.common.util.Strings.abbreviateMultiline(..) */
   /**
    * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
    * substring with a marker.
@@ -152,7 +152,7 @@ public final class Strings {
     return ret;
   }
 
-  /* [upstream] org.pdfclown.common.util.Strings.uncapitalizeMultichar(..) */
+  /* SourceFQN: org.pdfclown.common.util.Strings.uncapitalizeMultichar(..) */
   /**
    * Ensures leading characters are lower-case.
    * <p>

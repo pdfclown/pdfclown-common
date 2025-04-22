@@ -34,7 +34,7 @@ public final class Numbers {
   private static final int[] ROMAN_VALUES = {
       1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
 
-  /* [upstream] com.openhtmltopdf.layout.CounterLanguage.toLatin */
+  /* SourceFQN: com.openhtmltopdf.layout.CounterLanguage.toLatin */
   /**
    * Converts the given number to latin-alphabet numeral.
    *
@@ -51,7 +51,7 @@ public final class Numbers {
     return ret;
   }
 
-  /* [upstream] com.openhtmltopdf.layout.CounterLanguage.toRoman */
+  /* SourceFQN: com.openhtmltopdf.layout.CounterLanguage.toRoman */
   /**
    * Converts the given number to roman numeral.
    *

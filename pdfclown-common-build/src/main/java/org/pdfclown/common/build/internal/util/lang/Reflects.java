@@ -35,7 +35,7 @@ import org.apache.commons.lang3.mutable.MutableInt;
  * @author Stefano Chizzolini
  */
 public final class Reflects {
-  /* [upstream] org.pdfclown.common.util.lang.Reflects.callerFrame(..) */
+  /* SourceFQN: org.pdfclown.common.util.lang.Reflects.callerFrame(..) */
   /**
    * Gets the calling frame.
    */
@@ -43,7 +43,7 @@ public final class Reflects {
     return callerFrame($ -> true);
   }
 
-  /* [upstream] org.pdfclown.common.util.lang.Reflects.callerFrame(..) */
+  /* SourceFQN: org.pdfclown.common.util.lang.Reflects.callerFrame(..) */
   /**
    * Gets the frame chosen walking down the call stack.
    *
@@ -87,7 +87,7 @@ public final class Reflects {
         .findFirst());
   }
 
-  /* [upstream] org.pdfclown.common.util.lang.Reflects.method(..) */
+  /* SourceFQN: org.pdfclown.common.util.lang.Reflects.method(..) */
   /**
    * Gets the method corresponding to the given stack frame.
    */

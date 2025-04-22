@@ -47,7 +47,7 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public final class Files {
-  /* [upstream] org.pdfclown.common.util.io.Files.PATH_SUPER */
+  /* SourceFQN: org.pdfclown.common.util.io.Files.PATH_SUPER */
   public static final String PATH_SUPER = S + DOT + DOT;
 
   /**
@@ -62,7 +62,7 @@ public final class Files {
 
   private static final String FILE_EXTENSION__ZIP = ".zip";
 
-  /* [upstream] org.pdfclown.common.util.io.Files.fullExtension(..) */
+  /* SourceFQN: org.pdfclown.common.util.io.Files.fullExtension(..) */
   /**
    * Gets the full extension of the given path.
    * <p>
@@ -136,7 +136,7 @@ public final class Files {
       return java.nio.file.Files.readString(file.toPath());
   }
 
-  /* [upstream] org.pdfclown.common.util.io.Files.replaceFullExtension(..) */
+  /* SourceFQN: org.pdfclown.common.util.io.Files.replaceFullExtension(..) */
   /**
    * Replaces the {@linkplain #fullExtension(String) full extension} of the given path with the
    * given extension.

@@ -44,7 +44,7 @@ import org.pdfclown.common.build.internal.jsonassert.JSONCompareMode;
  *
  */
 public class ArraySizeComparatorTest {
-  /* [upstream] twoElementArray */
+  /* SourceFQN: twoElementArray */
   private static final String JSON_SAMPLE__ARRAY = "{a:[b,c]}";
 
   @Test

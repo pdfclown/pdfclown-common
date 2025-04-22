@@ -49,16 +49,16 @@ import org.pdfclown.common.build.internal.jsonassert.comparator.JSONComparator;
  *
  */
 public class ArrayValueMatcherTest {
-  /* [upstream] ARRAY_OF_JSONARRAYS */
+  /* SourceFQN: ARRAY_OF_JSONARRAYS */
   private static final String JSON_SAMPLE__ARRAY_ARRAY =
       "{a:[[6,7,8],[9,10,11],[12,13,14],[19,20,21,22]]}";
-  /* [upstream] ARRAY_OF_INTEGERS */
+  /* SourceFQN: ARRAY_OF_INTEGERS */
   private static final String JSON_SAMPLE__INT_ARRAY = "{a:[1,2,3,4,5]}";
-  /* [upstream] ARRAY_OF_JSONOBJECTS */
+  /* SourceFQN: ARRAY_OF_JSONOBJECTS */
   private static final String JSON_SAMPLE__OBJECT_ARRAY =
       "{a:[{background:white,id:1,type:row},{background:grey,id:2,type:row},{background:white,id:3,type:row},{background:grey,id:4,type:row}]}";
 
-  /* [upstream] comparator */
+  /* SourceFQN: comparator */
   private static final JSONComparator COMPARATOR = new DefaultComparator(JSONCompareMode.LENIENT);
 
   @Test

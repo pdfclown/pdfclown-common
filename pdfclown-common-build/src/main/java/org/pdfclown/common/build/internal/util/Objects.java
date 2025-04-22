@@ -57,7 +57,7 @@ public final class Objects {
       String.format(Locale.ROOT, "(?<%s>%s)@%s", PATTERN_GROUP__CLASS_FQN, REGEX__CLASS_FQN,
           REGEX__HEX));
 
-  /* [upstream] org.pdfclown.util.Objects.asType(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.asType(..) */
   /**
    * Gets the type corresponding to the given object.
    * <p>
@@ -69,7 +69,7 @@ public final class Objects {
     return obj != null ? (obj instanceof Class ? (Class<?>) obj : obj.getClass()) : null;
   }
 
-  /* [upstream] org.pdfclown.util.Objects.fqn(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.fqn(..) */
   /**
    * Gets the fully qualified type name of the given object.
    *
@@ -85,7 +85,7 @@ public final class Objects {
     return fqn(obj, false);
   }
 
-  /* [upstream] org.pdfclown.util.Objects.fqnd(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.fqnd(..) */
   /**
    * Gets the fully qualified type name of the given object, replacing inner-class separators
    * ({@code $}) with dots.
@@ -97,7 +97,7 @@ public final class Objects {
     return fqn(obj, true);
   }
 
-  /* [upstream] org.pdfclown.util.Objects.objTo(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.objTo(..) */
   /**
    * Maps the given object.
    *
@@ -113,7 +113,7 @@ public final class Objects {
     return obj != null ? mapper.apply(obj) : null;
   }
 
-  /* [upstream] org.pdfclown.util.Objects.objToLiteralString(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.objToLiteralString(..) */
   /**
    * Maps the given object to its literal string representation (ie, inclusive of markers such as
    * quotes).
@@ -130,7 +130,7 @@ public final class Objects {
       return String.valueOf(obj);
   }
 
-  /* [upstream] org.pdfclown.util.Objects.requireState(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.requireState(..) */
   /**
    * (see {@link #requireState(Object, String)})
    */
@@ -138,7 +138,7 @@ public final class Objects {
     return requireState(obj, "State UNDEFINED");
   }
 
-  /* [upstream] org.pdfclown.util.Objects.requireState(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.requireState(..) */
   /**
    * Checks that the given object reference is not null.
    * <p>
@@ -169,7 +169,7 @@ public final class Objects {
     return obj;
   }
 
-  /* [upstream] org.pdfclown.util.Objects.sqn(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.sqn(..) */
   /**
    * Gets the qualified simple type name of the given object, ie the simple class name qualified
    * with its outer class (eg, {@code MyOuterClass$MyInnerClass}), if present (otherwise, behaves
@@ -181,7 +181,7 @@ public final class Objects {
     return sqn(obj, false);
   }
 
-  /* [upstream] org.pdfclown.util.Objects.sqnd(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.sqnd(..) */
   /**
    * Gets the qualified simple type name of the given object, replacing inner-class separators
    * ({@code $}) with dots, ie the simple class name qualified with its outer class (eg,
@@ -195,7 +195,7 @@ public final class Objects {
     return sqn(obj, true);
   }
 
-  /* [upstream] org.pdfclown.util.Objects.typeOf(..) */
+  /* SourceFQN: org.pdfclown.util.Objects.typeOf(..) */
   /**
    * Gets the type of the given object.
    */
