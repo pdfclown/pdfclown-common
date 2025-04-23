@@ -36,49 +36,62 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
     [*] Latest commit reconciled
 
-3. in the source file reusing the third-party code, add a corresponding licensing notice formatted in accordance with the extent of the incorporation:
+3. in the source file reusing the third-party code, add a corresponding licensing notice formatted in accordance with the extent of the incorporation and accompanied by an informative block (containing tags like `Changes`, `SourceFQN`, etc):
 
     - **third-party file**: append to the file header the third-party copyright notice in its equivalent SPDX representation:
 
-        - in case of **repository-bound file** documented in the "Fork reconciliation" section of the project's README.md:
+        ```
+        . . . file header . . .
+        /*
+          SPDX-FileCopyrightText: © 2012-2022 Skyscreamer
+
+          SPDX-License-Identifier: Apache-2.0
+         */
+
+        /*
+          Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
+         */
+        class AbstractComparator {
+          . . .
+        ```
+
+        NOTE: If the original code has been incorporated as-is (no change other than trivial adaptation), then the "<code>Changes</code>" tag can be omitted. Other informative tags will be added based on the relationship with the original code:
+
+        - in case of **repository-bound file**, *if the class name of the file has changed* (eg, the original root package indicated among the forks in README.md is `org.skyscreamer.jsonassert` and the original class name is `org.skyscreamer.jsonassert.comparator.AbstractComparator` (relative package `comparator`), whilst its incorporated class name is `org.pdfclown.common.build.internal.jsonassert.comp.AbstractComparator` (root package `org.pdfclown.common.build.internal.jsonassert`, relative package `comp`)), then the `SourceFQN` tag will specify its original fully qualified name:
 
           ```
+          . . . file header . . .
           /*
             SPDX-FileCopyrightText: © 2012-2022 Skyscreamer
 
             SPDX-License-Identifier: Apache-2.0
-
-            Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
            */
-          ```
 
-          NOTE: If the original code has been incorporated as-is (no change other than trivial adaptation), then the "<code>Changes</code>" tag can be omitted.
-
-          If the file has changed name or relative package (eg, if the original root package indicated among the forks in README.md is `org.skyscreamer.jsonassert` and the original class name is `org.skyscreamer.jsonassert.comparator.AbstractComparator` (relative package `comparator`), while its incorporated class name is `org.pdfclown.common.build.internal.jsonassert.comp.AbstractComparator` (root package `org.pdfclown.common.build.internal.jsonassert`, relative package `comp`)), then the copyright notice will specify also its original fully qualified name:
-
-          ```
           /*
-            SPDX-FileCopyrightText: © 2012-2022 Skyscreamer
-
-            SPDX-License-Identifier: Apache-2.0
-
             SourceFQN: org.skyscreamer.jsonassert.comparator.AbstractComparator
             Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
            */
+          class AbstractComparator {
+            . . .
           ```
 
-        - otherwise (<b>detached file</b>), specify its repository-specific permalink:
+        - in case of **detached file**, the `Source` tag will specify its repository-specific permalink:
 
           ```
+          . . . file header . . .
           /*
             SPDX-FileCopyrightText: © 2012-2022 Skyscreamer
 
             SPDX-License-Identifier: Apache-2.0
+           */
 
+          /*
             SourceFQN: org.skyscreamer.jsonassert.comparator.AbstractComparator
             Source: https://github.com/skyscreamer/JSONassert/blob/e81c16c59ce0860f97a65d871589ab2337370c4b/src/main/java/org/skyscreamer/jsonassert/comparator/AbstractComparator.java
             Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
            */
+          class AbstractComparator {
+            . . .
           ```
 
     - **third-party code fragment** into a project file: wrap the fragment as an SPDX snippet:
