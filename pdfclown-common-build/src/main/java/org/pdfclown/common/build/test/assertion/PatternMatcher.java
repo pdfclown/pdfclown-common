@@ -25,6 +25,8 @@
   SPDX-FileCopyrightText: © 2016-2022 Talsma ICT
 
   SPDX-License-Identifier: Apache-2.0
+
+  Source: https://github.com/talsma-ict/umldoclet/blob/e9e7ce933f564da9a0dbbca476bd74a25d6f0663/src/test/java/nl/talsmasoftware/umldoclet/testing/PatternMatcher.java
  */
 package org.pdfclown.common.build.test.assertion;
 
@@ -35,10 +37,7 @@ import java.util.regex.Pattern;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-/*
- * SourceFQN: nl.talsmasoftware.umldoclet.testing.PatternMatcher
- * Source: https://github.com/talsma-ict/umldoclet/blob/e9e7ce933f564da9a0dbbca476bd74a25d6f0663/src/test/java/nl/talsmasoftware/umldoclet/testing/PatternMatcher.java
- */
+/* SourceFQN: nl.talsmasoftware.umldoclet.testing.PatternMatcher */
 /**
  * Matches regular expression patterns.
  *

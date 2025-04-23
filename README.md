@@ -27,7 +27,9 @@ See [Project Conventions](docs/conventions.md) for further information.
 
 pdfClown Common is Open Source software released under the [GNU Lesser General Public License (LGPL), version 3 or later](LICENSE.txt).
 
-See [COPYING](COPYING.md) for further information.
+See [NOTICE](NOTICE.txt) for attribution notices.
+
+See [REUSE compliance report](https://api.reuse.software/info/github.com/pdfclown/pdfclown-common) for detailed license and copyright information.
 
 ## Home
 
