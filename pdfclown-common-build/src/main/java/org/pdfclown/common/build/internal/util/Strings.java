@@ -3,23 +3,12 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 
-  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
-  partially) this file, you MUST add your own copyright notice in a separate comment block above
-  this file header, listing the main changes you applied to the original source.
-
   This file (Strings.java) is part of pdfclown-common-build module in pdfClown Common project
-  <https://github.com/pdfclown/pdfclown-common> (this Program).
+  <https://github.com/pdfclown/pdfclown-common>
 
-  This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
-  Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
-  3 of the License, or (at your option) any later version.
-
-  This Program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License along with this Program.
-  If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block above this file
+  header, listing the main changes you applied to the original source.
  */
 package org.pdfclown.common.build.internal.util;
 
@@ -31,50 +20,50 @@ import org.apache.commons.lang3.StringUtils;
  * @author Stefano Chizzolini
  */
 public final class Strings {
-  /* SourceFQN: org.pdfclown.common.util.Strings.BACKSLASH */
+  // SourceFQN: org.pdfclown.common.util.Strings.BACKSLASH
   public static final char BACKSLASH = '\\';
-  /* SourceFQN: org.pdfclown.common.util.Strings.COMMA */
+  // SourceFQN: org.pdfclown.common.util.Strings.COMMA
   public static final char COMMA = ',';
-  /* SourceFQN: org.pdfclown.common.util.Strings.DOT */
+  // SourceFQN: org.pdfclown.common.util.Strings.DOT
   public static final char DOT = '.';
-  /* SourceFQN: org.pdfclown.common.util.Strings.DQUOTE */
+  // SourceFQN: org.pdfclown.common.util.Strings.DQUOTE
   /**
    * Double quote (aka quotation mark).
    */
   public static final char DQUOTE = '\"';
-  /* SourceFQN: org.pdfclown.common.util.Strings.PIPE */
+  // SourceFQN: org.pdfclown.common.util.Strings.PIPE
   /**
    * Vertical bar.
    */
   public static final char PIPE = '|';
-  /* SourceFQN: org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE */
+  // SourceFQN: org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE
   public static final char ROUND_BRACKET_CLOSE = ')';
-  /* SourceFQN: org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN */
+  // SourceFQN: org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN
   public static final char ROUND_BRACKET_OPEN = '(';
-  /* SourceFQN: org.pdfclown.common.util.Strings.SLASH */
+  // SourceFQN: org.pdfclown.common.util.Strings.SLASH
   public static final char SLASH = '/';
-  /* SourceFQN: org.pdfclown.common.util.Strings.SPACE */
+  // SourceFQN: org.pdfclown.common.util.Strings.SPACE
   public static final char SPACE = ' ';
-  /* SourceFQN: org.pdfclown.common.util.Strings.SQUOTE */
+  // SourceFQN: org.pdfclown.common.util.Strings.SQUOTE
   /**
    * Single quote (aka apostrophe).
    */
   public static final char SQUOTE = '\'';
-  /* SourceFQN: org.pdfclown.common.util.Strings.UNDERSCORE */
+  // SourceFQN: org.pdfclown.common.util.Strings.UNDERSCORE
   public static final char UNDERSCORE = '_';
 
   public static final String ELLIPSIS = "...";
-  /* SourceFQN: org.pdfclown.common.util.Strings.EMPTY */
+  // SourceFQN: org.pdfclown.common.util.Strings.EMPTY
   /**
    * Empty string.
    */
   public static final String EMPTY = "";
-  /* SourceFQN: org.pdfclown.common.util.Strings.EOL */
+  // SourceFQN: org.pdfclown.common.util.Strings.EOL
   /**
    * System-dependent line separator ({@link System#lineSeparator()} alias).
    */
   public static final String EOL = System.lineSeparator();
-  /* SourceFQN: org.pdfclown.common.util.Strings.S */
+  // SourceFQN: org.pdfclown.common.util.Strings.S
   /**
    * Empty string, used as a marker to conveniently force the compiler to treat the following
    * concatenated character as a string.
@@ -86,7 +75,7 @@ public final class Strings {
    */
   public static final String S = EMPTY;
 
-  /* SourceFQN: org.pdfclown.common.util.Strings.abbreviateMultiline(..) */
+  // SourceFQN: org.pdfclown.common.util.Strings.abbreviateMultiline(..)
   /**
    * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
    * substring with a standard ellipsis.
@@ -104,7 +93,7 @@ public final class Strings {
     return abbreviateMultiline(value, maxLineCount, averageLineLength, "...");
   }
 
-  /* SourceFQN: org.pdfclown.common.util.Strings.abbreviateMultiline(..) */
+  // SourceFQN: org.pdfclown.common.util.Strings.abbreviateMultiline(..)
   /**
    * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
    * substring with a marker.
@@ -152,7 +141,7 @@ public final class Strings {
     return ret;
   }
 
-  /* SourceFQN: org.pdfclown.common.util.Strings.uncapitalizeMultichar(..) */
+  // SourceFQN: org.pdfclown.common.util.Strings.uncapitalizeMultichar(..)
   /**
    * Ensures leading characters are lower-case.
    * <p>

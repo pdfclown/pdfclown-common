@@ -3,23 +3,12 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 
-  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
-  partially) this file, you MUST add your own copyright notice in a separate comment block above
-  this file header, listing the main changes you applied to the original source.
-
   This file (Patterns.java) is part of pdfclown-common-build module in pdfClown Common project
-  <https://github.com/pdfclown/pdfclown-common> (this Program).
+  <https://github.com/pdfclown/pdfclown-common>
 
-  This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
-  Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
-  3 of the License, or (at your option) any later version.
-
-  This Program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License along with this Program.
-  If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block above this file
+  header, listing the main changes you applied to the original source.
  */
 package org.pdfclown.common.build.internal.util.regex;
 
@@ -29,7 +18,7 @@ package org.pdfclown.common.build.internal.util.regex;
  * @author Stefano Chizzolini
  */
 public final class Patterns {
-  /* SourceFQN: org.pdfclown.common.util.regex.Patterns.globToRegex(..) */
+  // SourceFQN: org.pdfclown.common.util.regex.Patterns.globToRegex(..)
   /**
    * Converts the given (filesystem-aware) glob to regex.
    *
@@ -45,7 +34,7 @@ public final class Patterns {
     return globToRegex(glob, true);
   }
 
-  /* SourceFQN: org.pdfclown.common.util.regex.Patterns.wildcardToRegex(..) */
+  // SourceFQN: org.pdfclown.common.util.regex.Patterns.wildcardToRegex(..)
   /**
    * Converts the given wildcard pattern to regex.
    *
@@ -61,7 +50,7 @@ public final class Patterns {
     return globToRegex(pattern, false);
   }
 
-  /* SourceFQN: org.pdfclown.common.util.regex.Patterns.globToRegex(..) */
+  // SourceFQN: org.pdfclown.common.util.regex.Patterns.globToRegex(..)
   /**
    * @param glob
    *          Glob pattern.

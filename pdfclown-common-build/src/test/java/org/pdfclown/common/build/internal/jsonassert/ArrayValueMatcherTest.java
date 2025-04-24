@@ -3,23 +3,12 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 
-  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
-  partially) this file, you MUST add your own copyright notice in a separate comment block above
-  this file header, listing the main changes you applied to the original source.
-
   This file (ArrayValueMatcherTest.java) is part of pdfclown-common-build module in pdfClown Common
-  project <https://github.com/pdfclown/pdfclown-common> (this Program).
+  project <https://github.com/pdfclown/pdfclown-common>
 
-  This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
-  Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
-  3 of the License, or (at your option) any later version.
-
-  This Program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License along with this Program.
-  If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block above this file
+  header, listing the main changes you applied to the original source.
  */
 /*
   SPDX-FileCopyrightText: © 2012-2022 Skyscreamer
@@ -49,16 +38,16 @@ import org.pdfclown.common.build.internal.jsonassert.comparator.JSONComparator;
  *
  */
 public class ArrayValueMatcherTest {
-  /* SourceFQN: ARRAY_OF_JSONARRAYS */
+  // SourceFQN: ARRAY_OF_JSONARRAYS
   private static final String JSON_SAMPLE__ARRAY_ARRAY =
       "{a:[[6,7,8],[9,10,11],[12,13,14],[19,20,21,22]]}";
-  /* SourceFQN: ARRAY_OF_INTEGERS */
+  // SourceFQN: ARRAY_OF_INTEGERS
   private static final String JSON_SAMPLE__INT_ARRAY = "{a:[1,2,3,4,5]}";
-  /* SourceFQN: ARRAY_OF_JSONOBJECTS */
+  // SourceFQN: ARRAY_OF_JSONOBJECTS
   private static final String JSON_SAMPLE__OBJECT_ARRAY =
       "{a:[{background:white,id:1,type:row},{background:grey,id:2,type:row},{background:white,id:3,type:row},{background:grey,id:4,type:row}]}";
 
-  /* SourceFQN: comparator */
+  // SourceFQN: comparator
   private static final JSONComparator COMPARATOR = new DefaultComparator(JSONCompareMode.LENIENT);
 
   @Test

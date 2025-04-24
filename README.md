@@ -1,7 +1,7 @@
 <!--
   SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
 
-  SPDX-License-Identifier: LGPL-3.0-or-later
+  SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 <h1 align="center">
 <picture>
@@ -29,7 +29,7 @@ pdfClown Common is Open Source software released under the [GNU Lesser General P
 
 See [NOTICE](NOTICE.txt) for attribution notices.
 
-See [REUSE compliance report](https://api.reuse.software/info/github.com/pdfclown/pdfclown-common) for detailed license and copyright information.
+See [REUSE compliance report](https://api.reuse.software/info/github.com/pdfclown/pdfclown-common) for detailed licensing and copyright information.
 
 ## Home
 

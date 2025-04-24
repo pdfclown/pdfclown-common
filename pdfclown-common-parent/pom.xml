@@ -3,6 +3,20 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
+<!--
+  Basic build (without integration tests, sources jar nor javadoc jar):
+    mvn install
+
+  Full build (with integration tests, sources jar and javadoc jar):
+    mvn install -Pverify -Pinstall
+
+  Publish on Maven Central:
+    mvn deploy -Pdeploy
+
+  Verify copyright and licensing declarations compliance
+  (https://reuse.software/):
+    reuse lint
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -62,14 +76,14 @@
       These properties MUST be specified in every root POM inheriting from this one.
     -->
     <!--
-      NOTE: Because of cyclic reference, pdfclown-common-maven-plugin's version MUST lag one release
-      behind this project's. Consequently, projects using this POM as parent SHOULD override this
-      property with the latest version.
+      NOTE: Because of cyclic reference, pdfclown-common-maven-plugin's version MUST
+	    lag one release behind this project's. Consequently, projects using this POM as
+	    parent SHOULD override this property with the latest version.
 
-      TODO: Whenever `pdfclown-common` project version changes, this version MUST be updated to the
-      preceding one.
+      TODO: Whenever `pdfclown-common` project version changes, this version MUST be
+	    updated to the preceding one.
     -->
-<!--
+    <!--
     <pdfclown.common.maven.version>0.1-SNAPSHOT</pdfclown.common.maven.version>
 -->
     <project.issues.url />
@@ -86,8 +100,8 @@
     <!--
       Path to the root project directory.
 
-      This is an ugly workaround to the notorious lack of a standard way to point to the root project
-      directory no matter the current project building in the reactor.
+      This is an ugly workaround to the notorious lack of a standard way to point to
+	    the root project directory no matter the current project building in the reactor.
     -->
     <rootdir>${project.basedir}</rootdir>
 
@@ -103,9 +117,9 @@
     -->
     <build.resources.directory>${project.build.directory}/build-resources</build.resources.directory>
     <!--
-      NOTE: Build resources are unpacked on 'validate' phase in order to prepare the stylesheet
-      for maven-checkstyle-plugin (otherwise, checkstyle would kick in before its
-      resources are available...).
+      NOTE: Build resources are unpacked on 'validate' phase in order to prepare the
+	    stylesheet for maven-checkstyle-plugin (otherwise, checkstyle would kick in
+	    before its resources are available...).
     -->
     <build.resources.unpack.phase>validate</build.resources.unpack.phase>
     <checkstyle.skip>false</checkstyle.skip>
@@ -140,8 +154,8 @@
     <maven.source.version>3.3.1</maven.source.version>
     <maven.surefire.version>3.5.2</maven.surefire.version>
     <!--
-      TODO: Whenever pdfclown-common-parent version is updated, `pdfclown.common.version` MUST be
-      updated as well.
+      TODO: Whenever pdfclown-common-parent version is updated,
+	    `pdfclown.common.version` MUST be updated as well.
     -->
     <pdfclown.common.version>0.0.0-SNAPSHOT</pdfclown.common.version>
     <revelc.formatter.version>2.23.0</revelc.formatter.version>
@@ -215,9 +229,9 @@
         <artifactId>maven-plugin-annotations</artifactId>
         <version>${maven.plugin.annotations.version}</version>
         <!--
-          NOTE: At Maven extension level (AbstractMavenLifecycleParticipant implementation), this
-          library isn't available on the classpath (ClassNotFoundException), so we have to
-          explicitly bring it in.
+          NOTE: At Maven extension level (AbstractMavenLifecycleParticipant
+	        implementation), this library isn't available on the classpath
+	        (ClassNotFoundException), so we have to explicitly bring it in.
         -->
         <scope>compile</scope>
       </dependency>
@@ -271,7 +285,7 @@
       </plugin>
 
       <!-- Packaging -->
-<!--
+      <!--
       <plugin>
         <groupId>org.pdfclown</groupId>
         <artifactId>pdfclown-common-maven-plugin</artifactId>
@@ -290,10 +304,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
     </plugins>
 
@@ -319,9 +329,12 @@
             </execution>
           </executions>
           <configuration>
-            <configFile>${build.resources.directory}/config/eclipse/java-style.xml</configFile>
-            <configHtmlFile>${build.resources.directory}/config/jsoup/html.properties</configHtmlFile>
-            <configXmlFile>${build.resources.directory}/config/eclipse/xml.properties</configXmlFile>
+            <configFile>
+              ${build.resources.directory}/config/eclipse/java-style.xml</configFile>
+            <configHtmlFile>
+              ${build.resources.directory}/config/jsoup/html.properties</configHtmlFile>
+            <configXmlFile>
+              ${build.resources.directory}/config/eclipse/xml.properties</configXmlFile>
             <lineEnding>LF</lineEnding>
           </configuration>
         </plugin>
@@ -329,8 +342,8 @@
           <!--
             [#CodeFormat] Checkstyle.
 
-            IMPORTANT: This plugin works along with formatter-maven-plugin: whenever check rules
-            change, code format MUST be updated accordingly.
+            IMPORTANT: This plugin works along with formatter-maven-plugin: whenever check
+	          rules change, code format MUST be updated accordingly.
 
             [Manual] To generate a report:
               mvn checkstyle:checkstyle
@@ -361,8 +374,10 @@
             <includeTestResources>false</includeTestResources>
             <linkXRef>false</linkXRef>
             <propertiesLocation>${rootdir}/src/checkstyle/checkstyle.properties</propertiesLocation>
-            <suppressionsLocation>${rootdir}/src/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
-            <configLocation>${build.resources.directory}/config/checkstyle/checkstyle-checks.xml</configLocation>
+            <suppressionsLocation>
+              ${rootdir}/src/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+            <configLocation>
+              ${build.resources.directory}/config/checkstyle/checkstyle-checks.xml</configLocation>
             <skip>${checkstyle.skip}</skip>
           </configuration>
         </plugin>
@@ -458,7 +473,8 @@
                 <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
                 <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
               </manifestEntries>
-              <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+              <manifestFile>
+                ${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
             </archive>
           </configuration>
         </plugin>
@@ -508,7 +524,8 @@
               </goals>
               <configuration>
                 <resourceBundles>
-                  <resourceBundle>org.pdfclown:pdfclown-common-build:${pdfclown.common.version}</resourceBundle>
+                  <resourceBundle>
+                    org.pdfclown:pdfclown-common-build:${pdfclown.common.version}</resourceBundle>
                 </resourceBundles>
                 <outputDirectory>${build.resources.directory}</outputDirectory>
                 <attachToMain>false</attachToMain>
@@ -563,10 +580,10 @@
             <excludePackageNames>*.internal:*.internal*</excludePackageNames>
             <!--
               FIXME: `sourcepath` was necessary because of an apparent bug affecting
-              maven-javadoc-plugin (when automatic module name (see "Automatic-Module-Name" property
-              herein) is enabled, maven javadoc plugin fails ("error: No source files for package")
-              - see also
-              <https://github.com/prometheus/client_java/issues/884#issuecomment-1791560944>).
+              maven-javadoc-plugin (when automatic module name (see "Automatic-Module-Name"
+	            property herein) is enabled, maven javadoc plugin fails ("error: No source
+	            files for package") - see also
+	            <https://github.com/prometheus/client_java/issues/884#issuecomment-1791560944>).
             -->
             <sourcepath>${project.build.sourceDirectory}</sourcepath>
 
@@ -575,7 +592,7 @@
                 NOTE: Idiotic maven-javadoc-plugin doesn't accept absolute paths in
                 `addStylesheets` property, so we have to feed it directly.
               -->
-<?ignore
+              <?ignore
               <additionalOption>--add-stylesheet
                 "${build.resources.directory}/config/javadoc/extend.css"</additionalOption>
 ?>
@@ -589,9 +606,9 @@
               CONTENTS (layout and resources)
             -->
             <!--
-              NOTE: Weirdly enough, projects inheriting from this POM don't retrieve the text of the
-              source overview.html file unless explicitly declared via `overview` parameter, despite
-              its default path should be just this one.
+              NOTE: Weirdly enough, projects inheriting from this POM don't retrieve the text
+	            of the source overview.html file unless explicitly declared via `overview`
+	            parameter, despite its default path should be just this one.
             -->
             <overview>${basedir}/src/main/javadoc/overview.html</overview>
             <top>
@@ -614,18 +631,20 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               <dependencyLink>
                 <groupId>org.jspecify</groupId>
                 <artifactId>jspecify</artifactId>
-                <url>https://www.javadoc.io/static/org.jspecify/jspecify/${jspecify.version}/</url>
+                <url>
+                  https://www.javadoc.io/static/org.jspecify/jspecify/${jspecify.version}/</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <url>https://www.javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}/</url>
+                <url>
+                  https://www.javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}/</url>
               </dependencyLink>
             </dependencyLinks>
             <!--
-              NOTE: Disabling offline-links detection prevents their automatic synthesis (which is
-              based on the arbitrary construct "{project.url}/apidocs") from interfering with their
-              explicit configuration.
+              NOTE: Disabling offline-links detection prevents their automatic synthesis
+	            (which is based on the arbitrary construct "{project.url}/apidocs") from
+	            interfering with their explicit configuration.
             -->
             <detectOfflineLinks>false</detectOfflineLinks>
 
@@ -642,15 +661,15 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <!--
               NOTE: Missing comments are ignored.
             -->
-<!--
+            <!--
             <doclint>all,-missing</doclint>
 -->
-			<doclint>none</doclint>
+            <doclint>none</doclint>
             <quiet>true</quiet>
           </configuration>
         </plugin>
 
-<!--
+        <!--
         <plugin>
           <groupId>org.pdfclown</groupId>
           <artifactId>pdfclown-common-maven-plugin</artifactId>
@@ -691,11 +710,13 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
         </plugin>
 
         <!--
-          IDE-specific configuration (I know, this is NOT the place for IDE configuration, but we
-          have to pragmatically cope with common idiosyncrasies).
+          IDE-specific configuration (I know, this is NOT the place for IDE
+	        configuration, but we have to pragmatically cope with common
+	        idiosyncrasies).
         -->
         <plugin>
-          <!-- See https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html -->
+          <!-- See
+          https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html -->
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
           <version>${m2e.lifecycle.version}</version>
@@ -756,7 +777,24 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
   </build>
 
   <profiles>
-    <!-- MANUAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- MANUAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <profile>
+      <id>verify</id>
+      <!--
+        FULL VERIFICATION PROFILE
+
+        For convenience, integration tests are disabled by default: this profile activates them.
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
     <profile>
       <id>install</id>
@@ -786,7 +824,8 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <!--
         DEPLOYMENT PROFILE
 
-        central-publishing-maven-plugin transparently manages both public releases and snapshots.
+        central-publishing-maven-plugin transparently manages both public releases and
+        snapshots.
       -->
       <build>
         <plugins>
@@ -831,7 +870,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       </build>
     </profile>
 
-    <!-- AUTOMATED PROFILES  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- AUTOMATED PROFILES  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
     <profile>
       <id>maven-plugin</id>

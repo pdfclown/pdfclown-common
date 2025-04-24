@@ -3,23 +3,12 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 
-  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you repurpose (entirely or
-  partially) this file, you MUST add your own copyright notice in a separate comment block above
-  this file header, listing the main changes you applied to the original source.
-
   This file (Objects.java) is part of pdfclown-common-build module in pdfClown Common project
-  <https://github.com/pdfclown/pdfclown-common> (this Program).
+  <https://github.com/pdfclown/pdfclown-common>
 
-  This Program is free software: you can redistribute it and/or modify it under the terms of the GNU
-  Lesser General Public License (LGPL) as published by the Free Software Foundation, either version
-  3 of the License, or (at your option) any later version.
-
-  This Program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
-  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License along with this Program.
-  If not, see <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block above this file
+  header, listing the main changes you applied to the original source.
  */
 package org.pdfclown.common.build.internal.util;
 
@@ -57,7 +46,7 @@ public final class Objects {
       String.format(Locale.ROOT, "(?<%s>%s)@%s", PATTERN_GROUP__CLASS_FQN, REGEX__CLASS_FQN,
           REGEX__HEX));
 
-  /* SourceFQN: org.pdfclown.util.Objects.asType(..) */
+  // SourceFQN: org.pdfclown.util.Objects.asType(..)
   /**
    * Gets the type corresponding to the given object.
    * <p>
@@ -69,7 +58,7 @@ public final class Objects {
     return obj != null ? (obj instanceof Class ? (Class<?>) obj : obj.getClass()) : null;
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.fqn(..) */
+  // SourceFQN: org.pdfclown.util.Objects.fqn(..)
   /**
    * Gets the fully qualified type name of the given object.
    *
@@ -85,7 +74,7 @@ public final class Objects {
     return fqn(obj, false);
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.fqnd(..) */
+  // SourceFQN: org.pdfclown.util.Objects.fqnd(..)
   /**
    * Gets the fully qualified type name of the given object, replacing inner-class separators
    * ({@code $}) with dots.
@@ -97,7 +86,7 @@ public final class Objects {
     return fqn(obj, true);
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.objTo(..) */
+  // SourceFQN: org.pdfclown.util.Objects.objTo(..)
   /**
    * Maps the given object.
    *
@@ -113,7 +102,7 @@ public final class Objects {
     return obj != null ? mapper.apply(obj) : null;
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.objToLiteralString(..) */
+  // SourceFQN: org.pdfclown.util.Objects.objToLiteralString(..)
   /**
    * Maps the given object to its literal string representation (ie, inclusive of markers such as
    * quotes).
@@ -130,7 +119,7 @@ public final class Objects {
       return String.valueOf(obj);
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.requireState(..) */
+  // SourceFQN: org.pdfclown.util.Objects.requireState(..)
   /**
    * (see {@link #requireState(Object, String)})
    */
@@ -138,7 +127,7 @@ public final class Objects {
     return requireState(obj, "State UNDEFINED");
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.requireState(..) */
+  // SourceFQN: org.pdfclown.util.Objects.requireState(..)
   /**
    * Checks that the given object reference is not null.
    * <p>
@@ -169,7 +158,7 @@ public final class Objects {
     return obj;
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.sqn(..) */
+  // SourceFQN: org.pdfclown.util.Objects.sqn(..)
   /**
    * Gets the qualified simple type name of the given object, ie the simple class name qualified
    * with its outer class (eg, {@code MyOuterClass$MyInnerClass}), if present (otherwise, behaves
@@ -181,7 +170,7 @@ public final class Objects {
     return sqn(obj, false);
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.sqnd(..) */
+  // SourceFQN: org.pdfclown.util.Objects.sqnd(..)
   /**
    * Gets the qualified simple type name of the given object, replacing inner-class separators
    * ({@code $}) with dots, ie the simple class name qualified with its outer class (eg,
@@ -195,7 +184,7 @@ public final class Objects {
     return sqn(obj, true);
   }
 
-  /* SourceFQN: org.pdfclown.util.Objects.typeOf(..) */
+  // SourceFQN: org.pdfclown.util.Objects.typeOf(..)
   /**
    * Gets the type of the given object.
    */
