@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import org.pdfclown.common.build.internal.jsonassert.JSONAssert;
 import org.pdfclown.common.build.internal.util.io.Files;
 import org.pdfclown.common.build.test.model.JsonArray;
 import org.pdfclown.common.build.test.model.JsonElement;
@@ -32,6 +31,7 @@ import org.pdfclown.common.build.test.model.ModelComparator;
 import org.pdfclown.common.build.test.model.ModelMapper;
 import org.pdfclown.common.build.test.model.ModelMapper.PropertySelector;
 import org.pdfclown.common.build.util.Resources;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

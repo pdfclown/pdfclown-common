@@ -14,7 +14,6 @@ package org.pdfclown.common.build.test;
 
 import static org.pdfclown.common.build.test.Tests.argumentsGenerator;
 
-import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;

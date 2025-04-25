@@ -15,9 +15,9 @@ package org.pdfclown.common.build.test.model;
 import static org.pdfclown.common.build.internal.util.Objects.PATTERN_GROUP__CLASS_FQN;
 import static org.pdfclown.common.build.internal.util.Objects.PATTERN__TO_STRING__DEFAULT;
 
-import com.github.openjson.JSONArray;
-import com.github.openjson.JSONObject;
 import java.util.regex.Matcher;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jspecify.annotations.Nullable;
 
 /**

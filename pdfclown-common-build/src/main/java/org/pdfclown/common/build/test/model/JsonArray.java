@@ -12,8 +12,7 @@
  */
 package org.pdfclown.common.build.test.model;
 
-import com.github.openjson.JSONArray;
-import com.github.openjson.JSONException;
+import org.json.JSONArray;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -23,7 +22,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class JsonArray extends JSONArray implements JsonElement {
   @Override
-  public @Nullable JSONArray put(int index, @Nullable Object value) throws JSONException {
+  public @Nullable JSONArray put(int index, @Nullable Object value) {
     return super.put(index, JsonElement.normValue(value));
   }
 

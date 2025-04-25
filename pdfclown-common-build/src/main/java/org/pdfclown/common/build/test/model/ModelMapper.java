@@ -17,7 +17,6 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.util.Objects.sqn;
 
-import com.github.openjson.JSONException;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
@@ -34,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.ToIntFunction;
+import org.json.JSONException;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util.Iterators;
@@ -427,7 +427,7 @@ public class ModelMapper<T> {
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
    */
-  public JsonObject map(@NonNull T obj) throws JSONException {
+  public JsonObject map(@NonNull T obj) {
     return map(obj, List.of());
   }
 
@@ -444,7 +444,7 @@ public class ModelMapper<T> {
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
    */
-  public JsonObject map(@NonNull T obj, List<PropertySelector> selectors) throws JSONException {
+  public JsonObject map(@NonNull T obj, List<PropertySelector> selectors) {
     return map(obj, selectors, new HashSet<>(), 0);
   }
 
@@ -458,7 +458,7 @@ public class ModelMapper<T> {
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
    */
-  public JsonArray mapAll(Collection<@NonNull ? extends T> objs) throws JSONException {
+  public JsonArray mapAll(Collection<@NonNull ? extends T> objs) {
     return mapAll(objs, List.of());
   }
 
@@ -475,8 +475,7 @@ public class ModelMapper<T> {
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
    */
-  public JsonArray mapAll(Collection<@NonNull ? extends T> objs, List<PropertySelector> selectors)
-      throws JSONException {
+  public JsonArray mapAll(Collection<@NonNull ? extends T> objs, List<PropertySelector> selectors) {
     var ret = new JsonArray();
     var visitedObjs = new HashSet<>();
     for (var obj : objs) {
@@ -513,7 +512,7 @@ public class ModelMapper<T> {
    *           processed).
    */
   protected JsonObject map(Object obj, List<PropertySelector> selectors, Set<Object> visitedObjs,
-      int level) throws JSONException {
+      int level) {
     if (visitedObjs.contains(obj))
       throw new IllegalArgumentException("Object already visited: " + obj);
 
@@ -629,10 +628,9 @@ public class ModelMapper<T> {
    *          JSON representation of {@code obj}.
    * @param level
    *          Current nesting level.
-   * @throws JSONException
    */
   protected void mapCustomProperties(Object obj, @Nullable PropertySelector objSelector,
-      JsonObject objJson, int level) throws JSONException {
+      JsonObject objJson, int level) {
   }
 
   /**
@@ -647,10 +645,9 @@ public class ModelMapper<T> {
    *          Visited objects to avoid mapping duplications.
    * @param level
    *          Current nesting level.
-   * @throws JSONException
    */
   protected @Nullable Object mapValue(@Nullable Object value, List<PropertySelector> selectors,
-      Set<Object> visitedObjs, int level) throws JSONException {
+      Set<Object> visitedObjs, int level) {
     if (value == null || (value instanceof CharSequence && ((CharSequence) value).length() == 0))
       return null;
 

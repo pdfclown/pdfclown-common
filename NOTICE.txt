@@ -5,9 +5,9 @@ Licensed under LGPL 3.0 or later <https://www.gnu.org/licenses/lgpl-3.0.html>
 
 This product reuses source code from third-party projects [1]:
 
-JSONassert <https://github.com/skyscreamer/JSONassert>
-Copyright 2012-2022 Skyscreamer
-Licensed under Apache License 2.0 <https://www.apache.org/licenses/LICENSE-2.0>
+JSON-java (org.json) <https://github.com/stleary/JSON-java>
+Copyright NONE
+Licensed under generic Public Domain license <https://creativecommons.org/publicdomain/zero/1.0/>
 
 UMLDoclet <https://github.com/talsma-ict/umldoclet>
 Copyright 2016-2022 Talsma ICT
