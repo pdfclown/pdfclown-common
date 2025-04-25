@@ -130,6 +130,7 @@ public final class Executions {
   //
   // Source: https://github.com/talsma-ict/umldoclet/blob/a1776aa4b3c9af1b073c31969721e867233fe727/src/test/java/nl/talsmasoftware/umldoclet/issues/Issue267Test.java
   // SourceFQN: nl.talsmasoftware.umldoclet.issues.Issue267Test.interceptSystemOut
+  // Changes: adaptation to pdfClown
   /**
    * Executes the given task, intercepting the output from the standard streams.
    *
@@ -142,8 +143,6 @@ public final class Executions {
    * @param merged
    *          Whether the output of both standard streams has to be merged into a single result (in
    *          this case, both {@code outRef} and {@code errRef} are filled with the same value).
-   * @author Sjoerd Talsma (original implementation)
-   * @author Stefano Chizzolini (adaptation to pdfClown)
    * @implNote The output is diverted from the standard streams, temporarily replacing their default
    *           implementations with ad-hoc ones.
    */

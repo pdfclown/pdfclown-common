@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors <https://github.com/pdfclown/pdfclown-common>
+  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
+
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
 <!--
