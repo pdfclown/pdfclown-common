@@ -10,6 +10,9 @@
   Full build (with integration tests, sources jar and javadoc jar):
     mvn install -Pverify,install
 
+  Verify dependency vulnerabilities:
+    mvn verify -Pverify-extra
+
   Verify copyright and licensing declarations compliance <https://reuse.software>:
     reuse lint
 
@@ -132,6 +135,7 @@
     <commons.io.version>2.18.0</commons.io.version>
     <commons.lang.version>3.17.0</commons.lang.version>
     <commons.text.version>1.10.0</commons.text.version>
+    <dependency.check.version>12.1.1</dependency.check.version>
     <java.version>11</java.version>
     <jspecify.version>1.0.0</jspecify.version>
     <log4j.version>2.19.0</log4j.version>
@@ -796,6 +800,35 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
     </profile>
 
     <profile>
+      <id>verify-extra</id>
+      <!--
+        EXTRA VERIFICATION PROFILE
+
+        Slow and seldom operations, such as dependency vulnerability check.
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>${dependency.check.version}</version>
+            <configuration>
+              <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+              <failBuildOnCVSS>0</failBuildOnCVSS>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
       <id>install</id>
       <!--
         FULL INSTALLATION PROFILE
@@ -809,7 +842,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
           </plugin>
-
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -832,7 +864,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
           </plugin>
-
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
