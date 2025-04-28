@@ -32,6 +32,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
           SPDX-License-Identifier: Apache-2.0
 
+          -------------------------------------------------------------------------------------------------
           Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
          */
 
@@ -43,7 +44,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
         NOTE: If the original code has been incorporated as-is (no change other than trivial adaptation), then the `Changes` tag can be omitted.
 
-        Other informative tags will be added based on the relationship of the incorporated file with the original code:
+        Other informative tags will be added based on the relationship between the incorporated file and the original code:
 
         - in case of **repository-bound file**, *if the fully-qualified name of its class has changed*, then the `SourceFQN` tag will indicate its original fully-qualified name:
 
@@ -55,6 +56,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
             SPDX-License-Identifier: Apache-2.0
 
+            -------------------------------------------------------------------------------------------------
             Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
            */
 
@@ -77,6 +79,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
             SPDX-License-Identifier: Apache-2.0
 
+            -------------------------------------------------------------------------------------------------
             Source: https://github.com/skyscreamer/JSONassert/blob/e81c16c59ce0860f97a65d871589ab2337370c4b/src/main/java/org/skyscreamer/jsonassert/comparator/AbstractComparator.java
             Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
            */
