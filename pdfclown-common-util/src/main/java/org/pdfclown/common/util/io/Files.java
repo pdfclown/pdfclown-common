@@ -23,12 +23,12 @@ import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SLASH;
-import static org.pdfclown.common.util.net.Uris.uri;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -173,9 +173,16 @@ public final class Files {
    * <i>Contrary to {@link Path#of(URI)}, this function supports also <b>relative URLs</b></i>,
    * remedying the limitation of the standard API which rejects URIs missing their scheme.
    * </p>
+   *
+   * @throws IllegalArgumentException
+   *           if {@code url} is an invalid URI.
    */
   public static Path pathOf(URL url) {
-    return pathOf(uri(url));
+    try {
+      return pathOf(url.toURI());
+    } catch (URISyntaxException ex) {
+      throw wrongArg("url", url, null, ex);
+    }
   }
 
   /**
@@ -253,7 +260,12 @@ public final class Files {
   public static URI uriOf(Path path) {
     return path.isAbsolute()
         ? path.normalize().toUri()
-        : URI.create(Streams.of(path).map(Path::toString).collect(joining("/")));
+        : URI.create(Streams.of(path)
+            .map(Path::toString)
+            .collect(joining(S + SLASH) /*
+                                         * Forces the URI separator instead of the default
+                                         * filesystem separator
+                                         */));
   }
 
   /**
@@ -263,6 +275,7 @@ public final class Files {
    *           if {@code path} is relative.
    */
   public static URL urlOf(File path) {
+    // TODO: support relative paths
     return urlOf(path.toPath());
   }
 
@@ -273,6 +286,7 @@ public final class Files {
    *           if {@code path} is relative.
    */
   public static URL urlOf(Path path) {
+    // TODO: support relative paths
     try {
       return uriOf(path).toURL();
     } catch (MalformedURLException ex) {

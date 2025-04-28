@@ -30,7 +30,7 @@ import org.pdfclown.common.build.test.model.JsonObject;
 import org.pdfclown.common.build.test.model.ModelComparator;
 import org.pdfclown.common.build.test.model.ModelMapper;
 import org.pdfclown.common.build.test.model.ModelMapper.PropertySelector;
-import org.pdfclown.common.build.util.Resources;
+import org.pdfclown.common.build.util.io.ResourceNames;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,7 +200,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
    */
   protected void assertEquals(final String expectedJsonResourceName,
       final JsonElement actualJsonElement, final Config config) {
-    final String expectedJsonResourceFqn = Resources.absName(expectedJsonResourceName,
+    final String expectedJsonResourceFqn = ResourceNames.absName(expectedJsonResourceName,
         config.getEnv().getClass());
     final File expectedJsonFile = config.getEnv().resourceFile(expectedJsonResourceFqn);
 

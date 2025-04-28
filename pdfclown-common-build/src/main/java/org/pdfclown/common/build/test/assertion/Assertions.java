@@ -28,8 +28,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import org.hamcrest.Matcher;
-import org.pdfclown.common.build.util.Executions;
-import org.pdfclown.common.build.util.PathEvaluator;
 
 /**
  * Assertion utilities.

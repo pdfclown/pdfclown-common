@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.util;
+package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 

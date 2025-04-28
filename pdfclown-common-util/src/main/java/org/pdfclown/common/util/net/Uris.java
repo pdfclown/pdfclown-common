@@ -15,7 +15,6 @@ package org.pdfclown.common.util.net;
 import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.indexOfDifference;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.SLASH;
@@ -30,7 +29,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.lang.PolyNull;
 
 /**
  * Network-related utilities.
@@ -121,45 +119,65 @@ public final class Uris {
   /**
    * Creates the given URI.
    *
-   * @param uri
-   *          URI
-   * @throws IllegalArgumentException
-   *           If {@code uri} is illegal.
+   * @return {@code null}, if {@code uri} is undefined or illegal.
    */
-  public static @PolyNull @Nullable URI uri(@PolyNull @Nullable String uri) {
-    return uri != null ? URI.create(uri) : null;
+  public static @Nullable URI uri(@Nullable String uri) {
+    if (uri != null) {
+      try {
+        return new URI(uri);
+      } catch (URISyntaxException ex) {
+        /* NOOP */
+      }
+    }
+    return null;
   }
 
   /**
    * Converts the given URL to URI.
    *
-   * @param url
-   *          URL.
-   * @throws IllegalArgumentException
-   *           If {@code url} is illegal.
+   * @return {@code null}, if {@code url} is undefined or illegal.
    */
-  public static @PolyNull @Nullable URI uri(@PolyNull @Nullable URL url) {
-    try {
-      return url != null ? url.toURI() : null;
-    } catch (URISyntaxException ex) {
-      throw wrongArg("url", url, null, ex);
+  public static @Nullable URI uri(@Nullable URL url) {
+    if (url != null) {
+      try {
+        return url.toURI();
+      } catch (URISyntaxException ex) {
+        /* NOOP */
+      }
     }
+    return null;
   }
 
   /**
    * Converts the given URI to URL.
    *
-   * @param uri
-   *          URI
-   * @throws IllegalArgumentException
-   *           If {@code uri} is illegal.
+   * @return {@code null}, if {@code url} is undefined or illegal.
    */
-  public static @PolyNull @Nullable URL url(@PolyNull @Nullable URI uri) {
-    try {
-      return uri != null ? uri.toURL() : null;
-    } catch (MalformedURLException ex) {
-      throw wrongArg("uri", uri, null, ex);
+  public static @Nullable URL url(@Nullable String url) {
+    if (url != null) {
+      try {
+        return new URI(url).toURL();
+      } catch (MalformedURLException | URISyntaxException ex) {
+        /* NOOP */
+      }
     }
+    return null;
+  }
+
+  /**
+   * Converts the given URI to URL.
+   *
+   * @return {@code null}, if {@code uri} is undefined or illegal.
+   */
+  public static @Nullable URL url(@Nullable URI uri) {
+    if (uri != null) {
+      try {
+        return uri.toURL();
+      } catch (MalformedURLException ex) {
+        /* NOOP */
+      }
+    }
+    return null;
   }
 
   private Uris() {

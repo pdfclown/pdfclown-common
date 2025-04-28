@@ -3,14 +3,14 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 
-  This file (ResourcesTest.java) is part of pdfclown-common-build module in pdfClown Common project
-  <https://github.com/pdfclown/pdfclown-common>
+  This file (ResourceNamesTest.java) is part of pdfclown-common-build module in pdfClown Common
+  project <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.util;
+package org.pdfclown.common.build.util.io;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -31,7 +31,7 @@ import org.pdfclown.common.build.test.Tests.Argument;
 /**
  * @author Stefano Chizzolini
  */
-public class ResourcesTest extends BaseTest {
+public class ResourceNamesTest extends BaseTest {
   private static final List<Argument<String>> NAMES = List.of(
       Argument.of("/",
           "Normal absolute root"),
@@ -143,22 +143,22 @@ public class ResourcesTest extends BaseTest {
             "/my/other/deep/absolute/resource",
             // name[5]
             "",
-            "org/pdfclown/common/build/util",
+            "org/pdfclown/common/build/util/io",
             // name[6]
             "my/relative/resource",
-            "org/pdfclown/common/build/util/my/relative/resource",
+            "org/pdfclown/common/build/util/io/my/relative/resource",
             // name[7]
             "my/relative/resource",
-            "org/pdfclown/common/build/util/my/relative/resource",
+            "org/pdfclown/common/build/util/io/my/relative/resource",
             // name[8]
             "my/other/deep/relative/resource",
-            "org/pdfclown/common/build/util/my/other/deep/relative/resource"),
+            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource"),
         // name
         NAMES,
         // basePackage
         asList(
             EMPTY,
-            Resources.class.getPackageName()));
+            ResourceNames.class.getPackageName()));
   }
 
   private static Stream<Arguments> _fullName_baseType() {
@@ -182,22 +182,22 @@ public class ResourcesTest extends BaseTest {
             "/my/other/deep/absolute/resource",
             // name[5]
             "",
-            "org/pdfclown/common/build/util",
+            "org/pdfclown/common/build/util/io",
             // name[6]
             "my/relative/resource",
-            "org/pdfclown/common/build/util/my/relative/resource",
+            "org/pdfclown/common/build/util/io/my/relative/resource",
             // name[7]
             "my/relative/resource",
-            "org/pdfclown/common/build/util/my/relative/resource",
+            "org/pdfclown/common/build/util/io/my/relative/resource",
             // name[8]
             "my/other/deep/relative/resource",
-            "org/pdfclown/common/build/util/my/other/deep/relative/resource"),
+            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource"),
         // name
         NAMES,
         // baseType
         asList(
             null,
-            Resources.class));
+            ResourceNames.class));
   }
 
   private static Stream<Arguments> _name_1() {
@@ -355,7 +355,7 @@ public class ResourcesTest extends BaseTest {
   @MethodSource
   public void _absName_filePath_unix(String expected, Path filePath, Path baseDir) {
     var actual = evalParameterized(
-        () -> Resources.absName(filePath, baseDir));
+        () -> ResourceNames.absName(filePath, baseDir));
 
     /*
      * DO NOT remove (useful in case of arguments update)
@@ -371,7 +371,7 @@ public class ResourcesTest extends BaseTest {
   @MethodSource
   public void _absName_filePath_win(String expected, Path filePath, Path baseDir) {
     var actual = evalParameterized(
-        () -> Resources.absName(filePath, baseDir));
+        () -> ResourceNames.absName(filePath, baseDir));
 
     /*
      * DO NOT remove (useful in case of arguments update)
@@ -387,7 +387,7 @@ public class ResourcesTest extends BaseTest {
   @MethodSource
   public void _fullName_basePackage(String expected, Argument<String> name, String basePackage) {
     var actual = evalParameterized(
-        () -> Resources.fullName(name.getValue(), basePackage));
+        () -> ResourceNames.fullName(name.getValue(), basePackage));
 
     /*
      * DO NOT remove (useful in case of arguments update)
@@ -404,7 +404,7 @@ public class ResourcesTest extends BaseTest {
   public void _fullName_baseType(String expected, Argument<String> name,
       @Nullable Class<?> baseType) {
     var actual = evalParameterized(
-        () -> Resources.fullName(name.getValue(), baseType));
+        () -> ResourceNames.fullName(name.getValue(), baseType));
 
     /*
      * DO NOT remove (useful in case of arguments update)
@@ -417,14 +417,14 @@ public class ResourcesTest extends BaseTest {
   }
 
   public void _name_0() {
-    assertParameterized(Resources.name(), EMPTY);
+    assertParameterized(ResourceNames.name(), EMPTY);
   }
 
   @ParameterizedTest
   @MethodSource
   public void _name_1(String expected, Argument<String> name0) {
     var actual = evalParameterized(
-        () -> Resources.name(name0.getValue()));
+        () -> ResourceNames.name(name0.getValue()));
 
     /*
      * DO NOT remove (useful in case of arguments update)
@@ -440,7 +440,7 @@ public class ResourcesTest extends BaseTest {
   @MethodSource
   public void _name_2(String expected, Argument<String> name0, Argument<String> name1) {
     var actual = evalParameterized(
-        () -> Resources.name(name0.getValue(), name1.getValue()));
+        () -> ResourceNames.name(name0.getValue(), name1.getValue()));
 
     /*
      * DO NOT remove (useful in case of arguments update)
@@ -456,7 +456,7 @@ public class ResourcesTest extends BaseTest {
   @MethodSource
   public void _normalize(String expected, Argument<String> name) {
     var actual = evalParameterized(
-        () -> Resources.normalize(name.getValue()));
+        () -> ResourceNames.normalize(name.getValue()));
 
     /*
      * DO NOT remove (useful in case of arguments update)
@@ -472,7 +472,7 @@ public class ResourcesTest extends BaseTest {
   @MethodSource
   public void _parent(String expected, Argument<String> name) {
     var actual = evalParameterized(
-        () -> Resources.parent(name.getValue()));
+        () -> ResourceNames.parent(name.getValue()));
 
     /*
      * DO NOT remove (useful in case of arguments update)

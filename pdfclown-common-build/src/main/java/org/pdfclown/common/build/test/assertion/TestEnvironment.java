@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 import org.apache.commons.lang3.stream.Streams;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.util.Resources;
+import org.pdfclown.common.build.util.io.ResourceNames;
 
 /**
  * Test environment.
@@ -33,7 +33,7 @@ import org.pdfclown.common.build.util.Resources;
  * <p>
  * Within the test environment, filesystem objects are addressed by <b>names</b> similar to
  * {@linkplain Class#getResource(String) Java resource names} (see
- * {@link Resources#path(String, Path, Class)}) and are rooted in their respective
+ * {@link ResourceNames#path(String, Path, Class)}) and are rooted in their respective
  * {@linkplain #dirPath(DirId) base directories}; <b>relative names</b> are based on the
  * subdirectory local to the current test environment.
  * </p>
@@ -156,7 +156,7 @@ public interface TestEnvironment {
    */
   default @Nullable String resolveName(Path file) {
     return Streams.of(DirId.values())
-        .map($ -> Resources.absName(file, dirPath($)))
+        .map($ -> ResourceNames.absName(file, dirPath($)))
         .filter(Objects::nonNull)
         .findFirst()
         .orElse(null);

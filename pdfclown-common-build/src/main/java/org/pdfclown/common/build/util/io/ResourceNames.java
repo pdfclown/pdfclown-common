@@ -3,14 +3,14 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 
-  This file (Resources.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (ResourceNames.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.util;
+package org.pdfclown.common.build.util.io;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.pdfclown.common.build.internal.util.Objects.sqnd;
@@ -34,7 +34,7 @@ import org.pdfclown.common.build.internal.util.io.Files;
  *
  * @author Stefano Chizzolini
  */
-public final class Resources {
+public final class ResourceNames {
   /**
    * Gets the absolute name of the given resource, resolved according to the given base directory.
    *
@@ -464,6 +464,6 @@ public final class Resources {
     return pos >= 0 ? name.substring(pos + 1) : name;
   }
 
-  private Resources() {
+  private ResourceNames() {
   }
 }

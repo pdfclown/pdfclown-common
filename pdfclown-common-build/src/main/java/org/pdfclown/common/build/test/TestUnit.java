@@ -15,7 +15,6 @@ package org.pdfclown.common.build.test;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.pdfclown.common.build.internal.util.Objects.sqn;
-import static org.pdfclown.common.build.internal.util.Strings.S;
 import static org.pdfclown.common.build.internal.util.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util.io.Files.resetDir;
 
@@ -32,7 +31,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.pdfclown.common.build.test.assertion.LogExtension;
 import org.pdfclown.common.build.test.assertion.LogInterceptor;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
-import org.pdfclown.common.build.util.Resources;
+import org.pdfclown.common.build.util.io.ResourceNames;
 import org.slf4j.event.Level;
 import org.slf4j.event.LoggingEvent;
 
@@ -182,10 +181,10 @@ public abstract class TestUnit implements TestEnvironment {
    * Useful for referencing resources specific to this test unit.
    * </p>
    *
-   * @see Resources#localName(String, Class)
+   * @see ResourceNames#localName(String, Class)
    */
   public String localName(String simpleName) {
-    return Resources.localName(simpleName, getClass());
+    return ResourceNames.localName(simpleName, getClass());
   }
 
   /**
@@ -218,8 +217,8 @@ public abstract class TestUnit implements TestEnvironment {
       }
     }
 
-    return Resources.path(
-        name.startsWith(S + SLASH) ? name : sqn(this) + SLASH + name,
+    return ResourceNames.path(
+        ResourceNames.isAbsolute(name) ? name : sqn(this) + SLASH + name,
         dirPath(DirId.OUTPUT), getClass());
   }
 
@@ -233,7 +232,7 @@ public abstract class TestUnit implements TestEnvironment {
 
   @Override
   public Path resourcePath(String name) {
-    return Resources.path(name, dirPath(DirId.RESOURCE), getClass());
+    return ResourceNames.path(name, dirPath(DirId.RESOURCE), getClass());
   }
 
   /**
@@ -246,7 +245,7 @@ public abstract class TestUnit implements TestEnvironment {
 
   @Override
   public Path resourceSrcPath(String name) {
-    return Resources.path(name, dirPath(DirId.RESOURCE_SRC), getClass());
+    return ResourceNames.path(name, dirPath(DirId.RESOURCE_SRC), getClass());
   }
 
   /**
@@ -261,9 +260,9 @@ public abstract class TestUnit implements TestEnvironment {
   public Path typeSrcPath(Class<?> type) {
     Path ret;
     var filename = sqn(requireNonNull(type, "`type`")) + ".java";
-    if (Files.exists(ret = Resources.path(filename, dirPath(DirId.TYPE_SRC), type)))
+    if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.TYPE_SRC), type)))
       return ret;
-    else if (Files.exists(ret = Resources.path(filename, dirPath(DirId.MAIN_TYPE_SRC), type)))
+    else if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.MAIN_TYPE_SRC), type)))
       return ret;
     else
       throw new RuntimeException(new FileNotFoundException(

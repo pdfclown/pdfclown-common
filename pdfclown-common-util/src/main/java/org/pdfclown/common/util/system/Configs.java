@@ -23,17 +23,10 @@ import static org.pdfclown.common.util.Strings.DQUOTE;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SEMICOLON;
 import static org.pdfclown.common.util.Strings.SPACE;
-import static org.pdfclown.common.util.io.Files.urlOf;
-import static org.pdfclown.common.util.net.Uris.uri;
-import static org.pdfclown.common.util.net.Uris.url;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +34,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.stream.Streams;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.net.Uris;
+import org.pdfclown.common.util.io.Resource;
 
 /**
  * Configuration utilities.
@@ -187,14 +180,14 @@ public final class Configs {
   }
 
   /**
-   * Parses the {@link URL} corresponding to the given resource name.
+   * Parses the resource corresponding to the given name.
    * <p>
    * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options) to their canonical form.
+   * files or command-line options).
    * </p>
    * <p>
-   * For more information, see
-   * {@linkplain #parseResourceUrl(String, ClassLoader, Function, FileSystem) main overload}.
+   * For more information, see {@linkplain #parseResource(String, ClassLoader, Function) main
+   * overload}.
    * </p>
    *
    * @param name
@@ -202,113 +195,60 @@ public final class Configs {
    *          {@code "classpath:"} prefix)).
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  public static @Nullable URL parseResourceUrl(String name) {
-    return parseResourceUrl(name, $ -> new File($).getAbsolutePath());
+  public static @Nullable Resource parseResource(String name) {
+    return Resource.of(name);
   }
 
   /**
-   * Parses the {@link URL} corresponding to the given resource name.
+   * Parses the resource corresponding to the given name.
    * <p>
    * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options) to their canonical form.
+   * files or command-line options).
    * </p>
    * <p>
    * Supported sources:
    * </p>
    * <ul>
-   * <li>classpath (either explicitly defined via URI scheme ({@code "classpath:"} prefix), or
+   * <li>classpath (either explicitly qualified via URI scheme ({@code "classpath:"}), or
    * automatically detected)</li>
    * <li>filesystem</li>
    * <li>generic URL</li>
    * </ul>
-   * <p>
-   * Name resolution algorithm:
-   * </p>
-   * <ol>
-   * <li>if {@code name} is prefixed by {@code "classpath:"} (<b>explicit classpath resource</b>),
-   * it is resolved through {@code cl} and returned</li>
-   * <li>{@code name} is converted through {@code relativeFilePathResolver} to an absolute
-   * filesystem path: if its node exists on {@code fs} (<b>filesystem resource</b>), it is
-   * returned</li>
-   * <li>if {@code name} is an absolute URL (<b>generic URL resource</b>), it is returned</li>
-   * <li>otherwise ({@code name} is a relative URL — <b>implicit classpath resource</b>), it is
-   * resolved through {@code cl} and returned</li>
-   * </ol>
-   * <p>
-   * In any case, the resolved resource is checked for existence before being returned.
-   * </p>
    *
    * @param name
    *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
    *          {@code "classpath:"} prefix)).
    * @param cl
    *          {@link ClassLoader} for classpath resource resolution.
-   * @param relativeFilePathResolver
-   *          Relative filesystem path resolver. Converts relative paths to their absolute
-   *          counterparts.
-   * @param fs
-   *          Filesystem for file path interpretation.
+   * @param fileResolver
+   *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  @SuppressWarnings("null")
-  public static @Nullable URL parseResourceUrl(String name, ClassLoader cl,
-      Function<String, String> relativeFilePathResolver, FileSystem fs) {
-    // Classpath (explicit)?
-    if (name.startsWith(RESOURCE_NAME_PREFIX__CLASSPATH))
-      return cl.getResource(name.substring(RESOURCE_NAME_PREFIX__CLASSPATH.length()));
-
-    // Filesystem.
-    try {
-      var file = fs.getPath(name);
-      // Resolve relative file path!
-      if (!file.isAbsolute()) {
-        file = fs.getPath(relativeFilePathResolver.apply(file.toString()));
-      }
-      // Filesystem resource exists?
-      if (Files.exists(file))
-        return urlOf(file);
-    } catch (InvalidPathException ex) {
-      /*
-       * NOOP: `name` is not a file path, so we fall back to generic URL (or implicit classpath
-       * resource).
-       */
-    }
-
-    // URL.
-    var uri = uri(name);
-    // Generic URL?
-    if (uri.isAbsolute()) {
-      var ret = url(uri);
-      return Uris.exists(ret) ? ret : null;
-    }
-    // Classpath (implicit, from relative URL).
-    else
-      return cl.getResource(name);
+  public static @Nullable Resource parseResource(String name, ClassLoader cl,
+      Function<Path, Path> fileResolver) {
+    return Resource.of(name, cl, fileResolver);
   }
 
   /**
-   * Parses the {@link URL} corresponding to the given resource name.
+   * Parses the resource corresponding to the given name.
    * <p>
    * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options) to their canonical form.
+   * files or command-line options).
    * </p>
    * <p>
-   * For more information, see
-   * {@linkplain #parseResourceUrl(String, ClassLoader, Function, FileSystem) main overload}.
+   * For more information, see {@linkplain #parseResource(String, ClassLoader, Function) main
+   * overload}.
    * </p>
    *
    * @param name
    *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
    *          {@code "classpath:"} prefix)).
-   * @param relativeFilePathResolver
-   *          Relative filesystem path resolver. Converts relative paths to their absolute
-   *          counterparts.
+   * @param fileResolver
+   *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  public static @Nullable URL parseResourceUrl(String name,
-      Function<String, String> relativeFilePathResolver) {
-    return parseResourceUrl(name, ClassLoader.getSystemClassLoader(), relativeFilePathResolver,
-        FileSystems.getDefault());
+  public static @Nullable Resource parseResource(String name, Function<Path, Path> fileResolver) {
+    return Resource.of(name, fileResolver);
   }
 
   /**
