@@ -137,11 +137,9 @@ public interface Resource {
    */
   public static @Nullable Resource of(String name, ClassLoader cl,
       Function<Path, Path> fileResolver) {
-    if (name.startsWith(URI_SCHEME_PART__CLASSPATH)) {
-      URL url = cl.getResource(name.substring(URI_SCHEME_PART__CLASSPATH.length()));
+    if (name.startsWith(URI_SCHEME_PART__CLASSPATH))
       // [explicit classpath resource]
-      return url != null ? new ClasspathResource(name, url) : null;
-    }
+      return ClasspathResource.of(name, cl);
 
     try {
       var file = Path.of(name);
@@ -163,11 +161,10 @@ public interface Resource {
       var ret = url(uri);
       // [generic URL resource]
       return ret != null && Uris.exists(ret) ? new WebResource(name, ret) : null;
-    } else {
-      URL url = cl.getResource(name);
-      // [implicit classpath resource]
-      return url != null ? new ClasspathResource(name, url) : null;
     }
+
+    // [implicit classpath resource]
+    return ClasspathResource.of(name, cl);
   }
 
   /**

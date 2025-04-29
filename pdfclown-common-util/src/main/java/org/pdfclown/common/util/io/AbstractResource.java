@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util.io;
 
+import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Strings.COLON;
 
 /**
@@ -39,7 +40,7 @@ public abstract class AbstractResource implements Resource {
   private final String name;
 
   protected AbstractResource(String name) {
-    this.name = name;
+    this.name = requireNonNull(name, "`name`");
   }
 
   @Override

@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.util.io;
 
+import static java.util.Objects.requireNonNull;
+
 import java.net.URL;
 
 /**
@@ -25,7 +27,7 @@ public class WebResource extends AbstractResource {
   WebResource(String name, URL url) {
     super(name);
 
-    this.url = url;
+    this.url = requireNonNull(url, "`url`");
   }
 
   @Override

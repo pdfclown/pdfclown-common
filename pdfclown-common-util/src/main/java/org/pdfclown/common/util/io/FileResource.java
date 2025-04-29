@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util.io;
 
+import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.io.Files.urlOf;
 
 import java.net.URL;
@@ -28,7 +29,7 @@ public class FileResource extends AbstractResource implements PathResource {
   FileResource(String name, Path path) {
     super(name);
 
-    this.path = path;
+    this.path = requireNonNull(path, "`path`");
   }
 
   @Override

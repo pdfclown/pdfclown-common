@@ -12,7 +12,9 @@
  */
 package org.pdfclown.common.util.io;
 
+import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Strings.SLASH;
 
 import java.net.URL;
 import java.nio.file.FileSystem;
@@ -23,6 +25,7 @@ import java.nio.file.ProviderMismatchException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.function.Failable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Classpath resource.
@@ -50,6 +53,24 @@ public class ClasspathResource extends AbstractResource implements PathResource 
    */
   private static Map<String, FileSystem> fileSystems = new HashMap<>();
 
+  static @Nullable ClasspathResource of(String name, ClassLoader cl) {
+    URL url;
+    {
+      int index = 0;
+      if (name.startsWith(URI_SCHEME_PART__CLASSPATH)) {
+        index = URI_SCHEME_PART__CLASSPATH.length();
+      }
+      if (name.charAt(index) == SLASH) {
+        index++;
+      }
+      if (index > 0) {
+        name = name.substring(index);
+      }
+      url = cl.getResource(name);
+    }
+    return url != null ? new ClasspathResource(name, url) : null;
+  }
+
   private static FileSystem asFileSystem(Path path) {
     return fileSystems.computeIfAbsent(path.toString(),
         Failable.asFunction($k -> FileSystems.newFileSystem(path, null)));
@@ -69,7 +90,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   protected ClasspathResource(String name, URL url) {
     super(name);
 
-    this.url = url;
+    this.url = requireNonNull(url, "`url`");
 
     switch (url.getProtocol()) {
       case URI_SCHEME__JAR: {
