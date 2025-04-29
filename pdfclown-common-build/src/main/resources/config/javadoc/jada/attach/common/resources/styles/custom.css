@@ -1,11 +1,15 @@
-h1.title:not([title]):only-child {
+h1.title:not([title]):only-child{
+  background-image: url('../images/logo.png');
+  background-repeat: no-repeat;
+  background-size: 80px;
   font-size: 32px;
 }
-
 h1.title:not([title]):only-child:before {
-  content: url('../images/logo.png');
+  content: '';
   display: inline-block;
+  height: 80px;
   vertical-align: middle;
+  width: 90px;
 }
 
 cite {
