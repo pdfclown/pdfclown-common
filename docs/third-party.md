@@ -33,7 +33,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
           SPDX-License-Identifier: Apache-2.0
 
           -------------------------------------------------------------------------------------------------
-          Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
+          Changes: `recursivelyCompareJSONArray(..)` modified to handle also . . .
          */
 
         . . .
@@ -46,7 +46,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
         Other informative tags will be added based on the relationship between the incorporated file and the original code:
 
-        - in case of **repository-bound file**, *if the fully-qualified name of its class has changed*, then the `SourceFQN` tag will indicate its original fully-qualified name:
+        - the `SourceFQN` tag indicates the original name of the type (or type member — i.e., field or method) in case the incorporation changed it:
 
           ```java
           . . . file header . . .
@@ -57,7 +57,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
             SPDX-License-Identifier: Apache-2.0
 
             -------------------------------------------------------------------------------------------------
-            Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
+            Changes: `recursivelyCompareJSONArray(..)` modified to handle also . . .
            */
 
           . . .
@@ -67,9 +67,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
             . . .
           ```
 
-          NOTE: The `SourceFQN` tag stands on its own comment as it is associated to the programmatic level rather than the attribution level of the source code.
-
-        - in case of **detached file**, the `Source` tag will indicate its repository-specific permalink, and the `SourceFQN` tag will always be indicated (since, by definition, its relationship with the original repository is not documented elsewhere in the project):
+        - the `Source` tag indicates, in case of detached file, its repository-specific permalink:
 
           ```java
           . . . file header . . .
@@ -81,7 +79,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
             -------------------------------------------------------------------------------------------------
             Source: https://github.com/skyscreamer/JSONassert/blob/e81c16c59ce0860f97a65d871589ab2337370c4b/src/main/java/org/skyscreamer/jsonassert/comparator/AbstractComparator.java
-            Changes: `recursivelyCompareJSONArray(..)` modified to handle also XY
+            Changes: `recursivelyCompareJSONArray(..)` modified to handle also . . .
            */
 
           . . .
@@ -90,6 +88,8 @@ Whenever any source code from third-party projects is incorporated, it must be d
           class AbstractComparator {
             . . .
           ```
+
+            NOTE: In case of detached file, the `SourceFQN` tag will always be indicated (since, by definition, its relationship with the original repository is not documented elsewhere in the project).
 
     - **third-party code fragment** into a project file: wrap the fragment as an SPDX snippet:
 
