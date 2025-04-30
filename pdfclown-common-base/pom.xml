@@ -22,7 +22,6 @@
   <version>0.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>${project.artifactId}</name>
   <!--
     NOTE: `url` is project-specific, MUST be explicitly declared in each inheriting project in order
     to override the default mechanism.
