@@ -67,7 +67,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
             . . .
           ```
 
-        - the `Source` tag indicates, in case of detached file, its repository-specific permalink:
+        - the `Source` tag indicates its repository-specific permalink in case of detached file:
 
           ```java
           . . . file header . . .
