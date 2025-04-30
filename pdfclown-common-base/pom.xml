@@ -531,16 +531,9 @@
               <!--
                 NOTE: Idiotic maven-javadoc-plugin doesn't accept absolute paths in
                 `addStylesheets` property, so we have to feed it directly.
-
-                This is just a placeholder used to force javadoc tool to insert a corresponding link
-                tag in the documentation pages: it will be replace during post-processing by its
-                actual resource from pdfclown-common-build jar.
-
-                TODO: Whenever this POM is inherited by a root project, an empty "extend.css" file
-                MUST be placed in the path specified here (see its effective POM for resolved path).
               -->
               <?ignore
-              <additionalOption>--add-stylesheet "${rootdir}/src/main/javadoc/extend.css"</additionalOption>
+              <additionalOption>--add-stylesheet "${rootdir}/src/main/javadoc/stylesheet-ext.css"</additionalOption>
 ?>
             </additionalOptions>
 
@@ -564,7 +557,7 @@
             </top>
             <bottom>
 <![CDATA[
-Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br><a href="${project.issues.url}">Report a bug or suggest an enhancement</a><p class="footer-right">${maven.build.timestamp}</p>
+Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br><a href="${project.url}">Project Home</a> | <a href="${project.issues.url}">Report a bug or suggest an enhancement</a><p class="footer-right">${maven.build.timestamp}</p>
 ]]>
             </bottom>
 
