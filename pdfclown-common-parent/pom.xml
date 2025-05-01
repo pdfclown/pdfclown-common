@@ -5,14 +5,6 @@
 -->
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  org.pdfclown:pdfclown-common-parent
-
-
-  Common configuration for pdfClown projects.
-
-  See org.pdfclown:pdfclown-common-base for more information.
-
-
   USAGE
 
   - Basic build (without integration tests, sources jar nor javadoc jar):
@@ -44,6 +36,9 @@
 
   <artifactId>pdfclown-common-parent</artifactId>
   <packaging>pom</packaging>
+
+  <description>Common configuration for pdfClown projects -- see parent POM
+    (org.pdfclown:pdfclown-common-base) for more information.</description>
 
   <properties>
     <!--

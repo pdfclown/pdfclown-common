@@ -3,15 +3,6 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
-
-<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  org.pdfclown:pdfclown-common-base
-
-
-  Internal base configuration for pdfClown.org projects.
-
-  DO NOT use directly, inherit from org.pdfclown:pdfclown-common-parent instead.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -22,6 +13,8 @@
   <version>0.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <description>Internal base configuration for pdfClown.org projects -- DO NOT use directly, inherit
+    from org.pdfclown:pdfclown-common-parent instead.</description>
   <!--
     NOTE: `url` is project-specific, MUST be explicitly declared in each inheriting project in order
     to override the default mechanism.

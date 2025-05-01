@@ -3,13 +3,6 @@
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
-
-<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  org.pdfclown:pdfclown-common
-
-
-  Common functionalities for pdfClown projects.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -26,6 +19,7 @@
   <version>0.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <description>Common functionalities for pdfClown projects.</description>
   <url>${project.root.url}</url>
   <inceptionYear>2025</inceptionYear>
 
