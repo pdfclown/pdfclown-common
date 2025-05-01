@@ -119,14 +119,11 @@
     <!--
       NOTE: Because of cyclic reference, pdfclown-common-maven-plugin's version MUST lag one release
       behind this project's.
-
-      TODO: Whenever pdfclown-common-base project version changes, `pdfclown.common.maven.version` MUST
-      be updated to the preceding one.
     -->
     <!--
       TODO: enable after first release (cyclic dependency!)
 
-    <pdfclown.common.maven.version>-SNAPSHOT</pdfclown.common.maven.version>
+    <pdfclown.common.maven.version></pdfclown.common.maven.version>
     -->
     <!--
       TODO: Whenever pdfclown-common-base version is updated, `pdfclown.common.version` MUST be
