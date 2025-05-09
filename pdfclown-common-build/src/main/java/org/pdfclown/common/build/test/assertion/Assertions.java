@@ -170,7 +170,7 @@ public final class Assertions {
    *          wrap it this way:
    *          </p>
    *          <pre>
-   * Assertions.probeDelta($ -&gt; {
+   * Assertions.probeDelta($ {@code ->} {
    *   assertEquals(myExpected, myActual, $);
    * });</pre>
    *          <p>

@@ -11,7 +11,7 @@
 
 [![REUSE status](https://api.reuse.software/badge/github.com/pdfclown/pdfclown-common)](https://api.reuse.software/info/github.com/pdfclown/pdfclown-common)
 
-Common functionalities for pdfClown projects.
+Common functionalities for pdfClown.org projects.
 
 ## Conventions
 
@@ -25,7 +25,7 @@ See [Project Conventions](docs/conventions.md) for further information.
 
 ## License
 
-pdfClown Common is Open Source software released under the [GNU Lesser General Public License (LGPL), version 3 or later](LICENSE.txt).
+pdfClown Common is Open Source software released under the **[GNU Lesser General Public License (LGPL), version 3 or later](LICENSE.txt)**.
 
 See [NOTICE](NOTICE.txt) for attributions.
 

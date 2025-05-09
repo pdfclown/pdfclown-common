@@ -1,31 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.pdfclown</groupId>
-    <artifactId>pdfclown-common</artifactId>
+    <artifactId>pdfclown-common-parent</artifactId>
     <version>0.0.0-SNAPSHOT</version>
+    <relativePath>../pdfclown-common-parent/pom.xml</relativePath>
   </parent>
 
   <artifactId>pdfclown-common-build</artifactId>
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
-  <description>Common build utilities for pdfClown projects</description>
-  <url>${project.root.url}</url>
+  <description>Common build tools and resources for pdfClown.org projects</description>
+  <url>${projectRootUrl}</url>
 
   <properties>
     <!--
       OVERRIDDEN PROPERTIES
     -->
-    <project.jpms.name>org.pdfclown.common.build</project.jpms.name>
+    <projectJpmsName>org.pdfclown.common.build</projectJpmsName>
     <rootdir>${project.basedir}/..</rootdir>
 
     <!--
@@ -55,10 +58,6 @@
       <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jspecify</groupId>
-      <artifactId>jspecify</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
       <version>${reflections.version}</version>
@@ -76,11 +75,6 @@
     </dependency>
 
     <!-- Logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -114,14 +108,14 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>${hamcrest.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${hamcrest.version}</version>
     </dependency>
 
     <dependency>
@@ -137,6 +131,55 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <configuration>
+            <dependencyLinks
+                combine.children="append">
+              <dependencyLink>
+                <groupId>com.google.jimfs</groupId>
+                <artifactId>jimfs</artifactId>
+                <url>https://www.javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <url>https://javadoc.io/doc/org.hamcrest/hamcrest/${hamcrest.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <url>https://junit.org/junit5/docs/${junit.version}/api/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <url>https://javadoc.io/doc/org.junit.vintage/junit-vintage-engine/${junit.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <url>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <url>https://javadoc.io/doc/org.reflections/reflections/${reflections.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <url>https://javadoc.io/doc/org.skyscreamer/jsonassert/${jsonassert.version}</url>
+              </dependencyLink>
+            </dependencyLinks>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -184,75 +227,5 @@
         </executions>
       </plugin>
     </plugins>
-
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <configuration>
-            <dependencyLinks combine.children="append">
-              <dependencyLink>
-                <groupId>com.google.jimfs</groupId>
-                <artifactId>jimfs</artifactId>
-                <url>https://www.javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <url>https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-api/${log4j.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <url>
-                  https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-core/${log4j.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <url>
-                  https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-slf4j-impl/${log4j.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest</artifactId>
-                <url>https://javadoc.io/doc/org.hamcrest/hamcrest/${hamcrest.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <url>https://javadoc.io/doc/org.json/json/${json.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <url>https://junit.org/junit5/docs/${junit.version}/api/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <url>https://javadoc.io/doc/org.junit.vintage/junit-vintage-engine/${junit.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <url>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <url>https://javadoc.io/doc/org.reflections/reflections/${reflections.version}/</url>
-              </dependencyLink>
-              <dependencyLink>
-                <groupId>org.skyscreamer</groupId>
-                <artifactId>jsonassert</artifactId>
-                <url>https://javadoc.io/doc/org.skyscreamer/jsonassert/${jsonassert.version}/</url>
-              </dependencyLink>
-            </dependencyLinks>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 </project>

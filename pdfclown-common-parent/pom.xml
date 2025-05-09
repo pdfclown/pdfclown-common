@@ -1,96 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
-
-<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  USAGE
-
-  - Basic build (without integration tests, sources jar nor javadoc jar):
-      mvn install
-
-  - Full build (with integration tests, sources jar and javadoc jar):
-      mvn install -Pverify,install
-
-  - Verify dependency vulnerabilities:
-      mvn verify -Pverify-extra
-
-  - Verify copyright and licensing declarations compliance <https://reuse.software>:
-      reuse lint
-
-  - Publish on Maven Central:
-      mvn deploy -Pverify,deploy
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.pdfclown</groupId>
-    <artifactId>pdfclown-common-base</artifactId>
+    <artifactId>pdfclown-common-bom</artifactId>
     <version>0.0.0-SNAPSHOT</version>
-    <relativePath>../pdfclown-common-base/pom.xml</relativePath>
   </parent>
 
   <artifactId>pdfclown-common-parent</artifactId>
   <packaging>pom</packaging>
 
-  <description>Common configuration for pdfClown projects -- see parent POM
-    (org.pdfclown:pdfclown-common-base) for more information.</description>
+  <name>${project.artifactId}</name>
+  <description>Internal configuration</description>
 
   <properties>
     <!--
-      OVERRIDDEN PROPERTIES
+      CUSTOM PROPERTIES
     -->
-    <pdfclown.common.maven.version>${pdfclown.common.version}</pdfclown.common.maven.version>
+    <!--
+      Automatic module name (JPMS).
+
+      NOTE: Each module MUST define its own unique JPMS name. -->
+    <projectJpmsName/>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.pdfclown</groupId>
+        <artifactId>pdfclown-common-deps</artifactId>
+        <version>${pdfclownCommonVersion}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- Language -->
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>net.revelc.code.formatter</groupId>
-          <artifactId>formatter-maven-plugin</artifactId>
-          <dependencies>
-            <!-- Common resources (configuration files) -->
-            <dependency>
-              <groupId>org.pdfclown</groupId>
-              <artifactId>pdfclown-common-build</artifactId>
-              <version>${pdfclown.common.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <dependencies>
-            <!-- Common resources (configuration files) -->
-            <dependency>
-              <groupId>org.pdfclown</groupId>
-              <artifactId>pdfclown-common-build</artifactId>
-              <version>${pdfclown.common.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <configuration>
-            <docletArtifacts combine.children="append">
-              <!-- Common resources (stylesheets, etc) -->
-              <docletArtifact>
-                <groupId>org.pdfclown</groupId>
-                <artifactId>pdfclown-common-build</artifactId>
-                <version>${pdfclown.common.version}</version>
-              </docletArtifact>
-            </docletArtifacts>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>${projectJpmsName}</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

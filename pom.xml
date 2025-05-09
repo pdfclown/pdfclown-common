@@ -1,26 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.pdfclown</groupId>
-    <artifactId>pdfclown-common-base</artifactId>
+    <artifactId>pdfclown-common-super</artifactId>
     <version>0.0.0-SNAPSHOT</version>
-    <relativePath>pdfclown-common-base/pom.xml</relativePath>
+    <relativePath>pdfclown-common-super/pom.xml</relativePath>
   </parent>
 
-  <artifactId>pdfclown-common</artifactId>
-  <version>0.0.0-SNAPSHOT</version>
+  <artifactId>pdfclown-common-bom</artifactId>
   <packaging>pom</packaging>
 
-  <description>Common functionalities for pdfClown projects.</description>
-  <url>${project.root.url}</url>
+  <name>${project.artifactId}</name>
+  <description>Bill of Materials (complete set of pdfClown common components)</description>
+  <url>${projectRootUrl}</url>
   <inceptionYear>2025</inceptionYear>
 
   <organization>
@@ -50,45 +52,57 @@
   <modules>
     <module>pdfclown-common-base</module>
     <module>pdfclown-common-build</module>
-    <module>pdfclown-common-maven-plugin</module>
+    <module>pdfclown-common-deps</module>
     <module>pdfclown-common-parent</module>
+    <module>pdfclown-common-super</module>
     <module>pdfclown-common-util</module>
   </modules>
+
+  <scm
+      child.scm.connection.inherit.append.path="false"
+      child.scm.developerConnection.inherit.append.path="false"
+      child.scm.url.inherit.append.path="false">
+    <connection>scm:git:https://${projectUrlBasePath}.git</connection>
+    <developerConnection>scm:git:https://${projectUrlBasePath}.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>${projectScmUrl}</url>
+  </scm>
+
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>${projectIssuesUrl}</url>
+  </issueManagement>
 
   <properties>
     <!--
       OVERRIDDEN PROPERTIES
     -->
-    <build.resources.rootpath>${rootdir}/pdfclown-common-build/src/main/resources</build.resources.rootpath>
-    <project.issues.url>https://github.com/pdfclown/pdfclown-common/issues</project.issues.url>
-    <project.root.url>https://github.com/pdfclown/pdfclown-common</project.root.url>
-    <project.scm.connection>scm:git:git://github.com/pdfclown/pdfclown-common.git</project.scm.connection>
-    <project.scm.dev.connection>scm:git:git://github.com/pdfclown/pdfclown-common.git</project.scm.dev.connection>
-    <project.scm.url>https://github.com/pdfclown/pdfclown-common</project.scm.url>
+    <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
+    <projectRootUrl>https://${projectUrlBasePath}</projectRootUrl>
 
     <!--
       CUSTOM PROPERTIES
     -->
-    <!--
-      Automatic module name (JPMS).
-
-      NOTE: Each module MUST define its own unique JPMS name.
-    -->
-    <project.jpms.name/>
+    <projectUrlBasePath>github.com/pdfclown/pdfclown-common</projectUrlBasePath>
   </properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Automatic-Module-Name>${project.jpms.name}</Automatic-Module-Name>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.pdfclown</groupId>
+        <artifactId>pdfclown-common-util</artifactId>
+        <version>${pdfclownCommonVersion}</version>
+      </dependency>
+
+      <!--
+        TESTING
+      -->
+      <dependency>
+        <groupId>org.pdfclown</groupId>
+        <artifactId>pdfclown-common-build</artifactId>
+        <version>${pdfclownCommonVersion}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>

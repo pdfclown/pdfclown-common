@@ -1,38 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
 
   SPDX-License-Identifier: LGPL-3.0-or-later
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.pdfclown</groupId>
-    <artifactId>pdfclown-common</artifactId>
+    <artifactId>pdfclown-common-parent</artifactId>
     <version>0.0.0-SNAPSHOT</version>
+    <relativePath>../pdfclown-common-parent/pom.xml</relativePath>
   </parent>
 
   <artifactId>pdfclown-common-util</artifactId>
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
-  <description>Common utilities for pdfClown projects</description>
-  <url>${project.root.url}</url>
+  <description>Common utilities for pdfClown.org projects</description>
+  <url>${projectRootUrl}</url>
 
   <properties>
     <!--
-      OVERRIDDEN PROPERTIES
+        OVERRIDDEN PROPERTIES
     -->
-    <project.jpms.name>org.pdfclown.common.util</project.jpms.name>
+    <projectJpmsName>org.pdfclown.common.util</projectJpmsName>
     <rootdir>${project.basedir}/..</rootdir>
 
     <!--
-      CUSTOM PROPERTIES
+        CUSTOM PROPERTIES
     -->
 
     <!--
-      VERSIONS
+        VERSIONS
     -->
   </properties>
 
@@ -46,20 +50,8 @@
       <artifactId>commons-lang3</artifactId>
     </dependency>
 
-    <!-- Language -->
-    <dependency>
-      <groupId>org.jspecify</groupId>
-      <artifactId>jspecify</artifactId>
-    </dependency>
-
-    <!-- Logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
     <!--
-      TESTING
+        TESTING
     -->
     <dependency>
       <groupId>org.pdfclown</groupId>
