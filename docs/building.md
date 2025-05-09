@@ -10,11 +10,21 @@ This document describes how to set up your development environment to build and 
 
 ## Prerequisites
 
-- JDK 11 (for source code compilation)
+- **JDK 11** (for source code compilation)
 
-- JDK 17+ (for Maven execution)
+- **JDK 17+** (for Maven execution)
 
-- [Maven toolchains configuration](toolchains.xml) for JDK 11
+- **[Maven toolchains configuration](https://maven.apache.org/guides/mini/guide-using-toolchains.html)** for JDK 11 [[sample toolchains.xml](toolchains.xml)]
+
+- **[pre-commit](https://pre-commit.com/)** [[installation instructions](https://pre-commit.com/#install)]
+
+## Setup
+
+1. install [REUSE](https://reuse.software/spec-3.3/) pre-commit hook:
+
+        pre-commit install
+
+    This hook automatically runs `reuse lint` on every commit, preventing your commit from going through if it doesn't pass REUSE validation.
 
 ## Building
 
