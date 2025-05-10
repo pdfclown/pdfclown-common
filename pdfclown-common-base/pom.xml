@@ -20,7 +20,7 @@
       reuse lint
 
   - Publish on Maven Central:
-      mvn deploy -Pverify,deploy
+      mvn deploy -Pverify,release
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <project
     xmlns="http://maven.apache.org/POM/4.0.0"

@@ -552,7 +552,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           <configuration>
             <!--  
             <goals>deploy</goals>
-            <arguments>-Pdeploy</arguments>
+            <arguments>-Prelease</arguments>
             -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <tagNameFormat>@{project.version}</tagNameFormat>
@@ -763,7 +763,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
     </profile>
 
     <profile>
-      <id>deploy</id>
+      <id>release</id>
       <!--
         DEPLOYMENT PROFILE
 
