@@ -14,7 +14,21 @@ This document describes how to set up your development environment to build and 
 
 - **JDK 17+** (for Maven execution)
 
-- **[Maven toolchains configuration](https://maven.apache.org/guides/mini/guide-using-toolchains.html)** for JDK 11 [[sample toolchains.xml](toolchains.xml)]
+- **[Maven toolchains configuration](https://maven.apache.org/guides/mini/guide-using-toolchains.html)** for JDK 11
+
+    If the file `${user.home}/.m2/toolchains.xml` is missing, generate it via CLI:
+
+      mvn toolchains:generate-jdk-toolchains-xml
+
+    It should contain a `toolchain` entry for JDK 11, like this:
+
+    ```xml
+    <toolchain>
+      <type>jdk</type>
+      <provides>
+        <version>11</version>
+        . . .
+    ```
 
 - **[pre-commit](https://pre-commit.com/)** [[installation instructions](https://pre-commit.com/#install)]
 
