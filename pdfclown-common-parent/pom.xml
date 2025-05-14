@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.pdfclown</groupId>
     <artifactId>pdfclown-common-bom</artifactId>
-    <version>0.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>pdfclown-common-parent</artifactId>
@@ -38,7 +38,7 @@
       <dependency>
         <groupId>org.pdfclown</groupId>
         <artifactId>pdfclown-common-deps</artifactId>
-        <version>${pdfclownCommonVersion}</version>
+        <version>${revision}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

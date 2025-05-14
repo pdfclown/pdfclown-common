@@ -1,6 +1,6 @@
+.idea/
 .settings/
 target/
 temp/
 .classpath
 .project
-release.properties

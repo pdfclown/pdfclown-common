@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.pdfclown</groupId>
     <artifactId>pdfclown-common-super</artifactId>
-    <version>0.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <relativePath>pdfclown-common-super/pom.xml</relativePath>
   </parent>
 
@@ -53,6 +53,7 @@
     <module>pdfclown-common-base</module>
     <module>pdfclown-common-build</module>
     <module>pdfclown-common-deps</module>
+    <module>pdfclown-common-maven-plugin</module>
     <module>pdfclown-common-parent</module>
     <module>pdfclown-common-super</module>
     <module>pdfclown-common-util</module>
@@ -91,7 +92,7 @@
       <dependency>
         <groupId>org.pdfclown</groupId>
         <artifactId>pdfclown-common-util</artifactId>
-        <version>${pdfclownCommonVersion}</version>
+        <version>${revision}</version>
       </dependency>
 
       <!--
@@ -100,7 +101,7 @@
       <dependency>
         <groupId>org.pdfclown</groupId>
         <artifactId>pdfclown-common-build</artifactId>
-        <version>${pdfclownCommonVersion}</version>
+        <version>${revision}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

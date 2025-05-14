@@ -12,7 +12,7 @@
 
   <groupId>org.pdfclown</groupId>
   <artifactId>pdfclown-common-super</artifactId>
-  <version>0.0.0-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
   <name>${project.artifactId}</name>
@@ -76,7 +76,14 @@ pdfclown-common-base instead)</description>
     <jsoup.version>1.18.3</jsoup.version>
     <jspecify.version>1.0.0</jspecify.version>
     <log4j.version>2.19.0</log4j.version>
-    <pdfclownCommonVersion>0.0.0-SNAPSHOT</pdfclownCommonVersion>
+    <!--
+      NOTE: Because of cyclic reference, pdfclown-common-maven-plugin's version MUST lag one
+      release behind this project's.
+
+      TODO: Whenever pdfclown-common-base project version changes, `pdfclown-common-maven-plugin.version`
+      MUST be updated to the preceding one. 
+    <pdfclown-common-maven-plugin.version>0.0.0-SNAPSHOT</pdfclown-common-maven-plugin.version>
+    -->
     <slf4j.version>1.7.36</slf4j.version>
 
     <!--
@@ -87,9 +94,9 @@ pdfclown-common-base instead)</description>
     <codehaus.xml.version>1.0.2</codehaus.xml.version>
     <dependency.check.version>12.1.1</dependency.check.version>
     <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
-    <jada.version>0.2-SNAPSHOT</jada.version>
     <javaVersion>11</javaVersion>
     <m2e.lifecycle.version>1.0.0</m2e.lifecycle.version>
+    <mavenVersion>3.6.3</mavenVersion>
     <maven.bundle.version>5.1.1</maven.bundle.version>
     <maven.compiler.version>3.13.0</maven.compiler.version>
     <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
@@ -472,7 +479,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               <dependencyLink>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>pdfclown-common-util</artifactId>
-                <url>https://www.javadoc.io/static/org.pdfclown/pdfclown-common-util/${pdfclownCommonVersion}</url>
+                <url>https://www.javadoc.io/static/org.pdfclown/pdfclown-common-util/${revision}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.slf4j</groupId>
@@ -522,6 +529,27 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           </executions>
         </plugin>
 
+        <!-- 
+            TODO: enable after first release
+        <plugin>
+          <groupId>org.pdfclown</groupId>
+          <artifactId>pdfclown-common-maven-plugin</artifactId>
+          <version>${pdfclown-common-maven-plugin.version}</version>
+          <configuration>
+            <outputDirectory>${project.build.directory}</outputDirectory>
+            <updatePomFile>true</updatePomFile>
+          </configuration>
+          <executions>
+            <execution>
+              <id>flatten</id>
+              <goals>
+                <goal>flatten</goal>
+              </goals>
+              <phase>process-resources</phase>
+            </execution>
+          </executions>
+        </plugin>
+-->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
@@ -653,6 +681,13 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       </plugin>
 
       <!-- Packaging -->
+      <!--
+        TODO: enable after first release (cyclic dependency!)
+      <plugin>
+        <groupId>org.pdfclown</groupId>
+        <artifactId>pdfclown-common-maven-plugin</artifactId>
+      </plugin>
+      -->
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -900,6 +935,22 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <properties>
         <checkstyleSkip>true</checkstyleSkip>
       </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>flatten-maven-plugin</artifactId>
+            <!-- 
+        TODO: enable after first release (cyclic dependency!)
+            <groupId>org.pdfclown</groupId>
+            <artifactId>pdfclown-common-maven-plugin</artifactId>
+            -->
+            <configuration>
+              <flattenMode>resolveCiFriendliesOnly</flattenMode>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <!-- 
@@ -997,8 +1048,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <artifactId>flatten-maven-plugin</artifactId>
             <configuration>
               <flattenMode>bom</flattenMode>
-              <pomElements
-                  combine.children="append">
+              <pomElements>
                 <properties>remove</properties>
                 <dependencyManagement>extended_interpolate</dependencyManagement>
                 <build>remove</build>
@@ -1056,8 +1106,16 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <configuration>
               <toolchains>
                 <jdk>
-                  <version>${javaVersion}</version>
-                  <vendor>openjdk</vendor>
+                  <!--
+                    NOTE: Apparently, the Version Range Specification
+                    <https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html> provides
+                    no primitive way to express the condition "any version within the same major"
+                    (for example, "any version 11" can only be expressed as "[11,12)", but this
+                    implies defining also the upper bound major in another property (since the
+                    interpolation mechanism doesn't support transformation to express
+                    `${javaVersion} + 1`); as a workaround, we specify an arbitrarily large minor
+                    (9) to cover all the plausible range. -->
+                  <version>[${javaVersion},${javaVersion}.9]</version>
                 </jdk>
               </toolchains>
             </configuration>
