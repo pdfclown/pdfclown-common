@@ -550,6 +550,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           </executions>
         </plugin>
 -->
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
@@ -584,6 +585,16 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <tagNameFormat>@{project.version}</tagNameFormat>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>${sonatype.central.publishing.version}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <publishingServerId>central</publishingServerId>
           </configuration>
         </plugin>
 
@@ -836,11 +847,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
-            <version>${sonatype.central.publishing.version}</version>
-            <extensions>true</extensions>
-            <configuration>
-              <publishingServerId>central</publishingServerId>
-            </configuration>
           </plugin>
         </plugins>
       </build>
@@ -1005,9 +1011,9 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
         </file>
       </activation>
       <properties>
+        <gpg.skip>true</gpg.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.install.skip>true</maven.install.skip>
-        <skipPublishing>true</skipPublishing>
       </properties>
       <build>
         <plugins>
@@ -1016,6 +1022,20 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <executions>
               <execution>
                 <id>default-jar</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!--
+            NOTE: `skipPublishing` parameter doesn't work, so we have to force disabling via phase.
+          -->
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>injected-central-publishing</id>
                 <phase>none</phase>
               </execution>
             </executions>

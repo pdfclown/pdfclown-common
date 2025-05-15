@@ -118,6 +118,24 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <configuration>
+            <dependencyLinks>
+              <dependencyLink>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <url>https://www.javadoc.io/static/org.assertj/assertj-core/${assertj-core.version}</url>
+              </dependencyLink>
+            </dependencyLinks>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -130,20 +148,6 @@
       <plugin>
         <groupId>org.eclipse.sisu</groupId>
         <artifactId>sisu-maven-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <dependencyLinks>
-            <dependencyLink>
-              <groupId>org.assertj</groupId>
-              <artifactId>assertj-core</artifactId>
-              <url>https://www.javadoc.io/static/org.assertj/assertj-core/${assertj-core.version}</url>
-            </dependencyLink>
-          </dependencyLinks>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -181,6 +185,7 @@
               </execution>
             </executions>
           </plugin>
+
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>mrm-maven-plugin</artifactId>
