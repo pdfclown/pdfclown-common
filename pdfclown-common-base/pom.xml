@@ -7,7 +7,7 @@
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   USAGE
 
-  - Basic build (without integration tests, sources jar nor javadoc jar):
+  - Basic build (without integration tests, sources jar or javadoc jar):
       mvn install
 
   - Full build (with integration tests, sources jar and javadoc jar):
