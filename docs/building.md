@@ -31,14 +31,24 @@ This document describes how to set up your development environment to build and 
     ```
 
 - **[pre-commit](https://pre-commit.com/)** [[installation instructions](https://pre-commit.com/#install)]
+- **[commitizen](https://commitizen-tools.github.io/commitizen/)** [[installation instructions](https://commitizen-tools.github.io/commitizen/#requirements)]
+- **[REUSE tool](https://reuse.software/)** [[installation instructions](https://reuse.readthedocs.io/en/latest/readme.html#install)]
 
 ## Setup
 
-1. install [REUSE](https://reuse.software/spec-3.3/) pre-commit hook:
+1. install **commit validation hooks**:
 
         pre-commit install
 
-    This hook automatically runs `reuse lint` on every commit, preventing your commit from going through if it doesn't pass REUSE validation.
+    Installed hooks (activated whenever a commit is submitted):
+
+    - [commit-check](https://github.com/commit-check/commit-check) — triggers `check-branch`, aborting the new commit if [branch validation](https://conventional-branch.github.io/) failed
+    - [commitizen](https://commitizen-tools.github.io/commitizen/getting_started/#integration-with-pre-commit) — triggers `cz check`, aborting the new commit if [message validation](https://www.conventionalcommits.org/en/v1.0.0/) failed
+    - [REUSE](https://reuse.software/dev/#pre-commit-hook) — triggers `reuse lint`, aborting the new commit if [REUSE validation](https://reuse.software/spec-3.3/) failed
+
+    To update the hooks to latest version:
+
+        pre-commit autoupdate
 
 ## Building
 

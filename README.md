@@ -17,6 +17,7 @@ Common functionalities for pdfClown.org projects.
 
 This project adheres to the following specifications:
 
+- [Conventional Branch](https://conventional-branch.github.io/)
 - [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
 - [REUSE 3.3](https://reuse.software/spec-3.3/)
 - [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)

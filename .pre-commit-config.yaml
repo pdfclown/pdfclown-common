@@ -1,8 +1,12 @@
-# SPDX-FileCopyrightText: 2020 Free Software Foundation Europe e.V.
-# SPDX-License-Identifier: CC0-1.0
-#
-# See <https://reuse.software/dev/>
 repos:
+  - repo: https://github.com/commit-check/commit-check
+    rev: v0.9.5
+    hooks:
+      - id: check-branch
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.7.0
+    hooks:
+      - id: commitizen
   - repo: https://github.com/fsfe/reuse-tool
     rev: v5.0.2
     hooks:
