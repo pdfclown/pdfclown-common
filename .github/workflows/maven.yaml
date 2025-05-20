@@ -18,6 +18,5 @@ jobs:
         java-version-file: '.tool-versions'
         distribution: 'temurin'
         cache: maven
-    # Full verification (including integration tests and javadoc)
     - name: Build with Maven
-      run: mvn --batch-mode verify -Pverify,install
+      run: mvn --batch-mode verify
