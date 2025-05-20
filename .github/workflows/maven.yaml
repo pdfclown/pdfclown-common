@@ -15,7 +15,7 @@ jobs:
     - name: Set up tool JDK
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version-file: '.tool-versions'
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
