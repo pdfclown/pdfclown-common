@@ -10,15 +10,6 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-/*
- * NOTE: Apache License applies to the following methods:
- * - isNumeric
- * - strNormAll
- */
-/*
-  SPDX-FileCopyrightText: Copyright The Apache Software Foundation <https://www.apache.org>
-  SPDX-License-Identifier: Apache-2.0
- */
 package org.pdfclown.common.util;
 
 import java.util.Random;
@@ -229,20 +220,18 @@ public final class Strings {
     return isNumeric(value, false, true);
   }
 
-  /*-
-   * Original FQN: org.apache.commons.lang3.StringUtils.isNumeric
-   * Source: https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java
-   * License: see file header.
-   */
+  // SPDX-SnippetBegin
+  // SPDX-SnippetCopyrightText: © 2001-2025 The Apache Software Foundation
+  // SPDX-License-Identifier: Apache-2.0
+  //
+  // Source: https://github.com/apache/commons-lang/blob/73f99230910010c1056bb6c04b36a04261da8b7d/src/main/java/org/apache/commons/lang3/StringUtils.java#L3682
+  // SourceFQN: org.apache.commons.lang3.StringUtils.isNumeric(CharSequence)
+  // Changes: see @implNote
   /**
    * Gets whether the given string contains only Unicode digits, with optional leading sign, either
    * positive or negative, and decimal point.
    * <p>
-   * NOTE: Contrary to the original org.apache.commons.lang3 implementation, this method allows for
-   * a leading sign, either positive or negative, and a decimal point.
-   * </p>
-   * <p>
-   * NOTE: If a string passes the numeric test, it may still generate an exception when parsed by
+   * NOTE: Even if a string passes this test, it may still generate an exception when parsed by
    * Integer.parseInt or Long.parseLong (eg, if the value is outside the range for int or long
    * respectively).
    * </p>
@@ -269,6 +258,9 @@ public final class Strings {
    *          Whether {@code value} should be integer (ie, without decimal point).
    * @param signable
    *          Whether {@code value} can contain a leading sign.
+   * @implNote Contrary to the original implementation
+   *           ({@code org.apache.commons.lang3.StringUtils.isNumeric(CharSequence)}), this method
+   *           allows for a leading sign, either positive or negative, and a decimal point.
    */
   public static boolean isNumeric(@Nullable final CharSequence value, final boolean integer,
       final boolean signable) {
@@ -301,6 +293,7 @@ public final class Strings {
     }
     return true;
   }
+  // SPDX-SnippetEnd
 
   /**
    * Gets whether the given string represents an unsigned integer number (ie, contains only Unicode
@@ -408,11 +401,13 @@ public final class Strings {
     return strNormAll(value, EMPTY, true);
   }
 
-  /*-
-   * Original FQN: org.apache.commons.lang3.StringUtils.normalizeSpace
-   * Source: https://github.com/apache/commons-lang/blob/master/src/main/java/org/apache/commons/lang3/StringUtils.java
-   * License: see file header.
-   */
+  // SPDX-SnippetBegin
+  // SPDX-SnippetCopyrightText: © 2001-2025 The Apache Software Foundation
+  // SPDX-License-Identifier: Apache-2.0
+  //
+  // Source: https://github.com/apache/commons-lang/blob/73f99230910010c1056bb6c04b36a04261da8b7d/src/main/java/org/apache/commons/lang3/StringUtils.java#L5364
+  // SourceFQN: org.apache.commons.lang3.StringUtils.normalizeSpace(String)
+  // Changes: see @implNote
   /**
    * Normalizes the given value replacing sequences of whitespace characters by a single space
    * (similar to <a href=
@@ -449,6 +444,9 @@ public final class Strings {
    * @param trimmed
    *          Whether {@code value} must be trimmed.
    * @return {@code defaultValue}, if {@code value} is {@code null} or normalized value is empty.
+   * @implNote Contrary to the original implementation
+   *           ({@code org.apache.commons.lang3.StringUtils.normalizeSpace(String)}), this method
+   *           allows to control trimming and default value.
    */
   public static String strNormAll(@Nullable String value, String defaultValue, boolean trimmed) {
     /*
@@ -482,6 +480,7 @@ public final class Strings {
         ? new String(newChars, 0, count)
         : defaultValue;
   }
+  // SPDX-SnippetEnd
 
   /**
    * (see {@link #strNormAll(String, String, boolean)})
