@@ -99,6 +99,7 @@ public final class Strings {
    * System-dependent line separator ({@link System#lineSeparator()} alias).
    */
   public static final String EOL = System.lineSeparator();
+
   /**
    * Empty string, used as a marker to conveniently force the compiler to treat the following
    * concatenated character as a string.
@@ -109,6 +110,16 @@ public final class Strings {
    *String str = S + HYPHEN;</pre>
    */
   public static final String S = EMPTY;
+
+  /**
+   * <a href="https://en.wikipedia.org/wiki/Ellipsis">Common (aka Associated Press-style)
+   * ellipsis</a>.
+   */
+  public static final String ELLIPSIS = S + DOT + DOT + DOT;
+  /**
+   * <a href="https://en.wikipedia.org/wiki/Ellipsis">Chicago-style ellipsis</a>.
+   */
+  public static final String ELLIPSIS__CHICAGO = S + DOT + NBSP + DOT + NBSP + DOT;
 
   /**
    * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
@@ -124,7 +135,7 @@ public final class Strings {
    * @see StringUtils#abbreviate(String, int)
    */
   public static String abbreviateMultiline(String value, int maxLineCount, int averageLineLength) {
-    return abbreviateMultiline(value, maxLineCount, averageLineLength, "...");
+    return abbreviateMultiline(value, maxLineCount, averageLineLength, ELLIPSIS);
   }
 
   /**
