@@ -13,7 +13,6 @@
 package org.pdfclown.common.util.lang;
 
 import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.CLASS;
 
 import java.lang.annotation.Documented;
@@ -21,33 +20,32 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated type is
- * <a href="https://en.wikipedia.org/wiki/Immutable_object">strongly immutable</a>.
+ * Indicates that the annotated type is immutable.
+ * <p>
+ * Immutability is stricter than {@linkplain Unmodifiable unmodifiability}.
+ * </p>
  * <h2>Requirements</h2>
  * <ul>
  * <li>class:
  * <ul>
- * <li>the annotated class is {@code final}</li>
- * <li>the annotated class complies with the requirements of {@linkplain WeakImmutable weak
- * immutability}</li>
+ * <li>the annotated class has only {@code final} fields, which are themselves effectively immutable
+ * (eg, defensive copy of arrays and other mutable objects)</li>
+ * <li>the annotated class is {@code final} (<b>strong immutability</b>), or not (<b>weak
+ * immutability</b>)</li>
+ * <li>the parent class of the annotated class is itself immutable</li>
  * </ul>
  * </li>
  * <li>interface:
  * <ul>
  * <li>the annotated interface has no member with state-altering semantics (setters or other methods
- * with side effects); any semantic detail delegated by parent interfaces must be settled to
- * immutability</li>
- * <li>all the parent interfaces of the annotated interface are themselves immutable (or weakly
- * immutable, if limited to semantic details delegated to derived types)</li>
+ * with side effects), and its getters return types which are themselves immutable</li>
+ * <li>all the parent interfaces of the annotated interface are themselves immutable</li>
  * </ul>
- * <p>
- * NOTE: Strong immutability at interface level is obviously limited to contract: it is
- * implementers' responsibility to honor its semantics (and annotate derived types accordingly).
- * </p>
  * </li>
  * </ul>
  *
  * @author Stefano Chizzolini
+ * @see Unmodifiable
  * @implNote Because of the <a href="https://github.com/google/guava/issues/2960">notorious mess</a>
  *           around defunct JSR 305, to avoid bloating dependencies with yet another idiosyncratic
  *           sub-standard set of annotations, the minimalist set in this package is meant to
@@ -56,6 +54,6 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(CLASS)
-@Target({ TYPE, TYPE_USE })
+@Target(TYPE)
 public @interface Immutable {
 }
