@@ -433,27 +433,8 @@ public final class Objects {
    * <p>
    * This is a shorthand to explicit non-null assertion, useful to confirm expected state to
    * compiler when null check is redundant (contrary to
-   * {@link java.util.Objects#requireNonNull(Object)}, which enforces null check); some examples:
+   * {@link java.util.Objects#requireNonNull(Object)}, which enforces null check).
    * </p>
-   * <ul>
-   * <li>chained call (it would cause NPE nonetheless, no need of prior null check): <pre>
-   *{@code @}Nullable Foo getMyProperty() {
-   *  . . .
-   *}
-   *
-   *nonNull(getMyProperty()).getAnotherProperty();</pre></li>
-   * <li>non-null argument (it would cause NPE nonetheless, no need of prior null check): <pre>
-   *{@code @}Nullable Foo getMyProperty() {
-   *  . . .
-   *}
-   *
-   *void myMethod(@NonNull Foo foo) {
-   *  requireNotNull(foo);
-   *  . . .
-   *}
-   *
-   *myMethod(nonNull(getMyProperty()));</pre></li>
-   * </ul>
    * <p>
    * NOTE: Depending on the compiler's nullness policies' strictness, such method may be unnecessary
    * and more conveniently replaced by <code>@SuppressWarnings("null")</code> (see also
@@ -978,14 +959,13 @@ public final class Objects {
   }
 
   private static String fqn(@Nullable Object obj, boolean dotted) {
-    return fqn(asType(obj).getName(), dotted);
+    return fqn(objTo(asType(obj), Class::getName), dotted);
   }
 
   private static String fqn(@Nullable String s, boolean dotted) {
-    if (s == null)
-      return "null";
-
-    return s.replace('$', dotted ? '.' : '$');
+    return s != null
+        ? s.replace('$', dotted ? '.' : '$')
+        : "null";
   }
 
   private static String sqn(@Nullable Object obj, boolean dotted) {
@@ -993,9 +973,7 @@ public final class Objects {
   }
 
   private static String sqn(@Nullable String s, boolean dotted) {
-    return s
-        .substring(s.lastIndexOf('.') + 1)
-        .replace('$', dotted ? '.' : '$');
+    return fqn(objTo(s, $ -> $.substring($.lastIndexOf('.') + 1)), dotted);
   }
 
   private Objects() {
