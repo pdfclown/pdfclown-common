@@ -1,6 +1,6 @@
 pdfClown Common <https://github.com/pdfclown/pdfclown-common>
 Copyright 2025 Stefano Chizzolini and others
-Licensed under LGPL 3.0 or later <https://www.gnu.org/licenses/lgpl-3.0.html>
+Licensed under LGPL 3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>
 
 
 This product reuses source code from third-party projects [1]:

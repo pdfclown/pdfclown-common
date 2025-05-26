@@ -26,7 +26,7 @@ See [Project Conventions](docs/conventions.md) for further information.
 
 ## License
 
-pdfClown Common is Open Source software released under the **[GNU Lesser General Public License (LGPL), version 3 or later](LICENSE.txt)**.
+pdfClown Common is Open Source software released under the **[GNU Lesser General Public License (LGPL), version 3.0](LICENSE.txt)**.
 
 See [NOTICE](NOTICE.txt) for attributions.
 

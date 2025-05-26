@@ -96,7 +96,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
       ```java
       // SPDX-SnippetBegin
       // SPDX-SnippetCopyrightText: © 2016 Foo Ltd
-      // SPDX-License-Identifier: LGPL-3.0-or-later
+      // SPDX-License-Identifier: LGPL-3.0-only
       //
       // Source: https://github.com/foo/bar/blob/e9e7ce933f564da9a0dbbca476bd74a25d6f0663/src/main/java/org/foo/bar/graphics/AnotherClass.java
       // Changes: algorithm X substituted with Y

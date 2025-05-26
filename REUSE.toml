@@ -1,17 +1,17 @@
 version = 1
 
 # NOTE: This is a hack (see <https://reuse.software/faq/#lgpl-only>) to make
-# `reuse` tool validate GPL-3.0-or-later license as used (it is required as
+# `reuse` tool validate GPL-3.0-only license as used (it is required as
 # base of LGPL, even if it is never referenced directly by source code).
 [[annotations]]
 path = ".gitignore"
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
-SPDX-License-Identifier = "LGPL-3.0-or-later OR GPL-3.0-or-later"
+SPDX-License-Identifier = "LGPL-3.0-only OR GPL-3.0-only"
 
 [[annotations]]
 path = ["NOTICE.txt", "src/**"]
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
-SPDX-License-Identifier = "LGPL-3.0-or-later"
+SPDX-License-Identifier = "LGPL-3.0-only"
 
 [[annotations]]
 path = [".tool-versions", "**/*.config", "**/*.toml", "**/*.yaml"]
