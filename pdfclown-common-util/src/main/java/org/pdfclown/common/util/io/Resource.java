@@ -51,7 +51,7 @@ public interface Resource {
    *          File.
    * @return {@code null}, if the resource corresponding to {@code file} does not exist.
    */
-  public static @Nullable PathResource of(File file) {
+  static @Nullable PathResource of(File file) {
     return (PathResource) of(file.toString());
   }
 
@@ -65,7 +65,7 @@ public interface Resource {
    *          Path.
    * @return {@code null}, if the resource corresponding to {@code path} does not exist.
    */
-  public static @Nullable PathResource of(Path path) {
+  static @Nullable PathResource of(Path path) {
     return (PathResource) of(path.toString());
   }
 
@@ -79,7 +79,7 @@ public interface Resource {
    *          Resource name.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  public static @Nullable Resource of(String name) {
+  static @Nullable Resource of(String name) {
     return of(name, Resource.class.getClassLoader());
   }
 
@@ -95,7 +95,7 @@ public interface Resource {
    *          Class loader for resource lookup.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  public static @Nullable Resource of(String name, ClassLoader cl) {
+  static @Nullable Resource of(String name, ClassLoader cl) {
     return of(name, cl, Path::toAbsolutePath);
   }
 
@@ -123,19 +123,19 @@ public interface Resource {
    *           <li>[<b>explicit classpath resource</b>] if {@code name} is prefixed by
    *           {@code "classpath:"}, it is resolved through {@code cl} and returned</li>
    *           <li>[<b>filesystem resource</b>] {@code name} is converted through
-   *           {@code fileResolver} to an absolute filesystem path: if its node exists on
-   *           {@code fs}, it is returned</li>
+   *           {@code fileResolver} to an absolute filesystem path; if it exists, it is
+   *           returned</li>
    *           <li>[<b>generic URL resource</b>] if {@code name} is an absolute URL, it is
    *           returned</li>
-   *           <li>[<b>implicit classpath resource</b>] otherwise ({@code name} is a relative URL),
-   *           it is resolved through {@code cl} and returned</li>
+   *           <li>[<b>implicit classpath resource</b>] otherwise, {@code name} is resolved through
+   *           {@code cl} and returned</li>
    *           </ol>
    *           <p>
    *           NOTE: In any case, the resolved resource is checked for existence before being
    *           returned.
    *           </p>
    */
-  public static @Nullable Resource of(String name, ClassLoader cl,
+  static @Nullable Resource of(String name, ClassLoader cl,
       Function<Path, Path> fileResolver) {
     if (name.startsWith(URI_SCHEME_PART__CLASSPATH))
       // [explicit classpath resource]
@@ -179,7 +179,7 @@ public interface Resource {
    *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  public static @Nullable Resource of(String name, Function<Path, Path> fileResolver) {
+  static @Nullable Resource of(String name, Function<Path, Path> fileResolver) {
     return of(name, Resource.class.getClassLoader(), fileResolver);
   }
 
@@ -193,7 +193,7 @@ public interface Resource {
    *          URL.
    * @return {@code null}, if the resource corresponding to {@code url} does not exist.
    */
-  public static @Nullable Resource of(URL url) {
+  static @Nullable Resource of(URL url) {
     return of(url.toString());
   }
 
@@ -209,8 +209,6 @@ public interface Resource {
 
   /**
    * Opens a connection to this resource.
-   *
-   * @throws IOException
    */
   default InputStream openStream() throws IOException {
     return getUrl().openStream();

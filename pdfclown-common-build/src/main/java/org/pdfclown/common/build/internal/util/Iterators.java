@@ -49,12 +49,14 @@ public final class Iterators {
   public static Iterator<Class> ancestors(final Class type, final Comparator<Class> comparator,
       Set<Class> stoppers, boolean stopperExclusive) {
     return new Iterator<>() {
-      Iterator<Class> base;
+      final Iterator<Class> base;
       {
         Set<Class> superTypes = new TreeSet<>(comparator);
         Class superType = type;
+        //noinspection StatementWithEmptyBody
         while ((superType = superType.getSuperclass()) != null
             && collect(superType, superTypes, stoppers, stopperExclusive)) {
+          // NOOP
         }
         base = superTypes.iterator();
       }
@@ -81,7 +83,6 @@ public final class Iterators {
        * ignored.
        * </p>
        *
-       * @param type
        * @param superTypes
        *          Target collection.
        * @param stoppers

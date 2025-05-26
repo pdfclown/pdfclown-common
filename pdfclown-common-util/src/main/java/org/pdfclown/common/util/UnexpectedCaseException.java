@@ -50,9 +50,6 @@ public class UnexpectedCaseException extends AssertionError {
   }
 
   /**
-   * @param value
-   * @param message
-   * @param cause
    */
   public UnexpectedCaseException(@Nullable Object value, @Nullable String message,
       @Nullable Throwable cause) {

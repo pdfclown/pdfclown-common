@@ -39,9 +39,10 @@ public class TextFileMatcher extends TypeSafeMatcher<Path> {
     return new TextFileMatcher(expectedContentPath, true);
   }
 
-  private String actual;
-  private Path expectedContentPath;
-  private TextMatcher matcher;
+  @SuppressWarnings("NotNullFieldNotInitialized")
+  private /* @InitNonNull */ String actual;
+  private final Path expectedContentPath;
+  private final TextMatcher matcher;
 
   protected TextFileMatcher(Path expectedContentPath, boolean caseIgnored) {
     try {

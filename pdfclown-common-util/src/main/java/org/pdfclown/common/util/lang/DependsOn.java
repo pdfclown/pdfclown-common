@@ -33,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Indicates the element relies on non-essential dependencies and must therefore be decoupled from
- * main code in case those dependencies may be excluded at runtime.
+ * Indicates that the element relies on non-essential dependencies and must therefore be decoupled
+ * from main code in case those dependencies may be excluded at runtime.
  *
  * @author Stefano Chizzolini
  * @apiNote To decouple code relying on non-essential dependencies:
@@ -84,7 +84,7 @@ public @interface DependsOn {
    *
    * @author Stefano Chizzolini
    */
-  static class Registry {
+  class Registry {
     private static final Logger log = LoggerFactory.getLogger(Registry.class);
 
     private static final Map<String, Boolean> dependables = new HashMap<>();
@@ -117,7 +117,7 @@ public @interface DependsOn {
      *          Either an instance or a class.
      */
     public static boolean isUsable(Object obj) {
-      Class<?> dependentType = asType(obj);
+      Class<?> dependentType = requireNonNull(asType(obj), "`obj`");
       var annot = dependentType.getDeclaredAnnotation(DependsOn.class);
       if (annot != null) {
         for (String dependency : annot.value()) {

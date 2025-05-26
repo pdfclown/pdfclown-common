@@ -23,17 +23,14 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.ToIntFunction;
-import org.json.JSONException;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util.Iterators;
@@ -89,52 +86,42 @@ public class ModelMapper<T> {
     /**
      * Gets the all-but-these-properties selector for the given type.
      *
-     * @param type
      * @param level
      *          Exclusion level (ie, selection is applied from this level).
-     * @param properties
      */
     public static PropertySelector excludeProperties(Class<?> type, int level,
-        @NonNull String... properties) {
+        String... properties) {
       return new PropertySelector(type, true, level, properties);
     }
 
     /**
      * Gets the all-but-these-properties selector for the given type.
-     *
-     * @param type
-     * @param properties
      */
-    public static PropertySelector excludeProperties(Class<?> type, @NonNull String... properties) {
+    public static PropertySelector excludeProperties(Class<?> type, String... properties) {
       return excludeProperties(type, 0, properties);
     }
 
     /**
      * Gets the nothing-but-these-properties selector for the given type.
      *
-     * @param type
      * @param level
      *          Inclusion level (ie, selection is applied up to this level).
-     * @param properties
      */
     public static PropertySelector includeProperties(Class<?> type, int level,
-        @NonNull String... properties) {
+        String... properties) {
       return new PropertySelector(type, false, level, properties);
     }
 
     /**
      * Gets the nothing-but-these-properties selector for the given type.
-     *
-     * @param type
-     * @param properties
      */
-    public static PropertySelector includeProperties(Class<?> type, @NonNull String... properties) {
+    public static PropertySelector includeProperties(Class<?> type, String... properties) {
       return includeProperties(type, Integer.MAX_VALUE, properties);
     }
 
     private boolean exclusive;
     private boolean mutable;
-    private List<Rule> rules;
+    private final List<Rule> rules;
     private Class<?> type;
 
     /**
@@ -161,8 +148,7 @@ public class ModelMapper<T> {
     /**
      * Creates an immutable selector.
      */
-    public PropertySelector(Class<?> type, boolean exclusive, int level,
-        @NonNull String... properties) {
+    public PropertySelector(Class<?> type, boolean exclusive, int level, String... properties) {
       this(type, exclusive, level, Set.of(properties) /* NOTE: Immutable set */);
     }
 
@@ -212,8 +198,8 @@ public class ModelMapper<T> {
        * NOTE: In order to be selected, all rules MUST be satisfied.
        */
       for (var rule : rules) {
-        if (!(((level < rule.level) != exclusive
-            && rule.properties.contains(propertyName)) != exclusive))
+        if (((level < rule.level) != exclusive
+            && rule.properties.contains(propertyName)) == exclusive)
           return false;
       }
       return true;
@@ -258,7 +244,7 @@ public class ModelMapper<T> {
   @FunctionalInterface
   protected interface ValueMapper {
     @Nullable
-    Object map(@Nullable Object value, List<PropertySelector> selectors,
+    Object map(Object value, List<PropertySelector> selectors,
         Set<Object> visitedObjs, int level);
   }
 
@@ -278,14 +264,14 @@ public class ModelMapper<T> {
 
     private int minPriority;
     private int maxPriority;
-    private Map<Class, Integer> priorities = new HashMap<>();
+    private final Map<Class, Integer> priorities = new HashMap<>();
     /**
      * Explicitly mapped types.
      * <p>
      * Represents all the mappings not derived from related ones.
      * </p>
      */
-    private Map<ValueMapper, Class> rootTypes = new HashMap<>();
+    private final Map<ValueMapper, Class> rootTypes = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     ValueMapperMap() {
@@ -332,14 +318,14 @@ public class ModelMapper<T> {
     }
 
     @Override
-    public @Nullable ValueMapper put(@Nullable Class key, @Nullable ValueMapper value) {
+    public @Nullable ValueMapper put(Class key, ValueMapper value) {
       if (!rootTypes.containsKey(value)) {
         rootTypes.put(value, key);
       }
       return super.put(key, value);
     }
 
-    public @Nullable ValueMapper put(@Nullable Class key, @Nullable ValueMapper value,
+    public @Nullable ValueMapper put(Class key, ValueMapper value,
         int priority) {
       if (priority < minPriority) {
         subtractExact(priority, maxPriority) /* Checks underflow */;
@@ -357,8 +343,7 @@ public class ModelMapper<T> {
     }
 
     @Override
-    protected void putRelated(@Nullable Class relatedKey, @Nullable Class key,
-        @Nullable ValueMapper value) {
+    protected void putRelated(Class relatedKey, Class key, ValueMapper value) {
       put(key, value, priorities.getOrDefault(relatedKey, 0));
 
       if (log.isDebugEnabled()) {
@@ -388,19 +373,15 @@ public class ModelMapper<T> {
         return $obj.toString();
     });
 
-    valueMappers.put(Iterable.class, ($obj, $selectors, $visitedObjs, $level) -> {
-      return map($obj, $selectors, $visitedObjs, $level);
-    });
+    valueMappers.put(Iterable.class, this::map);
 
-    valueMappers.put(Map.class, ($obj, $selectors, $visitedObjs, $level) -> {
-      return map($obj, $selectors, $visitedObjs, $level);
-    });
+    valueMappers.put(Map.class, this::map);
 
     valueMappers.put(Map.Entry.class, ($obj, $selectors, $visitedObjs, $level) -> {
       @SuppressWarnings("rawtypes")
       var entry = (Map.Entry) $obj;
-      return entry.getKey().toString() + ": "
-          + Objects.toString(mapValue(entry.getValue(), $selectors, $visitedObjs, $level));
+      return entry.getKey() + ": "
+          + mapValue(entry.getValue(), $selectors, $visitedObjs, $level);
     });
   }
 
@@ -422,7 +403,6 @@ public class ModelMapper<T> {
    *
    * @param obj
    *          Object to map.
-   * @throws JSONException
    * @implNote Because of visited-object tracking, to ensure consistent mappings across multiple
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
@@ -439,7 +419,6 @@ public class ModelMapper<T> {
    * @param selectors
    *          Filters for selective inclusion/exclusion of object properties based on their parent
    *          type. Types outside this collection are fully included by default.
-   * @throws JSONException
    * @implNote Because of visited-object tracking, to ensure consistent mappings across multiple
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
@@ -453,12 +432,11 @@ public class ModelMapper<T> {
    *
    * @param objs
    *          Objects to map.
-   * @throws JSONException
    * @implNote Because of visited-object tracking, to ensure consistent mappings across multiple
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
    */
-  public JsonArray mapAll(Collection<@NonNull ? extends T> objs) {
+  public JsonArray mapAll(Collection<? extends T> objs) {
     return mapAll(objs, List.of());
   }
 
@@ -470,12 +448,11 @@ public class ModelMapper<T> {
    * @param selectors
    *          Filters for selective inclusion/exclusion of object properties based on their parent
    *          type. Types outside this collection are fully included by default.
-   * @throws JSONException
    * @implNote Because of visited-object tracking, to ensure consistent mappings across multiple
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
    */
-  public JsonArray mapAll(Collection<@NonNull ? extends T> objs, List<PropertySelector> selectors) {
+  public JsonArray mapAll(Collection<? extends T> objs, List<PropertySelector> selectors) {
     var ret = new JsonArray();
     var visitedObjs = new HashSet<>();
     for (var obj : objs) {
@@ -489,7 +466,7 @@ public class ModelMapper<T> {
    * <p>
    * {@code obj} is added to {@code visitedObjs} to prevent duplicated mappings and infinite loops
    * on circular references: <span class="important">it is caller's responsibility to check
-   * {@code visitedObjs} <i>before</i> calling this method in order to fallback to an alternate,
+   * {@code visitedObjs} <i>before</i> calling this method in order to fall back to an alternate,
    * reference-like representation</span> (eg, as a PDF reference (say, "14 0 R") instead of its
    * referenced PDF object) in case {@code obj} has already been visited.
    * </p>
@@ -506,7 +483,6 @@ public class ModelMapper<T> {
    * @throws IllegalArgumentException
    *           if {@code obj} has already been visited (circular references MUST be resolved by the
    *           caller with an alternate, reference-like representation of {@code obj}).
-   * @throws JSONException
    * @implNote To ensure consistent mappings across multiple sessions over the same object, a strict
    *           transformation ordering is enforced (properties are therefore sorted before being
    *           processed).
@@ -522,7 +498,6 @@ public class ModelMapper<T> {
 
     PropertySelector objSelector = typeSelectors != null
         ? typeSelectors.computeIfAbsent(obj.getClass(), $ -> {
-          assert $ != null;
           /*-
            * NOTE: Applied property selector is the most specific to the object type, according to
            * these rules:
@@ -579,9 +554,9 @@ public class ModelMapper<T> {
         objProperties = Introspections.propertyDescriptors(obj.getClass(), null);
         /*
          * NOTE: Properties are sorted before being processed to ensure consistent mappings across
-         * multiple sessions over over the same object.
+         * multiple sessions over the same object.
          */
-        Collections.sort(objProperties, Comparator.comparing(PropertyDescriptor::getName));
+        objProperties.sort(Comparator.comparing(PropertyDescriptor::getName));
       } catch (IntrospectionException ex) {
         throw new RuntimeException(ex);
       }
@@ -623,7 +598,6 @@ public class ModelMapper<T> {
    *
    * @param obj
    *          Object to map.
-   * @param objSelector
    * @param objJson
    *          JSON representation of {@code obj}.
    * @param level
@@ -655,6 +629,11 @@ public class ModelMapper<T> {
       log.debug("mapValue(level: {}): {}", level, sqn(value));
     }
 
-    return valueMappers.get(value.getClass()).map(value, selectors, visitedObjs, level);
+    var valueMapper = valueMappers.get(value.getClass());
+    assert valueMapper != null /*
+                                * NOTE: By definition, there MUST be a fallback mapper for Object
+                                * class, so it cannot be null in any case
+                                */;
+    return valueMapper.map(value, selectors, visitedObjs, level);
   }
 }

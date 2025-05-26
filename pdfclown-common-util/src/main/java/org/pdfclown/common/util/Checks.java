@@ -17,7 +17,6 @@ import static org.pdfclown.common.util.Exceptions.differingArg;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.util.ParamMessage.ARG;
-import static org.pdfclown.common.util.Strings.strNormToNull;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -25,6 +24,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.lang.PolyNull;
 
 /**
  * Validation utilities.
@@ -45,7 +45,7 @@ public final class Checks {
      * Whether the input is among the given options or undefined.
      */
     @SafeVarargs
-    public static <@Nullable T> Predicate<T> isAmong(@NonNull T... options) {
+    public static <T> Predicate<@Nullable T> isAmong(@NonNull T... options) {
       return $ -> {
         if ($ == null)
           return true;
@@ -67,7 +67,7 @@ public final class Checks {
     /**
      * Whether values are equivalent.
      */
-    public static <@Nullable T> Predicate<T> isEqual(@Nullable Object otherValue) {
+    public static <T> Predicate<@Nullable T> isEqual(@Nullable Object otherValue) {
       return $ -> Objects.equals($, otherValue);
     }
 
@@ -85,12 +85,6 @@ public final class Checks {
 
     /**
      */
-    public static <@Nullable T> Predicate<T> isNotNull() {
-      return $ -> $ != null;
-    }
-
-    /**
-     */
     public static <@NonNull T extends Number> Predicate<T> isPositive() {
       return $ -> $.doubleValue() > 0;
     }
@@ -98,14 +92,14 @@ public final class Checks {
     /**
      * Whether values are identical.
      */
-    public static <@Nullable T> Predicate<T> isSame(@Nullable Object otherValue) {
+    public static <T> Predicate<@Nullable T> isSame(@Nullable Object otherValue) {
       return $ -> $ == otherValue;
     }
 
     /**
-     * Whether value is an instance of any of the given types or undefined.
+     * Whether value is an instance of the given types or undefined.
      */
-    public static <@Nullable T> Predicate<T> isType(Class<?>... types) {
+    public static <T> Predicate<@Nullable T> isType(Class<?>... types) {
       return $ -> {
         if ($ == null)
           return true;
@@ -130,18 +124,22 @@ public final class Checks {
   }
 
   /**
-   * Checks the given value through an algorithm.
+   * Checks the given value through custom logic.
+   * <p>
+   * Useful wherever inline code is impossible and calling a full-fledged validation method is
+   * inconvenient (e.g., constructors).
+   * </p>
    *
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @param checker
-   *          Checking algorithm. Expected to throw a {@link RuntimeException} if {@code value}
-   *          doesn't pass its logic.
+   *          Checks the given value, throwing a {@link RuntimeException} if {@code value} fails the
+   *          check.
    * @return {@code value}
-   * @apiNote Useful wherever inline code is impossible and calling a full-fledged validation method
-   *          is inconvenient (eg, constructors).
+   * @throws RuntimeException
+   *           if the check failed.
    */
   public static <T> T check(T value, Consumer<T> checker) {
     checker.accept(value);
@@ -156,13 +154,12 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param condition
-   *          Check condition. Expected to return {@code false} if {@code value} doesn't pass its
-   *          logic.
+   *          Returns {@code false} if {@code value} fails the check.
    * @param exceptionSupplier
-   *          Exception to throw if {@code condition} is negative.
+   *          Supplies the exception to throw if the check failed.
    * @return {@code value}
    * @throws RuntimeException
-   *           (supplied by {@code exceptionSupplier}) if {@code condition} is negative.
+   *           (supplied by {@code exceptionSupplier}) if the check failed.
    */
   public static <T> T check(T value, Predicate<T> condition,
       Function<T, RuntimeException> exceptionSupplier) {
@@ -173,68 +170,88 @@ public final class Checks {
   }
 
   /**
-   * Checks that the given value is among the given options (or null).
+   * Checks that the given value is among the given options, or undefined.
    *
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @param exceptionSupplier
+   *          Supplies the exception to throw if the check failed.
    * @param options
+   *          Any expected value which {@code value} may match.
    * @return {@code value}
+   * @throws RuntimeException
+   *           (supplied by {@code exceptionSupplier}) if the check failed.
    */
   @SafeVarargs
-  public static <@Nullable T> T checkAmong(T value, Function<T, RuntimeException> exceptionSupplier,
+  public static <@Nullable T> @PolyNull T checkAmong(@PolyNull T value,
+      Function<T, RuntimeException> exceptionSupplier,
       @NonNull T... options) {
     return check(value, Condition.isAmong(options), exceptionSupplier);
   }
 
   /**
-   * Checks that the given value is among the given options (or null).
+   * Checks that the given value is among the given options, or undefined.
    *
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param message
+   *          Exception message.
    * @param options
+   *          Any expected value which {@code value} may match.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   @SafeVarargs
-  public static <@Nullable T> T checkAmong(T value, @Nullable String name, @Nullable String message,
+  public static <@Nullable T> @PolyNull T checkAmong(@PolyNull T value, @Nullable String name,
+      @Nullable String message,
       @NonNull T... options) {
     return checkAmong(value, $ -> wrongArgOpt(name, value, message, options), options);
   }
 
   /**
-   * Checks that the given value is among the given options (or null).
+   * Checks that the given value is among the given options, or undefined.
    *
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param options
+   *          Any expected value which {@code value} may match.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   @SafeVarargs
-  public static <@Nullable T> T checkAmong(T value, @Nullable String name, @NonNull T... options) {
+  public static <@Nullable T> @PolyNull T checkAmong(@PolyNull T value, @Nullable String name,
+      @NonNull T... options) {
+    //noinspection RedundantCast
     return checkAmong(value, name, (String) null, options);
   }
 
   /**
-   * Checks that the given value is among the given options (or null).
+   * Checks that the given value is among the given options, or undefined.
    *
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @param options
+   *          Any expected value which {@code value} may match.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   @SafeVarargs
-  public static <@Nullable T> T checkAmong(T value, @NonNull T... options) {
+  public static <@Nullable T> @PolyNull T checkAmong(@PolyNull T value, @NonNull T... options) {
     return checkAmong(value, (String) null, options);
   }
 
@@ -244,8 +261,12 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param min
+   *          Lower bound.
    * @param max
+   *          Higher bound.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   public static <@NonNull T extends Number> T checkBetween(T value, T min, T max) {
     return checkBetween(value, min, max, (String) null);
@@ -257,9 +278,14 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param min
+   *          Lower bound.
    * @param max
+   *          Higher bound.
    * @param exceptionSupplier
+   *          Supplies the exception to throw if the check failed.
    * @return {@code value}
+   * @throws RuntimeException
+   *           (supplied by {@code exceptionSupplier}) if the check failed.
    */
   public static <@NonNull T extends Number> T checkBetween(T value, T min, T max,
       Function<T, RuntimeException> exceptionSupplier) {
@@ -272,11 +298,16 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param min
+   *          Lower bound.
    * @param max
+   *          Higher bound.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
-  public static <@NonNull T extends Number> @NonNull T checkBetween(T value, T min, T max,
+  public static <@NonNull T extends Number> T checkBetween(T value, T min, T max,
       @Nullable String name) {
     return checkBetween(value, min, max, name, null);
   }
@@ -287,12 +318,18 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param min
+   *          Lower bound.
    * @param max
+   *          Higher bound.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param message
+   *          Exception message.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
-  public static <@NonNull T extends Number> @NonNull T checkBetween(T value, T min, T max,
+  public static <@NonNull T extends Number> T checkBetween(T value, T min, T max,
       @Nullable String name, @Nullable String message) {
     return checkBetween(value, min, max, $ -> wrongArg(name, value,
         ARG + " (should be between " + ARG + " and " + ARG + ")",
@@ -305,9 +342,13 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param otherValue
+   *          Value to compare to {@code value}.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
-  public static <@Nullable T> T checkEqual(T value, @Nullable Object otherValue) {
+  public static <@Nullable T> @PolyNull T checkEqual(@PolyNull T value,
+      @Nullable Object otherValue) {
     return checkEqual(value, otherValue, (String) null);
   }
 
@@ -317,10 +358,14 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param otherValue
+   *          Value to compare to {@code value}.
    * @param exceptionSupplier
+   *          Supplies the exception to throw if the check failed.
    * @return {@code value}
+   * @throws RuntimeException
+   *           (supplied by {@code exceptionSupplier}) if the check failed.
    */
-  public static <@Nullable T> T checkEqual(T value, @Nullable Object otherValue,
+  public static <@Nullable T> @PolyNull T checkEqual(@PolyNull T value, @Nullable Object otherValue,
       Function<T, RuntimeException> exceptionSupplier) {
     return check(value, Condition.isEqual(otherValue), exceptionSupplier);
   }
@@ -331,10 +376,14 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param otherValue
+   *          Value to compare to {@code value}.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
-  public static <@Nullable T> T checkEqual(T value, @Nullable Object otherValue,
+  public static <@Nullable T> @PolyNull T checkEqual(@PolyNull T value, @Nullable Object otherValue,
       @Nullable String name) {
     return checkEqual(value, otherValue, name, null);
   }
@@ -345,17 +394,26 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param otherValue
+   *          Value to compare to {@code value}.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param message
+   *          Exception message.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
-  public static <@Nullable T> T checkEqual(T value, @Nullable Object otherValue,
+  public static <@Nullable T> @PolyNull T checkEqual(@PolyNull T value, @Nullable Object otherValue,
       @Nullable String name, @Nullable String message) {
     return checkEqual(value, otherValue, $ -> differingArg(name, value, otherValue, message));
   }
 
   /**
    * Checks the given index is within the sequence range (0 to {@code length}, inclusive).
+   *
+   * @throws IndexOutOfBoundsException
+   *           if the check failed.
+   * @see Objects#checkIndex(int, int)
    */
   public static int checkIndexAdd(int index, int length) {
     if (index < 0 || index > length)
@@ -365,58 +423,13 @@ public final class Checks {
   }
 
   /**
-   * @param value
-   *          Value to check.
-   * @return Normalized {@code value} (stripped of both leading and trailing
-   *         {@linkplain Character#isWhitespace(int) white space}).
-   */
-  public static @Nullable String checkNotBlank(@Nullable String value) {
-    return checkNotBlank(value, (String) null);
-  }
-
-  /**
-   * @param value
-   *          Value to check.
-   * @param exceptionSupplier
-   * @return Normalized {@code value} (stripped of both leading and trailing
-   *         {@linkplain Character#isWhitespace(int) white space}).
-   */
-  public static @Nullable String checkNotBlank(@Nullable String value,
-      Function<@Nullable String, RuntimeException> exceptionSupplier) {
-    return check(strNormToNull(value), Condition.isNotNull(), exceptionSupplier);
-  }
-
-  /**
-   * @param value
-   *          Value to check.
-   * @param name
-   * @return Normalized {@code value} (stripped of both leading and trailing
-   *         {@linkplain Character#isWhitespace(int) white space}).
-   */
-  public static @Nullable String checkNotBlank(@Nullable String value, @Nullable String name) {
-    return checkNotBlank(value, name, null);
-  }
-
-  /**
-   * @param value
-   *          Value to check.
-   * @param name
-   * @param message
-   * @return Normalized {@code value} (stripped of both leading and trailing
-   *         {@linkplain Character#isWhitespace(int) white space}).
-   */
-  public static @Nullable String checkNotBlank(@Nullable String value, @Nullable String name,
-      @Nullable String message) {
-    return checkNotBlank(value,
-        $ -> wrongArg(name, $, requireNonNullElse(message, "MUST be non-empty")));
-  }
-
-  /**
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   public static <@NonNull T extends Number> T checkNotNegative(T value) {
     return checkNotNegative(value, null);
@@ -428,7 +441,10 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   public static <@NonNull T extends Number> T checkNotNegative(T value, @Nullable String name) {
     return Checks.<@NonNull T>check(value, Condition.isNotNegative(),
@@ -441,6 +457,8 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   public static <@NonNull T extends Number> T checkPositive(T value) {
     return checkPositive(value, null);
@@ -452,7 +470,10 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   public static <@NonNull T extends Number> T checkPositive(T value, @Nullable String name) {
     return Checks.<@NonNull T>check(value, Condition.isPositive(),
@@ -465,7 +486,10 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param types
+   *          Any expected type which {@code value} may match as an instance.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   @SafeVarargs
   public static <@Nullable T> T checkType(T value, Class<? extends T>... types) {
@@ -480,7 +504,10 @@ public final class Checks {
    * @param value
    *          Value to check.
    * @param type
+   *          Type which {@code value} is expected to match as an instance.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   @SuppressWarnings("unchecked")
   public static <@Nullable T, U extends T> U checkType(T value, Class<U> type) {
@@ -488,15 +515,19 @@ public final class Checks {
   }
 
   /**
-   * Checks that the given value is an instance of any of the given types (or null).
+   * Checks that the given value is an instance of the given types, or undefined.
    *
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @param exceptionSupplier
+   *          Supplies the exception to throw if the check failed.
    * @param types
+   *          Any expected type which {@code value} may match as an instance.
    * @return {@code value}
+   * @throws RuntimeException
+   *           (supplied by {@code exceptionSupplier}) if the check failed.
    */
   @SafeVarargs
   public static <@Nullable T> T checkType(T value, Function<T, RuntimeException> exceptionSupplier,
@@ -505,33 +536,43 @@ public final class Checks {
   }
 
   /**
-   * Checks that the given value is an instance of any of the given types (or null).
+   * Checks that the given value is an instance of the given types, or undefined.
    *
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param types
+   *          Any expected type which {@code value} may match as an instance.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   @SafeVarargs
   public static <@Nullable T> T checkType(T value, @Nullable String name,
       Class<? extends T>... types) {
+    //noinspection RedundantCast
     return checkType(value, name, (String) null, types);
   }
 
   /**
-   * Checks that the given value is an instance of any of the given types (or null).
+   * Checks that the given value is an instance of the given types, or undefined.
    *
    * @param <T>
    *          Value type.
    * @param value
    *          Value to check.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param message
+   *          Exception message.
    * @param types
+   *          Any expected type which {@code value} may match as an instance.
    * @return {@code value}
+   * @throws RuntimeException
+   *           if the check failed.
    */
   @SafeVarargs
   public static <@Nullable T> T checkType(T value, @Nullable String name, @Nullable String message,

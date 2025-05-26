@@ -323,7 +323,7 @@ public final class ResourceNames {
           b = new StringBuilder();
         }
         if (lastEnd < i) {
-          b.append(name.substring(lastEnd, i));
+          b.append(name, lastEnd, i);
         }
         b.append(replacement);
         lastEnd = i + 1;

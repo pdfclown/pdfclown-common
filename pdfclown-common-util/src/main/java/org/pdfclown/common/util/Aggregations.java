@@ -54,7 +54,7 @@ public final class Aggregations {
    * @author Stefano Chizzolini
    */
   private static class FailSafeMapBasedSet<E> extends FailSafeSet<E> {
-    private Map<E, Boolean> base;
+    private final Map<E, Boolean> base;
 
     public FailSafeMapBasedSet(Map<E, Boolean> base) {
       super(base.keySet());
@@ -80,7 +80,7 @@ public final class Aggregations {
    * @author Stefano Chizzolini
    */
   private static class FailSafeSet<E> extends AbstractSet<E> {
-    private Set<E> base;
+    private final Set<E> base;
 
     public FailSafeSet(Set<E> base) {
       this.base = requireNonNull(base);
@@ -126,7 +126,7 @@ public final class Aggregations {
       return new Iterator<>() {
         int i;
         @SuppressWarnings({ "unchecked" })
-        E[] items = base.toArray((E[]) new Object[base.size()]);
+        final E[] items = base.toArray((E[]) new Object[base.size()]);
 
         @Override
         public boolean hasNext() {
@@ -199,12 +199,9 @@ public final class Aggregations {
   /**
    * Extended mutable list.
    *
-   * @param <E>
    * @author Stefano Chizzolini
    */
-  private static class XtArrayList<E>
-      extends ArrayList<E>
-      implements XtList<E> {
+  private static class XtArrayList<E> extends ArrayList<E> implements XtList<E> {
     private static final long serialVersionUID = 1L;
 
     public XtArrayList() {
@@ -224,14 +221,10 @@ public final class Aggregations {
   /**
    * Extended mutable map.
    *
-   * @param <K>
-   * @param <V>
    * @author Stefano Chizzolini
    */
   @SuppressWarnings("null")
-  private static class XtHashMap<K, V>
-      extends HashMap<K, V>
-      implements XtMap<K, V> {
+  private static class XtHashMap<K, V> extends HashMap<K, V> implements XtMap<K, V> {
     private static final long serialVersionUID = 1L;
 
     public XtHashMap() {
@@ -251,12 +244,9 @@ public final class Aggregations {
   /**
    * Extended mutable set.
    *
-   * @param <E>
    * @author Stefano Chizzolini
    */
-  private static class XtHashSet<E>
-      extends HashSet<E>
-      implements XtSet<E> {
+  private static class XtHashSet<E> extends HashSet<E> implements XtSet<E> {
     private static final long serialVersionUID = 1L;
 
     public XtHashSet() {
@@ -274,25 +264,6 @@ public final class Aggregations {
   }
 
   /**
-   * Appends an array of elements to the given collection.
-   *
-   * @param target
-   *          Target collection.
-   * @param a
-   *          Array of elements to append.
-   * @return Whether the given collection changed as a result of the call.
-   */
-  public static <E> boolean addAll(Collection<E> target, E[] a) {
-    if (a.length == 0)
-      return false;
-
-    for (E e : a) {
-      target.add(e);
-    }
-    return true;
-  }
-
-  /**
    * Inserts an array of elements in the given list.
    *
    * @param target
@@ -302,6 +273,7 @@ public final class Aggregations {
    * @param a
    *          Array of elements to insert.
    * @return Whether the given list changed as a result of the call.
+   * @see Collections#addAll( Collection, Object[])
    */
   public static <E> boolean addAll(List<E> target, int index, E[] a) {
     if (a.length == 0)
@@ -486,14 +458,14 @@ public final class Aggregations {
    * Creates a set backed by a {@link WeakHashMap}, safe for concurrent modifications.
    */
   public static <E> Set<E> failSafeWeakSet() {
-    return failSafeSet(new WeakHashMap<E, Boolean>());
+    return failSafeSet(new WeakHashMap<>());
   }
 
   /**
    * Performs an action for each element of the given list until all elements have been processed or
    * the action throws an exception (relayed to the caller).
    * <p>
-   * The behavior of this method is unspecified if the action performs side-effects that modify the
+   * The behavior of this method is unspecified if the action performs side effects that modify the
    * underlying source of elements, unless an overriding class has specified a concurrent
    * modification policy.
    * </p>
@@ -540,9 +512,7 @@ public final class Aggregations {
   @SafeVarargs
   public static <E> HashSet<E> hashSet(E... ee) {
     var ret = new HashSet<E>(ee.length);
-    for (var e : ee) {
-      ret.add(e);
-    }
+    Collections.addAll(ret, ee);
     return ret;
   }
 
@@ -601,9 +571,7 @@ public final class Aggregations {
   @SafeVarargs
   public static <E> XtList<E> list(E... ee) {
     var ret = new XtArrayList<E>(ee.length);
-    for (var e : ee) {
-      ret.add(e);
-    }
+    Collections.addAll(ret, ee);
     return ret;
   }
 
@@ -704,7 +672,6 @@ public final class Aggregations {
    * If {@code index} is out of bounds, nothing happens.
    * </p>
    *
-   * @param target
    * @param index
    *          Index of the element to remove.
    * @return Removed element; {@code null}, if {@code target} is undefined or {@code index} is out
@@ -734,9 +701,7 @@ public final class Aggregations {
   @SafeVarargs
   public static <E> XtSet<E> set(E... ee) {
     var ret = new XtHashSet<E>(ee.length);
-    for (var e : ee) {
-      ret.add(e);
-    }
+    Collections.addAll(ret, ee);
     return ret;
   }
 
@@ -835,6 +800,7 @@ public final class Aggregations {
    * Traverses depth-first the given collection of tree nodes.
    *
    * @param <T>
+   *          Node type.
    * @param c
    *          Node children.
    * @param childrenGetter
@@ -865,7 +831,7 @@ public final class Aggregations {
     return lists.get(index).stream()
         .flatMap($ -> cartesianProduct(lists, index + 1)
             .map($$ -> {
-              var newList = new ArrayList<Object>($$);
+              var newList = new ArrayList<>($$);
               newList.add(0, $);
               return newList;
             }));

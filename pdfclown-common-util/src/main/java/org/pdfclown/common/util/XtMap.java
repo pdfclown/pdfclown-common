@@ -75,7 +75,6 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   @SuppressWarnings("unchecked")
   default @Nullable V getAny(K... keys) {
     for (K key : keys) {
-      @Nullable
       V value = get(key);
       if (value != null)
         return value;
@@ -94,7 +93,6 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
    * @return {@code null}, if no match to the given keys was found.
    */
   default @Nullable V getAny(K key1, K key2) {
-    @Nullable
     V value = get(key1);
     if (value != null)
       return value;
@@ -115,7 +113,6 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
    * @return {@code null}, if no match to the given keys was found.
    */
   default @Nullable V getAny(K key1, K key2, K key3) {
-    @Nullable
     V value = get(key1);
     if (value != null)
       return value;
@@ -130,7 +127,6 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   /**
    * Gets the key associated to the given value.
    *
-   * @param value
    * @implNote The default implementation doesn't rely on bidirectional maps, to say that the only
    *           abstract way to retrieve a key from a value is to iterate the whole map (O(n)
    *           complexity). It is therefore recommended to override it with an optimized solution.
@@ -159,8 +155,6 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   /**
    * Fluent {@link #put(Object, Object) put}.
    *
-   * @param key
-   * @param value
    * @return This object.
    */
   default XtMap<K, V> with(K key, V value) {
@@ -171,7 +165,6 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   /**
    * Fluent {@link #remove(Object) remove}.
    *
-   * @param key
    * @return This object.
    */
   default XtMap<K, V> without(K key) {

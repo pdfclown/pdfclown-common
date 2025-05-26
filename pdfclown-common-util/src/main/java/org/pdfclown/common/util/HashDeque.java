@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
 public class HashDeque<E> extends ArrayDeque<E> {
   private static final long serialVersionUID = 1L;
 
-  private final Set<E> set = new HashSet<>();
+  private final Set<E> base = new HashSet<>();
 
   private final boolean tracked;
 
@@ -55,7 +55,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
 
   @Override
   public boolean add(E e) {
-    if (!set.add(e))
+    if (!base.add(e))
       return false;
 
     super.addLast(e);
@@ -93,7 +93,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
   }
 
   /**
-   * Removes all of the elements from this deque.
+   * Removes all the elements from this deque.
    *
    * @param reset
    *          Whether element tracking is reset.
@@ -101,7 +101,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
   public void clear(boolean reset) {
     super.clear();
     if (reset) {
-      set.clear();
+      base.clear();
     }
   }
 
@@ -123,7 +123,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
   @Override
   public Iterator<E> iterator() {
     return new Iterator<>() {
-      Iterator<E> base = HashDeque.super.iterator();
+      final Iterator<E> base = HashDeque.super.iterator();
       E next;
 
       @Override
@@ -140,7 +140,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
       public void remove() {
         Iterator.super.remove();
         if (!tracked) {
-          set.remove(next);
+          HashDeque.this.base.remove(next);
         }
       }
     };
@@ -153,7 +153,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
 
   @Override
   public boolean offerFirst(E e) {
-    if (!set.add(e))
+    if (!base.add(e))
       return false;
 
     super.addFirst(e);
@@ -174,7 +174,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
   public @Nullable E pollFirst() {
     var ret = super.pollFirst();
     if (!tracked) {
-      set.remove(ret);
+      base.remove(ret);
     }
     return ret;
   }
@@ -183,7 +183,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
   public @Nullable E pollLast() {
     var ret = super.pollLast();
     if (!tracked) {
-      set.remove(ret);
+      base.remove(ret);
     }
     return ret;
   }
@@ -226,7 +226,8 @@ public class HashDeque<E> extends ArrayDeque<E> {
   public boolean removeFirstOccurrence(@Nullable Object o) {
     var ret = super.removeFirstOccurrence(o);
     if (ret && !tracked) {
-      set.remove(o);
+      //noinspection SuspiciousMethodCalls
+      base.remove(o);
     }
     return ret;
   }
@@ -234,6 +235,10 @@ public class HashDeque<E> extends ArrayDeque<E> {
   @Override
   public final boolean removeIf(Predicate<? super E> filter) {
     int oldSize = size();
+    /*
+     * NOTE: Cannot delegate to super.removeIf(..) as we have to track removal via custom iterator.
+     */
+    //noinspection Java8CollectionRemoveIf
     for (var itr = iterator(); itr.hasNext();) {
       var e = itr.next();
       if (filter.test(e)) {

@@ -30,8 +30,9 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class PatternsTest extends BaseTest {
-  static class RegexArgument extends Argument<String> {
+  public static class RegexArgument extends Argument<String> {
     /**
      * Samples matching {@linkplain #getValue() regex}.
      */
@@ -49,7 +50,7 @@ public class PatternsTest extends BaseTest {
     }
   }
 
-  private static Stream<Arguments> _globToRegex() {
+  static Stream<Arguments> _globToRegex() {
     return argumentsStream(
         // expected
         asList(
@@ -76,7 +77,7 @@ public class PatternsTest extends BaseTest {
                     "/home/SuperUser/a/random/subdir/foocat/NOTEmd"))));
   }
 
-  private static Stream<Arguments> _wildcardToRegex() {
+  static Stream<Arguments> _wildcardToRegex() {
     return argumentsStream(
         // expected
         asList(
@@ -90,6 +91,7 @@ public class PatternsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
+  @SuppressWarnings("CommentedOutCode")
   public void _globToRegex(String expected, RegexArgument glob) {
     var actual = (String) evalParameterized(
         () -> Patterns.globToRegex(glob.getValue()));
@@ -108,6 +110,7 @@ public class PatternsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
+  @SuppressWarnings("CommentedOutCode")
   public void _wildcardToRegex(String expected, RegexArgument pattern) {
     var actual = (String) evalParameterized(
         () -> Patterns.wildcardToRegex(pattern.getValue()));

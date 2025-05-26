@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONString;
+import org.jspecify.annotations.Nullable;
 
 /**
  * JSON object for domain modeling.
@@ -48,9 +49,9 @@ public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-SnippetCopyrightText: NONE
   // SPDX-License-Identifier: CC0-1.0
   //
-  // Source: Ibid.
+  // Source: ibid.
   // SourceFQN: org.json.JSONObject.indent(Writer, int)
-  private static final void indent(Writer writer, int indent) throws IOException {
+  private static void indent(Writer writer, int indent) throws IOException {
     for (int i = 0; i < indent; i += 1) {
       writer.write(' ');
     }
@@ -61,11 +62,13 @@ public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-SnippetCopyrightText: NONE
   // SPDX-License-Identifier: CC0-1.0
   //
-  // Source: Ibid.
+  // Source: ibid.
   // SourceFQN: org.json.JSONObject.writeValue(Writer, Object, int, int)
-  private static final Writer writeValue(Writer writer, Object value,
+  // Changes: null value flaw fixed.
+  @SuppressWarnings("UnusedReturnValue")
+  private static Writer writeValue(Writer writer, @Nullable Object value,
       int indentFactor, int indent) throws JSONException, IOException {
-    if (value == null || value.equals(null)) {
+    if (value == null || value.equals("null")) {
       writer.write("null");
     } else if (value instanceof JSONString) {
       Object o;
@@ -82,7 +85,7 @@ public class JsonObject extends JSONObject implements JsonElement {
         writer.write(numberAsString);
       } else {
         // The Number value is not a valid JSON number.
-        // Instead we will quote it as a string
+        // Instead, we will quote it as a string
         quote(numberAsString, writer);
       }
     } else if (value instanceof Boolean) {
@@ -108,14 +111,14 @@ public class JsonObject extends JSONObject implements JsonElement {
   }
   // SPDX-SnippetEnd
 
-  private Comparator<String> keyComparator;
+  private final Comparator<String> keyComparator;
 
-  JsonObject(Comparator<String> keyComparator) {
+  JsonObject(@Nullable Comparator<String> keyComparator) {
     this.keyComparator = keyComparator != null ? keyComparator : Comparator.naturalOrder();
   }
 
   @Override
-  public JSONObject put(String name, Object value) {
+  public JSONObject put(String name, @Nullable Object value) {
     return super.put(name, JsonElement.normValue(value));
   }
 
@@ -123,7 +126,7 @@ public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-SnippetCopyrightText: NONE
   // SPDX-License-Identifier: CC0-1.0
   //
-  // Source: Ibid.
+  // Source: ibid.
   // SourceFQN: org.json.JSONObject.write(Writer, int, int)
   // Changes: sort entries by key for serialization predictability.
   @Override

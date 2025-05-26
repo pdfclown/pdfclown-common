@@ -38,8 +38,6 @@ public class NotImplementedException extends UnsupportedOperationException {
   }
 
   /**
-   * @param message
-   * @param cause
    */
   public NotImplementedException(@Nullable String message, @Nullable Throwable cause) {
     super(isBlank(message)

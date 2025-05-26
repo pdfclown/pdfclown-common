@@ -123,6 +123,7 @@ public final class Configs {
    */
   private static final String URI_SCHEME__CLASSPATH = "classpath";
 
+  @SuppressWarnings("unused")
   private static final String RESOURCE_NAME_PREFIX__CLASSPATH = URI_SCHEME__CLASSPATH + COLON;
 
   /**

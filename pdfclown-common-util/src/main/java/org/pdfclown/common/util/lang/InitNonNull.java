@@ -36,7 +36,6 @@ import org.jspecify.annotations.Nullable;
  *class MyClass {
  *  {@code @}InitNonNull Object object;
  *
- *  {@code @}SuppressWarnings("null")
  *  MyClass() {
  *    . . .
  *    load();
@@ -48,12 +47,7 @@ import org.jspecify.annotations.Nullable;
  *}</pre>
  * <p>
  * [*] NOTE: This annotation is for documentation purposes only; since static analyzers don't
- * recognize its semantics, corresponding nullness warnings on construction have to be suppressed.
- * </p>
- * <p>
- * DO NOT use this annotation for mandatory fields which are expected to be manually set from
- * outside the class through explicit setter invocations: mark them as {@link Nullable @Nullable}
- * instead; their respective setter and getter shall be non-null.
+ * recognize its semantics, corresponding nullness warnings have to be suppressed.
  * </p>
  *
  * @author Stefano Chizzolini

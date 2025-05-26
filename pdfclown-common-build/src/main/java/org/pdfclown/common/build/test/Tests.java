@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.test;
 
-import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,6 +33,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.FailableSupplier;
@@ -122,11 +122,7 @@ public final class Tests {
    * @author Stefano Chizzolini
    */
   public static class ArgumentsGenerator {
-    private int count;
-    /**
-     * Argument counts.
-     */
-    private int[] counts;
+    private final int count;
     /**
      * Next expected result index.
      */
@@ -134,7 +130,7 @@ public final class Tests {
     /**
      * Argument moduli.
      */
-    private int[] mods;
+    private final int[] mods;
 
     /**
      * @param count
@@ -145,7 +141,7 @@ public final class Tests {
     ArgumentsGenerator(int count, List<?>[] args) {
       this.count = count;
 
-      counts = new int[args.length];
+      final var counts = new int[args.length];
       mods = new int[args.length - 1];
       for (int i = 0; i < counts.length; i++) {
         counts[i] = args[i].size();
@@ -185,7 +181,8 @@ public final class Tests {
               StringUtils.repeat('-', (i + 1) * 2),
               argNames.get(i),
               (i == 0 ? index : index % mods[i - 1]) / mods[i],
-              abbreviate(Objects.toString(args.get(i)).lines().findFirst().get(), "[...]", 80));
+              abbreviate(Objects.toString(args.get(i)).lines().findFirst().orElseThrow(), "[...]",
+                  80));
         }
       }
       out.print(expectedSourceCode);
@@ -263,7 +260,7 @@ public final class Tests {
           return "'" + $ + "'";
         else
           return $.toString().replace("\\", "\\\\").lines()
-              .collect(joining("\\n\"\n+ \"", "\"", "\""));
+              .collect(Collectors.joining("\\n\"\n+ \"", "\"", "\""));
       }, argNames, args);
     }
   }
@@ -293,7 +290,8 @@ public final class Tests {
     }
   }
 
-  private static ThreadLocal<ArgumentsGenerator> argumentsGenerator = new ThreadLocal<>();
+  private static final ThreadLocal<@Nullable ArgumentsGenerator> argumentsGenerator =
+      new ThreadLocal<>();
 
   /**
    * Design-time arguments generator for {@link Tests#argumentsStream(List, List...)

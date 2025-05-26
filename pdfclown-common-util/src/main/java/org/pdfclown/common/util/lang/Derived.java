@@ -22,11 +22,11 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Indicates that the annotated field represents a secondary state derived from primary state.
+ * Indicates that the annotated field represents secondary state, derived from primary state.
  * <p>
  * Contrary to {@link LazyNonNull @LazyNonNull}, <i>a field marked with this annotation can (at
  * least potentially) be later reset to {@code null}</i>, and re-initialized on next accessor call
- * (this behavior is typical of derived fields which store computetionally-intensive information
+ * (this behavior is typical of derived fields which store computationally-intensive information
  * based on primary state: if the latter changes, the former is invalidated so it can be freshly
  * re-initialized on demand). Consequently, this annotation is typically accompanied by
  * {@link Nullable @Nullable}; otherwise, it defaults to {@link NonNull @NonNull}, with
@@ -37,7 +37,7 @@ import org.jspecify.annotations.Nullable;
  * field should NEVER be accessed directly until its accessor method is called</i>.</span>
  * </p>
  * <p>
- * Useful for derived fields — eg [*]:
+ * For example [*]:
  * </p>
  * <pre>
  *{@code @}NullMarked
@@ -50,7 +50,6 @@ import org.jspecify.annotations.Nullable;
  *    . . .
  *  }
  *
- *  {@code @}SuppressWarnings("null")
  *  public Object getObject() {
  *    if (object == null) {
  *      object = primaryData.toString();

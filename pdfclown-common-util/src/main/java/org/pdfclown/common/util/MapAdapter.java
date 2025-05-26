@@ -36,7 +36,7 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public class MapAdapter<K, V> implements XtMap<K, V> {
-  private Map<? super K, ? super V> base;
+  private final Map<? super K, ? super V> base;
 
   public MapAdapter(Map<? super K, ? super V> base) {
     this.base = requireNonNull(base);
@@ -72,7 +72,7 @@ public class MapAdapter<K, V> implements XtMap<K, V> {
 
       @Override
       public void clear() {
-        MapAdapter.this.base.entrySet().clear();
+        MapAdapter.this.base.clear();
       }
 
       @Override
@@ -93,7 +93,7 @@ public class MapAdapter<K, V> implements XtMap<K, V> {
       @Override
       public Iterator<Entry<K, V>> iterator() {
         return new Iterator<>() {
-          Iterator<?> base = MapAdapter.this.base.entrySet().iterator();
+          final Iterator<?> base = MapAdapter.this.base.entrySet().iterator();
 
           @Override
           public boolean hasNext() {
@@ -169,11 +169,12 @@ public class MapAdapter<K, V> implements XtMap<K, V> {
 
       @Override
       public void clear() {
-        MapAdapter.this.base.keySet().clear();
+        MapAdapter.this.base.clear();
       }
 
       @Override
       public boolean contains(@Nullable Object o) {
+        //noinspection RedundantCollectionOperation
         return MapAdapter.this.base.keySet().contains(o);
       }
 
@@ -190,7 +191,7 @@ public class MapAdapter<K, V> implements XtMap<K, V> {
       @Override
       public Iterator<K> iterator() {
         return new Iterator<>() {
-          Iterator<? super K> base = MapAdapter.this.base.keySet().iterator();
+          final Iterator<? super K> base = MapAdapter.this.base.keySet().iterator();
 
           @Override
           public boolean hasNext() {
@@ -206,6 +207,7 @@ public class MapAdapter<K, V> implements XtMap<K, V> {
 
       @Override
       public boolean remove(@Nullable Object o) {
+        //noinspection RedundantCollectionOperation
         return MapAdapter.this.base.keySet().remove(o);
       }
 
@@ -273,7 +275,7 @@ public class MapAdapter<K, V> implements XtMap<K, V> {
 
       @Override
       public void clear() {
-        MapAdapter.this.base.values().clear();
+        MapAdapter.this.base.clear();
       }
 
       @Override
@@ -294,7 +296,7 @@ public class MapAdapter<K, V> implements XtMap<K, V> {
       @Override
       public Iterator<V> iterator() {
         return new Iterator<>() {
-          Iterator<? super V> base = MapAdapter.this.base.values().iterator();
+          final Iterator<? super V> base = MapAdapter.this.base.values().iterator();
 
           @Override
           public boolean hasNext() {

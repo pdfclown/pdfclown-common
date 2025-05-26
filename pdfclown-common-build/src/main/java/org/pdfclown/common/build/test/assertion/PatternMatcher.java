@@ -40,6 +40,7 @@ public class PatternMatcher extends TypeSafeMatcher<String> {
   }
 
   public static PatternMatcher containsPattern(CharSequence pattern, int flags) {
+    //noinspection MagicConstant
     return containsPattern(Pattern.compile(requireNonNull(pattern, "`pattern`").toString(), flags));
   }
 
@@ -52,6 +53,7 @@ public class PatternMatcher extends TypeSafeMatcher<String> {
   }
 
   public static PatternMatcher matchesPattern(CharSequence pattern, int flags) {
+    //noinspection MagicConstant
     return matchesPattern(Pattern.compile(requireNonNull(pattern, "`pattern`").toString(), flags));
   }
 

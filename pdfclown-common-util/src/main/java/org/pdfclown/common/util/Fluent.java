@@ -88,7 +88,9 @@ public interface Fluent {
    * </p>
    *
    * @param <T>
+   *          Input type.
    * @param <R>
+   *          Result type.
    * @param mapper
    *          Object transformer.
    * @return Transformed object.

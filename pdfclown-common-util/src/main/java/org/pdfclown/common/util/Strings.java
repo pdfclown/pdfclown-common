@@ -12,8 +12,6 @@
  */
 package org.pdfclown.common.util;
 
-import java.util.Random;
-import java.util.function.IntPredicate;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -122,6 +120,11 @@ public final class Strings {
   public static final String ELLIPSIS__CHICAGO = S + DOT + NBSP + DOT + NBSP + DOT;
 
   /**
+   * Empty string array.
+   */
+  public static final String[] STR_ARRAY__EMPTY = new String[0];
+
+  /**
    * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
    * substring with a standard ellipsis.
    *
@@ -179,6 +182,7 @@ public final class Strings {
         ret = ret.substring(0, maxLength);
       }
     }
+    //noinspection StringEquality
     if (ret != value) {
       ret += marker;
     }
@@ -278,8 +282,6 @@ public final class Strings {
     if (isEmpty(value))
       return false;
 
-    assert value != null;
-
     boolean decimal = false;
     for (int i = 0; i < value.length(); i++) {
       char c = value.charAt(i);
@@ -327,44 +329,6 @@ public final class Strings {
    */
   public static int lineStart(String text, int position) {
     return text.lastIndexOf('\n', position) + 1;
-  }
-
-  /**
-   * Generates a random alphanumeric string.
-   *
-   * @param length
-   *          String length.
-   * @param alphabetic
-   *          Whether (lower-case) alphabetic characters are included.
-   * @param numeric
-   *          Whether numeric characters are included.
-   */
-  public static String randomAlphanumeric(int length, boolean alphabetic, boolean numeric) {
-    int lBound = 0;
-    int uBound = 0;
-    IntPredicate filter = null;
-    if (numeric) {
-      final int lb = lBound = '0';
-      final int ub = uBound = '9';
-      filter = $ -> $ >= lb && $ <= ub;
-    }
-    if (alphabetic) {
-      final int lb = 'a';
-      final int ub = uBound = 'z';
-      IntPredicate f = $ -> $ >= lb && $ <= ub;
-      if (filter != null) {
-        filter = filter.or(f);
-      } else {
-        lBound = lb;
-        filter = f;
-      }
-    }
-    return new Random()
-        .ints(lBound, uBound + 1)
-        .filter(filter)
-        .limit(length)
-        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-        .toString();
   }
 
   /**
@@ -467,8 +431,6 @@ public final class Strings {
     if (isEmpty(value))
       return defaultValue;
 
-    assert value != null;
-
     final int size = value.length();
     final var newChars = new char[size];
     int count = 0;
@@ -527,10 +489,9 @@ public final class Strings {
   /**
    * Converts the given string to integer.
    *
-   * @param value
    * @return {@code null}, if {@code value} is invalid.
    */
-  public static @Nullable Integer toInteger(String value) {
+  public static @Nullable Integer strToInteger(String value) {
     try {
       return Integer.parseInt(value);
     } catch (NumberFormatException ex) {
@@ -554,7 +515,7 @@ public final class Strings {
    * <li>{@code "UNDERSCORE_TEST"} to {@code "underscore_TEST"}</li>
    * </ul>
    */
-  public static String uncapitalizeMultichar(String value) {
+  public static String uncapitalizeGreedy(String value) {
     char[] valueChars = value.toCharArray();
     for (int i = 0, limit = valueChars.length - 1; i <= limit; i++) {
       /*-

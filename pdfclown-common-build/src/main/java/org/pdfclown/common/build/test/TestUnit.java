@@ -272,9 +272,6 @@ public abstract class TestUnit implements TestEnvironment {
 
   /**
    * Asserts that log events matching the given criteria occurred, then resets logged events.
-   *
-   * @param level
-   * @param message
    */
   protected LoggingEvent assertLogged(Level level, Matcher<String> message) {
     var ret = assertLoggedAlso(level, message);
@@ -284,9 +281,6 @@ public abstract class TestUnit implements TestEnvironment {
 
   /**
    * Asserts that log events matching the given criteria occurred.
-   *
-   * @param level
-   * @param message
    */
   protected LoggingEvent assertLoggedAlso(Level level, Matcher<String> message) {
     return logInterceptor.assertLogged(level, message);
@@ -301,9 +295,6 @@ public abstract class TestUnit implements TestEnvironment {
 
   /**
    * Asserts that no log event matching the given criteria occurred, then resets logged events.
-   *
-   * @param level
-   * @param message
    */
   protected void assertNotLogged(@Nullable Level level, @Nullable Matcher<String> message) {
     assertNotLoggedAlso(level, message);
@@ -312,9 +303,6 @@ public abstract class TestUnit implements TestEnvironment {
 
   /**
    * Asserts that no log event matching the given criteria occurred.
-   *
-   * @param level
-   * @param message
    */
   protected void assertNotLoggedAlso(@Nullable Level level, @Nullable Matcher<String> message) {
     logInterceptor.assertNotLogged(level, message);

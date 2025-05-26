@@ -56,8 +56,6 @@ public final class Range<T> {
     private final boolean inclusive;
 
     /**
-     * @param value
-     * @param inclusive
      */
     private Bound(T value, boolean inclusive) {
       this.value = value;
@@ -65,6 +63,7 @@ public final class Range<T> {
     }
 
     @Override
+    @SuppressWarnings("EqualsDoesntCheckParameterClass")
     public boolean equals(@Nullable Object o) {
       if (o == this)
         return true;
@@ -122,7 +121,6 @@ public final class Range<T> {
   /**
    * Gets whether the given value is contained within this interval.
    *
-   * @param value
    * @apiNote Comparison is performed via natural order, so values are required to be
    *          {@link Comparable}.
    */
@@ -132,9 +130,6 @@ public final class Range<T> {
 
   /**
    * Gets whether the given value is contained within this interval.
-   *
-   * @param value
-   * @param comparator
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public boolean contains(T value, Comparator comparator) {

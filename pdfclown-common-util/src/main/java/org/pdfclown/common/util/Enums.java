@@ -14,6 +14,7 @@ package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.Objects.splitFqn;
 
 import java.util.HashMap;
@@ -41,7 +42,7 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public final class Enums {
-  private static Map<Class<?>, Map<?, ?>> values = new HashMap<>();
+  private static final Map<Class<?>, Map<?, ?>> values = new HashMap<>();
 
   /**
    * Gets the constant matching the given code.
@@ -141,7 +142,6 @@ public final class Enums {
    *           If there is no constant associated to {@code key}.
    */
   public static <E> E getOrThrow(Class<E> type, Object key) {
-    @Nullable
     E value = get(type, key);
     if (value == null)
       throw wrongArg("key", requireNonNull(key), "No matching constant in {}", type);
@@ -237,12 +237,12 @@ public final class Enums {
     return map(type, Collectors.toMap(keyMapper, Function.identity()));
   }
 
-  @SuppressWarnings({ "unchecked", "null" })
+  @SuppressWarnings("unchecked")
   private static <E, K> Map<K, E> map(Class<E> type,
       Collector<E, ?, @NonNull Map<K, E>> collector) {
     Stream<E> stream;
     if (Xnum.class.isAssignableFrom(type) && type.isInterface()) {
-      stream = (Stream<E>) BaseXnum.values((Class<Xnum<K>>) type).stream();
+      stream = (Stream<E>) nonNull(BaseXnum.values((Class<Xnum<K>>) type)).stream();
     } else if (type.isEnum()) {
       stream = Stream.of(type.getEnumConstants());
     } else

@@ -42,11 +42,10 @@ public interface JsonElement {
    * <li>ancillary objects (any other object)</li>
    * </ul>
    *
-   * @param value
    * @return {@link JsonElement}s are passed through; any other object is converted to string
    *         enforcing its stability across executions.
    */
-  static @Nullable Object normValue(Object value) {
+  static @Nullable Object normValue(@Nullable Object value) {
     if ((value instanceof JSONArray || value instanceof JSONObject)
         && !(value instanceof JsonElement))
       throw new IllegalArgumentException(

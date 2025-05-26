@@ -27,6 +27,7 @@ import org.pdfclown.common.util.__test.BaseTest;
  */
 public class ObjectsTest extends BaseTest {
   @Test
+  @SuppressWarnings("ConstantValue")
   public void _objOrGet() {
     List<Object> defaultResult = Collections.emptyList();
 
@@ -39,6 +40,7 @@ public class ObjectsTest extends BaseTest {
   }
 
   @Test
+  @SuppressWarnings("ConstantValue")
   public void _objToOrElse() {
     int defaultResult = 0;
 
@@ -51,6 +53,7 @@ public class ObjectsTest extends BaseTest {
   }
 
   @Test
+  @SuppressWarnings("ConstantValue")
   public void _objToOrGet() {
     int defaultResult = 0;
 

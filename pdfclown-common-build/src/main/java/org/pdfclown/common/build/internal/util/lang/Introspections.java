@@ -13,7 +13,7 @@
 package org.pdfclown.common.build.internal.util.lang;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.pdfclown.common.build.internal.util.Strings.uncapitalizeMultichar;
+import static org.pdfclown.common.build.internal.util.Strings.uncapitalizeGreedy;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -34,7 +34,7 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public final class Introspections {
-  private static Map<Class<?>, Map<String, PropertyDescriptor>> declaredPropertyDescriptors =
+  private static final Map<Class<?>, Map<String, PropertyDescriptor>> declaredPropertyDescriptors =
       new HashMap<>();
 
   private static final int PROPERTY_MODIFIER_MASK__ON = Modifier.PUBLIC;
@@ -55,23 +55,25 @@ public final class Introspections {
    * (<a href="https://bugs.openjdk.org/browse/JDK-8071693">JDK-8071693</a>), at the moment OpenJDK
    * ignores the introspection of default methods, whilst this method supports it;</li>
    * <li>interfaces as stop types: standard introspection works only on classes as stop types,
-   * whilst this method supports interfaces too.</li>
+   * whilst this method supports interfaces too (in such case, it looks for the farthest ancestor
+   * class implementing the interface along the inheritance line).</li>
    * </ul>
    *
    * @param type
+   *          Type whose properties are to retrieve.
    * @param stopType
-   * @return Mutable property list.
-   * @throws IntrospectionException
+   *          Ancestor type (exclusive) at which to stop the traversal of {@code type}'s inheritance
+   *          line.
    */
   public static List<PropertyDescriptor> propertyDescriptors(Class<?> type,
-      @Nullable Class<?> stopType)
-      throws IntrospectionException {
+      @Nullable Class<?> stopType) throws IntrospectionException {
     if (stopType != null) {
+      // Checking that `stopType` is actually an ancestor...
       var superType = type;
       if (stopType.isInterface()) {
         /*
-         * NOTE: If the stopType is an interface, looks for the highest class implementing it along
-         * the inheritance line.
+         * Looking for the farthest ancestor class implementing `stopType` interface along the
+         * inheritance line...
          */
         Class<?> actualStopType = null;
         while ((superType = superType.getSuperclass()) != null
@@ -84,7 +86,9 @@ public final class Introspections {
           superType = null;
         }
       } else {
+        //noinspection StatementWithEmptyBody
         while ((superType = superType.getSuperclass()) != null && superType != stopType) {
+          /* NOOP */
         }
       }
       if (superType == null)
@@ -127,7 +131,7 @@ public final class Introspections {
           } else {
             continue;
           }
-          propertyName = uncapitalizeMultichar(propertyName);
+          propertyName = uncapitalizeGreedy(propertyName);
         }
         declaredProperties.put(propertyName, new PropertyDescriptor(propertyName, method, null));
       }

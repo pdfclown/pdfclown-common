@@ -51,7 +51,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   /*
    * TODO: cache soft refs!
    */
-  private static Map<String, FileSystem> fileSystems = new HashMap<>();
+  private static final Map<String, FileSystem> fileSystems = new HashMap<>();
 
   static @Nullable ClasspathResource of(String name, ClassLoader cl) {
     URL url;

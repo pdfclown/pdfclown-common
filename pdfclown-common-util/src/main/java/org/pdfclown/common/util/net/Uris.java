@@ -60,11 +60,11 @@ public final class Uris {
    * <p>
    * This method remedies {@link URI#relativize(URI)} limitations, since the latter cannot
    * relativize a target path if the source is a subpath (<cite>"if the path of this URI is not a
-   * prefix of the path of the given URI, then the given URI is returned."</cite>), eg
+   * prefix of the path of the given URI, then the given URI is returned."</cite>) — for example,
    * </p>
    * <pre>
    * URI.create("https://example.io/path/from.html").relativize(
-   *    URI.create("https://example.io/path/way/longer/to.html"))</pre>
+   *   URI.create("https://example.io/path/way/longer/to.html"))</pre>
    * <p>
    * weirdly returns
    * </p>

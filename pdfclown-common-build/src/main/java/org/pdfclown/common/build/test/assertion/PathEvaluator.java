@@ -27,9 +27,6 @@ import java.awt.geom.PathIterator;
 public interface PathEvaluator {
   /**
    * Evaluates the given graphical path.
-   *
-   * @param itr
-   * @param evaluator
    */
   static void eval(PathIterator itr, PathEvaluator evaluator) {
     var coords = new double[3 * 2];
@@ -39,6 +36,7 @@ public interface PathEvaluator {
       switch (segmentKind) {
         case PathIterator.SEG_LINETO:
         case PathIterator.SEG_MOVETO:
+          //noinspection PointlessArithmeticExpression: informational purposes.
           coordsCount = 1 * 2;
           break;
         case PathIterator.SEG_QUADTO:
@@ -48,6 +46,7 @@ public interface PathEvaluator {
           coordsCount = 3 * 2;
           break;
         case PathIterator.SEG_CLOSE:
+          //noinspection PointlessArithmeticExpression: informational purposes.
           coordsCount = 0 * 2;
           break;
         default:
@@ -61,9 +60,6 @@ public interface PathEvaluator {
 
   /**
    * Evaluates the given shape.
-   *
-   * @param shape
-   * @param evaluator
    */
   static void eval(Shape shape, PathEvaluator evaluator) {
     eval(shape.getPathIterator(null), evaluator);

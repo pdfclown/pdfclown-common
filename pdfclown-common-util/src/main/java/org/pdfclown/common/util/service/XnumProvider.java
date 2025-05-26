@@ -26,7 +26,7 @@ public interface XnumProvider extends ServiceProvider {
    * Tries to load the implementation of the given {@link Xnum}-derived interface.
    *
    * @param <T>
-   * @param type
+   *          Interface type.
    * @return Whether loading succeeded.
    */
   <T extends Xnum<?>> boolean load(Class<T> type);

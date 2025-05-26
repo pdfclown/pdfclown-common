@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
  * between annotated inputs and outputs of a method</a>.
  * <p>
  * Arguments marked with this annotation will cause the method to return a non-null result, and vice
- * versa — like if there were two method overloads, eg [*]:
+ * versa — like if there were two method overloads, e.g. [*]:
  * </p>
  * <pre>
  *{@code @}NullMarked
@@ -57,8 +57,6 @@ import org.jspecify.annotations.Nullable;
  * </p>
  *
  * @author Stefano Chizzolini
- * @implNote This annotation is meant to temporarily substitute missing {@code @PolyNull} for
- *           documentation purposes, until standardized by the JSpecify initiative.
  */
 @Documented
 @Retention(CLASS)

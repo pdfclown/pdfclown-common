@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class Util {
+  @SuppressWarnings("LoggerInitializedWithForeignClass")
   static final Logger serviceProviderLog = LoggerFactory.getLogger(ServiceProvider.class);
 
   private Util() {

@@ -14,6 +14,7 @@ package org.pdfclown.common.util;
 
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElseGet;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongState;
 import static org.pdfclown.common.util.Objects.objTo;
@@ -28,6 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.lang.ReadOnly;
 import org.pdfclown.common.util.service.ServiceProvider;
 import org.pdfclown.common.util.service.XnumProvider;
 
@@ -96,7 +98,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   public static class XnumType<E extends Xnum<K>, @NonNull K> {
     private final Class<K> codeType;
     private final Predicate<K> codeValidator;
-    private Map<K, E> constants = new HashMap<>();
+    private final Map<K, E> constants = new HashMap<>();
     private final BiFunction<K, @NonNull Object, E> constructor;
     private boolean sealed;
     private final Class<E> type;
@@ -115,7 +117,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
         @Nullable Predicate<K> codeValidator, BiFunction<K, @NonNull Object, E> constructor) {
       this.type = requireNonNull(type);
       this.codeType = requireNonNull(codeType);
-      this.codeValidator = codeValidator != null ? codeValidator : $ -> true;
+      this.codeValidator = requireNonNullElseGet(codeValidator, () -> $ -> true);
       this.constructor = requireNonNull(constructor);
     }
 
@@ -233,7 +235,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   }
 
   /**
-   * {@linkplain BaseXnum#Xnum(Object, Object) Constructor} guard.
+   * {@linkplain BaseXnum#BaseXnum( Object, Object) Constructor} guard.
    * <p>
    * Ensures only internal calls are valid.
    * </p>
@@ -241,9 +243,9 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   private static final Object GUARD = new Object();
 
   @SuppressWarnings("rawtypes")
-  private static Map<Class, BaseXnum.XnumType> types = new HashMap<>();
+  private static final Map<Class, BaseXnum.XnumType> types = new HashMap<>();
 
-  private static List<@NonNull XnumProvider> providers =
+  private static final List<@NonNull XnumProvider> providers =
       ServiceProvider.discover(XnumProvider.class);
 
   /**
@@ -258,7 +260,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
    * @param code
    *          Domain-specific identity.
    */
-  public static <E extends Xnum<K>, K> @Nullable boolean contains(Class<E> type, @Nullable K code) {
+  public static <E extends Xnum<K>, K> boolean contains(Class<E> type, @Nullable K code) {
     return objToElse(get(type), $ -> $.constants.containsKey(code), false);
   }
 
@@ -314,10 +316,10 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
    * @param type
    *          Augmented enumeration type.
    */
-  public static <E extends Xnum<K>, K> @Nullable Collection<E> values(Class<E> type) {
+  public static <E extends Xnum<K>, K> @Nullable @ReadOnly Collection<E> values(Class<E> type) {
     /*
      * NOTE: The unmodifiable collection guarantees that changes to the backing collections are
-     * visible to the former too.
+     * visible to it too.
      */
     return objTo(get(type), $ -> unmodifiableCollection($.constants.values()));
   }
@@ -350,10 +352,9 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
     if (types.containsKey(type))
       throw wrongArg("type", type, "Interface already registered");
 
-    var xnumType = new XnumType<>(type, codeType, codeValidator, constructor)
-        .addAll(enumType);
-    types.put(xnumType.type, xnumType);
-    return xnumType;
+    var ret = new XnumType<>(type, codeType, codeValidator, constructor).addAll(enumType);
+    types.put(ret.type, ret);
+    return ret;
   }
 
   private final K code;

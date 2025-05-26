@@ -21,7 +21,6 @@ public final class LogMarker {
   /**
    * Marker for assertion log entries excluded from console.
    */
-  @SuppressWarnings("null")
   public static final org.slf4j.Marker VERBOSE = MarkerFactory.getMarker("VERBOSE");
 
   private LogMarker() {

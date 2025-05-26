@@ -34,6 +34,9 @@ public final class Objects {
       REGEX__JAVA_IDENTIFIER + "(\\." + REGEX__JAVA_IDENTIFIER + ")*";
   private static final String REGEX__HEX = "[0-9a-fA-F]+";
 
+  // SourceFQN: org.pdfclown.common.util.Objects#OBJ_ARRAY__EMPTY
+  public static final Object[] OBJ_ARRAY__EMPTY = new Object[0];
+
   public static final String PATTERN_GROUP__CLASS_FQN = "fqcn";
 
   /**
@@ -46,7 +49,7 @@ public final class Objects {
       String.format(Locale.ROOT, "(?<%s>%s)@%s", PATTERN_GROUP__CLASS_FQN, REGEX__CLASS_FQN,
           REGEX__HEX));
 
-  // SourceFQN: org.pdfclown.util.Objects.asType(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.asType(..)
   /**
    * Gets the type corresponding to the given object.
    * <p>
@@ -58,7 +61,7 @@ public final class Objects {
     return obj != null ? (obj instanceof Class ? (Class<?>) obj : obj.getClass()) : null;
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.fqn(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.fqn(..)
   /**
    * Gets the fully qualified type name of the given object.
    *
@@ -74,7 +77,7 @@ public final class Objects {
     return fqn(obj, false);
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.fqnd(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.fqnd(..)
   /**
    * Gets the fully qualified type name of the given object, replacing inner-class separators
    * ({@code $}) with dots.
@@ -86,12 +89,14 @@ public final class Objects {
     return fqn(obj, true);
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.objTo(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.objTo(..)
   /**
    * Maps the given object.
    *
    * @param <T>
+   *          Object type.
    * @param <R>
+   *          Return type.
    * @param obj
    *          Object to map.
    * @param mapper
@@ -102,7 +107,7 @@ public final class Objects {
     return obj != null ? mapper.apply(obj) : null;
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.objToLiteralString(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.objToLiteralString(..)
   /**
    * Maps the given object to its literal string representation (ie, inclusive of markers such as
    * quotes).
@@ -119,7 +124,7 @@ public final class Objects {
       return String.valueOf(obj);
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.requireState(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.requireState(..)
   /**
    * (see {@link #requireState(Object, String)})
    */
@@ -127,7 +132,7 @@ public final class Objects {
     return requireState(obj, "State UNDEFINED");
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.requireState(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.requireState(..)
   /**
    * Checks that the given object reference is not null.
    * <p>
@@ -158,7 +163,7 @@ public final class Objects {
     return obj;
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.sqn(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.sqn(..)
   /**
    * Gets the qualified simple type name of the given object, ie the simple class name qualified
    * with its outer class (eg, {@code MyOuterClass$MyInnerClass}), if present (otherwise, behaves
@@ -170,7 +175,7 @@ public final class Objects {
     return sqn(obj, false);
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.sqnd(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.sqnd(..)
   /**
    * Gets the qualified simple type name of the given object, replacing inner-class separators
    * ({@code $}) with dots, ie the simple class name qualified with its outer class (eg,
@@ -184,7 +189,7 @@ public final class Objects {
     return sqn(obj, true);
   }
 
-  // SourceFQN: org.pdfclown.util.Objects.typeOf(..)
+  // SourceFQN: org.pdfclown.common.util.Objects.typeOf(..)
   /**
    * Gets the type of the given object.
    */
@@ -192,18 +197,26 @@ public final class Objects {
     return obj != null ? obj.getClass() : null;
   }
 
+  // SourceFQN: org.pdfclown.common.util.Objects.fqn(..)
   private static String fqn(@Nullable Object obj, boolean dotted) {
-    if (obj == null)
-      return "null";
-
-    return asType(obj).getName().replace('$', dotted ? '.' : '$');
+    return fqn(objTo(asType(obj), Class::getName), dotted);
   }
 
+  // SourceFQN: org.pdfclown.common.util.Objects.fqn(..)
+  private static String fqn(@Nullable String s, boolean dotted) {
+    return s != null
+        ? s.replace('$', dotted ? '.' : '$')
+        : "null";
+  }
+
+  // SourceFQN: org.pdfclown.common.util.Objects.sqn(..)
   private static String sqn(@Nullable Object obj, boolean dotted) {
-    String s;
-    return (s = fqn(obj, false))
-        .substring(s.lastIndexOf('.') + 1)
-        .replace('$', dotted ? '.' : '$');
+    return sqn(fqn(obj, false), dotted);
+  }
+
+  // SourceFQN: org.pdfclown.common.util.Objects.sqn(..)
+  private static String sqn(@Nullable String s, boolean dotted) {
+    return fqn(objTo(s, $ -> $.substring($.lastIndexOf('.') + 1)), dotted);
   }
 
   private Objects() {

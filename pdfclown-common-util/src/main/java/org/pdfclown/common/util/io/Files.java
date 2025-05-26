@@ -53,7 +53,7 @@ public final class Files {
    * (Unix directory separator) or back-slash (Windows directory separator).
    * </p>
    */
-  private static final Pattern PATTERN__FULL_EXTENSION = Pattern.compile("(\\.\\D[^\\.\\\\/]+)+$");
+  private static final Pattern PATTERN__FULL_EXTENSION = Pattern.compile("(\\.\\D[^.\\\\/]+)+$");
 
   public static final String FILE_EXTENSION__EPS = ".eps";
   public static final String FILE_EXTENSION__HTML = ".html";
@@ -133,11 +133,11 @@ public final class Files {
   }
 
   /**
-   * Gets whether the extension of the given path corresponds to the specified one (case
-   * insensitive).
+   * Gets whether the extension of the given path corresponds to the specified one
+   * (case-insensitive).
    * <p>
    * NOTE: Contrary to {@link FilenameUtils#isExtension(String, String)}, <i>the extension is
-   * prefixed by dot and the match is case insensitive</i>.
+   * prefixed by dot and the match is case-insensitive</i>.
    * </p>
    *
    * @see #isFullExtension(String, String)
@@ -147,8 +147,8 @@ public final class Files {
   }
 
   /**
-   * Gets whether the full extension of the given path corresponds to the specified one (case
-   * insensitive).
+   * Gets whether the full extension of the given path corresponds to the specified one
+   * (case-insensitive).
    *
    * @see #isExtension(String, String)
    */
@@ -330,7 +330,7 @@ public final class Files {
     // Absolute URI?
     if (uri.isAbsolute()) {
       if (!uri.getScheme().equalsIgnoreCase("file"))
-        throw wrongArg("uri", uri, "MUST be a 'file:' URI");
+        throw wrongArg("uri", uri, "MUST be a file-scheme URI");
 
       var b = new StringBuilder();
       // Windows-like?
@@ -338,8 +338,7 @@ public final class Files {
         String s;
         // Host.
         if ((s = uri.getAuthority()) != null) {
-          b.append(fs.getSeparator() + fs.getSeparator()).append(uri.getAuthority())
-              .append(fs.getSeparator());
+          b.append(fs.getSeparator()).append(fs.getSeparator()).append(s).append(fs.getSeparator());
         }
         // Path.
         s = uri.getPath();

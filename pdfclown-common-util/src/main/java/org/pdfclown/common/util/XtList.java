@@ -64,7 +64,7 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
    * Performs the given action for each element of this list until all elements have been processed
    * or the action throws an exception (relayed to the caller).
    * <p>
-   * The behavior of this method is unspecified if the action performs side-effects that modify the
+   * The behavior of this method is unspecified if the action performs side effects that modify the
    * underlying source of elements, unless an overriding class has specified a concurrent
    * modification policy.
    * </p>
@@ -234,8 +234,6 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
   /**
    * Fluent {@link List#add(int, Object) add(..)}.
    *
-   * @param index
-   * @param e
    * @return This object.
    */
   default XtList<E> with(int index, E e) {
@@ -246,8 +244,6 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
   /**
    * Fluent {@link List#set(int, Object) set(..)}.
    *
-   * @param index
-   * @param e
    * @return This object.
    */
   default XtList<E> withElse(int index, E e) {
@@ -258,8 +254,6 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
   /**
    * Fluent {@link #place(int, Object) place(..)}.
    *
-   * @param index
-   * @param e
    * @return This object.
    */
   default XtList<E> withElseSafe(int index, E e) {
@@ -275,7 +269,6 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
   /**
    * Fluent {@link List#remove(int) remove(..)}.
    *
-   * @param index
    * @return This object.
    */
   default XtList<E> without(int index) {
@@ -286,7 +279,6 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
   /**
    * Fluent {@link #poll(int) poll(..)}.
    *
-   * @param index
    * @return This object.
    */
   default XtList<E> withoutSafe(int index) {

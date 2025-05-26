@@ -57,7 +57,6 @@ public final class Assertions {
 
   /**
    * Asserts that {@code expected} and {@code actual} are equal applying the given comparator.
-   *
    * <p>
    * This method supplements junit's
    * {@link org.junit.jupiter.api.Assertions#assertIterableEquals(Iterable, Iterable)
@@ -77,6 +76,7 @@ public final class Assertions {
 
       T expectedElement = expectedItr.next();
       T actualElement = actualItr.next();
+      //noinspection SimplifiableAssertion
       assertTrue(comparator.compare(expectedElement, actualElement) == 0);
     }
     assertFalse(actualItr.hasNext());
@@ -101,38 +101,34 @@ public final class Assertions {
     var segmentIndex = new int[1];
     try {
       Executions.failFast(
-          () -> {
-            PathEvaluator.eval(expected, ($segmentKind, $coords, $coordsCount) -> {
-              var assertMessagePrefix = "Segment " + segmentIndex[0]++;
-              try {
-                var actualSegment = actualSegmentQueue.take();
-                assertEquals($segmentKind, actualSegment.kind,
-                    assertMessagePrefix + ", segmentKind");
+          () -> PathEvaluator.eval(expected, ($segmentKind, $coords, $coordsCount) -> {
+            var assertMessagePrefix = "Segment " + segmentIndex[0]++;
+            try {
+              var actualSegment = actualSegmentQueue.take();
+              assertEquals($segmentKind, actualSegment.kind,
+                  assertMessagePrefix + ", segmentKind");
 
-                for (int i = 0; i < $coordsCount;) {
-                  var coordAssertMessagePrefix =
-                      String.format("%s, point %s, ", assertMessagePrefix, i % 2);
-                  assertEquals($coords[i], actualSegment.coords[i++], delta,
-                      coordAssertMessagePrefix + "x");
-                  assertEquals($coords[i], actualSegment.coords[i++], delta,
-                      coordAssertMessagePrefix + "y");
-                }
-                return true;
-              } catch (InterruptedException ex) {
-                return false;
+              for (int i = 0; i < $coordsCount;) {
+                var coordAssertMessagePrefix =
+                    String.format("%s, point %s, ", assertMessagePrefix, i % 2);
+                assertEquals($coords[i], actualSegment.coords[i++], delta,
+                    coordAssertMessagePrefix + "x");
+                assertEquals($coords[i], actualSegment.coords[i++], delta,
+                    coordAssertMessagePrefix + "y");
               }
-            });
-          },
-          () -> {
-            PathEvaluator.eval(actual, ($segmentKind, $coords, $coordsCount) -> {
-              try {
-                actualSegmentQueue.put(new Segment($segmentKind, $coords));
-                return true;
-              } catch (InterruptedException ex) {
-                return false;
-              }
-            });
-          });
+              return true;
+            } catch (InterruptedException ex) {
+              return false;
+            }
+          }),
+          () -> PathEvaluator.eval(actual, ($segmentKind, $coords, $coordsCount) -> {
+            try {
+              actualSegmentQueue.put(new Segment($segmentKind, $coords));
+              return true;
+            } catch (InterruptedException ex) {
+              return false;
+            }
+          }));
       assertTrue(expected.isDone());
       assertTrue(actual.isDone());
     } catch (ExecutionException ex) {

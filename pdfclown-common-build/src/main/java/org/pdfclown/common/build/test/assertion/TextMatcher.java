@@ -44,8 +44,8 @@ public class TextMatcher extends TypeSafeMatcher<String> {
     return new TextMatcher(expected, true);
   }
 
-  private boolean caseIgnored;
-  private String expected;
+  private final boolean caseIgnored;
+  private final String expected;
   private int line = 1;
   private int lineStart;
   private int column = 1;

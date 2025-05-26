@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (WeakNullness.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (VariantNull.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -39,64 +39,61 @@ import org.jspecify.annotations.Nullable;
  * For example:
  * </p>
  * <pre>
- * {@code @}NullMarked
+ * &#64;NullMarked
  * abstract class MyRootType {
- *   private {@code @}Nullable Object myProperty;
+ *   private &#64;Nullable Object myProperty;
  *
- *   protected MyRootType(Object myProperty) {
+ *   protected MyRootType(&#64;VariantNull Object myProperty) {
  *     setMyProperty(myProperty);
  *   }
  *
- *   public {@code @}Nullable {@code @}WeakNullness Object getMyProperty() {
+ *   public &#64;Nullable &#64;VariantNull Object getMyProperty() {
  *     return myProperty;
  *   }
  *
- *   public void setMyProperty({@code @}WeakNullness Object value) {
+ *   public void setMyProperty(&#64;VariantNull Object value) {
  *     myProperty = value;
  *   }
  * }
  *
- * {@code @}NullMarked
+ * &#64;NullMarked
  * class MyOptionalType extends MyRootType {
- *   {@code @}SuppressWarnings("null")
- *   public MyOptionalType({@code @}Nullable Object myProperty) {
+ *   public MyOptionalType(&#64;Nullable Object myProperty) {
  *     super(myProperty);
  *   }
  *
- *   {@code @}Override
- *   public {@code @}Nullable Object getMyProperty() {
+ *   &#64;Override
+ *   public &#64;Nullable Object getMyProperty() {
  *     return super.getMyProperty();
  *   }
  *
- *   {@code @}Override
- *   {@code @}SuppressWarnings("null")
- *   public void setMyProperty({@code @}Nullable Object value) {
+ *   &#64;Override
+ *   public void setMyProperty(&#64;Nullable Object value) {
  *     return super.setMyProperty(value);
  *   }
  * }
  *
- * {@code @}NullMarked
+ * &#64;NullMarked
  * class MyRequiredType extends MyRootType {
  *   public MyRequiredType(Object myProperty) {
  *     super(myProperty);
  *   }
  *
- *   {@code @}Override
- *   public {@code @}NonNull Object getMyProperty() {
+ *   &#64;Override
+ *   public &#64;NonNull Object getMyProperty() {
  *     return requireNonNull(super.getMyProperty());
  *   }
  *
- *   {@code @}Override
+ *   &#64;Override
  *   public void setMyProperty(Object value) {
  *     return super.setMyProperty(requireNonNull(value));
  *   }
- * }
- * </pre>
+ * }</pre>
  *
  * @author Stefano Chizzolini
  */
 @Documented
 @Retention(CLASS)
 @Target(TYPE_USE)
-public @interface WeakNullness {
+public @interface VariantNull {
 }

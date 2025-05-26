@@ -21,6 +21,7 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("CodeBlock2Expr")
 public class ChecksTest extends BaseTest {
   @Test
   public void _checkBetween() {

@@ -14,6 +14,7 @@ package org.pdfclown.common.build.test.assertion;
 
 import org.hamcrest.Matcher;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.extension.Extension;
 import org.slf4j.event.Level;
 import org.slf4j.event.LoggingEvent;
 
@@ -22,7 +23,7 @@ import org.slf4j.event.LoggingEvent;
  *
  * @author Stefano Chizzolini
  */
-public interface LogInterceptor {
+public interface LogInterceptor extends Extension {
   /**
    * Asserts that log events matching the given criteria occurred.
    *
@@ -32,7 +33,7 @@ public interface LogInterceptor {
    * @param message
    *          Matching message ({@code null} matches any).
    */
-  public LoggingEvent assertLogged(@Nullable Level level, @Nullable Matcher<String> message);
+  LoggingEvent assertLogged(@Nullable Level level, @Nullable Matcher<String> message);
 
   /**
    * Asserts that no log event matching the given criteria occurred.
@@ -43,10 +44,10 @@ public interface LogInterceptor {
    * @param message
    *          Matching message ({@code null} matches any).
    */
-  public void assertNotLogged(@Nullable Level level, @Nullable Matcher<String> message);
+  void assertNotLogged(@Nullable Level level, @Nullable Matcher<String> message);
 
   /**
    * Cleans up the stored log events.
    */
-  public void reset();
+  void reset();
 }

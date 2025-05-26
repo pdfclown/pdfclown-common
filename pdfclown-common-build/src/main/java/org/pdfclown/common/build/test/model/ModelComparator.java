@@ -27,8 +27,6 @@ public abstract class ModelComparator<TModel, TDiff> {
   /**
    * Compares the given objects.
    *
-   * @param obj1
-   * @param obj2
    * @return Differences.
    */
   public abstract List<TDiff> compare(TModel obj1, TModel obj2);

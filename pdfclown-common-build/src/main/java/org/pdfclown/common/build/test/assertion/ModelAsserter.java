@@ -12,8 +12,10 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util.Objects.fqn;
+import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util.io.Files.fullExtension;
 import static org.pdfclown.common.build.internal.util.io.Files.replaceFullExtension;
 
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 import org.pdfclown.common.build.internal.util.io.Files;
@@ -148,7 +151,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
       var targetObjSelectors = new ArrayList<>(objSelectors) /* NOTE: Preserves original order */;
       var prevRef = new PropertySelector[1];
       objSelectors.stream()
-          .sorted(($1, $2) -> $1.getType().getName().compareTo($2.getType().getName()))
+          .sorted(Comparator.comparing($ -> $.getType().getName()))
           .forEachOrdered($ -> {
             var prev = prevRef[0];
             if (prev != null && $.getType() == prev.getType()) {
@@ -210,7 +213,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
       boolean built = false;
       while (true) {
         try {
-          String expectedJson = Files.readString(expectedJsonFile);
+          String expectedJson = requireNonNull(Files.readString(expectedJsonFile), EMPTY);
           if (actualJsonElement instanceof JsonObject) {
             JSONAssert.assertEquals(expectedJson, (JsonObject) actualJsonElement, true);
           } else {
@@ -219,13 +222,14 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
           break;
         } catch (AssertionError | FileNotFoundException ex) {
           // Unrecoverable?
-          if (built || !isUpdateable(testId)) {
+          if (built || !isUpdatable(testId)) {
             File actualJsonOutFile = null;
             if (expectedJsonFile.exists()) {
               actualJsonOutFile = config.getEnv().outputFile(replaceFullExtension(
                   expectedJsonResourceFqn, "_UNEXPECTED" + fullExtension(expectedJsonResourceFqn)));
               try {
                 // Save unexpected actual object!
+                //noinspection ResultOfMethodCallIgnored
                 actualJsonOutFile.getParentFile().mkdirs();
                 Files.writeString(actualJsonOutFile, actualJsonElement.toString());
 

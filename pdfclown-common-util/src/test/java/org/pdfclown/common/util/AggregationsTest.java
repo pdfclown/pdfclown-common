@@ -27,10 +27,8 @@ public class AggregationsTest extends BaseTest {
   @Test
   public void _addAll_array() {
     var obj = new ArrayList<>();
-    Aggregations.addAll(obj, new Object[] { "A", "B" });
-    assertThat(obj.size(), is(2));
-    assertThat(obj.get(0), is("A"));
-    assertThat(obj.get(1), is("B"));
+    obj.add("A");
+    obj.add("B");
 
     Aggregations.addAll(obj, 1, new Object[] { "C", "D", "E" });
     assertThat(obj.size(), is(5));

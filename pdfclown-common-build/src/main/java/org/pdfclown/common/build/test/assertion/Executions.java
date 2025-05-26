@@ -36,14 +36,14 @@ public final class Executions {
    * @param tasks
    *          Operations to execute.
    * @throws ExecutionException
-   *           If any of the tasks fails to execute.
-   * @throws InterruptedException
+   *           if any of the tasks fails to execute.
    */
   public static void failFast(@NonNull Runnable... tasks)
       throws ExecutionException, InterruptedException {
     var futures = new ArrayList<CompletableFuture<Void>>();
     var failure = new CompletableFuture<Void>().exceptionally($ex -> {
       futures.forEach($ -> $.cancel(true));
+      //noinspection DataFlowIssue
       return null;
     });
     for (var task : tasks) {
@@ -149,25 +149,30 @@ public final class Executions {
   public static synchronized void interceptSystemStreams(Runnable task,
       @Nullable MutableObject<String> outRef, @Nullable MutableObject<String> errRef,
       boolean merged) {
-    if (outRef == null && errRef == null)
-      throw new IllegalArgumentException("At least one among `outRef` and `errRef` MUST be "
-          + "defined");
+    if (outRef == null) {
+      if (errRef == null)
+        throw new IllegalArgumentException("At least one among `outRef` and `errRef` MUST be "
+            + "defined");
+      else if (merged) {
+        outRef = new MutableObject<>();
+      }
+    }
 
     ByteArrayOutputStream outStream = null;
     ByteArrayOutputStream errStream = null;
-    PrintStream defaultOut = null;
-    PrintStream defaultErr = null;
+    PrintStream oldOut = null;
+    PrintStream oldErr = null;
     final var charset = UTF_8;
     try {
       PrintStream out = null;
-      if (outRef != null || merged) {
-        defaultOut = System.out;
+      if (outRef != null) {
+        oldOut = System.out;
 
         System.setOut(out = new PrintStream(outStream = new ByteArrayOutputStream(), true,
             charset));
       }
       if (errRef != null || merged) {
-        defaultErr = System.err;
+        oldErr = System.err;
 
         System.setErr(merged ? out
             : new PrintStream(errStream = new ByteArrayOutputStream(), true, charset));
@@ -175,19 +180,24 @@ public final class Executions {
 
       task.run();
     } finally {
-      if (defaultOut != null) {
-        if (outRef != null) {
+      if (oldOut != null) {
+        try {
+          assert outStream != null;
           outRef.setValue(outStream.toString(charset));
+        } finally {
+          System.setOut(oldOut);
         }
-
-        System.setOut(defaultOut);
       }
-      if (defaultErr != null) {
-        if (errRef != null) {
-          errRef.setValue(merged ? outRef.getValue() : errStream.toString(charset));
+      if (oldErr != null) {
+        try {
+          if (errRef != null) {
+            assert errStream != null;
+            //noinspection ConstantValue
+            errRef.setValue(merged ? outRef.getValue() : errStream.toString(charset));
+          }
+        } finally {
+          System.setErr(oldErr);
         }
-
-        System.setErr(defaultErr);
       }
     }
   }

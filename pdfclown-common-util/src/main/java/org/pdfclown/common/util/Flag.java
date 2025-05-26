@@ -22,5 +22,5 @@ public interface Flag extends XtEnum<Integer> {
    * Bitwise representation of this flag.
    */
   @Override
-  public Integer getCode();
+  Integer getCode();
 }

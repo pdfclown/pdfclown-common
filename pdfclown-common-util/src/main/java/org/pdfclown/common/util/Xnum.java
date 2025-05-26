@@ -15,8 +15,7 @@ package org.pdfclown.common.util;
 /**
  * Augmented enumeration.
  * <p>
- * Closes the gap between the inherently-rigid regular enumerations and flexibility-demanding use
- * cases.
+ * Closes the gap between the inherently-rigid regular enumerations and flexible use cases.
  * </p>
  * <p>
  * See {@link BaseXnum} for further details on the way to implement this interface.

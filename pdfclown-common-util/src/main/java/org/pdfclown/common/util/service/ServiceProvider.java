@@ -14,6 +14,7 @@ package org.pdfclown.common.util.service;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Stream;
@@ -33,11 +34,11 @@ public interface ServiceProvider {
    * Retrieves available providers of the given type, sorted by priority.
    *
    * @param <T>
-   * @param providerType
+   *          Provider type.
    * @return Immutable list, sorted by ascending priority (the lower the priority, the better).
    */
-  public static <T extends ServiceProvider> List<T> discover(Class<T> providerType) {
-    return collect(providerType, doDiscover(providerType).filter($ -> $.isAvailable()));
+  static <T extends ServiceProvider> List<T> discover(Class<T> providerType) {
+    return collect(providerType, doDiscover(providerType).filter(ServiceProvider::isAvailable));
   }
 
   /**
@@ -47,10 +48,10 @@ public interface ServiceProvider {
    * </p>
    *
    * @param <T>
-   * @param providerType
+   *          Provider type.
    * @return Immutable list, sorted by ascending priority (the lower the priority, the better).
    */
-  public static <T extends ServiceProvider> List<T> discoverAll(Class<T> providerType) {
+  static <T extends ServiceProvider> List<T> discoverAll(Class<T> providerType) {
     return collect(providerType, doDiscover(providerType));
   }
 
@@ -58,9 +59,9 @@ public interface ServiceProvider {
    * Retrieves the best available provider of the given type.
    *
    * @param <T>
-   * @param providerType
+   *          Provider type.
    */
-  public static <T extends ServiceProvider> T discoverBest(Class<T> providerType) {
+  static <T extends ServiceProvider> T discoverBest(Class<T> providerType) {
     List<T> providers = discover(providerType);
     return !providers.isEmpty() ? providers.get(0) : null;
   }
@@ -88,25 +89,21 @@ public interface ServiceProvider {
   }
 
   private static <T extends ServiceProvider> Stream<T> doDiscover(Class<T> providerType) {
-    return ServiceLoader.load(providerType).stream().map($ -> $.get())
-        .sorted(($1, $2) -> $1.getPriority() - $2.getPriority());
+    return ServiceLoader.load(providerType).stream().map(ServiceLoader.Provider::get)
+        .sorted(Comparator.comparingInt(ServiceProvider::getPriority));
   }
 
   /**
    * Implementation priority, ie a capability index used to rank available implementations (the
-   * lesser the better — zero means full capability).
+   * lesser, the better — zero means full capability).
    * <p>
    * Each implementation is expected to declare a priority comparable to other implementations of
-   * the same {@linkplain ServiceProvider provider type}. Eg:
+   * the same {@linkplain ServiceProvider provider type} — e.g., barcode renderers would return
+   * their level of graphical inaccuracy (a ZXing-based renderer is, despite equivalent encoding
+   * accuracy, less refined than an Okapi-based renderer as only the latter differentiates bar
+   * lengths in 1D labels and adjusts the placement of human-readable symbols at character level,
+   * making for a more professionally-looking rendering)
    * </p>
-   * <ul>
-   * <li>hyphenators would return their average error rate</li>
-   * <li>barcode renderers would return their level of graphical inaccuracy (a ZXing-based renderer
-   * is, despite equivalent encoding accuracy, less refined than an Okapi-based renderer as, eg,
-   * only the latter differentiates bar lengths in 1D labels and adjusts the placement of
-   * human-readable symbols at character level, making for a more professionally-looking
-   * rendering)</li>
-   * </ul>
    */
   int getPriority();
 

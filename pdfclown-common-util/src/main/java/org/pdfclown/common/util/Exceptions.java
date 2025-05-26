@@ -115,6 +115,7 @@ public final class Exceptions {
 
   /**
    * @param value
+   *          Invalid value.
    * @param format
    *          Parameterized message (use <code>{}</code> as argument placeholder).
    * @param args
@@ -160,7 +161,9 @@ public final class Exceptions {
 
   /**
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param value
+   *          Invalid value.
    * @param format
    *          Parameterized message (use <code>{}</code> as argument placeholder).
    * @param args
@@ -194,10 +197,15 @@ public final class Exceptions {
 
   /**
    * @param <T>
+   *          Value type.
    * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param value
+   *          Invalid value.
    * @param description
+   *          Exception description.
    * @param options
+   *          Any expected value which {@code value} may have matched.
    */
   @SafeVarargs
   public static <T> IllegalArgumentException wrongArgOpt(@Nullable String name,

@@ -39,7 +39,7 @@ public final class Aggregations {
     return lists.get(index).stream()
         .flatMap($ -> cartesianProduct(lists, index + 1)
             .map($$ -> {
-              var newList = new ArrayList<Object>($$);
+              var newList = new ArrayList<>($$);
               newList.add(0, $);
               return newList;
             }));

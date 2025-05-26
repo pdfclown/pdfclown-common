@@ -25,7 +25,6 @@ public interface Listenable<T extends Listener> {
   /**
    * Adds the given listener as a weak reference.
    *
-   * @param listener
    * @return Self.
    */
   Listenable<T> addListener(@NonNull T listener);
@@ -33,7 +32,6 @@ public interface Listenable<T extends Listener> {
   /**
    * Removes the given listener.
    *
-   * @param listener
    * @return Whether the given listener was removed.
    */
   boolean removeListener(@NonNull T listener);

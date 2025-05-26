@@ -29,7 +29,7 @@ import org.jspecify.annotations.Nullable;
  */
 public interface IndexedMap<K, V> extends XtMap<K, V> {
   /**
-   * Returns the index of the specified key in this map.
+   * Gets the index of the specified key in this map.
    *
    * @return {@code -1} if this map does not contain the key.
    */
@@ -45,7 +45,7 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
   }
 
   /**
-   * Returns the index of the specified value in this map.
+   * Gets the index of the specified value in this map.
    *
    * @return {@code -1} if this map does not contain the value.
    */
@@ -61,10 +61,12 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
   }
 
   /**
-   * Returns the key at the specified position.
+   * Gets the key at the specified position.
    *
    * @param index
+   *          Entry position.
    * @throws IndexOutOfBoundsException
+   *           if {@code index} is less, or equal, or greater than {@link #size() size}.
    */
   default @Nullable K keyOfIndex(int index) {
     int i = 0;
@@ -92,6 +94,7 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
    *          Destination.
    * @return Moved entry.
    * @throws IndexOutOfBoundsException
+   *           if {@code index} is less, or equal, or greater than {@link #size() size}.
    */
   Map.Entry<K, V> move(int index, int targetIndex);
 
@@ -100,7 +103,9 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
    * position (if the map previously contained a mapping for the key) or to the end of this map.
    *
    * @param key
+   *          Entry key.
    * @param value
+   *          Entry value.
    * @return Previous value associated with {@code key}, or {@code null} if there was no mapping for
    *         {@code key} (a {@code null} return can also indicate that the map previously associated
    *         {@code null} with {@code key}, if the implementation supports {@code null} values).
@@ -117,12 +122,16 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
    * position).
    *
    * @param index
+   *          Entry position.
    * @param key
+   *          Entry key.
    * @param value
+   *          Entry value.
    * @return Previous value associated with {@code key}, or {@code null} if there was no mapping for
    *         {@code key} (a {@code null} return can also indicate that the map previously associated
    *         {@code null} with {@code key}, if the implementation supports {@code null} values).
    * @throws IndexOutOfBoundsException
+   *           if {@code index} is less or greater than {@link #size() size}.
    */
   @Nullable
   V put(@Nullable K key, @Nullable V value, int index);

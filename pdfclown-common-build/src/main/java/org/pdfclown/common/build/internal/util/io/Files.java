@@ -47,7 +47,7 @@ public final class Files {
    * (Unix directory separator) or back-slash (Windows directory separator).
    * </p>
    */
-  private static final Pattern PATTERN__FULL_EXTENSION = Pattern.compile("(\\.\\D[^\\.\\\\/]+)+$");
+  private static final Pattern PATTERN__FULL_EXTENSION = Pattern.compile("(\\.\\D[^.\\\\/]+)+$");
 
   private static final String FILE_EXTENSION__ZIP = ".zip";
 
@@ -76,9 +76,6 @@ public final class Files {
    * NOTE: In case of compressed archive, this method would access only its first entry; in case of
    * multi-entry archive, call {@link #readString(File, Predicate)} instead.
    * </p>
-   *
-   * @param file
-   * @throws IOException
    */
   public static @Nullable String readString(File file) throws IOException {
     return readString(file, null);
@@ -94,10 +91,8 @@ public final class Files {
    * {@code filter}.
    * </p>
    *
-   * @param file
    * @param filter
    *          Entry filter (compressed file only; {@code null} for filtering the first entry).
-   * @throws IOException
    */
   public static @Nullable String readString(File file, @Nullable Predicate<String> filter)
       throws IOException {
@@ -106,9 +101,11 @@ public final class Files {
         filter = $ -> true;
       }
       try (var in = new ZipInputStream(new FileInputStream(file))) {
-        ZipEntry zipEntry = in.getNextEntry();
-        while (zipEntry != null) {
-          if (!zipEntry.isDirectory() && filter.test(zipEntry.getName())) {
+        while (true) {
+          ZipEntry zipEntry = in.getNextEntry();
+          if (zipEntry == null) {
+            break;
+          } else if (!zipEntry.isDirectory() && filter.test(zipEntry.getName())) {
             try (var out = new ByteArrayOutputStream()) {
               int len;
               var buf = new byte[1024];
@@ -144,6 +141,7 @@ public final class Files {
     if (dir.exists()) {
       FileUtils.cleanDirectory(dir);
     } else {
+      //noinspection ResultOfMethodCallIgnored
       dir.mkdirs();
     }
     return dir;
@@ -154,8 +152,6 @@ public final class Files {
    *
    * @param file
    *          Target file ({@value #FILE_EXTENSION__ZIP} extension causes data to compress).
-   * @param data
-   * @throws IOException
    */
   public static void writeString(File file, String data) throws IOException {
     if (file.getName().endsWith(FILE_EXTENSION__ZIP)) {

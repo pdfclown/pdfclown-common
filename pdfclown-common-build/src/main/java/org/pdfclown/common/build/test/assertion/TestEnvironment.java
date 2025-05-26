@@ -87,7 +87,7 @@ public interface TestEnvironment {
    *
    * @author Stefano Chizzolini
    */
-  public enum DirId {
+  enum DirId {
     /**
      * Base directory of test output (typically, {@code "target/test-output"}).
      */

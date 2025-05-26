@@ -12,7 +12,10 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.pdfclown.common.build.internal.util.Objects.OBJ_ARRAY__EMPTY;
+import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +52,7 @@ import org.slf4j.event.LoggingEvent;
 public class LogExtension
     implements LogInterceptor, AfterAllCallback, BeforeAllCallback, BeforeEachCallback {
   private static class InterceptionAppender extends AbstractAppender {
-    private List<LogEvent> events = new ArrayList<>();
+    private final List<LogEvent> events = new ArrayList<>();
 
     public InterceptionAppender() {
       super("Interception", null, null, true, Property.EMPTY_ARRAY);
@@ -67,20 +70,25 @@ public class LogExtension
 
   private static class LoggedEvent implements LoggingEvent {
     public static LoggedEvent of(LogEvent nativeEvent) {
-      var ret = new LoggedEvent();
-      ret.level = Level.valueOf(nativeEvent.getLevel().name());
-      ret.message = nativeEvent.getMessage().getFormattedMessage();
-      ret.throwable = nativeEvent.getMessage().getThrowable();
-      return ret;
+      return new LoggedEvent(
+          Level.valueOf(nativeEvent.getLevel().name()),
+          nativeEvent.getMessage().getFormattedMessage(),
+          nativeEvent.getMessage().getThrowable());
     }
 
-    private Level level;
-    private String message;
-    private @Nullable Throwable throwable;
+    private final Level level;
+    private final String message;
+    private final @Nullable Throwable throwable;
+
+    public LoggedEvent(Level level, String message, @Nullable Throwable throwable) {
+      this.level = requireNonNull(level, "`level`");
+      this.message = requireNonNull(message, "`message`");
+      this.throwable = throwable;
+    }
 
     @Override
     public Object[] getArgumentArray() {
-      return null;
+      return OBJ_ARRAY__EMPTY;
     }
 
     @Override
@@ -90,11 +98,11 @@ public class LogExtension
 
     @Override
     public String getLoggerName() {
-      return null;
+      return EMPTY;
     }
 
     @Override
-    public Marker getMarker() {
+    public @Nullable Marker getMarker() {
       return null;
     }
 
@@ -105,11 +113,11 @@ public class LogExtension
 
     @Override
     public String getThreadName() {
-      return null;
+      return EMPTY;
     }
 
     @Override
-    public Throwable getThrowable() {
+    public @Nullable Throwable getThrowable() {
       return throwable;
     }
 
@@ -119,21 +127,24 @@ public class LogExtension
     }
   }
 
-  private InterceptionAppender appender;
-  private LoggerConfig rootLoggerConfig;
+  @SuppressWarnings("NotNullFieldNotInitialized")
+  private /* @InitNonNull */ InterceptionAppender appender;
+  @SuppressWarnings("NotNullFieldNotInitialized")
+  private /* @InitNonNull */ LoggerConfig rootLoggerConfig;
 
   @Override
-  public void afterAll(ExtensionContext context) throws Exception {
+  public void afterAll(ExtensionContext context) {
     rootLoggerConfig.removeAppender(appender.getName());
   }
 
   @Override
-  public LoggingEvent assertLogged(Level level, Matcher<String> messageMatcher) {
+  public LoggingEvent assertLogged(@Nullable Level level,
+      @Nullable Matcher<String> messageMatcher) {
     var nativeLevel = level != null ? org.apache.logging.log4j.Level.valueOf(level.name()) : null;
     for (LogEvent event : appender.events) {
       if ((nativeLevel == null || nativeLevel.compareTo(event.getLevel()) >= 0)
-          && (messageMatcher == null
-              || messageMatcher.matches(event.getMessage().getFormattedMessage())))
+          && (messageMatcher == null || messageMatcher.matches(event.getMessage()
+              .getFormattedMessage())))
         return LoggedEvent.of(event);
     }
     fail(String.format("Event match MISSING where level is %s and message is %s",
@@ -142,7 +153,7 @@ public class LogExtension
   }
 
   @Override
-  public void assertNotLogged(Level level, Matcher<String> messageMatcher) {
+  public void assertNotLogged(@Nullable Level level, @Nullable Matcher<String> messageMatcher) {
     try {
       assertLogged(level, messageMatcher);
     } catch (AssertionError ex) {
@@ -153,9 +164,9 @@ public class LogExtension
   }
 
   @Override
-  public void beforeAll(ExtensionContext context) throws Exception {
-    rootLoggerConfig =
-        ((LoggerContext) LogManager.getContext(false)).getConfiguration().getLoggerConfig("");
+  public void beforeAll(ExtensionContext context) {
+    rootLoggerConfig = ((LoggerContext) LogManager.getContext(false)).getConfiguration()
+        .getLoggerConfig(EMPTY);
 
     // Inject the log interception appender!
     rootLoggerConfig.addAppender(appender = new InterceptionAppender(),
@@ -164,7 +175,7 @@ public class LogExtension
   }
 
   @Override
-  public void beforeEach(ExtensionContext context) throws Exception {
+  public void beforeEach(ExtensionContext context) {
     reset() /* Ensures each test sees its own log events only */;
   }
 

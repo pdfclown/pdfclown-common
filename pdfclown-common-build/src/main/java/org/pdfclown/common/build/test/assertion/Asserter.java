@@ -29,7 +29,6 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -37,7 +36,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -102,14 +100,14 @@ public abstract class Asserter {
    * @author Stefano Chizzolini
    */
   public static class ErrorMessageBuilder {
-    private StringBuilder base = new StringBuilder();
+    private final StringBuilder base = new StringBuilder();
 
     /**
      * Appends the {@linkplain Object#toString() string representation} of the given object to the
      * current error entry.
      */
     public ErrorMessageBuilder append(Object obj) {
-      base.append(Objects.toString(obj));
+      base.append(obj);
       return this;
     }
 
@@ -171,16 +169,16 @@ public abstract class Asserter {
    *          <ul>
    *          <li>to regenerate all the mismatching resources, no matter the tests they belong to:
    *          <pre>
-   * mvn verify -Dpdfclown.assert.update</pre></li>
+   * mvn verify ... -Dpdfclown.assert.update</pre></li>
    *          <li>to regenerate the mismatching resources belonging to specific test classes (eg,
    *          "MyObjectIT"): <pre>
-   * mvn verify -Dpdfclown.assert.update -Dtest=MyObjectIT</pre></li>
+   * mvn verify ... -Dpdfclown.assert.update -Dtest=MyObjectIT</pre></li>
    *          <li>to regenerate the mismatching resources belonging to specific test cases (eg,
    *          "MyObjectIT.myTest"): <pre>
-   * mvn verify -Dpdfclown.assert.update -Dtest=MyObjectIT#myTest</pre></li>
+   * mvn verify ... -Dpdfclown.assert.update -Dtest=MyObjectIT#myTest</pre></li>
    *          <li>to regenerate the mismatching resources belonging to multiple test classes (eg,
    *          MyObjectIT and MyOtherObjectIT), they can be specified as a comma-separated list:<pre>
-   * mvn verify -Dpdfclown.assert.update -Dtest=MyObjectIT,MyOtherObjectIT</pre></li>
+   * mvn verify ... -Dpdfclown.assert.update -Dtest=MyObjectIT,MyOtherObjectIT</pre></li>
    *          </ul>
    *          <p>
    *          NOTE: {@code test} CLI parameter is typically mapped by maven plugins (such as
@@ -286,13 +284,12 @@ public abstract class Asserter {
    * @throws AssertionError
    *           If {@code message} is not empty.
    */
-  protected void evalAssertionError(String testId, String message, File expectedFile,
-      File actualFile) throws AssertionError {
-    if (StringUtils.isEmpty(message))
+  protected void evalAssertionError(String testId, @Nullable String message, File expectedFile,
+      @Nullable File actualFile) throws AssertionError {
+    if (message == null || (message = message.strip()).isEmpty())
       return;
 
     var testAnnotationTypes = Set.of(Test.class, ParameterizedTest.class);
-    @SuppressWarnings("null")
     String testName = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
         .walk($frames -> $frames
             .skip(2)
@@ -301,19 +298,17 @@ public abstract class Asserter {
                 return Optional.of($.getDeclaringClass().getDeclaredMethod($.getMethodName(),
                     $.getMethodType().parameterArray()));
               } catch (NoSuchMethodException e) {
-                return Optional.ofNullable(null);
+                return Optional.empty();
               }
             })
             .filter($ -> $
                 .map($$ -> Stream.of($$.getDeclaredAnnotations())
-                    .filter($$$ -> testAnnotationTypes.contains($$$.annotationType()))
-                    .findAny()
-                    .isPresent())
+                    .anyMatch($$$ -> testAnnotationTypes.contains($$$.annotationType())))
                 .orElse(false))
             .findFirst()
             .map($ -> $
                 .map($$ -> $$.getDeclaringClass().getSimpleName() + "#" + $$.getName())
-                .get())
+                .orElseThrow())
             .orElse(EMPTY));
     if (testName.isEmpty())
       throw new RuntimeException(String.format(
@@ -321,17 +316,18 @@ public abstract class Asserter {
               + "annotations: %s)",
           testAnnotationTypes.stream().map(Class::getName).collect(toList())));
 
-    message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message.strip());
+    message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message);
     String hint = String.format(Locale.ROOT,
         "\nCompared files:\n"
             + " * EXPECTED: %s\n"
             + " * ACTUAL: %s\n"
-            + "To retry, enter this command:\n"
-            + "  mvn verify -Dmaven.javadoc.skip=true -Dtest=\"%s\"\n"
-            + "To confirm the actual changes as expected (and to generate missing resources), "
-            + "enter this command:\n"
-            + "  mvn verify -Dmaven.javadoc.skip=true -D%s=\"%s\" -Dtest=\"%s\"\n",
-        expectedFile, actualFile, testName, PARAM_NAME__BUILDABLE, testId, testName);
+            + "To retry, enter this CLI parameter into your command:\n"
+            + "  mvn verify ... -Dtest=\"%s\"\n"
+            + "To confirm the actual changes as expected, enter these CLI parameters into your "
+            + "command:\n"
+            + "  mvn verify ... -D%s=\"%s\" -Dtest=\"%s\"\n",
+        expectedFile, requireNonNull(actualFile, "N/A"), testName, PARAM_NAME__BUILDABLE, testId,
+        testName);
 
     // Log (full message).
     getLog().error(LogMarker.VERBOSE, "{}\n{}", message, hint);
@@ -363,7 +359,7 @@ public abstract class Asserter {
    * Gets whether the expected resources associated to the given ID can be overwritten in case of
    * mismatch with their actual counterparts.
    */
-  protected boolean isUpdateable(String testId) {
+  protected boolean isUpdatable(String testId) {
     return FILTER__BUILDABLE.test(testId);
   }
 
@@ -376,15 +372,14 @@ public abstract class Asserter {
    *          Resource generator.
    * @param config
    *          Assertion configuration.
-   * @throws IOException
    */
   protected void writeExpectedFile(String resourceName, Consumer<File> writer, Config config)
       throws IOException {
     // Source file.
     File sourceFile = config.getEnv().resourceSrcFile(resourceName);
     try {
-      File parentFile = sourceFile.getParentFile();
-      assert parentFile != null;
+      File parentFile = requireNonNull(sourceFile.getParentFile());
+      //noinspection ResultOfMethodCallIgnored
       parentFile.mkdirs();
       writer.accept(sourceFile);
     } catch (RuntimeException ex) {
@@ -396,8 +391,8 @@ public abstract class Asserter {
     // Target file.
     File targetFile = config.getEnv().resourceFile(resourceName);
     try {
-      File parentFile = targetFile.getParentFile();
-      assert parentFile != null;
+      File parentFile = requireNonNull(targetFile.getParentFile());
+      //noinspection ResultOfMethodCallIgnored
       parentFile.mkdirs();
       Files.copy(sourceFile.toPath(), targetFile.toPath(),
           StandardCopyOption.REPLACE_EXISTING);
@@ -417,7 +412,6 @@ public abstract class Asserter {
    *          Actual file to overwrite the expected resource.
    * @param config
    *          Assertion configuration.
-   * @throws IOException
    */
   protected void writeExpectedFile(String resourceName, File actualFile, Config config)
       throws IOException {

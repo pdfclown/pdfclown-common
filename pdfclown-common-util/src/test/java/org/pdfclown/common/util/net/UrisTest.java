@@ -166,6 +166,7 @@ public class UrisTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
+  @SuppressWarnings("CommentedOutCode")
   public void _relativeUri(Object expected, URI from, URI to) {
     var actual = evalParameterized(() -> Uris.relativeUri(from, to));
 

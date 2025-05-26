@@ -51,6 +51,11 @@ public final class Objects {
   private static final Logger log = LoggerFactory.getLogger(Objects.class);
 
   /**
+   * Empty object array.
+   */
+  public static final Object[] OBJ_ARRAY__EMPTY = new Object[0];
+
+  /**
    * Gets whether the given object matches the other one according to the given predicate.
    * <p>
    * NOTE: This method is redundant; it's intended as a placeholder in case the implementer expects
@@ -139,7 +144,6 @@ public final class Objects {
   /**
    * Gets the integer representation of the given boolean value.
    *
-   * @param value
    * @return {@code 1}, if {@code value} is {@code true}, otherwise {@code 0}.
    */
   public static int boolToInt(boolean value) {
@@ -149,8 +153,6 @@ public final class Objects {
   /**
    * Quietly closes the given object.
    *
-   * @param <T>
-   * @param obj
    * @return {@code obj}.
    * @implNote A warning is logged if this operation fails.
    */
@@ -238,6 +240,7 @@ public final class Objects {
    * {@link String#equalsIgnoreCase(String)} instead of {@link Object#equals(Object)})
    */
   public static boolean equalsIgnoreCase(@Nullable String s1, @Nullable String s2) {
+    //noinspection StringEquality
     return (s1 == s2) || (s1 != null && s1.equalsIgnoreCase(s2));
   }
 
@@ -312,8 +315,6 @@ public final class Objects {
   /**
    * Applies an action to the given object.
    *
-   * @param <T>
-   * @param obj
    * @param action
    *          Action applied if {@code obj} is defined.
    */
@@ -326,7 +327,6 @@ public final class Objects {
   /**
    * Initializes the given class.
    *
-   * @param type
    * @return Whether the initialization succeeded.
    * @implNote This is the unchecked equivalent of {@link Class#forName(String)}
    */
@@ -337,7 +337,6 @@ public final class Objects {
   /**
    * Initializes the given class.
    *
-   * @param typeName
    * @return Whether the initialization succeeded.
    * @implNote This is the unchecked equivalent of {@link Class#forName(String)}
    */
@@ -353,9 +352,8 @@ public final class Objects {
   /**
    * Initializes the given class.
    *
-   * @param type
    * @throws RuntimeException
-   *           If class initialization fails.
+   *           if class initialization fails.
    * @implNote This is the unchecked equivalent of {@link Class#forName(String)}
    */
   public static void initOrThrow(Class<?> type) {
@@ -365,9 +363,8 @@ public final class Objects {
   /**
    * Initializes the given class.
    *
-   * @param typeName
    * @throws RuntimeException
-   *           If class initialization fails.
+   *           if class initialization fails.
    * @implNote This is the unchecked equivalent of {@link Class#forName(String)}
    */
   public static void initOrThrow(String typeName) {
@@ -472,8 +469,6 @@ public final class Objects {
   /**
    * Applies an action to the given object.
    *
-   * @param <T>
-   * @param obj
    * @param action
    *          Action applied if {@code obj} is defined.
    * @return {@code obj}
@@ -493,14 +488,17 @@ public final class Objects {
    * </p>
    *
    * @param <T>
+   *          Object type.
    * @param obj
+   *          Object to evaluate.
    * @param defaultSupplier
    *          Object supplier if {@code obj} is undefined.
    * @see java.util.Objects#requireNonNull(Object)
    * @see java.util.Objects#requireNonNullElse(Object, Object)
    * @see java.util.Objects#requireNonNullElseGet(Object, Supplier)
    */
-  public static <@Nullable T> T objElseGet(T obj, Supplier<? extends T> defaultSupplier) {
+  public static <T> @Nullable T objElseGet(@Nullable T obj,
+      Supplier<? extends @Nullable T> defaultSupplier) {
     return obj != null ? obj : defaultSupplier.get();
   }
 
@@ -508,14 +506,16 @@ public final class Objects {
    * Maps the given object.
    *
    * @param <T>
+   *          Object type.
    * @param <R>
+   *          Result type.
    * @param obj
    *          Object to map.
    * @param mapper
    *          Object mapping function.
    */
-  public static <T, @Nullable R> R objTo(@Nullable T obj,
-      Function<? super @NonNull T, ? extends R> mapper) {
+  public static <T, R> @Nullable R objTo(@Nullable T obj,
+      Function<? super @NonNull T, ? extends @Nullable R> mapper) {
     return obj != null ? mapper.apply(obj) : null;
   }
 
@@ -523,7 +523,9 @@ public final class Objects {
    * Maps the given object.
    *
    * @param <T>
+   *          Object type.
    * @param <R>
+   *          Result type.
    * @param obj
    *          Object to map.
    * @param mapper
@@ -533,7 +535,6 @@ public final class Objects {
    */
   public static <T, R> R objToElse(@Nullable T obj,
       Function<? super @NonNull T, ? extends @Nullable R> mapper, R defaultResult) {
-    @Nullable
     R ret;
     return (ret = objTo(obj, mapper)) != null ? ret : defaultResult;
   }
@@ -541,8 +542,6 @@ public final class Objects {
   /**
    * Maps the given object.
    *
-   * @param <T>
-   * @param <R>
    * @param obj
    *          Object to map.
    * @param mapper
@@ -714,7 +713,6 @@ public final class Objects {
   /**
    * Gets the string representation of the given object, along with its features.
    *
-   * @param obj
    * @param features
    *          Features (null values are ignored).
    */
@@ -736,7 +734,6 @@ public final class Objects {
   /**
    * Gets the string representation of the given object, along with its features.
    *
-   * @param obj
    * @param f1
    *          Feature (null value is ignored).
    */
@@ -757,7 +754,6 @@ public final class Objects {
   /**
    * Gets the string representation of the given object, along with its features.
    *
-   * @param obj
    * @param f1
    *          Feature (null value is ignored).
    * @param f2
@@ -784,7 +780,6 @@ public final class Objects {
   /**
    * Gets the string representation of the given object, along with its features.
    *
-   * @param obj
    * @param f1
    *          Feature (null value is ignored).
    * @param f2
@@ -823,7 +818,6 @@ public final class Objects {
   /**
    * Gets the string representation of the given object, along with its properties.
    *
-   * @param obj
    * @param properties
    *          Properties (key-value pairs; keys MUST be non-null).
    */
@@ -873,7 +867,6 @@ public final class Objects {
   /**
    * Tries the given operation, returning its result, if not null; otherwise, the given default.
    *
-   * @param <T>
    * @param operation
    *          Operation.
    * @param defaultObj
@@ -919,16 +912,16 @@ public final class Objects {
      * TODO: Unordered comparison is painfully inefficient (O = c1.size * c2.size / 2), needs
      * sorting via custom comparator.
      */
-    List<T> oc2 = c2.stream().map(resolver::apply).collect(Collectors.toList());
+    List<T> oc2 = c2.stream().map(resolver).collect(Collectors.toList());
     for (R r1 : c1) {
       T o1 = resolver.apply(r1);
-      for (Iterator<T> itr2 = oc2.iterator(); itr2.hasNext();) {
+      Iterator<T> itr2 = oc2.iterator();
+      if (itr2.hasNext()) {
         T o2 = itr2.next();
         if (!deepEquals(o1, o2, baseRefType, resolver, raw))
           return false;
 
         itr2.remove();
-        break;
       }
     }
     return true;

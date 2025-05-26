@@ -79,8 +79,6 @@ public class ParamMessage {
       if (isEmpty(format))
         return EMPTY;
 
-      assert format != null;
-
       var b = new StringBuilder();
       int index = 0;
       int oldIndex = index;
@@ -91,7 +89,7 @@ public class ParamMessage {
           break;
         }
 
-        b.append(format.substring(oldIndex, index)).append(formatArg(args[i]));
+        b.append(format, oldIndex, index).append(formatArg(args[i]));
         oldIndex = index + ARG.length();
       }
       if (index >= 0 && format.indexOf(ARG, oldIndex) > 0) {
@@ -221,8 +219,8 @@ public class ParamMessage {
     return formatter.format(format, args, argsCount);
   }
 
-  private @Nullable Throwable cause;
-  private String description;
+  private final @Nullable Throwable cause;
+  private final String description;
 
   private ParamMessage(String description, @Nullable Throwable cause) {
     this.description = requireNonNull(description);

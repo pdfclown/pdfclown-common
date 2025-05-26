@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Stefano Chizzolini
  * @implSpec Implementers should keep {@linkplain #putRelated(Object, Object, Object) implicit,
- *           automatically derived mappings} distinct from ({@linkplain #put(Object, Object)
- *           explicit, user-added ones}); this is useful for tracing entries back to their
+ *           automatically-derived mappings} distinct from {@linkplain #put(Object, Object)
+ *           explicit, user-defined ones} — this is useful for tracing entries back to their
  *           respective root assignments.
  */
 public class RelativeMap<K, V> extends HashMap<K, V> {
@@ -64,6 +64,7 @@ public class RelativeMap<K, V> extends HashMap<K, V> {
    *          Related-keys provider (given a key, provides a sequence of alternatives to find a
    *          match).
    * @param m
+   *          Map whose mappings are to be copied to this map.
    */
   public RelativeMap(@Nullable Function<K, Iterator<K>> relatedKeysProvider,
       Map<? extends K, ? extends V> m) {
@@ -80,7 +81,6 @@ public class RelativeMap<K, V> extends HashMap<K, V> {
    * </p>
    */
   @Override
-  @SuppressWarnings("null")
   public @Nullable V get(@Nullable Object key) {
     // Query explicit mapping!
     var ret = super.get(key);

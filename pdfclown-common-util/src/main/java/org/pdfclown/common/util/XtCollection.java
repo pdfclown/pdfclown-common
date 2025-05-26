@@ -13,6 +13,7 @@
 package org.pdfclown.common.util;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Extended collection.
@@ -30,7 +31,7 @@ public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
    * @return Whether this collection changed as a result of the call.
    */
   default boolean addAll(E[] a) {
-    return Aggregations.addAll(this, a);
+    return Collections.addAll(this, a);
   }
 
   /**
@@ -78,7 +79,6 @@ public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
   /**
    * Fluent {@link Collection#add(Object) add(Object)}.
    *
-   * @param e
    * @return This object.
    */
   default XtCollection<E> with(E e) {
@@ -89,7 +89,6 @@ public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
   /**
    * Fluent {@link Collection#addAll(Collection) addAll(Collection)}.
    *
-   * @param c
    * @return This object.
    */
   default XtCollection<E> withAll(Collection<? extends E> c) {
@@ -100,7 +99,6 @@ public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
   /**
    * Fluent {@link Collection#remove(Object) remove(Object)}.
    *
-   * @param e
    * @return This object.
    */
   default XtCollection<E> without(E e) {
@@ -111,7 +109,6 @@ public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
   /**
    * Fluent {@link Collection#removeAll(Collection) removeAll(Collection)}.
    *
-   * @param c
    * @return This object.
    */
   default XtCollection<E> withoutAll(Collection<?> c) {

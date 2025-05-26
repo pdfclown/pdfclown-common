@@ -101,8 +101,6 @@ public final class Reflects {
    *
    * @param <T>
    *          Return type.
-   * @throws NoSuchMethodException
-   * @throws IllegalAccessException
    */
   @SuppressWarnings("unchecked")
   public static <T> @Nullable T callOrThrow(final Object obj, final String methodName,
@@ -120,7 +118,6 @@ public final class Reflects {
    *
    * @param <T>
    *          Return type.
-   * @param obj
    * @param getter
    *          Method name of the property getter (eg "getMyProperty").
    */

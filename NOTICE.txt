@@ -17,6 +17,10 @@ JSON-java (org.json) <https://github.com/stleary/JSON-java>
 Copyright NONE
 Licensed under generic Public Domain license <https://creativecommons.org/publicdomain/zero/1.0/>
 
+Open HTML to PDF <https://github.com/danfickle/openhtmltopdf>
+Copyright 2015-2022 Daniel Fickling, 2015 Patrick Wright
+Licensed under GNU General Public License 3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>
+
 UMLDoclet <https://github.com/talsma-ict/umldoclet>
 Copyright 2016-2022 Talsma ICT
 Licensed under Apache License 2.0 <https://www.apache.org/licenses/LICENSE-2.0>

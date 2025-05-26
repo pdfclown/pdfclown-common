@@ -44,7 +44,6 @@ import org.jspecify.annotations.Nullable;
  *    . . .
  *  }
  *
- *  {@code @}SuppressWarnings("null")
  *  public Object getObject() {
  *    if (object == null) {
  *      object = . . .;

@@ -28,6 +28,7 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class StringsTest extends BaseTest {
   private static Stream<Arguments> _abbreviateMultiline() {
     return argumentsStream(
@@ -221,7 +222,7 @@ public class StringsTest extends BaseTest {
             "[...]"));
   }
 
-  private static Stream<Arguments> _uncapitalizeMultichar() {
+  private static Stream<Arguments> _uncapitalizeGreedy() {
     return argumentsStream(
         // expected
         asList(
@@ -247,6 +248,7 @@ public class StringsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
+  @SuppressWarnings("CommentedOutCode")
   public void _abbreviateMultiline(Object expected, String value, int maxLineCount,
       int averageLineLength, String marker) {
     var actual = evalParameterized(
@@ -270,9 +272,10 @@ public class StringsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _uncapitalizeMultichar(String expected, String value) {
+  @SuppressWarnings("CommentedOutCode")
+  public void _uncapitalizeGreedy(String expected, String value) {
     var actual = evalParameterized(
-        () -> Strings.uncapitalizeMultichar(value));
+        () -> Strings.uncapitalizeGreedy(value));
 
     /*
      * DO NOT remove (useful in case of arguments update)
@@ -288,9 +291,9 @@ public class StringsTest extends BaseTest {
    * Tests that unchanged strings are returned without creating new instances of the same string.
    */
   @Test
-  public void _uncapitalizeMultichar_sameInstance() {
+  public void _uncapitalizeGreedy_sameInstance() {
     final var value = "notApplicable";
 
-    assertThat(Strings.uncapitalizeMultichar(value), is(sameInstance(value)));
+    assertThat(Strings.uncapitalizeGreedy(value), is(sameInstance(value)));
   }
 }

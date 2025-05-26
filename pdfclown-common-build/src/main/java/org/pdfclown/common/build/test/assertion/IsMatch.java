@@ -48,7 +48,8 @@ public class IsMatch<T> extends BaseMatcher<T> {
     if (actualValue == null)
       return expectedValue == null;
 
-    return expectedValue.getClass().isInstance(actualValue)
+    return expectedValue != null
+        && expectedValue.getClass().isInstance(actualValue)
         && predicate.test((T) actualValue, expectedValue);
   }
 }

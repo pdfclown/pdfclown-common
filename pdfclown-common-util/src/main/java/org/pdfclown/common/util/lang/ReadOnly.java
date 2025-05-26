@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Unmodifiable.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (ReadOnly.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -21,36 +21,32 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated type or type use is unmodifiable.
+ * Indicates that the annotated type or type use allows only read access to its state, like an
+ * unmodifiable view.
  * <p>
- * Unmodifiability is about the <i>stability of the object state, referenced objects exclusive</i>;
- * it is stricter than {@linkplain ReadOnly view unmodifiability} and looser than
- * {@linkplain Immutable immutability}.
+ * View unmodifiability is about the <i>stability of the object state, referenced objects exclusive,
+ * against observer access</i>; it is looser than {@linkplain Unmodifiable proper unmodifiability}
+ * and {@linkplain Immutable immutability}.
  * </p>
  * <h2>Requirements</h2>
  * <ul>
  * <li>class:
  * <ul>
- * <li>the annotated class has only unmodifiable fields, whose types may be mutable</li>
- * <li>the annotated class is {@code final} (<b>strong unmodifiability</b>), or not (<b>weak
- * unmodifiability</b>)</li>
+ * <li>the annotated class has effectively no member with mutation semantics (any setter or other
+ * method with side effects throws {@link UnsupportedOperationException})</li>
+ * <li>the annotated class is {@code final} (<b>strong view unmodifiability</b>), or not (<b>weak
+ * view unmodifiability</b>)</li>
  * </ul>
  * </li>
- * <li>interface:
- * <ul>
- * <li>the annotated interface has no member with mutation semantics (setters or other methods with
- * side effects), whilst its getters may return types which are mutable</li>
- * <li>the parent interfaces of the annotated interface are themselves unmodifiable</li>
- * </ul>
- * </li>
+ * <li>interface: not applicable (read-only access is an implementation detail)</li>
  * </ul>
  *
  * @author Stefano Chizzolini
  * @see Immutable
- * @see ReadOnly
+ * @see Unmodifiable
  */
 @Documented
 @Retention(CLASS)
 @Target({ TYPE, TYPE_USE })
-public @interface Unmodifiable {
+public @interface ReadOnly {
 }

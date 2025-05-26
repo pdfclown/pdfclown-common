@@ -97,7 +97,7 @@ public final class Xmls {
     /**
      * Walk to the next sibling, skipping the descendants of the current node.
      */
-    SKIP;
+    SKIP
   }
 
   private static class XPathNamespaces implements NamespaceContext {
@@ -113,7 +113,7 @@ public final class Xmls {
     }
 
     @Override
-    public String getPrefix(String namespaceURI) {
+    public @Nullable String getPrefix(String namespaceURI) {
       return Aggregations.getKey(base, requireNonNull(namespaceURI));
     }
 
@@ -147,14 +147,11 @@ public final class Xmls {
           + "\\s?=\\s?"
           + "([\"'])(?<" + PATTERN_GROUP__PSEUDO_ATTR__VALUE + ">(?:(?!\\2).)*)\\2");
 
-  private static final ThreadLocal<XPath> XPATH = new ThreadLocal<>() {
-    @Override
-    protected XPath initialValue() {
-      var ret = XPathFactory.newInstance().newXPath();
-      ret.setNamespaceContext(new XPathNamespaces());
-      return ret;
-    }
-  };
+  private static final ThreadLocal<XPath> XPATH = ThreadLocal.withInitial(() -> {
+    var ret = XPathFactory.newInstance().newXPath();
+    ret.setNamespaceContext(new XPathNamespaces());
+    return ret;
+  });
 
   /**
    * <a href="https://www.w3.org/1999/xhtml/">XHTML namespace</a>.
@@ -165,7 +162,7 @@ public final class Xmls {
    * <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta">{@code <meta>}
    * (metadata element)</a> types.
    */
-  private static final @NonNull String[] META_TYPES = {
+  private static final String[] META_TYPES = {
       // Document-level metadata.
       "name",
       // Pragma directive.
@@ -198,15 +195,15 @@ public final class Xmls {
   /**
    * Evaluates the given XPath expression in the given context.
    *
-   * @param <T>
+   * @param <R>
    *          Result type (see {@code returnType} parameter).
    * @param expression
    *          XPath expression.
    * @param source
    *          Context where {@code expression} will be evaluated.
    * @param returnType
-   *          Result type expected to be returned by {@code expression}. Valid return types are
-   *          defined in {@link XPathConstants}.
+   *          Result type expected to be returned by {@code expression}, as defined in
+   *          {@link XPathConstants}.
    * @return Result of evaluating {@code expression} as an instance of {@code returnType}; if not
    *         found:
    *         <ul>
@@ -216,9 +213,9 @@ public final class Xmls {
    *         </ul>
    */
   @SuppressWarnings("unchecked")
-  public static <T> @Nullable T filter(String expression, Object source, QName returnType) {
+  public static <R> @Nullable R filter(String expression, Object source, QName returnType) {
     try {
-      return (T) xpath().evaluate(expression, source, returnType);
+      return (R) xpath().evaluate(expression, source, returnType);
     } catch (XPathExpressionException ex) {
       throw runtime(ex);
     }
@@ -227,7 +224,7 @@ public final class Xmls {
   /**
    * Evaluates the given XPath expression in the given context.
    *
-   * @param <T>
+   * @param <R>
    *          Result type.
    * @param expression
    *          XPath expression.
@@ -235,7 +232,7 @@ public final class Xmls {
    *          Context where {@code expression} will be evaluated.
    * @return {@code null}, if not found.
    */
-  public static <T extends Node> @Nullable T filterNode(String expression, Object source) {
+  public static <R extends Node> @Nullable R filterNode(String expression, Object source) {
     return filter(expression, source, XPathConstants.NODE);
   }
 
@@ -269,12 +266,11 @@ public final class Xmls {
    * Finds the first node matching the given node name which is a descendant of the given source
    * node.
    *
-   * @param <T>
-   * @param nodeName
-   * @param source
+   * @param <R>
+   *          Result type.
    * @return {@code null}, if not found.
    */
-  public static <T extends Node> @Nullable T findNode(String nodeName, Node source) {
+  public static <R extends Node> @Nullable R findNode(String nodeName, Node source) {
     return walkDescendants(source, $ -> $.getNodeName().equals(nodeName) ? $ : WalkAction.CONTINUE);
   }
 
@@ -284,8 +280,6 @@ public final class Xmls {
    * NOTE: Matched nodes are not traversed for nested matches.
    * </p>
    *
-   * @param nodeName
-   * @param source
    * @return Empty, if not found.
    */
   public static List<@NonNull Node> findNodes(String nodeName, Node source) {
@@ -323,9 +317,7 @@ public final class Xmls {
   /**
    * Gets the value of the given attribute walking across the inheritance line of the given element.
    *
-   * @param name
-   * @param element
-   * @return {@code null} if the attribute has no inherited value.
+   * @return {@code null}, if the attribute has no inherited value.
    */
   public static @Nullable String getInheritableAttributeValue(String name, Element element) {
     return walkAncestors(element, $ -> $.getNodeType() == Node.ELEMENT_NODE
@@ -439,14 +431,15 @@ public final class Xmls {
    * Walks along the ancestor-or-self axis of the given node until the mapping succeeds (ie, a
    * non-null result is returned by the mapper).
    *
-   * @param <T>
-   * @param node
+   * @param <R>
+   *          Result type.
    * @param mapper
    *          (return either {@link WalkAction} or a user object).
-   * @return {@code null}, if no mapping succeeded.
+   * @return {@code null}, if {@code node} is undefined or no mapping succeeded.
    */
   @SuppressWarnings("unchecked")
-  public static <@Nullable T> T walkAncestors(@Nullable Node node, Function<Node, Object> mapper) {
+  public static <R> @Nullable R walkAncestors(@Nullable Node node,
+      Function<Node, @Nullable Object> mapper) {
     if (node == null)
       return null;
 
@@ -457,10 +450,8 @@ public final class Xmls {
         node = requireNonNull(oldNode.getParentNode());
         node.removeChild(oldNode);
         continue;
-      } else if (ret == WalkAction.CONTINUE || ret == WalkAction.SKIP || ret == null) {
-        /* NOOP */
-      } else
-        return (T) ret;
+      } else if (ret != WalkAction.CONTINUE && ret != WalkAction.SKIP && ret != null)
+        return (R) ret;
 
       node = node.getParentNode();
     }
@@ -471,15 +462,15 @@ public final class Xmls {
    * Walks along the descendant axis of the given node until the mapping succeeds (ie, a non-null
    * result is returned by the mapper).
    *
-   * @param <T>
-   * @param node
+   * @param <R>
+   *          Result type.
    * @param mapper
    *          (return either {@link WalkAction} or a user object).
    * @return {@code null}, if no mapping succeeded.
    */
   @SuppressWarnings("unchecked")
-  public static <@Nullable T> T walkDescendants(@Nullable Node node,
-      Function<Node, Object> mapper) {
+  public static <R> @Nullable R walkDescendants(@Nullable Node node,
+      Function<Node, @Nullable Object> mapper) {
     if (node == null)
       return null;
 
@@ -496,9 +487,9 @@ public final class Xmls {
       } else if (ret == WalkAction.CONTINUE || ret == null) {
         ret = walkDescendants(child, mapper);
         if (ret != null)
-          return (T) ret;
+          return (R) ret;
       } else
-        return (T) ret;
+        return (R) ret;
 
       child = child.getNextSibling();
     }
@@ -557,7 +548,7 @@ public final class Xmls {
         }
 
         @Override
-        public void warning(SAXParseException exception) throws SAXException {
+        public void warning(SAXParseException exception) {
           // TODO log warning
         }
       });
@@ -591,11 +582,12 @@ public final class Xmls {
     return XPATH.get();
   }
 
+  /*
+   * FIXME: static configuration of shared object (xpath) is an anti-pattern: move ALL xpath-related
+   * methods to dedicated instance
+   */
   /**
    * Registers a namespace prefix for xpath expressions.
-   *
-   * @param prefix
-   * @param namespaceUri
    */
   public static void xpathNS(String prefix, String namespaceUri) {
     ((XPathNamespaces) xpath().getNamespaceContext()).register(prefix, namespaceUri);

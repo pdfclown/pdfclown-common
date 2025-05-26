@@ -135,13 +135,14 @@ public final class Strings {
         ret = ret.substring(0, maxLength);
       }
     }
+    //noinspection StringEquality
     if (ret != value) {
       ret += marker;
     }
     return ret;
   }
 
-  // SourceFQN: org.pdfclown.common.util.Strings.uncapitalizeMultichar(..)
+  // SourceFQN: org.pdfclown.common.util.Strings.uncapitalizeGreedy(..)
   /**
    * Ensures leading characters are lower-case.
    * <p>
@@ -158,7 +159,7 @@ public final class Strings {
    * <li>{@code "UNDERSCORE_TEST"} to {@code "underscore_TEST"}</li>
    * </ul>
    */
-  public static String uncapitalizeMultichar(String value) {
+  public static String uncapitalizeGreedy(String value) {
     char[] valueChars = value.toCharArray();
     for (int i = 0, limit = valueChars.length - 1; i <= limit; i++) {
       /*-
