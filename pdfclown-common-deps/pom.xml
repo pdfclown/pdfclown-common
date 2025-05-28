@@ -23,6 +23,14 @@
   <description>Full Bill of Materials (complete set of pdfClown common dependencies)</description>
 
   <properties>
+    <!--
+      OVERRIDDEN PROPERTIES
+    -->
+    <rootdir>${project.basedir}/..</rootdir>
+
+    <!--
+      VERSIONS
+    -->
     <commons.io.version>2.18.0</commons.io.version>
     <commons.lang.version>3.17.0</commons.lang.version>
     <commons.text.version>1.10.0</commons.text.version>

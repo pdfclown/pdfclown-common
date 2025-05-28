@@ -78,8 +78,8 @@
     <!--
       OVERRIDDEN PROPERTIES
     -->
-    <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
     <projectRootUrl>https://${projectUrlBasePath}</projectRootUrl>
+    <rootdir>${project.basedir}</rootdir>
 
     <!--
       CUSTOM PROPERTIES

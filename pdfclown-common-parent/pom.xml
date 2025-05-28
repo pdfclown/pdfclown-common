@@ -24,6 +24,11 @@
 
   <properties>
     <!--
+      OVERRIDDEN PROPERTIES
+    -->
+    <rootdir>${project.basedir}/..</rootdir>
+
+    <!--
       CUSTOM PROPERTIES
     -->
     <!--

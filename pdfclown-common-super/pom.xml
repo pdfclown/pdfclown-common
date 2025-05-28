@@ -43,7 +43,7 @@ pdfclown-common-base instead)</description>
       Path to the root project directory.
       This is an ugly workaround to the notorious lack of a standard way to point to the root
       project directory no matter the current project building in the reactor. -->
-    <rootdir>${project.basedir}</rootdir>
+    <rootdir>${project.basedir}/..</rootdir>
 
     <!--
       THIRD-PARTY PROPERTIES
@@ -59,7 +59,7 @@ pdfclown-common-base instead)</description>
         - JDK tools like javadoc may apply validation rules which are incompatible with source code
           targeting another JDK version
 
-      Consequently, we stick to old good source+target options, constraining JDK to the same version
+      Consequently, we stick to good old source+target options, constraining JDK to the same version
       via toolchain. -->
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
@@ -71,12 +71,12 @@ pdfclown-common-base instead)</description>
       CUSTOM PROPERTIES
     -->
     <!--
-      NOTE: Default `buildResourcesRootPath` (empty) corresponds to classpath-based resources (some
-      plugins support also the equivalent explicit protocol "classpath:"): derived POMs MUST either
-      override this property (in case of filesystem-based resources), or declare the build resources
-      artifact (namely, pdfclown-common-build) as dependency of the plugins referencing those
-      resources. -->
-    <buildResourcesRootPath/>
+      NOTE: Derived POMs MUST override this property either specifying their own filesystem-based
+      resources path, or setting it empty (ie, classpath-based resources) and declaring the build
+      resources artifact (namely, pdfclown-common-build) as dependency of the plugins referencing
+      those resources (BTW, some plugins support also the equivalent "classpath:" protocol, but
+      that's not a standard practice, so we have to stick to common heuristics). -->
+    <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
     <checkstyleSkip>false</checkstyleSkip>
 
     <!--
@@ -127,10 +127,11 @@ pdfclown-common-base instead)</description>
     <maven.source.version>3.3.1</maven.source.version>
     <maven.surefire.version>3.5.2</maven.surefire.version>
     <maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
-    <revelc.formatter.version>2.26.0</revelc.formatter.version>
     <sisu.version>0.3.5</sisu.version>
     <sonatype.central.publishing.version>0.7.0</sonatype.central.publishing.version>
-    <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
+    <spotless-maven-plugin.version>2.44.4</spotless-maven-plugin.version>
+    <spotless-maven-plugin.eclipseIde.version>4.34</spotless-maven-plugin.eclipseIde.version>
+    <spotless-maven-plugin.eclipseWtp.version>4.21.0</spotless-maven-plugin.eclipseWtp.version>
   </properties>
 
   <build>
@@ -145,37 +146,28 @@ pdfclown-common-base instead)</description>
         </plugin>
 
         <plugin>
-          <groupId>com.github.ekryd.sortpom</groupId>
-          <artifactId>sortpom-maven-plugin</artifactId>
-          <version>${sortpom-maven-plugin.version}</version>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless-maven-plugin.version}</version>
           <configuration>
-            <createBackupFile>false</createBackupFile>
-            <expandEmptyElements>false</expandEmptyElements>
-            <indentAttribute>all</indentAttribute>
-            <lineSeparator>\n</lineSeparator>
-          </configuration>
-        </plugin>
-        <plugin>
-          <!--
-            [#CodeFormat] Code formatter.
+            <!-- See <https://github.com/diffplug/spotless/tree/main/plugin-maven> -->
 
-            [Manual] Before any commit, code MUST be formatted (and verified):
-              mvn formatter:format
-          -->
-          <groupId>net.revelc.code.formatter</groupId>
-          <artifactId>formatter-maven-plugin</artifactId>
-          <version>${revelc.formatter.version}</version>
-          <configuration>
-            <configFile>${buildResourcesRootPath}/config/eclipse/java-style.xml</configFile>
-            <configHtmlFile>${buildResourcesRootPath}/config/jsoup/html.properties</configHtmlFile>
-            <configXmlFile>${buildResourcesRootPath}/config/eclipse/xml.properties</configXmlFile>
-            <lineEnding>LF</lineEnding>
+            <!--
+              NOTE: Only POM formatter is enabled on all projects; any other source code formatter
+              is activated by a dedicated profile ("full-format") which can be easily switched off.
+            -->
+            <pom>
+              <sortPom>
+                <expandEmptyElements>false</expandEmptyElements>
+                <indentAttribute>all</indentAttribute>
+                <lineSeparator>\n</lineSeparator>
+              </sortPom>
+            </pom>
           </configuration>
           <executions>
             <execution>
-              <id>sources-format</id>
               <goals>
-                <goal>format</goal>
+                <goal>check</goal>
               </goals>
               <phase>process-sources</phase>
             </execution>
@@ -732,24 +724,8 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
 
       <!-- Code formatting -->
       <plugin>
-        <groupId>com.github.ekryd.sortpom</groupId>
-        <artifactId>sortpom-maven-plugin</artifactId>
-        <executions>
-          <!--
-          TODO: in CI profile, define execution of `verify` goal (see
-          <https://github.com/Ekryd/sortpom/wiki/SortPom-and-Build-Servers>).
-          -->
-          <execution>
-            <goals>
-              <goal>sort</goal>
-            </goals>
-            <phase>validate</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>net.revelc.code.formatter</groupId>
-        <artifactId>formatter-maven-plugin</artifactId>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -1024,7 +1000,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       </build>
     </profile>
 
-    <!-- 
+    <!--
       TODO: Full POMs should be like fat jars, containing all the configuration merged from their
       ancestor POMs (which should be marked as "internal-pom" instead). The point is to avoid
       publishing fragmented POMs when they were split because of internal reasons. Unfortunately,
@@ -1138,6 +1114,119 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
                 <dependencyManagement>extended_interpolate</dependencyManagement>
                 <build>remove</build>
               </pomElements>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>full-format</id>
+      <!--
+        FULL-FORMAT PROFILE
+
+        Fully-formatted source code. By default, projects are applied this profile unless they
+        explicit opt-out via "no-format" marker file.
+      -->
+      <activation>
+        <file>
+          <missing>src/profiles/no-format</missing>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <configuration>
+              <!-- See <https://github.com/diffplug/spotless/tree/main/plugin-maven> -->
+
+              <formats>
+                <!--
+                  WARNING: Avoid eclipseWtp for CSS formatting, it's buggy! corrupts property
+                  declarations arbitrarily converting constants to strings, and breaks at-rule
+                  names; for example:
+                    font-family: inherit !important;
+                  to
+                    font-family: "inherit !important";
+                  and
+                    @right-middle {
+                      . . .
+                    }
+                  to
+                    @
+                    right-middle {
+                      . . .
+                    }
+                -->
+
+                <format>
+                  <includes>
+                    <include>src/**/*.css</include>
+                    <include>src/**/*.html</include>
+                  </includes>
+                  <!-- DO NOT alter test resources (their formatting may be significant) -->
+                  <excludes>
+                    <exclude>src/test/**/*</exclude>
+                  </excludes>
+
+                  <prettier>
+                    <prettierVersion>2.0.5</prettierVersion>
+                    <config>
+                      <printWidth>100</printWidth>
+                    </config>
+                  </prettier>
+                </format>
+
+                <format>
+                  <includes>
+                    <include>src/**/*.xml</include>
+                    <include>src/**/*.xsd</include>
+                  </includes>
+
+                  <eclipseWtp>
+                    <version>${spotless-maven-plugin.eclipseWtp.version}</version>
+
+                    <type>XML</type>
+                    <files>
+                      <file>${buildResourcesRootPath}/config/eclipse/org.eclipse.wst.xml.core.prefs</file>
+                    </files>
+                  </eclipseWtp>
+                </format>
+              </formats>
+
+              <java>
+                <eclipse>
+                  <version>${spotless-maven-plugin.eclipseIde.version}</version>
+
+                  <file>${buildResourcesRootPath}/config/eclipse/java-style.xml</file>
+
+                  <sortMembersEnabled>true</sortMembersEnabled>
+                  <!-- Sort order of the member categories:
+                  - T: (Nested) Types
+                  - SF: Static Fields
+                  - SI: Static Initializers
+                  - SM: Static Methods
+                  - F: Fields
+                  - I: Initializers
+                  - C: Constructors
+                  - M: Methods -->
+                  <sortMembersOrder>T,SF,SI,SM,F,I,C,M</sortMembersOrder>
+                  <!-- Reordering of members of the same category by the visibility within the
+                  category. -->
+                  <sortMembersVisibilityOrderEnabled>true</sortMembersVisibilityOrderEnabled>
+                  <!-- Ordering of members of the same category by the visibility within the category:
+                  - B: Public
+                  - R: Protected
+                  - D: Package
+                  - V: Private -->
+                  <sortMembersVisibilityOrder>B,R,D,V</sortMembersVisibilityOrder>
+                </eclipse>
+
+                <importOrder>
+                  <file>${buildResourcesRootPath}/config/eclipse/java.importorder</file>
+                </importOrder>
+              </java>
             </configuration>
           </plugin>
         </plugins>

@@ -33,7 +33,6 @@
       OVERRIDDEN PROPERTIES
     -->
     <checkstyleSkip>true</checkstyleSkip>
-    <formatter.skip>true</formatter.skip>
     <projectJpmsName>org.pdfclown.common.maven</projectJpmsName>
     <rootdir>${project.basedir}/..</rootdir>
 

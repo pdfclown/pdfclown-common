@@ -30,6 +30,9 @@ This document describes how to set up your development environment to build and 
         . . .
     ```
 
+- **[nodeJS](https://nodejs.org/en)** [[installation instructions](https://nodejs.org/en/download)]
+
+    This is required by the [Prettier](https://prettier.io/) formatter integrated in [Spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven) Maven plugin.
 - **[pre-commit](https://pre-commit.com/)** [[installation instructions](https://pre-commit.com/#install)]
 - **[commitizen](https://commitizen-tools.github.io/commitizen/)** [[installation instructions](https://commitizen-tools.github.io/commitizen/#requirements)]
 - **[REUSE tool](https://reuse.software/)** [[installation instructions](https://reuse.readthedocs.io/en/latest/readme.html#install)]
