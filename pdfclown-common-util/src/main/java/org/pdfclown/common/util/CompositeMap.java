@@ -92,18 +92,6 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
   <R extends M> @Nullable R getMap(Class<? extends V> type);
 
   /**
-   * Associates the sub-map to the given type.
-   *
-   * @param type
-   *          Sub-map value type.
-   * @param map
-   *          Sub-map.
-   * @throws NullPointerException
-   *           if {@code type} has no mapping.
-   */
-  void putMap(Class<? extends V> type, M map);
-
-  /**
    * Associates the value to the given key.
    * <p>
    * The entry is placed in the sub-map corresponding to its value type.
@@ -120,4 +108,16 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
   default @Nullable V put(K key, @NonNull V value) {
     return requireNonNull((XtMap<K, V>) getMap((Class<V>) value.getClass())).put(key, value);
   }
+
+  /**
+   * Associates the sub-map to the given type.
+   *
+   * @param type
+   *          Sub-map value type.
+   * @param map
+   *          Sub-map.
+   * @throws NullPointerException
+   *           if {@code type} has no mapping.
+   */
+  void putMap(Class<? extends V> type, M map);
 }

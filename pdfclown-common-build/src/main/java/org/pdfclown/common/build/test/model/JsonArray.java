@@ -22,12 +22,12 @@ import org.jspecify.annotations.Nullable;
  */
 public class JsonArray extends JSONArray implements JsonElement {
   @Override
-  public @Nullable JSONArray put(int index, @Nullable Object value) {
-    return super.put(index, JsonElement.normValue(value));
+  public @Nullable JSONArray put(@Nullable Object value) {
+    return super.put(JsonElement.normValue(value));
   }
 
   @Override
-  public @Nullable JSONArray put(@Nullable Object value) {
-    return super.put(JsonElement.normValue(value));
+  public @Nullable JSONArray put(int index, @Nullable Object value) {
+    return super.put(index, JsonElement.normValue(value));
   }
 }

@@ -34,14 +34,30 @@ import org.jspecify.annotations.Nullable;
  * @see Checks
  */
 public final class Exceptions {
+  public static EOFException EOF() {
+    return new EOFException();
+  }
+
+  public static NotImplementedException TODO() {
+    return new NotImplementedException();
+  }
+
+  /**
+   * @param format
+   *          Parameterized message (use <code>{}</code> as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
+   *          {@link Throwable#getCause() cause}.
+   */
+  public static NotImplementedException TODO(@Nullable String format, @Nullable Object... args) {
+    var message = ParamMessage.of(format, args);
+    return new NotImplementedException(message.getDescription(), message.getCause());
+  }
+
   public static IllegalArgumentException differingArg(@Nullable String name,
       @Nullable Object value, @Nullable Object otherValue, @Nullable String description) {
     return wrongArg(name, value, ARG + " (should be " + ARG + ")",
         requireNonNullElse(description, "INVALID"), objToLiteralString(otherValue));
-  }
-
-  public static EOFException EOF() {
-    return new EOFException();
   }
 
   public static NoSuchElementException missing() {
@@ -78,22 +94,6 @@ public final class Exceptions {
   public static RuntimeException runtime(Throwable cause) {
     return cause instanceof RuntimeException ? (RuntimeException) cause
         : new RuntimeException(cause);
-  }
-
-  public static NotImplementedException TODO() {
-    return new NotImplementedException();
-  }
-
-  /**
-   * @param format
-   *          Parameterized message (use <code>{}</code> as argument placeholder).
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link Throwable#getCause() cause}.
-   */
-  public static NotImplementedException TODO(@Nullable String format, @Nullable Object... args) {
-    var message = ParamMessage.of(format, args);
-    return new NotImplementedException(message.getDescription(), message.getCause());
   }
 
   /**

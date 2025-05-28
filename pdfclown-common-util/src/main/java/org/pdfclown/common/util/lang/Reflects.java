@@ -47,6 +47,23 @@ public final class Reflects {
   }
 
   /**
+   * Calls the given method on the target object.
+   *
+   * @param <T>
+   *          Return type.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> @Nullable T callOrThrow(final Object obj, final String methodName,
+      Class<?> @Nullable [] paramTypes, Object @Nullable [] args)
+      throws NoSuchMethodException, IllegalAccessException {
+    try {
+      return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
+    } catch (InvocationTargetException ex) {
+      throw new RuntimeException(ex.getCause());
+    }
+  }
+
+  /**
    * Gets the calling frame.
    */
   public static Optional<StackFrame> callerFrame() {
@@ -94,23 +111,6 @@ public final class Reflects {
           return false;
         })
         .findFirst());
-  }
-
-  /**
-   * Calls the given method on the target object.
-   *
-   * @param <T>
-   *          Return type.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T> @Nullable T callOrThrow(final Object obj, final String methodName,
-      Class<?> @Nullable [] paramTypes, Object @Nullable [] args)
-      throws NoSuchMethodException, IllegalAccessException {
-    try {
-      return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
-    } catch (InvocationTargetException ex) {
-      throw new RuntimeException(ex.getCause());
-    }
   }
 
   /**

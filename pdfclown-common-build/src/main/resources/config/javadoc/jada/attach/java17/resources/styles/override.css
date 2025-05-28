@@ -31,7 +31,8 @@ h6 {
   font-size: 14px;
 }
 
-:not(h1, h2, h3, h4, h5, h6)>code, :not(h1, h2, h3, h4, h5, h6)>tt {
+:not(h1, h2, h3, h4, h5, h6) > code,
+:not(h1, h2, h3, h4, h5, h6) > tt {
   line-height: inherit;
 }
 
@@ -78,16 +79,19 @@ ul.sub-nav-list li {
 /*
  * Styles for headings.
  */
-body.class-declaration-page .summary h2, body.class-declaration-page .details h2, body.class-use-page  h2,
-  body.module-declaration-page  .block-list h2 {
+body.class-declaration-page .summary h2,
+body.class-declaration-page .details h2,
+body.class-use-page h2,
+body.module-declaration-page .block-list h2 {
   font-style: inherit;
   margin: 0;
   padding: 10px;
   text-align: center;
 }
 
-body.class-declaration-page .summary h3, body.class-declaration-page .details h3, body.class-declaration-page .summary .inherited-list h2
-  {
+body.class-declaration-page .summary h3,
+body.class-declaration-page .details h3,
+body.class-declaration-page .summary .inherited-list h2 {
   background-color: #869ab2;
   border: 0;
   color: white;
@@ -98,11 +102,11 @@ body.class-declaration-page .summary h3, body.class-declaration-page .details h3
 /*
  * Styles for page layout containers.
  */
-dl.notes>dt {
+dl.notes > dt {
   font-family: inherit;
 }
 
-dl.notes>dd {
+dl.notes > dd {
   font-family: inherit;
   margin: revert;
 }
@@ -110,19 +114,25 @@ dl.notes>dd {
 /*
  * Styles for lists.
  */
-ul
-.block-list>li, ul.details-list>li, ul.member-list>li, ul.summary-list>li {
+ul .block-list > li,
+ul.details-list > li,
+ul.member-list > li,
+ul.summary-list > li {
   line-height: inherit;
 }
 
-ul.block-list, ul.details-list, ul.member-list, ul.summary-list {
+ul.block-list,
+ul.details-list,
+ul.member-list,
+ul.summary-list {
   margin: 0;
 }
 
 /*
  * Styles for tables.
  */
-.summary-table, .details-table {
+.summary-table,
+.details-table {
   border: 0;
   margin-bottom: 10px;
 }
@@ -135,11 +145,12 @@ div.table-tabs {
   padding: inherit;
 }
 
-div.table-tabs>button {
+div.table-tabs > button {
   padding: 5px 20px;
 }
 
-.summary-table>div, .details-table>div {
+.summary-table > div,
+.details-table > div {
   padding: 5px;
 }
 
@@ -152,7 +163,10 @@ div.table-tabs>button {
   background-color: inherit;
 }
 
-.even-row-color, .even-row-color .table-header, .odd-row-color, .odd-row-color .table-header {
+.even-row-color,
+.even-row-color .table-header,
+.odd-row-color,
+.odd-row-color .table-header {
   background-color: inherit;
   border-top: 1px #b0b0b0 solid;
 }
@@ -164,7 +178,10 @@ div.block {
   font-family: inherit;
 }
 
-.module-signature, .package-signature, .type-signature, .member-signature {
+.module-signature,
+.package-signature,
+.type-signature,
+.member-signature {
   font-size: 16px;
 }
 
@@ -180,20 +197,24 @@ section.class-description {
   line-height: inherit;
 }
 
-.summary section[class$="-summary"], .details section[class$="-details"], .class-uses .detail,
-  .serialized-class-details {
+.summary section[class$="-summary"],
+.details section[class$="-details"],
+.class-uses .detail,
+.serialized-class-details {
   background-color: inherit;
   border: 0;
   padding: inherit;
 }
 
-.inherited-list, section[class$="-details"] .detail {
+.inherited-list,
+section[class$="-details"] .detail {
   background-color: inherit;
   border: inherit;
   padding: 0 0 0 8px;
 }
 
-div.inherited-list h2, div.inherited-list h3 {
+div.inherited-list h2,
+div.inherited-list h3 {
   text-align: left !important;
 }
 

@@ -85,6 +85,13 @@ public class ModelMapper<T> {
 
     /**
      * Gets the all-but-these-properties selector for the given type.
+     */
+    public static PropertySelector excludeProperties(Class<?> type, String... properties) {
+      return excludeProperties(type, 0, properties);
+    }
+
+    /**
+     * Gets the all-but-these-properties selector for the given type.
      *
      * @param level
      *          Exclusion level (ie, selection is applied from this level).
@@ -95,10 +102,10 @@ public class ModelMapper<T> {
     }
 
     /**
-     * Gets the all-but-these-properties selector for the given type.
+     * Gets the nothing-but-these-properties selector for the given type.
      */
-    public static PropertySelector excludeProperties(Class<?> type, String... properties) {
-      return excludeProperties(type, 0, properties);
+    public static PropertySelector includeProperties(Class<?> type, String... properties) {
+      return includeProperties(type, Integer.MAX_VALUE, properties);
     }
 
     /**
@@ -110,13 +117,6 @@ public class ModelMapper<T> {
     public static PropertySelector includeProperties(Class<?> type, int level,
         String... properties) {
       return new PropertySelector(type, false, level, properties);
-    }
-
-    /**
-     * Gets the nothing-but-these-properties selector for the given type.
-     */
-    public static PropertySelector includeProperties(Class<?> type, String... properties) {
-      return includeProperties(type, Integer.MAX_VALUE, properties);
     }
 
     private boolean exclusive;

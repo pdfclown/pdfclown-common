@@ -245,8 +245,8 @@ public final class Xmls {
    *          Context where {@code expression} will be evaluated.
    * @return Empty, if not found.
    */
-  public static List<@NonNull Node> filterNodes(String expression, Object source) {
-    return asList(nonNull(filter(expression, source, XPathConstants.NODESET)));
+  public static String filterNodeValue(String expression, Object source) {
+    return nonNull(filter(expression, source, XPathConstants.STRING));
   }
 
   /**
@@ -258,8 +258,8 @@ public final class Xmls {
    *          Context where {@code expression} will be evaluated.
    * @return Empty, if not found.
    */
-  public static String filterNodeValue(String expression, Object source) {
-    return nonNull(filter(expression, source, XPathConstants.STRING));
+  public static List<@NonNull Node> filterNodes(String expression, Object source) {
+    return asList(nonNull(filter(expression, source, XPathConstants.NODESET)));
   }
 
   /**

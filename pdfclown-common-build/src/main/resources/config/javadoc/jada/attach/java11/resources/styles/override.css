@@ -50,34 +50,46 @@ pre {
   background-color: black;
 }
 
-.bottomNav, .topNav {
+.bottomNav,
+.topNav {
   background-color: #4072b1;
   height: auto;
   padding: 0;
 }
 
-ul.navList, ul.nav-list {
+ul.navList,
+ul.nav-list {
   margin: 0;
   padding: 0;
 }
 
 .navBarCell1Rev {
-  background-color: #F8981D;
+  background-color: #f8981d;
   margin: 0;
 }
 
-.overviewSummary caption span, .memberSummary caption span, .typeSummary caption span, .useSummary caption span,
-  .constantsSummary caption span, .deprecatedSummary caption span, .requiresSummary caption span,
-  .packagesSummary caption span, .providesSummary caption span, .usesSummary caption span {
-  background-color: #F8981D;
+.overviewSummary caption span,
+.memberSummary caption span,
+.typeSummary caption span,
+.useSummary caption span,
+.constantsSummary caption span,
+.deprecatedSummary caption span,
+.requiresSummary caption span,
+.packagesSummary caption span,
+.providesSummary caption span,
+.usesSummary caption span {
+  background-color: #f8981d;
 }
 
-.memberSummary caption span.tableTab span, .packagesSummary caption span.tableTab span,
-  .overviewSummary caption span.tableTab span, .typeSummary caption span.tableTab span {
+.memberSummary caption span.tableTab span,
+.packagesSummary caption span.tableTab span,
+.overviewSummary caption span.tableTab span,
+.typeSummary caption span.tableTab span {
   background-color: #4072b1;
 }
 
-ul.navList li, ul.nav-list li {
+ul.navList li,
+ul.nav-list li {
   margin: 0;
   padding: 7px 15px;
 }
@@ -95,17 +107,19 @@ div.block {
   color: inherit;
 }
 
-div.block>span.descfrmTypeLabel, span.descfrmTypeLabel>code {
+div.block > span.descfrmTypeLabel,
+span.descfrmTypeLabel > code {
   font-size: smaller;
 }
 
 div.block:has(span.descfrmTypeLabel) {
-  color: #4E4E4E;
+  color: #4e4e4e;
   margin-bottom: 10px;
 }
 
-.contentContainer .description dl dt, .contentContainer .details dl dt, .serializedFormContainer dl dt
-  {
+.contentContainer .description dl dt,
+.contentContainer .details dl dt,
+.serializedFormContainer dl dt {
   font-size: smaller;
 }
 
@@ -129,21 +143,30 @@ main {
   margin: 0;
 }
 
-.contentContainer, .sourceContainer, .classUseContainer, .serializedFormContainer, .constantValuesContainer, .allClassesContainer, .allPackagesContainer {
+.contentContainer,
+.sourceContainer,
+.classUseContainer,
+.serializedFormContainer,
+.constantValuesContainer,
+.allClassesContainer,
+.allPackagesContainer {
   padding: 5px 0;
 }
 
-ul.blockList li.blockList, ul.blockListLast li.blockList {
+ul.blockList li.blockList,
+ul.blockListLast li.blockList {
   line-height: 1.2;
 }
 
-ul.blockList ul.blockList li.blockList, ul.blockList ul.blockListLast li.blockList {
+ul.blockList ul.blockList li.blockList,
+ul.blockList ul.blockListLast li.blockList {
   background-color: inherit;
   border: 0;
   padding: 0;
 }
 
-section>ul.blockList>li.blockList, section>ul.blockListLast>li.blockList {
+section > ul.blockList > li.blockList,
+section > ul.blockListLast > li.blockList {
   margin-top: 50px;
 }
 
@@ -152,8 +175,8 @@ ul.blockList ul.blockList li.blockList h3 {
   text-align: center;
 }
 
-ul.blockList ul.blockList ul.blockList li.blockList, ul.blockList ul.blockList ul.blockListLast li.blockList
-  {
+ul.blockList ul.blockList ul.blockList li.blockList,
+ul.blockList ul.blockList ul.blockListLast li.blockList {
   background-color: inherit;
   padding: 0 0 0 8px;
 }
@@ -167,8 +190,8 @@ ul.blockList ul.blockList ul.blockList li.blockList h3 {
   text-align: left !important;
 }
 
-div.details ul.blockList ul.blockList ul.blockList li.blockList h4, div.details ul.blockList ul.blockList ul.blockListLast li.blockList h4
-  {
+div.details ul.blockList ul.blockList ul.blockList li.blockList h4,
+div.details ul.blockList ul.blockList ul.blockListLast li.blockList h4 {
   background-color: #869ab2;
   border: 0;
   color: white;
@@ -177,67 +200,125 @@ div.details ul.blockList ul.blockList ul.blockList li.blockList h4, div.details 
   padding: 7px 10px;
 }
 
-a[name]::before, a[name]:target, a[id]::before, a[id]:target {
+a[name]::before,
+a[name]:target,
+a[id]::before,
+a[id]:target {
   display: inherit;
 }
 
-#allclasses_navbar_top, #skip\.navbar\.top, #allclasses_navbar_bottom, #skip\.navbar\.bottom {
+#allclasses_navbar_top,
+#skip\.navbar\.top,
+#allclasses_navbar_bottom,
+#skip\.navbar\.bottom {
   display: none !important;
 }
 
-.memberSummary caption span.tableTab span, .packagesSummary caption span.tableTab span,
-  .overviewSummary caption span.tableTab span, .typeSummary caption span.tableTab span {
+.memberSummary caption span.tableTab span,
+.packagesSummary caption span.tableTab span,
+.overviewSummary caption span.tableTab span,
+.typeSummary caption span.tableTab span {
   height: auto;
   padding: 5px 20px;
 }
 
-.memberSummary caption span.activeTableTab span, .packagesSummary caption span.activeTableTab span,
-  .overviewSummary caption span.activeTableTab span, .typeSummary caption span.activeTableTab span {
+.memberSummary caption span.activeTableTab span,
+.packagesSummary caption span.activeTableTab span,
+.overviewSummary caption span.activeTableTab span,
+.typeSummary caption span.activeTableTab span {
   height: auto;
   padding: 5px 20px;
 }
 
-.overviewSummary caption span, .memberSummary caption span, .typeSummary caption span, .useSummary caption span,
-  .constantsSummary caption span, .deprecatedSummary caption span, .requiresSummary caption span,
-  .packagesSummary caption span, .providesSummary caption span, .usesSummary caption span {
+.overviewSummary caption span,
+.memberSummary caption span,
+.typeSummary caption span,
+.useSummary caption span,
+.constantsSummary caption span,
+.deprecatedSummary caption span,
+.requiresSummary caption span,
+.packagesSummary caption span,
+.providesSummary caption span,
+.usesSummary caption span {
   height: auto;
   padding: 5px 20px;
 }
 
-th.colFirst, th.colSecond, th.colLast, th.colConstructorName, th.colDeprecatedItemName, .useSummary th,
-  .constantsSummary th, .packagesSummary th, td.colFirst, td.colSecond, td.colLast, .useSummary td,
-  .constantsSummary td {
+th.colFirst,
+th.colSecond,
+th.colLast,
+th.colConstructorName,
+th.colDeprecatedItemName,
+.useSummary th,
+.constantsSummary th,
+.packagesSummary th,
+td.colFirst,
+td.colSecond,
+td.colLast,
+.useSummary td,
+.constantsSummary td {
   background-color: #869ab2;
   color: white;
   padding: 7px 5px;
 }
 
-th.colFirst, th.colSecond, th.colLast, th.colConstructorName, th.colDeprecatedItemName, .useSummary th,
-  .constantsSummary th, .packagesSummary th, td.colFirst, td.colSecond, td.colLast, .useSummary td,
-  .constantsSummary td {
+th.colFirst,
+th.colSecond,
+th.colLast,
+th.colConstructorName,
+th.colDeprecatedItemName,
+.useSummary th,
+.constantsSummary th,
+.packagesSummary th,
+td.colFirst,
+td.colSecond,
+td.colLast,
+.useSummary td,
+.constantsSummary td {
   vertical-align: middle;
 }
 
-.overviewSummary td.colFirst, .overviewSummary th.colFirst, .requiresSummary td.colFirst,
-  .requiresSummary th.colFirst, .packagesSummary td.colFirst, .packagesSummary td.colSecond,
-  .packagesSummary th.colFirst, .packagesSummary th, .usesSummary td.colFirst, .usesSummary th.colFirst,
-  .providesSummary td.colFirst, .providesSummary th.colFirst, .memberSummary td.colFirst,
-  .memberSummary th.colFirst, .memberSummary td.colSecond, .memberSummary th.colSecond,
-  .memberSummary th.colConstructorName, .typeSummary td.colFirst, .typeSummary th.colFirst {
+.overviewSummary td.colFirst,
+.overviewSummary th.colFirst,
+.requiresSummary td.colFirst,
+.requiresSummary th.colFirst,
+.packagesSummary td.colFirst,
+.packagesSummary td.colSecond,
+.packagesSummary th.colFirst,
+.packagesSummary th,
+.usesSummary td.colFirst,
+.usesSummary th.colFirst,
+.providesSummary td.colFirst,
+.providesSummary th.colFirst,
+.memberSummary td.colFirst,
+.memberSummary th.colFirst,
+.memberSummary td.colSecond,
+.memberSummary th.colSecond,
+.memberSummary th.colConstructorName,
+.typeSummary td.colFirst,
+.typeSummary th.colFirst {
   vertical-align: middle;
 }
 
-td.colFirst, th.colFirst {
+td.colFirst,
+th.colFirst {
   padding: 0 5px !important;
 }
 
-.overviewSummary td, .memberSummary td, .typeSummary td, .useSummary td, .constantsSummary td,
-  .deprecatedSummary td, .requiresSummary td, .packagesSummary td, .providesSummary td, .usesSummary td
-  {
+.overviewSummary td,
+.memberSummary td,
+.typeSummary td,
+.useSummary td,
+.constantsSummary td,
+.deprecatedSummary td,
+.requiresSummary td,
+.packagesSummary td,
+.providesSummary td,
+.usesSummary td {
   padding: 3px 5px !important;
 }
 
-li.blockList>pre {
+li.blockList > pre {
   font-size: 16px;
 }
 
@@ -245,26 +326,45 @@ li.blockList>pre {
   width: 100%;
 }
 
-.altColor, .altColor td, .altColor th {
+.altColor,
+.altColor td,
+.altColor th {
   background-color: inherit;
   color: inherit;
   border-top: 1px #b0b0b0 solid;
 }
 
-.rowColor, .rowColor td, .rowColor th {
+.rowColor,
+.rowColor td,
+.rowColor th {
   background-color: inherit;
   color: inherit;
   border-top: 1px #b0b0b0 solid;
 }
 
-.overviewSummary, .memberSummary, .typeSummary, .useSummary, .constantsSummary, .deprecatedSummary,
-  .requiresSummary, .packagesSummary, .providesSummary, .usesSummary {
+.overviewSummary,
+.memberSummary,
+.typeSummary,
+.useSummary,
+.constantsSummary,
+.deprecatedSummary,
+.requiresSummary,
+.packagesSummary,
+.providesSummary,
+.usesSummary {
   border: 0;
 }
 
-.overviewSummary caption, .memberSummary caption, .typeSummary caption, .useSummary caption,
-  .constantsSummary caption, .deprecatedSummary caption, .requiresSummary caption, .packagesSummary caption,
-  .providesSummary caption, .usesSummary caption {
+.overviewSummary caption,
+.memberSummary caption,
+.typeSummary caption,
+.useSummary caption,
+.constantsSummary caption,
+.deprecatedSummary caption,
+.requiresSummary caption,
+.packagesSummary caption,
+.providesSummary caption,
+.usesSummary caption {
   padding: 0;
 }
 

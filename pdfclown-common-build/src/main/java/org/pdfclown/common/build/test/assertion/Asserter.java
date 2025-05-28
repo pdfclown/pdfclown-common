@@ -191,6 +191,7 @@ public abstract class Asserter {
    *          </p>
    */
   public static final String PARAM_NAME__BUILDABLE = "pdfclown.assert.update";
+
   private static final Predicate<String> FILTER__BUILDABLE = fqnFilter(PARAM_NAME__BUILDABLE);
 
   /**

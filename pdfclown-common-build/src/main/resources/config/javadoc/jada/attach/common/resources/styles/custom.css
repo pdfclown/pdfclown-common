@@ -1,11 +1,11 @@
-h1.title:not([title]):only-child{
-  background-image: url('../images/logo.png');
+h1.title:not([title]):only-child {
+  background-image: url("../images/logo.png");
   background-repeat: no-repeat;
   background-size: 80px;
   font-size: 32px;
 }
 h1.title:not([title]):only-child:before {
-  content: '';
+  content: "";
   display: inline-block;
   height: 80px;
   vertical-align: middle;
@@ -18,10 +18,10 @@ cite {
 }
 
 dt {
-  margin-top: .25em;
+  margin-top: 0.25em;
 }
 
-li>p {
+li > p {
   margin: 0;
 }
 
