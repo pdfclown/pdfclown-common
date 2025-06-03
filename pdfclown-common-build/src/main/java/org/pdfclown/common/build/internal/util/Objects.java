@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.internal.util;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 import static org.pdfclown.common.build.internal.util.Strings.DQUOTE;
 import static org.pdfclown.common.build.internal.util.Strings.S;
 import static org.pdfclown.common.build.internal.util.Strings.SQUOTE;
@@ -19,6 +20,8 @@ import static org.pdfclown.common.build.internal.util.Strings.SQUOTE;
 import java.util.Locale;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -109,19 +112,47 @@ public final class Objects {
 
   // SourceFQN: org.pdfclown.common.util.Objects.objToLiteralString(..)
   /**
-   * Maps the given object to its literal string representation (ie, inclusive of markers such as
-   * quotes).
+   * Maps the given object to its literal string representation (that is, inclusive of markers such
+   * as quotes).
    *
-   * @param obj
-   *          Object to map.
+   * @see #objToLiteralString( Object, boolean)
    */
   public static String objToLiteralString(@Nullable Object obj) {
-    if (obj instanceof CharSequence)
-      return S + DQUOTE + obj + DQUOTE;
+    return objToLiteralString(obj, false);
+  }
+
+  // SourceFQN: org.pdfclown.common.util.Objects.objToLiteralString(..)
+  /**
+   * Maps the given object to its literal string representation (that is, inclusive of markers such
+   * as quotes).
+   *
+   * @param multiline
+   *          Whether the resulting string must be split on newline characters.
+   * @return Depending on {@code obj} type:
+   *         <ul>
+   *         <li>{@code null} — {@code "null"} (like {@link String#valueOf(Object)})</li>
+   *         <li>{@link Boolean}, {@link Number} — as-is</li>
+   *         <li>{@link Character} — wrapped with single quotes</li>
+   *         <li>any other type — {@link Object#toString()}
+   *         {@linkplain StringEscapeUtils#escapeJava( String) escaped} and wrapped with double
+   *         quotes</li></li>
+   *         </ul>
+   */
+  public static String objToLiteralString(@Nullable Object obj, boolean multiline) {
+    if (obj == null)
+      return "null";
+    else if (obj instanceof Number || obj instanceof Boolean)
+      return obj.toString();
     else if (obj instanceof Character)
       return S + SQUOTE + obj + SQUOTE;
-    else
-      return String.valueOf(obj);
+    else {
+      var s = obj.toString();
+      return multiline
+          ? s.lines()
+              .map(StringEscapeUtils::escapeJava)
+              .collect(Collectors.joining("\\n\"\n+ \"", S + DQUOTE, S + DQUOTE))
+          : S + DQUOTE + escapeJava(s) + DQUOTE;
+    }
   }
 
   // SourceFQN: org.pdfclown.common.util.Objects.requireState(..)

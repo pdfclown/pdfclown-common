@@ -12,9 +12,12 @@
  */
 package org.pdfclown.common.build.internal.util;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Aggregation (ie, collection or map) utilities.
@@ -30,6 +33,16 @@ public final class Aggregations {
    */
   public static Stream<List<Object>> cartesianProduct(List<List<?>> lists) {
     return cartesianProduct(lists, 0);
+  }
+
+  // SourceFQN: org.pdfclown.common.util.Aggregations.entry(..)
+  /**
+   * Creates a new unmodifiable entry.
+   *
+   * @see Map#entry(Object, Object)
+   */
+  public static <K, V> Map.Entry<K, V> entry(@Nullable K key, @Nullable V value) {
+    return new AbstractMap.SimpleImmutableEntry<>(key, value);
   }
 
   private static Stream<List<Object>> cartesianProduct(List<List<?>> lists, int index) {

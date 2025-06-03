@@ -14,6 +14,7 @@ package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +38,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.lang.Unmodifiable;
 
 /**
  * Aggregation (ie, collection or map) utilities.
@@ -406,6 +408,15 @@ public final class Aggregations {
    */
   public static <T extends Map<?, ?>> @Nullable T emptyToNull(@Nullable T m) {
     return isFilled(m) ? m : null;
+  }
+
+  /**
+   * Creates a new entry.
+   *
+   * @see Map#entry( Object, Object)
+   */
+  public static <K, V> Map.@Unmodifiable Entry<K, V> entry(@Nullable K key, @Nullable V value) {
+    return new AbstractMap.SimpleImmutableEntry<>(key, value);
   }
 
   /**

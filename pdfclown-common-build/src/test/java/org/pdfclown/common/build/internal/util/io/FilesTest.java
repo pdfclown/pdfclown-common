@@ -13,7 +13,9 @@
 package org.pdfclown.common.build.internal.util.io;
 
 import static java.util.Arrays.asList;
-import static org.pdfclown.common.build.test.Tests.argumentsStream;
+import static java.util.Map.entry;
+import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
+import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -21,7 +23,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.__test.BaseTest;
-import org.pdfclown.common.build.test.Tests.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 
 /**
  * @author Stefano Chizzolini
@@ -42,34 +45,46 @@ public class FilesTest extends BaseTest {
           "Multi-part file extension, dot before base filename"));
 
   private static Stream<Arguments> _fullExtension() {
-    return argumentsStream(
+    return cartesianArgumentsStream(
         // expected
         asList(
+            // -- path[0]: '/home/me/my.sub/test/obj.tar.gz'
             ".tar.gz",
+            // -- path[1]: 'smb://myhost/my.sub/test/obj.tar.gz'
             ".tar.gz",
+            // -- path[2]: 'C:\my.sub\test\obj.tar.gz'
             ".tar.gz",
+            // -- path[3]: '\\myhost\my.sub\test\obj.tar.gz'
             ".tar.gz",
+            // -- path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz'
             ".tar2.gz",
+            // -- path[5]: 'C:\my\test-1.5\obj.tar2.gz'
             ".tar2.gz"),
         // path
         PATHS);
   }
 
   private static Stream<Arguments> _replaceFullExtension() {
-    return argumentsStream(
+    return cartesianArgumentsStream(
         // expected
         asList(
-            // -- path[0]='/home/me/my.sub/test/obj.tar.gz'
+            // -- path[0]: '/home/me/my.sub/test/obj.tar.gz'
+            // ---- newExtension[0]: '.zip'
             "/home/me/my.sub/test/obj.zip",
-            // -- path[1]='smb://myhost/my.sub/test/obj.tar.gz'
+            // -- path[1]: 'smb://myhost/my.sub/test/obj.tar.gz'
+            // ---- newExtension[0]: '.zip'
             "smb://myhost/my.sub/test/obj.zip",
-            // -- path[2]='C:\my.sub\test\obj.tar.gz'
+            // -- path[2]: 'C:\my.sub\test\obj.tar.gz'
+            // ---- newExtension[0]: '.zip'
             "C:\\my.sub\\test\\obj.zip",
-            // -- path[3]='\\myhost\my.sub\test\obj.tar.gz'
+            // -- path[3]: '\\myhost\my.sub\test\obj.tar.gz'
+            // ---- newExtension[0]: '.zip'
             "\\\\myhost\\my.sub\\test\\obj.zip",
-            // -- path[4]='/home/me/my/test/obj-5.2.9.tar2.gz'
+            // -- path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz'
+            // ---- newExtension[0]: '.zip'
             "/home/me/my/test/obj-5.2.9.zip",
-            // -- path[5]='C:\my\test-1.5\obj.tar2.gz'
+            // -- path[5]: 'C:\my\test-1.5\obj.tar2.gz'
+            // ---- newExtension[0]: '.zip'
             "C:\\my\\test-1.5\\obj.zip"),
         // path
         PATHS,
@@ -80,32 +95,21 @@ public class FilesTest extends BaseTest {
   @ParameterizedTest
   @MethodSource
   public void _fullExtension(String expected, Argument<String> path) {
-    var actual = evalParameterized(
-        () -> Files.fullExtension(path.getValue()));
-
-    /*
-     * DO NOT remove (useful in case of arguments update)
-     */
-    //    generateExpected(actual,
-    //        asList("path"),
-    //        asList(path.getValue()));
-
-    assertParameterized(actual, expected);
+    assertParameterizedOf(
+        () -> Files.fullExtension(path.getValue()),
+        expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("path", path.getValue()))));
   }
 
   @ParameterizedTest
   @MethodSource
   public void _replaceFullExtension(String expected, Argument<String> path, String newExtension) {
-    var actual = evalParameterized(
-        () -> Files.replaceFullExtension(path.getValue(), newExtension));
-
-    //    /*
-    //     * DO NOT remove (useful in case of arguments update)
-    //     */
-    //    generateExpected(actual,
-    //        asList("path", "newExtension"),
-    //        asList(path.getValue(), newExtension));
-
-    assertParameterized(actual, expected);
+    assertParameterizedOf(
+        () -> Files.replaceFullExtension(path.getValue(), newExtension),
+        expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("path", path.getValue()),
+            entry("newExtension", newExtension))));
   }
 }

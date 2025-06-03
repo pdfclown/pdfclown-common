@@ -31,6 +31,13 @@ public final class Strings {
    * Double quote (aka quotation mark).
    */
   public static final char DQUOTE = '\"';
+  // SourceFQN: org.pdfclown.common.util.Strings.NBSP
+  /**
+   * <a href="https://en.wikipedia.org/wiki/Non-breaking_space">Non-breaking space</a> (aka hard
+   * space) character preventing automatic line break at its position. In some formats, including
+   * HTML, it also prevents consecutive whitespace characters from collapsing into a single space.
+   */
+  public static final char NBSP = 160;
   // SourceFQN: org.pdfclown.common.util.Strings.PIPE
   /**
    * Vertical bar.
@@ -52,7 +59,6 @@ public final class Strings {
   // SourceFQN: org.pdfclown.common.util.Strings.UNDERSCORE
   public static final char UNDERSCORE = '_';
 
-  public static final String ELLIPSIS = "...";
   // SourceFQN: org.pdfclown.common.util.Strings.EMPTY
   /**
    * Empty string.
@@ -74,6 +80,18 @@ public final class Strings {
    *String str = S + HYPHEN;</pre>
    */
   public static final String S = EMPTY;
+
+  // SourceFQN: org.pdfclown.common.util.Strings.ELLIPSIS
+  /**
+   * <a href="https://en.wikipedia.org/wiki/Ellipsis">Common (aka Associated Press-style)
+   * ellipsis</a>.
+   */
+  public static final String ELLIPSIS = S + DOT + DOT + DOT;
+  // SourceFQN: org.pdfclown.common.util.Strings.ELLIPSIS__CHICAGO
+  /**
+   * <a href="https://en.wikipedia.org/wiki/Ellipsis">Chicago-style ellipsis</a>.
+   */
+  public static final String ELLIPSIS__CHICAGO = S + DOT + NBSP + DOT + NBSP + DOT;
 
   // SourceFQN: org.pdfclown.common.util.Strings.abbreviateMultiline(..)
   /**

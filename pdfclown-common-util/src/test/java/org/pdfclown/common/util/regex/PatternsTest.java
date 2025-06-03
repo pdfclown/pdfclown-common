@@ -15,7 +15,10 @@ package org.pdfclown.common.util.regex;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.pdfclown.common.build.test.Tests.argumentsStream;
+import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
+import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
+import static org.pdfclown.common.build.test.assertion.Assertions.evalParameterized;
+import static org.pdfclown.common.util.Aggregations.entry;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -24,7 +27,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.Tests.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
@@ -51,10 +55,12 @@ public class PatternsTest extends BaseTest {
   }
 
   static Stream<Arguments> _globToRegex() {
-    return argumentsStream(
+    return cartesianArgumentsStream(
         // expected
-        asList(
+        java.util.Arrays.asList(
+            // glob[0]: '/**/my*.* ()'
             "/.*/my[^/]*\\.[^/]*",
+            // glob[1]: '/home/*User/**/foo?a?/*.md ()'
             "/home/[^/]*User/.*/foo.a./[^/]*\\.md"),
         // pattern
         asList(
@@ -78,9 +84,10 @@ public class PatternsTest extends BaseTest {
   }
 
   static Stream<Arguments> _wildcardToRegex() {
-    return argumentsStream(
+    return cartesianArgumentsStream(
         // expected
-        asList(
+        java.util.Arrays.asList(
+            // pattern[0]: 'Som? content. * more (*)\? ()'
             "Som. content\\. .* more \\(.*\\)\\?"),
         // pattern
         asList(
@@ -91,38 +98,26 @@ public class PatternsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  @SuppressWarnings("CommentedOutCode")
   public void _globToRegex(String expected, RegexArgument glob) {
     var actual = (String) evalParameterized(
         () -> Patterns.globToRegex(glob.getValue()));
 
-    /*
-     * DO NOT remove (useful in case of arguments update)
-     */
-    //    generateExpected(actual,
-    //        asList("glob"),
-    //        asList(glob));
-
-    assertParameterized(actual, expected);
+    assertParameterized(actual, expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("glob", glob))));
     assertRegexMatches(actual, glob.matches, true);
     assertRegexMatches(actual, glob.mismatches, false);
   }
 
   @ParameterizedTest
   @MethodSource
-  @SuppressWarnings("CommentedOutCode")
   public void _wildcardToRegex(String expected, RegexArgument pattern) {
     var actual = (String) evalParameterized(
         () -> Patterns.wildcardToRegex(pattern.getValue()));
 
-    /*
-     * DO NOT remove (useful in case of arguments update)
-     */
-    //    generateExpected(actual,
-    //        asList("pattern"),
-    //        asList(pattern));
-
-    assertParameterized(actual, expected);
+    assertParameterized(actual, expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("pattern", pattern))));
     assertRegexMatches(actual, pattern.matches, true);
     assertRegexMatches(actual, pattern.mismatches, false);
   }
