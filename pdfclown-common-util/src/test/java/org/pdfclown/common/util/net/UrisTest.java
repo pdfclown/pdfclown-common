@@ -34,7 +34,7 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini
  */
 public class UrisTest extends BaseTest {
-  private static Stream<Arguments> _relativeUri() {
+  static Stream<Arguments> _relativeUri() {
     var from = asList(
         URI.create("my/sub/same.html"),
         URI.create("my/another/sub/from.html"),
@@ -277,7 +277,7 @@ public class UrisTest extends BaseTest {
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("from", from),
-            entry("to", to)),
-            $ -> "URI.create(" + objToLiteralString($) + ")"));
+            entry("to", to)))
+                .setExpectedSourceCodeGenerator($ -> "URI.create(" + objToLiteralString($) + ")"));
   }
 }

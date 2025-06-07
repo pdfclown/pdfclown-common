@@ -717,6 +717,44 @@ public final class Aggregations {
   }
 
   /**
+   * Sets the {@link List#size() size} of the given list, shrinking or expanding it with the given
+   * element.
+   *
+   * @param target
+   *          Target list.
+   * @param value
+   *          New size.
+   * @param lowerPadding
+   *          Whether, on shrink, existing elements are removed from the beginning rather than the
+   *          end of the list, and, on expansion, {@code element}s are inserted at the beginning
+   *          rather than appended at the end of the list.
+   * @param element
+   *          Filling element.
+   * @return {@code target}.
+   */
+  public static <E> List<@Nullable E> size(List<@Nullable E> target, int value,
+      boolean lowerPadding, @Nullable E element) {
+    int size = target.size();
+    while (value > size) {
+      if (lowerPadding) {
+        target.add(0, element);
+      } else {
+        target.add(element);
+      }
+      size++;
+    }
+    while (value < size) {
+      size--;
+      if (lowerPadding) {
+        target.remove(0);
+      } else {
+        target.remove(size);
+      }
+    }
+    return target;
+  }
+
+  /**
    * Sets the {@link List#size() size} of the given list, shrinking or expanding it with
    * {@code null} elements.
    *
@@ -739,50 +777,13 @@ public final class Aggregations {
    * @param value
    *          New size.
    * @param lowerPadding
-   *          Whether, on expansion, {@code null} elements are inserted at the beginning rather than
-   *          appended at the end of the list.
+   *          Whether, on shrink, existing elements are removed from the beginning rather than the
+   *          end of the list, and, on expansion, {@code null} elements are inserted at the
+   *          beginning rather than appended at the end of the list.
    * @return {@code target}.
    */
   public static <E> List<E> size(List<E> target, int value, boolean lowerPadding) {
     return size(target, value, lowerPadding, null);
-  }
-
-  /**
-   * Sets the {@link List#size() size} of the given list, shrinking or expanding it with the given
-   * element.
-   *
-   * @param target
-   *          Target list.
-   * @param value
-   *          New size.
-   * @param lowerPadding
-   *          Whether, on expansion, {@code null} elements are inserted at the beginning rather than
-   *          appended at the end of the list.
-   * @param element
-   *          Filling element.
-   * @return {@code target}.
-   */
-  @SuppressWarnings("null")
-  public static <E> List<E> size(List<E> target, int value, boolean lowerPadding,
-      @Nullable E element) {
-    int size = target.size();
-    if (size != value) {
-      if (lowerPadding) {
-        while (value > size) {
-          target.add(0, element);
-          size++;
-        }
-      } else {
-        while (value > size) {
-          target.add(element);
-          size++;
-        }
-      }
-      while (value < size) {
-        target.remove(--size);
-      }
-    }
-    return target;
   }
 
   /**

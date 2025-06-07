@@ -36,7 +36,7 @@ public interface PathEvaluator {
       switch (segmentKind) {
         case PathIterator.SEG_LINETO:
         case PathIterator.SEG_MOVETO:
-          //noinspection PointlessArithmeticExpression: informational purposes.
+          //noinspection PointlessArithmeticExpression -- informational purposes
           coordsCount = 1 * 2;
           break;
         case PathIterator.SEG_QUADTO:
@@ -46,7 +46,7 @@ public interface PathEvaluator {
           coordsCount = 3 * 2;
           break;
         case PathIterator.SEG_CLOSE:
-          //noinspection PointlessArithmeticExpression: informational purposes.
+          //noinspection PointlessArithmeticExpression -- informational purposes
           coordsCount = 0 * 2;
           break;
         default:

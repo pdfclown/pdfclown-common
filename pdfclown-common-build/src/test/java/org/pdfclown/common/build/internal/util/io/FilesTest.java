@@ -44,47 +44,47 @@ public class FilesTest extends BaseTest {
       Argument.of("C:\\my\\test-1.5\\obj.tar2.gz",
           "Multi-part file extension, dot before base filename"));
 
-  private static Stream<Arguments> _fullExtension() {
+  static Stream<Arguments> _fullExtension() {
     return cartesianArgumentsStream(
         // expected
         asList(
-            // -- path[0]: '/home/me/my.sub/test/obj.tar.gz'
+            // path[0]: '/home/me/my.sub/test/obj.tar.gz'
             ".tar.gz",
-            // -- path[1]: 'smb://myhost/my.sub/test/obj.tar.gz'
+            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz'
             ".tar.gz",
-            // -- path[2]: 'C:\my.sub\test\obj.tar.gz'
+            // path[2]: 'C:\my.sub\test\obj.tar.gz'
             ".tar.gz",
-            // -- path[3]: '\\myhost\my.sub\test\obj.tar.gz'
+            // path[3]: '\\myhost\my.sub\test\obj.tar.gz'
             ".tar.gz",
-            // -- path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz'
+            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz'
             ".tar2.gz",
-            // -- path[5]: 'C:\my\test-1.5\obj.tar2.gz'
+            // path[5]: 'C:\my\test-1.5\obj.tar2.gz'
             ".tar2.gz"),
         // path
         PATHS);
   }
 
-  private static Stream<Arguments> _replaceFullExtension() {
+  static Stream<Arguments> _replaceFullExtension() {
     return cartesianArgumentsStream(
         // expected
         asList(
-            // -- path[0]: '/home/me/my.sub/test/obj.tar.gz'
-            // ---- newExtension[0]: '.zip'
+            // path[0]: '/home/me/my.sub/test/obj.tar.gz'
+            // -- newExtension[0]: '.zip'
             "/home/me/my.sub/test/obj.zip",
-            // -- path[1]: 'smb://myhost/my.sub/test/obj.tar.gz'
-            // ---- newExtension[0]: '.zip'
+            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz'
+            // -- newExtension[0]: '.zip'
             "smb://myhost/my.sub/test/obj.zip",
-            // -- path[2]: 'C:\my.sub\test\obj.tar.gz'
-            // ---- newExtension[0]: '.zip'
+            // path[2]: 'C:\my.sub\test\obj.tar.gz'
+            // -- newExtension[0]: '.zip'
             "C:\\my.sub\\test\\obj.zip",
-            // -- path[3]: '\\myhost\my.sub\test\obj.tar.gz'
-            // ---- newExtension[0]: '.zip'
+            // path[3]: '\\myhost\my.sub\test\obj.tar.gz'
+            // -- newExtension[0]: '.zip'
             "\\\\myhost\\my.sub\\test\\obj.zip",
-            // -- path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz'
-            // ---- newExtension[0]: '.zip'
+            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz'
+            // -- newExtension[0]: '.zip'
             "/home/me/my/test/obj-5.2.9.zip",
-            // -- path[5]: 'C:\my\test-1.5\obj.tar2.gz'
-            // ---- newExtension[0]: '.zip'
+            // path[5]: 'C:\my\test-1.5\obj.tar2.gz'
+            // -- newExtension[0]: '.zip'
             "C:\\my\\test-1.5\\obj.zip"),
         // path
         PATHS,

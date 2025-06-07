@@ -65,7 +65,7 @@ public class FilesTest extends BaseTest {
   private static final Function<Object, String> EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF =
       $ -> "fs.getPath(" + objToLiteralString($) + ")";
 
-  private static Stream<Arguments> _extension() {
+  static Stream<Arguments> _extension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -85,7 +85,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  private static Stream<Arguments> _fileName() {
+  static Stream<Arguments> _fileName() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -105,7 +105,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  private static Stream<Arguments> _fullExtension() {
+  static Stream<Arguments> _fullExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -125,7 +125,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  private static Stream<Arguments> _isExtension() {
+  static Stream<Arguments> _isExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -189,7 +189,7 @@ public class FilesTest extends BaseTest {
         EXTENSIONS);
   }
 
-  private static Stream<Arguments> _isFullExtension() {
+  static Stream<Arguments> _isFullExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -253,7 +253,7 @@ public class FilesTest extends BaseTest {
         EXTENSIONS);
   }
 
-  private static Stream<Arguments> _pathOf_unix() {
+  static Stream<Arguments> _pathOf_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix());
     return cartesianArgumentsStream(
         // expected
@@ -280,7 +280,7 @@ public class FilesTest extends BaseTest {
         List.of(fs));
   }
 
-  private static Stream<Arguments> _pathOf_win() {
+  static Stream<Arguments> _pathOf_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows());
     return cartesianArgumentsStream(
         // expected
@@ -307,7 +307,7 @@ public class FilesTest extends BaseTest {
         List.of(fs));
   }
 
-  private static Stream<Arguments> _replaceFullExtension() {
+  static Stream<Arguments> _replaceFullExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -335,7 +335,7 @@ public class FilesTest extends BaseTest {
         List.of(".zip"));
   }
 
-  private static Stream<Arguments> _simpleBaseName() {
+  static Stream<Arguments> _simpleBaseName() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -355,7 +355,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  private static Stream<Arguments> _withoutExtension() {
+  static Stream<Arguments> _withoutExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -375,7 +375,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  private static Stream<Arguments> _withoutFullExtension() {
+  static Stream<Arguments> _withoutFullExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -456,8 +456,8 @@ public class FilesTest extends BaseTest {
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("uri", uri),
-            entry("fs", fs)),
-            EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF));
+            entry("fs", fs)))
+                .setExpectedSourceCodeGenerator(EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -468,8 +468,8 @@ public class FilesTest extends BaseTest {
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("uri", uri),
-            entry("fs", fs)),
-            EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF));
+            entry("fs", fs)))
+                .setExpectedSourceCodeGenerator(EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF));
   }
 
   @ParameterizedTest

@@ -127,15 +127,16 @@ public final class Objects {
    * as quotes).
    *
    * @param multiline
-   *          Whether the resulting string must be split on newline characters.
+   *          Whether the resulting string must be split at newline characters.
    * @return Depending on {@code obj} type:
    *         <ul>
-   *         <li>{@code null} — {@code "null"} (like {@link String#valueOf(Object)})</li>
+   *         <li>{@code null} — {@code "null"} (like
+   *         {@link java.util.Objects#toString(Object)})</li>
    *         <li>{@link Boolean}, {@link Number} — as-is</li>
    *         <li>{@link Character} — wrapped with single quotes</li>
    *         <li>any other type — {@link Object#toString()}
    *         {@linkplain StringEscapeUtils#escapeJava( String) escaped} and wrapped with double
-   *         quotes</li></li>
+   *         quotes</li>
    *         </ul>
    */
   public static String objToLiteralString(@Nullable Object obj, boolean multiline) {

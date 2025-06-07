@@ -13,6 +13,8 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.repeat;
@@ -50,9 +52,12 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.function.FailableSupplier;
 import org.hamcrest.Matcher;
@@ -60,6 +65,7 @@ import org.hamcrest.Matchers;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.pdfclown.common.build.internal.util.io.XtPrintStream;
 import org.pdfclown.common.build.util.lang.Runtimes;
 
 /**
@@ -117,26 +123,72 @@ public final class Assertions {
    * @see Assertions#assertParameterized(Object, Object, Supplier)
    */
   public static class ExpectedGeneration {
-    final List<Map.Entry<String, Object>> args;
-    final @Nullable Function<Object, String> expectedSourceCodeGenerator;
-    final PrintStream out;
+    String argCommentAbbreviationMarker = ELLIPSIS__CHICAGO;
+    Function<@Nullable Object, String> argCommentFormatter = Objects::toString;
+    final List<Map.Entry<String, @Nullable Object>> args;
+    Function<@Nullable Object, String> expectedSourceCodeGenerator =
+        $ -> objToLiteralString($, true);
+    int maxArgCommentLength = 20;
+    PrintStream out = System.err;
+    boolean outOverridable = true;
 
-    public ExpectedGeneration(List<Map.Entry<String, Object>> args) {
-      this(args, null);
-    }
-
-    public ExpectedGeneration(List<Map.Entry<String, Object>> args,
-        @Nullable Function<Object, String> expectedSourceCodeGenerator) {
-      this(args, expectedSourceCodeGenerator, System.err);
-    }
-
-    /**
-    */
-    public ExpectedGeneration(List<Map.Entry<String, Object>> args,
-        @Nullable Function<Object, String> expectedSourceCodeGenerator, PrintStream out) {
+    public ExpectedGeneration(List<Map.Entry<String, @Nullable Object>> args) {
       this.args = args;
-      this.expectedSourceCodeGenerator = expectedSourceCodeGenerator;
-      this.out = out;
+    }
+
+    public ExpectedGeneration setArgCommentAbbreviationMarker(String value) {
+      argCommentAbbreviationMarker = requireNonNull(value);
+      return this;
+    }
+
+    public ExpectedGeneration setArgCommentFormatter(Function<@Nullable Object, String> value) {
+      argCommentFormatter = requireNonNull(value);
+      return this;
+    }
+
+    public ExpectedGeneration setExpectedSourceCodeGenerator(
+        Function<@Nullable Object, String> value) {
+      expectedSourceCodeGenerator = requireNonNull(value);
+      return this;
+    }
+
+    public ExpectedGeneration setMaxArgCommentLength(int value) {
+      maxArgCommentLength = value;
+      return this;
+    }
+
+    public ExpectedGeneration setOut(PrintStream value) {
+      out = requireNonNull(value);
+      return this;
+    }
+
+    public ExpectedGeneration setOutOverridable(boolean value) {
+      outOverridable = value;
+      return this;
+    }
+  }
+
+  /**
+   * Expected thrown exception.
+   *
+   * @author Stefano Chizzolini
+   * @see #assertParameterized(Object, Object, Supplier )
+   */
+  public static class ThrownExpected {
+    private final String message;
+    private final String name;
+
+    public ThrownExpected(String name, String message) {
+      this.name = name;
+      this.message = message;
+    }
+
+    public String getMessage() {
+      return message;
+    }
+
+    public String getName() {
+      return name;
     }
   }
 
@@ -162,37 +214,98 @@ public final class Assertions {
    *
    * @author Stefano Chizzolini
    */
-  public static class ExpectedGenerator {
-    private static final String INDENT = SPACE + SPACE;
+  private static class CartesianExpectedGenerator extends ExpectedGenerator {
+    private static int count(List<List<?>> args) {
+      return args.stream().mapToInt(List::size).reduce(1, Math::multiplyExact);
+    }
 
-    private final int count;
-    /**
-     * Next expected result index.
-     */
-    private int index;
     /**
      * Argument moduli.
      */
     private final int[] mods;
 
-    private @Nullable PrintStream out;
-    private @Nullable ByteArrayOutputStream outStream;
-
     /**
      * @param args
      *          Arguments lists.
      */
-    ExpectedGenerator(List<List<?>> args) {
-      count = cartesianProductCount(args);
+    CartesianExpectedGenerator(List<List<?>> args) {
+      super(count(args));
+
       mods = new int[args.size()];
       {
-        var count = this.count;
+        var count = getCount();
         final var counts = new int[args.size()];
         for (int i = 0; i < counts.length; i++) {
           counts[i] = args.get(i).size();
           mods[i] = (count /= counts[i]);
         }
       }
+    }
+
+    @Override
+    protected void generateExpectedComment(ExpectedGeneration generation) {
+      for (int i = 0; i < mods.length; i++) {
+        if (getIndex() % mods[i] == 0) {
+          // Main level separator.
+          if (i == 0 && generation.args.size() > 1 && getIndex() > 0) {
+            out().append(INDENT).println("//");
+          }
+
+          // Level title.
+          var arg = generation.args.get(i);
+          out().append(INDENT).printf("// %s%s%s[%s]: '%s'\n",
+              repeat('-', 2 * i),
+              i == 0 ? EMPTY : SPACE,
+              arg.getKey(),
+              (i == 0 ? getIndex() : getIndex() % mods[i - 1]) / mods[i],
+              formatArgComment(arg, generation));
+        }
+      }
+    }
+  }
+
+  /**
+   * Source code generator of the expected results of a parameterized test.
+   * <p>
+   * The generated source code looks like this:
+   * </p>
+   * <pre>
+   * // expected
+   * java.util.Arrays.asList(
+   *   // %expectedComment[0]%
+   *   %expected[0]%,
+   *   // %expectedComment[1]%
+   *   %expected[1]%,
+   *   . . .
+   *   // %expectedComment[n]%
+   *   %expected[n]%),</pre>
+   *
+   * @author Stefano Chizzolini
+   */
+  private abstract static class ExpectedGenerator {
+    protected static final String INDENT = SPACE + SPACE;
+
+    /**
+     * Arguments tuples count.
+     */
+    private final int count;
+    /**
+     * Current arguments tuple index.
+     */
+    private int index = -1;
+    /**
+     * Target stream (either <b>internal</b> (for output redirection to clipboard, in case of debug
+     * mode) or <b>{@linkplain #generateExpected(Object, ExpectedGeneration) provided}</b>) the
+     * generated representation is written to.
+     */
+    private @Nullable PrintStream out;
+    /**
+     * Whether {@link #out} lifecycle is internal responsibility of this class.
+     */
+    private boolean outManaged;
+
+    protected ExpectedGenerator(int count) {
+      this.count = count;
     }
 
     /**
@@ -207,124 +320,317 @@ public final class Assertions {
      * otherwise, to literal</li>
      * </ul>
      *
-     * @param out
-     *          Target stream the generated representation is written to.
      * @param expected
      *          Expected result.
-     * @param expectedSourceCodeGenerator
-     *          Generates the source code representation of regular {@code expected}.
-     * @param args
-     *          Argument values.
+     * @param generation
+     *          Generation feed for the expected result of the parameterized test.
      * @implNote {@link ThrownExpected} replaces the actual {@link Throwable} type in order to
      *           simplify automated instantiation.
      */
-    public <T> void generateExpected(PrintStream out, @Nullable T expected,
-        @Nullable Function<@Nullable T, String> expectedSourceCodeGenerator,
-        List<Map.Entry<String, Object>> args) {
+    public <T> void generateExpected(@Nullable T expected, ExpectedGeneration generation) {
+      beginExpected(generation);
+
+      generateExpectedComment(generation);
+      generateExpectedSourceCode(expected, generation);
+
+      endExpected();
+    }
+
+    /**
+     * Expected results count.
+     */
+    public int getCount() {
+      return count;
+    }
+
+    /**
+     * Current expected result index.
+     */
+    public int getIndex() {
+      return index;
+    }
+
+    public boolean isComplete() {
+      return out == null && index >= 0;
+    }
+
+    protected String formatArgComment(Map.Entry<String, @Nullable Object> arg,
+        ExpectedGeneration generation) {
+      return abbreviate(
+          generation.argCommentFormatter.apply(arg.getValue()).lines().findFirst().orElse(EMPTY),
+          generation.argCommentAbbreviationMarker, generation.maxArgCommentLength);
+    }
+
+    protected abstract void generateExpectedComment(ExpectedGeneration generation);
+
+    protected <T> void generateExpectedSourceCode(@Nullable T expected,
+        ExpectedGeneration generation) {
       String expectedSourceCode;
       if (expected instanceof Throwable) {
         var ex = (Throwable) expected;
         expectedSourceCode = String.format("new %s(\"%s\", \"%s\")", fqnd(ThrownExpected.class),
             fqn(ex), ex.getMessage());
-      } else if (expectedSourceCodeGenerator != null) {
-        expectedSourceCode = expectedSourceCodeGenerator.apply(expected);
       } else {
-        expectedSourceCode = objToLiteralString(expected, true);
+        expectedSourceCode = generation.expectedSourceCodeGenerator.apply(expected);
       }
-
-      out = beginExpected(out);
-
-      for (int i = 0; i < mods.length; i++) {
-        if (index % mods[i] == 0) {
-          var arg = args.get(i);
-          out.append(INDENT).printf("// %s%s%s[%s]: '%s'\n",
-              repeat('-', 2 * i),
-              i == 0 ? EMPTY : SPACE,
-              arg.getKey(),
-              (i == 0 ? index : index % mods[i - 1]) / mods[i],
-              abbreviate(Objects.toString(arg.getValue()).lines().findFirst().orElse("???"),
-                  ELLIPSIS__CHICAGO, 50));
-        }
-      }
-      out.append(INDENT).append(expectedSourceCode);
-
-      endExpected();
+      out().append(INDENT).append(expectedSourceCode);
     }
 
-    private PrintStream beginExpected(PrintStream out) {
-      if (index == 0) {
-        open();
-        if (this.out == null) {
-          this.out = out;
-        }
+    protected PrintStream out() {
+      assert out != null;
+      return out;
+    }
 
-        this.out.println("// expected\n"
+    private void begin(ExpectedGeneration generation) {
+      // Output redirect to clipboard?
+      if (generation.outOverridable && Runtimes.isDebugging()
+          && !GraphicsEnvironment.isHeadless()) {
+        out = new XtPrintStream(new ByteArrayOutputStream(), true, UTF_8);
+        outManaged = true;
+      }
+      // No output redirect.
+      else {
+        out = generation.out;
+      }
+    }
+
+    private void beginExpected(ExpectedGeneration generation) {
+      if (++index == 0) {
+        begin(generation);
+
+        out().println("// expected\n"
             + "java.util.Arrays.asList(");
       }
-      assert this.out != null;
-      return this.out;
     }
 
-    private void close() {
+    private void end() {
       assert out != null;
 
-      if (outStream != null) {
-        String data = outStream.toString(UTF_8);
+      if (outManaged) {
+        // Transfer output to clipboard!
+        String data = ((XtPrintStream) out).toDataString();
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(data), null);
 
+        System.err.printf(
+            "[%s] Expected results' source code GENERATED and COPIED to clipboard.\n",
+            sqnd(this));
+
         out.close();
-        outStream = null;
       }
       out = null;
     }
 
     private void endExpected() {
-      assert out != null;
+      if (index == getCount() - 1) {
+        out().println("),");
 
-      if (++index == count) {
-        out.println("),");
-
-        close();
+        end();
       } else {
-        out.println(",");
-      }
-    }
-
-    private void open() {
-      if (Runtimes.isDebugging() && !GraphicsEnvironment.isHeadless()) {
-        out = new PrintStream(outStream = new ByteArrayOutputStream(), true, UTF_8);
+        out().println(",");
       }
     }
   }
 
   /**
-   * Expected thrown exception.
+   * Source code generator of the expected results of a parameterized test fed by
+   * {@link #argumentsStream(List, List[]) argumentsStream(..)}.
+   * <p>
+   * The generated source code looks like this:
+   * </p>
+   * <pre>
+   * // expected
+   * java.util.Arrays.asList(
+   *   // from[0]
+   *   URI.create(""),
+   *   // from[1]
+   *   URI.create("to.html"),
+   *   . . .
+   *   // from[5]
+   *   URI.create("other/to.html")),</pre>
    *
    * @author Stefano Chizzolini
-   * @see ExpectedGenerator#generateExpected(PrintStream, Object, Function, List)
-   * @see #assertParameterized(Object, Object, Supplier )
    */
-  public static class ThrownExpected {
-    private final String message;
-    private final String name;
-
-    public ThrownExpected(String name, String message) {
-      this.name = name;
-      this.message = message;
+  private static class SimpleExpectedGenerator extends ExpectedGenerator {
+    private static int count(List<List<?>> args) {
+      int cardinality = 0;
+      for (var it = args.listIterator(); it.hasNext();) {
+        int argSize = it.next().size();
+        if (cardinality == 0) {
+          cardinality = argSize;
+        } else {
+          if (argSize != cardinality)
+            throw new IllegalArgumentException(String.format(
+                "args[%s].size (%s): INVALID (should be %s)", it.nextIndex() - 1, argSize,
+                cardinality));
+        }
+      }
+      return cardinality;
     }
 
-    public String getMessage() {
-      return message;
+    /**
+     * @param args
+     *          Arguments lists.
+     */
+    SimpleExpectedGenerator(List<List<?>> args) {
+      super(count(args));
     }
 
-    public String getName() {
-      return name;
+    @Override
+    protected void generateExpectedComment(ExpectedGeneration generation) {
+      out().append(INDENT).append("// ");
+      for (int i = 0; i < generation.args.size(); i++) {
+        if (i > 0) {
+          out().append("; ");
+        }
+
+        var arg = generation.args.get(i);
+        out().printf("%s[%s]: '%s'", arg.getKey(), getIndex(), formatArgComment(arg, generation));
+      }
+      out().append("\n");
     }
   }
 
   private static final ThreadLocal<@Nullable ExpectedGenerator> expectedGenerator =
       new ThreadLocal<>();
+
+  /**
+   * Combines the given argument lists into a stream of corresponding {@linkplain Arguments
+   * parametric tuples} to feed a {@linkplain ParameterizedTest parameterized test}.
+   * <p>
+   * The {@code expected} parameter shall contain both regular results and failures (i.e., thrown
+   * exception) of the method tested with the given {@code args}; failures will be represented as
+   * {@link ThrownExpected} to simplify their automated handling.
+   * </p>
+   * <p>
+   * The corresponding parameterized test shall follow this pattern:
+   * </p>
+   * <pre>
+   * &#64;ParameterizedTest
+   * &#64;MethodSource
+   * public void %myTestName%(Object expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
+   *   assertParameterizedOf(
+   *       () -&gt; %myMethodToTest%(arg0, arg1, . . ., argN),
+   *       expected,
+   *       () -&gt; new ExpectedGeneration(List.of(
+   *           entry("arg0", arg0),
+   *           entry("arg1", arg1),
+   *           . . .
+   *           entry("argN", argN))));
+   * }</pre>
+   * <p>
+   * NOTE: In the parameterized test method signature, <i>{@code expected} parameter should be
+   * declared as {@code Object}</i> (that's required whenever a failure (i.e., thrown exception) is
+   * among the expected results). In any case, it MUST NOT be declared as primitive type (e.g.,
+   * {@code boolean}), since it is passed {@code null} during arguments generation (see dedicated
+   * section here below).
+   * </p>
+   * <p>
+   * See {@link #assertParameterized(Object, Object, Supplier)} for more information and a full
+   * example.
+   * </p>
+   * <h2>Arguments generation</h2>
+   * <p>
+   * The source code representation of {@code expected} is automatically generated as described in
+   * this section. This simplifies the preparation and maintenance of test cases, also unifying the
+   * way failed results (i.e., thrown exceptions) are dealt with.
+   * </p>
+   * <p>
+   * Here, the steps to generate {@code expected} (based on the example in
+   * {@link #assertParameterized(Object, Object, Supplier)}):
+   * </p>
+   * <ol>
+   * <li>pass {@code null} as {@code expected} argument to this method:<pre>
+   * private static Stream&lt;Arguments&gt; _uncapitalizeGreedy() {
+   *     return argumentsStream(
+   *       // expected
+   *       <span style="background-color:yellow;color:black;">null</span>,
+   *       // value
+   *       asList(
+   *           "Capitalized",
+   *           "uncapitalized",
+   *           . . .
+   *           "UNDERSCORE_TEST"));
+   * }</pre></li>
+   * <li>in your IDE, <i>run the test in debug mode</i> — this will cause the generated source code
+   * to be copied directly into your clipboard.
+   * <p>
+   * If run in normal mode, the generated source code will be output to
+   * {@link ExpectedGeneration#out}, as specified in your
+   * {@link #assertParameterized(Object, Object, Supplier)} call (by default, {@linkplain System#err
+   * stderr}):
+   * </p>
+   * <pre>
+   * &#64;ParameterizedTest
+   * &#64;MethodSource
+   * public void uncapitalizeGreedy(Object expected, String value) {
+   *   assertParameterizedOf(
+   *       () -&gt; Strings.uncapitalizeGreedy(value),
+   *       expected,
+   *       () -&gt; new ExpectedGeneration(List.of(
+   *           entry("value", value)))); // <span style=
+  "background-color:yellow;color:black;">&lt;- No `out` stream specified here, so it defaults to stderr</span>
+   * }</pre></li>
+   * <li>replace {@code null} (step 1) with the generated source code as {@code expected}
+   * argument:<pre>
+   * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
+   *     return argumentsStream(
+   *       // expected
+   *       <span style="background-color:yellow;color:black;">java.util.Arrays.asList(
+   *           // value[0]: 'Capitalized'
+   *           "capitalized",
+   *           // value[1]: 'uncapitalized'
+   *           "uncapitalized",
+   *           . . .
+   *           // value[7]: 'UNDERSCORE_TEST'
+   *           "underscore_TEST")</span>,
+   *       // value
+   *       asList(
+   *           "Capitalized",
+   *           "uncapitalized",
+   *           . . .
+   *           "UNDERSCORE_TEST"));
+   * }</pre></li>
+   * </ol>
+   *
+   * @param expected
+   *          Expected test results, or {@code null} to automatically generate them (see "Arguments
+   *          generation" section here above). Corresponds to the <b>codomain of the test</b>; its
+   *          size MUST equal that of each {@code args} list.
+   * @param args
+   *          Test arguments. Corresponds to the <b>domain of the respective test argument</b>; each
+   *          list MUST have the same size.
+   * @return A stream of tuples, each composed this way: <pre>
+   * (expected[y], args[0][x], args[1][x], .&nbsp;.&nbsp;., args[n][x])</pre>
+   *         <p>
+   *         where
+   *         </p>
+   *         <ul>
+   *         <li><code>expected[y] = f(args[0][x], args[1][x], .&nbsp;.&nbsp;., args[n][x])</code></li>
+   *         <li><code>n = args.size() - 1</code></li>
+   *         <li><code>m = args[0].size() = args[1].size() = .&nbsp;.&nbsp;. = args[n].size()</code></li>
+   *         <li><code>y ∈ N : 0 &lt;= y &lt;= m</code></li>
+   *         <li><code>x ∈ N : 0 &lt;= x &lt; m</code></li>
+   *         </ul>
+   */
+  public static Stream<Arguments> argumentsStream(@Nullable List<?> expected,
+      List<?>... args) {
+    return doArgumentsStream(
+        expected,
+        args,
+        SimpleExpectedGenerator::count,
+        SimpleExpectedGenerator::new,
+        ($expected, $args) -> IntStream.range(0, $expected.size())
+            .mapToObj($ -> {
+              int i;
+              var testArgs = new Object[1 + $args.size()];
+              testArgs[i = 0] = $expected.get($);
+              while (++i < testArgs.length) {
+                testArgs[i] = $args.get(i - 1).get($);
+              }
+              return Arguments.of(testArgs);
+            }));
+  }
 
   /**
    * Maps the given items to the corresponding matchers.
@@ -423,7 +729,7 @@ public final class Assertions {
    * import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
    *
    * public class StringsTest {
-   *   private static Stream&lt;Arguments&gt; _uncapitalizeGreedy() {
+   *   private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
    *     return cartesianArgumentsStream(
    *         // expected <span style=
   "background-color:yellow;color:black;">&lt;- THIS list is generated automatically (see cartesianArgumentsStream(..))</span>
@@ -458,7 +764,7 @@ public final class Assertions {
    *
    *   &#64;ParameterizedTest
    *   &#64;MethodSource
-   *   public void _uncapitalizeGreedy(Object expected, String value) {
+   *   public void uncapitalizeGreedy(Object expected, String value) {
    *     assertParameterizedOf(
    *         () -&gt; Strings.uncapitalizeGreedy(value)),
    *         expected,
@@ -492,6 +798,7 @@ public final class Assertions {
       }
       // Regular result.
       else {
+        //noinspection unchecked,DataFlowIssue -- false null violation
         assertThat(actual, expected instanceof Matcher ? (Matcher<Object>) expected : is(expected));
       }
     }
@@ -501,9 +808,20 @@ public final class Assertions {
       if (generationSupplier == null)
         return;
 
-      var generation = generationSupplier.get();
-      generator.generateExpected(generation.out, actual, generation.expectedSourceCodeGenerator,
-          generation.args);
+      var complete = true;
+      try {
+        var generation = generationSupplier.get();
+        generator.generateExpected(actual, generation);
+        complete = generator.isComplete();
+      } finally {
+        /*
+         * Ensures the generator is properly discarded, either on normal completion or on
+         * malfunction.
+         */
+        if (complete) {
+          expectedGenerator.remove();
+        }
+      }
     }
   }
 
@@ -589,8 +907,8 @@ public final class Assertions {
   }
 
   /**
-   * Combines the given argument lists into a stream of corresponding {@linkplain Arguments
-   * parametric tuples} (Cartesian product) to feed a {@linkplain ParameterizedTest parameterized
+   * Combines by Cartesian product the given argument lists into a stream of corresponding
+   * {@linkplain Arguments parametric tuples} to feed a {@linkplain ParameterizedTest parameterized
    * test}.
    * <p>
    * The {@code expected} parameter shall contain both regular results and failures (i.e., thrown
@@ -630,8 +948,7 @@ public final class Assertions {
    * this section. This simplifies the preparation and maintenance of test cases (especially
    * considering that the Cartesian product of {@code args} causes the size of {@code expected} to
    * rapidly escalate), also unifying the way failed results (i.e., thrown exceptions) are dealt
-   * with (see {@link ExpectedGenerator#generateExpected(PrintStream, Object, Function, List)
-   * ExpectedGenerator} for more information on their source code representation).
+   * with.
    * </p>
    * <p>
    * Here, the steps to generate {@code expected} (based on the example in
@@ -639,7 +956,7 @@ public final class Assertions {
    * </p>
    * <ol>
    * <li>pass {@code null} as {@code expected} argument to this method:<pre>
-   * private static Stream&lt;Arguments&gt; _uncapitalizeGreedy() {
+   * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
    *     return cartesianArgumentsStream(
    *       // expected
    *       <span style="background-color:yellow;color:black;">null</span>,
@@ -661,7 +978,7 @@ public final class Assertions {
    * <pre>
    * &#64;ParameterizedTest
    * &#64;MethodSource
-   * public void _uncapitalizeGreedy(Object expected, String value) {
+   * public void uncapitalizeGreedy(Object expected, String value) {
    *   assertParameterizedOf(
    *       () -&gt; Strings.uncapitalizeGreedy(value),
    *       expected,
@@ -671,7 +988,7 @@ public final class Assertions {
    * }</pre></li>
    * <li>replace {@code null} (step 1) with the generated source code as {@code expected}
    * argument:<pre>
-   * private static Stream&lt;Arguments&gt; _uncapitalizeGreedy() {
+   * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
    *     return cartesianArgumentsStream(
    *       // expected
    *       <span style="background-color:yellow;color:black;">java.util.Arrays.asList(
@@ -715,29 +1032,18 @@ public final class Assertions {
    */
   public static Stream<Arguments> cartesianArgumentsStream(@Nullable List<?> expected,
       List<?>... args) {
-    var argsList = List.of(args);
-    int cartesianCount = cartesianProductCount(argsList);
-
-    // Expected to stub?
-    if (expected == null) {
-      expected = Collections.nCopies(cartesianCount, null);
-
-      expectedGenerator.set(new ExpectedGenerator(argsList));
-    } else {
-      expectedGenerator.set(null);
-    }
-
-    if (expected.size() != cartesianCount)
-      throw new IllegalArgumentException(String.format(
-          "`expected` size (%s) MISMATCH with `args` cartesian product (SHOULD be %s)",
-          expected.size(), cartesianCount));
-
-    final var expectedList = expected;
-    var indexRef = new AtomicInteger();
-    return cartesianProduct(argsList)
-        .map($ -> {
-          $.add(0, expectedList.get(indexRef.getAndIncrement()));
-          return Arguments.of($.toArray());
+    return doArgumentsStream(
+        expected,
+        args,
+        CartesianExpectedGenerator::count,
+        CartesianExpectedGenerator::new,
+        ($expected, $args) -> {
+          var indexRef = new AtomicInteger();
+          return cartesianProduct($args)
+              .map($ -> {
+                $.add(0, $expected.get(indexRef.getAndIncrement()));
+                return Arguments.of($.toArray());
+              });
         });
   }
 
@@ -815,8 +1121,24 @@ public final class Assertions {
     }
   }
 
-  private static int cartesianProductCount(List<List<?>> args) {
-    return args.stream().mapToInt(List::size).reduce(1, Math::multiplyExact);
+  private static Stream<Arguments> doArgumentsStream(@Nullable List<?> expected,
+      List<?>[] args, ToIntFunction<List<List<?>>> expectedCounter,
+      Function<List<List<?>>, ExpectedGenerator> expectedGeneratorProvider,
+      BiFunction<List<?>, List<List<?>>, Stream<Arguments>> argumentsStreamer) {
+    var argsList = asList(args);
+    int expectedCount = expectedCounter.applyAsInt(argsList);
+
+    // Expected results' generation mode?
+    if (expected == null) {
+      expected = Collections.nCopies(expectedCount, null);
+      expectedGenerator.set(expectedGeneratorProvider.apply(argsList));
+    }
+    if (expected.size() != expectedCount)
+      throw new IllegalArgumentException(String.format(
+          "`expected` size (%s) MISMATCH with `args` (SHOULD be %s)", expected.size(),
+          expectedCount));
+
+    return argumentsStreamer.apply(expected, argsList);
   }
 
   private Assertions() {

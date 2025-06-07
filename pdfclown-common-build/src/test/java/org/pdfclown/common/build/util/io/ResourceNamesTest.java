@@ -56,7 +56,7 @@ public class ResourceNamesTest extends BaseTest {
       Argument.of("my/\\\\other\\/\\deep//relative\\resource/",
           "Slash- and backslash-ridden relative name"));
 
-  private static Stream<Arguments> _absName_filePath_unix() {
+  static Stream<Arguments> _absName_filePath_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build());
     return cartesianArgumentsStream(
@@ -103,7 +103,7 @@ public class ResourceNamesTest extends BaseTest {
             fs.getPath("/host/absolute")));
   }
 
-  private static Stream<Arguments> _absName_filePath_win() {
+  static Stream<Arguments> _absName_filePath_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build());
     return cartesianArgumentsStream(
@@ -150,7 +150,7 @@ public class ResourceNamesTest extends BaseTest {
             fs.getPath("c:\\absolute")));
   }
 
-  private static Stream<Arguments> _fullName_basePackage() {
+  static Stream<Arguments> _fullName_basePackage() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -207,7 +207,7 @@ public class ResourceNamesTest extends BaseTest {
             ResourceNames.class.getPackageName()));
   }
 
-  private static Stream<Arguments> _fullName_baseType() {
+  static Stream<Arguments> _fullName_baseType() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -264,7 +264,7 @@ public class ResourceNamesTest extends BaseTest {
             ResourceNames.class));
   }
 
-  private static Stream<Arguments> _name_1() {
+  static Stream<Arguments> _name_1() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -290,7 +290,7 @@ public class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
-  private static Stream<Arguments> _name_2() {
+  static Stream<Arguments> _name_2() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -471,7 +471,7 @@ public class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
-  private static Stream<Arguments> _normalize() {
+  static Stream<Arguments> _normalize() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -497,7 +497,7 @@ public class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
-  private static Stream<Arguments> _parent() {
+  static Stream<Arguments> _parent() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(

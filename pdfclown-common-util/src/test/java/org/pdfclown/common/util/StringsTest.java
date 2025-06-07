@@ -34,7 +34,7 @@ import org.pdfclown.common.util.__test.BaseTest;
  */
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class StringsTest extends BaseTest {
-  private static Stream<Arguments> _abbreviateMultiline() {
+  static Stream<Arguments> _abbreviateMultiline() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -258,7 +258,7 @@ public class StringsTest extends BaseTest {
             "[...]"));
   }
 
-  private static Stream<Arguments> _uncapitalizeGreedy() {
+  static Stream<Arguments> _uncapitalizeGreedy() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
