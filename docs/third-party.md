@@ -4,7 +4,9 @@
   SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-# Third-party Code Reuse
+[Project Conventions](conventions.md) >
+
+# Third-Party Code Reuse
 
 Source code from third-party projects is incorporated according to [REUSE 3.3](https://reuse.software/spec-3.3/) specification.
 
@@ -42,9 +44,9 @@ Whenever any source code from third-party projects is incorporated, it must be d
           . . .
         ```
 
-        NOTE: If the original code has been incorporated as-is (no change other than trivial adaptation), then the `Changes` tag can be omitted.
+      NOTE: If the original code has been incorporated as-is (no change other than trivial adaptation), then the `Changes` tag can be omitted.
 
-        Other informative tags will be added based on the relationship between the incorporated file and the original code:
+      Other informative tags will be added based on the relationship between the incorporated file and the original code:
 
         - the `SourceFQN` tag indicates the original name of the type (or type member — i.e., field or method) in case the incorporation changed it:
 
@@ -89,7 +91,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
             . . .
           ```
 
-            NOTE: In case of detached file, the `SourceFQN` tag will always be indicated (since, by definition, its relationship with the original repository is not documented elsewhere in the project).
+      NOTE: In case of detached file, the `SourceFQN` tag will always be indicated (since, by definition, its relationship with the original repository is not documented elsewhere in the project).
 
     - **third-party code fragment** into a project file: wrap the fragment as an SPDX snippet:
 
