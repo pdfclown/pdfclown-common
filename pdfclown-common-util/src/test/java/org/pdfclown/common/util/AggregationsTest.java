@@ -23,9 +23,9 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-public class AggregationsTest extends BaseTest {
+class AggregationsTest extends BaseTest {
   @Test
-  public void _addAll_array() {
+  void addAll_array() {
     var obj = new ArrayList<>();
     obj.add("A");
     obj.add("B");
@@ -40,7 +40,7 @@ public class AggregationsTest extends BaseTest {
   }
 
   @Test
-  public void _place() {
+  void place() {
     var obj = new ArrayList<>();
     obj.add("A");
     obj.add("B");

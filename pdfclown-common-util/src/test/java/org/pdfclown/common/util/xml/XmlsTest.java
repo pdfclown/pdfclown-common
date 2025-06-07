@@ -19,16 +19,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.w3c.dom.ProcessingInstruction;
 
 /**
  * @author Stefano Chizzolini
  */
-public class XmlsTest extends BaseTest {
+class XmlsTest extends BaseTest {
   @Test
-  public void _getPseudoAttributes() {
+  void getPseudoAttributes() {
     var pi = mock(ProcessingInstruction.class);
     {
       when(pi.getTarget()).thenReturn("xml-stylesheet");

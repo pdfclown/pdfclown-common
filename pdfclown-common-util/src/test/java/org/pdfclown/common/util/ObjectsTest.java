@@ -25,10 +25,10 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-public class ObjectsTest extends BaseTest {
+class ObjectsTest extends BaseTest {
   @Test
   @SuppressWarnings("ConstantValue")
-  public void _objOrGet() {
+  void objOrGet() {
     List<Object> defaultResult = Collections.emptyList();
 
     List<Object> obj = List.of("test");
@@ -41,7 +41,7 @@ public class ObjectsTest extends BaseTest {
 
   @Test
   @SuppressWarnings("ConstantValue")
-  public void _objToOrElse() {
+  void objToOrElse() {
     int defaultResult = 0;
 
     List<Object> obj = List.of("test");
@@ -54,7 +54,7 @@ public class ObjectsTest extends BaseTest {
 
   @Test
   @SuppressWarnings("ConstantValue")
-  public void _objToOrGet() {
+  void objToOrGet() {
     int defaultResult = 0;
 
     List<Object> obj = List.of("test");

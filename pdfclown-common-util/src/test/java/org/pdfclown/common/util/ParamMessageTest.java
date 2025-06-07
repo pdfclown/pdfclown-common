@@ -25,9 +25,9 @@ import org.slf4j.event.Level;
 /**
  * @author Stefano Chizzolini
  */
-public class ParamMessageTest extends BaseTest {
+class ParamMessageTest extends BaseTest {
   @Test
-  public void _format() {
+  void format() {
     assertEquals("Test message 101", ParamMessage.format("{} message {}", "Test", 101));
     assertNotLogged();
 
@@ -37,7 +37,7 @@ public class ParamMessageTest extends BaseTest {
   }
 
   @Test
-  public void _of() {
+  void of() {
     {
       ParamMessage message = ParamMessage.of("Message {}", "construction");
       assertEquals("Message construction", message.getDescription());

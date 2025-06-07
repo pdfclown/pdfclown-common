@@ -29,7 +29,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 /**
  * @author Stefano Chizzolini
  */
-public class FilesTest extends BaseTest {
+class FilesTest extends BaseTest {
   private static final List<Argument<String>> PATHS = asList(
       Argument.of("/home/me/my.sub/test/obj.tar.gz",
           "Multi-part file extension, dot before directory separator, Unix path"),
@@ -44,7 +44,7 @@ public class FilesTest extends BaseTest {
       Argument.of("C:\\my\\test-1.5\\obj.tar2.gz",
           "Multi-part file extension, dot before base filename"));
 
-  static Stream<Arguments> _fullExtension() {
+  static Stream<Arguments> fullExtension() {
     return cartesianArgumentsStream(
         // expected
         asList(
@@ -64,7 +64,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> _replaceFullExtension() {
+  static Stream<Arguments> replaceFullExtension() {
     return cartesianArgumentsStream(
         // expected
         asList(
@@ -94,7 +94,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _fullExtension(String expected, Argument<String> path) {
+  void fullExtension(String expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.fullExtension(path.getValue()),
         expected,
@@ -104,7 +104,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _replaceFullExtension(String expected, Argument<String> path, String newExtension) {
+  void replaceFullExtension(String expected, Argument<String> path, String newExtension) {
     assertParameterizedOf(
         () -> Files.replaceFullExtension(path.getValue(), newExtension),
         expected,

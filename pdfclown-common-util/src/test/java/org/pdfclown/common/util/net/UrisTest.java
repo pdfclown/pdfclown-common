@@ -33,8 +33,8 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-public class UrisTest extends BaseTest {
-  static Stream<Arguments> _relativeUri() {
+class UrisTest extends BaseTest {
+  static Stream<Arguments> relativeUri() {
     var from = asList(
         URI.create("my/sub/same.html"),
         URI.create("my/another/sub/from.html"),
@@ -271,7 +271,7 @@ public class UrisTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _relativeUri(Object expected, URI from, URI to) {
+  void relativeUri(Object expected, URI from, URI to) {
     assertParameterizedOf(
         () -> Uris.relativeUri(from, to),
         expected,

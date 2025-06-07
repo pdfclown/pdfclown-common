@@ -33,8 +33,8 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini
  */
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
-public class StringsTest extends BaseTest {
-  static Stream<Arguments> _abbreviateMultiline() {
+class StringsTest extends BaseTest {
+  static Stream<Arguments> abbreviateMultiline() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -258,7 +258,7 @@ public class StringsTest extends BaseTest {
             "[...]"));
   }
 
-  static Stream<Arguments> _uncapitalizeGreedy() {
+  static Stream<Arguments> uncapitalizeGreedy() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -292,7 +292,7 @@ public class StringsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _abbreviateMultiline(Object expected, String value, int maxLineCount,
+  void abbreviateMultiline(Object expected, String value, int maxLineCount,
       int averageLineLength, String marker) {
     assertParameterizedOf(
         () -> Strings.abbreviateMultiline(value, maxLineCount, averageLineLength, marker),
@@ -314,7 +314,7 @@ public class StringsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _uncapitalizeGreedy(Object expected, String value) {
+  void uncapitalizeGreedy(Object expected, String value) {
     assertParameterizedOf(
         () -> Strings.uncapitalizeGreedy(value),
         expected,
@@ -326,7 +326,7 @@ public class StringsTest extends BaseTest {
    * Tests that unchanged strings are returned without creating new instances of the same string.
    */
   @Test
-  public void _uncapitalizeGreedy_sameInstance() {
+  void uncapitalizeGreedy_sameInstance() {
     final var value = "notApplicable";
 
     assertThat(Strings.uncapitalizeGreedy(value), is(sameInstance(value)));

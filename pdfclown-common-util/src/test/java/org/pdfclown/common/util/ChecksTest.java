@@ -22,9 +22,9 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini
  */
 @SuppressWarnings("CodeBlock2Expr")
-public class ChecksTest extends BaseTest {
+class ChecksTest extends BaseTest {
   @Test
-  public void _checkBetween() {
+  void checkBetween() {
     final int intValue = 42;
     {
       assertEquals(intValue, Checks.checkBetween(intValue, 40, 42));
@@ -45,7 +45,7 @@ public class ChecksTest extends BaseTest {
   }
 
   @Test
-  public void _checkEqual() {
+  void checkEqual() {
     final int intValue = 42;
     {
       assertEquals(intValue, Checks.checkEqual(intValue, 42));
@@ -64,7 +64,7 @@ public class ChecksTest extends BaseTest {
   }
 
   @Test
-  public void _checkType() {
+  void checkType() {
     final String StringValue = "My value";
     final String ArgumentName = "myParam";
     {

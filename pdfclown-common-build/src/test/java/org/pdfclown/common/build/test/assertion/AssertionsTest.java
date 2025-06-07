@@ -38,7 +38,7 @@ import org.pdfclown.common.build.internal.util.io.XtPrintStream;
 /**
  * @author Stefano Chizzolini
  */
-public class AssertionsTest extends BaseTest {
+class AssertionsTest extends BaseTest {
   private static final double DBL_DELTA = 1e-6;
 
   static Stream<Arguments> assertParameterized_cartesian() {
@@ -186,7 +186,7 @@ public class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  public void assertParameterized_cartesian(Object expected, String value, int length) {
+  void assertParameterized_cartesian(Object expected, String value, int length) {
     doAssertParameterized(expected, value, length);
   }
 
@@ -197,7 +197,7 @@ public class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  public void assertParameterized_cartesian_generation(Object expected, String value, int length) {
+  void assertParameterized_cartesian_generation(Object expected, String value, int length) {
     doAssertParameterized_generation(expected, value, length,
         "// expected\n"
             + "java.util.Arrays.asList(\n"
@@ -227,7 +227,7 @@ public class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  public void assertParameterized_simple(Object expected, String value, int length) {
+  void assertParameterized_simple(Object expected, String value, int length) {
     doAssertParameterized(expected, value, length);
   }
 
@@ -238,7 +238,7 @@ public class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  public void assertParameterized_simple_generation(Object expected, String value, int length) {
+  void assertParameterized_simple_generation(Object expected, String value, int length) {
     doAssertParameterized_generation(expected, value, length, "// expected\n"
         + "java.util.Arrays.asList(\n"
         + "  // value[0]: 'The quick brown. . .'; length[0]: '50'\n"
@@ -257,12 +257,12 @@ public class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  public void assertParameterized_simple_generation_invalidCardinality(Object expected,
+  void assertParameterized_simple_generation_invalidCardinality(Object expected,
       String value, int length) {
   }
 
   @Test
-  public void assertShapeEquals() {
+  void assertShapeEquals() {
     assertDoesNotThrow(
         () -> Assertions.assertShapeEquals(
             polygon(new double[] { .1, .1, .8, .1, .9, .9, .2, .19 }),

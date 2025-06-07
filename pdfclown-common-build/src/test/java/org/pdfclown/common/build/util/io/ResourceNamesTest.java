@@ -35,7 +35,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 /**
  * @author Stefano Chizzolini
  */
-public class ResourceNamesTest extends BaseTest {
+class ResourceNamesTest extends BaseTest {
   private static final List<Argument<String>> NAMES = asList(
       Argument.of("/",
           "Normal absolute root"),
@@ -56,7 +56,7 @@ public class ResourceNamesTest extends BaseTest {
       Argument.of("my/\\\\other\\/\\deep//relative\\resource/",
           "Slash- and backslash-ridden relative name"));
 
-  static Stream<Arguments> _absName_filePath_unix() {
+  static Stream<Arguments> absName_filePath_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build());
     return cartesianArgumentsStream(
@@ -103,7 +103,7 @@ public class ResourceNamesTest extends BaseTest {
             fs.getPath("/host/absolute")));
   }
 
-  static Stream<Arguments> _absName_filePath_win() {
+  static Stream<Arguments> absName_filePath_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build());
     return cartesianArgumentsStream(
@@ -150,7 +150,7 @@ public class ResourceNamesTest extends BaseTest {
             fs.getPath("c:\\absolute")));
   }
 
-  static Stream<Arguments> _fullName_basePackage() {
+  static Stream<Arguments> fullName_basePackage() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -207,7 +207,7 @@ public class ResourceNamesTest extends BaseTest {
             ResourceNames.class.getPackageName()));
   }
 
-  static Stream<Arguments> _fullName_baseType() {
+  static Stream<Arguments> fullName_baseType() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -264,7 +264,7 @@ public class ResourceNamesTest extends BaseTest {
             ResourceNames.class));
   }
 
-  static Stream<Arguments> _name_1() {
+  static Stream<Arguments> name_1() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -290,7 +290,7 @@ public class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
-  static Stream<Arguments> _name_2() {
+  static Stream<Arguments> name_2() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -471,7 +471,7 @@ public class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
-  static Stream<Arguments> _normalize() {
+  static Stream<Arguments> normalize() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -497,7 +497,7 @@ public class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
-  static Stream<Arguments> _parent() {
+  static Stream<Arguments> parent() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -525,7 +525,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  public void _absName_filePath_unix(String expected, Path filePath, Path baseDir) {
+  void absName_filePath_unix(String expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
         () -> ResourceNames.absName(filePath, baseDir),
         expected,
@@ -536,7 +536,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  public void _absName_filePath_win(String expected, Path filePath, Path baseDir) {
+  void absName_filePath_win(String expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
         () -> ResourceNames.absName(filePath, baseDir),
         expected,
@@ -547,7 +547,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _fullName_basePackage(String expected, Argument<String> name, String basePackage) {
+  void fullName_basePackage(String expected, Argument<String> name, String basePackage) {
     assertParameterizedOf(
         () -> ResourceNames.fullName(name.getValue(), basePackage),
         expected,
@@ -558,7 +558,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _fullName_baseType(String expected, Argument<String> name,
+  void fullName_baseType(String expected, Argument<String> name,
       @Nullable Class<?> baseType) {
     assertParameterizedOf(
         () -> ResourceNames.fullName(name.getValue(), baseType),
@@ -568,13 +568,13 @@ public class ResourceNamesTest extends BaseTest {
             entry("baseType", baseType))));
   }
 
-  public void _name_0() {
+  void name_0() {
     assertParameterized(ResourceNames.name(), EMPTY, null);
   }
 
   @ParameterizedTest
   @MethodSource
-  public void _name_1(String expected, Argument<String> name0) {
+  void name_1(String expected, Argument<String> name0) {
     assertParameterizedOf(
         () -> ResourceNames.name(name0.getValue()),
         expected,
@@ -584,7 +584,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _name_2(String expected, Argument<String> name0, Argument<String> name1) {
+  void name_2(String expected, Argument<String> name0, Argument<String> name1) {
     assertParameterizedOf(
         () -> ResourceNames.name(name0.getValue(), name1.getValue()),
         expected,
@@ -595,7 +595,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _normalize(String expected, Argument<String> name) {
+  void normalize(String expected, Argument<String> name) {
     assertParameterizedOf(
         () -> ResourceNames.normalize(name.getValue()),
         expected,
@@ -605,7 +605,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _parent(String expected, Argument<String> name) {
+  void parent(String expected, Argument<String> name) {
     assertParameterizedOf(
         () -> ResourceNames.parent(name.getValue()),
         expected,

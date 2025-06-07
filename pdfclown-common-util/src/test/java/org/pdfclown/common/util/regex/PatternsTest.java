@@ -35,8 +35,8 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini
  */
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
-public class PatternsTest extends BaseTest {
-  public static class RegexArgument extends Argument<String> {
+class PatternsTest extends BaseTest {
+  static class RegexArgument extends Argument<String> {
     /**
      * Samples matching {@linkplain #getValue() regex}.
      */
@@ -46,7 +46,7 @@ public class PatternsTest extends BaseTest {
      */
     List<String> mismatches;
 
-    public RegexArgument(String value, List<String> matches, List<String> mismatches) {
+    RegexArgument(String value, List<String> matches, List<String> mismatches) {
       super(value, "");
 
       this.matches = matches;
@@ -54,7 +54,7 @@ public class PatternsTest extends BaseTest {
     }
   }
 
-  static Stream<Arguments> _globToRegex() {
+  static Stream<Arguments> globToRegex() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -83,7 +83,7 @@ public class PatternsTest extends BaseTest {
                     "/home/SuperUser/a/random/subdir/foocat/NOTEmd"))));
   }
 
-  static Stream<Arguments> _wildcardToRegex() {
+  static Stream<Arguments> wildcardToRegex() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -98,7 +98,7 @@ public class PatternsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _globToRegex(String expected, RegexArgument glob) {
+  void globToRegex(String expected, RegexArgument glob) {
     var actual = (String) evalParameterized(
         () -> Patterns.globToRegex(glob.getValue()));
 
@@ -111,7 +111,7 @@ public class PatternsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _wildcardToRegex(String expected, RegexArgument pattern) {
+  void wildcardToRegex(String expected, RegexArgument pattern) {
     var actual = (String) evalParameterized(
         () -> Patterns.wildcardToRegex(pattern.getValue()));
 

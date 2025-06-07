@@ -21,9 +21,9 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-public class ExceptionsTest extends BaseTest {
+class ExceptionsTest extends BaseTest {
   @Test
-  public void _wrongArg() {
+  void wrongArg() {
     IllegalArgumentException exception = Exceptions.wrongArg("myArg", 99, "{}! Maybe {}{} or {}",
         "that's it", "not so good", ',', "relevant", new NullPointerException());
     assertEquals("myArg (99): that's it! Maybe not so good, or relevant", exception.getMessage());

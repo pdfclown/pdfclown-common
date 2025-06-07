@@ -35,7 +35,7 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-public class FilesTest extends BaseTest {
+class FilesTest extends BaseTest {
   private static final List<Argument<String>> EXTENSIONS = List.of(
       Argument.of(".tar.gz",
           "Multi-part, normal"),
@@ -65,7 +65,7 @@ public class FilesTest extends BaseTest {
   private static final Function<Object, String> EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF =
       $ -> "fs.getPath(" + objToLiteralString($) + ")";
 
-  static Stream<Arguments> _extension() {
+  static Stream<Arguments> extension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -85,7 +85,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> _fileName() {
+  static Stream<Arguments> fileName() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -105,7 +105,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> _fullExtension() {
+  static Stream<Arguments> fullExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -125,7 +125,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> _isExtension() {
+  static Stream<Arguments> isExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -189,7 +189,7 @@ public class FilesTest extends BaseTest {
         EXTENSIONS);
   }
 
-  static Stream<Arguments> _isFullExtension() {
+  static Stream<Arguments> isFullExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -253,7 +253,7 @@ public class FilesTest extends BaseTest {
         EXTENSIONS);
   }
 
-  static Stream<Arguments> _pathOf_unix() {
+  static Stream<Arguments> pathOf_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix());
     return cartesianArgumentsStream(
         // expected
@@ -280,7 +280,7 @@ public class FilesTest extends BaseTest {
         List.of(fs));
   }
 
-  static Stream<Arguments> _pathOf_win() {
+  static Stream<Arguments> pathOf_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows());
     return cartesianArgumentsStream(
         // expected
@@ -307,7 +307,7 @@ public class FilesTest extends BaseTest {
         List.of(fs));
   }
 
-  static Stream<Arguments> _replaceFullExtension() {
+  static Stream<Arguments> replaceFullExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -335,7 +335,7 @@ public class FilesTest extends BaseTest {
         List.of(".zip"));
   }
 
-  static Stream<Arguments> _simpleBaseName() {
+  static Stream<Arguments> simpleBaseName() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -355,7 +355,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> _withoutExtension() {
+  static Stream<Arguments> withoutExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -375,7 +375,7 @@ public class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> _withoutFullExtension() {
+  static Stream<Arguments> withoutFullExtension() {
     return cartesianArgumentsStream(
         // expected
         java.util.Arrays.asList(
@@ -397,7 +397,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _extension(String expected, Argument<String> path) {
+  void extension(String expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.extension(path.getValue()),
         expected,
@@ -407,7 +407,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _fileName(String expected, Argument<String> path) {
+  void fileName(String expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.fileName(path.getValue()),
         expected,
@@ -417,7 +417,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _fullExtension(String expected, Argument<String> path) {
+  void fullExtension(String expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.fullExtension(path.getValue()),
         expected,
@@ -427,7 +427,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _isExtension(Boolean expected, Argument<String> path, Argument<String> extension) {
+  void isExtension(Boolean expected, Argument<String> path, Argument<String> extension) {
     assertParameterizedOf(
         () -> Files.isExtension(path.getValue(), extension.getValue()),
         expected,
@@ -438,7 +438,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _isFullExtension(Boolean expected, Argument<String> path,
+  void isFullExtension(Boolean expected, Argument<String> path,
       Argument<String> extension) {
     assertParameterizedOf(
         () -> Files.isFullExtension(path.getValue(), extension.getValue()),
@@ -450,7 +450,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  public void _pathOf_unix(Path expected, URI uri, FileSystem fs) {
+  void pathOf_unix(Path expected, URI uri, FileSystem fs) {
     assertParameterizedOf(
         () -> Files.pathOf(uri, fs),
         expected,
@@ -462,7 +462,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  public void _pathOf_win(Path expected, URI uri, FileSystem fs) {
+  void pathOf_win(Path expected, URI uri, FileSystem fs) {
     assertParameterizedOf(
         () -> Files.pathOf(uri, fs),
         expected,
@@ -474,7 +474,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _replaceFullExtension(String expected, Argument<String> path,
+  void replaceFullExtension(String expected, Argument<String> path,
       String newExtension) {
     assertParameterizedOf(
         () -> Files.replaceFullExtension(path.getValue(), newExtension),
@@ -486,7 +486,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _simpleBaseName(String expected, Argument<String> path) {
+  void simpleBaseName(String expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.simpleBaseName(path.getValue()),
         expected,
@@ -496,7 +496,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _withoutExtension(String expected, Argument<String> path) {
+  void withoutExtension(String expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.withoutExtension(path.getValue()),
         expected,
@@ -506,7 +506,7 @@ public class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  public void _withoutFullExtension(String expected, Argument<String> path) {
+  void withoutFullExtension(String expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.withoutFullExtension(path.getValue()),
         expected,
