@@ -15,9 +15,11 @@ package org.pdfclown.common.build.util.io;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.pdfclown.common.build.internal.util.Aggregations.entry;
+import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -37,29 +39,30 @@ import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
  */
 class ResourceNamesTest extends BaseTest {
   private static final List<Argument<String>> NAMES = asList(
-      Argument.of("/",
-          "Normal absolute root"),
-      Argument.of("\\",
-          "Backslash absolute root"),
-      Argument.of("/my/absolute/resource",
-          "Normal absolute name"),
-      Argument.of("/my/absolute/resource/",
-          "Slash-trailing absolute name"),
-      Argument.of("//my/\\\\other\\/\\deep//absolute\\resource/",
-          "Slash- and backslash-ridden absolute name"),
-      Argument.of("",
-          "Relaive root"),
-      Argument.of("my/relative/resource",
-          "Normal relative name"),
-      Argument.of("my/relative/resource/",
-          "Slash-trailing relative name"),
-      Argument.of("my/\\\\other\\/\\deep//relative\\resource/",
-          "Slash- and backslash-ridden relative name"));
+      arg("Normal absolute root",
+          "/"),
+      arg("Backslash absolute root",
+          "\\"),
+      arg("Normal absolute name",
+          "/my/absolute/resource"),
+      arg("Slash-trailing absolute name",
+          "/my/absolute/resource/"),
+      arg("Slash- and backslash-ridden absolute name",
+          "//my/\\\\other\\/\\deep//absolute\\resource/"),
+      arg("Relaive root",
+          ""),
+      arg("Normal relative name",
+          "my/relative/resource"),
+      arg("Slash-trailing relative name",
+          "my/relative/resource/"),
+      arg("Slash- and backslash-ridden relative name",
+          "my/\\\\other\\/\\deep//relative\\resource/"));
 
   static Stream<Arguments> absName_filePath_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build());
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // filePath[0]: 'relative/index1.html'
@@ -106,7 +109,8 @@ class ResourceNamesTest extends BaseTest {
   static Stream<Arguments> absName_filePath_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build());
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // filePath[0]: 'relative\index1.html'
@@ -151,7 +155,8 @@ class ResourceNamesTest extends BaseTest {
   }
 
   static Stream<Arguments> fullName_basePackage() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // name[0]: '/ (Normal absolute root)'
@@ -208,7 +213,8 @@ class ResourceNamesTest extends BaseTest {
   }
 
   static Stream<Arguments> fullName_baseType() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // name[0]: '/ (Normal absolute root)'
@@ -265,7 +271,8 @@ class ResourceNamesTest extends BaseTest {
   }
 
   static Stream<Arguments> name_1() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // name0[0]: '/ (Normal absolute root)'
@@ -291,7 +298,8 @@ class ResourceNamesTest extends BaseTest {
   }
 
   static Stream<Arguments> name_2() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // name0[0]: '/ (Normal absolute root)'
@@ -472,7 +480,8 @@ class ResourceNamesTest extends BaseTest {
   }
 
   static Stream<Arguments> normalize() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // name[0]: '/ (Normal absolute root)'
@@ -498,7 +507,8 @@ class ResourceNamesTest extends BaseTest {
   }
 
   static Stream<Arguments> parent() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // name[0]: '/ (Normal absolute root)'

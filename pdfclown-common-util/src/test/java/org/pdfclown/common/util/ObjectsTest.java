@@ -17,9 +17,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Named.named;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.simple;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
 import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,6 +41,7 @@ import org.pdfclown.common.util.__test.BaseTest;
 class ObjectsTest extends BaseTest {
   static Stream<Arguments> objToLiteralString() {
     return argumentsStream(
+        simple(),
         // expected
         java.util.Arrays.asList(
             // [1] obj[0]: null

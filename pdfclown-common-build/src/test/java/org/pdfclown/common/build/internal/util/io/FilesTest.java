@@ -14,8 +14,10 @@ package org.pdfclown.common.build.internal.util.io;
 
 import static java.util.Arrays.asList;
 import static java.util.Map.entry;
+import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -29,23 +31,25 @@ import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings({ "ArraysAsListWithZeroOrOneArgument", "DataFlowIssue" })
 class FilesTest extends BaseTest {
   private static final List<Argument<String>> PATHS = asList(
-      Argument.of("/home/me/my.sub/test/obj.tar.gz",
-          "Multi-part file extension, dot before directory separator, Unix path"),
-      Argument.of("smb://myhost/my.sub/test/obj.tar.gz",
-          "Multi-part file extension, dot before directory separator, URI path"),
-      Argument.of("C:\\my.sub\\test\\obj.tar.gz",
-          "Multi-part file extension, dot before directory separator, Windows DOS path"),
-      Argument.of("\\\\myhost\\my.sub\\test\\obj.tar.gz",
-          "Multi-part file extension, dot before directory separator, Windows UNC path"),
-      Argument.of("/home/me/my/test/obj-5.2.9.tar2.gz",
-          "Multi-part file extension, dot in base filename"),
-      Argument.of("C:\\my\\test-1.5\\obj.tar2.gz",
-          "Multi-part file extension, dot before base filename"));
+      arg("Multi-part file extension, dot before directory separator, Unix path",
+          "/home/me/my.sub/test/obj.tar.gz"),
+      arg("Multi-part file extension, dot before directory separator, URI path",
+          "smb://myhost/my.sub/test/obj.tar.gz"),
+      arg("Multi-part file extension, dot before directory separator, Windows DOS path",
+          "C:\\my.sub\\test\\obj.tar.gz"),
+      arg("Multi-part file extension, dot before directory separator, Windows UNC path",
+          "\\\\myhost\\my.sub\\test\\obj.tar.gz"),
+      arg("Multi-part file extension, dot in base filename",
+          "/home/me/my/test/obj-5.2.9.tar2.gz"),
+      arg("Multi-part file extension, dot before base filename",
+          "C:\\my\\test-1.5\\obj.tar2.gz"));
 
   static Stream<Arguments> fullExtension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz'
@@ -65,7 +69,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> replaceFullExtension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz'

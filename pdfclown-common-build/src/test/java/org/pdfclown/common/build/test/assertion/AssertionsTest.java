@@ -34,58 +34,61 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.opentest4j.AssertionFailedError;
 import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.internal.util.io.XtPrintStream;
+import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
 
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("ConcatenationWithEmptyString")
 class AssertionsTest extends BaseTest {
   private static final double DBL_DELTA = 1e-6;
 
-  static Stream<Arguments> assertParameterized_cartesian() {
-    return Assertions.cartesianArgumentsStream(
+  static Stream<Arguments> assertParameterized__cartesian() {
+    return Assertions.argumentsStream(
+        ArgumentsStreamConfig.cartesian(),
         // expected
         java.util.Arrays.asList(
-            // value[0]: 'null'
-            // -- length[0]: '50'
+            // value[0]: null
+            // [1] length[0]: 50
             new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
                 "java.lang.NullPointerException", "`value`"),
-            // -- length[1]: '20'
+            // [2] length[1]: 20
             new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
                 "java.lang.NullPointerException", "`value`"),
-            // -- length[2]: '5'
+            // [3] length[2]: 5
             new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
                 "java.lang.NullPointerException", "`value`"),
             //
-            // value[1]: ''
-            // -- length[0]: '50'
+            // value[1]: ""
+            // [4] length[0]: 50
             new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
                 "java.lang.IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 0)"),
-            // -- length[1]: '20'
+            // [5] length[1]: 20
             new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
                 "java.lang.IllegalArgumentException",
                 "`length` (20): INVALID (should be less than 0)"),
-            // -- length[2]: '5'
+            // [6] length[2]: 5
             new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
                 "java.lang.IllegalArgumentException",
                 "`length` (5): INVALID (should be less than 0)"),
             //
-            // value[2]: 'The quick brown. . .'
-            // -- length[0]: '50'
+            // value[2]: "The quick brow. . ."
+            // [7] length[0]: 50
             new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
                 "java.lang.IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 43)"),
-            // -- length[1]: '20'
+            // [8] length[1]: 20
             "The quick brown fox ",
-            // -- length[2]: '5'
+            // [9] length[2]: 5
             "The q",
             //
-            // value[3]: 'The lazy yellow. . .'
-            // -- length[0]: '50'
+            // value[3]: "The lazy yello. . ."
+            // [10] length[0]: 50
             "The lazy yellow dog was caught by the slow red fox",
-            // -- length[1]: '20'
+            // [11] length[1]: 20
             "The lazy yellow dog ",
-            // -- length[2]: '5'
+            // [12] length[2]: 5
             "The l"),
         // value
         asList(
@@ -100,8 +103,9 @@ class AssertionsTest extends BaseTest {
             5));
   }
 
-  static Stream<Arguments> assertParameterized_cartesian_generation() {
-    return Assertions.cartesianArgumentsStream(
+  static Stream<Arguments> assertParameterized__cartesian_generation() {
+    return Assertions.argumentsStream(
+        ArgumentsStreamConfig.cartesian(),
         // expected
         null /* GENERATION MODE */,
         // value
@@ -115,15 +119,16 @@ class AssertionsTest extends BaseTest {
             5));
   }
 
-  static Stream<Arguments> assertParameterized_simple() {
+  static Stream<Arguments> assertParameterized__simple() {
     return Assertions.argumentsStream(
+        ArgumentsStreamConfig.simple(),
         // expected
         java.util.Arrays.asList(
-            // value[0]: 'The quick brown. . .'; length[0]: '50'
+            // [1] value[0]: "The quick brow. . ."; length[0]: 50
             new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
                 "java.lang.IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 43)"),
-            // value[1]: 'The lazy yellow. . .'; length[1]: '20'
+            // [2] value[1]: "The lazy yello. . ."; length[1]: 20
             "The lazy yellow dog "),
         // value
         asList(
@@ -135,8 +140,9 @@ class AssertionsTest extends BaseTest {
             20));
   }
 
-  static Stream<Arguments> assertParameterized_simple_generation() {
+  static Stream<Arguments> assertParameterized__simple_generation() {
     return Assertions.argumentsStream(
+        ArgumentsStreamConfig.simple(),
         // expected
         null /* GENERATION MODE */,
         // value
@@ -149,8 +155,9 @@ class AssertionsTest extends BaseTest {
             20));
   }
 
-  static Stream<Arguments> assertParameterized_simple_generation_invalidCardinality() {
+  static Stream<Arguments> assertParameterized__simple_generation_invalidCardinality() {
     var exception = assertThrows(IllegalArgumentException.class, () -> Assertions.argumentsStream(
+        ArgumentsStreamConfig.simple(),
         // expected
         null /* GENERATION MODE */,
         // value
@@ -181,83 +188,88 @@ class AssertionsTest extends BaseTest {
 
   /**
    * Tests the regular execution of {@link Assertions#assertParameterized(Object, Object, Supplier)
-   * assertParameterized(..)} along with {@link Assertions#cartesianArgumentsStream(List, List[])
-   * cartesianArgumentsStream(..)}.
+   * assertParameterized(..)} along with
+   * {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized_cartesian(Object expected, String value, int length) {
+  void assertParameterized__cartesian(Object expected, String value, int length) {
     doAssertParameterized(expected, value, length);
   }
 
   /**
    * Tests the expected results generation of
    * {@link Assertions#assertParameterized(Object, Object, Supplier) assertParameterized(..)} along
-   * with {@link Assertions#cartesianArgumentsStream(List, List[]) cartesianArgumentsStream(..)}.
-   */
-  @ParameterizedTest
-  @MethodSource
-  void assertParameterized_cartesian_generation(Object expected, String value, int length) {
-    doAssertParameterized_generation(expected, value, length,
-        "// expected\n"
-            + "java.util.Arrays.asList(\n"
-            + "  // value[0]: 'The quick brown. . .'\n"
-            + "  // -- length[0]: '50'\n"
-            + "  new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(" +
-            "\"java.lang.IllegalArgumentException\", " +
-            "\"`length` (50): INVALID (should be less than 43)\"),\n"
-            + "  // -- length[1]: '20'\n"
-            + "  \"The quick brown fox \",\n"
-            + "  // -- length[2]: '5'\n"
-            + "  \"The q\",\n"
-            + "  //\n"
-            + "  // value[1]: 'The lazy yellow. . .'\n"
-            + "  // -- length[0]: '50'\n"
-            + "  \"The lazy yellow dog was caught by the slow red fox\",\n"
-            + "  // -- length[1]: '20'\n"
-            + "  \"The lazy yellow dog \",\n"
-            + "  // -- length[2]: '5'\n"
-            + "  \"The l\"),\n");
-  }
-
-  /**
-   * Tests the regular execution of {@link Assertions#assertParameterized(Object, Object, Supplier)
-   * assertParameterized(..)} along with {@link Assertions#argumentsStream(List, List[])
+   * with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
    * argumentsStream(..)}.
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized_simple(Object expected, String value, int length) {
+  void assertParameterized__cartesian_generation(Object expected, String value, int length) {
+    doAssertParameterized_generation(expected, value, length, ""
+        + "// expected\n"
+        + "java.util.Arrays.asList(\n"
+        + "  // value[0]: \"The quick brow. . .\"\n"
+        + "  // [1] length[0]: 50\n"
+        + "  new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected("
+        + "\"java.lang.IllegalArgumentException\", "
+        + "\"`length` (50): INVALID (should be less than 43)\"),\n"
+        + "  // [2] length[1]: 20\n"
+        + "  \"The quick brown fox \",\n"
+        + "  // [3] length[2]: 5\n"
+        + "  \"The q\",\n"
+        + "  //\n"
+        + "  // value[1]: \"The lazy yello. . .\"\n"
+        + "  // [4] length[0]: 50\n"
+        + "  \"The lazy yellow dog was caught by the slow red fox\",\n"
+        + "  // [5] length[1]: 20\n"
+        + "  \"The lazy yellow dog \",\n"
+        + "  // [6] length[2]: 5\n"
+        + "  \"The l\"),\n");
+  }
+
+  /**
+   * Tests the regular execution of {@link Assertions#assertParameterized(Object, Object, Supplier)
+   * assertParameterized(..)} along with
+   * {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
+   */
+  @ParameterizedTest
+  @MethodSource
+  void assertParameterized__simple(Object expected, String value, int length) {
     doAssertParameterized(expected, value, length);
   }
 
   /**
    * Tests the expected results generation of
    * {@link Assertions#assertParameterized(Object, Object, Supplier) assertParameterized(..)} along
-   * with {@link Assertions#argumentsStream(List, List[]) argumentsStream(..)}.
+   * with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * argumentsStream(..)}.
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized_simple_generation(Object expected, String value, int length) {
-    doAssertParameterized_generation(expected, value, length, "// expected\n"
+  void assertParameterized__simple_generation(Object expected, String value, int length) {
+    doAssertParameterized_generation(expected, value, length, ""
+        + "// expected\n"
         + "java.util.Arrays.asList(\n"
-        + "  // value[0]: 'The quick brown. . .'; length[0]: '50'\n"
-        + "  new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(" +
-        "\"java.lang.IllegalArgumentException\", " +
-        "\"`length` (50): INVALID (should be less than 43)\"),\n"
-        + "  // value[1]: 'The lazy yellow. . .'; length[1]: '20'\n"
+        + "  // [1] value[0]: \"The quick brow. . .\"; length[0]: 50\n"
+        + "  new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected("
+        + "\"java.lang.IllegalArgumentException\", "
+        + "\"`length` (50): INVALID (should be less than 43)\"),\n"
+        + "  // [2] value[1]: \"The lazy yello. . .\"; length[1]: 20\n"
         + "  \"The lazy yellow dog \"),\n");
   }
 
   /**
-   * Tests {@link Assertions#argumentsStream(List, List[])} failure on expected results generation
-   * (arguments cardinality should be the same, but it's not the case...).
+   * Tests {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * argumentsStream(..)} failure on expected results generation (arguments cardinality should be
+   * the same, but it's not the case...).
    *
-   * @see #assertParameterized_simple_generation_invalidCardinality()
+   * @see #assertParameterized__simple_generation_invalidCardinality()
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized_simple_generation_invalidCardinality(Object expected,
+  @SuppressWarnings("unused")
+  void assertParameterized__simple_generation_invalidCardinality(Object expected,
       String value, int length) {
   }
 
@@ -302,7 +314,7 @@ class AssertionsTest extends BaseTest {
    * @throws IllegalArgumentException
    *           if {@code length} is less than 20.
    */
-  private String assertParameterized_testMethod(String value, int length) {
+  private String assertParameterizedTestMethod(String value, int length) {
     if (length > requireNonNull(value, "`value`").length())
       throw new IllegalArgumentException(String.format(
           "`length` (%s): INVALID (should be less than %s)", length, value.length()));
@@ -316,7 +328,7 @@ class AssertionsTest extends BaseTest {
 
   private void doAssertParameterized(Object expected, String value, int length) {
     Assertions.assertParameterizedOf(
-        () -> assertParameterized_testMethod(value, length),
+        () -> assertParameterizedTestMethod(value, length),
         expected,
         () -> new Assertions.ExpectedGeneration(
             List.of(
@@ -332,7 +344,7 @@ class AssertionsTest extends BaseTest {
 
     try {
       Assertions.assertParameterizedOf(
-          () -> assertParameterized_testMethod(value, length),
+          () -> assertParameterizedTestMethod(value, length),
           expected,
           () -> new Assertions.ExpectedGeneration(
               List.of(

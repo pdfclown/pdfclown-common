@@ -14,8 +14,9 @@ package org.pdfclown.common.util.net;
 
 import static java.util.Arrays.asList;
 import static java.util.Map.entry;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
 import static org.pdfclown.common.util.Objects.objToLiteralString;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
@@ -52,7 +53,8 @@ class UrisTest extends BaseTest {
                 + ($.getAuthority() != null ? "//" + $.getAuthority() : EMPTY)
                 + $.getPath().replace("from", "to")))
         .collect(Collectors.toCollection(ArrayList::new));
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // from[0]: 'my/sub/same.html'

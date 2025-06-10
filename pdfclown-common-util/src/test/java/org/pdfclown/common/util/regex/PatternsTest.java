@@ -15,8 +15,9 @@ package org.pdfclown.common.util.regex;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
-import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.evalParameterized;
 import static org.pdfclown.common.util.Aggregations.entry;
 
@@ -46,8 +47,8 @@ class PatternsTest extends BaseTest {
      */
     List<String> mismatches;
 
-    RegexArgument(String value, List<String> matches, List<String> mismatches) {
-      super(value, "");
+    RegexArgument(String payload, List<String> matches, List<String> mismatches) {
+      super("", payload);
 
       this.matches = matches;
       this.mismatches = mismatches;
@@ -55,7 +56,8 @@ class PatternsTest extends BaseTest {
   }
 
   static Stream<Arguments> globToRegex() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // glob[0]: '/**/my*.* ()'
@@ -84,7 +86,8 @@ class PatternsTest extends BaseTest {
   }
 
   static Stream<Arguments> wildcardToRegex() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // pattern[0]: 'Som? content. * more (*)\? ()'

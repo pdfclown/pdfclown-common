@@ -16,8 +16,9 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
 import static org.pdfclown.common.util.Aggregations.entry;
 
 import java.util.List;
@@ -35,7 +36,8 @@ import org.pdfclown.common.util.__test.BaseTest;
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 class StringsTest extends BaseTest {
   static Stream<Arguments> abbreviateMultiline() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // value[0]: '1:  A multi-line text to test whether Strings. . .'
@@ -259,7 +261,8 @@ class StringsTest extends BaseTest {
   }
 
   static Stream<Arguments> uncapitalizeGreedy() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // value[0]: 'Capitalized'

@@ -13,6 +13,7 @@
 package org.pdfclown.common.util.__test;
 
 import org.pdfclown.common.build.test.Test;
+import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
 
 /**
  * Module-specific unit test.
@@ -20,4 +21,11 @@ import org.pdfclown.common.build.test.Test;
  * @author Stefano Chizzolini
  */
 public abstract class BaseTest extends Test {
+  protected static ArgumentsStreamConfig cartesianArgumentsStreamConfig() {
+    return ArgumentsStreamConfig.cartesian();
+  }
+
+  protected static ArgumentsStreamConfig simpleArgumentsStreamConfig() {
+    return ArgumentsStreamConfig.simple();
+  }
 }

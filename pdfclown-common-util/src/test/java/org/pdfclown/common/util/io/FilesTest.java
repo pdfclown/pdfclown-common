@@ -12,8 +12,10 @@
  */
 package org.pdfclown.common.util.io;
 
+import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.build.test.assertion.Assertions.cartesianArgumentsStream;
 import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Objects.objToLiteralString;
 
@@ -37,36 +39,37 @@ import org.pdfclown.common.util.__test.BaseTest;
  */
 class FilesTest extends BaseTest {
   private static final List<Argument<String>> EXTENSIONS = List.of(
-      Argument.of(".tar.gz",
-          "Multi-part, normal"),
-      Argument.of(".tar.GZ",
-          "Multi-part, alt-case"),
-      Argument.of(".gz",
-          "Simple, normal"),
-      Argument.of(".GZ",
-          "Simple, alt-case"));
+      arg("Multi-part, normal",
+          ".tar.gz"),
+      arg("Multi-part, alt-case",
+          ".tar.GZ"),
+      arg("Simple, normal",
+          ".gz"),
+      arg("Simple, alt-case",
+          ".GZ"));
 
   private static final List<Argument<String>> PATHS = List.of(
       // path[0]
-      Argument.of("/home/me/my.sub/test/obj.tar.gz",
-          "Multi-part file extension, dot before directory separator, Unix path"),
-      Argument.of("smb://myhost/my.sub/test/obj.tar.gz",
-          "Multi-part file extension, dot before directory separator, URI path"),
-      Argument.of("C:\\my.sub\\test\\obj.tar.gz",
-          "Multi-part file extension, dot before directory separator, Windows DOS path"),
+      arg("Multi-part file extension, dot before directory separator, Unix path",
+          "/home/me/my.sub/test/obj.tar.gz"),
+      arg("Multi-part file extension, dot before directory separator, URI path",
+          "smb://myhost/my.sub/test/obj.tar.gz"),
+      arg("Multi-part file extension, dot before directory separator, Windows DOS path",
+          "C:\\my.sub\\test\\obj.tar.gz"),
       // path[3]
-      Argument.of("\\\\myhost\\my.sub\\test\\obj.tar.gz",
-          "Multi-part file extension, dot before directory separator, Windows UNC path"),
-      Argument.of("/home/me/my/test/obj-5.2.9.tar2.gz",
-          "Multi-part file extension, dot in base filename"),
-      Argument.of("C:\\my\\test-1.5\\obj.tar2.gz",
-          "Multi-part file extension, dot before base filename"));
+      arg("Multi-part file extension, dot before directory separator, Windows UNC path",
+          "\\\\myhost\\my.sub\\test\\obj.tar.gz"),
+      arg("Multi-part file extension, dot in base filename",
+          "/home/me/my/test/obj-5.2.9.tar2.gz"),
+      arg("Multi-part file extension, dot before base filename",
+          "C:\\my\\test-1.5\\obj.tar2.gz"));
 
   private static final Function<Object, String> EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF =
       $ -> "fs.getPath(" + objToLiteralString($) + ")";
 
   static Stream<Arguments> extension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
@@ -86,7 +89,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> fileName() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
@@ -106,7 +110,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> fullExtension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
@@ -126,7 +131,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> isExtension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
@@ -190,7 +196,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> isFullExtension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
@@ -255,7 +262,8 @@ class FilesTest extends BaseTest {
 
   static Stream<Arguments> pathOf_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix());
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // uri[0]: 'relative/uri.html'
@@ -282,7 +290,8 @@ class FilesTest extends BaseTest {
 
   static Stream<Arguments> pathOf_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows());
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // uri[0]: 'relative/uri.html'
@@ -308,7 +317,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> replaceFullExtension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part f. . .'
@@ -336,7 +346,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> simpleBaseName() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
@@ -356,7 +367,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> withoutExtension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
@@ -376,7 +388,8 @@ class FilesTest extends BaseTest {
   }
 
   static Stream<Arguments> withoutFullExtension() {
-    return cartesianArgumentsStream(
+    return argumentsStream(
+        cartesian(),
         // expected
         java.util.Arrays.asList(
             // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
