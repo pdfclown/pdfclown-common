@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util.Aggregations.cartesianProduct;
 import static org.pdfclown.common.build.internal.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.util.Objects.fqnd;
-import static org.pdfclown.common.build.internal.util.Objects.objToLiteralString;
 import static org.pdfclown.common.build.internal.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
@@ -127,7 +126,7 @@ public final class Assertions {
     Function<@Nullable Object, String> argCommentFormatter = Objects::toString;
     final List<Map.Entry<String, @Nullable Object>> args;
     Function<@Nullable Object, String> expectedSourceCodeGenerator =
-        $ -> objToLiteralString($, true);
+        org.pdfclown.common.build.internal.util.Objects::objToLiteralString;
     int maxArgCommentLength = 20;
     PrintStream out = System.err;
     boolean outOverridable = true;

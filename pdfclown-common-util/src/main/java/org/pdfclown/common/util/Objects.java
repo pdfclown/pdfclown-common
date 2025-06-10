@@ -14,7 +14,6 @@ package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
-import static org.apache.commons.text.StringEscapeUtils.escapeJava;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Strings.CURLY_BRACE_CLOSE;
@@ -38,6 +37,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.text.translate.AggregateTranslator;
+import org.apache.commons.text.translate.CharSequenceTranslator;
+import org.apache.commons.text.translate.EntityArrays;
+import org.apache.commons.text.translate.JavaUnicodeEscaper;
+import org.apache.commons.text.translate.LookupTranslator;
+import org.apache.commons.text.translate.OctalUnescaper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.lang.PolyNull;
@@ -56,6 +61,42 @@ public final class Objects {
    * Empty object array.
    */
   public static final Object[] OBJ_ARRAY__EMPTY = new Object[0];
+
+  /**
+   * Literal string escape filter.
+   * <p>
+   * Differently from {@link StringEscapeUtils#escapeJava(String)}, this translator doesn't escape
+   * Unicode characters.
+   * </p>
+   *
+   * @see #LITERAL_STRING_UNESCAPE
+   * @see StringEscapeUtils#ESCAPE_JAVA
+   */
+  private static final CharSequenceTranslator LITERAL_STRING_ESCAPE = new AggregateTranslator(
+      new LookupTranslator(Map.of(
+          "\"", "\\\"",
+          "\\", "\\\\")),
+      new LookupTranslator(EntityArrays.JAVA_CTRL_CHARS_ESCAPE),
+      JavaUnicodeEscaper.below(32));
+
+  /**
+   * Literal string unescape filter.
+   * <p>
+   * Differently from {@link StringEscapeUtils#unescapeJava(String)}, this translator doesn't
+   * unescape Unicode characters.
+   * </p>
+   *
+   * @see #LITERAL_STRING_ESCAPE
+   * @see StringEscapeUtils#UNESCAPE_JAVA
+   */
+  private static final CharSequenceTranslator LITERAL_STRING_UNESCAPE = new AggregateTranslator(
+      new OctalUnescaper(), // .between('\1', '\377'),
+      new LookupTranslator(EntityArrays.JAVA_CTRL_CHARS_UNESCAPE),
+      new LookupTranslator(Map.of(
+          "\\\\", "\\",
+          "\\\"", "\"",
+          "\\'", "'",
+          "\\", EMPTY)));
 
   /**
    * Gets whether the given object matches the other one according to the given predicate.
@@ -561,44 +602,25 @@ public final class Objects {
    * Maps the given object to its literal string representation (that is, inclusive of markers such
    * as quotes).
    *
-   * @see #objToLiteralString( Object, boolean)
-   */
-  public static String objToLiteralString(@Nullable Object obj) {
-    return objToLiteralString(obj, false);
-  }
-
-  /**
-   * Maps the given object to its literal string representation (that is, inclusive of markers such
-   * as quotes).
-   *
-   * @param multiline
-   *          Whether the resulting string must be split at newline characters.
    * @return Depending on {@code obj} type:
    *         <ul>
    *         <li>{@code null} — {@code "null"} (like
    *         {@link java.util.Objects#toString(Object)})</li>
-   *         <li>{@link Boolean}, {@link Number} — as-is</li>
-   *         <li>{@link Character} — wrapped with single quotes</li>
-   *         <li>any other type — {@link Object#toString()}
-   *         {@linkplain StringEscapeUtils#escapeJava( String) escaped} and wrapped with double
+   *         <li>{@link Boolean}, {@link Number} — {@link Object#toString()}, as-is</li>
+   *         <li>{@link Character} — {@link Object#toString()}, wrapped with single quotes</li>
+   *         <li>any other type — {@link Object#toString()}, escaped and wrapped with double
    *         quotes</li>
    *         </ul>
    */
-  public static String objToLiteralString(@Nullable Object obj, boolean multiline) {
+  public static String objToLiteralString(@Nullable Object obj) {
     if (obj == null)
       return "null";
     else if (obj instanceof Number || obj instanceof Boolean)
       return obj.toString();
     else if (obj instanceof Character)
       return S + SQUOTE + obj + SQUOTE;
-    else {
-      var s = obj.toString();
-      return multiline
-          ? s.lines()
-              .map(StringEscapeUtils::escapeJava)
-              .collect(Collectors.joining("\\n\"\n+ \"", S + DQUOTE, S + DQUOTE))
-          : S + DQUOTE + escapeJava(s) + DQUOTE;
-    }
+    else
+      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(obj.toString()) + DQUOTE;
   }
 
   /**
