@@ -21,8 +21,6 @@ import static org.hamcrest.Matchers.isA;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Aggregations.list;
-import static org.pdfclown.common.util.Objects.fqn;
-import static org.pdfclown.common.util.Objects.objToLiteralString;
 import static org.pdfclown.common.util.Objects.type;
 
 import java.util.Comparator;
@@ -32,7 +30,7 @@ import java.util.stream.Stream;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.quantity.Area;
-import org.apache.commons.lang3.function.Failable;
+import javax.measure.quantity.ElectricPotential;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -508,10 +506,21 @@ class UnitsTest extends BaseTest {
 
   @Test
   void _unit_parsing() {
-    Unit<?> unit = SimpleUnitFormat.getInstance().parse("mi²");
-    Class<? extends Quantity> quantityType = Units.getQuantityType(unit);
+    {
+      Unit<?> unit = SimpleUnitFormat.getInstance().parse("mi²");
+      Class<? extends Quantity> quantityType = Units.getQuantityType(unit);
 
-    assertThat(quantityType, is(Area.class));
+      assertThat(quantityType, is(Area.class));
+    }
+
+    {
+      // (see <https://github.com/unitsofmeasurement/indriya/issues/438>)
+      Unit<?> unit = SimpleUnitFormat.getInstance().parse("V");
+      Class<? extends Quantity> quantityType = Units.getQuantityType(unit);
+
+      assertThat(quantityType, is(ElectricPotential.class));
+      assertThat(XtUnit.of(unit).getQuantityType(), is(ElectricPotential.class));
+    }
   }
 
   @ParameterizedTest
