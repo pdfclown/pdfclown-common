@@ -35,6 +35,7 @@ import org.opentest4j.AssertionFailedError;
 import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.internal.util.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
+import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 
 /**
  * @author Stefano Chizzolini
@@ -193,7 +194,7 @@ class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized__cartesian(Object expected, String value, int length) {
+  void assertParameterized__cartesian(Expected<String> expected, String value, int length) {
     doAssertParameterized(expected, value, length);
   }
 
@@ -205,7 +206,8 @@ class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized__cartesian_generation(Object expected, String value, int length) {
+  void assertParameterized__cartesian_generation(Expected<String> expected, String value,
+      int length) {
     doAssertParameterized_generation(expected, value, length, ""
         + "// expected\n"
         + "java.util.Arrays.asList(\n"
@@ -235,7 +237,7 @@ class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized__simple(Object expected, String value, int length) {
+  void assertParameterized__simple(Expected<String> expected, String value, int length) {
     doAssertParameterized(expected, value, length);
   }
 
@@ -247,7 +249,7 @@ class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized__simple_generation(Object expected, String value, int length) {
+  void assertParameterized__simple_generation(Expected<String> expected, String value, int length) {
     doAssertParameterized_generation(expected, value, length, ""
         + "// expected\n"
         + "java.util.Arrays.asList(\n"
@@ -326,7 +328,7 @@ class AssertionsTest extends BaseTest {
     out = new XtPrintStream();
   }
 
-  private void doAssertParameterized(Object expected, String value, int length) {
+  private void doAssertParameterized(Expected<String> expected, String value, int length) {
     Assertions.assertParameterizedOf(
         () -> assertParameterizedTestMethod(value, length),
         expected,
@@ -336,7 +338,7 @@ class AssertionsTest extends BaseTest {
                 entry("length", length))));
   }
 
-  private void doAssertParameterized_generation(Object expected, String value, int length,
+  private void doAssertParameterized_generation(Expected<String> expected, String value, int length,
       String expectedOutput) {
     if (out == null) {
       beginOut();

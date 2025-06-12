@@ -26,6 +26,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.test.assertion.Assertions.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 
 /**
@@ -99,7 +100,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullExtension(String expected, Argument<String> path) {
+  void fullExtension(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.fullExtension(path.getValue()),
         expected,
@@ -109,7 +110,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void replaceFullExtension(String expected, Argument<String> path, String newExtension) {
+  void replaceFullExtension(Expected<String> expected, Argument<String> path, String newExtension) {
     assertParameterizedOf(
         () -> Files.replaceFullExtension(path.getValue(), newExtension),
         expected,

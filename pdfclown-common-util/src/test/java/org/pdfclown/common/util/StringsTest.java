@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
 
@@ -295,7 +296,7 @@ class StringsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void abbreviateMultiline(Object expected, String value, int maxLineCount,
+  void abbreviateMultiline(Expected<String> expected, String value, int maxLineCount,
       int averageLineLength, String marker) {
     assertParameterizedOf(
         () -> Strings.abbreviateMultiline(value, maxLineCount, averageLineLength, marker),
@@ -317,7 +318,7 @@ class StringsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void uncapitalizeGreedy(Object expected, String value) {
+  void uncapitalizeGreedy(Expected<String> expected, String value) {
     assertParameterizedOf(
         () -> Strings.uncapitalizeGreedy(value),
         expected,

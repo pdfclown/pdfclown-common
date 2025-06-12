@@ -29,6 +29,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
 
@@ -101,7 +102,7 @@ class PatternsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void globToRegex(String expected, RegexArgument glob) {
+  void globToRegex(Expected<String> expected, RegexArgument glob) {
     var actual = (String) evalParameterized(
         () -> Patterns.globToRegex(glob.getValue()));
 
@@ -114,7 +115,7 @@ class PatternsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void wildcardToRegex(String expected, RegexArgument pattern) {
+  void wildcardToRegex(Expected<String> expected, RegexArgument pattern) {
     var actual = (String) evalParameterized(
         () -> Patterns.wildcardToRegex(pattern.getValue()));
 

@@ -20,6 +20,13 @@ import org.apache.commons.lang3.StringUtils;
  * @author Stefano Chizzolini
  */
 public final class Strings {
+  // SourceFQN: org.pdfclown.common.util.Strings.INDEX__NOT_FOUND
+  /**
+   * Flag value used by methods like {@link String#indexOf(String)} to represent absence of searched
+   * occurrence.
+   */
+  public static final int INDEX__NOT_FOUND = -1;
+
   // SourceFQN: org.pdfclown.common.util.Strings.BACKSLASH
   public static final char BACKSLASH = '\\';
   // SourceFQN: org.pdfclown.common.util.Strings.COMMA

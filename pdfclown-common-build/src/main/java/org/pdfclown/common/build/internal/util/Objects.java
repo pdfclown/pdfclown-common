@@ -12,8 +12,10 @@
  */
 package org.pdfclown.common.build.internal.util;
 
+import static org.pdfclown.common.build.internal.util.Strings.DOT;
 import static org.pdfclown.common.build.internal.util.Strings.DQUOTE;
 import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.build.internal.util.Strings.S;
 import static org.pdfclown.common.build.internal.util.Strings.SQUOTE;
 
@@ -136,6 +138,20 @@ public final class Objects {
     return fqn(obj, true);
   }
 
+  // SourceFQN: org.pdfclown.common.util.Objects.fqnd(..)
+  /**
+   * Ensures the given type name has inner-class separators ({@code $}) replaced with dots.
+   * <p>
+   * No syntactic check is applied to {@code typeName}.
+   * </p>
+   *
+   * @see #fqn(Object)
+   * @see #sqn(Object)
+   */
+  public static String fqnd(@Nullable String typeName) {
+    return fqn(typeName, true);
+  }
+
   // SourceFQN: org.pdfclown.common.util.Objects.objTo(..)
   /**
    * Maps the given object.
@@ -221,9 +237,9 @@ public final class Objects {
 
   // SourceFQN: org.pdfclown.common.util.Objects.sqn(..)
   /**
-   * Gets the qualified simple type name of the given object, ie the simple class name qualified
-   * with its outer class (eg, {@code MyOuterClass$MyInnerClass}), if present (otherwise, behaves
-   * like {@link Class#getSimpleName()}).
+   * Gets the qualified simple type name of the given object, that is the simple class name
+   * qualified with its outer class (for example, {@code MyOuterClass$MyInnerClass}), if present
+   * (otherwise, behaves like {@link Class#getSimpleName()}).
    *
    * @see #fqn(Object)
    */
@@ -231,11 +247,26 @@ public final class Objects {
     return sqn(obj, false);
   }
 
+  // SourceFQN: org.pdfclown.common.util.Objects.sqn(..)
+  /**
+   * Gets the qualified simple type name from the given type name, that is the simple class name
+   * qualified with its outer class (for example, {@code MyOuterClass$MyInnerClass}), if present
+   * (otherwise, behaves like {@link Class#getSimpleName()}).
+   * <p>
+   * No syntactic check is applied to {@code typeName}.
+   * </p>
+   *
+   * @see #fqn(Object)
+   */
+  public static String sqn(@Nullable String typeName) {
+    return sqn(typeName, false);
+  }
+
   // SourceFQN: org.pdfclown.common.util.Objects.sqnd(..)
   /**
    * Gets the qualified simple type name of the given object, replacing inner-class separators
-   * ({@code $}) with dots, ie the simple class name qualified with its outer class (eg,
-   * {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
+   * ({@code $}) with dots, that is the simple class name qualified with its outer class (for
+   * example, {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
    * {@link Class#getSimpleName()}).
    *
    * @see #sqn(Object)
@@ -243,6 +274,23 @@ public final class Objects {
    */
   public static String sqnd(@Nullable Object obj) {
     return sqn(obj, true);
+  }
+
+  // SourceFQN: org.pdfclown.common.util.Objects.sqnd(..)
+  /**
+   * Gets the qualified simple type name from the given type name, replacing inner-class separators
+   * ({@code $}) with dots, that is the simple class name qualified with its outer class (for
+   * example, {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
+   * {@link Class#getSimpleName()}).
+   * <p>
+   * No syntactic check is applied to {@code typeName}.
+   * </p>
+   *
+   * @see #sqn(Object)
+   * @see #fqn(Object)
+   */
+  public static String sqnd(@Nullable String typeName) {
+    return sqn(typeName, true);
   }
 
   // SourceFQN: org.pdfclown.common.util.Objects.typeOf(..)
@@ -259,9 +307,9 @@ public final class Objects {
   }
 
   // SourceFQN: org.pdfclown.common.util.Objects.fqn(..)
-  private static String fqn(@Nullable String s, boolean dotted) {
-    return s != null
-        ? s.replace('$', dotted ? '.' : '$')
+  private static String fqn(@Nullable String typeName, boolean dotted) {
+    return typeName != null
+        ? dotted ? typeName.replace('$', DOT) : typeName
         : "null";
   }
 
@@ -271,8 +319,10 @@ public final class Objects {
   }
 
   // SourceFQN: org.pdfclown.common.util.Objects.sqn(..)
-  private static String sqn(@Nullable String s, boolean dotted) {
-    return fqn(objTo(s, $ -> $.substring($.lastIndexOf('.') + 1)), dotted);
+  private static String sqn(@Nullable String typeName, boolean dotted) {
+    return fqn(objTo(typeName, $ -> $.indexOf(DOT) != INDEX__NOT_FOUND
+        ? $.substring($.lastIndexOf(DOT) + 1)
+        : typeName), dotted);
   }
 
   private Objects() {

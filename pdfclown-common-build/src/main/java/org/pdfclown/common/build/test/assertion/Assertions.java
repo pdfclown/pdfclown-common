@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util.Aggregations.cartesianProduct;
 import static org.pdfclown.common.build.internal.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.util.Objects.fqnd;
+import static org.pdfclown.common.build.internal.util.Objects.objToLiteralString;
 import static org.pdfclown.common.build.internal.util.Objects.requireState;
 import static org.pdfclown.common.build.internal.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util.Strings.ELLIPSIS__CHICAGO;
@@ -60,6 +61,7 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.function.FailableSupplier;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -84,7 +86,7 @@ public final class Assertions {
    * <p>
    * Contrary to {@link Named}, its payload isn't unwrapped, so this argument goes to the
    * parameterized test as-is — useful for expected result generation (see
-   * {@link Assertions#assertParameterized(Object, Object, Supplier) assertParameterized(..)}).
+   * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}).
    * </p>
    *
    * @param <T>
@@ -231,6 +233,40 @@ public final class Assertions {
     }
 
     /**
+     * Prepends to {@link #getConverter() converter} the given function for the argument at
+     * {@code argIndex} position in {@code args} argument.
+     * <p>
+     * For example, if the parameterized test looks like this:
+     * </p>
+     * <pre>
+     * &#64;ParameterizedTest
+     * &#64;MethodSource
+     * public void %myTestName%(Object expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
+     *   assertParameterizedOf(
+     *       () -&gt; %myMethodToTest%(arg0, arg1, . . ., argN),
+     *       expected,
+     *       () -&gt; new ExpectedGeneration(List.of(
+     *           entry("arg0", arg0),
+     *           entry("arg1", arg1),
+     *           . . .
+     *           entry("argN", argN))));
+     * }</pre>
+     * <p>
+     * then {@code argIndex} = 0 will define the converter to {@code %ArgType0%} of the input values
+     * of parameterized test argument {@code arg0}.
+     * </p>
+     *
+     * @see #composeExpectedConverter(Function)
+     */
+    public ArgumentsStreamConfig composeArgConverter(
+        int argIndex, Function<@Nullable Object, @Nullable Object> before) {
+      requireNonNull(before);
+      var paramIndex = argIndex + 1 /* Offsets `expected` parameter */;
+      return composeConverter(
+          ($index, $source) -> $index == paramIndex ? before.apply($source) : $source);
+    }
+
+    /**
      * Prepends to {@link #getConverter() converter} the given function.
      */
     public ArgumentsStreamConfig composeConverter(Converter before) {
@@ -241,6 +277,8 @@ public final class Assertions {
     /**
      * Prepends to {@link #getConverter() converter} the given function for {@code expected}
      * argument.
+     *
+     * @see #composeArgConverter(int, Function)
      */
     public ArgumentsStreamConfig composeExpectedConverter(
         Function<@Nullable Object, @Nullable Object> before) {
@@ -279,10 +317,95 @@ public final class Assertions {
   }
 
   /**
+   * Parameterized test result.
+   *
+   * @author Stefano Chizzolini
+   * @see Assertions#assertParameterized(Object, Expected, Supplier)
+   */
+  public static class Expected<T> {
+    /**
+     * New failed result.
+     *
+     * @param thrown
+     *          Thrown exception.
+     */
+    public static <T> Expected<T> failure(ThrownExpected thrown) {
+      return new Expected<>(null, requireNonNull(thrown));
+    }
+
+    /**
+     * New regular result.
+     *
+     * @param returned
+     *          Returned value.
+     */
+    public static <T> Expected<T> success(@Nullable T returned) {
+      return new Expected<>(returned, null);
+    }
+
+    @Nullable
+    Supplier<Matcher<T>> matcherSupplier;
+    @Nullable
+    final T returned;
+    @Nullable
+    final ThrownExpected thrown;
+
+    private Expected(@Nullable T returned, @Nullable ThrownExpected thrown) {
+      this.thrown = thrown;
+      this.returned = returned;
+    }
+
+    /**
+     * Regular result.
+     */
+    public @Nullable T getReturned() {
+      return returned;
+    }
+
+    /**
+     * Thrown exception.
+     */
+    public @Nullable ThrownExpected getThrown() {
+      return thrown;
+    }
+
+    /**
+     * Whether this result represents a failure; if so, {@link #getThrown() thrown} is defined.
+     */
+    public boolean isFailure() {
+      return thrown != null;
+    }
+
+    /**
+     * Whether this result represents a success; if so, {@link #getThrown() thrown} is undefined.
+     */
+    public boolean isSuccess() {
+      return !isFailure();
+    }
+
+    /**
+     * Sets the custom matcher to validate {@link #getReturned() returned}.
+     */
+    public Expected<T> match(Supplier<Matcher<T>> matcherSupplier) {
+      this.matcherSupplier = matcherSupplier;
+      return this;
+    }
+
+    @Override
+    public String toString() {
+      return java.util.Objects.toString(returned != null ? returned : thrown);
+    }
+
+    Matcher<T> getMatcher() {
+      return matcherSupplier != null && returned != null ? matcherSupplier.get() : is(returned);
+    }
+  }
+
+  /**
    * Generation feed for the expected results of a parameterized test.
    *
    * @author Stefano Chizzolini
-   * @see Assertions#assertParameterized(Object, Object, Supplier)
+   * @see Assertions#assertParameterized(Object, Expected, Supplier)
    */
   public static class ExpectedGeneration {
     String argCommentAbbreviationMarker = ELLIPSIS__CHICAGO;
@@ -434,7 +557,7 @@ public final class Assertions {
    * Expected thrown exception.
    *
    * @author Stefano Chizzolini
-   * @see #assertParameterized(Object, Object, Supplier)
+   * @see #assertParameterized(Object, Expected, Supplier)
    */
   public static class ThrownExpected {
     private final String message;
@@ -451,6 +574,11 @@ public final class Assertions {
 
     public String getName() {
       return name;
+    }
+
+    @Override
+    public String toString() {
+      return sqnd(name) + " (" + abbreviate(message, 30) + ")";
     }
   }
 
@@ -813,7 +941,7 @@ public final class Assertions {
    * dedicated section here below).
    * </p>
    * <p>
-   * See {@link #assertParameterized(Object, Object, Supplier)} for more information and a full
+   * See {@link #assertParameterized(Object, Expected, Supplier)} for more information and a full
    * example.
    * </p>
    * <h2>Expected Results Generation</h2>
@@ -824,7 +952,7 @@ public final class Assertions {
    * </p>
    * <p>
    * Here, the steps to generate {@code expected} (based on the example in
-   * {@link #assertParameterized(Object, Object, Supplier)}):
+   * {@link #assertParameterized(Object, Expected, Supplier)}):
    * </p>
    * <ol>
    * <li>pass {@code null} as {@code expected} argument to this method:<pre>
@@ -844,8 +972,8 @@ public final class Assertions {
    * <p>
    * If run in normal mode, the generated source code will be output to
    * {@link ExpectedGeneration#out}, as specified in the
-   * {@link #assertParameterized(Object, Object, Supplier)} call (by default, {@linkplain System#err
-   * stderr}):
+   * {@link #assertParameterized(Object, Expected, Supplier)} call (by default,
+   * {@linkplain System#err stderr}):
    * </p>
    * <pre>
    * &#64;ParameterizedTest
@@ -979,29 +1107,30 @@ public final class Assertions {
         throw new AssertionError("Unexpected value: " + config.mode);
     }
 
-    // Transform the arguments!
+    // Arguments transformation:
+    // 1. Expected results (tested method output).
+    int paramIndex = 0;
+    if (expected != null) {
+      var targetList = new ArrayList<>(expected.size());
+      for (var e : expected) {
+        targetList.add(e instanceof ThrownExpected
+            ? Expected.failure((ThrownExpected) e)
+            : Expected.success(config.converter != null
+                ? config.converter.apply(paramIndex, e)
+                : e));
+      }
+      expected = unmodifiableList(targetList);
+    }
+    // 2. Arguments values (tested method inputs).
     List<List<?>> argsList;
     if (config.converter != null) {
-      int argumentIndex = 0;
-      if (expected != null) {
-        var targetList = new ArrayList<>(expected.size());
-        for (var e : expected) {
-          /*
-           * NOTE: Failure results MUST be passed through as-is.
-           */
-          targetList.add(e instanceof ThrownExpected ? e
-              : config.converter.apply(argumentIndex, e));
-        }
-        expected = unmodifiableList(targetList);
-      }
-
       argsList = new ArrayList<>(args.length);
       for (int i = 0; i < args.length; i++) {
         var sourceList = args[i];
         var argList = new ArrayList<>(sourceList.size());
-        argumentIndex++;
+        paramIndex++;
         for (var e : sourceList) {
-          argList.add(config.converter.apply(argumentIndex, e));
+          argList.add(config.converter.apply(paramIndex, e));
         }
         argsList.add(unmodifiableList(argList));
       }
@@ -1009,6 +1138,7 @@ public final class Assertions {
     } else {
       argsList = asList(args);
     }
+
     int expectedCount = expectedCounter.applyAsInt(argsList);
 
     // Expected results generation mode?
@@ -1084,24 +1214,14 @@ public final class Assertions {
    * </p>
    *
    * @param actual
-   *          Result of the method tested via {@link #evalParameterized( FailableSupplier )}.
+   *          Result of the method tested via {@link #evalParameterized(FailableSupplier)}.
    * @param expected
    *          Expected result, provided by
-   *          {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}; can
-   *          be any of these:
-   *          <ul>
-   *          <li><b>value as-is</b> (for {@linkplain Matchers#is(Object) exact match}): either
-   *          regular result or failure ({@link ThrownExpected})</li>
-   *          <li><b>value wrapped in a {@linkplain Matcher matcher}</b> (for custom match) — e.g.,
-   *          {@linkplain Matchers#closeTo(double, double) approximate match}:<pre>
-   * expected instanceof Double ? is(closeTo((double) expected, DELTA)) : expected</pre>
-   *          <p>
-   *          NOTE: The matcher MUST be guarded by a check on {@code expected} type as it could also
-   *          be {@link ThrownExpected} (in case of expected failure) or {@code null} (if arguments
-   *          generation is underway)
-   *          </p>
-   *          </li>
-   *          </ul>
+   *          {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}; it
+   *          can be passed as-is (for {@linkplain Matchers#is(Object) exact match}), or associated
+   *          to a custom {@linkplain Matcher matcher} (e.g.,
+   *          {@linkplain Matchers#closeTo(double, double) approximate match}):<pre>
+   * expected.match(() -> isCloseTo(expected.getReturned())) // where `expected` is Expected&lt;Double></pre>
    * @param generationSupplier
    *          Supplies the feed for expected results generation (see
    *          {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}).
@@ -1128,6 +1248,7 @@ public final class Assertions {
    * import org.junit.jupiter.params.provider.Arguments;
    * import org.junit.jupiter.params.provider.MethodSource;
    * import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
+   * import org.pdfclown.common.build.test.assertion.Assertions.Expected;
    * import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
    *
    * public class StringsTest {
@@ -1167,7 +1288,7 @@ public final class Assertions {
    *
    *   &#64;ParameterizedTest
    *   &#64;MethodSource
-   *   public void uncapitalizeGreedy(Object expected, String value) {
+   *   public void uncapitalizeGreedy(Expected&lt;String> expected, String value) {
    *     assertParameterizedOf(
    *         () -&gt; Strings.uncapitalizeGreedy(value)),
    *         expected,
@@ -1176,7 +1297,8 @@ public final class Assertions {
    *   }
    * }</pre>
    */
-  public static void assertParameterized(@Nullable Object actual, @Nullable Object expected,
+  public static <T> void assertParameterized(@Nullable Object actual,
+      @Nullable Expected<T> expected,
       @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
     ExpectedGenerator generator = expectedGenerator.get();
     /*
@@ -1186,14 +1308,16 @@ public final class Assertions {
      * they would fail fast since their state is incomplete).
      */
     if (generator == null) {
+      assert expected != null;
+
       // Failed result?
       if (actual instanceof Throwable) {
         var thrownActual = (Throwable) actual;
-        if (!(expected instanceof ThrownExpected))
-          fail(String.format("Failure UNEXPECTED (expected: '%s' (%s))", expected, sqnd(expected)),
-              thrownActual);
+        if (!expected.isFailure())
+          fail(String.format("Failure UNEXPECTED (expected: %s (%s))", objToLiteralString(expected),
+              sqnd(expected.getReturned())), thrownActual);
 
-        var thrownExpected = (ThrownExpected) expected;
+        var thrownExpected = expected.getThrown();
         assertThat("Throwable.class.name", thrownActual.getClass().getName(),
             is(thrownExpected.getName()));
         assertThat("Throwable.message", thrownActual.getMessage(),
@@ -1201,8 +1325,11 @@ public final class Assertions {
       }
       // Regular result.
       else {
-        //noinspection unchecked,DataFlowIssue -- false null violation
-        assertThat(actual, expected instanceof Matcher ? (Matcher<Object>) expected : is(expected));
+        if (!expected.isSuccess())
+          fail(String.format("Success UNEXPECTED (expected: %s)", expected));
+
+        //noinspection unchecked
+        assertThat((T) actual, expected.getMatcher());
       }
     }
     // Expected results generation.
@@ -1234,10 +1361,10 @@ public final class Assertions {
    * @param actualExpression
    *          Expression to {@linkplain #evalParameterized(FailableSupplier) evaluate} for actual
    *          result.
-   * @see #assertParameterized(Object, Object, Supplier)
+   * @see #assertParameterized(Object, Expected, Supplier)
    */
-  public static void assertParameterizedOf(FailableSupplier<Object, Exception> actualExpression,
-      @Nullable Object expected,
+  public static <T> void assertParameterizedOf(FailableSupplier<Object, Exception> actualExpression,
+      @Nullable Expected<T> expected,
       @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
     assertParameterized(evalParameterized(actualExpression), expected, generationSupplier);
   }
@@ -1313,7 +1440,7 @@ public final class Assertions {
    * Evaluates the given expression.
    * <p>
    * Intended for use within {@linkplain ParameterizedTest parameterized tests}; its result is
-   * expected to be checked via {@link #assertParameterized(Object, Object, Supplier)}.
+   * expected to be checked via {@link #assertParameterized(Object, Expected, Supplier)}.
    * </p>
    *
    * @return The result of {@code expression}, or its thrown exception (unchecked exceptions

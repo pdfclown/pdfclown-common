@@ -37,6 +37,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.__test.BaseTest;
@@ -525,20 +526,21 @@ class UnitsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void getFactor_Unit(Object expected, Argument<Unit<?>> unit) {
+  void getFactor_Unit(Expected<Double> expected, Argument<Unit<?>> unit) {
     assertParameterizedOf(
         () -> Units.getFactor(unit.getValue()),
-        expected instanceof Double ? isCloseTo((double) expected) : expected,
+        expected.match(() -> isCloseTo(expected.getReturned())),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit))));
   }
 
   @ParameterizedTest
   @MethodSource
-  void getFactor_Unit_Unit(Object expected, Argument<Unit<?>> unit, Argument<Unit<?>> target) {
+  void getFactor_Unit_Unit(Expected<Double> expected, Argument<Unit<?>> unit,
+      Argument<Unit<?>> target) {
     assertParameterizedOf(
         () -> Units.getFactor((Unit) unit.getValue(), target.getValue()),
-        expected instanceof Double ? isCloseTo((double) expected) : expected,
+        expected.match(() -> isCloseTo(expected.getReturned())),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit),
             entry("target", target))));
@@ -546,17 +548,17 @@ class UnitsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void getOffset_Unit(Object expected, Argument<Unit<?>> unit) {
+  void getOffset_Unit(Expected<Double> expected, Argument<Unit<?>> unit) {
     assertParameterizedOf(
         () -> Units.getOffset(unit.getValue()),
-        expected instanceof Double ? isCloseTo((double) expected) : expected,
+        expected.match(() -> isCloseTo(expected.getReturned())),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit))));
   }
 
   @ParameterizedTest
   @MethodSource
-  void getQuantityType(Object expected, Argument<XtUnit<?>> unit) {
+  void getQuantityType(Expected<Class<?>> expected, Argument<XtUnit<?>> unit) {
     assertParameterizedOf(
         () -> unit.getValue().getQuantityType(),
         expected,
@@ -567,7 +569,7 @@ class UnitsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void getQuantityType__external(Object expected, Argument<Unit<?>> unit) {
+  void getQuantityType__external(Expected<Class<?>> expected, Argument<Unit<?>> unit) {
     assertParameterizedOf(
         () -> Units.getQuantityType(unit.getValue()),
         expected,

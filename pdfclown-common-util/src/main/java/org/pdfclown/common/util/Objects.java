@@ -21,6 +21,7 @@ import static org.pdfclown.common.util.Strings.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.util.Strings.DOT;
 import static org.pdfclown.common.util.Strings.DQUOTE;
 import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SQUOTE;
 
@@ -324,16 +325,6 @@ public final class Objects {
   }
 
   /**
-   * Gets the fully qualified type name from the given string.
-   *
-   * @return {@code "null"}, if {@code s} is undefined.
-   * @see #sqn(Object)
-   */
-  public static String fqn(@Nullable String s) {
-    return fqn(s, false);
-  }
-
-  /**
    * Gets the fully qualified type name of the given object, replacing inner-class separators
    * ({@code $}) with dots.
    *
@@ -345,14 +336,16 @@ public final class Objects {
   }
 
   /**
-   * Gets the fully qualified type name from the given string, replacing inner-class separators
-   * ({@code $}) with dots.
+   * Ensures the given type name has inner-class separators ({@code $}) replaced with dots.
+   * <p>
+   * No syntactic check is applied to {@code typeName}.
+   * </p>
    *
    * @see #fqn(Object)
    * @see #sqn(Object)
    */
-  public static String fqnd(@Nullable String s) {
-    return fqn(s, true);
+  public static String fqnd(@Nullable String typeName) {
+    return fqn(typeName, true);
   }
 
   /**
@@ -715,9 +708,9 @@ public final class Objects {
   }
 
   /**
-   * Gets the qualified simple type name of the given object, ie the simple class name qualified
-   * with its outer class (eg, {@code MyOuterClass$MyInnerClass}), if present (otherwise, behaves
-   * like {@link Class#getSimpleName()}).
+   * Gets the qualified simple type name of the given object, that is the simple class name
+   * qualified with its outer class (for example, {@code MyOuterClass$MyInnerClass}), if present
+   * (otherwise, behaves like {@link Class#getSimpleName()}).
    *
    * @see #fqn(Object)
    */
@@ -726,20 +719,23 @@ public final class Objects {
   }
 
   /**
-   * Gets the qualified simple type name from the given string, ie the simple class name qualified
-   * with its outer class (eg, {@code MyOuterClass$MyInnerClass}), if present (otherwise, behaves
-   * like {@link Class#getSimpleName()}).
+   * Gets the qualified simple type name from the given type name, that is the simple class name
+   * qualified with its outer class (for example, {@code MyOuterClass$MyInnerClass}), if present
+   * (otherwise, behaves like {@link Class#getSimpleName()}).
+   * <p>
+   * No syntactic check is applied to {@code typeName}.
+   * </p>
    *
    * @see #fqn(Object)
    */
-  public static String sqn(@Nullable String s) {
-    return sqn(s, false);
+  public static String sqn(@Nullable String typeName) {
+    return sqn(typeName, false);
   }
 
   /**
    * Gets the qualified simple type name of the given object, replacing inner-class separators
-   * ({@code $}) with dots, ie the simple class name qualified with its outer class (eg,
-   * {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
+   * ({@code $}) with dots, that is the simple class name qualified with its outer class (for
+   * example, {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
    * {@link Class#getSimpleName()}).
    *
    * @see #sqn(Object)
@@ -750,16 +746,19 @@ public final class Objects {
   }
 
   /**
-   * Gets the qualified simple type name from the given string, replacing inner-class separators
-   * ({@code $}) with dots, ie the simple class name qualified with its outer class (eg,
-   * {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
+   * Gets the qualified simple type name from the given type name, replacing inner-class separators
+   * ({@code $}) with dots, that is the simple class name qualified with its outer class (for
+   * example, {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
    * {@link Class#getSimpleName()}).
+   * <p>
+   * No syntactic check is applied to {@code typeName}.
+   * </p>
    *
    * @see #sqn(Object)
    * @see #fqn(Object)
    */
-  public static String sqnd(@Nullable String s) {
-    return sqn(s, true);
+  public static String sqnd(@Nullable String typeName) {
+    return sqn(typeName, true);
   }
 
   /**
@@ -1020,9 +1019,9 @@ public final class Objects {
     return fqn(objTo(asType(obj), Class::getName), dotted);
   }
 
-  private static String fqn(@Nullable String s, boolean dotted) {
-    return s != null
-        ? s.replace('$', dotted ? '.' : '$')
+  private static String fqn(@Nullable String typeName, boolean dotted) {
+    return typeName != null
+        ? dotted ? typeName.replace('$', DOT) : typeName
         : "null";
   }
 
@@ -1030,8 +1029,10 @@ public final class Objects {
     return sqn(fqn(obj, false), dotted);
   }
 
-  private static String sqn(@Nullable String s, boolean dotted) {
-    return fqn(objTo(s, $ -> $.substring($.lastIndexOf('.') + 1)), dotted);
+  private static String sqn(@Nullable String typeName, boolean dotted) {
+    return fqn(objTo(typeName, $ -> $.indexOf(DOT) != INDEX__NOT_FOUND
+        ? $.substring($.lastIndexOf(DOT) + 1)
+        : typeName), dotted);
   }
 
   private Objects() {

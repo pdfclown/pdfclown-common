@@ -31,6 +31,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
 
@@ -410,7 +411,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void extension(String expected, Argument<String> path) {
+  void extension(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.extension(path.getValue()),
         expected,
@@ -420,7 +421,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fileName(String expected, Argument<String> path) {
+  void fileName(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.fileName(path.getValue()),
         expected,
@@ -430,7 +431,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullExtension(String expected, Argument<String> path) {
+  void fullExtension(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.fullExtension(path.getValue()),
         expected,
@@ -440,7 +441,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void isExtension(Boolean expected, Argument<String> path, Argument<String> extension) {
+  void isExtension(Expected<Boolean> expected, Argument<String> path, Argument<String> extension) {
     assertParameterizedOf(
         () -> Files.isExtension(path.getValue(), extension.getValue()),
         expected,
@@ -451,7 +452,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void isFullExtension(Boolean expected, Argument<String> path,
+  void isFullExtension(Expected<Boolean> expected, Argument<String> path,
       Argument<String> extension) {
     assertParameterizedOf(
         () -> Files.isFullExtension(path.getValue(), extension.getValue()),
@@ -463,7 +464,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void pathOf_unix(Path expected, URI uri, FileSystem fs) {
+  void pathOf_unix(Expected<Path> expected, URI uri, FileSystem fs) {
     assertParameterizedOf(
         () -> Files.pathOf(uri, fs),
         expected,
@@ -475,7 +476,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void pathOf_win(Path expected, URI uri, FileSystem fs) {
+  void pathOf_win(Expected<Path> expected, URI uri, FileSystem fs) {
     assertParameterizedOf(
         () -> Files.pathOf(uri, fs),
         expected,
@@ -487,7 +488,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void replaceFullExtension(String expected, Argument<String> path,
+  void replaceFullExtension(Expected<String> expected, Argument<String> path,
       String newExtension) {
     assertParameterizedOf(
         () -> Files.replaceFullExtension(path.getValue(), newExtension),
@@ -499,7 +500,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void simpleBaseName(String expected, Argument<String> path) {
+  void simpleBaseName(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.simpleBaseName(path.getValue()),
         expected,
@@ -509,7 +510,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void withoutExtension(String expected, Argument<String> path) {
+  void withoutExtension(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.withoutExtension(path.getValue()),
         expected,
@@ -519,7 +520,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void withoutFullExtension(String expected, Argument<String> path) {
+  void withoutFullExtension(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.withoutFullExtension(path.getValue()),
         expected,

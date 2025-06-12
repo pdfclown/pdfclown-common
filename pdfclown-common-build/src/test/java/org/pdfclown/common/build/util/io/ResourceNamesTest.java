@@ -32,6 +32,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.test.assertion.Assertions.Argument;
+import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 
 /**
@@ -535,7 +536,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void absName_filePath_unix(String expected, Path filePath, Path baseDir) {
+  void absName_filePath_unix(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
         () -> ResourceNames.absName(filePath, baseDir),
         expected,
@@ -546,7 +547,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void absName_filePath_win(String expected, Path filePath, Path baseDir) {
+  void absName_filePath_win(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
         () -> ResourceNames.absName(filePath, baseDir),
         expected,
@@ -557,7 +558,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullName_basePackage(String expected, Argument<String> name, String basePackage) {
+  void fullName_basePackage(Expected<String> expected, Argument<String> name, String basePackage) {
     assertParameterizedOf(
         () -> ResourceNames.fullName(name.getValue(), basePackage),
         expected,
@@ -568,7 +569,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullName_baseType(String expected, Argument<String> name,
+  void fullName_baseType(Expected<String> expected, Argument<String> name,
       @Nullable Class<?> baseType) {
     assertParameterizedOf(
         () -> ResourceNames.fullName(name.getValue(), baseType),
@@ -579,12 +580,12 @@ class ResourceNamesTest extends BaseTest {
   }
 
   void name_0() {
-    assertParameterized(ResourceNames.name(), EMPTY, null);
+    assertParameterized(ResourceNames.name(), Expected.success(EMPTY), null);
   }
 
   @ParameterizedTest
   @MethodSource
-  void name_1(String expected, Argument<String> name0) {
+  void name_1(Expected<String> expected, Argument<String> name0) {
     assertParameterizedOf(
         () -> ResourceNames.name(name0.getValue()),
         expected,
@@ -594,7 +595,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void name_2(String expected, Argument<String> name0, Argument<String> name1) {
+  void name_2(Expected<String> expected, Argument<String> name0, Argument<String> name1) {
     assertParameterizedOf(
         () -> ResourceNames.name(name0.getValue(), name1.getValue()),
         expected,
@@ -605,7 +606,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void normalize(String expected, Argument<String> name) {
+  void normalize(Expected<String> expected, Argument<String> name) {
     assertParameterizedOf(
         () -> ResourceNames.normalize(name.getValue()),
         expected,
@@ -615,7 +616,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void parent(String expected, Argument<String> name) {
+  void parent(Expected<String> expected, Argument<String> name) {
     assertParameterizedOf(
         () -> ResourceNames.parent(name.getValue()),
         expected,
