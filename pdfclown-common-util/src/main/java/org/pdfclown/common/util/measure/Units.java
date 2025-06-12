@@ -507,7 +507,7 @@ public class Units extends tech.units.indriya.unit.Units {
    * @throws IllegalArgumentException
    *           if a unit is already associated to {@code quantityType}.
    */
-  protected static <U extends XtUnit<?>, Q extends Quantity<Q>> U defaultUnit(Class<Q> quantityType,
+  protected static <U extends XtUnit<Q>, Q extends Quantity<Q>> U defaultUnit(Class<Q> quantityType,
       U unit, Units unitSystem) {
     if (unitSystem.quantityToUnit.containsKey(quantityType))
       throw wrongArg("quantityType", quantityType,
@@ -516,6 +516,20 @@ public class Units extends tech.units.indriya.unit.Units {
 
     unitSystem.quantityToUnit.put(quantityType, unwrap(unit));
     return unit;
+  }
+
+  /**
+   * @see #wrap(Unit)
+   */
+  protected static <Q extends Quantity<Q>> Unit<Q> unwrap(Unit<Q> unit) {
+    return unit instanceof XtUnit ? ((XtUnit<Q>) unit).base : unit;
+  }
+
+  /**
+   * @see #unwrap(Unit)
+   */
+  protected static <Q extends Quantity<Q>> XtUnit<Q> wrap(Unit<Q> unit) {
+    return unit instanceof XtUnit ? (XtUnit<Q>) unit : new XtUnit<>((AbstractUnit<Q>) unit);
   }
 
   /**
@@ -573,23 +587,9 @@ public class Units extends tech.units.indriya.unit.Units {
    * @throws IllegalArgumentException
    *           if a unit is already associated to {@code quantityType}.
    */
-  private static <U extends XtUnit<?>, Q extends Quantity<Q>> U defaultUnit(Class<Q> quantityType,
+  private static <U extends XtUnit<Q>, Q extends Quantity<Q>> U defaultUnit(Class<Q> quantityType,
       U unit) {
     return defaultUnit(quantityType, unit, INSTANCE);
-  }
-
-  /**
-   * @see #wrap(Unit)
-   */
-  private static Unit<?> unwrap(Unit<?> unit) {
-    return unit instanceof XtUnit ? ((XtUnit<?>) unit).base : unit;
-  }
-
-  /**
-   * @see #unwrap(Unit)
-   */
-  private static <Q extends Quantity<Q>> XtUnit<Q> wrap(Unit<Q> unit) {
-    return unit instanceof XtUnit ? (XtUnit<Q>) unit : new XtUnit<>((AbstractUnit<Q>) unit);
   }
 
   @Override

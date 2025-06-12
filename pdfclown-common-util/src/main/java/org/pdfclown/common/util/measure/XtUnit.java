@@ -14,6 +14,8 @@ package org.pdfclown.common.util.measure;
 
 import static org.pdfclown.common.util.Checks.checkType;
 import static org.pdfclown.common.util.Objects.requireState;
+import static org.pdfclown.common.util.measure.Units.unwrap;
+import static org.pdfclown.common.util.measure.Units.wrap;
 
 import java.util.Map;
 import javax.measure.Dimension;
@@ -191,14 +193,5 @@ public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
   @Override
   protected Unit<Q> toSystemUnit() {
     return base.getSystemUnit();
-  }
-
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  private Unit<Q> unwrap(Unit<Q> unit) {
-    return unit instanceof XtUnit ? ((XtUnit) unit).base : unit;
-  }
-
-  private XtUnit<Q> wrap(Unit<Q> base) {
-    return new XtUnit<>((AbstractUnit<Q>) base);
   }
 }
