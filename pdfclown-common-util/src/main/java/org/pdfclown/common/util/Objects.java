@@ -950,14 +950,19 @@ public final class Objects {
   /**
    * Gets the type corresponding to the given fully-qualified name.
    *
-   * @return {@code null}, if no class matched {@code name}.
+   * @return {@code null}, if no class matched {@code name}, or the latter is undefined.
+   * @implNote {@code name} nullability was introduced to simplify method referencing in lambda
+   *           expressions, avoiding NPE issues in case of nullable input.
    */
-  public static @Nullable Class<?> type(String name) {
-    try {
-      return Class.forName(name);
-    } catch (ClassNotFoundException ex) {
-      return null;
+  public static @Nullable Class<?> type(@Nullable String name) {
+    if (name != null) {
+      try {
+        return Class.forName(name);
+      } catch (ClassNotFoundException ex) {
+        // NOOP
+      }
     }
+    return null;
   }
 
   /**

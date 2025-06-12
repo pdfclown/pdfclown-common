@@ -32,7 +32,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 /**
  * @author Stefano Chizzolini
  */
-@SuppressWarnings({ "ArraysAsListWithZeroOrOneArgument", "DataFlowIssue" })
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 class FilesTest extends BaseTest {
   private static final List<Argument<String>> PATHS = asList(
       arg("Multi-part file extension, dot before directory separator, Unix path",

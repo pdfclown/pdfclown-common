@@ -256,14 +256,20 @@ public final class Assertions {
      * of parameterized test argument {@code arg0}.
      * </p>
      *
+     * @param <T>
+     *          Input type.
+     * @implNote {@code <T>} provides implicit casting to the type commanded by the given function;
+     *           this works conveniently like a type declaration, considering the weakly-typed
+     *           context of arguments streams, sparing redundant explicit casting.
      * @see #composeExpectedConverter(Function)
      */
-    public ArgumentsStreamConfig composeArgConverter(
-        int argIndex, Function<@Nullable Object, @Nullable Object> before) {
+    @SuppressWarnings("unchecked")
+    public <T> ArgumentsStreamConfig composeArgConverter(
+        int argIndex, Function<@Nullable T, @Nullable Object> before) {
       requireNonNull(before);
       var paramIndex = argIndex + 1 /* Offsets `expected` parameter */;
       return composeConverter(
-          ($index, $source) -> $index == paramIndex ? before.apply($source) : $source);
+          ($index, $source) -> $index == paramIndex ? before.apply((T) $source) : $source);
     }
 
     /**
@@ -278,12 +284,19 @@ public final class Assertions {
      * Prepends to {@link #getConverter() converter} the given function for {@code expected}
      * argument.
      *
+     * @param <T>
+     *          Input type.
+     * @implNote {@code <T>} provides implicit casting to the type commanded by the given function;
+     *           this works conveniently like a type declaration, considering the weakly-typed
+     *           context of arguments streams, sparing redundant explicit casting.
      * @see #composeArgConverter(int, Function)
      */
-    public ArgumentsStreamConfig composeExpectedConverter(
-        Function<@Nullable Object, @Nullable Object> before) {
+    @SuppressWarnings("unchecked")
+    public <T> ArgumentsStreamConfig composeExpectedConverter(
+        Function<@Nullable T, @Nullable Object> before) {
       requireNonNull(before);
-      return composeConverter(($index, $source) -> $index == 0 ? before.apply($source) : $source);
+      return composeConverter(
+          ($index, $source) -> $index == 0 ? before.apply((T) $source) : $source);
     }
 
     /**

@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.isA;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Aggregations.list;
-import static org.pdfclown.common.util.Objects.type;
 
 import java.util.Comparator;
 import java.util.List;
@@ -300,7 +299,7 @@ class UnitsTest extends BaseTest {
   static Stream<Arguments> getQuantityType() {
     return argumentsStream(
         simpleArgumentsStreamConfig()
-            .composeExpectedConverter($ -> type((String) $)),
+            .composeExpectedConverter(Objects::type),
         // expected
         java.util.Arrays.asList(
             // [1] unit[0]: 'a (Are)'
@@ -394,7 +393,7 @@ class UnitsTest extends BaseTest {
   static Stream<Arguments> getQuantityType__external() {
     return argumentsStream(
         simpleArgumentsStreamConfig()
-            .composeExpectedConverter($ -> type((String) $)),
+            .composeExpectedConverter(Objects::type),
         // expected
         asList(
             // [1] unit[0]: "m³ (Cubic metre)"

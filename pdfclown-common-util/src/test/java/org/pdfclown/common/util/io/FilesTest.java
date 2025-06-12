@@ -17,7 +17,6 @@ import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStrea
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Aggregations.entry;
-import static org.pdfclown.common.util.Objects.objToLiteralString;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -25,7 +24,6 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -64,9 +62,6 @@ class FilesTest extends BaseTest {
           "/home/me/my/test/obj-5.2.9.tar2.gz"),
       arg("Multi-part file extension, dot before base filename",
           "C:\\my\\test-1.5\\obj.tar2.gz"));
-
-  private static final Function<Object, String> EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF =
-      $ -> "fs.getPath(" + objToLiteralString($) + ")";
 
   static Stream<Arguments> extension() {
     return argumentsStream(
@@ -264,27 +259,31 @@ class FilesTest extends BaseTest {
   static Stream<Arguments> pathOf_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix());
     return argumentsStream(
-        cartesian(),
+        cartesian()
+            .composeExpectedConverter($ -> fs.getPath((String) $)),
         // expected
         java.util.Arrays.asList(
-            // uri[0]: 'relative/uri.html'
-            // -- fs[0]: 'com.google.common.jimfs.JimfsFileSystem@4152d38d'
-            fs.getPath("relative/uri.html"),
-            // uri[1]: '../relative/uri.html'
-            // -- fs[0]: 'com.google.common.jimfs.JimfsFileSystem@4152d38d'
-            fs.getPath("../relative/uri.html"),
-            // uri[2]: 'file:/absolute/local/uri.html'
-            // -- fs[0]: 'com.google.common.jimfs.JimfsFileSystem@4152d38d'
-            fs.getPath("/absolute/local/uri.html"),
-            // uri[3]: 'file://host/absolute/local/uri.html'
-            // -- fs[0]: 'com.google.common.jimfs.JimfsFileSystem@4152d38d'
-            fs.getPath("/host/absolute/local/uri.html")),
+            // uri[0]: "relative/uri.html"
+            // [1] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
+            "relative/uri.html",
+            //
+            // uri[1]: "../relative/uri.html"
+            // [2] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
+            "../relative/uri.html",
+            //
+            // uri[2]: "file:/absolute/local/uri.html"
+            // [3] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
+            "/absolute/local/uri.html",
+            //
+            // uri[3]: "file://host/absolute/local/uri.html"
+            // [4] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
+            "/host/absolute/local/uri.html"),
         // uri
         List.of(
-            URI.create("relative/uri.html"),
-            URI.create("../relative/uri.html"),
-            URI.create("file:/absolute/local/uri.html"),
-            URI.create("file://host/absolute/local/uri.html")),
+            "relative/uri.html",
+            "../relative/uri.html",
+            "file:/absolute/local/uri.html",
+            "file://host/absolute/local/uri.html"),
         // fs
         List.of(fs));
   }
@@ -292,27 +291,31 @@ class FilesTest extends BaseTest {
   static Stream<Arguments> pathOf_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows());
     return argumentsStream(
-        cartesian(),
+        cartesian()
+            .composeExpectedConverter($ -> fs.getPath((String) $)),
         // expected
         java.util.Arrays.asList(
-            // uri[0]: 'relative/uri.html'
-            // -- fs[0]: 'com.google.common.jimfs.JimfsFileSystem@245a26e1'
-            fs.getPath("relative\\uri.html"),
-            // uri[1]: '../relative/uri.html'
-            // -- fs[0]: 'com.google.common.jimfs.JimfsFileSystem@245a26e1'
-            fs.getPath("..\\relative\\uri.html"),
-            // uri[2]: 'file:///c:/absolute/local/uri.html'
-            // -- fs[0]: 'com.google.common.jimfs.JimfsFileSystem@245a26e1'
-            fs.getPath("c:\\absolute\\local\\uri.html"),
-            // uri[3]: 'file://host/absolute/uri.html'
-            // -- fs[0]: 'com.google.common.jimfs.JimfsFileSystem@245a26e1'
-            fs.getPath("\\\\host\\absolute\\uri.html")),
+            // uri[0]: "relative/uri.html"
+            // [1] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
+            "relative\\uri.html",
+            //
+            // uri[1]: "../relative/uri.html"
+            // [2] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
+            "..\\relative\\uri.html",
+            //
+            // uri[2]: "file:///c:/absolute/local/uri.html"
+            // [3] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
+            "c:\\absolute\\local\\uri.html",
+            //
+            // uri[3]: "file://host/absolute/uri.html"
+            // [4] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
+            "\\\\host\\absolute\\uri.html"),
         // uri
         List.of(
-            URI.create("relative/uri.html"),
-            URI.create("../relative/uri.html"),
-            URI.create("file:///c:/absolute/local/uri.html"),
-            URI.create("file://host/absolute/uri.html")),
+            "relative/uri.html",
+            "../relative/uri.html",
+            "file:///c:/absolute/local/uri.html",
+            "file://host/absolute/uri.html"),
         // fs
         List.of(fs));
   }
@@ -471,7 +474,7 @@ class FilesTest extends BaseTest {
         () -> new ExpectedGeneration(List.of(
             entry("uri", uri),
             entry("fs", fs)))
-                .setExpectedSourceCodeGenerator(EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF));
+                .setMaxArgCommentLength(50));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -483,7 +486,7 @@ class FilesTest extends BaseTest {
         () -> new ExpectedGeneration(List.of(
             entry("uri", uri),
             entry("fs", fs)))
-                .setExpectedSourceCodeGenerator(EXPECTED_SOURCE_CODE_GENERATOR___PATH_OF));
+                .setMaxArgCommentLength(50));
   }
 
   @ParameterizedTest
