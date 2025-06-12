@@ -241,6 +241,11 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
     return this;
   }
 
+  @Override
+  default XtList<E> withAll(Collection<? extends E> c) {
+    return (XtList<E>) XtCollection.super.withAll(c);
+  }
+
   /**
    * Fluent {@link List#set(int, Object) set(..)}.
    *
@@ -274,6 +279,11 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
   default XtList<E> without(int index) {
     remove(index);
     return this;
+  }
+
+  @Override
+  default XtList<E> withoutAll(Collection<?> c) {
+    return (XtList<E>) XtCollection.super.withoutAll(c);
   }
 
   /**

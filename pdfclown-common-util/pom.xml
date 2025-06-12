@@ -38,13 +38,18 @@
     <!--
         VERSIONS
     -->
+    <tech.units.indriya.version>2.2.3</tech.units.indriya.version>
   </properties>
 
   <dependencies>
+    <!-- JSR 385 - Reference Implementation -->
     <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
+      <groupId>tech.units</groupId>
+      <artifactId>indriya</artifactId>
+      <version>${tech.units.indriya.version}</version>
     </dependency>
+
+    <!-- Language -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
@@ -52,6 +57,18 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <!-- I/O -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <!-- System -->
+    <dependency>
+      <groupId>io.github.classgraph</groupId>
+      <artifactId>classgraph</artifactId>
     </dependency>
 
     <!--
