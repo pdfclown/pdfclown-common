@@ -15,6 +15,7 @@ package org.pdfclown.common.build.test.assertion;
 import static java.lang.Math.max;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.SPACE;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
@@ -68,6 +69,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.Objects;
 import org.pdfclown.common.build.internal.util.io.XtPrintStream;
+import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Mode;
 import org.pdfclown.common.build.util.lang.Runtimes;
 
@@ -77,31 +79,6 @@ import org.pdfclown.common.build.util.lang.Runtimes;
  * @author Stefano Chizzolini
  */
 public final class Assertions {
-  /**
-   * Argument converter.
-   * <p>
-   * NOTE: Contrary to {@link org.junit.jupiter.params.converter.ArgumentConverter
-   * ArgumentConverter}, this converter applies at an early stage of test invocation, so no
-   * parameter context is available, just its index.
-   * </p>
-   *
-   * @author Stefano Chizzolini
-   * @see #argumentsStream(ArgumentsStreamConfig, List, List[])
-   */
-  @FunctionalInterface
-  public interface ArgConverter {
-    /**
-     * Maps the given argument value to the type of the corresponding parameter in the parameterized
-     * test method.
-     *
-     * @param index
-     *          Parameter index.
-     * @param source
-     *          Argument value.
-     */
-    Object convert(int index, Object source);
-  }
-
   /**
    * Argument value wrapper to use within {@link Arguments}.
    * <p>
@@ -179,6 +156,50 @@ public final class Assertions {
    */
   public static class ArgumentsStreamConfig {
     /**
+     * Argument converter.
+     * <p>
+     * NOTE: Contrary to {@link org.junit.jupiter.params.converter.ArgumentConverter
+     * ArgumentConverter}, this converter applies at an early stage of test invocation, so no
+     * parameter context is available, just its index.
+     * </p>
+     *
+     * @author Stefano Chizzolini
+     * @see #argumentsStream(ArgumentsStreamConfig, List, List[])
+     */
+    public interface Converter extends BiFunction<Integer, @Nullable Object, @Nullable Object> {
+      /**
+       * Composes a converter that first applies this converter to its input, and then applies the
+       * {@code after} converter to the result.
+       */
+      default Converter andThen(Converter after) {
+        requireNonNull(after);
+        return ($index, $source) -> after.apply($index, apply($index, $source));
+      }
+
+      /**
+       * Maps the given argument value to the type of the corresponding parameter in the
+       * parameterized test method.
+       *
+       * @param index
+       *          Parameter index.
+       * @param source
+       *          Argument value.
+       */
+      @Override
+      @Nullable
+      Object apply(Integer index, @Nullable Object source);
+
+      /**
+       * Composes a converter that first applies the {@code before} converter to its input, and then
+       * applies this converter to the result.
+       */
+      default Converter compose(Converter before) {
+        requireNonNull(before);
+        return ($index, $source) -> apply($index, before.apply($index, $source));
+      }
+    }
+
+    /**
      * Arguments combination mode.
      */
     public enum Mode {
@@ -201,7 +222,7 @@ public final class Assertions {
     }
 
     @Nullable
-    ArgConverter argConverter;
+    Converter converter;
 
     final Mode mode;
 
@@ -210,11 +231,30 @@ public final class Assertions {
     }
 
     /**
-     * Sets the arguments converter.
+     * Prepends to {@link #getConverter() converter} the given function.
+     */
+    public ArgumentsStreamConfig composeConverter(Converter before) {
+      converter = converter != null ? converter.compose(before) : before;
+      return this;
+    }
+
+    /**
+     * Prepends to {@link #getConverter() converter} the given function for {@code expected}
+     * argument.
+     */
+    public ArgumentsStreamConfig composeExpectedConverter(
+        Function<@Nullable Object, @Nullable Object> before) {
+      requireNonNull(before);
+      return composeConverter(($index, $source) -> $index == 0 ? before.apply($source) : $source);
+    }
+
+    /**
+     * Arguments converter.
      * <p>
-     * Transforms {@code args} argument values in
-     * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)} before
-     * streaming them (useful, e.g., to wrap an argument as {@linkplain Named named}).
+     * Transforms the values of {@code expected} and {@code args} arguments of
+     * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)} before they
+     * are streamed (useful, e.g., to wrap a parameterized test argument as {@linkplain Named
+     * named}).
      * </p>
      * <p>
      * DEFAULT: {@code null} (arguments passed as-is — for efficiency, this should be used instead
@@ -225,8 +265,15 @@ public final class Assertions {
      * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
      * </p>
      */
-    public ArgumentsStreamConfig setArgConverter(@Nullable ArgConverter value) {
-      argConverter = value;
+    public @Nullable Converter getConverter() {
+      return converter;
+    }
+
+    /**
+     * Sets {@link #getConverter() converter}.
+     */
+    public ArgumentsStreamConfig setConverter(@Nullable Converter value) {
+      converter = value;
       return this;
     }
   }
@@ -247,21 +294,94 @@ public final class Assertions {
     boolean outOverridable = true;
 
     /**
-     * @param args
-     *          Arguments (pairs of parameter name and corresponding argument value) consumed by the
-     *          current test call.
      */
     public ExpectedGeneration(List<Entry<String, @Nullable Object>> args) {
       this.args = requireNonNull(args);
     }
 
     /**
-     * Sets the abbreviation marker to append to argument values exceeding
-     * {@link #setMaxArgCommentLength(int) maxArgCommentLength} in comments accompanying expected
-     * results source code.
+     * Prepends to {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator} the given
+     * function.
+     */
+    public ExpectedGeneration composeExpectedSourceCodeGenerator(
+        Function<@Nullable Object, String> before) {
+      expectedSourceCodeGenerator = expectedSourceCodeGenerator.compose(before);
+      return this;
+    }
+
+    /**
+     * Abbreviation marker to append to argument values exceeding {@link #getMaxArgCommentLength()
+     * maxArgCommentLength} in comments accompanying expected results source code.
      * <p>
      * DEFAULT: <code>".&nbsp;.&nbsp;."</code>
      * </p>
+     */
+    public String getArgCommentAbbreviationMarker() {
+      return argCommentAbbreviationMarker;
+    }
+
+    /**
+     * Formatter of the argument values in comments accompanying expected results source code.
+     * <p>
+     * DEFAULT: literal representation.
+     * </p>
+     */
+    public Function<@Nullable Object, String> getArgCommentFormatter() {
+      return argCommentFormatter;
+    }
+
+    /**
+     * Arguments (pairs of parameter name and corresponding argument value) consumed by the current
+     * test invocation.
+     */
+    public List<Entry<String, @Nullable Object>> getArgs() {
+      return args;
+    }
+
+    /**
+     * Source code generator of the expected results.
+     * <p>
+     * DEFAULT: literal representation.
+     * </p>
+     */
+    public Function<@Nullable Object, String> getExpectedSourceCodeGenerator() {
+      return expectedSourceCodeGenerator;
+    }
+
+    /**
+     * Maximum length of argument values in comments accompanying expected results source code.
+     * <p>
+     * DEFAULT: {@code 20}
+     * </p>
+     */
+    public int getMaxArgCommentLength() {
+      return maxArgCommentLength;
+    }
+
+    /**
+     * Stream where the generated expected results source code will be output.
+     * <p>
+     * DEFAULT: {@linkplain System#err stderr}
+     * </p>
+     */
+    public PrintStream getOut() {
+      return out;
+    }
+
+    /**
+     * Whether {@link #getOut() out} can be replaced by the generator (for example, to divert the
+     * output to the clipboard — see debug mode in "Expected Results Generation" section within
+     * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}).
+     * <p>
+     * DEFAULT: {@code true}
+     * </p>
+     */
+    public boolean isOutOverridable() {
+      return outOverridable;
+    }
+
+    /**
+     * Sets {@link #getArgCommentAbbreviationMarker() argCommentAbbreviationMarker}.
      */
     public ExpectedGeneration setArgCommentAbbreviationMarker(String value) {
       argCommentAbbreviationMarker = requireNonNull(value);
@@ -269,11 +389,7 @@ public final class Assertions {
     }
 
     /**
-     * Sets the formatter of the argument values in comments accompanying expected results source
-     * code.
-     * <p>
-     * DEFAULT: literal representation
-     * </p>
+     * Sets {@link #getArgCommentFormatter() argCommentFormatter}.
      */
     public ExpectedGeneration setArgCommentFormatter(Function<@Nullable Object, String> value) {
       argCommentFormatter = requireNonNull(value);
@@ -281,10 +397,7 @@ public final class Assertions {
     }
 
     /**
-     * Sets the generator of the expected results source code.
-     * <p>
-     * DEFAULT: literal representation
-     * </p>
+     * Sets {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator}.
      */
     public ExpectedGeneration setExpectedSourceCodeGenerator(
         Function<@Nullable Object, String> value) {
@@ -293,11 +406,7 @@ public final class Assertions {
     }
 
     /**
-     * Sets the maximum length of argument values in comments accompanying expected results source
-     * code.
-     * <p>
-     * DEFAULT: {@code 20}
-     * </p>
+     * Sets {@link #getMaxArgCommentLength() maxArgCommentLength}.
      */
     public ExpectedGeneration setMaxArgCommentLength(int value) {
       maxArgCommentLength = value;
@@ -305,10 +414,7 @@ public final class Assertions {
     }
 
     /**
-     * Sets the stream where the generated expected results source code will be output.
-     * <p>
-     * DEFAULT: {@linkplain System#err stderr}
-     * </p>
+     * Sets {@link #getOut() out}.
      */
     public ExpectedGeneration setOut(PrintStream value) {
       out = requireNonNull(value);
@@ -316,13 +422,7 @@ public final class Assertions {
     }
 
     /**
-     * Sets whether the {@link #setOut(PrintStream) output stream} can be replaced by the generator
-     * (for example, to divert the output to the clipboard — see debug mode in "Expected Results
-     * Generation" section within {@link #argumentsStream(ArgumentsStreamConfig, List, List[])
-     * argumentsStream(..)}).
-     * <p>
-     * DEFAULT: {@code true}
-     * </p>
+     * Sets {@link #isOutOverridable() outOverridable}.
      */
     public ExpectedGeneration setOutOverridable(boolean value) {
       outOverridable = value;
@@ -800,8 +900,8 @@ public final class Assertions {
    * invocation name; anticipating argument conversion at arguments stream generation allows to
    * combine custom display representation and custom mapping in a single step, without bloating the
    * target test method with parameter annotations. In order to do so,
-   * {@linkplain ArgumentsStreamConfig#setArgConverter(ArgConverter) pass} {@link ArgConverter} to
-   * {@code config} parameter.
+   * {@linkplain ArgumentsStreamConfig#setConverter(Converter) pass the converter} to {@code config}
+   * parameter.
    * </p>
    *
    * @param config
@@ -881,17 +981,31 @@ public final class Assertions {
 
     // Transform the arguments!
     List<List<?>> argsList;
-    if (config.argConverter != null) {
+    if (config.converter != null) {
+      int argumentIndex = 0;
+      if (expected != null) {
+        var targetList = new ArrayList<>(expected.size());
+        for (var e : expected) {
+          /*
+           * NOTE: Failure results MUST be passed through as-is.
+           */
+          targetList.add(e instanceof ThrownExpected ? e
+              : config.converter.apply(argumentIndex, e));
+        }
+        expected = unmodifiableList(targetList);
+      }
+
       argsList = new ArrayList<>(args.length);
       for (int i = 0; i < args.length; i++) {
         var sourceList = args[i];
         var argList = new ArrayList<>(sourceList.size());
+        argumentIndex++;
         for (var e : sourceList) {
-          argList.add(config.argConverter.convert(i, e));
+          argList.add(config.converter.apply(argumentIndex, e));
         }
-        argsList.add(argList);
+        argsList.add(unmodifiableList(argList));
       }
-      argsList = Collections.unmodifiableList(argsList);
+      argsList = unmodifiableList(argsList);
     } else {
       argsList = asList(args);
     }

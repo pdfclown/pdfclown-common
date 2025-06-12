@@ -949,6 +949,19 @@ public final class Objects {
   }
 
   /**
+   * Gets the type corresponding to the given fully-qualified name.
+   *
+   * @return {@code null}, if no class matched {@code name}.
+   */
+  public static @Nullable Class<?> type(String name) {
+    try {
+      return Class.forName(name);
+    } catch (ClassNotFoundException ex) {
+      return null;
+    }
+  }
+
+  /**
    * Gets the type of the given object.
    */
   public static @PolyNull @Nullable Class<?> typeOf(@PolyNull @Nullable Object obj) {
