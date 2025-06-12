@@ -18,7 +18,9 @@ import static javax.measure.MetricPrefix.KILO;
 import static javax.measure.MetricPrefix.MEGA;
 import static javax.measure.MetricPrefix.MILLI;
 import static org.pdfclown.common.util.Checks.checkType;
+import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Objects.fqn;
 import static org.pdfclown.common.util.Objects.objTo;
 
 import io.github.classgraph.ClassGraph;
@@ -36,8 +38,6 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Time;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.Exceptions;
-import org.pdfclown.common.util.Objects;
 import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.format.SimpleUnitFormat;
 import tech.units.indriya.function.AbstractConverter;
@@ -436,7 +436,7 @@ public class Units extends tech.units.indriya.unit.Units {
           ? ((MultiplyConverter) pair.getLeft()).getFactor().doubleValue()
           : ((MultiplyConverter) pair.getRight()).getFactor().doubleValue();
     } else
-      throw Exceptions.unsupported("Converter `{}` UNKNOWN", Objects.fqn(converter));
+      throw unsupported("Converter `{}` UNKNOWN", fqn(converter));
   }
 
   public static Units getInstance() {
@@ -464,7 +464,7 @@ public class Units extends tech.units.indriya.unit.Units {
           ? ((AddConverter) pair.getLeft()).getOffset().doubleValue()
           : ((AddConverter) pair.getRight()).getOffset().doubleValue();
     } else
-      throw Exceptions.unsupported("Converter `{}` UNKNOWN", Objects.fqn(converter));
+      throw unsupported("Converter `{}` UNKNOWN", fqn(converter));
   }
 
   /**
