@@ -188,9 +188,10 @@ class AssertionsTest extends BaseTest {
   private @Nullable XtPrintStream out;
 
   /**
-   * Tests the regular execution of {@link Assertions#assertParameterized(Object, Object, Supplier)
-   * assertParameterized(..)} along with
-   * {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
+   * Tests the regular execution of
+   * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}
+   * along with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * argumentsStream(..)}.
    */
   @ParameterizedTest
   @MethodSource
@@ -200,8 +201,8 @@ class AssertionsTest extends BaseTest {
 
   /**
    * Tests the expected results generation of
-   * {@link Assertions#assertParameterized(Object, Object, Supplier) assertParameterized(..)} along
-   * with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}
+   * along with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
    * argumentsStream(..)}.
    */
   @ParameterizedTest
@@ -231,9 +232,10 @@ class AssertionsTest extends BaseTest {
   }
 
   /**
-   * Tests the regular execution of {@link Assertions#assertParameterized(Object, Object, Supplier)
-   * assertParameterized(..)} along with
-   * {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
+   * Tests the regular execution of
+   * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}
+   * along with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * argumentsStream(..)}.
    */
   @ParameterizedTest
   @MethodSource
@@ -243,8 +245,8 @@ class AssertionsTest extends BaseTest {
 
   /**
    * Tests the expected results generation of
-   * {@link Assertions#assertParameterized(Object, Object, Supplier) assertParameterized(..)} along
-   * with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}
+   * along with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
    * argumentsStream(..)}.
    */
   @ParameterizedTest
@@ -311,7 +313,8 @@ class AssertionsTest extends BaseTest {
   }
 
   /**
-   * Test method for {@link Assertions#assertParameterized(Object, Object, Supplier)}-related tests.
+   * Test method for {@link Assertions#assertParameterized(Object, Expected, Supplier)}-related
+   * tests.
    *
    * @throws IllegalArgumentException
    *           if {@code length} is less than 20.
