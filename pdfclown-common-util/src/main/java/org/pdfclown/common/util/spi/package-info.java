@@ -14,6 +14,6 @@
  * @author Stefano Chizzolini
  */
 @NullMarked
-package org.pdfclown.common.util.service;
+package org.pdfclown.common.util.spi;
 
 import org.jspecify.annotations.NullMarked;

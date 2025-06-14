@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util.service;
+package org.pdfclown.common.util.spi;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
