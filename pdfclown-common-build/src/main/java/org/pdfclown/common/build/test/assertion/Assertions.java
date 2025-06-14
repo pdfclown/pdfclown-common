@@ -240,7 +240,7 @@ public final class Assertions {
      * <pre>
      * &#64;ParameterizedTest
      * &#64;MethodSource
-     * public void %myTestName%(Object expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
+     * public void %myTestName%(Expected&lt;String> expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
      *   assertParameterizedOf(
      *       () -&gt; %myMethodToTest%(arg0, arg1, . . ., argN),
      *       expected,
@@ -252,7 +252,8 @@ public final class Assertions {
      * }</pre>
      * <p>
      * then {@code argIndex} = 0 will define the converter to {@code %ArgType0%} of the input values
-     * of parameterized test argument {@code arg0}.
+     * of parameterized test argument {@code arg0} which corresponds to {@code args[0]} of
+     * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
      * </p>
      *
      * @param <T>
@@ -935,7 +936,7 @@ public final class Assertions {
    * <pre>
    * &#64;ParameterizedTest
    * &#64;MethodSource
-   * public void %myTestName%(Object expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
+   * public void %myTestName%(Expected&lt;String> expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
    *   assertParameterizedOf(
    *       () -&gt; %myMethodToTest%(arg0, arg1, . . ., argN),
    *       expected,
@@ -953,8 +954,8 @@ public final class Assertions {
    * dedicated section here below).
    * </p>
    * <p>
-   * See {@link #assertParameterized(Object, Expected, Supplier)} for more information and a full
-   * example.
+   * See {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} for more
+   * information and a full example.
    * </p>
    * <h2>Expected Results Generation</h2>
    * <p>
@@ -964,33 +965,34 @@ public final class Assertions {
    * </p>
    * <p>
    * Here, the steps to generate {@code expected} (based on the example in
-   * {@link #assertParameterized(Object, Expected, Supplier)}):
+   * {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)}):
    * </p>
    * <ol>
    * <li>pass {@code null} as {@code expected} argument to this method:<pre>
    * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
    *     return argumentsStream(
-   *       // expected
-   *       <span style="background-color:yellow;color:black;">null</span>,
-   *       // value
-   *       asList(
-   *           "Capitalized",
-   *           "uncapitalized",
-   *           . . .
-   *           "UNDERSCORE_TEST"));
+   *         ArgumentsStreamConfig.cartesian(),
+   *         // expected
+   *         <span style="background-color:yellow;color:black;">null</span>,
+   *         // value
+   *         asList(
+   *             "Capitalized",
+   *             "uncapitalized",
+   *             . . .
+   *             "UNDERSCORE_TEST"));
    * }</pre></li>
    * <li>in your IDE, <i>run the test in debug mode</i> — this will cause the generated source code
    * to be copied directly into your clipboard.
    * <p>
    * If run in normal mode, the generated source code will be output to
    * {@link ExpectedGeneration#out}, as specified in the
-   * {@link #assertParameterized(Object, Expected, Supplier)} call (by default,
-   * {@linkplain System#err stderr}):
+   * {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} call (by
+   * default, {@linkplain System#err stderr}):
    * </p>
    * <pre>
    * &#64;ParameterizedTest
    * &#64;MethodSource
-   * public void uncapitalizeGreedy(Object expected, String value) {
+   * public void uncapitalizeGreedy(Expected&lt;String> expected, String value) {
    *   assertParameterizedOf(
    *       () -&gt; Strings.uncapitalizeGreedy(value),
    *       expected,
@@ -1002,21 +1004,22 @@ public final class Assertions {
    * argument:<pre>
    * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
    *     return argumentsStream(
-   *       // expected
-   *       <span style="background-color:yellow;color:black;">java.util.Arrays.asList(
-   *           // value[0]: 'Capitalized'
-   *           "capitalized",
-   *           // value[1]: 'uncapitalized'
-   *           "uncapitalized",
-   *           . . .
-   *           // value[7]: 'UNDERSCORE_TEST'
-   *           "underscore_TEST")</span>,
-   *       // value
-   *       asList(
-   *           "Capitalized",
-   *           "uncapitalized",
-   *           . . .
-   *           "UNDERSCORE_TEST"));
+   *         ArgumentsStreamConfig.cartesian(),
+   *         // expected
+   *         <span style="background-color:yellow;color:black;">java.util.Arrays.asList(
+   *             // value[0]: 'Capitalized'
+   *             "capitalized",
+   *             // value[1]: 'uncapitalized'
+   *             "uncapitalized",
+   *             . . .
+   *             // value[7]: 'UNDERSCORE_TEST'
+   *             "underscore_TEST")</span>,
+   *         // value
+   *         asList(
+   *             "Capitalized",
+   *             "uncapitalized",
+   *             . . .
+   *             "UNDERSCORE_TEST"));
    * }</pre></li>
    * </ol>
    * <h2>Arguments Conversion</h2>
