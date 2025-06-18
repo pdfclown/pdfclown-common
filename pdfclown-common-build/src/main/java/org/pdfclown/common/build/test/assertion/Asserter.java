@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.pdfclown.common.build.internal.util.system.Builds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -318,17 +319,19 @@ public abstract class Asserter {
           testAnnotationTypes.stream().map(Class::getName).collect(toList())));
 
     message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message);
+    String projectArtifactId = Builds.artifactId(expectedFile.toPath());
     String hint = String.format(Locale.ROOT,
         "\nCompared files:\n"
             + " * EXPECTED: %s\n"
             + " * ACTUAL: %s\n"
             + "To retry, enter this CLI parameter into your command:\n"
-            + "  mvn verify ... -Dtest=\"%s\"\n"
+            + "  mvn verify -pl %s -Dtest=\"%s\"\n"
             + "To confirm the actual changes as expected, enter these CLI parameters into your "
             + "command:\n"
-            + "  mvn verify ... -D%s=\"%s\" -Dtest=\"%s\"\n",
-        expectedFile, requireNonNull(actualFile, "N/A"), testName, PARAM_NAME__BUILDABLE, testId,
-        testName);
+            + "  mvn verify -pl %s -D%s=\"%s\" -Dtest=\"%s\"\n",
+        expectedFile, requireNonNull(actualFile, "N/A"),
+        projectArtifactId, testName,
+        projectArtifactId, PARAM_NAME__BUILDABLE, testId, testName);
 
     // Log (full message).
     getLog().error(LogMarker.VERBOSE, "{}\n{}", message, hint);

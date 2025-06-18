@@ -16,6 +16,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 
@@ -43,6 +44,22 @@ public final class Aggregations {
    */
   public static <K, V> Map.Entry<K, V> entry(@Nullable K key, @Nullable V value) {
     return new AbstractMap.SimpleImmutableEntry<>(key, value);
+  }
+
+  // SourceFQN: org.pdfclown.common.util.Aggregations.getKey(..)
+  /**
+   * Gets the key associated to the given value.
+   * <p>
+   * NOTE: This implementation is the most simple and inefficient, iterating the whole map (O(n)
+   * complexity). Use it for occasional calls only.
+   * </p>
+   */
+  public static <K, V> @Nullable K getKey(Map<K, V> map, @Nullable V value) {
+    for (Map.Entry<K, V> entry : map.entrySet()) {
+      if (Objects.equals(entry.getValue(), value))
+        return entry.getKey();
+    }
+    return null;
   }
 
   private static Stream<List<Object>> cartesianProduct(List<List<?>> lists, int index) {
