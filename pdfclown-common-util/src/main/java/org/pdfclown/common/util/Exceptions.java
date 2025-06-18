@@ -15,7 +15,6 @@ package org.pdfclown.common.util;
 import static java.util.Objects.requireNonNullElse;
 import static org.pdfclown.common.util.Objects.objToLiteralString;
 import static org.pdfclown.common.util.ParamMessage.ARG;
-import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.Strings.COMMA;
 import static org.pdfclown.common.util.Strings.CURLY_BRACE_CLOSE;
 import static org.pdfclown.common.util.Strings.CURLY_BRACE_OPEN;
@@ -149,7 +148,7 @@ public final class Exceptions {
     return new UnsupportedOperationException(message.getDescription(), message.getCause());
   }
 
-  public static IllegalArgumentException wrongArg(@Nullable String name, @Nullable Object value) {
+  public static XtIllegalArgumentException wrongArg(@Nullable String name, @Nullable Object value) {
     return wrongArg(name, value, null);
   }
 
@@ -170,29 +169,9 @@ public final class Exceptions {
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link Throwable#getCause() cause}.
    */
-  public static IllegalArgumentException wrongArg(@Nullable String name,
+  public static XtIllegalArgumentException wrongArg(@Nullable String name,
       @Nullable Object value, @Nullable String format, @Nullable Object... args) {
-    if (name == null && value != null) {
-      name = "value";
-    }
-
-    ParamMessage message;
-    {
-      var b = new StringBuilder();
-      if (name != null) {
-        b.append(name);
-      }
-      if (value != null) {
-        b.append(SPACE).append(ROUND_BRACKET_OPEN).append(objToLiteralString(value))
-            .append(ROUND_BRACKET_CLOSE);
-      }
-      if (b.length() > 0) {
-        b.append(COLON).append(SPACE);
-      }
-      b.append(requireNonNullElse(format, "INVALID"));
-      message = ParamMessage.of(b.toString(), args);
-    }
-    return new IllegalArgumentException(message.getDescription(), message.getCause());
+    return new XtIllegalArgumentException(name == null ? "value" : name, value, format, args);
   }
 
   /**
@@ -208,7 +187,7 @@ public final class Exceptions {
    *          Any expected value which {@code value} may have matched.
    */
   @SafeVarargs
-  public static <T> IllegalArgumentException wrongArgOpt(@Nullable String name,
+  public static <T> XtIllegalArgumentException wrongArgOpt(@Nullable String name,
       @Nullable Object value, @Nullable String description, T... options) {
     var b = new StringBuilder();
     if (description != null) {
@@ -237,7 +216,7 @@ public final class Exceptions {
   }
 
   @SafeVarargs
-  public static <T> IllegalArgumentException wrongArgOpt(T... options) {
+  public static <T> XtIllegalArgumentException wrongArgOpt(T... options) {
     return wrongArgOpt(null, null, null, options);
   }
 
