@@ -37,6 +37,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.translate.AggregateTranslator;
 import org.apache.commons.text.translate.CharSequenceTranslator;
@@ -98,6 +100,8 @@ public final class Objects {
           "\\\"", "\"",
           "\\'", "'",
           "\\", EMPTY)));
+
+  private static final String STRING__NULL = "null";
 
   /**
    * Gets whether the given object matches the other one according to the given predicate.
@@ -419,6 +423,15 @@ public final class Objects {
   }
 
   /**
+   * Gets whether the given string is a literal null ({@code "null"}).
+   *
+   * @see #objFromLiteralString(String)
+   */
+  public static boolean isLiteralNull(@Nullable String s) {
+    return STRING__NULL.equals(s);
+  }
+
+  /**
    * Gets whether the objects are the same instance, or both null.
    */
   public static boolean isSame(@Nullable Object o1, @Nullable Object o2) {
@@ -539,6 +552,65 @@ public final class Objects {
   }
 
   /**
+   * Gets the object corresponding to the given literal string.
+   * <p>
+   * NOTE: This method is complementary to {@link #objToLiteralString(Object)} only for primitive
+   * type representations.
+   * </p>
+   *
+   * @return Depending on {@code s} format:
+   *         <ul>
+   *         <li>{@code "null"}, or undefined ({@code null}), or invalid (any string not comprised
+   *         in known formats) — {@code null} (use {@link #isLiteralNull(String)} to tell literal
+   *         null apart)</li>
+   *         <li>boolean literal ({@code true}, {@code false}) — {@link Boolean}</li>
+   *         <li>numeric value — see {@link NumberUtils#createNumber(String)}</li>
+   *         <li>single-quoted character — {@link Character}</li>
+   *         <li>single- or double-quoted string — {@link String}, unescaped</li>
+   *         </ul>
+   */
+  public static @Nullable Object objFromLiteralString(@Nullable String s) {
+    // Undefined, or null literal?
+    if (s == null || (s = s.trim()).equals(STRING__NULL))
+      return null;
+
+    if (s.length() >= 2) {
+      char c = s.charAt(0);
+      switch (c) {
+        case '"':
+        case '\'':
+          // Quoted literal?
+          if (s.charAt(s.length() - 1) == c) {
+            // Character literal without escape?
+            if (c == SQUOTE && s.length() == 3)
+              return Character.valueOf(s.charAt(1));
+            // Character literal with escape?
+            else if (c == SQUOTE && s.length() == 4 && s.charAt(1) == '\\')
+              return Character.valueOf(s.charAt(2));
+            // String literal.
+            else
+              return LITERAL_STRING_UNESCAPE.translate(s.substring(1, s.length() - 1));
+          }
+      }
+    }
+
+    s = s.toLowerCase();
+    // Boolean literal?
+    if (s.equals("true"))
+      return Boolean.TRUE;
+    else if (s.equals("false"))
+      return Boolean.FALSE;
+
+    try {
+      // Numeric literal.
+      return NumberUtils.createNumber(s);
+    } catch (NumberFormatException ex) {
+      // Invalid literal.
+      return null;
+    }
+  }
+
+  /**
    * Maps the given object.
    *
    * @param <T>
@@ -607,11 +679,21 @@ public final class Objects {
    */
   public static String objToLiteralString(@Nullable Object obj) {
     if (obj == null)
-      return "null";
+      return STRING__NULL;
+    else if (obj instanceof Float)
+      /*
+       * NOTE: Literal float MUST be marked by suffix to override default double type.
+       */
+      return obj + "F";
+    else if (obj instanceof Long)
+      /*
+       * NOTE: Literal long MUST be marked by suffix to override default integer type.
+       */
+      return obj + "L";
     else if (obj instanceof Number || obj instanceof Boolean)
       return obj.toString();
     else if (obj instanceof Character)
-      return S + SQUOTE + obj + SQUOTE;
+      return S + SQUOTE + ((Character) obj == SQUOTE ? "\\" : EMPTY) + obj + SQUOTE;
     else
       return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(obj.toString()) + DQUOTE;
   }
@@ -1027,7 +1109,7 @@ public final class Objects {
   private static String fqn(@Nullable String typeName, boolean dotted) {
     return typeName != null
         ? dotted ? typeName.replace('$', DOT) : typeName
-        : "null";
+        : STRING__NULL;
   }
 
   private static String sqn(@Nullable Object obj, boolean dotted) {

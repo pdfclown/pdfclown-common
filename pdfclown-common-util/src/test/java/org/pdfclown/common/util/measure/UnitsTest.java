@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Argument;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
+import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.__test.BaseTest;
 import tech.units.indriya.format.SimpleQuantityFormat;
@@ -172,7 +173,7 @@ class UnitsTest extends BaseTest {
             // [3] unit[2]: 'ft (Foot)'; target[2]: 'km (Kilometre)'
             3.048E-4,
             // [4] unit[3]: 'ft (Foot)'; target[3]: 'ft² (Square foot)'
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "javax.measure.UnconvertibleException",
                 "javax.measure.IncommensurableException: ft is not compatible with ft²"),
             // [5] unit[4]: 'ac (Acre)'; target[4]: 'ha (Hectare)'
@@ -180,7 +181,7 @@ class UnitsTest extends BaseTest {
             // [6] unit[5]: '℃ (Celsius)'; target[5]: 'K (Kelvin)'
             1.0,
             // [7] unit[6]: 'h (Hour)'; target[6]: 'K (Kelvin)'
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "javax.measure.UnconvertibleException",
                 "javax.measure.IncommensurableException: h is not compatible with K")),
         // unit
@@ -563,7 +564,7 @@ class UnitsTest extends BaseTest {
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit)))
-                .composeExpectedSourceCodeGenerator(Objects::fqn));
+                .setExpectedSourceCodeGenerator(Objects::fqn));
   }
 
   @ParameterizedTest
@@ -574,7 +575,7 @@ class UnitsTest extends BaseTest {
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit)))
-                .composeExpectedSourceCodeGenerator(Objects::fqn));
+                .setExpectedSourceCodeGenerator(Objects::fqn));
   }
 
   private Matcher<Double> isCloseTo(double value) {

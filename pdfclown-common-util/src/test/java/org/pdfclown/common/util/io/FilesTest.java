@@ -258,9 +258,10 @@ class FilesTest extends BaseTest {
 
   static Stream<Arguments> pathOf_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix());
+    //noinspection DataFlowIssue
     return argumentsStream(
         cartesian()
-            .composeExpectedConverter($ -> fs.getPath((String) $)),
+            .<String>composeExpectedConverter(fs::getPath),
         // expected
         java.util.Arrays.asList(
             // uri[0]: "relative/uri.html"
@@ -290,9 +291,10 @@ class FilesTest extends BaseTest {
 
   static Stream<Arguments> pathOf_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows());
+    //noinspection DataFlowIssue
     return argumentsStream(
         cartesian()
-            .composeExpectedConverter($ -> fs.getPath((String) $)),
+            .<String>composeExpectedConverter(fs::getPath),
         // expected
         java.util.Arrays.asList(
             // uri[0]: "relative/uri.html"

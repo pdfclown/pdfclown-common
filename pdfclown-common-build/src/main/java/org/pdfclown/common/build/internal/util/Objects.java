@@ -188,10 +188,20 @@ public final class Objects {
   public static String objToLiteralString(@Nullable Object obj) {
     if (obj == null)
       return "null";
+    else if (obj instanceof Float)
+      /*
+       * NOTE: Literal float MUST be marked by suffix to override default double type.
+       */
+      return obj + "F";
+    else if (obj instanceof Long)
+      /*
+       * NOTE: Literal long MUST be marked by suffix to override default integer type.
+       */
+      return obj + "L";
     else if (obj instanceof Number || obj instanceof Boolean)
       return obj.toString();
     else if (obj instanceof Character)
-      return S + SQUOTE + obj + SQUOTE;
+      return S + SQUOTE + ((Character) obj == SQUOTE ? "\\" : EMPTY) + obj + SQUOTE;
     else
       return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(obj.toString()) + DQUOTE;
   }

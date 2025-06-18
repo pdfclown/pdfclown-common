@@ -36,6 +36,7 @@ import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.internal.util.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
+import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 
 /**
  * @author Stefano Chizzolini
@@ -51,32 +52,32 @@ class AssertionsTest extends BaseTest {
         java.util.Arrays.asList(
             // value[0]: null
             // [1] length[0]: 50
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "java.lang.NullPointerException", "`value`"),
             // [2] length[1]: 20
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "java.lang.NullPointerException", "`value`"),
             // [3] length[2]: 5
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "java.lang.NullPointerException", "`value`"),
             //
             // value[1]: ""
             // [4] length[0]: 50
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "java.lang.IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 0)"),
             // [5] length[1]: 20
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "java.lang.IllegalArgumentException",
                 "`length` (20): INVALID (should be less than 0)"),
             // [6] length[2]: 5
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "java.lang.IllegalArgumentException",
                 "`length` (5): INVALID (should be less than 0)"),
             //
             // value[2]: "The quick brow. . ."
             // [7] length[0]: 50
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "java.lang.IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 43)"),
             // [8] length[1]: 20
@@ -126,7 +127,7 @@ class AssertionsTest extends BaseTest {
         // expected
         java.util.Arrays.asList(
             // [1] value[0]: "The quick brow. . ."; length[0]: 50
-            new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected(
+            new Failure(
                 "java.lang.IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 43)"),
             // [2] value[1]: "The lazy yello. . ."; length[1]: 20
@@ -214,7 +215,7 @@ class AssertionsTest extends BaseTest {
         + "java.util.Arrays.asList(\n"
         + "  // value[0]: \"The quick brow. . .\"\n"
         + "  // [1] length[0]: 50\n"
-        + "  new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected("
+        + "  new org.pdfclown.common.build.test.assertion.Assertions.Failure("
         + "\"java.lang.IllegalArgumentException\", "
         + "\"`length` (50): INVALID (should be less than 43)\"),\n"
         + "  // [2] length[1]: 20\n"
@@ -256,7 +257,7 @@ class AssertionsTest extends BaseTest {
         + "// expected\n"
         + "java.util.Arrays.asList(\n"
         + "  // [1] value[0]: \"The quick brow. . .\"; length[0]: 50\n"
-        + "  new org.pdfclown.common.build.test.assertion.Assertions.ThrownExpected("
+        + "  new org.pdfclown.common.build.test.assertion.Assertions.Failure("
         + "\"java.lang.IllegalArgumentException\", "
         + "\"`length` (50): INVALID (should be less than 43)\"),\n"
         + "  // [2] value[1]: \"The lazy yello. . .\"; length[1]: 20\n"

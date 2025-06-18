@@ -35,17 +35,14 @@ import static org.pdfclown.common.build.internal.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
 
-import java.awt.GraphicsEnvironment;
 import java.awt.Shape;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.geom.PathIterator;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -59,6 +56,7 @@ import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.function.FailableSupplier;
@@ -69,6 +67,7 @@ import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.Objects;
+import org.pdfclown.common.build.internal.util.desktop.Desktops;
 import org.pdfclown.common.build.internal.util.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Mode;
@@ -224,7 +223,6 @@ public final class Assertions {
 
     @Nullable
     Converter converter;
-
     final Mode mode;
 
     ArgumentsStreamConfig(Mode mode) {
@@ -342,7 +340,7 @@ public final class Assertions {
      * @param thrown
      *          Thrown exception.
      */
-    public static <T> Expected<T> failure(ThrownExpected thrown) {
+    public static <T> Expected<T> failure(Failure thrown) {
       return new Expected<>(null, requireNonNull(thrown));
     }
 
@@ -361,9 +359,9 @@ public final class Assertions {
     @Nullable
     final T returned;
     @Nullable
-    final ThrownExpected thrown;
+    final Failure thrown;
 
-    private Expected(@Nullable T returned, @Nullable ThrownExpected thrown) {
+    private Expected(@Nullable T returned, @Nullable Failure thrown) {
       this.thrown = thrown;
       this.returned = returned;
     }
@@ -378,7 +376,7 @@ public final class Assertions {
     /**
      * Thrown exception.
      */
-    public @Nullable ThrownExpected getThrown() {
+    public @Nullable Failure getThrown() {
       return thrown;
     }
 
@@ -421,10 +419,31 @@ public final class Assertions {
    * @see Assertions#assertParameterized(Object, Expected, Supplier)
    */
   public static class ExpectedGeneration {
+    /**
+     * Gets the constructor source code to use in {@link #setExpectedSourceCodeGenerator(Function)}.
+     *
+     * @see #expectedSourceCodeForFactory( Class, String, Object...)
+     */
+    public static String expectedSourceCodeForConstructor(Class<?> type, @Nullable Object... args) {
+      return String.format("new %s(%s)", fqnd(type),
+          Arrays.stream(args).map(Objects::objToLiteralString).collect(Collectors.joining(",")));
+    }
+
+    /**
+     * Gets factory source code to use in {@link #setExpectedSourceCodeGenerator(Function)}.
+     *
+     * @see #expectedSourceCodeForConstructor( Class, Object...)
+     */
+    public static String expectedSourceCodeForFactory(Class<?> type, String methodName,
+        @Nullable Object... args) {
+      return String.format("%s.%s(%s)", fqnd(type), methodName,
+          Arrays.stream(args).map(Objects::objToLiteralString).collect(Collectors.joining(",")));
+    }
+
     String argCommentAbbreviationMarker = ELLIPSIS__CHICAGO;
     Function<@Nullable Object, String> argCommentFormatter = Objects::objToLiteralString;
     final List<Entry<String, @Nullable Object>> args;
-    Function<@Nullable Object, String> expectedSourceCodeGenerator = Objects::objToLiteralString;
+    Function<Object, String> expectedSourceCodeGenerator = Objects::objToLiteralString;
     int maxArgCommentLength = 20;
     PrintStream out = System.err;
     boolean outOverridable = true;
@@ -433,16 +452,6 @@ public final class Assertions {
      */
     public ExpectedGeneration(List<Entry<String, @Nullable Object>> args) {
       this.args = requireNonNull(args);
-    }
-
-    /**
-     * Prepends to {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator} the given
-     * function.
-     */
-    public ExpectedGeneration composeExpectedSourceCodeGenerator(
-        Function<@Nullable Object, String> before) {
-      expectedSourceCodeGenerator = expectedSourceCodeGenerator.compose(before);
-      return this;
     }
 
     /**
@@ -480,7 +489,7 @@ public final class Assertions {
      * DEFAULT: literal representation.
      * </p>
      */
-    public Function<@Nullable Object, String> getExpectedSourceCodeGenerator() {
+    public Function<Object, String> getExpectedSourceCodeGenerator() {
       return expectedSourceCodeGenerator;
     }
 
@@ -536,7 +545,7 @@ public final class Assertions {
      * Sets {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator}.
      */
     public ExpectedGeneration setExpectedSourceCodeGenerator(
-        Function<@Nullable Object, String> value) {
+        Function<Object, String> value) {
       expectedSourceCodeGenerator = requireNonNull(value);
       return this;
     }
@@ -572,16 +581,16 @@ public final class Assertions {
    * @author Stefano Chizzolini
    * @see #assertParameterized(Object, Expected, Supplier)
    */
-  public static class ThrownExpected {
-    private final String message;
+  public static class Failure {
+    private final @Nullable String message;
     private final String name;
 
-    public ThrownExpected(String name, String message) {
-      this.name = name;
+    public Failure(String name, @Nullable String message) {
+      this.name = requireNonNull(name, "`name`");
       this.message = message;
     }
 
-    public String getMessage() {
+    public @Nullable String getMessage() {
       return message;
     }
 
@@ -723,19 +732,21 @@ public final class Assertions {
      * The expected result is mapped to source code representation based on its value type:
      * </p>
      * <ul>
-     * <li>{@link Throwable} (failed result): to {@link ThrownExpected}</li>
-     * <li>any other type (regular result): via {@code expectedSourceCodeGenerator}, if present;
-     * otherwise, to literal</li>
+     * <li>{@code null} — to literal null ({@code "null"})</li>
+     * <li>failed result (thrown {@link Throwable}) — to {@link Failure}</li>
+     * <li>regular result — via
+     * {@code generation.}{@link ExpectedGeneration#getExpectedSourceCodeGenerator()
+     * expectedSourceCodeGenerator}</li>
      * </ul>
      *
      * @param expected
      *          Expected result.
      * @param generation
      *          Generation feed for the expected result of the parameterized test.
-     * @implNote {@link ThrownExpected} replaces the actual {@link Throwable} type in order to
-     *           simplify automated instantiation.
+     * @implNote {@link Failure} replaces the actual {@link Throwable} type in order to disambiguate
+     *           between thrown exceptions and exceptions returned as regular results.
      */
-    public <T> void generateExpected(@Nullable T expected, ExpectedGeneration generation) {
+    public <T> void generateExpected(@Nullable Object expected, ExpectedGeneration generation) {
       beginExpected(generation);
 
       generateExpectedComment(generation);
@@ -790,15 +801,18 @@ public final class Assertions {
 
     protected abstract void generateExpectedComment(ExpectedGeneration generation);
 
-    protected <T> void generateExpectedSourceCode(@Nullable T expected,
+    protected <T> void generateExpectedSourceCode(@Nullable Object expected,
         ExpectedGeneration generation) {
       String expectedSourceCode;
-      if (expected instanceof Throwable) {
-        var ex = (Throwable) expected;
-        expectedSourceCode = String.format("new %s(\"%s\", \"%s\")",
-            fqnd(ThrownExpected.class), fqn(ex), ex.getMessage());
+      if (expected == null) {
+        expectedSourceCode = "null";
+      } else if (expected instanceof Failure) {
+        var failure = (Failure) expected;
+        expectedSourceCode = String.format("new %s(\"%s\", %s)",
+            fqnd(Failure.class), failure.getName(), objToLiteralString(failure.getMessage()));
       } else {
-        expectedSourceCode = generation.expectedSourceCodeGenerator.apply(expected);
+        //noinspection unchecked
+        expectedSourceCode = generation.expectedSourceCodeGenerator.apply((T) expected);
       }
       out().append(INDENT).append(expectedSourceCode);
     }
@@ -810,14 +824,15 @@ public final class Assertions {
 
     private void begin(ExpectedGeneration generation) {
       // Output redirect to clipboard?
-      if (generation.outOverridable && Runtimes.isDebugging()
-          && !GraphicsEnvironment.isHeadless()) {
+      if (generation.outOverridable && Runtimes.isDebugging() && Desktops.isGUI()) {
         out = new XtPrintStream(new ByteArrayOutputStream(), true, UTF_8);
         outManaged = true;
       }
       // No output redirect.
       else {
         out = generation.out;
+
+        printInfo("Expected results source code generation underway...");
       }
     }
 
@@ -833,18 +848,18 @@ public final class Assertions {
     private void end() {
       assert out != null;
 
+      var message = new StringBuilder("Expected results source code GENERATED");
       if (outManaged) {
         // Transfer output to clipboard!
-        String data = ((XtPrintStream) out).toDataString();
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(new StringSelection(data), null);
+        Desktops.copyToClipboard(((XtPrintStream) out).toDataString());
 
-        System.err.printf(
-            "[%s] Expected results source code GENERATED, and COPIED to clipboard.\n",
-            sqnd(this));
+        message.append(", and COPIED to clipboard (IMPORTANT: in order to work, a clipboard "
+            + "manager must be active on the system)");
 
         out.close();
       }
+      printInfo(message);
+
       out = null;
     }
 
@@ -856,6 +871,10 @@ public final class Assertions {
       } else {
         out().println(",");
       }
+    }
+
+    private void printInfo(Object text) {
+      System.err.printf("\n[%s] %s\n\n", sqnd(this), text);
     }
   }
 
@@ -928,7 +947,7 @@ public final class Assertions {
    * <p>
    * The {@code expected} parameter shall contain both regular results and failures (i.e., thrown
    * exception) of the method tested with the given {@code args}; failures will be represented as
-   * {@link ThrownExpected} for automatic handling.
+   * {@link Failure} for automatic handling.
    * </p>
    * <p>
    * The corresponding parameterized test shall follow this pattern:
@@ -1128,8 +1147,8 @@ public final class Assertions {
     if (expected != null) {
       var targetList = new ArrayList<>(expected.size());
       for (var e : expected) {
-        targetList.add(e instanceof ThrownExpected
-            ? Expected.failure((ThrownExpected) e)
+        targetList.add(e instanceof Failure
+            ? Expected.failure((Failure) e)
             : Expected.success(config.converter != null
                 ? config.converter.apply(paramIndex, e)
                 : e));
@@ -1140,8 +1159,7 @@ public final class Assertions {
     List<List<?>> argsList;
     if (config.converter != null) {
       argsList = new ArrayList<>(args.length);
-      for (int i = 0; i < args.length; i++) {
-        var sourceList = args[i];
+      for (List<?> sourceList : args) {
         var argList = new ArrayList<>(sourceList.size());
         paramIndex++;
         for (var e : sourceList) {
@@ -1326,17 +1344,21 @@ public final class Assertions {
       assert expected != null;
 
       // Failed result?
-      if (actual instanceof Throwable) {
-        var thrownActual = (Throwable) actual;
+      if (actual instanceof Failure) {
         if (!expected.isFailure())
-          fail(String.format("Failure UNEXPECTED (expected: %s (%s))", objToLiteralString(expected),
-              sqnd(expected.getReturned())), thrownActual);
+          fail(String.format("Failure UNEXPECTED (expected: %s (%s); actual: %s)",
+              objToLiteralString(expected), sqnd(expected.getReturned()), actual));
 
+        var thrownActual = (Failure) actual;
         var thrownExpected = expected.getThrown();
-        assertThat("Throwable.class.name", thrownActual.getClass().getName(),
-            is(thrownExpected.getName()));
-        assertThat("Throwable.message", thrownActual.getMessage(),
-            is(thrownExpected.getMessage()));
+        assert thrownExpected != null;
+        assertThat("Throwable.class.name", thrownActual.getName(), is(thrownExpected.getName()));
+        /*
+         * NOTE: DataFlowIssue is false positive: `actual` arg of `assertThat(..)` and `value` arg
+         * of `is(..)` can be null, no NPE is possible.
+         */
+        //noinspection DataFlowIssue -- see NOTE above
+        assertThat("Throwable.message", thrownActual.getMessage(), is(thrownExpected.getMessage()));
       }
       // Regular result.
       else {
@@ -1378,7 +1400,8 @@ public final class Assertions {
    *          result.
    * @see #assertParameterized(Object, Expected, Supplier)
    */
-  public static <T> void assertParameterizedOf(FailableSupplier<Object, Exception> actualExpression,
+  public static <T> void assertParameterizedOf(
+      FailableSupplier<@Nullable Object, Exception> actualExpression,
       @Nullable Expected<T> expected,
       @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
     assertParameterized(evalParameterized(actualExpression), expected, generationSupplier);
@@ -1455,22 +1478,29 @@ public final class Assertions {
    * Evaluates the given expression.
    * <p>
    * Intended for use within {@linkplain ParameterizedTest parameterized tests}; its result is
-   * expected to be checked via {@link #assertParameterized(Object, Expected, Supplier)}.
+   * expected to be checked via {@link #assertParameterized(Object, Expected, Supplier)
+   * assertParameterized(..)}.
    * </p>
    *
-   * @return The result of {@code expression}, or its thrown exception (unchecked exceptions
-   *         ({@link UncheckedIOException}, {@link UndeclaredThrowableException}) are unwrapped).
+   * @return
+   *         <ul>
+   *         <li>{@link Failure} — if {@code expression} failed throwing an exception (unchecked
+   *         exceptions ({@link UncheckedIOException}, {@link UndeclaredThrowableException}) are
+   *         unwrapped)</li>
+   *         <li>regular result — if {@code expression} succeeded</li>
+   *         </ul>
    */
-  public static Object evalParameterized(FailableSupplier<Object, Exception> expression) {
+  public static @Nullable Object evalParameterized(
+      FailableSupplier<@Nullable Object, Exception> expression) {
     try {
       return expression.get();
     } catch (Throwable ex) {
-      if (ex instanceof UncheckedIOException)
-        return ex.getCause();
-      else if (ex instanceof UndeclaredThrowableException)
-        return ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
-      else
-        return ex;
+      if (ex instanceof UncheckedIOException) {
+        ex = ex.getCause();
+      } else if (ex instanceof UndeclaredThrowableException) {
+        ex = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
+      }
+      return new Failure(fqn(ex), ex.getMessage());
     }
   }
 

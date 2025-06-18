@@ -13,10 +13,11 @@
 package org.pdfclown.common.util;
 
 import static java.util.Arrays.asList;
+import static java.util.List.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Named.named;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.simple;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
@@ -40,43 +41,87 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini
  */
 class ObjectsTest extends BaseTest {
+  /**
+   * @implNote Generated as {@code expected} source code within {@link #objToLiteralString()}.
+   */
+  private static final List<String> LITERAL_STRINGS = asList(
+      // [1] obj[0]: null
+      "null",
+      // [2] obj[1]: 1234
+      "1234",
+      // [3] obj[2]: 1.987
+      "1.987",
+      // [4] obj[3]: 1.5E-4
+      "1.5E-4",
+      // [5] obj[4]: true
+      "true",
+      // [6] obj[5]: '''
+      "'\\''",
+      // [7] obj[6]: '"'
+      "'\"'",
+      // [8] obj[7]: ""
+      "\"\"",
+      // [9] obj[8]: "Text with:\n- . . ."
+      "\"Text with:\\n- \\\"quoted content\\\"\\n- newlines\"",
+      // [10] obj[9]: "测试文本"
+      "\"测试文本\"");
+
+  static Stream<Arguments> objFromLiteralString() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] s[0]: "null"
+            null,
+            // [2] s[1]: "1234"
+            1234,
+            // [3] s[2]: "1.987"
+            1.987F,
+            // [4] s[3]: "1.5E-4"
+            1.5E-4F,
+            // [5] s[4]: "true"
+            true,
+            // [6] s[5]: "'\\''"
+            '\'',
+            // [7] s[6]: "'\"'"
+            '"',
+            // [8] s[7]: "\"\""
+            "",
+            // [9] s[8]: "\"Text with:\\. . ."
+            "Text with:\n- \"quoted content\"\n- newlines",
+            // [10] s[9]: "\"测试文本\""
+            "测试文本"),
+        // s
+        LITERAL_STRINGS);
+  }
+
   static Stream<Arguments> objToLiteralString() {
     return argumentsStream(
         simple(),
         // expected
-        java.util.Arrays.asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 1234
-            "1234",
-            // [3] obj[2]: 1.987
-            "1.987",
-            // [4] obj[3]: 1.5E-4
-            "1.5E-4",
-            // [5] obj[4]: true
-            "true",
-            // [6] obj[5]: '''
-            "'''",
-            // [7] obj[6]: '"'
-            "'\"'",
-            // [8] obj[7]: ""
-            "\"\"",
-            // [9] obj[8]: "Text with:\n- . . ."
-            "\"Text with:\\n- \\\"quoted content\\\"\\n- newlines\"",
-            // [10] obj[9]: "测试文本"
-            "\"测试文本\""),
+        LITERAL_STRINGS,
         // obj
         asList(
-            named("Null", null),
-            named("Integer", 1_234),
-            named("Double", 1.987),
-            named("Double with exponential notation", 1.5e-4),
-            named("Boolean", true),
-            named("Single-quote character", '\''),
-            named("Double-quote character", '"'),
-            named("Empty string", EMPTY),
-            named("String with control characters", "Text with:\n- \"quoted content\"\n- newlines"),
-            named("String with Unicode characters", "测试文本")));
+            null,
+            1_234,
+            1.987,
+            1.5e-4,
+            true,
+            '\'',
+            '"',
+            EMPTY,
+            "Text with:\n- \"quoted content\"\n- newlines",
+            "测试文本"));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void objFromLiteralString(Expected<@Nullable Object> expected, @Nullable String s) {
+    assertParameterizedOf(
+        () -> Objects.objFromLiteralString(s),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("s", s))));
   }
 
   @Test
@@ -84,7 +129,7 @@ class ObjectsTest extends BaseTest {
   void objOrGet() {
     List<Object> defaultResult = Collections.emptyList();
 
-    List<Object> obj = List.of("test");
+    List<Object> obj = of("test");
     Supplier<List<Object>> defaultSupplier = () -> defaultResult;
     assertThat(Objects.objElseGet(obj, defaultSupplier), is(obj));
 
@@ -98,7 +143,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.objToLiteralString(obj),
         expected,
-        () -> new ExpectedGeneration(List.of(
+        () -> new ExpectedGeneration(of(
             entry("obj", obj))));
   }
 
@@ -107,7 +152,7 @@ class ObjectsTest extends BaseTest {
   void objToOrElse() {
     int defaultResult = 0;
 
-    List<Object> obj = List.of("test");
+    List<Object> obj = of("test");
     assertThat(Objects.objToElse(obj, List::size, defaultResult), is(1));
 
     obj = null;
@@ -120,7 +165,7 @@ class ObjectsTest extends BaseTest {
   void objToOrGet() {
     int defaultResult = 0;
 
-    List<Object> obj = List.of("test");
+    List<Object> obj = of("test");
     Supplier<Integer> defaultSupplier = () -> defaultResult;
     assertThat(Objects.objToElseGet(obj, List::size, defaultSupplier), is(1));
 
