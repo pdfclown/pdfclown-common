@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.test.system;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.AppenderRef;
@@ -28,9 +29,36 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  */
 public final class LogManager {
   /**
+   * Logging profile.
+   */
+  public enum Profile {
+    /**
+     * CLI application.
+     */
+    CLI
+  }
+
+  /**
    * Appender for assertion-related logs.
    */
   public static final String APPENDER_NAME__ASSERT = "Assert";
+
+  /**
+   * Applies the given logging profile.
+   */
+  public static void applyProfile(Profile profile) {
+    switch (profile) {
+      case CLI: {
+        // Set console log output threshold at INFO level!
+        var logContext = getContext();
+        logContext.getConfiguration().getRootLogger().setLevel(Level.INFO);
+        logContext.updateLoggers();
+      }
+        break;
+      default:
+        throw new AssertionError("Unexpected profile: " + profile);
+    }
+  }
 
   /**
    * Binds the loggers associated to the given package to an existing log appender.
@@ -41,7 +69,7 @@ public final class LogManager {
    *          Name of the log appender to bind.
    */
   public static void bindLogger(Class<?> packageType, String appenderName) {
-    var logContext = (LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
+    var logContext = getContext();
     Configuration logConfig = logContext.getConfiguration();
     Appender appender = logConfig.getAppender(appenderName);
     var loggerConfig = LoggerConfig.newBuilder()
@@ -54,6 +82,13 @@ public final class LogManager {
     loggerConfig.addAppender(appender, null, null);
     logConfig.addLogger(loggerConfig.getName(), loggerConfig);
     logContext.updateLoggers();
+  }
+
+  /**
+   * Gets the logger context.
+   */
+  public static LoggerContext getContext() {
+    return (LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
   }
 
   private LogManager() {
