@@ -12,12 +12,12 @@
  */
 package org.pdfclown.common.build.test.system;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.slf4j.event.Level;
 
 /**
  * Log manager exposing common logging utilities.
@@ -48,12 +48,8 @@ public final class LogManager {
    */
   public static void applyProfile(Profile profile) {
     switch (profile) {
-      case CLI: {
-        // Set console log output threshold at INFO level!
-        var logContext = getContext();
-        logContext.getConfiguration().getRootLogger().setLevel(Level.INFO);
-        logContext.updateLoggers();
-      }
+      case CLI:
+        setLevel(Level.INFO);
         break;
       default:
         throw new AssertionError("Unexpected profile: " + profile);
@@ -85,9 +81,19 @@ public final class LogManager {
   }
 
   /**
+   * Sets the root logging level.
+   */
+  public static void setLevel(Level value) {
+    var implLevel = org.apache.logging.log4j.Level.valueOf(value.name());
+    var logContext = getContext();
+    logContext.getConfiguration().getRootLogger().setLevel(implLevel);
+    logContext.updateLoggers();
+  }
+
+  /**
    * Gets the logger context.
    */
-  public static LoggerContext getContext() {
+  private static LoggerContext getContext() {
     return (LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
   }
 
