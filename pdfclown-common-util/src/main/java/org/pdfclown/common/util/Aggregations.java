@@ -581,9 +581,16 @@ public final class Aggregations {
    */
   @SafeVarargs
   public static <E> XtList<E> list(E... ee) {
-    var ret = new XtArrayList<E>(ee.length);
+    var ret = new XtArrayList<E>();
     Collections.addAll(ret, ee);
     return ret;
+  }
+
+  /**
+   * Creates a new mutable list of the given type.
+   */
+  public static <E> XtList<E> listOf(Class<E> type) {
+    return list();
   }
 
   /**
@@ -594,22 +601,22 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new mutable map.
-   */
-  public static <K, V> XtMap<K, V> map(Class<K> keyType, Class<V> valueType) {
-    return new XtHashMap<>();
-  }
-
-  /**
    * Creates a new mutable map populated with the given entries.
    */
   @SafeVarargs
   public static <K, V> XtMap<K, V> map(Map.Entry<K, V>... ee) {
-    var ret = new XtHashMap<K, V>(ee.length);
+    var ret = new XtHashMap<K, V>();
     for (var e : ee) {
       ret.put(e.getKey(), e.getValue());
     }
     return ret;
+  }
+
+  /**
+   * Creates a new mutable map of the given types.
+   */
+  public static <K, V> XtMap<K, V> mapOf(Class<K> keyType, Class<V> valueType) {
+    return map();
   }
 
   /**
