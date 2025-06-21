@@ -29,6 +29,10 @@ This project adheres to the following specifications:
 
 To enforce their adoption, please set up the [**commit validation hooks**](building.md#setup).
 
+## Project structure
+
+[see [here](structure.md)]
+
 ## Coding Conventions
 
 [see [here](coding.md)]
