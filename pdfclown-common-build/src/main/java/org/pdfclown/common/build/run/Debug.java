@@ -30,8 +30,8 @@ import java.util.Scanner;
 import jdk.jfr.Configuration;
 import jdk.jfr.Recording;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.test.system.LogManager;
-import org.pdfclown.common.build.test.system.LogManager.Profile;
+import org.pdfclown.common.build.system.LogManager;
+import org.pdfclown.common.build.system.LogManager.Profile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -161,7 +161,7 @@ public abstract class Debug {
    * @implNote This method is decoupled from {@link #init(Class, String, CliArgs) init(..)} to allow
    *           {@code cli} customization.
    */
-  protected static CommandLine parseCli(CommandLine cli, String... args) {
+  protected static CommandLine parseArgs(CommandLine cli, String... args) {
     var cliArgs = (CliArgs) cli.getCommand();
     try {
       cli.parseArgs(args);

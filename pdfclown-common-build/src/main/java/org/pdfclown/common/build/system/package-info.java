@@ -17,6 +17,6 @@
  * @author Stefano Chizzolini
  */
 @NullMarked
-package org.pdfclown.common.build.test.system;
+package org.pdfclown.common.build.system;
 
 import org.jspecify.annotations.NullMarked;
