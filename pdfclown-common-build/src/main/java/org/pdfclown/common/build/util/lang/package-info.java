@@ -12,13 +12,11 @@
  */
 
 /**
- * Test assertions.
+ * Basic programming utilities.
  *
  * @author Stefano Chizzolini
- * @see org.pdfclown.common.build.test.assertion.Asserter
- * @see org.pdfclown.common.build.test.assertion.Assertions
  */
 @NullMarked
-package org.pdfclown.common.build.test.assertion;
+package org.pdfclown.common.build.util.lang;
 
 import org.jspecify.annotations.NullMarked;

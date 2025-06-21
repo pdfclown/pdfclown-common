@@ -75,6 +75,17 @@ import org.pdfclown.common.build.util.lang.Runtimes;
 
 /**
  * Assertion utilities.
+ * <p>
+ * In particular, <b>parameterized tests</b> are provided a
+ * {@linkplain #assertParameterized(Object, Expected, Supplier) convenient framework} to streamline
+ * definition and maintenance of test cases:
+ * </p>
+ * <ul>
+ * <li><b>regular results and failures</b> are unified in a single automated assertion path</li>
+ * <li><b>input arguments</b> can be combined via Cartesian product for massive testing</li>
+ * <li><b>expected results</b> are automatically generated on design time, relieving users from
+ * wasteful maintenance efforts</li>
+ * </ul>
  *
  * @author Stefano Chizzolini
  */

@@ -10,8 +10,15 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
+
 /**
- * pdfClown's common test harness.
+ * Test harness.
+ * <p>
+ * Defines a comprehensive testing model on top of popular tools
+ * (<a href="https://junit.org/">JUnit</a>, <a href="https://hamcrest.org/">Hamcrest</a>,
+ * <a href="https://mockito.org/">Mockito</a>), rooted in
+ * {@link org.pdfclown.common.build.test.TestUnit TestUnit}.
+ * </p>
  *
  * @author Stefano Chizzolini
  */
