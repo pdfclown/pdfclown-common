@@ -29,7 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.lang.ReadOnly;
+import org.pdfclown.common.util.annot.ReadOnly;
 import org.pdfclown.common.util.spi.ServiceProvider;
 import org.pdfclown.common.util.spi.XnumProvider;
 

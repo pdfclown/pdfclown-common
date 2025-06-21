@@ -12,11 +12,9 @@
  */
 
 /**
- * Basic programming utilities.
- *
  * @author Stefano Chizzolini
  */
 @NullMarked
-package org.pdfclown.common.build.util.lang;
+package org.pdfclown.common.build.internal.util.reflect;
 
 import org.jspecify.annotations.NullMarked;

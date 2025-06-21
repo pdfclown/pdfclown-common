@@ -10,13 +10,13 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util.lang;
+package org.pdfclown.common.util;
 
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Mutable object wrapper.
+ * Mutable wrapper.
  * <p>
  * Useful to mimic by-reference argument semantics.
  * </p>

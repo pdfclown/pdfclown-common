@@ -17,7 +17,7 @@ import static org.pdfclown.common.util.Objects.objCast;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.lang.Immutable;
+import org.pdfclown.common.util.annot.Immutable;
 
 /**
  * <a href="https://en.wikipedia.org/wiki/Fluent_interface">Fluent</a> object.

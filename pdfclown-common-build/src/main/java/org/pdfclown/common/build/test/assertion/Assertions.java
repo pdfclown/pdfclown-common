@@ -17,7 +17,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.SPACE;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,6 +33,8 @@ import static org.pdfclown.common.build.internal.util.Objects.requireState;
 import static org.pdfclown.common.build.internal.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util.Strings.S;
+import static org.pdfclown.common.build.internal.util.Strings.SPACE;
 
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
@@ -67,11 +68,11 @@ import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.Objects;
-import org.pdfclown.common.build.internal.util.desktop.Desktops;
 import org.pdfclown.common.build.internal.util.io.XtPrintStream;
+import org.pdfclown.common.build.internal.util.system.Desktops;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Mode;
-import org.pdfclown.common.build.util.lang.Runtimes;
+import org.pdfclown.common.build.util.system.Runtimes;
 
 /**
  * Assertion utilities.
@@ -721,7 +722,7 @@ public final class Assertions {
    * @author Stefano Chizzolini
    */
   private abstract static class ExpectedGenerator {
-    protected static final String INDENT = SPACE + SPACE;
+    protected static final String INDENT = S + SPACE + SPACE;
 
     /**
      * Arguments tuples count.

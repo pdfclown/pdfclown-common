@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.lang.InitNonNull;
+import org.pdfclown.common.util.annot.InitNonNull;
 
 /**
  * Indentation-capable {@link java.io.PrintStream PrintStream}.

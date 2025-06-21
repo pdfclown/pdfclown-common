@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.lang.Unmodifiable;
+import org.pdfclown.common.util.annot.Unmodifiable;
 
 /**
  * Aggregation (ie, collection or map) utilities.

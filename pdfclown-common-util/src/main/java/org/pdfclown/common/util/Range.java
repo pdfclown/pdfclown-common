@@ -17,7 +17,7 @@ import static org.pdfclown.common.util.Objects.isSameType;
 import java.util.Comparator;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.lang.Immutable;
+import org.pdfclown.common.util.annot.Immutable;
 
 /**
  * Interval of comparable objects.

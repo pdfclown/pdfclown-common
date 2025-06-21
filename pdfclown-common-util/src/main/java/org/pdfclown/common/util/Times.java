@@ -15,7 +15,7 @@ package org.pdfclown.common.util;
 import java.time.OffsetDateTime;
 import java.util.GregorianCalendar;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.lang.PolyNull;
+import org.pdfclown.common.util.annot.PolyNull;
 
 /**
  * Time utilities.

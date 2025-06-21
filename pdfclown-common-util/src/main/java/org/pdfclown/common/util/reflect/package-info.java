@@ -10,17 +10,13 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
+
 /**
- * Common language annotations.
- * <p>
- * This minimalist set supplements <a href="https://github.com/jspecify/jspecify">JSpecify</a> for
- * documentation purposes (see also <a href="https://github.com/google/guava/issues/2960">this
- * discussion</a> on the notorious mess around defunct JSR 305).
- * </p>
+ * Reflection utilities.
  *
  * @author Stefano Chizzolini
  */
 @NullMarked
-package org.pdfclown.common.util.lang;
+package org.pdfclown.common.util.reflect;
 
 import org.jspecify.annotations.NullMarked;

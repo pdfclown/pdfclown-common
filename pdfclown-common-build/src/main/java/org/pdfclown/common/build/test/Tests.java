@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.pdfclown.common.build.internal.util.lang.Reflects;
+import org.pdfclown.common.build.internal.util.reflect.Reflects;
 
 /**
  * Test utilities.

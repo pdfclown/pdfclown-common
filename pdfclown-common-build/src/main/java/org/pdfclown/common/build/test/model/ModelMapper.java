@@ -35,7 +35,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util.Iterators;
 import org.pdfclown.common.build.internal.util.RelativeMap;
-import org.pdfclown.common.build.internal.util.lang.Introspections;
+import org.pdfclown.common.build.internal.util.reflect.Introspections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

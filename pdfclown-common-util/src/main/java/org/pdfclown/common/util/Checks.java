@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.lang.PolyNull;
+import org.pdfclown.common.util.annot.PolyNull;
 
 /**
  * Validation utilities.

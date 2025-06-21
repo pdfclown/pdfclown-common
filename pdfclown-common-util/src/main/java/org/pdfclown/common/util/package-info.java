@@ -11,6 +11,8 @@
   header, listing the main changes you applied to the original source.
  */
 /**
+ * Common basic functionalities.
+ *
  * @author Stefano Chizzolini
  */
 @NullMarked

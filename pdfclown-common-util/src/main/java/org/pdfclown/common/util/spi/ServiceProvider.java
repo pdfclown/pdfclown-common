@@ -18,7 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Stream;
-import org.pdfclown.common.util.lang.Immutable;
+import org.pdfclown.common.util.annot.Immutable;
 
 /**
  * Pluggable extension based on the {@link ServiceLoader} mechanism.

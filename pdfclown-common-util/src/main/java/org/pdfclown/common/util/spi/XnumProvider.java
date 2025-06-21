@@ -13,7 +13,7 @@
 package org.pdfclown.common.util.spi;
 
 import org.pdfclown.common.util.Xnum;
-import org.pdfclown.common.util.lang.Immutable;
+import org.pdfclown.common.util.annot.Immutable;
 
 /**
  * Augmented enumeration provider.
