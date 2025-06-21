@@ -31,7 +31,7 @@ import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Network-related utilities.
+ * URI-related utilities.
  *
  * @author Stefano Chizzolini
  */

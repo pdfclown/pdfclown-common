@@ -26,14 +26,18 @@ import org.jspecify.annotations.Nullable;
  * Indicates that the subclass implementations of the method where the annotated type is used are
  * responsible to decide over its nullness (ie, whether to specialize (in case of output) or
  * generalize (in case of input)).
+ * <p>
+ * In detail:
+ * </p>
  * <ul>
- * <li>method inputs (contravariant): the root class defines method parameters as {@link NonNull};
- * its subclasses are responsible to override the method and either
+ * <li><b>method inputs</b> (contravariant): the root class defines method parameters as
+ * {@link NonNull}; its subclasses are responsible to override the method and either
  * {@linkplain Objects#requireNonNull(Object) check} the required arguments or mark those parameters
  * as {@link Nullable}. Corresponding constructor parameters behave accordingly.</li>
- * <li>method outputs (covariant): the root class defines a method return type as {@link Nullable};
- * its subclasses are responsible, whenever appropriate, to override the method, mark its output as
- * {@link NonNull} and {@linkplain Objects#requireNonNull(Object) check} its value.</li>
+ * <li><b>method outputs</b> (covariant): the root class defines a method's return type as
+ * {@link Nullable}; its subclasses are responsible, whenever appropriate, to override the method,
+ * mark its output as {@link NonNull} and {@linkplain Objects#requireNonNull(Object) check} its
+ * value.</li>
  * </ul>
  * <p>
  * For example:
