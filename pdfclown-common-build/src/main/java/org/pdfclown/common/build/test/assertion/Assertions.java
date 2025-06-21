@@ -169,9 +169,9 @@ public final class Assertions {
     /**
      * Argument converter.
      * <p>
-     * NOTE: Contrary to {@link org.junit.jupiter.params.converter.ArgumentConverter
-     * ArgumentConverter}, this converter applies at an early stage of test invocation, so no
-     * parameter context is available, just its index.
+     * NOTE: Contrary to the {@linkplain org.junit.jupiter.params.converter.ArgumentConverter JUnit
+     * converter}, this one applies at an early stage of test invocation, so no parameter context is
+     * available, just its index.
      * </p>
      *
      * @author Stefano Chizzolini
@@ -224,10 +224,16 @@ public final class Assertions {
       CARTESIAN
     }
 
+    /**
+     * New configuration for Cartesian-product arguments stream.
+     */
     public static ArgumentsStreamConfig cartesian() {
       return new ArgumentsStreamConfig(Mode.CARTESIAN);
     }
 
+    /**
+     * New configuration for plain arguments stream.
+     */
     public static ArgumentsStreamConfig simple() {
       return new ArgumentsStreamConfig(Mode.SIMPLE);
     }
@@ -283,6 +289,9 @@ public final class Assertions {
 
     /**
      * Prepends to {@link #getConverter() converter} the given function.
+     *
+     * @see #composeArgConverter(int, Function)
+     * @see #composeExpectedConverter(Function)
      */
     public ArgumentsStreamConfig composeConverter(Converter before) {
       converter = converter != null ? converter.compose(before) : before;
@@ -331,6 +340,8 @@ public final class Assertions {
 
     /**
      * Sets {@link #getConverter() converter}.
+     *
+     * @see #composeConverter(Converter)
      */
     public ArgumentsStreamConfig setConverter(@Nullable Converter value) {
       converter = value;
