@@ -29,7 +29,7 @@ This project adheres to the following specifications:
 
 To enforce their adoption, please set up the [**commit validation hooks**](building.md#setup).
 
-## Project structure
+## Project Structure
 
 [see [here](structure.md)]
 
