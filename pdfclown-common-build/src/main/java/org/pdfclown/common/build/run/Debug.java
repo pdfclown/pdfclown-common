@@ -30,7 +30,6 @@ import java.util.Scanner;
 import jdk.jfr.Configuration;
 import jdk.jfr.Recording;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util.Objects;
 import org.pdfclown.common.build.test.system.LogManager;
 import org.pdfclown.common.build.test.system.LogManager.Profile;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public abstract class Debug {
    *
    * @author Stefano Chizzolini
    */
-  protected static class CliArgs {
+  public abstract static class CliArgs {
     /**
      * Whether verbose logging is enabled.
      */
@@ -121,8 +120,8 @@ public abstract class Debug {
     }
 
     if (cli != null) {
-      cli.usage(System.out);
-      System.out.println();
+      cli.usage(out);
+      out.println();
     }
 
     System.exit(failed ? 1 : 0);
@@ -175,15 +174,15 @@ public abstract class Debug {
       exit("Arguments validation FAILED", ex, cli);
     }
 
-    System.out.println("\nARGUMENTS:");
+    out.println("\nARGUMENTS:");
     for (Field field : cliArgs.getClass().getFields()) {
       try {
-        System.out.printf("  %s: %s\n", field.getName(), field.get(cliArgs));
+        out.printf("  %s: %s\n", field.getName(), field.get(cliArgs));
       } catch (IllegalAccessException ex) {
         throw new RuntimeException(ex) /* Should NEVER happen */;
       }
     }
-    System.out.println();
+    out.println();
 
     if (cliArgs.debug) {
       LogManager.setLevel(Level.DEBUG);
@@ -205,7 +204,7 @@ public abstract class Debug {
    * @return Entered value.
    */
   protected static String promptArg(String name, String description, @Nullable String hint) {
-    System.out.printf("-> %s (ENTER %s)%s: ", name, description,
+    out.printf("-> %s (ENTER %s)%s: ", name, description,
         (hint = stripToNull(hint)) != null ? SPACE + hint : EMPTY);
     return new Scanner(System.in).nextLine();
   }
