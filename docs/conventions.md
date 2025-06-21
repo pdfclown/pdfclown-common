@@ -18,7 +18,9 @@ Throughtout the documentation, source code comments included, the keywords “MU
 
 Throughtout the documentation, source code comments included, formal grammar definitions are expressed with the [Extended Backus-Naur Form (EBNF) notation described in the XML specification](https://www.w3.org/TR/REC-xml/#sec-notation).
 
-## Specifications
+##  Public Conventions
+
+### Normative Conventions
 
 This project adheres to the following specifications:
 
@@ -28,6 +30,12 @@ This project adheres to the following specifications:
 - [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html)
 
 To enforce their adoption, please set up the [**commit validation hooks**](building.md#setup).
+
+### Non-normative Conventions
+
+This project adheres to the following best practices:
+
+- [Open Source Guides](https://opensource.guide/)
 
 ## Project Structure
 
