@@ -108,8 +108,8 @@ public final class Exceptions {
         : new UncheckedException(cause);
   }
 
-  public static UnexpectedCaseException unexpected(@Nullable Object value) {
-    return new UnexpectedCaseException(value);
+  public static UnexpectedCaseError unexpected(@Nullable Object value) {
+    return new UnexpectedCaseError(value);
   }
 
   /**
@@ -121,13 +121,13 @@ public final class Exceptions {
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link Throwable#getCause() cause}.
    */
-  public static UnexpectedCaseException unexpected(@Nullable Object value, @Nullable String format,
+  public static UnexpectedCaseError unexpected(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
     var message = ParamMessage.of(format, args);
-    return new UnexpectedCaseException(value, message.getDescription(), message.getCause());
+    return new UnexpectedCaseError(value, message.getDescription(), message.getCause());
   }
 
-  public static UnexpectedCaseException unexpected(@Nullable String name, @Nullable Object value) {
+  public static UnexpectedCaseError unexpected(@Nullable String name, @Nullable Object value) {
     return unexpected(value, name);
   }
 

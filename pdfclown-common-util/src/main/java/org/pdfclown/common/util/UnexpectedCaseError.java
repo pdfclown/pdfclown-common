@@ -18,22 +18,20 @@ import static org.pdfclown.common.util.Strings.strNorm;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Thrown to indicate that a specific {@linkplain #getValue() case} (such as an enum constant) isn't
- * managed.
+ * Thrown to indicate that a {@linkplain #getValue() case} (such as an enum constant) violates logic
+ * assumptions and, therefore, cannot be managed.
  * <p>
  * Typically used in the default case of switches to ensure that unmanaged cases don't fall through.
  * </p>
  *
  * @author Stefano Chizzolini
  */
-public class UnexpectedCaseException extends AssertionError {
+public class UnexpectedCaseError extends AssertionError {
   private static final long serialVersionUID = 1L;
 
   private static String buildMessage(@Nullable Object value, @Nullable String message) {
-    message = strNorm(message);
-
-    var b = new StringBuilder("Unknown value: ").append(objToLiteralString(value));
-    if (!message.isEmpty()) {
+    var b = new StringBuilder("Value (").append(objToLiteralString(value)).append(") UNEXPECTED");
+    if (!(message = strNorm(message)).isEmpty()) {
       b.append(" (").append(message).append(")");
     }
     return b.toString();
@@ -41,23 +39,26 @@ public class UnexpectedCaseException extends AssertionError {
 
   private final @Nullable Object value;
 
-  public UnexpectedCaseException(@Nullable Object value) {
+  public UnexpectedCaseError(@Nullable Object value) {
     this(value, null);
   }
 
-  public UnexpectedCaseException(@Nullable Object value, @Nullable String message) {
+  public UnexpectedCaseError(@Nullable Object value, @Nullable String message) {
     this(value, message, null);
   }
 
   /**
    */
-  public UnexpectedCaseException(@Nullable Object value, @Nullable String message,
+  public UnexpectedCaseError(@Nullable Object value, @Nullable String message,
       @Nullable Throwable cause) {
     super(buildMessage(value, message), cause);
 
     this.value = value;
   }
 
+  /**
+   * Unexpected value.
+   */
   public @Nullable Object getValue() {
     return value;
   }
