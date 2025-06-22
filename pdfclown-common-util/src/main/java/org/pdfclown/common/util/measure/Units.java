@@ -38,6 +38,7 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Time;
 import org.jspecify.annotations.Nullable;
+import tech.units.indriya.AbstractSystemOfUnits;
 import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.format.SimpleUnitFormat;
 import tech.units.indriya.function.AbstractConverter;
@@ -51,7 +52,7 @@ import tech.units.indriya.unit.TransformedUnit;
  *
  * @author Stefano Chizzolini
  */
-public class Units extends tech.units.indriya.unit.Units {
+public class Units extends AbstractSystemOfUnits {
   private static final Units INSTANCE = new Units();
 
   //
@@ -486,16 +487,45 @@ public class Units extends tech.units.indriya.unit.Units {
   }
 
   /**
-   * Adds an existing unit into the given collection.
+   * Adds the
+   * <a href="https://en.wikipedia.org/wiki/Unit_of_measurement#Base_and_derived_units">base
+   * unit</a> of the given quantity type.
    *
-   * @param base
-   *          Unit base, i.e. inner representation of the unit (DO NOT confuse with the concept of
-   *          base unit!).
-   * @return Wrapped {@code unit}.
+   * @param unitSystem
+   *          Target unit system.
+   * @param quantityType
+   *          Quantity type {@code unit} has to be associated to.
+   * @param unit
+   *          Base unit.
+   * @return {@linkplain #wrap Wrapped} {@code unit}.
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
+   * @throws IllegalArgumentException
+   *           if a unit is already associated to {@code quantityType}.
    */
-  protected static <Q extends Quantity<Q>> XtUnit<Q> addXtUnit(Set<Unit<?>> units, Unit<Q> base) {
-    var ret = wrap(base);
-    units.add(ret);
+  @SuppressWarnings("unchecked")
+  protected static <Q extends Quantity<Q>> XtUnit<Q> addBaseUnit(Units unitSystem,
+      Class<Q> quantityType,
+      Unit<Q> unit) {
+    return defaultUnit(quantityType, addUnit(unitSystem, checkType(unit, BaseUnit.class)),
+        unitSystem);
+  }
+
+  /**
+   * Imports in the given system a unit from another {@linkplain tech.units.indriya indriya-based}
+   * system.
+   *
+   * @param unitSystem
+   *          Target unit system.
+   * @param unit
+   *          Imported unit.
+   * @return {@linkplain #wrap Wrapped} {@code unit}.
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
+   */
+  protected static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Units unitSystem, Unit<Q> unit) {
+    var ret = wrap(unit);
+    unitSystem.units.add(ret);
     SimpleUnitFormat.getInstance().label(ret, ret.getSymbol());
     return ret;
   }
@@ -503,6 +533,12 @@ public class Units extends tech.units.indriya.unit.Units {
   /**
    * Defines the given unit as default for the given quantity type in the given unit system.
    *
+   * @param quantityType
+   *          Quantity type {@code unit} has to be associated to.
+   * @param unit
+   *          Default unit.
+   * @param unitSystem
+   *          Target unit system.
    * @return {@code unit}
    * @throws IllegalArgumentException
    *           if a unit is already associated to {@code quantityType}.
@@ -519,6 +555,8 @@ public class Units extends tech.units.indriya.unit.Units {
   }
 
   /**
+   * Gets the inner representation of the given unit.
+   *
    * @see #wrap(Unit)
    */
   protected static <Q extends Quantity<Q>> Unit<Q> unwrap(Unit<Q> unit) {
@@ -526,6 +564,11 @@ public class Units extends tech.units.indriya.unit.Units {
   }
 
   /**
+   *
+   * Gets the augmented representation of the given unit.
+   *
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
    * @see #unwrap(Unit)
    */
   protected static <Q extends Quantity<Q>> XtUnit<Q> wrap(Unit<Q> unit) {
@@ -537,26 +580,32 @@ public class Units extends tech.units.indriya.unit.Units {
    * <a href="https://en.wikipedia.org/wiki/Unit_of_measurement#Base_and_derived_units">base
    * unit</a> of the given quantity type.
    *
-   * @param base
-   *          Unit base, i.e. inner representation of the unit (DO NOT confuse with the concept of
-   *          base unit!).
+   * @param quantityType
+   *          Quantity type {@code unit} has to be associated to.
+   * @param unit
+   *          Base unit.
+   * @return {@linkplain #wrap Wrapped} {@code unit}.
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
+   * @throws IllegalArgumentException
+   *           if a unit is already associated to {@code quantityType}.
    */
-  @SuppressWarnings("unchecked")
   private static <Q extends Quantity<Q>> XtUnit<Q> addBaseUnit(Class<Q> quantityType,
-      Unit<Q> base) {
-    return defaultUnit(quantityType, addUnit(checkType(base, BaseUnit.class)));
+      Unit<Q> unit) {
+    return addBaseUnit(INSTANCE, quantityType, unit);
   }
 
   /**
-   * Adds an existing unit.
+   * Imports a unit from another {@linkplain tech.units.indriya indriya-based} system.
    *
-   * @param base
-   *          Unit base, i.e. inner representation of the unit (DO NOT confuse with the concept of
-   *          base unit!).
-   * @return Wrapped {@code base}.
+   * @param unit
+   *          Imported unit.
+   * @return Wrapped {@code unit}.
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
    */
-  private static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Unit<Q> base) {
-    return addXtUnit(INSTANCE.units, base);
+  private static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Unit<Q> unit) {
+    return addUnit(INSTANCE, unit);
   }
 
   /**
@@ -575,7 +624,7 @@ public class Units extends tech.units.indriya.unit.Units {
    */
   private static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Unit<Q> unit, String name,
       @Nullable String symbol) {
-    var ret = addUnit(INSTANCE.units, wrap(unit), name, symbol);
+    var ret = Helper.addUnit(INSTANCE.units, wrap(unit), name, symbol);
     SimpleUnitFormat.getInstance().label(ret, ret.getSymbol());
     return ret;
   }
@@ -583,6 +632,10 @@ public class Units extends tech.units.indriya.unit.Units {
   /**
    * Defines the given unit as default for the given quantity type.
    *
+   * @param quantityType
+   *          Quantity type {@code unit} has to be associated to.
+   * @param unit
+   *          Default unit.
    * @return {@code unit}
    * @throws IllegalArgumentException
    *           if a unit is already associated to {@code quantityType}.
@@ -590,6 +643,11 @@ public class Units extends tech.units.indriya.unit.Units {
   private static <U extends XtUnit<Q>, Q extends Quantity<Q>> U defaultUnit(Class<Q> quantityType,
       U unit) {
     return defaultUnit(quantityType, unit, INSTANCE);
+  }
+
+  @Override
+  public String getName() {
+    return "pdfClown Common Units";
   }
 
   @Override
