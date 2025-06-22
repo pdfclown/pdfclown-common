@@ -234,7 +234,7 @@
                     <include>java-style.xml</include>
                   </includes>
                   <outputDir>src/main/resources/config/eclipse</outputDir>
-                  <stylesheet>src/eclipse/profile-normalize.xsl</stylesheet>
+                  <stylesheet>src/config/eclipse/profile-normalize.xsl</stylesheet>
                 </transformationSet>
               </transformationSets>
             </configuration>

@@ -192,8 +192,8 @@ pdfclown-common-base instead)</description>
             <includeResources>false</includeResources>
             <includeTestResources>false</includeTestResources>
             <linkXRef>false</linkXRef>
-            <propertiesLocation>${rootdir}/src/checkstyle/checkstyle.properties</propertiesLocation>
-            <suppressionsLocation>${rootdir}/src/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+            <propertiesLocation>${rootdir}/src/config/checkstyle/checkstyle.properties</propertiesLocation>
+            <suppressionsLocation>${rootdir}/src/config/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
             <configLocation>${buildResourcesRootPath}/config/checkstyle/checkstyle-checks.xml</configLocation>
             <skip>${checkstyleSkip}</skip>
           </configuration>
@@ -1015,7 +1015,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <value>pom</value>
           </property>
           <file>
-            <exists>src/profiles/full-pom</exists>
+            <exists>src/config/profiles/full-pom</exists>
           </file>
         </activation>
         <build>
@@ -1048,7 +1048,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       -->
       <activation>
         <file>
-          <exists>src/profiles/internal-pom</exists>
+          <exists>src/config/profiles/internal-pom</exists>
         </file>
       </activation>
       <properties>
@@ -1099,7 +1099,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           <value>pom</value>
         </property>
         <file>
-          <exists>src/profiles/bom</exists>
+          <exists>src/config/profiles/bom</exists>
         </file>
       </activation>
       <build>
@@ -1130,7 +1130,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       -->
       <activation>
         <file>
-          <missing>src/profiles/no-format</missing>
+          <missing>src/config/profiles/no-format</missing>
         </file>
       </activation>
       <build>
