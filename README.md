@@ -5,8 +5,8 @@
 -->
 <h1 align="center">
 <picture>
-<img alt="logo" src="src/main/javadoc/jada/attach/common/resources/images/logo.png" width="80">
-</picture> pdfClown Common
+<img alt="logo" src="src/main/javadoc/jada/attach/common/resources/images/logo.png" width="100">
+</picture><br>pdfClown Common
 </h1>
 
 [![REUSE status](https://api.reuse.software/badge/github.com/pdfclown/pdfclown-common)](https://api.reuse.software/info/github.com/pdfclown/pdfclown-common)
