@@ -42,6 +42,9 @@
   <description>Common build configuration for pdfClown.org projects</description>
 
   <properties>
+    <!--
+      OVERRIDDEN PROPERTIES
+    -->
     <pdfclown-common-maven-plugin.version>${revision}</pdfclown-common-maven-plugin.version>
   </properties>
 

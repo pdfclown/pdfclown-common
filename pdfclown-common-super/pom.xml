@@ -82,22 +82,36 @@ pdfclown-common-base instead)</description>
     <!--
       DEPENDENCY VERSIONS
 
-      NOTE: Brought here because of plugin-level references.
+      NOTE: Brought here because of plugin-level references (otherwise, their natural place would
+      be pdfclown-common-deps).
     -->
     <bytebuddy.version>1.15.10</bytebuddy.version>
     <classgraph.version>4.8.154</classgraph.version>
     <eventbus.version>3.3.1</eventbus.version>
+    <hamcrest.version>3.0</hamcrest.version>
+    <indriya.version>2.2.3</indriya.version>
     <javaparser.version>3.26.2</javaparser.version>
+    <jimfs.version>1.3.0</jimfs.version>
+    <!--
+      TODO: Whenever `jsonassert.version` is updated, this version MUST align to its transitive
+            org.json:json dependency.
+    -->
+    <json.version>20240303</json.version>
+    <jsonassert.version>2.0-rc1</jsonassert.version>
     <jsoup.version>1.18.3</jsoup.version>
     <jspecify.version>1.0.0</jspecify.version>
+    <junit.version>5.11.4</junit.version>
     <log4j.version>2.19.0</log4j.version>
+    <mockito.version>5.14.2</mockito.version>
+    <reflections.version>0.10.2</reflections.version>
     <!--
       NOTE: Because of cyclic reference, pdfclown-common-maven-plugin's version MUST lag one
       release behind this project's.
 
-      TODO: Whenever pdfclown-common-base project version changes, `pdfclown-common-maven-plugin.version`
-      MUST be updated to the preceding one. 
-    <pdfclown-common-maven-plugin.version>0.0.0-SNAPSHOT</pdfclown-common-maven-plugin.version>
+      TODO: Whenever pdfclown-common-base project version changes,
+            `pdfclown-common-maven-plugin.version` MUST be updated to the preceding one.
+
+      <pdfclown-common-maven-plugin.version>0.0.0-SNAPSHOT</pdfclown-common-maven-plugin.version>
     -->
     <slf4j.version>1.7.36</slf4j.version>
 
@@ -330,7 +344,7 @@ pdfclown-common-base instead)</description>
 
                 <!--
                   TODO: Remove `Release-Jdk-Spec` entry when natively supported by
-                  maven-jar-plugin (see <https://issues.apache.org/jira/browse/MJAR-323>).
+                        maven-jar-plugin (see <https://issues.apache.org/jira/browse/MJAR-323>).
 
                   NOTE: This entry should be named `Target-Jdk-Spec` but, due to a bug in
                   maven-bundle-plugin, `Build-Jdk-Spec` entry is wrongly valued with the JDK
@@ -411,10 +425,10 @@ pdfclown-common-base instead)</description>
             <excludePackageNames>*.internal:*.internal*</excludePackageNames>
             <!--
               FIXME: `sourcepath` was necessary because of an apparent bug affecting
-              maven-javadoc-plugin (when automatic module name (see "Automatic-Module-Name" property
-              herein) is enabled, maven javadoc plugin fails ("error: No source files for package")
-              - see also
-              <https://github.com/prometheus/client_java/issues/884#issuecomment-1791560944>).
+                     maven-javadoc-plugin (when automatic module name (see "Automatic-Module-Name"
+                     property herein) is enabled, maven javadoc plugin fails ("error: No source
+                     files for package") - see also
+                     <https://github.com/prometheus/client_java/issues/884#issuecomment-1791560944>)
             -->
             <sourcepath>${project.build.sourceDirectory}</sourcepath>
 
@@ -456,6 +470,11 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
                 <url>https://www.javadoc.io/static/com.github.javaparser/javaparser-core/${javaparser.version}</url>
               </dependencyLink>
               <dependencyLink>
+                <groupId>com.google.jimfs</groupId>
+                <artifactId>jimfs</artifactId>
+                <url>https://www.javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</url>
+              </dependencyLink>
+              <dependencyLink>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
                 <url>https://www.javadoc.io/static/io.github.classgraph/classgraph/${classgraph.version}</url>
@@ -486,6 +505,16 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
                 <url>https://www.javadoc.io/doc/org.greenrobot/eventbus-java/${eventbus.version}</url>
               </dependencyLink>
               <dependencyLink>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <url>https://javadoc.io/doc/org.hamcrest/hamcrest/${hamcrest.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <url>https://javadoc.io/doc/org.json/json/${json.version}</url>
+              </dependencyLink>
+              <dependencyLink>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
                 <url>https://www.javadoc.io/static/org.jsoup/jsoup/${jsoup.version}</url>
@@ -496,14 +525,44 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
                 <url>https://www.javadoc.io/static/org.jspecify/jspecify/${jspecify.version}</url>
               </dependencyLink>
               <dependencyLink>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <url>https://junit.org/junit5/docs/${junit.version}/api/</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <url>https://javadoc.io/doc/org.junit.vintage/junit-vintage-engine/${junit.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <url>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}</url>
+              </dependencyLink>
+              <dependencyLink>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>pdfclown-common-util</artifactId>
                 <url>https://www.javadoc.io/static/org.pdfclown/pdfclown-common-util/${revision}</url>
               </dependencyLink>
               <dependencyLink>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <url>https://javadoc.io/doc/org.reflections/reflections/${reflections.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <url>https://javadoc.io/doc/org.skyscreamer/jsonassert/${jsonassert.version}</url>
+              </dependencyLink>
+              <dependencyLink>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <url>https://www.javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</url>
+              </dependencyLink>
+              <dependencyLink>
+                <groupId>tech.units</groupId>
+                <artifactId>indriya</artifactId>
+                <url>https://www.javadoc.io/static/tech.units/indriya/${indriya.version}</url>
               </dependencyLink>
             </dependencyLinks>
             <!--
@@ -735,10 +794,10 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <!-- Packaging -->
       <!--
         TODO: enable after first release (cyclic dependency!)
-      <plugin>
-        <groupId>org.pdfclown</groupId>
-        <artifactId>pdfclown-common-maven-plugin</artifactId>
-      </plugin>
+          <plugin>
+            <groupId>org.pdfclown</groupId>
+            <artifactId>pdfclown-common-maven-plugin</artifactId>
+          </plugin>
       -->
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -988,9 +1047,9 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>flatten-maven-plugin</artifactId>
             <!-- 
-        TODO: enable after first release (cyclic dependency!)
-            <groupId>org.pdfclown</groupId>
-            <artifactId>pdfclown-common-maven-plugin</artifactId>
+              TODO: enable after first release (cyclic dependency!)
+                <groupId>org.pdfclown</groupId>
+                <artifactId>pdfclown-common-maven-plugin</artifactId>
             -->
             <configuration>
               <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -1002,10 +1061,10 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
 
     <!--
       TODO: Full POMs should be like fat jars, containing all the configuration merged from their
-      ancestor POMs (which should be marked as "internal-pom" instead). The point is to avoid
-      publishing fragmented POMs when they were split because of internal reasons. Unfortunately,
-      flatten-maven-plugin notoriously reuses Maven's effective POM, which destroys ordering,
-      formatting, comments of the original POM.
+            ancestor POMs (which should be marked as "internal-pom" instead). The point is to avoid
+            publishing fragmented POMs when they were split because of internal reasons.
+            Unfortunately, flatten-maven-plugin notoriously reuses Maven's effective POM, which
+            destroys ordering, formatting and comments of the original POM.
 
       <profile>
         <id>full-pom</id>

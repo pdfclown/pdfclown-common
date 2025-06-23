@@ -34,29 +34,21 @@
     <!--
         CUSTOM PROPERTIES
     -->
-
-    <!--
-        VERSIONS
-    -->
-    <tech.units.indriya.version>2.2.3</tech.units.indriya.version>
   </properties>
 
   <dependencies>
-    <!-- JSR 385 - Reference Implementation -->
-    <dependency>
-      <groupId>tech.units</groupId>
-      <artifactId>indriya</artifactId>
-      <version>${tech.units.indriya.version}</version>
-    </dependency>
-
     <!-- Language -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
+      <groupId>tech.units</groupId>
+      <artifactId>indriya</artifactId>
     </dependency>
 
     <!-- I/O -->
@@ -65,14 +57,14 @@
       <artifactId>commons-io</artifactId>
     </dependency>
 
-    <!-- System -->
+    <!-- Code manipulation (reflection and generation) -->
     <dependency>
       <groupId>io.github.classgraph</groupId>
       <artifactId>classgraph</artifactId>
     </dependency>
 
     <!--
-        TESTING
+      TESTING
     -->
     <dependency>
       <groupId>org.pdfclown</groupId>
