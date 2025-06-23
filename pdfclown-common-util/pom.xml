@@ -26,13 +26,13 @@
 
   <properties>
     <!--
-        OVERRIDDEN PROPERTIES
+      OVERRIDDEN PROPERTIES
     -->
     <projectJpmsName>org.pdfclown.common.util</projectJpmsName>
     <rootdir>${project.basedir}/..</rootdir>
 
     <!--
-        CUSTOM PROPERTIES
+      CUSTOM PROPERTIES
     -->
   </properties>
 
