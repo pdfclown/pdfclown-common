@@ -384,19 +384,25 @@ public class Units extends AbstractSystemOfUnits {
           .forEach($ -> {
             @SuppressWarnings("rawtypes")
             Class quantityType = $;
-            if (!Units.INSTANCE.quantityToUnit.containsKey(quantityType)) {
+            if (!INSTANCE.quantityToUnit.containsKey(quantityType)) {
               @SuppressWarnings("unchecked")
               var defaultUnit = tech.units.indriya.unit.Units.getInstance().getUnit(quantityType);
               //noinspection unchecked
-              Units.defaultUnit(quantityType, wrap(defaultUnit));
+              defaultUnit(quantityType, wrap(defaultUnit));
             }
           });
     }
   }
 
+  /**
+   * Derives an area unit from a corresponding length one.
+   *
+   * @throws ClassCastException
+   *           if {@code length} doesn't inherit from {@link AbstractUnit}.
+   */
   @SuppressWarnings("unchecked")
-  public static XtUnit<Area> area(Unit<Length> lengthUnit) {
-    return new XtUnit<>((AbstractUnit<Area>) lengthUnit.pow(2));
+  public static XtUnit<Area> area(Unit<Length> length) {
+    return new XtUnit<>((AbstractUnit<Area>) length.pow(2));
   }
 
   /**
@@ -405,7 +411,7 @@ public class Units extends AbstractSystemOfUnits {
    * @return {@code null}, if {@code quantityType} isn't mapped.
    */
   public static <Q extends Quantity<Q>> @Nullable Dimension getDimension(Class<Q> quantityType) {
-    return objTo(Units.INSTANCE.quantityToUnit.get(quantityType), Unit::getDimension);
+    return objTo(INSTANCE.quantityToUnit.get(quantityType), Unit::getDimension);
   }
 
   /**
@@ -479,7 +485,7 @@ public class Units extends AbstractSystemOfUnits {
   @SuppressWarnings("rawtypes")
   public static @Nullable Class<? extends Quantity> getQuantityType(Unit<?> unit) {
     var systemUnit = unit.getSystemUnit();
-    for (var entry : Units.INSTANCE.quantityToUnit.entrySet()) {
+    for (var entry : INSTANCE.quantityToUnit.entrySet()) {
       if (systemUnit.equals(entry.getValue()))
         return entry.getKey();
     }
@@ -505,8 +511,7 @@ public class Units extends AbstractSystemOfUnits {
    */
   @SuppressWarnings("unchecked")
   protected static <Q extends Quantity<Q>> XtUnit<Q> addBaseUnit(Units unitSystem,
-      Class<Q> quantityType,
-      Unit<Q> unit) {
+      Class<Q> quantityType, Unit<Q> unit) {
     return defaultUnit(quantityType, addUnit(unitSystem, checkType(unit, BaseUnit.class)),
         unitSystem);
   }
@@ -526,6 +531,46 @@ public class Units extends AbstractSystemOfUnits {
   protected static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Units unitSystem, Unit<Q> unit) {
     var ret = wrap(unit);
     unitSystem.units.add(ret);
+    SimpleUnitFormat.getInstance().label(ret, ret.getSymbol());
+    return ret;
+  }
+
+  /**
+   * Adds in the given system a new unit.
+   *
+   * @param unitSystem
+   *          Target unit system.
+   * @param unit
+   *          New unit.
+   * @param name
+   *          Unit name.
+   * @return {@linkplain #wrap Wrapped} {@code unit}.
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
+   */
+  protected static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Units unitSystem, Unit<Q> unit,
+      String name) {
+    return addUnit(unitSystem, unit, name, null);
+  }
+
+  /**
+   * Adds in the given system a new unit.
+   *
+   * @param unitSystem
+   *          Target unit system.
+   * @param unit
+   *          New unit.
+   * @param name
+   *          Unit name.
+   * @param symbol
+   *          Unit symbol.
+   * @return {@linkplain #wrap Wrapped} {@code unit}.
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
+   */
+  protected static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Units unitSystem, Unit<Q> unit,
+      String name, @Nullable String symbol) {
+    var ret = Helper.addUnit(unitSystem.units, wrap(unit), name, symbol);
     SimpleUnitFormat.getInstance().label(ret, ret.getSymbol());
     return ret;
   }
@@ -557,6 +602,7 @@ public class Units extends AbstractSystemOfUnits {
   /**
    * Gets the inner representation of the given unit.
    *
+   * @return Unwrapped {@code unit}.
    * @see #wrap(Unit)
    */
   protected static <Q extends Quantity<Q>> Unit<Q> unwrap(Unit<Q> unit) {
@@ -564,9 +610,9 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   *
    * Gets the augmented representation of the given unit.
    *
+   * @return Wrapped {@code unit}.
    * @throws ClassCastException
    *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
    * @see #unwrap(Unit)
@@ -600,7 +646,7 @@ public class Units extends AbstractSystemOfUnits {
    *
    * @param unit
    *          Imported unit.
-   * @return Wrapped {@code unit}.
+   * @return {@linkplain #wrap Wrapped} {@code unit}.
    * @throws ClassCastException
    *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
    */
@@ -609,24 +655,36 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Adds a new unit.
+   * Adds a new unit to this system.
    *
-   * @return Wrapped {@code unit}.
+   * @param unit
+   *          New unit.
+   * @param name
+   *          Unit name.
+   * @return {@linkplain #wrap Wrapped} {@code unit}.
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
    */
   private static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Unit<Q> unit, String name) {
-    return addUnit(unit, name, null);
+    return addUnit(INSTANCE, unit, name);
   }
 
   /**
-   * Adds a new unit.
+   * Adds a new unit to this system.
    *
-   * @return Wrapped {@code unit}.
+   * @param unit
+   *          New unit.
+   * @param name
+   *          Unit name.
+   * @param symbol
+   *          Unit symbol.
+   * @return {@linkplain #wrap Wrapped} {@code unit}.
+   * @throws ClassCastException
+   *           if {@code unit} doesn't inherit from {@link AbstractUnit}.
    */
   private static <Q extends Quantity<Q>> XtUnit<Q> addUnit(Unit<Q> unit, String name,
       @Nullable String symbol) {
-    var ret = Helper.addUnit(INSTANCE.units, wrap(unit), name, symbol);
-    SimpleUnitFormat.getInstance().label(ret, ret.getSymbol());
-    return ret;
+    return addUnit(INSTANCE, unit, name, symbol);
   }
 
   /**
