@@ -536,7 +536,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Adds in the given system a new unit.
+   * Adds a new unit to the given system.
    *
    * @param unitSystem
    *          Target unit system.
@@ -554,7 +554,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Adds in the given system a new unit.
+   * Adds a new unit to the given system.
    *
    * @param unitSystem
    *          Target unit system.
@@ -576,7 +576,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Defines the given unit as default for the given quantity type in the given unit system.
+   * Defines the unit as default for the given quantity type in the given system.
    *
    * @param quantityType
    *          Quantity type {@code unit} has to be associated to.
@@ -600,7 +600,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Gets the inner representation of the given unit.
+   * Gets the inner representation of the unit.
    *
    * @return Unwrapped {@code unit}.
    * @see #wrap(Unit)
@@ -610,7 +610,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Gets the augmented representation of the given unit.
+   * Gets the augmented representation of the unit.
    *
    * @return Wrapped {@code unit}.
    * @throws ClassCastException
@@ -688,7 +688,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Defines the given unit as default for the given quantity type.
+   * Defines the unit as default for the given quantity type.
    *
    * @param quantityType
    *          Quantity type {@code unit} has to be associated to.
