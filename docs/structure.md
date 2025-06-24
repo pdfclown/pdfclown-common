@@ -103,53 +103,57 @@ classDiagram
 </tr>
 <tr>
   <td><code>base</code></td>
-  <td>external parent</td>
+  <td>:wrench:<br/>external parent</td>
   <td>Build configuration meant to be reused <i>outside</i> the project hierarchy via inheritance; inherits from the same subproject as <code>bom</code>.<br/><br/>Example: <a href="../pdfclown-common-base/pom.xml"><code>pdfclown-common-base</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
-  <td><code>bom</code></td>
-  <td>minimal BOM, root project</td>
-  <td>Declares its subprojects (Maven reactor) and the corresponding dependencies, meant to be reused via import; any third-party dependency is declared by <code>deps</code>; any build configuration is inherited from either <code>super</code> (if present) or a parent external to the project hierarchy.<br/><br/>Example: <a href="../pom.xml"><code>pdfclown-common-bom</code></a></td>
+  <td rowspan="2"><code>bom</code></td>
+  <td>:gear:<br/>minimal BOM</td>
+  <td rowspan="2">Declares its subprojects (Maven reactor) and the corresponding dependencies, meant to be reused via import; any third-party dependency is declared by <code>deps</code>; any build configuration is inherited from either <code>super</code> (if present) or a parent external to the project hierarchy.<br/><br/>Example: <a href="../pom.xml"><code>pdfclown-common-bom</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
+  <td>:wrench:<br/>root project</td>
+  <td>NO</td>
+</tr>
+<tr>
   <td><code>build</code></td>
-  <td>concrete artifact</td>
+  <td>:package:<br/>concrete artifact</td>
   <td>Library providing common configuration, resources and utilities for the building process.<br/><br/>Example: <a href="../pdfclown-common-build/pom.xml"><code>pdfclown-common-build</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
   <td><code>deps</code></td>
-  <td>full BOM</td>
+  <td>:gear:<br/>full BOM</td>
   <td>Declares <i>all</i> the dependency used in the project hierarchy, including those in <code>bom</code>.<br/><br/>Example: <a href="../pdfclown-common-deps/pom.xml"><code>pdfclown-common-deps</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
   <td><code>parent</code></td>
-  <td>internal parent</td>
+  <td>:wrench::gear:<br/>internal parent</td>
   <td>Build configuration and dependencies meant to be reused <i>inside</i> the project hierarchy via inheritance by all the concrete subprojects.<br/><br/>Example: <a href="../pdfclown-common-parent/pom.xml"><code>pdfclown-common-parent</code></a></td>
   <td>NO</td>
 </tr>
 <tr>
   <td rowspan="2"><code>super</code></td>
-  <td>internal super-parent</td>
+  <td>:wrench:<br/>internal super-parent</td>
   <td>Build configuration meant to be inherited by <code>bom</code> as an alternative to a parent from an external project, if the latter is missing or has to be customized (in such case, the parent from an external project is inherited by <code>super</code>).<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
   <td rowspan="2">NO*<br><br>[*] Currently, because of technical limitations in Maven toolset, it is transitively inherited outside the project (ideally, it should be flattened inside <code>base</code> and not published)</td>
 </tr>
 <tr>
-  <td>external super-parent</td>
+  <td>:wrench:<br/>external super-parent</td>
   <td>Build configuration meant to be inherited by <code>base</code> to expose the configuration to external projects.<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
 </tr>
 <tr>
   <td><code>util</code></td>
-  <td>concrete artifact</td>
+  <td>:package:<br/>concrete artifact</td>
   <td>Library providing common utilities.<br/><br/>Example: <a href="../pdfclown-common-util/pom.xml"><code>pdfclown-common-util</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
   <td><code>(lib*)</code></td>
-  <td>concrete artifacts</td>
+  <td>:package:<br/>concrete artifacts</td>
   <td>Any other concrete (i.e., without "pom" packaging) subproject <i>inside</i> the project hierarchy.</td>
   <td>YES</td>
 </tr>
@@ -158,7 +162,7 @@ classDiagram
 </tr>
 <tr>
   <td><code>(external-root*)</code></td>
-  <td>external children</td>
+  <td>:wrench:<br/>external children</td>
   <td>Root projects <i>outside</i> the project hierarchy (i.e., external projects consuming the published <code>base</code> subproject).</td>
   <td>N/A</td>
 </tr>
