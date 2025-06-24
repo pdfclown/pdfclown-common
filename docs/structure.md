@@ -137,13 +137,13 @@ classDiagram
 </tr>
 <tr>
   <td rowspan="2"><code>super</code></td>
-  <td>:wrench:<br/>internal super-parent</td>
-  <td>Build configuration meant to be inherited by <code>bom</code> as an alternative to a parent from an external project, if the latter is missing or has to be customized (in such case, the parent from an external project is inherited by <code>super</code>).<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
+  <td>:wrench:<br/>external super-parent</td>
+  <td>Build configuration meant to be inherited by <code>base</code> to expose the configuration to external projects.<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
   <td rowspan="2">NO*<br><br>[*] Currently, because of technical limitations in Maven toolset, it is transitively inherited outside the project (ideally, it should be flattened inside <code>base</code> and not published)</td>
 </tr>
 <tr>
-  <td>:wrench:<br/>external super-parent</td>
-  <td>Build configuration meant to be inherited by <code>base</code> to expose the configuration to external projects.<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
+  <td>:wrench:<br/>internal super-parent</td>
+  <td>Build configuration meant to be inherited by <code>bom</code> as an alternative to a parent from an external project, if the latter is missing or has to be customized (in such case, the parent from an external project is inherited by <code>super</code>).<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
 </tr>
 <tr>
   <td><code>util</code></td>
