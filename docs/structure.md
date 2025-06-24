@@ -105,41 +105,41 @@ classDiagram
   <td><code>base</code></td>
   <td>:wrench:<br/>external parent</td>
   <td>Build configuration meant to be reused <i>outside</i> the project hierarchy via inheritance; inherits from the same subproject as <code>bom</code>.<br/><br/>Example: <a href="../pdfclown-common-base/pom.xml"><code>pdfclown-common-base</code></a></td>
-  <td>YES</td>
+  <td>:heavy_check_mark:</td>
 </tr>
 <tr>
   <td rowspan="2"><code>bom</code></td>
   <td>:gear:<br/>minimal BOM</td>
   <td rowspan="2">Declares its subprojects (Maven reactor) and the corresponding dependencies, meant to be reused via import; any third-party dependency is declared by <code>deps</code>; any build configuration is inherited from either <code>super</code> (if present) or a parent external to the project hierarchy.<br/><br/>Example: <a href="../pom.xml"><code>pdfclown-common-bom</code></a></td>
-  <td>YES</td>
+  <td>:heavy_check_mark:</td>
 </tr>
 <tr>
   <td>:wrench:<br/>root project</td>
-  <td>NO</td>
+  <td>:x:</td>
 </tr>
 <tr>
   <td><code>build</code></td>
   <td>:package:<br/>concrete artifact</td>
   <td>Library providing common configuration, resources and utilities for the building process.<br/><br/>Example: <a href="../pdfclown-common-build/pom.xml"><code>pdfclown-common-build</code></a></td>
-  <td>YES</td>
+  <td>:heavy_check_mark:</td>
 </tr>
 <tr>
   <td><code>deps</code></td>
   <td>:gear:<br/>full BOM</td>
   <td>Declares <i>all</i> the dependency used in the project hierarchy, including those in <code>bom</code>.<br/><br/>Example: <a href="../pdfclown-common-deps/pom.xml"><code>pdfclown-common-deps</code></a></td>
-  <td>YES</td>
+  <td>:heavy_check_mark:</td>
 </tr>
 <tr>
   <td><code>parent</code></td>
   <td>:wrench::gear:<br/>internal parent</td>
   <td>Build configuration and dependencies meant to be reused <i>inside</i> the project hierarchy via inheritance by all the concrete subprojects.<br/><br/>Example: <a href="../pdfclown-common-parent/pom.xml"><code>pdfclown-common-parent</code></a></td>
-  <td>NO</td>
+  <td>:x:</td>
 </tr>
 <tr>
   <td rowspan="2"><code>super</code></td>
   <td>:wrench:<br/>external super&#x2011;parent</td>
   <td>Build configuration meant to be inherited by <code>base</code> to expose the configuration to external projects.<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
-  <td rowspan="2">NO&dagger;</td>
+  <td rowspan="2">:x:&dagger;</td>
 </tr>
 <tr>
   <td>:wrench:<br/>internal super&#x2011;parent</td>
@@ -149,13 +149,13 @@ classDiagram
   <td><code>util</code></td>
   <td>:package:<br/>concrete artifact</td>
   <td>Library providing common utilities.<br/><br/>Example: <a href="../pdfclown-common-util/pom.xml"><code>pdfclown-common-util</code></a></td>
-  <td>YES</td>
+  <td>:heavy_check_mark:</td>
 </tr>
 <tr>
   <td><code>(lib*)</code></td>
   <td>:package:<br/>concrete artifacts</td>
   <td>Any other concrete (i.e., without "pom" packaging) subproject <i>inside</i> the project hierarchy.</td>
-  <td>YES</td>
+  <td>:heavy_check_mark:</td>
 </tr>
 <tr>
   <th colspan="4">External projects</th>
