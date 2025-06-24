@@ -22,35 +22,46 @@ A pdfClown.org project SHALL be defined according to this hierarchy (initially d
 
 ```mermaid
 classDiagram
-    class _base_{
-        <<external>>
-        plugins
+    direction LR
+    namespace pdfclown-xxxxx {
+      class _base_ {
+          <<external>>
+          plugins
+      }
+      class _bom_ {
+          <<root : minimal BOM : external>>
+          dependencies
+      }
+      class _deps_ {
+          <<full BOM : external>>
+          dependencies
+      }
+      class _parent_ {
+          <<internal>>
+          dependencies
+          plugins
+      }
+      class _super_ {
+          <<internal>>
+          plugins
+      }
     }
-    class _bom_ {
-        <<root : minimal BOM : external>>
-        dependencies
+    link _base_ "#subproject_base" "base subproject"
+
+    namespace third-party-project1 {
+      class _external-root1_{
+          <<root>>
+      }
     }
-    class _deps_ {
-        <<full BOM : external>>
-        dependencies
+    namespace third-party-project2 {
+      class _external-root2_{
+          <<root>>
+      }
     }
-    class _external-root1_{
-        <<root>>
-    }
-    class _external-root2_{
-        <<root>>
-    }
-    class _external-rootN_{
-        <<root>>
-    }
-    class _parent_{
-        <<internal>>
-        dependencies
-        plugins
-    }
-    class _super_ {
-        <<internal>>
-        plugins
+    namespace third-party-projectN {
+      class _external-rootN_{
+          <<root>>
+      }
     }
 
     %% Inheritance relationships (child --|> parent)
@@ -58,6 +69,8 @@ classDiagram
     _deps_ --|> _bom_ : parent POM
     _parent_ --|> _bom_ : parent POM
     _base_ --|> _super_ : parent POM
+    build --|> _parent_ : parent POM
+    util --|> _parent_ : parent POM
     lib1 --|> _parent_ : parent POM
     lib2 --|> _parent_ : parent POM
     libN --|> _parent_ : parent POM
@@ -68,6 +81,8 @@ classDiagram
     %% Dependency imports, usages and other relationships
     _parent_ ..> _deps_ : import dependencies
     _deps_ ..> _bom_ : import dependencies
+    build ..> _parent_ : use dependencies
+    util ..> _parent_ : use dependencies
     lib1 ..> _parent_ : use dependencies
     lib2 ..> _parent_ : use dependencies
     libN ..> _parent_ : use dependencies
@@ -75,8 +90,8 @@ classDiagram
 
 **Legend:**
 - _italic style_ denotes **subprojects with "pom" packaging** (assimilated to abstract classes)
-- `<<internal>>` stereotype denotes **private artifacts** (i.e., not published, consumed only internally to the current project hierarchy)
-- `<<external>>` stereotype denotes **published artifacts** (i.e., consumed also externally to the current project hierarchy)
+- `<<internal>>` stereotype denotes **private artifacts** (i.e., not published, consumed only internally to the project hierarchy)
+- `<<external>>` stereotype denotes **published artifacts** (i.e., consumed also externally to the project hierarchy)
 - properties represent **declarations** (e.g. `dependencies`, `plugins`)
 - `--|>` arrows represent **Maven `parent` (inheritance) relationships**, pointing from child to parent
 - `..>` dashed arrows represent **Maven dependencies usage** (import or regular)
@@ -88,7 +103,7 @@ classDiagram
   <th>Description</th>
   <th>Published</th>
 </tr>
-<tr>
+<tr id="subproject_base">
   <td><code>base</code></td>
   <td>external parent</td>
   <td>Build configuration meant to be reused <i>outside</i> the project hierarchy via inheritance; inherits from the same subproject as <code>bom</code>.<br/><br/>Example: <a href="../pdfclown-common-base/pom.xml"><code>pdfclown-common-base</code></a></td>
@@ -98,6 +113,12 @@ classDiagram
   <td><code>bom</code></td>
   <td>minimal BOM, root project</td>
   <td>Declares its subprojects (Maven reactor) and the corresponding dependencies, meant to be reused via import; any third-party dependency is declared by <code>deps</code>; any build configuration is inherited from either <code>super</code> (if present) or an external parent.<br/><br/>Example: <a href="../pom.xml"><code>pdfclown-common-bom</code></a></td>
+  <td>YES</td>
+</tr>
+<tr>
+  <td><code>build</code></td>
+  <td>concrete artifact</td>
+  <td>Library providing common configuration, resources and utilities to aid the building process.<br/><br/>Example: <a href="../pdfclown-common-build/pom.xml"><code>pdfclown-common-build</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
@@ -119,9 +140,15 @@ classDiagram
   <td>NO*<br><br>[*] Currently, because of technical limitations in Maven toolset, it is transitively inherited outside the project (ideally, it should be flattened inside <code>base</code> and not published)</td>
 </tr>
 <tr>
+  <td><code>util</code></td>
+  <td>concrete artifact</td>
+  <td>Library providing common utilities.<br/><br/>Example: <a href="../pdfclown-common-util/pom.xml"><code>pdfclown-common-util</code></a></td>
+  <td>YES</td>
+</tr>
+<tr>
   <td><code>(lib*)</code></td>
   <td>concrete artifacts</td>
-  <td>Subprojects representing <b>concrete</b> (i.e., without "pom" packaging) <b>subprojects <i>inside</i> the current project hierarchy</b>.<br/><br/>Examples: <a href="../pdfclown-common-build/pom.xml"><code>pdfclown-common-build</code></a>, <a href="../pdfclown-common-util/pom.xml"><code>pdfclown-common-util</code></a></td>
+  <td>Subprojects representing other <b>concrete</b> (i.e., without "pom" packaging) <b>subprojects <i>inside</i> the project hierarchy</b>.<br/><br/>Examples: <a href="../pdfclown-common-build/pom.xml"><code>pdfclown-common-build</code></a>, <a href="../pdfclown-common-util/pom.xml"><code>pdfclown-common-util</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
@@ -130,7 +157,7 @@ classDiagram
 <tr>
   <td><code>(external-root*)</code></td>
   <td>external children</td>
-  <td>Projects representing <b>root projects <i>outside</i> the current project hierarchy</b> (i.e., external projects consuming the published <code>base</code> subproject)</td>
+  <td>Projects representing <b>root projects <i>outside</i> the project hierarchy</b> (i.e., external projects consuming the published <code>base</code> subproject)</td>
   <td>N/A</td>
 </tr>
 </table>
@@ -145,7 +172,7 @@ The notorious verbosity of Maven configuration is prone to quickly degenerate in
     - `parent` — for configuration shared _only internally_ to the project
     - `base` — for configuration shared _only externally_ to the project
   - **dependencies** are declared in BOM (Bill of Materials) subprojects only:
-    - `bom` — for _dependencies corresponding to subprojects within_ the current project hierarchy
-    - `deps` — for _all the dependencies_ of the current project hierarchy, `bom` inclusive
+    - `bom` — for _dependencies corresponding to subprojects within_ the project hierarchy
+    - `deps` — for _all the dependencies_ of the project hierarchy, `bom` inclusive
 - **plugin and dependency references** MUST be pushed as low as possible in the inheritance hierarchy
 - **artifacts of internal subprojects** (like `parent`) are neither installed nor published, implying that the artifacts of their child (external) subprojects MUST flatten them
