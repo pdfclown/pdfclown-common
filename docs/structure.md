@@ -32,10 +32,14 @@ classDiagram
           <<root : minimal BOM : external>>
           dependencies
       }
+      class build
       class _deps_ {
           <<full BOM : external>>
           dependencies
       }
+      class lib1
+      class lib2
+      class libN
       class _parent_ {
           <<internal>>
           dependencies
@@ -45,6 +49,7 @@ classDiagram
           <<internal>>
           plugins
       }
+      class util
     }
     namespace third-party-project1 {
       class _external-root1_{
