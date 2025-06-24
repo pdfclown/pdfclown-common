@@ -2,7 +2,7 @@
 
 Common Maven plugin for pdfClown.org projects.
 
-This module temporarily features a patched version of [flatten-maven-plugin](https://github.com/mojohaus/flatten-maven-plugin) until (hopefully) merged upstream.
+This module temporarily features a patched version of [flatten-maven-plugin](https://github.com/mojohaus/flatten-maven-plugin) until (hopefully) merged upstream (UPDATE: [PR merged](https://github.com/mojohaus/flatten-maven-plugin/pull/446), waiting for release).
 
 ## Source code
 
