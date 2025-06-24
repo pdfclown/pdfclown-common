@@ -46,8 +46,6 @@ classDiagram
           plugins
       }
     }
-    link _base_ "#subproject_base" "base subproject"
-
     namespace third-party-project1 {
       class _external-root1_{
           <<root>>
@@ -103,7 +101,7 @@ classDiagram
   <th>Description</th>
   <th>Published</th>
 </tr>
-<tr id="subproject_base">
+<tr>
   <td><code>base</code></td>
   <td>external parent</td>
   <td>Build configuration meant to be reused <i>outside</i> the project hierarchy via inheritance; inherits from the same subproject as <code>bom</code>.<br/><br/>Example: <a href="../pdfclown-common-base/pom.xml"><code>pdfclown-common-base</code></a></td>
@@ -112,13 +110,13 @@ classDiagram
 <tr>
   <td><code>bom</code></td>
   <td>minimal BOM, root project</td>
-  <td>Declares its subprojects (Maven reactor) and the corresponding dependencies, meant to be reused via import; any third-party dependency is declared by <code>deps</code>; any build configuration is inherited from either <code>super</code> (if present) or an external parent.<br/><br/>Example: <a href="../pom.xml"><code>pdfclown-common-bom</code></a></td>
+  <td>Declares its subprojects (Maven reactor) and the corresponding dependencies, meant to be reused via import; any third-party dependency is declared by <code>deps</code>; any build configuration is inherited from either <code>super</code> (if present) or a parent external to the project hierarchy.<br/><br/>Example: <a href="../pom.xml"><code>pdfclown-common-bom</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
   <td><code>build</code></td>
   <td>concrete artifact</td>
-  <td>Library providing common configuration, resources and utilities to aid the building process.<br/><br/>Example: <a href="../pdfclown-common-build/pom.xml"><code>pdfclown-common-build</code></a></td>
+  <td>Library providing common configuration, resources and utilities for the building process.<br/><br/>Example: <a href="../pdfclown-common-build/pom.xml"><code>pdfclown-common-build</code></a></td>
   <td>YES</td>
 </tr>
 <tr>
@@ -134,10 +132,14 @@ classDiagram
   <td>NO</td>
 </tr>
 <tr>
-  <td><code>super</code></td>
-  <td>super-parent (both internal and external)</td>
-  <td>Build configuration meant to be inherited by:<ul><li><code>bom</code> (internal super-parent) — as alternative to an external parent, if the latter is missing or has to be customized (in such case, the external parent is inherited by <code>super</code>)</li><li><code>base</code> (external super-parent) — to expose the configuration to external projects</li></ul>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
-  <td>NO*<br><br>[*] Currently, because of technical limitations in Maven toolset, it is transitively inherited outside the project (ideally, it should be flattened inside <code>base</code> and not published)</td>
+  <td rowspan="2"><code>super</code></td>
+  <td>internal super-parent</td>
+  <td>Build configuration meant to be inherited by <code>bom</code> as an alternative to a parent from an external project, if the latter is missing or has to be customized (in such case, the parent from an external project is inherited by <code>super</code>).<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
+  <td rowspan="2">NO*<br><br>[*] Currently, because of technical limitations in Maven toolset, it is transitively inherited outside the project (ideally, it should be flattened inside <code>base</code> and not published)</td>
+</tr>
+<tr>
+  <td>external super-parent</td>
+  <td>Build configuration meant to be inherited by <code>base</code> to expose the configuration to external projects.<br/><br/>Example: <a href="../pdfclown-common-super/pom.xml"><code>pdfclown-common-super</code></a></td>
 </tr>
 <tr>
   <td><code>util</code></td>
@@ -148,7 +150,7 @@ classDiagram
 <tr>
   <td><code>(lib*)</code></td>
   <td>concrete artifacts</td>
-  <td>Subprojects representing other <b>concrete</b> (i.e., without "pom" packaging) <b>subprojects <i>inside</i> the project hierarchy</b>.<br/><br/>Examples: <a href="../pdfclown-common-build/pom.xml"><code>pdfclown-common-build</code></a>, <a href="../pdfclown-common-util/pom.xml"><code>pdfclown-common-util</code></a></td>
+  <td>Any other concrete (i.e., without "pom" packaging) subproject <i>inside</i> the project hierarchy.</td>
   <td>YES</td>
 </tr>
 <tr>
@@ -157,7 +159,7 @@ classDiagram
 <tr>
   <td><code>(external-root*)</code></td>
   <td>external children</td>
-  <td>Projects representing <b>root projects <i>outside</i> the project hierarchy</b> (i.e., external projects consuming the published <code>base</code> subproject)</td>
+  <td>Root projects <i>outside</i> the project hierarchy (i.e., external projects consuming the published <code>base</code> subproject).</td>
   <td>N/A</td>
 </tr>
 </table>
