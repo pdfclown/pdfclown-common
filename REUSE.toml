@@ -17,3 +17,8 @@ SPDX-License-Identifier = "LGPL-3.0-only"
 path = [".tool-versions", "**/*.config", "**/*.toml", "**/*.yaml"]
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
 SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["**/*.md", "**/*.svg", "**/*.png"]
+SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
+SPDX-License-Identifier = "CC-BY-SA-4.0"

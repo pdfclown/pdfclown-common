@@ -1,0 +1,2305 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="mermaid-svg"
+   width="1607.652"
+   class="classDiagram"
+   viewBox="0 0 1607.652 881.91064"
+   role="graphics-document document"
+   aria-roledescription="class"
+   version="1.1"
+   sodipodi:docname="project-hierarchy.svg"
+   inkscape:version="1.4.2 (2aeb623e1d, 2025-05-12)"
+   inkscape:export-filename="../8d497ae3/project-hierarchy_color_grouped_arrows-lost.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   height="881.91064"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs210">
+    <marker
+       style="overflow:visible"
+       id="ColoredTriangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Colored triangle"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-fill;fill-rule:evenodd;stroke:context-stroke;stroke-width:2"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path9" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="namedview210"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="5.9404653"
+     inkscape:cx="261.17483"
+     inkscape:cy="273.96844"
+     inkscape:window-width="1536"
+     inkscape:window-height="891"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g209"
+     showgrid="false" />
+  <style
+     id="style1">#mermaid-svg{font-family:&quot;trebuchet ms&quot;,verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#mermaid-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#mermaid-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#mermaid-svg .error-icon{fill:#552222;}#mermaid-svg .error-text{fill:#552222;stroke:#552222;}#mermaid-svg .edge-thickness-normal{stroke-width:1px;}#mermaid-svg .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#mermaid-svg .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg .marker{fill:#333333;stroke:#333333;}#mermaid-svg .marker.cross{stroke:#333333;}#mermaid-svg svg{font-family:&quot;trebuchet ms&quot;,verdana,arial,sans-serif;font-size:16px;}#mermaid-svg p{margin:0;}#mermaid-svg g.classGroup text{fill:#000000;stroke:none;font-family:&quot;trebuchet ms&quot;,verdana,arial,sans-serif;font-size:10px;}#mermaid-svg g.classGroup text .title{font-weight:bolder;}#mermaid-svg .nodeLabel,#mermaid-svg .edgeLabel{color:#131300;}#mermaid-svg .edgeLabel .label rect{fill:#ECECFF;}#mermaid-svg .label text{fill:#131300;}#mermaid-svg .labelBkg{background:#ECECFF;}#mermaid-svg .edgeLabel .label span{background:#ECECFF;}#mermaid-svg .classTitle{font-weight:bolder;}#mermaid-svg .node rect,#mermaid-svg .node circle,#mermaid-svg .node ellipse,#mermaid-svg .node polygon,#mermaid-svg .node path{fill:#ECECFF;stroke:#000000;stroke-width:1px;}#mermaid-svg .divider{stroke:#000000;stroke-width:1;}#mermaid-svg g.clickable{cursor:pointer;}#mermaid-svg g.classGroup rect{fill:#ECECFF;stroke:#000000;}#mermaid-svg g.classGroup line{stroke:#000000;stroke-width:1;}#mermaid-svg .classLabel .box{stroke:none;stroke-width:0;fill:#ECECFF;opacity:0.5;}#mermaid-svg .classLabel .label{fill:#000000;font-size:10px;}#mermaid-svg .relation{stroke:#333333;stroke-width:1;fill:none;}#mermaid-svg .dashed-line{stroke-dasharray:3;}#mermaid-svg .dotted-line{stroke-dasharray:1 2;}#mermaid-svg #compositionStart,#mermaid-svg .composition{fill:#333333!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #compositionEnd,#mermaid-svg .composition{fill:#333333!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #dependencyStart,#mermaid-svg .dependency{fill:#333333!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #dependencyStart,#mermaid-svg .dependency{fill:#333333!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #extensionStart,#mermaid-svg .extension{fill:transparent!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #extensionEnd,#mermaid-svg .extension{fill:transparent!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #aggregationStart,#mermaid-svg .aggregation{fill:transparent!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #aggregationEnd,#mermaid-svg .aggregation{fill:transparent!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #lollipopStart,#mermaid-svg .lollipop{fill:#ECECFF!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg #lollipopEnd,#mermaid-svg .lollipop{fill:#ECECFF!important;stroke:#333333!important;stroke-width:1;}#mermaid-svg .edgeTerminals{font-size:11px;line-height:initial;}#mermaid-svg .classTitleText{text-anchor:middle;font-size:18px;fill:#333;}#mermaid-svg :root{--mermaid-font-family:&quot;trebuchet ms&quot;,verdana,arial,sans-serif;}</style>
+  <rect
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.377953;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+     id="rect1"
+     width="1607.652"
+     height="881.91064"
+     x="0"
+     y="0" />
+  <g
+     id="g210"
+     transform="translate(-3.6621094e-4)">
+    <defs
+       id="defs1">
+      <marker
+         id="mermaid-svg_class-aggregationStart"
+         class="marker aggregation class"
+         refX="18"
+         refY="7"
+         markerWidth="190"
+         markerHeight="240"
+         orient="auto">
+        <path
+           d="M 18,7 9,13 1,7 9,1 Z"
+           id="path1" />
+      </marker>
+    </defs>
+    <defs
+       id="defs2">
+      <marker
+         id="mermaid-svg_class-aggregationEnd"
+         class="marker aggregation class"
+         refX="1"
+         refY="7"
+         markerWidth="20"
+         markerHeight="28"
+         orient="auto">
+        <path
+           d="M 18,7 9,13 1,7 9,1 Z"
+           id="path2" />
+      </marker>
+    </defs>
+    <defs
+       id="defs3">
+      <marker
+         id="mermaid-svg_class-extensionStart"
+         class="marker extension class"
+         refX="18"
+         refY="7"
+         markerWidth="190"
+         markerHeight="240"
+         orient="auto">
+        <path
+           d="m 1,7 17,6 V 1 Z"
+           id="path3" />
+      </marker>
+    </defs>
+    <defs
+       id="defs4">
+      <marker
+         id="mermaid-svg_class-extensionEnd"
+         class="marker extension class"
+         refX="1"
+         refY="7"
+         markerWidth="20"
+         markerHeight="28"
+         orient="auto">
+        <path
+           d="M 1,1 V 13 L 18,7 Z"
+           id="path4" />
+      </marker>
+    </defs>
+    <defs
+       id="defs5">
+      <marker
+         id="mermaid-svg_class-compositionStart"
+         class="marker composition class"
+         refX="18"
+         refY="7"
+         markerWidth="190"
+         markerHeight="240"
+         orient="auto">
+        <path
+           d="M 18,7 9,13 1,7 9,1 Z"
+           id="path5" />
+      </marker>
+    </defs>
+    <defs
+       id="defs6">
+      <marker
+         id="mermaid-svg_class-compositionEnd"
+         class="marker composition class"
+         refX="1"
+         refY="7"
+         markerWidth="20"
+         markerHeight="28"
+         orient="auto">
+        <path
+           d="M 18,7 9,13 1,7 9,1 Z"
+           id="path6" />
+      </marker>
+    </defs>
+    <defs
+       id="defs7">
+      <marker
+         id="mermaid-svg_class-dependencyStart"
+         class="marker dependency class"
+         refX="6"
+         refY="7"
+         markerWidth="190"
+         markerHeight="240"
+         orient="auto">
+        <path
+           d="M 5,7 9,13 1,7 9,1 Z"
+           id="path7" />
+      </marker>
+    </defs>
+    <defs
+       id="defs8">
+      <marker
+         id="mermaid-svg_class-dependencyEnd"
+         class="marker dependency class"
+         refX="13"
+         refY="7"
+         markerWidth="20"
+         markerHeight="28"
+         orient="auto">
+        <path
+           d="M 18,7 9,13 14,7 9,1 Z"
+           id="path8" />
+      </marker>
+    </defs>
+    <defs
+       id="defs9">
+      <marker
+         id="mermaid-svg_class-lollipopStart"
+         class="marker lollipop class"
+         refX="13"
+         refY="7"
+         markerWidth="190"
+         markerHeight="240"
+         orient="auto">
+        <circle
+           stroke="#000000"
+           fill="transparent"
+           cx="7"
+           cy="7"
+           r="6"
+           id="circle8" />
+      </marker>
+    </defs>
+    <defs
+       id="defs10">
+      <marker
+         id="mermaid-svg_class-lollipopEnd"
+         class="marker lollipop class"
+         refX="1"
+         refY="7"
+         markerWidth="190"
+         markerHeight="240"
+         orient="auto">
+        <circle
+           stroke="#000000"
+           fill="transparent"
+           cx="7"
+           cy="7"
+           r="6"
+           id="circle9" />
+      </marker>
+    </defs>
+    <g
+       class="root"
+       id="g209">
+      <g
+         class="cluster undefined"
+         id="pdfclown-xxxxx"
+         data-look="classic">
+        <rect
+           style="fill:#c8dcff;fill-opacity:1;stroke:#000000"
+           x="8"
+           y="8"
+           width="1591.6523"
+           height="674"
+           id="rect10" />
+        <g
+           class="cluster-label "
+           transform="translate(749.58398,8)"
+           id="g10">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#000000"
+             id="text10">pdfclown-xxxxx</text>
+        </g>
+      </g>
+      <path
+         d="m 1328.496,255.25 h 11.356 c 11.355,0 34.066,0 57.221,17.233 23.155,17.233 46.755,51.699 58.555,68.932 l 11.799,17.233"
+         id="id__bom___super__1"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="m 809.087,358.5 11.966,-14.042 c 11.965,-14.041 35.895,-42.125 64.406,-56.166 28.511,-14.042 61.602,-14.042 91.704,-15.193 30.102,-1.151 57.215,-3.452 70.771,-4.603 l 13.556,-1.151"
+         id="id__deps___bom__2"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="m 403.757,265.25 21.576,-31.333 c 21.575,-31.334 64.727,-94 102.848,-125.334 38.121,-31.333 71.212,-31.333 108.457,-31.333 37.245,0 78.645,0 120.044,0 41.399,0 82.798,0 120.043,0 37.245,0 70.336,0 108.947,17.549 38.612,17.55 82.743,52.648 104.808,70.197 l 22.066,17.55"
+         id="id__parent___bom__3"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="m 1260.018,573.75 h 22.768 c 22.769,0 68.306,0 100.504,-10.631 32.199,-10.63 51.059,-31.892 60.489,-42.523 l 9.43,-10.63"
+         id="id__base___super__4"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="m 95.219,77.096 14.991,-2.724 c 14.991,-2.724 44.972,-8.173 79.308,20.629 34.337,28.802 73.027,91.854 92.372,123.381 l 19.345,31.526"
+         id="id_build__parent__5"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="m 88.109,599.022 16.176,-5.545 c 16.176,-5.545 48.528,-16.636 82.333,-46.02 33.805,-29.383 69.065,-77.059 86.694,-100.897 l 17.63,-23.838"
+         id="id_util__parent__6"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="m 89.941,200.894 15.871,-5.44 c 15.87,-5.441 47.611,-16.323 77.604,-7.713 29.993,8.61 58.238,36.712 72.36,50.763 l 14.123,14.05"
+         id="id_lib1__parent__7"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="m 89.941,327.894 15.871,-5.44 c 15.87,-5.441 47.611,-16.323 75.559,-18.804 27.947,-2.481 52.101,3.438 64.179,6.397 l 12.077,2.959"
+         id="id_lib2__parent__8"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="m 91.219,470.956 15.657,-5.367 c 15.658,-5.368 46.973,-16.104 75.051,-28.952 28.079,-12.849 52.921,-27.81 65.342,-35.291 l 12.421,-7.481"
+         id="id_libN__parent__9"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)" />
+      <path
+         d="M 769.97747,709.07876 C 802.04746,599.02519 1025.2328,571.12708 1129.3827,570.38606"
+         id="id__external-root1___base__10"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)"
+         sodipodi:nodetypes="cc" />
+      <path
+         d="M 483.00932,707.67991 C 538.12327,562.1091 923.01531,540.3846 1129.0902,553.41614"
+         id="id__external-root2___base__11"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)"
+         sodipodi:nodetypes="cc" />
+      <path
+         d="M 1059.0439,709.07876 C 1058.3394,682 1067.5503,604.30615 1130.242,588.243"
+         id="id__external-rootN___base__12"
+         class=" edge-thickness-normal edge-pattern-solid relation"
+         marker-end="url(#mermaid-svg_class-extensionEnd)"
+         sodipodi:nodetypes="cc" />
+      <path
+         d="m 433.938,373.749 16.545,7.708 c 16.546,7.709 49.637,23.126 82.728,30.834 33.091,7.709 66.182,7.709 85.894,7.709 19.713,0 26.046,0 29.213,0 h 3.166"
+         id="id__parent___deps__13"
+         class=" edge-thickness-normal edge-pattern-dashed relation"
+         marker-end="url(#mermaid-svg_class-dependencyEnd)" />
+      <path
+         d="m 855.879,453.945 4.167,1.426 c 4.166,1.426 12.5,4.277 33.212,5.703 20.712,1.426 53.803,1.426 95.848,-22.186 42.044,-23.612 93.041,-70.837 118.54,-94.449 l 25.499,-23.612"
+         id="id__deps___bom__14"
+         class=" edge-thickness-normal edge-pattern-dashed relation"
+         marker-end="url(#mermaid-svg_class-dependencyEnd)" />
+      <path
+         d="m 95.219,93.415 14.991,5.139 c 14.991,5.139 44.972,15.418 78.069,43.275 33.097,27.857 69.309,73.293 87.415,96.011 l 18.105,22.718"
+         id="id_build__parent__15"
+         class=" edge-thickness-normal edge-pattern-dashed relation"
+         marker-end="url(#mermaid-svg_class-dependencyEnd)" />
+      <path
+         d="m 88.109,611.612 16.176,2.939 c 16.176,2.94 48.528,8.82 85.529,-24.209 37.001,-33.028 78.653,-104.964 99.478,-140.932 l 20.826,-35.968"
+         id="id_util__parent__16"
+         class=" edge-thickness-normal edge-pattern-dashed relation"
+         marker-end="url(#mermaid-svg_class-dependencyEnd)" />
+      <path
+         d="m 89.941,218.606 15.871,5.44 c 15.87,5.441 47.611,16.323 77.58,28.881 29.968,12.558 58.165,26.793 72.263,33.91 l 14.098,7.117"
+         id="id_lib1__parent__17"
+         class=" edge-thickness-normal edge-pattern-dashed relation"
+         marker-end="url(#mermaid-svg_class-dependencyEnd)" />
+      <path
+         d="m 89.941,349.127 15.871,7.604 c 15.87,7.603 47.611,22.811 77.526,25.605 29.916,2.794 58.005,-6.826 72.05,-11.635 l 14.045,-4.81"
+         id="id_lib2__parent__18"
+         class=" edge-thickness-normal edge-pattern-dashed relation"
+         marker-end="url(#mermaid-svg_class-dependencyEnd)" />
+      <path
+         d="m 91.219,489.544 15.657,5.367 c 15.658,5.368 46.973,16.104 79.273,3.292 32.299,-12.811 65.584,-49.169 82.226,-67.348 l 16.642,-18.179"
+         id="id_libN__parent__19"
+         class=" edge-thickness-normal edge-pattern-dashed relation"
+         marker-end="url(#mermaid-svg_class-dependencyEnd)" />
+      <g
+         class="edgeLabel"
+         transform="translate(1396.6289,255.25)"
+         id="g17">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g16">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text15">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(980.15234,274.25)"
+         id="g19">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g18">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text17">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(756.68164,77.25)"
+         id="g21">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g20">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text19">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(1396.6289,573.75)"
+         id="g23">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g22">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text21">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,60.75)"
+         id="g25">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g24">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text23">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,565.75)"
+         id="g27">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g26">
+          <text
+             x="-25.633186"
+             y="10.313082"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text25">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,168.25)"
+         id="g29">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g28">
+          <text
+             x="-36.21925"
+             y="39.203999"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text27">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,295.25)"
+         id="g31">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g30">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text29">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,438.75)"
+         id="g33">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g32">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text31">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(713.49418,582.91204)"
+         id="g35">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g34">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text33">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(934.1327,603.91852)"
+         id="g37">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g36">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text35">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(1058.6525,651.65289)"
+         id="g39">
+        <g
+           class="label"
+           transform="translate(-43.132812,-12)"
+           id="g38">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text37">parent POM</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(533.21094,420)"
+         id="g41">
+        <g
+           class="label"
+           transform="translate(-74.273437,-12)"
+           id="g40">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text39">import dependencies</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(980.15234,462.5)"
+         id="g43">
+        <g
+           class="label"
+           transform="translate(-74.273437,-12)"
+           id="g42">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text41">import dependencies</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,124.25)"
+         id="g45">
+        <g
+           class="label"
+           transform="translate(-64.945312,-12)"
+           id="g44">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text43">use dependencies</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,629.25)"
+         id="g47">
+        <g
+           class="label"
+           transform="translate(-64.945312,-12)"
+           id="g46">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text45">use dependencies</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,251.25)"
+         id="g49">
+        <g
+           class="label"
+           transform="translate(-64.945312,-12)"
+           id="g48">
+          <text
+             x="0"
+             y="17"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text47">use dependencies</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,394.75)"
+         id="g51">
+        <g
+           class="label"
+           transform="translate(-64.945312,-12)"
+           id="g50">
+          <text
+             x="-3.0201154"
+             y="12.179263"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text49">use dependencies</text>
+        </g>
+      </g>
+      <g
+         class="edgeLabel"
+         transform="translate(185.16406,521.75)"
+         id="g53">
+        <g
+           class="label"
+           transform="translate(-64.945312,-12)"
+           id="g52">
+          <text
+             x="4.6387305"
+             y="6.5744247"
+             style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#131300"
+             id="text51">use dependencies</text>
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-_base_-0"
+         transform="translate(1203.9609,573.75)">
+        <g
+           class="basic label-container"
+           id="g55">
+          <path
+             d="M -56.056641,-61.5 H 56.056641 v 123 H -56.056641"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path54" />
+          <path
+             d="m -56.056641,-61.5 c 39.423303,0 78.846605,0 112.113282,0 m -112.113282,0 c 35.07409,0 70.14818,0 112.113282,0 m 0,0 c 0,26.839325 0,53.6786499 0,123 m 0,-123 c 0,34.888827 0,69.7776541 0,123 m 0,0 c -26.608013,0 -53.2160264,0 -112.113282,0 m 112.113282,0 c -43.145584,0 -86.291168,0 -112.113282,0 m 0,0 c 0,-48.778857 0,-97.557715 0,-123 m 0,123 c 0,-42.031899 0,-84.063798 0,-123"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path55" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(-37.410156,-41.5)"
+           id="g58">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g57">
+            <g
+               id="g56">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect55"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text56"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan56"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan55">«external»</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="label-group text"
+           transform="translate(-18.285156,-24.5)"
+           id="g61">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g60">
+            <g
+               id="g59">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect58"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text59"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan59"><tspan
+                     font-style="italic"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan58">base</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-44.056641,16.5)"
+           id="g64">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g63">
+            <g
+               id="g62">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect61"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text62"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan62"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan61">plugins</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="methods-group text"
+           transform="translate(-44.056641,57.5)"
+           id="g65" />
+        <g
+           class="divider"
+           id="g66">
+          <path
+             d="m -56.056641,-3.5 c 29.582335,0 59.1646702,0 112.113282,0 m -112.113282,0 c 43.222801,0 86.445602,0 112.113282,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path65" />
+        </g>
+        <g
+           class="divider"
+           id="g67">
+          <path
+             d="m -56.056641,37.5 c 41.781552,0 83.563103,0 112.113282,0 m -112.113282,0 c 36.732708,0 73.465416,0 112.113282,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path66" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-_bom_-1"
+         transform="translate(1203.9609,255.25)">
+        <g
+           class="basic label-container"
+           id="g68">
+          <path
+             d="m -124.53516,-61.5 h 249.07032 v 123 h -249.07032"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path67" />
+          <path
+             d="m -124.53516,-61.5 c 81.34317,0 162.686336,0 249.07032,0 m -249.07032,0 c 90.707976,0 181.415948,0 249.07032,0 m 0,0 c 0,44.14145 0,88.2829 0,123 m 0,-123 c 0,43.744711 0,87.489421 0,123 m 0,0 c -62.688342,0 -125.37667947,0 -249.07032,0 m 249.07032,0 c -91.799028,0 -183.598053,0 -249.07032,0 m 0,0 c 0,-44.127473 0,-88.254946 0,-123 m 0,123 c 0,-32.711475 0,-65.4229502 0,-123"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path68" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(-112.53516,-41.5)"
+           id="g76">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g75">
+            <g
+               id="g74">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect68"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text74"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan74"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan68">«root</tspan><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan69">:</tspan><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan70">minimal</tspan><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan71">BOM</tspan><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan72">:</tspan><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan73">external»</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="label-group text"
+           transform="translate(-16.890625,-24.5)"
+           id="g79">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g78">
+            <g
+               id="g77">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect76"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text77"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan77"><tspan
+                     font-style="italic"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan76">bom</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-112.53516,16.5)"
+           id="g82">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g81">
+            <g
+               id="g80">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect79"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text80"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan80"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan79">dependencies</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="methods-group text"
+           transform="translate(-112.53516,57.5)"
+           id="g83" />
+        <g
+           class="divider"
+           id="g84">
+          <path
+             d="m -124.53516,-3.5 c 87.964863,0 175.929723,0 249.07032,0 m -249.07032,0 c 87.712499,0 175.424994,0 249.07032,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path83" />
+        </g>
+        <g
+           class="divider"
+           id="g85">
+          <path
+             d="m -124.53516,37.5 c 71.83362,0 143.667237,0 249.07032,0 m -249.07032,0 c 74.501874,0 149.003744,0 249.07032,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path84" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-build-2"
+         transform="translate(64.109375,82.75)">
+        <g
+           class="basic label-container"
+           id="g86">
+          <path
+             d="m -31.109375,-38.5 h 62.21875 v 77 h -62.21875"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path85" />
+          <path
+             d="m -31.109375,-38.5 c 19.909593,0 39.8191858,0 62.21875,0 m -62.21875,0 c 23.8960847,0 47.792169,0 62.21875,0 m 0,0 c 0,26.593111 0,53.186222 0,77 m 0,-77 c 0,25.233375 0,50.46675 0,77 m 0,0 c -20.064523,0 -40.129046,0 -62.21875,0 m 62.21875,0 c -24.7966321,0 -49.593264,0 -62.21875,0 m 0,0 c 0,-28.146689 0,-56.293378 0,-77 m 0,77 c 0,-15.716793 0,-31.4335853 0,-77"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path86" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(0,-18.5)"
+           id="g87" />
+        <g
+           class="label-group text"
+           transform="translate(-19.109375,-18.5)"
+           id="g90">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g89">
+            <g
+               id="g88">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect87"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text88"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan88"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan87">build</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-19.109375,22.5)"
+           id="g91" />
+        <g
+           class="methods-group text"
+           transform="translate(-19.109375,52.5)"
+           id="g92" />
+        <g
+           class="divider"
+           id="g93">
+          <path
+             d="m -31.109375,2.5 c 18.067298,0 36.1345969,0 62.21875,0 m -62.21875,0 c 16.097136,0 32.1942722,0 62.21875,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path92" />
+        </g>
+        <g
+           class="divider"
+           id="g94">
+          <path
+             d="m -31.109375,20.5 c 21.2591435,0 42.518287,0 62.21875,0 m -62.21875,0 c 19.946577,0 39.8931544,0 62.21875,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path93" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-_deps_-3"
+         transform="translate(756.68164,420)">
+        <g
+           class="basic label-container"
+           id="g95">
+          <path
+             d="M -99.197266,-61.5 H 99.197266 v 123 H -99.197266"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path94" />
+          <path
+             d="m -99.197266,-61.5 c 78.623555,0 157.247109,0 198.394532,0 m -198.394532,0 c 41.685912,0 83.371823,0 198.394532,0 m 0,0 c 0,39.37443 0,78.74886 0,123 m 0,-123 c 0,41.38002 0,82.76004 0,123 m 0,0 c -63.135261,0 -126.270522,0 -198.394532,0 m 198.394532,0 c -44.76831,0 -89.5366191,0 -198.394532,0 m 0,0 c 0,-26.786145 0,-53.5722902 0,-123 m 0,123 c 0,-48.098494 0,-96.196988 0,-123"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path95" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(-74.753906,-41.5)"
+           id="g101">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g100">
+            <g
+               id="g99">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect95"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text99"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan99"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan95">«full</tspan><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan96">BOM</tspan><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan97">:</tspan><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan98">external»</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="label-group text"
+           transform="translate(-18.722656,-24.5)"
+           id="g104">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g103">
+            <g
+               id="g102">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect101"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text102"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan102"><tspan
+                     font-style="italic"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan101">deps</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-87.197266,16.5)"
+           id="g107">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g106">
+            <g
+               id="g105">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect104"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text105"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan105"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan104">dependencies</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="methods-group text"
+           transform="translate(-87.197266,57.5)"
+           id="g108" />
+        <g
+           class="divider"
+           id="g109">
+          <path
+             d="m -99.197266,-3.5 c 69.916998,0 139.833995,0 198.394532,0 m -198.394532,0 c 70.630031,0 141.260061,0 198.394532,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path108" />
+        </g>
+        <g
+           class="divider"
+           id="g110">
+          <path
+             d="m -99.197266,37.5 c 75.337621,0 150.675242,0 198.394532,0 m -198.394532,0 c 43.180177,0 86.360353,0 198.394532,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path109" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-lib1-4"
+         transform="translate(64.109375,209.75)">
+        <g
+           class="basic label-container"
+           id="g111">
+          <path
+             d="m -25.832031,-38.5 h 51.664062 v 77 h -51.664062"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path110" />
+          <path
+             d="m -25.832031,-38.5 c 18.6881947,0 37.37639,0 51.664062,0 m -51.664062,0 c 12.968331,0 25.93666167,0 51.664062,0 m 0,0 c 0,29.3448687 0,58.689737 0,77 m 0,-77 c 0,26.962914 0,53.925827 0,77 m 0,0 c -14.679107,0 -29.3582144,0 -51.664062,0 m 51.664062,0 c -12.708504,0 -25.41700871,0 -51.664062,0 m 0,0 c 0,-28.6627179 0,-57.325436 0,-77 m 0,77 c 0,-17.706309 0,-35.4126171 0,-77"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path111" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(0,-18.5)"
+           id="g112" />
+        <g
+           class="label-group text"
+           transform="translate(-13.832031,-18.5)"
+           id="g115">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g114">
+            <g
+               id="g113">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect112"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text113"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan113"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan112">lib1</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-13.832031,22.5)"
+           id="g116" />
+        <g
+           class="methods-group text"
+           transform="translate(-13.832031,52.5)"
+           id="g117" />
+        <g
+           class="divider"
+           id="g118">
+          <path
+             d="m -25.832031,2.5 c 18.894511,0 37.789022,0 51.664062,0 m -51.664062,0 c 10.708743,0 21.4174853,0 51.664062,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path117" />
+        </g>
+        <g
+           class="divider"
+           id="g119">
+          <path
+             d="m -25.832031,20.5 c 16.8335953,0 33.6671909,0 51.664062,0 m -51.664062,0 c 13.998878,0 27.9977559,0 51.664062,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path118" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-lib2-5"
+         transform="translate(64.109375,336.75)">
+        <g
+           class="basic label-container"
+           id="g120">
+          <path
+             d="m -25.832031,-38.5 h 51.664062 v 77 h -51.664062"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path119" />
+          <path
+             d="m -25.832031,-38.5 c 17.3769101,0 34.7538205,0 51.664062,0 m -51.664062,0 c 19.6080477,0 39.216096,0 51.664062,0 m 0,0 c 0,26.743999 0,53.487997 0,77 m 0,-77 c 0,18.679687 0,37.3593748 0,77 m 0,0 c -18.0144567,0 -36.028914,0 -51.664062,0 m 51.664062,0 c -16.8810515,0 -33.7621033,0 -51.664062,0 m 0,0 c 0,-23.772913 0,-47.5458255 0,-77 m 0,77 c 0,-22.890114 0,-45.7802287 0,-77"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path120" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(0,-18.5)"
+           id="g121" />
+        <g
+           class="label-group text"
+           transform="translate(-13.832031,-18.5)"
+           id="g124">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g123">
+            <g
+               id="g122">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect121"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text122"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan122"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan121">lib2</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-13.832031,22.5)"
+           id="g125" />
+        <g
+           class="methods-group text"
+           transform="translate(-13.832031,52.5)"
+           id="g126" />
+        <g
+           class="divider"
+           id="g127">
+          <path
+             d="m -25.832031,2.5 c 19.0369966,0 38.073993,0 51.664062,0 m -51.664062,0 c 10.948039,0 21.8960788,0 51.664062,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path126" />
+        </g>
+        <g
+           class="divider"
+           id="g128">
+          <path
+             d="m -25.832031,20.5 c 12.431778,0 24.86355593,0 51.664062,0 m -51.664062,0 c 12.982817,0 25.96563525,0 51.664062,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path127" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-libN-6"
+         transform="translate(64.109375,480.25)">
+        <g
+           class="basic label-container"
+           id="g129">
+          <path
+             d="m -27.109375,-38.5 h 54.21875 v 77 h -54.21875"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path128" />
+          <path
+             d="m -27.109375,-38.5 c 11.005803,0 22.0116069,0 54.21875,0 m -54.21875,0 c 18.5495741,0 37.0991481,0 54.21875,0 m 0,0 c 0,26.197597 0,52.395194 0,77 m 0,-77 c 0,20.08295 0,40.1658999 0,77 m 0,0 c -16.337488,0 -32.6749761,0 -54.21875,0 m 54.21875,0 c -20.3152616,0 -40.630523,0 -54.21875,0 m 0,0 c 0,-28.191722 0,-56.383444 0,-77 m 0,77 c 0,-29.0611791 0,-58.122358 0,-77"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path129" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(0,-18.5)"
+           id="g130" />
+        <g
+           class="label-group text"
+           transform="translate(-15.109375,-18.5)"
+           id="g133">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g132">
+            <g
+               id="g131">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect130"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text131"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan131"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan130">libN</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-15.109375,22.5)"
+           id="g134" />
+        <g
+           class="methods-group text"
+           transform="translate(-15.109375,52.5)"
+           id="g135" />
+        <g
+           class="divider"
+           id="g136">
+          <path
+             d="m -27.109375,2.5 c 12.974923,0 25.9498464,0 54.21875,0 m -54.21875,0 c 13.630649,0 27.26129805,0 54.21875,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path135" />
+        </g>
+        <g
+           class="divider"
+           id="g137">
+          <path
+             d="m -27.109375,20.5 c 20.2326887,0 40.465377,0 54.21875,0 m -54.21875,0 c 16.502639,0 33.0052788,0 54.21875,0"
+             stroke="#9370D"
+             stroke-width="1.3"
+             fill="none"
+             id="path136" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-_parent_-7"
+         transform="translate(354.52344,336.75)">
+        <g
+           class="basic label-container"
+           id="g138">
+          <path
+             id="path137"
+             style="fill:#6ebeff;fill-opacity:1"
+             d="M -79.413699 -71.5 L -79.413699 71.5 L 79.414426 71.5 L 79.414426 -71.5 L -79.413699 -71.5 z " />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(-35.1875,-51.5)"
+           id="g141">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g140">
+            <g
+               id="g139">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect138"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text139"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan139"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan138">«internal»</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="label-group text"
+           transform="translate(-25.285156,-34.5)"
+           id="g144">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g143">
+            <g
+               id="g142">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect141"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text142"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan142"><tspan
+                     font-style="italic"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan141">parent</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-67.414062,6.5)"
+           id="g149">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g146">
+            <g
+               id="g145">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect144"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text145"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan145"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan144">dependencies</tspan></tspan></text>
+            </g>
+          </g>
+          <g
+             class="label"
+             transform="translate(0,11.5)"
+             id="g148">
+            <g
+               id="g147">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect146"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text147"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan147"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan146">plugins</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="methods-group text"
+           transform="translate(-67.414062,67.5)"
+           id="g150" />
+        <g
+           class="divider"
+           id="g151">
+          <path
+             d="m -79.414062,-13.5 c 46.508093,0 93.016187,0 158.828124,0 m -158.828124,0 c 50.264429,0 100.528858,0 158.828124,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path150" />
+        </g>
+        <g
+           class="divider"
+           id="g152">
+          <path
+             d="m -79.414062,47.5 c 51.163048,0 102.326097,0 158.828124,0 m -158.828124,0 c 63.321507,0 126.643015,0 158.828124,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path151" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-_super_-8"
+         transform="translate(1519.707,435)">
+        <g
+           class="basic label-container"
+           id="g153">
+          <path
+             d="M -54.945312,-61.5 H 54.945312 v 123 H -54.945312"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path152" />
+          <path
+             d="m -54.945312,-61.5 c 23.352578,0 46.7051561,0 109.890624,0 m -109.890624,0 c 40.635952,0 81.271905,0 109.890624,0 m 0,0 c 0,46.188289 0,92.376578 0,123 m 0,-123 c 0,42.3438 0,84.687601 0,123 m 0,0 c -41.265305,0 -82.53061,0 -109.890624,0 m 109.890624,0 c -32.873211,0 -65.746423,0 -109.890624,0 m 0,0 c 0,-45.251183 0,-90.502366 0,-123 m 0,123 c 0,-29.638511 0,-59.2770218 0,-123"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path153" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(-35.1875,-41.5)"
+           id="g156">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g155">
+            <g
+               id="g154">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect153"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text154"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan154"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan153">«internal»</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="label-group text"
+           transform="translate(-22.171875,-24.5)"
+           id="g159">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g158">
+            <g
+               id="g157">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect156"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text157"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan157"><tspan
+                     font-style="italic"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan156">super</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-42.945312,16.5)"
+           id="g162">
+          <g
+             class="label"
+             transform="translate(0,-8.5)"
+             id="g161">
+            <g
+               id="g160">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect159"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text160"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   id="tspan160"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight="normal"
+                     id="tspan159">plugins</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="methods-group text"
+           transform="translate(-42.945312,57.5)"
+           id="g163" />
+        <g
+           class="divider"
+           id="g164">
+          <path
+             d="m -54.945312,-3.5 c 25.486308,0 50.9726156,0 109.890624,0 m -109.890624,0 c 34.060558,0 68.121117,0 109.890624,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path163" />
+        </g>
+        <g
+           class="divider"
+           id="g165">
+          <path
+             d="m -54.945312,37.5 c 38.211378,0 76.422756,0 109.890624,0 m -109.890624,0 c 42.040979,0 84.081959,0 109.890624,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path164" />
+        </g>
+      </g>
+      <g
+         class="node default "
+         id="classId-util-9"
+         transform="translate(64.109375,607.25)">
+        <g
+           class="basic label-container"
+           id="g166">
+          <path
+             d="m -24,-38.5 h 48 v 77 h -48"
+             stroke="none"
+             stroke-width="0"
+             fill="#ECECFF"
+             style="fill:#6ebeff;fill-opacity:1"
+             id="path165" />
+          <path
+             d="m -24,-38.5 c 13.605057,0 27.2101134,0 48,0 m -48,0 c 10.582204,0 21.1644089,0 48,0 m 0,0 c 0,28.8453547 0,57.690709 0,77 m 0,-77 c 0,25.366113 0,50.732226 0,77 m 0,0 c -14.4913686,0 -28.9827373,0 -48,0 m 48,0 c -10.084899,0 -20.1697976,0 -48,0 m 0,0 c 0,-23.345529 0,-46.6910574 0,-77 m 0,77 c 0,-15.747077 0,-31.4941538 0,-77"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path166" />
+        </g>
+        <g
+           class="annotation-group text"
+           transform="translate(0,-18.5)"
+           id="g167" />
+        <g
+           class="label-group text"
+           transform="translate(-12,-18.5)"
+           id="g170">
+          <g
+             class="label"
+             style="font-weight:bolder"
+             transform="translate(0,-8.5)"
+             id="g169">
+            <g
+               id="g168">
+              <rect
+                 class="background"
+                 style="stroke:none"
+                 id="rect167"
+                 width="0"
+                 height="0"
+                 x="0"
+                 y="0" />
+              <text
+                 y="-10.1"
+                 id="text168"><tspan
+                   class="text-outer-tspan"
+                   x="0"
+                   y="-0.1em"
+                   dy="1.1em"
+                   font-weight=""
+                   id="tspan168"><tspan
+                     font-style="normal"
+                     class="text-inner-tspan"
+                     font-weight=""
+                     id="tspan167">util</tspan></tspan></text>
+            </g>
+          </g>
+        </g>
+        <g
+           class="members-group text"
+           transform="translate(-12,22.5)"
+           id="g171" />
+        <g
+           class="methods-group text"
+           transform="translate(-12,52.5)"
+           id="g172" />
+        <g
+           class="divider"
+           id="g173">
+          <path
+             d="m -24,2.5 c 11.464101,0 22.9282017,0 48,0 m -48,0 c 16.7615759,0 33.5231518,0 48,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path172" />
+        </g>
+        <g
+           class="divider"
+           id="g174">
+          <path
+             d="m -24,20.5 c 9.772935,0 19.5458693,0 48,0 m -48,0 c 14.1016046,0 28.2032093,0 48,0"
+             stroke="#000000"
+             stroke-width="1.3"
+             fill="none"
+             id="path173" />
+        </g>
+      </g>
+      <g
+         id="g1"
+         transform="translate(-275.77058,7.0787462)">
+        <g
+           class="cluster undefined"
+           id="third-party-project1"
+           data-look="classic">
+          <rect
+             style="fill:#f2f2f2;fill-opacity:1;stroke:#000000"
+             x="632.48438"
+             y="702"
+             width="248.39453"
+             height="164"
+             id="rect11" />
+          <g
+             class="cluster-label "
+             transform="translate(689.54102,702)"
+             id="g11">
+            <text
+               x="0"
+               y="17"
+               style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#000000"
+               id="text11">third-party-project1</text>
+          </g>
+        </g>
+        <g
+           class="node default "
+           id="classId-_external-root1_-10"
+           transform="translate(756.68164,784)">
+          <g
+             class="basic label-container"
+             id="g175">
+            <path
+               d="M -65.398437,-47 H 65.398437 V 47 H -65.398437"
+               stroke="none"
+               stroke-width="0"
+               fill="#ECECFF"
+               style="fill:#cccccc;fill-opacity:1"
+               id="path174" />
+            <path
+               d="m -65.398437,-47 c 36.442219,0 72.884439,0 130.796874,0 m -130.796874,0 c 40.964325,0 81.92865,0 130.796874,0 m 0,0 c 0,22.900332 0,45.8006641 0,94 m 0,-94 c 0,34.45758 0,68.91516 0,94 m 0,0 c -44.543279,0 -89.086558,0 -130.796874,0 m 130.796874,0 c -49.046473,0 -98.092947,0 -130.796874,0 m 0,0 c 0,-25.802431 0,-51.6048625 0,-94 m 0,94 c 0,-33.907525 0,-67.815049 0,-94"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path175" />
+          </g>
+          <g
+             class="annotation-group text"
+             transform="translate(-22.734375,-27)"
+             id="g178">
+            <g
+               class="label"
+               transform="translate(0,-8.5)"
+               id="g177">
+              <g
+                 id="g176">
+                <rect
+                   class="background"
+                   style="stroke:none"
+                   id="rect175"
+                   width="0"
+                   height="0"
+                   x="0"
+                   y="0" />
+                <text
+                   y="-10.1"
+                   id="text176"><tspan
+                     class="text-outer-tspan"
+                     x="0"
+                     y="-0.1em"
+                     dy="1.1em"
+                     id="tspan176"><tspan
+                       font-style="normal"
+                       class="text-inner-tspan"
+                       font-weight="normal"
+                       id="tspan175">«root»</tspan></tspan></text>
+              </g>
+            </g>
+          </g>
+          <g
+             class="label-group text"
+             transform="translate(-53.398437,-10)"
+             id="g181">
+            <g
+               class="label"
+               style="font-weight:bolder"
+               transform="translate(0,-8.5)"
+               id="g180">
+              <g
+                 id="g179">
+                <rect
+                   class="background"
+                   style="stroke:none"
+                   id="rect178"
+                   width="0"
+                   height="0"
+                   x="0"
+                   y="0" />
+                <text
+                   y="-10.1"
+                   id="text179"><tspan
+                     class="text-outer-tspan"
+                     x="0"
+                     y="-0.1em"
+                     dy="1.1em"
+                     font-weight=""
+                     id="tspan179"><tspan
+                       font-style="italic"
+                       class="text-inner-tspan"
+                       font-weight=""
+                       id="tspan178">external-root1</tspan></tspan></text>
+              </g>
+            </g>
+          </g>
+          <g
+             class="members-group text"
+             transform="translate(-53.398437,31)"
+             id="g182" />
+          <g
+             class="methods-group text"
+             transform="translate(-53.398437,61)"
+             id="g183" />
+          <g
+             class="divider"
+             id="g184">
+            <path
+               d="m -65.398437,11 c 27.31923,0 54.63846,0 130.796874,0 m -130.796874,0 c 39.105708,0 78.211417,0 130.796874,0"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path183" />
+          </g>
+          <g
+             class="divider"
+             id="g185">
+            <path
+               d="m -65.398437,29 c 40.947246,0 81.894492,0 130.796874,0 m -130.796874,0 c 45.854329,0 91.708658,0 130.796874,0"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path184" />
+          </g>
+        </g>
+      </g>
+      <g
+         id="g2"
+         transform="translate(13.295825,-176.92124)">
+        <g
+           class="cluster undefined"
+           id="third-party-project2"
+           data-look="classic">
+          <rect
+             style="fill:#f2f2f2;fill-opacity:1;stroke:#000000"
+             x="632.48438"
+             y="886"
+             width="248.39453"
+             height="164"
+             id="rect12" />
+          <g
+             class="cluster-label "
+             transform="translate(689.54102,886)"
+             id="g12">
+            <text
+               x="0"
+               y="17"
+               style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#000000"
+               id="text12">third-party-project2</text>
+          </g>
+        </g>
+        <g
+           class="node default "
+           id="classId-_external-root2_-11"
+           transform="translate(756.68164,968)">
+          <g
+             class="basic label-container"
+             id="g186">
+            <path
+               d="M -65.398437,-47 H 65.398437 V 47 H -65.398437"
+               stroke="none"
+               stroke-width="0"
+               fill="#ECECFF"
+               style="fill:#cccccc;fill-opacity:1"
+               id="path185" />
+            <path
+               d="m -65.398437,-47 c 47.944862,0 95.889725,0 130.796874,0 m -130.796874,0 c 51.793164,0 103.586329,0 130.796874,0 m 0,0 c 0,36.63449 0,73.268979 0,94 m 0,-94 c 0,24.156311 0,48.3126212 0,94 m 0,0 c -41.279695,0 -82.55939,0 -130.796874,0 M 65.398437,47 C 33.317884,47 1.2373314,47 -65.398437,47 m 0,0 c 0,-19.672198 0,-39.3443952 0,-94 m 0,94 c 0,-20.029553 0,-40.0591059 0,-94"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path186" />
+          </g>
+          <g
+             class="annotation-group text"
+             transform="translate(-22.734375,-27)"
+             id="g189">
+            <g
+               class="label"
+               transform="translate(0,-8.5)"
+               id="g188">
+              <g
+                 id="g187">
+                <rect
+                   class="background"
+                   style="stroke:none"
+                   id="rect186"
+                   width="0"
+                   height="0"
+                   x="0"
+                   y="0" />
+                <text
+                   y="-10.1"
+                   id="text187"><tspan
+                     class="text-outer-tspan"
+                     x="0"
+                     y="-0.1em"
+                     dy="1.1em"
+                     id="tspan187"><tspan
+                       font-style="normal"
+                       class="text-inner-tspan"
+                       font-weight="normal"
+                       id="tspan186">«root»</tspan></tspan></text>
+              </g>
+            </g>
+          </g>
+          <g
+             class="label-group text"
+             transform="translate(-53.398437,-10)"
+             id="g192">
+            <g
+               class="label"
+               style="font-weight:bolder"
+               transform="translate(0,-8.5)"
+               id="g191">
+              <g
+                 id="g190">
+                <rect
+                   class="background"
+                   style="stroke:none"
+                   id="rect189"
+                   width="0"
+                   height="0"
+                   x="0"
+                   y="0" />
+                <text
+                   y="-10.1"
+                   id="text190"><tspan
+                     class="text-outer-tspan"
+                     x="0"
+                     y="-0.1em"
+                     dy="1.1em"
+                     font-weight=""
+                     id="tspan190"><tspan
+                       font-style="italic"
+                       class="text-inner-tspan"
+                       font-weight=""
+                       id="tspan189">external-root2</tspan></tspan></text>
+              </g>
+            </g>
+          </g>
+          <g
+             class="members-group text"
+             transform="translate(-53.398437,31)"
+             id="g193" />
+          <g
+             class="methods-group text"
+             transform="translate(-53.398437,61)"
+             id="g194" />
+          <g
+             class="divider"
+             id="g195">
+            <path
+               d="m -65.398437,11 c 36.083723,0 72.1674468,0 130.796874,0 m -130.796874,0 c 47.871528,0 95.743057,0 130.796874,0"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path194" />
+          </g>
+          <g
+             class="divider"
+             id="g196">
+            <path
+               d="m -65.398437,29 c 39.832277,0 79.664554,0 130.796874,0 m -130.796874,0 c 51.179816,0 102.359633,0 130.796874,0"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path195" />
+          </g>
+        </g>
+      </g>
+      <g
+         id="g3"
+         transform="translate(302.36223,-360.92124)">
+        <g
+           class="cluster undefined"
+           id="third-party-projectN"
+           data-look="classic">
+          <rect
+             style="fill:#f2f2f2;fill-opacity:1;stroke:#000000"
+             x="632.48438"
+             y="1070"
+             width="248.39453"
+             height="164"
+             id="rect13" />
+          <g
+             class="cluster-label "
+             transform="translate(688.21289,1070)"
+             id="g13">
+            <text
+               x="0"
+               y="17"
+               style="font-size:16px;font-family:'trebuchet ms', verdana, arial, sans-serif;fill:#000000"
+               id="text13">third-party-projectN</text>
+          </g>
+        </g>
+        <g
+           class="node default "
+           id="classId-_external-rootN_-12"
+           transform="translate(756.68164,1152)">
+          <g
+             class="basic label-container"
+             id="g197">
+            <path
+               d="M -66.898437,-47 H 66.898437 V 47 H -66.898437"
+               stroke="none"
+               stroke-width="0"
+               fill="#ECECFF"
+               style="fill:#cccccc;fill-opacity:1"
+               id="path196" />
+            <path
+               d="m -66.898437,-47 c 43.000997,0 86.001995,0 133.796874,0 m -133.796874,0 c 49.690598,0 99.381196,0 133.796874,0 m 0,0 c 0,34.915065 0,69.83013 0,94 m 0,-94 c 0,27.413718 0,54.8274354 0,94 m 0,0 C 29.828604,47 -7.2412287,47 -66.898437,47 M 66.898437,47 C 13.99838,47 -38.901678,47 -66.898437,47 m 0,0 c 0,-22.958762 0,-45.9175233 0,-94 m 0,94 c 0,-20.81585 0,-41.6316998 0,-94"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path197" />
+          </g>
+          <g
+             class="annotation-group text"
+             transform="translate(-22.734375,-27)"
+             id="g200">
+            <g
+               class="label"
+               transform="translate(0,-8.5)"
+               id="g199">
+              <g
+                 id="g198">
+                <rect
+                   class="background"
+                   style="stroke:none"
+                   id="rect197"
+                   width="0"
+                   height="0"
+                   x="0"
+                   y="0" />
+                <text
+                   y="-10.1"
+                   id="text198"><tspan
+                     class="text-outer-tspan"
+                     x="0"
+                     y="-0.1em"
+                     dy="1.1em"
+                     id="tspan198"><tspan
+                       font-style="normal"
+                       class="text-inner-tspan"
+                       font-weight="normal"
+                       id="tspan197">«root»</tspan></tspan></text>
+              </g>
+            </g>
+          </g>
+          <g
+             class="label-group text"
+             transform="translate(-54.898437,-10)"
+             id="g203">
+            <g
+               class="label"
+               style="font-weight:bolder"
+               transform="translate(0,-8.5)"
+               id="g202">
+              <g
+                 id="g201">
+                <rect
+                   class="background"
+                   style="stroke:none"
+                   id="rect200"
+                   width="0"
+                   height="0"
+                   x="0"
+                   y="0" />
+                <text
+                   y="-10.1"
+                   id="text201"><tspan
+                     class="text-outer-tspan"
+                     x="0"
+                     y="-0.1em"
+                     dy="1.1em"
+                     font-weight=""
+                     id="tspan201"><tspan
+                       font-style="italic"
+                       class="text-inner-tspan"
+                       font-weight=""
+                       id="tspan200">external-rootN</tspan></tspan></text>
+              </g>
+            </g>
+          </g>
+          <g
+             class="members-group text"
+             transform="translate(-54.898437,31)"
+             id="g204" />
+          <g
+             class="methods-group text"
+             transform="translate(-54.898437,61)"
+             id="g205" />
+          <g
+             class="divider"
+             id="g206">
+            <path
+               d="m -66.898437,11 c 47.973215,0 95.94643,0 133.796874,0 m -133.796874,0 c 27.451078,0 54.902157,0 133.796874,0"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path205" />
+          </g>
+          <g
+             class="divider"
+             id="g207">
+            <path
+               d="m -66.898437,29 c 39.205062,0 78.410124,0 133.796874,0 m -133.796874,0 c 47.093198,0 94.186396,0 133.796874,0"
+               stroke="#000000"
+               stroke-width="1.3"
+               fill="none"
+               id="path206" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
