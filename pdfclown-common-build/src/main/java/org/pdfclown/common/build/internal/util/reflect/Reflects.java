@@ -28,8 +28,9 @@ public final class Reflects {
   /**
    * Gets the calling frame.
    */
-  public static Optional<StackFrame> callerFrame() {
-    return callerFrame($ -> true);
+  public static StackFrame callerFrame() {
+    //noinspection OptionalGetWithoutIsPresent : Exception should NEVER happen.
+    return callerFrame($ -> true).get();
   }
 
   // SourceFQN: org.pdfclown.common.util.reflect.Reflects.callerFrame(..)

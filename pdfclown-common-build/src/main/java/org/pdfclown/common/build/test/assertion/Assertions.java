@@ -1212,26 +1212,6 @@ public final class Assertions {
   }
 
   /**
-   * Maps the given items to the corresponding matchers.
-   */
-  @SafeVarargs
-  @SuppressWarnings("unchecked")
-  public static <E, T extends Matcher<? super E>> List<Matcher<? super E>> asMatchers(
-      Function<E, T> mapper, E... elements) {
-    var ret = new ArrayList<T>();
-    for (var element : elements) {
-      ret.add(mapper.apply(element));
-    }
-    /*
-     * NOTE: Cast is necessary because, due to type erasure, we are forced to declare
-     * `List<Matcher<? super E>>` as return type instead of List<T>, since the latter would be
-     * statically resolved as List<Object>, causing the linker to match wrong overloads (eg, see
-     * org.hamcrest.Matchers.arrayContaining(..)).
-     */
-    return (List<Matcher<? super E>>) ret;
-  }
-
-  /**
    * Asserts that {@code expected} and {@code actual} are equal applying the given comparator.
    * <p>
    * This method supplements junit's

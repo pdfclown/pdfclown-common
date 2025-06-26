@@ -12,13 +12,20 @@
  */
 package org.pdfclown.common.util;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
+import static org.pdfclown.common.build.test.assertion.Matchers.matchesEvent;
+import static org.pdfclown.common.util.Strings.EMPTY;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.mockito.invocation.InvocationOnMock;
+import org.pdfclown.common.build.test.assertion.LogCaptor;
+import org.pdfclown.common.util.ParamMessage.Formatter;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.slf4j.event.Level;
 
@@ -26,40 +33,76 @@ import org.slf4j.event.Level;
  * @author Stefano Chizzolini
  */
 class ParamMessageTest extends BaseTest {
+  @RegisterExtension
+  static LogCaptor logged = LogCaptor.of(ParamMessage.class);
+
   @Test
   void format() {
-    assertEquals("Test message 101", ParamMessage.format("{} message {}", "Test", 101));
-    assertNotLogged();
+    assertThat(ParamMessage.format("{} message {}", "ARG0", 99), is("ARG0 message 99"));
 
-    assertEquals("Test message {}", ParamMessage.format("{} message {}", "Test"));
-    assertLogged(Level.WARN,
-        is("Argument 1 missing for placeholder '{}' (format: '{} message {}')"));
+    assertThat(logged.noEvent(), is(true));
   }
 
   @Test
-  void of() {
-    {
-      ParamMessage message = ParamMessage.of("Message {}", "construction");
-      assertEquals("Message construction", message.getDescription());
-      assertNull(message.getCause());
-      assertNotLogged();
-    }
+  void format__argument_missing() {
+    assertThat(ParamMessage.format("{} message {}", "ARG0"), is("ARG0 message {}"));
 
-    {
-      final var cause = new RuntimeException();
-      ParamMessage message = ParamMessage.of("Message {}", "construction", cause);
-      assertEquals("Message construction", message.getDescription());
-      assertSame(cause, message.getCause());
-      assertNotLogged();
-    }
+    assertThat(logged.eventCount(), is(1));
+    assertThat(logged.event(0), matchesEvent(Level.WARN,
+        "Argument 1 missing for placeholder '{}' (format: '{} message {}')", null));
+  }
 
-    {
-      final var cause = new RuntimeException();
-      ParamMessage message = ParamMessage.of("Message {}", "construction", 5334, cause);
-      assertEquals("Message construction", message.getDescription());
-      assertSame(cause, message.getCause());
-      assertLogged(Level.WARN,
-          is("Placeholder '{}' missing for argument 1 (format: 'Message {}')"));
+  @Test
+  void format__placeholder_missing() {
+    assertThat(ParamMessage.format("{} message", "ARG0", 99), is("ARG0 message"));
+
+    assertThat(logged.eventCount(), is(1));
+    assertThat(logged.event(0), matchesEvent(Level.WARN,
+        "Placeholder '{}' missing for argument 1 (format: '{} message')", null));
+  }
+
+  /**
+   * Tests that {@link ParamMessage#format(Formatter, String, Object[], int)
+   * ParamMessage.format(..)} is called from {@link ParamMessage#of(String, Object...)
+   * ParamMessage.of(..)} — this spares us from redundant formatting tests on the latter.
+   */
+  @Test
+  void of__verify_format() {
+    try (var staticMock = mockStatic(ParamMessage.class)) {
+      staticMock
+          /* base ParamMessage.format(..) overload (ALL other format calls end up here) */
+          .when(() -> ParamMessage.format(any(), any(), any(Object[].class), any(Integer.class)))
+          .thenReturn(EMPTY);
+      staticMock
+          .when(() -> ParamMessage.of(any(), any()))
+          .then(InvocationOnMock::callRealMethod);
+      staticMock
+          .when(() -> ParamMessage.of(any(), any(), any()))
+          .then(InvocationOnMock::callRealMethod);
+
+      ParamMessage.of("Message {}", "construction");
+
+      staticMock.verify(() -> ParamMessage.format(ParamMessage.FORMATTER, "Message {}",
+          new Object[] { "construction" }, 1));
     }
+  }
+
+  @Test
+  void of__with_cause() {
+    final var cause = new RuntimeException();
+    ParamMessage message = ParamMessage.of("Message {}", "construction", cause);
+
+    assertThat(message.getDescription(), is("Message construction"));
+    assertThat(message.getCause(), sameInstance(cause));
+    assertThat(logged.noEvent(), is(true));
+  }
+
+  @Test
+  void of__without_cause() {
+    ParamMessage message = ParamMessage.of("Message {}", "construction");
+
+    assertThat(message.getDescription(), is("Message construction"));
+    assertThat(message.getCause(), is(nullValue()));
+    assertThat(logged.noEvent(), is(true));
   }
 }

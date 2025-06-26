@@ -15,9 +15,9 @@ package org.pdfclown.common.build.internal.util;
 import static org.pdfclown.common.build.internal.util.Strings.DOT;
 import static org.pdfclown.common.build.internal.util.Strings.DQUOTE;
 import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.build.internal.util.Strings.S;
 import static org.pdfclown.common.build.internal.util.Strings.SQUOTE;
+import static org.pdfclown.common.build.internal.util.Strings.indexFound;
 
 import java.util.Locale;
 import java.util.Map;
@@ -330,7 +330,7 @@ public final class Objects {
 
   // SourceFQN: org.pdfclown.common.util.Objects.sqn(..)
   private static String sqn(@Nullable String typeName, boolean dotted) {
-    return fqn(objTo(typeName, $ -> $.indexOf(DOT) != INDEX__NOT_FOUND
+    return fqn(objTo(typeName, $ -> indexFound($.indexOf(DOT))
         ? $.substring($.lastIndexOf(DOT) + 1)
         : typeName), dotted);
   }

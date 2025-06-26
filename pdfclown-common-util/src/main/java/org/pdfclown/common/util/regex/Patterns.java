@@ -12,6 +12,10 @@
  */
 package org.pdfclown.common.util.regex;
 
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Regular-expression utilities.
  *
@@ -31,6 +35,14 @@ public final class Patterns {
    */
   public static String globToRegex(String glob) {
     return globToRegex(glob, true);
+  }
+
+  /**
+   * Tries to match the given pattern.
+   */
+  public static Optional<Matcher> match(Pattern pattern, CharSequence input) {
+    Matcher ret = pattern.matcher(input);
+    return ret.find() ? Optional.of(ret) : Optional.empty();
   }
 
   /**

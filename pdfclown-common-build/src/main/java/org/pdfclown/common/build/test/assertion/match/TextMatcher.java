@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.test.assertion;
+package org.pdfclown.common.build.test.assertion.match;
 
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
@@ -36,10 +36,23 @@ import org.hamcrest.core.IsEqual;
 public class TextMatcher extends TypeSafeMatcher<String> {
   private static final int CHUNK_LENGTH__MAX = 80;
 
+  /**
+   * Creates a matcher that matches when the examined text equals the expected one.
+   *
+   * @param expected
+   *          Expected text.
+   */
   public static TextMatcher matchesText(String expected) {
     return new TextMatcher(expected, false);
   }
 
+  /**
+   * Creates a matcher that matches when the examined text equals the expected one, ignoring case
+   * considerations.
+   *
+   * @param expected
+   *          Expected text.
+   */
   public static TextMatcher matchesTextIgnoreCase(String expected) {
     return new TextMatcher(expected, true);
   }

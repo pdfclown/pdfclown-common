@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.test.assertion;
+package org.pdfclown.common.build.test.assertion.match;
 
 import static java.nio.file.Files.readString;
 import static org.pdfclown.common.build.internal.util.Strings.S;
@@ -31,10 +31,23 @@ import org.hamcrest.TypeSafeMatcher;
  * @see TextMatcher
  */
 public class TextFileMatcher extends TypeSafeMatcher<Path> {
+  /**
+   * Creates a matcher that matches when the examined text content equals the expected one.
+   *
+   * @param expectedContentPath
+   *          Path of the file containing the expected text.
+   */
   public static TextFileMatcher matchesFileContent(Path expectedContentPath) {
     return new TextFileMatcher(expectedContentPath, false);
   }
 
+  /**
+   * Creates a matcher that matches when the examined text content equals the expected one, ignoring
+   * case considerations.
+   *
+   * @param expectedContentPath
+   *          Path of the file containing the expected text.
+   */
   public static TextFileMatcher matchesFileContentIgnoreCase(Path expectedContentPath) {
     return new TextFileMatcher(expectedContentPath, true);
   }

@@ -146,7 +146,7 @@ public class ParamMessage {
   /**
    * Default formatter.
    */
-  private static final Formatter FORMATTER = new Formatter();
+  static final Formatter FORMATTER = new Formatter();
 
   /**
    * Formats the given parameterized string with the default formatter.
@@ -214,7 +214,7 @@ public class ParamMessage {
    * @param formatter
    *          Applied formatter.
    */
-  private static String format(Formatter formatter, @Nullable String format,
+  static String format(Formatter formatter, @Nullable String format,
       @Nullable Object[] args, int argsCount) {
     return formatter.format(format, args, argsCount);
   }

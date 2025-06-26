@@ -23,17 +23,10 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.hamcrest.Matcher;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.pdfclown.common.build.test.assertion.LogExtension;
-import org.pdfclown.common.build.test.assertion.LogInterceptor;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
 import org.pdfclown.common.build.util.io.ResourceNames;
-import org.slf4j.event.Level;
-import org.slf4j.event.LoggingEvent;
 
 /**
  * Automated testing unit.
@@ -115,9 +108,6 @@ public abstract class TestUnit implements TestEnvironment {
       return TYPE_SRC_PATH;
     }
   }
-
-  @RegisterExtension
-  static LogInterceptor logInterceptor = new LogExtension();
 
   private static final BaseDirResolver BASE_DIR_RESOLVER__MAVEN = new MavenBaseDirResolver();
 
@@ -268,50 +258,5 @@ public abstract class TestUnit implements TestEnvironment {
       throw new RuntimeException(new FileNotFoundException(
           String.format("Source file corresponding to `%s` NOT FOUND (search paths: %s, %s)",
               type.getName(), dirPath(DirId.TYPE_SRC), dirPath(DirId.MAIN_TYPE_SRC))));
-  }
-
-  /**
-   * Asserts that log events matching the given criteria occurred, then resets logged events.
-   */
-  protected LoggingEvent assertLogged(Level level, Matcher<String> message) {
-    var ret = assertLoggedAlso(level, message);
-    resetLog();
-    return ret;
-  }
-
-  /**
-   * Asserts that log events matching the given criteria occurred.
-   */
-  protected LoggingEvent assertLoggedAlso(Level level, Matcher<String> message) {
-    return logInterceptor.assertLogged(level, message);
-  }
-
-  /**
-   * Asserts that no log event occurred.
-   */
-  protected void assertNotLogged() {
-    assertNotLogged(null, null);
-  }
-
-  /**
-   * Asserts that no log event matching the given criteria occurred, then resets logged events.
-   */
-  protected void assertNotLogged(@Nullable Level level, @Nullable Matcher<String> message) {
-    assertNotLoggedAlso(level, message);
-    resetLog();
-  }
-
-  /**
-   * Asserts that no log event matching the given criteria occurred.
-   */
-  protected void assertNotLoggedAlso(@Nullable Level level, @Nullable Matcher<String> message) {
-    logInterceptor.assertNotLogged(level, message);
-  }
-
-  /**
-   * Resets logged events.
-   */
-  protected void resetLog() {
-    logInterceptor.reset();
   }
 }

@@ -20,9 +20,9 @@ import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Strings.BACKSLASH;
 import static org.pdfclown.common.util.Strings.DOT;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SLASH;
+import static org.pdfclown.common.util.Strings.indexFound;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +82,7 @@ public final class Files {
    */
   public static String extension(String path) {
     int extensionIndex = FilenameUtils.indexOfExtension(path);
-    return extensionIndex != INDEX__NOT_FOUND ? path.substring(extensionIndex) : EMPTY;
+    return indexFound(extensionIndex) ? path.substring(extensionIndex) : EMPTY;
   }
 
   /**

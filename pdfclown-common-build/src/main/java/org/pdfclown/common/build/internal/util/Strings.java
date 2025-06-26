@@ -167,6 +167,17 @@ public final class Strings {
     return ret;
   }
 
+  // SourceFQN: org.pdfclown.common.util.Strings.indexFound(..)
+  /**
+   * Gets whether the given index represents a matching.
+   *
+   * @see String#indexOf(String)
+   * @see String#lastIndexOf(String)
+   */
+  public static boolean indexFound(int index) {
+    return index != INDEX__NOT_FOUND;
+  }
+
   // SourceFQN: org.pdfclown.common.util.Strings.uncapitalizeGreedy(..)
   /**
    * Ensures leading characters are lower-case.

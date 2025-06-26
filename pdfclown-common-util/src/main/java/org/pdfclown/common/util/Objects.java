@@ -21,9 +21,9 @@ import static org.pdfclown.common.util.Strings.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.util.Strings.DOT;
 import static org.pdfclown.common.util.Strings.DQUOTE;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SQUOTE;
+import static org.pdfclown.common.util.Strings.indexFound;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -1116,7 +1116,7 @@ public final class Objects {
   }
 
   private static String sqn(@Nullable String typeName, boolean dotted) {
-    return fqn(objTo(typeName, $ -> $.indexOf(DOT) != INDEX__NOT_FOUND
+    return fqn(objTo(typeName, $ -> indexFound($.indexOf(DOT))
         ? $.substring($.lastIndexOf(DOT) + 1)
         : typeName), dotted);
   }

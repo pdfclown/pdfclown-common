@@ -18,12 +18,13 @@
   -------------------------------------------------------------------------------------------------
   Source: https://github.com/talsma-ict/umldoclet/blob/e9e7ce933f564da9a0dbbca476bd74a25d6f0663/src/test/java/nl/talsmasoftware/umldoclet/testing/PatternMatcher.java
  */
-package org.pdfclown.common.build.test.assertion;
+package org.pdfclown.common.build.test.assertion.match;
 
 import static java.util.Objects.requireNonNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -35,28 +36,52 @@ import org.hamcrest.TypeSafeMatcher;
  * @author Stefano Chizzolini (adaptation to pdfClown)
  */
 public class PatternMatcher extends TypeSafeMatcher<String> {
-  public static PatternMatcher containsPattern(CharSequence pattern) {
-    return containsPattern(pattern, 0);
+  /**
+   * Creates a matcher that matches when the examined text contains the given regular expression.
+   */
+  public static PatternMatcher containsPattern(CharSequence regex) {
+    return containsPattern(regex, 0);
   }
 
-  public static PatternMatcher containsPattern(CharSequence pattern, int flags) {
+  /**
+   * Creates a matcher that matches when the examined text contains the given regular expression.
+   *
+   * @param flags
+   *          (see {@link Pattern#compile( String, int)})
+   */
+  public static PatternMatcher containsPattern(CharSequence regex, int flags) {
     //noinspection MagicConstant
-    return containsPattern(Pattern.compile(requireNonNull(pattern, "`pattern`").toString(), flags));
+    return containsPattern(Pattern.compile(requireNonNull(regex, "`pattern`").toString(), flags));
   }
 
+  /**
+   * Creates a matcher that matches when the examined text contains the given pattern.
+   */
   public static PatternMatcher containsPattern(Pattern pattern) {
     return new PatternMatcher(pattern, false);
   }
 
-  public static PatternMatcher matchesPattern(CharSequence pattern) {
-    return matchesPattern(pattern, 0);
+  /**
+   * Creates a matcher that matches when the examined text matches the given regular expression.
+   */
+  public static PatternMatcher matchesPattern(CharSequence regex) {
+    return matchesPattern(regex, 0);
   }
 
-  public static PatternMatcher matchesPattern(CharSequence pattern, int flags) {
+  /**
+   * Creates a matcher that matches when the examined text matches the given regular expression.
+   *
+   * @param flags
+   *          (see {@link Pattern#compile( String, int)})
+   */
+  public static PatternMatcher matchesPattern(CharSequence regex, int flags) {
     //noinspection MagicConstant
-    return matchesPattern(Pattern.compile(requireNonNull(pattern, "`pattern`").toString(), flags));
+    return matchesPattern(Pattern.compile(requireNonNull(regex, "`pattern`").toString(), flags));
   }
 
+  /**
+   * Creates a matcher that matches when the examined text matches the given pattern.
+   */
   public static PatternMatcher matchesPattern(Pattern pattern) {
     return new PatternMatcher(pattern, true);
   }

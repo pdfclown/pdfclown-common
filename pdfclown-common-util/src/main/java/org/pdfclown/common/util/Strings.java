@@ -206,6 +206,16 @@ public final class Strings {
   }
 
   /**
+   * Gets whether the given index represents a matching.
+   *
+   * @see String#indexOf(String)
+   * @see String#lastIndexOf(String)
+   */
+  public static boolean indexFound(int index) {
+    return index != INDEX__NOT_FOUND;
+  }
+
+  /**
    * Gets whether the given string is null or blank.
    */
   public static boolean isBlank(@Nullable String value) {
