@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (TextFileMatcher.java) is part of pdfclown-common-build module in pdfClown Common
+  This file (MatchesTextFile.java) is part of pdfclown-common-build module in pdfClown Common
   project <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -28,38 +28,19 @@ import org.hamcrest.TypeSafeMatcher;
  * </p>
  *
  * @author Stefano Chizzolini
- * @see TextMatcher
+ * @see MatchesText
  */
-public class TextFileMatcher extends TypeSafeMatcher<Path> {
-  /**
-   * Creates a matcher that matches when the examined text content equals the expected one.
-   *
-   * @param expectedContentPath
-   *          Path of the file containing the expected text.
-   */
-  public static TextFileMatcher matchesFileContent(Path expectedContentPath) {
-    return new TextFileMatcher(expectedContentPath, false);
-  }
-
-  /**
-   * Creates a matcher that matches when the examined text content equals the expected one, ignoring
-   * case considerations.
-   *
-   * @param expectedContentPath
-   *          Path of the file containing the expected text.
-   */
-  public static TextFileMatcher matchesFileContentIgnoreCase(Path expectedContentPath) {
-    return new TextFileMatcher(expectedContentPath, true);
-  }
-
+public class MatchesTextFile extends TypeSafeMatcher<Path> {
   @SuppressWarnings("NotNullFieldNotInitialized")
   private /* @InitNonNull */ String actual;
   private final Path expectedContentPath;
-  private final TextMatcher matcher;
+  private final MatchesText matcher;
 
-  protected TextFileMatcher(Path expectedContentPath, boolean caseIgnored) {
+  /**
+  */
+  public MatchesTextFile(Path expectedContentPath, boolean caseIgnored) {
     try {
-      matcher = new TextMatcher(readString(this.expectedContentPath = expectedContentPath),
+      matcher = new MatchesText(readString(this.expectedContentPath = expectedContentPath),
           caseIgnored);
     } catch (IOException ex) {
       throw new RuntimeException(ex);

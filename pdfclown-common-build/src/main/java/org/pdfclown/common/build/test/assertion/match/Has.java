@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (HasMatcher.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (Has.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -26,31 +26,14 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
  *          Argument type.
  * @author Stefano Chizzolini
  */
-public class HasMatcher<T> extends TypeSafeDiagnosingMatcher<T> {
-  /**
-   * Creates a matcher that matches when the transformation of the examined object satisfies the
-   * given matcher.
-   *
-   * @param mappingDescription
-   *          Description of the transformation (typically, should be expressed as the bean path
-   *          corresponding to the transformation of an argument via {@code mapper}).
-   * @param mapper
-   *          Transforms an argument.
-   * @param matcher
-   *          Matches the result of {@code mapper}.
-   * @param <T>
-   *          Argument type.
-   */
-  public static <T> HasMatcher<T> has(String mappingDescription, Function<T, Object> mapper,
-      Matcher<Object> matcher) {
-    return new HasMatcher<>(mappingDescription, mapper, matcher);
-  }
-
+public class Has<T> extends TypeSafeDiagnosingMatcher<T> {
   private final String mappingDescription;
   private final Function<T, Object> mapper;
   private final Matcher<Object> matcher;
 
-  protected HasMatcher(String mappingDescription, Function<T, Object> mapper,
+  /**
+  */
+  public Has(String mappingDescription, Function<T, Object> mapper,
       Matcher<Object> matcher) {
     this.mappingDescription = mappingDescription;
     this.mapper = mapper;

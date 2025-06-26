@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (TextMatcher.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (MatchesText.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -31,31 +31,10 @@ import org.hamcrest.core.IsEqual;
  * </p>
  *
  * @author Stefano Chizzolini
- * @see TextFileMatcher
+ * @see MatchesTextFile
  */
-public class TextMatcher extends TypeSafeMatcher<String> {
+public class MatchesText extends TypeSafeMatcher<String> {
   private static final int CHUNK_LENGTH__MAX = 80;
-
-  /**
-   * Creates a matcher that matches when the examined text equals the expected one.
-   *
-   * @param expected
-   *          Expected text.
-   */
-  public static TextMatcher matchesText(String expected) {
-    return new TextMatcher(expected, false);
-  }
-
-  /**
-   * Creates a matcher that matches when the examined text equals the expected one, ignoring case
-   * considerations.
-   *
-   * @param expected
-   *          Expected text.
-   */
-  public static TextMatcher matchesTextIgnoreCase(String expected) {
-    return new TextMatcher(expected, true);
-  }
 
   private final boolean caseIgnored;
   private final String expected;
@@ -63,7 +42,9 @@ public class TextMatcher extends TypeSafeMatcher<String> {
   private int lineStart;
   private int column = 1;
 
-  protected TextMatcher(String expected, boolean caseIgnored) {
+  /**
+  */
+  public MatchesText(String expected, boolean caseIgnored) {
     this.expected = requireNonNull(expected, "`expected`");
     this.caseIgnored = caseIgnored;
   }

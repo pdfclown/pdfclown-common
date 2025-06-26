@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (IsMatch.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (Matches.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -15,24 +15,22 @@ package org.pdfclown.common.build.test.assertion.match;
 import java.util.function.BiPredicate;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Generic predicate matcher.
+ * Matches a value to another one based on an arbitrary condition.
  *
  * @param <T>
+ *          Value type.
  * @author Stefano Chizzolini
  */
-public class IsMatch<T> extends BaseMatcher<T> {
-  public static <T> Matcher<T> matches(T expectedValue, BiPredicate<T, T> predicate) {
-    return new IsMatch<>(expectedValue, predicate);
-  }
-
+public class Matches<T> extends BaseMatcher<T> {
   private final @Nullable T expectedValue;
   private final BiPredicate<T, T> predicate;
 
-  protected IsMatch(T expectedValue, BiPredicate<T, T> predicate) {
+  /**
+  */
+  public Matches(T expectedValue, BiPredicate<T, T> predicate) {
     this.expectedValue = expectedValue;
     this.predicate = predicate;
   }

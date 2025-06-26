@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -20,14 +21,16 @@ import static org.hamcrest.Matchers.nullValue;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import org.hamcrest.Matcher;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.test.assertion.match.HasMatcher;
-import org.pdfclown.common.build.test.assertion.match.PatternMatcher;
-import org.pdfclown.common.build.test.assertion.match.TextFileMatcher;
-import org.pdfclown.common.build.test.assertion.match.TextMatcher;
+import org.pdfclown.common.build.test.assertion.match.ContainsPattern;
+import org.pdfclown.common.build.test.assertion.match.Has;
+import org.pdfclown.common.build.test.assertion.match.Matches;
+import org.pdfclown.common.build.test.assertion.match.MatchesText;
+import org.pdfclown.common.build.test.assertion.match.MatchesTextFile;
 import org.slf4j.event.Level;
 import org.slf4j.event.LoggingEvent;
 
@@ -58,27 +61,28 @@ public final class Matchers {
   }
 
   /**
+   * Creates a matcher that matches when the examined text contains the given pattern.
+   */
+  public static Matcher<String> containsPattern(Pattern pattern) {
+    return new ContainsPattern(pattern);
+  }
+
+  /**
    * Creates a matcher that matches when the examined text contains the given regular expression.
    */
-  public static PatternMatcher containsPattern(CharSequence regex) {
-    return PatternMatcher.containsPattern(regex);
+  public static Matcher<String> containsPattern(String regex) {
+    return containsPattern(regex, 0);
   }
 
   /**
    * Creates a matcher that matches when the examined text contains the given regular expression.
    *
    * @param flags
-   *          (see {@link Pattern#compile( String, int)})
+   *          (see {@link Pattern#compile(String, int)})
    */
-  public static PatternMatcher containsPattern(CharSequence regex, int flags) {
-    return PatternMatcher.containsPattern(regex, flags);
-  }
-
-  /**
-   * Creates a matcher that matches when the examined text contains the given pattern.
-   */
-  public static PatternMatcher containsPattern(Pattern pattern) {
-    return PatternMatcher.containsPattern(pattern);
+  public static Matcher<String> containsPattern(String regex, int flags) {
+    //noinspection MagicConstant
+    return containsPattern(Pattern.compile(requireNonNull(regex, "`pattern`"), flags));
   }
 
   /**
@@ -95,9 +99,17 @@ public final class Matchers {
    * @param <T>
    *          Argument type.
    */
-  public static <T> HasMatcher<T> has(String mappingDescription, Function<T, Object> mapper,
+  public static <T> Has<T> has(String mappingDescription, Function<T, Object> mapper,
       Matcher<Object> matcher) {
-    return HasMatcher.has(mappingDescription, mapper, matcher);
+    return new Has<>(mappingDescription, mapper, matcher);
+  }
+
+  /**
+   * Creates a matcher that matches the expected value to another one on the basis of the given
+   * condition.
+   */
+  public static <T> Matcher<T> matches(T expectedValue, BiPredicate<T, T> predicate) {
+    return new Matches<>(expectedValue, predicate);
   }
 
   /**
@@ -118,8 +130,8 @@ public final class Matchers {
    * @param expectedContentPath
    *          Path of the file containing the expected text.
    */
-  public static TextFileMatcher matchesFileContent(Path expectedContentPath) {
-    return TextFileMatcher.matchesFileContent(expectedContentPath);
+  public static Matcher<Path> matchesFileContent(Path expectedContentPath) {
+    return new MatchesTextFile(expectedContentPath, false);
   }
 
   /**
@@ -129,32 +141,33 @@ public final class Matchers {
    * @param expectedContentPath
    *          Path of the file containing the expected text.
    */
-  public static TextFileMatcher matchesFileContentIgnoreCase(Path expectedContentPath) {
-    return TextFileMatcher.matchesFileContentIgnoreCase(expectedContentPath);
+  public static Matcher<Path> matchesFileContentIgnoreCase(Path expectedContentPath) {
+    return new MatchesTextFile(expectedContentPath, true);
+  }
+
+  /**
+   * Creates a matcher that matches when the examined text matches the given pattern.
+   */
+  public static Matcher<String> matchesPattern(Pattern pattern) {
+    return org.hamcrest.Matchers.matchesPattern(pattern);
   }
 
   /**
    * Creates a matcher that matches when the examined text matches the given regular expression.
    */
-  public static PatternMatcher matchesPattern(CharSequence regex) {
-    return PatternMatcher.matchesPattern(regex);
+  public static Matcher<String> matchesPattern(String regex) {
+    return matchesPattern(regex, 0);
   }
 
   /**
    * Creates a matcher that matches when the examined text matches the given regular expression.
    *
    * @param flags
-   *          (see {@link Pattern#compile( String, int)})
+   *          (see {@link Pattern#compile(String, int)})
    */
-  public static PatternMatcher matchesPattern(CharSequence regex, int flags) {
-    return PatternMatcher.matchesPattern(regex, flags);
-  }
-
-  /**
-   * Creates a matcher that matches when the examined text matches the given pattern.
-   */
-  public static PatternMatcher matchesPattern(Pattern pattern) {
-    return PatternMatcher.matchesPattern(pattern);
+  public static Matcher<String> matchesPattern(String regex, int flags) {
+    //noinspection MagicConstant
+    return matchesPattern(Pattern.compile(requireNonNull(regex, "`pattern`"), flags));
   }
 
   /**
@@ -163,8 +176,8 @@ public final class Matchers {
    * @param expected
    *          Expected text.
    */
-  public static TextMatcher matchesText(String expected) {
-    return TextMatcher.matchesText(expected);
+  public static Matcher<String> matchesText(String expected) {
+    return new MatchesText(expected, false);
   }
 
   /**
@@ -174,8 +187,8 @@ public final class Matchers {
    * @param expected
    *          Expected text.
    */
-  public static TextMatcher matchesTextIgnoreCase(String expected) {
-    return TextMatcher.matchesTextIgnoreCase(expected);
+  public static Matcher<String> matchesTextIgnoreCase(String expected) {
+    return new MatchesText(expected, true);
   }
 
   private Matchers() {
