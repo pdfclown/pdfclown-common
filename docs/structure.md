@@ -27,8 +27,8 @@ A pdfClown.org project SHALL be defined according to this hierarchy (initially d
 - `<<internal>>` stereotype denotes **private artifacts** (i.e., not published, consumed only internally to the project hierarchy)
 - `<<external>>` stereotype denotes **published artifacts** (i.e., consumed also externally to the project hierarchy)
 - properties represent **declarations** (e.g. `dependencies`, `plugins`)
-- `--|>` arrows represent **Maven `parent` (inheritance) relationships**, pointing from child to parent
-- `..>` dashed arrows represent **Maven dependencies usage** (import or regular)
+- solid arrow lines represent **Maven `parent` (inheritance) relationships**, pointing from child to parent
+- dashed arrow lines represent **Maven dependencies usage** (import or regular)
 
 <table>
 <tr>

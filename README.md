@@ -5,7 +5,7 @@
 -->
 <h1 align="center">
 <picture>
-<img alt="logo" src="src/main/javadoc/jada/attach/common/resources/images/logo.png" width="100">
+<img alt="logo" src="src/main/javadoc/jada/attach/common/resources/images/logo.png" width="125">
 </picture><br>pdfClown Common
 </h1>
 
