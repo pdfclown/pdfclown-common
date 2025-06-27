@@ -8,8 +8,7 @@
     NOTE: AbbreviationAsWordInName currently (checkstyle 10.1) is incapable to recognize
     digit-terminated abbreviations [1].
 
-    [1] https://github.com/checkstyle/checkstyle/issues/6694#issuecomment-1086919616
-  -->
+    [1] https://github.com/checkstyle/checkstyle/issues/6694#issuecomment-1086919616 -->
   <suppress
     checks="AbbreviationAsWordInName"
     message="MCID'"/>
@@ -17,8 +16,7 @@
     This is a temporary fix to the faulty behavior of SuppressionCommentFilter, which currently
     (checkstyle 10.1) excludes closing tag comment (onComment) from suppression [1].
 
-    [1] https://github.com/checkstyle/checkstyle/issues/11504
-  -->
+    [1] https://github.com/checkstyle/checkstyle/issues/11504 -->
   <suppress
     checks="CommentsIndentation"
     message="Comment has incorrect indentation level 0"/>
@@ -40,11 +38,20 @@
     This is a temporary fix to the faulty behavior of IndentationCheck, which currently
     (checkstyle 10.12) applies wrong indentation to them [1].
 
-    [1] https://github.com/checkstyle/checkstyle/issues/13405
-  -->
+    [1] https://github.com/checkstyle/checkstyle/issues/13405 -->
   <suppress
     checks="Indentation"
     message="'new' has incorrect indentation"/>
 
 <!-- SUBPROJECTS -->
+  <!--
+    pdfclown-common-build
+  -->
+  <!-- Allow special property naming to avoid TestUnit API pollution.
+    This ensures implementing test classes have a clean canvas to name their test case methods after
+    their own tested class API without conflicts. -->
+  <suppress
+    checks="MemberName|MethodName"
+    message="'__.+' must match pattern"
+    files="TestUnit.java"/>
 </suppressions>
