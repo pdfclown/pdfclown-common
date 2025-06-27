@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -151,8 +152,7 @@ public final class Executions {
       boolean merged) {
     if (outRef == null) {
       if (errRef == null)
-        throw new IllegalArgumentException("At least one among `outRef` and `errRef` MUST be "
-            + "defined");
+        throw wrongArg("At least one among `outRef` and `errRef` MUST be defined");
       else if (merged) {
         outRef = new MutableObject<>();
       }

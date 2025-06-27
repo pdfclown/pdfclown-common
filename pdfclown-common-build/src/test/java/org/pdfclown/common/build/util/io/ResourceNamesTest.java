@@ -14,7 +14,7 @@ package org.pdfclown.common.build.util.io;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.pdfclown.common.build.internal.util.Aggregations.entry;
+import static org.pdfclown.common.build.internal.util_.Aggregations.entry;
 import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;

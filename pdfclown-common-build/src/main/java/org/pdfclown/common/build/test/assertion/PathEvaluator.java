@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
+
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 
@@ -50,7 +52,7 @@ public interface PathEvaluator {
           coordsCount = 0 * 2;
           break;
         default:
-          throw new UnsupportedOperationException("segmentKind UNEXPECTED: " + segmentKind);
+          throw unexpected("segmentKind", segmentKind);
       }
       if (!evaluator.eval(segmentKind, coords, coordsCount)) {
         break;

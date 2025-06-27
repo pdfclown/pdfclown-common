@@ -14,8 +14,11 @@ package org.pdfclown.common.build.test.model;
 
 import static java.lang.Math.subtractExact;
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.build.internal.util.Objects.fqn;
-import static org.pdfclown.common.build.internal.util.Objects.sqn;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
+import static org.pdfclown.common.build.internal.util_.Objects.fqn;
+import static org.pdfclown.common.build.internal.util_.Objects.sqn;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -210,7 +213,7 @@ public class ModelMapper<T> {
      */
     public void merge(PropertySelector other) {
       if (!mutable)
-        throw new IllegalStateException("Immutable");
+        throw wrongState("Immutable");
 
       if (other.exclusive != exclusive) {
         exclusive = other.exclusive;
@@ -490,7 +493,7 @@ public class ModelMapper<T> {
   protected JsonObject map(Object obj, List<PropertySelector> selectors, Set<Object> visitedObjs,
       int level) {
     if (visitedObjs.contains(obj))
-      throw new IllegalArgumentException("Object already visited: " + obj);
+      throw wrongArg("obj", obj, "ALREADY VISITED");
 
     visitedObjs.add(obj);
 
@@ -558,7 +561,7 @@ public class ModelMapper<T> {
          */
         objProperties.sort(Comparator.comparing(PropertyDescriptor::getName));
       } catch (IntrospectionException ex) {
-        throw new RuntimeException(ex);
+        throw runtime(ex);
       }
       for (var objProperty : objProperties) {
         if (!objSelector.isSelected(objProperty.getName(), level)

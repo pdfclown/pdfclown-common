@@ -26,6 +26,11 @@
   <suppress
     checks="AbbreviationAsWordInName|MethodName"
     message="'TODO'|'EOF'"/>
+  <!-- Allow special internal package names (useful, e.g., to mark packages containing copies of
+    classes from external projects). -->
+  <suppress
+    checks="PackageName"
+    message=".internal."/>
   <!-- Allow empty javadoc summaries (sometimes they are simply redundant, such as in setters). -->
   <suppress
     checks="SummaryJavadoc"
@@ -41,5 +46,5 @@
     checks="Indentation"
     message="'new' has incorrect indentation"/>
 
-<!-- MODULES -->
+<!-- SUBPROJECTS -->
 </suppressions>

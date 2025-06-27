@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Test.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (Debug.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -16,11 +16,12 @@ import static java.lang.System.out;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
-import static org.pdfclown.common.build.internal.util.Objects.fqnd;
-import static org.pdfclown.common.build.internal.util.Objects.objToLiteralString;
-import static org.pdfclown.common.build.internal.util.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util.Strings.SPACE;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
+import static org.pdfclown.common.build.internal.util_.Objects.objToLiteralString;
+import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -179,7 +180,7 @@ public abstract class Debug {
       try {
         out.printf("  %s: %s\n", field.getName(), field.get(cliArgs));
       } catch (IllegalAccessException ex) {
-        throw new RuntimeException(ex) /* Should NEVER happen */;
+        throw runtime(ex) /* Should NEVER happen */;
       }
     }
     out.println();
@@ -242,7 +243,7 @@ public abstract class Debug {
         record.close();
         record = null;
       }
-      throw new RuntimeException(ex);
+      throw runtime(ex);
     }
   }
 

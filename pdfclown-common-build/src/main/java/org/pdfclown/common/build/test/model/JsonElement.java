@@ -14,6 +14,7 @@ package org.pdfclown.common.build.test.model;
 
 import static org.pdfclown.common.build.internal.util.Objects.PATTERN_GROUP__CLASS_FQN;
 import static org.pdfclown.common.build.internal.util.Objects.PATTERN__TO_STRING__DEFAULT;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 
 import java.util.regex.Matcher;
 import org.json.JSONArray;
@@ -48,8 +49,7 @@ public interface JsonElement {
   static @Nullable Object normValue(@Nullable Object value) {
     if ((value instanceof JSONArray || value instanceof JSONObject)
         && !(value instanceof JsonElement))
-      throw new IllegalArgumentException(
-          String.format("JSON values MUST implement %s", JsonElement.class));
+      throw wrongArg("JSON values MUST implement {}", JsonElement.class);
 
     if (value instanceof JsonElement)
       return value;

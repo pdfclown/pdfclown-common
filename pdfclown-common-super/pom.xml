@@ -138,6 +138,7 @@ pdfclown-common-base instead)</description>
     <maven.plugin.plugin.version>3.15.1</maven.plugin.plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
     <maven.remoteresources.version>3.0.0</maven.remoteresources.version>
+    <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
     <maven.source.version>3.3.1</maven.source.version>
     <maven.surefire.version>3.5.2</maven.surefire.version>
     <maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
@@ -386,6 +387,12 @@ pdfclown-common-base instead)</description>
               </configuration>
             </execution>
           </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>${maven-shade-plugin.version}</version>
         </plugin>
 
         <plugin>

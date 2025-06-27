@@ -13,18 +13,19 @@
 package org.pdfclown.common.build.util.io;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.pdfclown.common.build.internal.util.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util.Strings.BACKSLASH;
-import static org.pdfclown.common.build.internal.util.Strings.DOT;
-import static org.pdfclown.common.build.internal.util.Strings.S;
-import static org.pdfclown.common.build.internal.util.Strings.SLASH;
-import static org.pdfclown.common.build.internal.util.Strings.UNDERSCORE;
-import static org.pdfclown.common.build.internal.util.io.Files.PATH_SUPER;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.build.internal.util_.Strings.BACKSLASH;
+import static org.pdfclown.common.build.internal.util_.Strings.DOT;
+import static org.pdfclown.common.build.internal.util_.Strings.S;
+import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
+import static org.pdfclown.common.build.internal.util_.Strings.UNDERSCORE;
+import static org.pdfclown.common.build.internal.util_.io.Files.PATH_SUPER;
 
 import java.io.File;
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util.io.Files;
+import org.pdfclown.common.build.internal.util_.io.Files;
 
 /**
  * Resource utilities.
@@ -224,8 +225,7 @@ public final class ResourceNames {
    */
   public static String localName(String simpleName, Class<?> baseType) {
     if (simpleName.indexOf(SLASH) >= 0)
-      throw new IllegalArgumentException(String.format(
-          "`simpleName` (%s) INVALID (cannot contain slashes)", simpleName));
+      throw wrongArg("simpleName", simpleName, "INVALID (cannot contain slashes)");
 
     return sqnd(baseType) + UNDERSCORE + simpleName;
   }

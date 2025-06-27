@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.pdfclown.common.build.internal.util.Aggregations.entry;
+import static org.pdfclown.common.build.internal.util_.Aggregations.entry;
 
 import java.awt.Shape;
 import java.awt.geom.Path2D;
@@ -33,7 +33,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opentest4j.AssertionFailedError;
 import org.pdfclown.common.build.__test.BaseTest;
-import org.pdfclown.common.build.internal.util.io.XtPrintStream;
+import org.pdfclown.common.build.internal.util_.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;

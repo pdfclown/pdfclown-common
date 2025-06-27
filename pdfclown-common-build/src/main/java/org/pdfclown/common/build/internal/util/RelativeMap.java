@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.build.internal.util;
 
-import static org.pdfclown.common.build.internal.util.Objects.sqn;
+import static org.pdfclown.common.build.internal.util_.Objects.sqn;
 
 import java.util.ArrayList;
 import java.util.HashMap;

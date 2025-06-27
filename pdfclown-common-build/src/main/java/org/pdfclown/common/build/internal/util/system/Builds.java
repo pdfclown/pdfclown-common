@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util.xml.Xmls;
+import org.pdfclown.common.build.internal.util_.xml.Xmls;
 
 /**
  * Build utilities.

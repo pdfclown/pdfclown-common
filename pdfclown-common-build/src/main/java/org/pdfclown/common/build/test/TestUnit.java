@@ -14,9 +14,11 @@ package org.pdfclown.common.build.test;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.pdfclown.common.build.internal.util.Objects.sqn;
-import static org.pdfclown.common.build.internal.util.Strings.SLASH;
-import static org.pdfclown.common.build.internal.util.io.Files.resetDir;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Exceptions.unsupported;
+import static org.pdfclown.common.build.internal.util_.Objects.sqn;
+import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
+import static org.pdfclown.common.build.internal.util_.io.Files.resetDir;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -127,7 +129,7 @@ public abstract class TestUnit implements TestEnvironment {
        */
       resourceDir = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
     } catch (URISyntaxException ex) {
-      throw new RuntimeException(ex) /* Should NEVER happen */;
+      throw runtime(ex) /* Should NEVER happen */;
     }
   }
 
@@ -161,7 +163,7 @@ public abstract class TestUnit implements TestEnvironment {
       case MAIN_TYPE_SRC:
         return baseDirResolver.getMainTypeSrcPath();
       default:
-        throw new UnsupportedOperationException("Unexpected `id`: " + id);
+        throw unsupported("Unexpected `id`: " + id);
     }
   }
 
@@ -255,7 +257,7 @@ public abstract class TestUnit implements TestEnvironment {
     else if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.MAIN_TYPE_SRC), type)))
       return ret;
     else
-      throw new RuntimeException(new FileNotFoundException(
+      throw runtime(new FileNotFoundException(
           String.format("Source file corresponding to `%s` NOT FOUND (search paths: %s, %s)",
               type.getName(), dirPath(DirId.TYPE_SRC), dirPath(DirId.MAIN_TYPE_SRC))));
   }

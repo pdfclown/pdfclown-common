@@ -13,7 +13,7 @@
 package org.pdfclown.common.build.internal.util.reflect;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.pdfclown.common.build.internal.util.Strings.uncapitalizeGreedy;
+import static org.pdfclown.common.build.internal.util_.Strings.uncapitalizeGreedy;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;

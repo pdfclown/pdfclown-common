@@ -10,7 +10,11 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.internal.util.regex;
+package org.pdfclown.common.build.internal.util_.regex;
+
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Regular-expression utilities.
@@ -18,7 +22,6 @@ package org.pdfclown.common.build.internal.util.regex;
  * @author Stefano Chizzolini
  */
 public final class Patterns {
-  // SourceFQN: org.pdfclown.common.util.regex.Patterns.globToRegex(..)
   /**
    * Converts the given (filesystem-aware) glob to regex.
    *
@@ -34,7 +37,14 @@ public final class Patterns {
     return globToRegex(glob, true);
   }
 
-  // SourceFQN: org.pdfclown.common.util.regex.Patterns.wildcardToRegex(..)
+  /**
+   * Tries to match the given pattern.
+   */
+  public static Optional<Matcher> match(Pattern pattern, CharSequence input) {
+    Matcher ret = pattern.matcher(input);
+    return ret.find() ? Optional.of(ret) : Optional.empty();
+  }
+
   /**
    * Converts the given wildcard pattern to regex.
    *
@@ -50,7 +60,6 @@ public final class Patterns {
     return globToRegex(pattern, false);
   }
 
-  // SourceFQN: org.pdfclown.common.util.regex.Patterns.globToRegex(..)
   /**
    * @param glob
    *          Glob pattern.

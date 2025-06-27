@@ -14,10 +14,11 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.pdfclown.common.build.internal.util.Objects.fqn;
-import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util.io.Files.fullExtension;
-import static org.pdfclown.common.build.internal.util.io.Files.replaceFullExtension;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Objects.fqn;
+import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.io.Files.fullExtension;
+import static org.pdfclown.common.build.internal.util_.io.Files.replaceFullExtension;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -261,7 +262,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
               try {
                 Files.writeString($, actualJsonElement.toString());
               } catch (IOException ex1) {
-                throw new RuntimeException(ex1);
+                throw runtime(ex1);
               }
             }, config);
           }

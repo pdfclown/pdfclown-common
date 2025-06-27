@@ -3,18 +3,33 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (package-info.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (Aggregation.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
+package org.pdfclown.common.build.internal.util_;
 
 /**
+ * Element aggregation.
+ * <p>
+ * Common interface bridging collections with maps.
+ * </p>
+ *
+ * @param <E>
+ *          Element type.
  * @author Stefano Chizzolini
  */
-@NullMarked
-package org.pdfclown.common.build.internal.util.regex;
+public interface Aggregation<E> extends Fluent, Iterable<E> {
+  default boolean isEmpty() {
+    return size() == 0;
+  }
 
-import org.jspecify.annotations.NullMarked;
+  default boolean isFilled() {
+    return !isEmpty();
+  }
+
+  int size();
+}

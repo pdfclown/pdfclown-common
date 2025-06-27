@@ -25,16 +25,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.pdfclown.common.build.internal.util.Aggregations.cartesianProduct;
-import static org.pdfclown.common.build.internal.util.Objects.fqn;
-import static org.pdfclown.common.build.internal.util.Objects.fqnd;
-import static org.pdfclown.common.build.internal.util.Objects.objToLiteralString;
-import static org.pdfclown.common.build.internal.util.Objects.requireState;
-import static org.pdfclown.common.build.internal.util.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util.Strings.ELLIPSIS__CHICAGO;
-import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util.Strings.S;
-import static org.pdfclown.common.build.internal.util.Strings.SPACE;
+import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianProduct;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Objects.fqn;
+import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
+import static org.pdfclown.common.build.internal.util_.Objects.objToLiteralString;
+import static org.pdfclown.common.build.internal.util_.Objects.requireState;
+import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS__CHICAGO;
+import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.S;
+import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
@@ -67,9 +70,9 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.pdfclown.common.build.internal.util.Objects;
-import org.pdfclown.common.build.internal.util.io.XtPrintStream;
 import org.pdfclown.common.build.internal.util.system.Desktops;
+import org.pdfclown.common.build.internal.util_.Objects;
+import org.pdfclown.common.build.internal.util_.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Mode;
 import org.pdfclown.common.build.util.system.Runtimes;
@@ -930,9 +933,8 @@ public final class Assertions {
           cardinality = argSize;
         } else {
           if (argSize != cardinality)
-            throw new IllegalArgumentException(String.format(
-                "args[%s].size (%s): INVALID (should be %s)", it.nextIndex() - 1, argSize,
-                cardinality));
+            throw wrongArg("args[" + (it.nextIndex() - 1) + "].size", argSize,
+                "INVALID (should be {})", cardinality);
         }
       }
       return cardinality;
@@ -1161,7 +1163,7 @@ public final class Assertions {
         };
         break;
       default:
-        throw new AssertionError("Unexpected value: " + config.mode);
+        throw unexpected(config.mode);
     }
 
     // Arguments transformation:
@@ -1203,9 +1205,8 @@ public final class Assertions {
       expectedGenerator.set(expectedGeneratorProvider.apply(argsList));
     }
     if (expected.size() != expectedCount)
-      throw new IllegalArgumentException(String.format(
-          "`expected` size (%s): MISMATCH with `args` (SHOULD be %s)", expected.size(),
-          expectedCount));
+      throw wrongArg("`expected` size", expected.size(), "MISMATCH with `args` (SHOULD be {})",
+          expectedCount);
 
     // Build the argument sets!
     return argumentsStreamer.apply(expected, argsList);
@@ -1463,9 +1464,9 @@ public final class Assertions {
       if (ex.getCause() instanceof AssertionError) {
         fail(ex.getCause());
       } else
-        throw new RuntimeException(ex.getCause());
+        throw runtime(ex.getCause());
     } catch (InterruptedException ex) {
-      throw new RuntimeException(ex);
+      throw runtime(ex);
     }
   }
 

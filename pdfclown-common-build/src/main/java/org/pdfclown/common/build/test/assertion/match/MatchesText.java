@@ -16,8 +16,8 @@ import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.leftPad;
-import static org.pdfclown.common.build.internal.util.Strings.ELLIPSIS;
-import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS;
+import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;

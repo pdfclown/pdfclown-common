@@ -10,10 +10,14 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.internal.util.xml;
+package org.pdfclown.common.build.internal.util_.xml;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.build.internal.util.Objects.objToLiteralString;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Objects.nonNull;
+import static org.pdfclown.common.build.internal.util_.Objects.objToLiteralString;
+import static org.pdfclown.common.build.internal.util_.Strings.strEmptyToNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,10 +52,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util.Aggregations;
+import org.pdfclown.common.build.internal.util_.Aggregations;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -61,7 +64,6 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-// SourceFQN: org.pdfclown.common.util.xml.Xmls
 /**
  * W3C DOM utilities.
  *
@@ -126,9 +128,8 @@ public final class Xmls {
 
     public void register(String prefix, String namespaceUri) {
       if (base.containsKey(prefix))
-        throw new IllegalArgumentException(String.format(
-            "prefix (\"%s\" Already used for %s namespace", prefix,
-            objToLiteralString(base.get(prefix))));
+        throw wrongArg("prefix", prefix, "Already used for {} namespace",
+            objToLiteralString(base.get(prefix)));
 
       base.put(prefix, namespaceUri);
     }
@@ -180,7 +181,7 @@ public final class Xmls {
         ? new AbstractList<>() {
           @Override
           public Node get(int index) {
-            return requireNonNull(nodes.item(index));
+            return nonNull(nodes.item(index));
           }
 
           @Override
@@ -216,7 +217,7 @@ public final class Xmls {
     try {
       return (R) xpath().evaluate(expression, source, returnType);
     } catch (XPathExpressionException ex) {
-      throw new RuntimeException(ex);
+      throw runtime(ex);
     }
   }
 
@@ -245,7 +246,7 @@ public final class Xmls {
    * @return Empty, if not found.
    */
   public static String filterNodeValue(String expression, Object source) {
-    return requireNonNull(filter(expression, source, XPathConstants.STRING));
+    return nonNull(filter(expression, source, XPathConstants.STRING));
   }
 
   /**
@@ -258,7 +259,7 @@ public final class Xmls {
    * @return Empty, if not found.
    */
   public static List<@NonNull Node> filterNodes(String expression, Object source) {
-    return asList(requireNonNull(filter(expression, source, XPathConstants.NODESET)));
+    return asList(nonNull(filter(expression, source, XPathConstants.NODESET)));
   }
 
   /**
@@ -320,7 +321,7 @@ public final class Xmls {
    */
   public static @Nullable String getInheritableAttributeValue(String name, Element element) {
     return walkAncestors(element, $ -> $.getNodeType() == Node.ELEMENT_NODE
-        ? StringUtils.stripToNull(((Element) $).getAttribute(name))
+        ? strEmptyToNull(((Element) $).getAttribute(name))
         : null);
   }
 
@@ -329,7 +330,7 @@ public final class Xmls {
    */
   public static Map<String, Map<String, String>> getMetaInfo(Document document) {
     Map<String, Map<String, String>> ret = null;
-    for (Node node : filterNodes("/*/head/meta", requireNonNull(document.getDocumentElement()))) {
+    for (Node node : filterNodes("/*/head/meta", nonNull(document.getDocumentElement()))) {
       Element meta = (Element) node;
       String content = meta.getAttribute("content");
       if (content.isEmpty()) {
@@ -553,7 +554,7 @@ public final class Xmls {
       });
       return builder.parse(in);
     } catch (ParserConfigurationException ex) {
-      throw new RuntimeException(ex);
+      throw runtime(ex);
     }
   }
 

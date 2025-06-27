@@ -113,6 +113,13 @@
     <dependency>
       <groupId>org.pdfclown</groupId>
       <artifactId>pdfclown-common-build</artifactId>
+      <exclusions>
+        <!-- (see comment to the same exclusion in pdfclown-common-util POM) -->
+        <exclusion>
+          <groupId>org.pdfclown</groupId>
+          <artifactId>pdfclown-common-util</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

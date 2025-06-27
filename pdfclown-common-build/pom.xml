@@ -37,6 +37,24 @@
   </properties>
 
   <dependencies>
+    <!--
+      TODO: [shading] After the initial release:
+            1. activate the dependency on pdfclown-common-util (until then it is illegal because of
+               cyclic dependency between pdfclown-common-build and pdfclown-common-util)
+            2. activate the corresponding maven-shade-plugin configuration here below
+            3. delete ALL the source code packages under `org.pdfclown.common.build.internal.util_`
+               (they are just temporary copies of pdfclown-common-util classes) and rename the
+               resulting broken imports to the package (`org.pdfclown.common.util`) of the new
+               dependency
+    -->
+    <!--
+    <dependency>
+      <groupId>org.pdfclown</groupId>
+      <artifactId>pdfclown-common-util</artifactId>
+      <version>RELEASED VERSION HERE</version>
+    </dependency>
+    -->
+
     <!-- Language -->
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -166,6 +184,47 @@
           </execution>
         </executions>
       </plugin>
+
+      <!--
+        TODO: see [shading] tag here above.
+      -->
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <configuration>
+          <artifactSet>
+            <includes>
+              <include>org.pdfclown:pdfclown-common-util</include>
+            </includes>
+          </artifactSet>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/MANIFEST.MF</exclude>
+              </excludes>
+            </filter>
+          </filters>
+          <relocations>
+            <relocation>
+              <pattern>org.pdfclown.common.util</pattern>
+              <shadedPattern>org.pdfclown.common.build.internal.util_</shadedPattern>
+            </relocation>
+          </relocations>
+          <minimizeJar>true</minimizeJar>
+        </configuration>
+        <executions>
+          <execution>
+            <id>shade-dependencies</id>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      -->
     </plugins>
   </build>
 </project>

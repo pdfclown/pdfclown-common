@@ -14,14 +14,15 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.pdfclown.common.build.internal.util.Strings.COMMA;
-import static org.pdfclown.common.build.internal.util.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util.Strings.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.build.internal.util.Strings.ROUND_BRACKET_OPEN;
-import static org.pdfclown.common.build.internal.util.Strings.S;
-import static org.pdfclown.common.build.internal.util.Strings.SLASH;
-import static org.pdfclown.common.build.internal.util.Strings.abbreviateMultiline;
-import static org.pdfclown.common.build.internal.util.regex.Patterns.globToRegex;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
+import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.build.internal.util_.Strings.S;
+import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
+import static org.pdfclown.common.build.internal.util_.Strings.abbreviateMultiline;
+import static org.pdfclown.common.build.internal.util_.regex.Patterns.globToRegex;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,7 +78,7 @@ public abstract class Asserter {
       try {
         return (Config) super.clone();
       } catch (CloneNotSupportedException ex) {
-        throw new RuntimeException(ex);
+        throw runtime(ex);
       }
     }
 
@@ -313,10 +314,9 @@ public abstract class Asserter {
                 .orElseThrow())
             .orElse(EMPTY));
     if (testName.isEmpty())
-      throw new RuntimeException(String.format(
-          "Failed test method NOT FOUND on stack trace (should be marked with any of these "
-              + "annotations: %s)",
-          testAnnotationTypes.stream().map(Class::getName).collect(toList())));
+      throw runtime("Failed test method NOT FOUND on stack trace (should be marked with any of "
+          + "these annotations: {})",
+          testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
     message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message);
     String projectArtifactId = Builds.artifactId(expectedFile.toPath());
@@ -337,10 +337,9 @@ public abstract class Asserter {
     getLog().error(LogMarker.VERBOSE, "{}\n{}", message, hint);
 
     // Exception (shortened message).
-    throw new AssertionError(
-        String.format("%s\n"
-            + "(see pdfclown/assert.log for further information)\n"
-            + "%s", abbreviateMultiline(message, 5, 100), hint));
+    throw new AssertionError(String.format("%s\n"
+        + "(see pdfclown/assert.log for further information)\n"
+        + "%s", abbreviateMultiline(message, 5, 100), hint));
   }
 
   /**
@@ -387,7 +386,7 @@ public abstract class Asserter {
       parentFile.mkdirs();
       writer.accept(sourceFile);
     } catch (RuntimeException ex) {
-      throw new RuntimeException("Expected resource build FAILED: " + sourceFile,
+      throw runtime("Expected resource build FAILED: " + sourceFile,
           ex.getCause() != null ? ex.getCause() : ex);
     }
     getLog().info("Expected resource BUILT at {}", sourceFile);
@@ -401,7 +400,7 @@ public abstract class Asserter {
       Files.copy(sourceFile.toPath(), targetFile.toPath(),
           StandardCopyOption.REPLACE_EXISTING);
     } catch (RuntimeException ex) {
-      throw new RuntimeException("Expected resource copy to target FAILED "
+      throw runtime("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + targetFile, ex);
     }
     getLog().info("Expected resource COPIED to target ({})", targetFile);
@@ -424,7 +423,7 @@ public abstract class Asserter {
           try {
             Files.copy(actualFile.toPath(), $.toPath(), StandardCopyOption.REPLACE_EXISTING);
           } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw runtime(ex);
           }
         }, config);
   }

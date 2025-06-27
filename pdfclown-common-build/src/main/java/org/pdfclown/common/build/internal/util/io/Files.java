@@ -12,8 +12,7 @@
  */
 package org.pdfclown.common.build.internal.util.io;
 
-import static org.pdfclown.common.build.internal.util.Strings.DOT;
-import static org.pdfclown.common.build.internal.util.Strings.S;
+import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__ZIP;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,8 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -36,37 +33,6 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public final class Files {
-  // SourceFQN: org.pdfclown.common.util.io.Files.PATH_SUPER
-  public static final String PATH_SUPER = S + DOT + DOT;
-
-  /**
-   * Full file extension pattern.
-   * <p>
-   * A greedy sequence of one or more extensions, each beginning with a dot, followed by a
-   * non-digit, followed by one or more characters different from dot (extension separator), slash
-   * (Unix directory separator) or back-slash (Windows directory separator).
-   * </p>
-   */
-  private static final Pattern PATTERN__FULL_EXTENSION = Pattern.compile("(\\.\\D[^.\\\\/]+)+$");
-
-  private static final String FILE_EXTENSION__ZIP = ".zip";
-
-  // SourceFQN: org.pdfclown.common.util.io.Files.fullExtension(..)
-  /**
-   * Gets the full extension of the given path.
-   * <p>
-   * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (eg, ".tar.gz") are recognized, while version codes are ignored
-   * (eg, "commons-io-2.8.0.jar" returns ".jar", NOT ".8.0.jar").
-   * </p>
-   *
-   * @return Empty, if no extension.
-   */
-  public static String fullExtension(String path) {
-    Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
-    return m.find() ? m.group() : "";
-  }
-
   /**
    * Gets the content of the given (either plain or ZIP-compressed) file as string.
    * <p>
@@ -122,16 +88,6 @@ public final class Files {
       return java.nio.file.Files.readString(file.toPath());
   }
 
-  // SourceFQN: org.pdfclown.common.util.io.Files.replaceFullExtension(..)
-  /**
-   * Replaces the {@linkplain #fullExtension(String) full extension} of the given path with the
-   * given extension.
-   */
-  public static String replaceFullExtension(String path, String newExtension) {
-    Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
-    return (m.find() ? path.substring(0, m.start()) : path) + newExtension;
-  }
-
   /**
    * Cleans the given directory, or creates it if not existing.
    *
@@ -151,7 +107,9 @@ public final class Files {
    * Writes the given data string to file.
    *
    * @param file
-   *          Target file ({@value #FILE_EXTENSION__ZIP} extension causes data to compress).
+   *          Target file
+   *          ({@value org.pdfclown.common.build.internal.util_.io.Files#FILE_EXTENSION__ZIP}
+   *          extension causes data to compress).
    */
   public static void writeString(File file, String data) throws IOException {
     if (file.getName().endsWith(FILE_EXTENSION__ZIP)) {

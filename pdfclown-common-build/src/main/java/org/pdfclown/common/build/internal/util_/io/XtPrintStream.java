@@ -10,16 +10,16 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.internal.util.io;
+package org.pdfclown.common.build.internal.util_.io;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-// SourceFQN: org.pdfclown.common.util.io.XtPrintStream
 /**
  * Extended {@link java.io.PrintStream PrintStream}.
  * <p>
@@ -239,7 +239,7 @@ public class XtPrintStream extends java.io.PrintStream {
    */
   private ByteArrayOutputStream baseArrayStream() {
     if (!(out instanceof ByteArrayOutputStream))
-      throw new IllegalStateException("Backing stream is NOT `ByteArrayOutputStream`");
+      throw wrongState("Backing stream is NOT `ByteArrayOutputStream`");
 
     return (ByteArrayOutputStream) out;
   }
