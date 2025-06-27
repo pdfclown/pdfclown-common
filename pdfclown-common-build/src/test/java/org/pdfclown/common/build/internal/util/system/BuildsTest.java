@@ -13,8 +13,8 @@
 package org.pdfclown.common.build.internal.util.system;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.test.assertion.TestEnvironment.DirId;
@@ -26,7 +26,6 @@ class BuildsTest extends BaseTest {
   @Test
   void artifactId() {
     //noinspection DataFlowIssue : assertThat(..) supports nullable actual.
-    assertThat(Builds.artifactId(env().dirPath(DirId.MAIN_TYPE_SRC)),
-        Matchers.is("pdfclown-common-build"));
+    assertThat(Builds.artifactId(env().dirPath(DirId.MAIN_TYPE_SRC)), is("pdfclown-common-build"));
   }
 }

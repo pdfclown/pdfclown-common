@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.build.system;
 
+import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
+
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.AppenderRef;
@@ -52,7 +54,7 @@ public final class LogManager {
         setLevel(Level.INFO);
         break;
       default:
-        throw new AssertionError("Unexpected profile: " + profile);
+        throw unexpected("profile", profile);
     }
   }
 
