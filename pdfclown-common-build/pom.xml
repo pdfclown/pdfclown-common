@@ -46,6 +46,7 @@
                (they are just temporary copies of pdfclown-common-util classes) and rename the
                resulting broken imports to the package (`org.pdfclown.common.util`) of the new
                dependency
+            4. define SPI for logging capture adapters (see `LogCaptor`)
     -->
     <!--
     <dependency>

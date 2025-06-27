@@ -14,7 +14,6 @@ package org.pdfclown.common.build.test.assertion;
 
 import static org.pdfclown.common.build.internal.util_.Objects.objTo;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,20 +66,6 @@ class Log4jCaptor extends LogCaptor {
 
   private final CaptureAppender appender = new CaptureAppender();
   private final LoggerConfig logConfig;
-
-  /**
-   * New instance capturing root logger events.
-   */
-  Log4jCaptor() {
-    this(EMPTY);
-  }
-
-  /**
-   * New instance capturing events of the given logger.
-   */
-  Log4jCaptor(Class<?> loggerClass) {
-    this(loggerClass.getName());
-  }
 
   /**
    * New instance capturing events of the given logger.

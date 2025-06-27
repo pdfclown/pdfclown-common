@@ -14,6 +14,7 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.util_.Objects.OBJ_ARRAY__EMPTY;
+import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
 import org.slf4j.event.LoggingEvent;
@@ -33,6 +35,7 @@ import org.slf4j.event.LoggingEvent;
  * {@linkplain org.junit.jupiter.api.extension.Extension JUnit extension} for capturing log entries.
  *
  * @author Stefano Chizzolini
+ * @see Matchers#matchesEvent(Level, String, Class)
  */
 public abstract class LogCaptor
     implements AutoCloseable, AfterAllCallback, BeforeAllCallback, AfterEachCallback {
@@ -97,43 +100,54 @@ public abstract class LogCaptor
    * New instance capturing root logger events.
    */
   public static LogCaptor of() {
-    return new Log4jCaptor();
+    return of(EMPTY);
   }
 
   /**
    * New instance capturing events of the given logger.
    */
   public static LogCaptor of(Class<?> loggerClass) {
-    return new Log4jCaptor(loggerClass);
+    return of(loggerClass.getName());
   }
 
   /**
    * New instance capturing events of the given logger.
    */
   public static LogCaptor of(String loggerName) {
-    return new Log4jCaptor(loggerName);
+    String implName = fqn(LoggerFactory.getILoggerFactory()).toLowerCase();
+    // Log4J?
+    if (implName.contains("log4j"))
+      return new Log4jCaptor(loggerName);
+    /*
+     * TODO: after the initial release, when `org.pdfclown.common.util.spi.ServiceProvider` is
+     * available, define a service (in `org.pdfclown.common.build.spi`) to discover other logging
+     * adapters.
+     */
+    // Unknown.
+    else
+      throw new UnsupportedOperationException("Logging implementation NOT supported: " + implName);
   }
 
   private @Nullable Level level;
 
   @Override
-  public void afterAll(ExtensionContext context) throws Exception {
+  public void afterAll(ExtensionContext context) {
     close();
   }
 
   @Override
-  public void afterEach(ExtensionContext context) throws Exception {
+  public void afterEach(ExtensionContext context) {
     reset();
   }
 
   @Override
-  public void beforeAll(ExtensionContext context) throws Exception {
+  public void beforeAll(ExtensionContext context) {
     attach();
     start();
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
     stop();
     detach();
   }
