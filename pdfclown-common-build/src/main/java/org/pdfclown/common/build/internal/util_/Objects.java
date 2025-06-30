@@ -37,6 +37,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.function.FailableConsumer;
+import org.apache.commons.lang3.function.FailableRunnable;
+import org.apache.commons.lang3.function.FailableSupplier;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.translate.AggregateTranslator;
@@ -109,16 +112,16 @@ public final class Objects {
    * further objects to be added later.
    * </p>
    */
-  public static <@Nullable T, @Nullable U> boolean any(T obj, BiPredicate<T, U> predicate,
-      U other1) {
+  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
+      @Nullable U other1) {
     return predicate.test(obj, other1);
   }
 
   /**
    * Gets whether the given object matches any of the others according to the given predicate.
    */
-  public static <@Nullable T, @Nullable U> boolean any(T obj, BiPredicate<T, U> predicate, U other1,
-      U other2) {
+  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
+      @Nullable U other1, @Nullable U other2) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2);
   }
@@ -132,8 +135,8 @@ public final class Objects {
    *           this is the standard way Java API itself deals with such cases.
    */
   @SafeVarargs
-  public static <@Nullable T, @Nullable U> boolean any(T obj, BiPredicate<T, U> predicate, U other1,
-      U other2, U... others) {
+  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
+      @Nullable U other1, @Nullable U other2, @Nullable U... others) {
     if (predicate.test(obj, other1)
         || predicate.test(obj, other2))
       return true;
@@ -147,8 +150,8 @@ public final class Objects {
   /**
    * Gets whether the given object matches any of the others according to the given predicate.
    */
-  public static <@Nullable T, @Nullable U> boolean any(T obj, BiPredicate<T, U> predicate, U other1,
-      U other2, U other3) {
+  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
+      @Nullable U other1, @Nullable U other2, @Nullable U other3) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3);
@@ -157,8 +160,8 @@ public final class Objects {
   /**
    * Gets whether the given object matches any of the others according to the given predicate.
    */
-  public static <@Nullable T, @Nullable U> boolean any(T obj, BiPredicate<T, U> predicate, U other1,
-      U other2, U other3, U other4) {
+  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
+      @Nullable U other1, @Nullable U other2, @Nullable U other3, @Nullable U other4) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3)
@@ -168,8 +171,9 @@ public final class Objects {
   /**
    * Gets whether the given object matches any of the others according to the given predicate.
    */
-  public static <@Nullable T, @Nullable U> boolean any(T obj, BiPredicate<T, U> predicate, U other1,
-      U other2, U other3, U other4, U other5) {
+  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
+      @Nullable U other1, @Nullable U other2, @Nullable U other3, @Nullable U other4,
+      @Nullable U other5) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3)
@@ -200,18 +204,12 @@ public final class Objects {
   /**
    * Quietly closes the given object.
    *
-   * @return {@code obj}.
-   * @implNote A warning is logged if this operation fails.
+   * @return {@code obj}
+   * @see #quiet(FailableConsumer, Object)
    */
-  public static <@Nullable T extends AutoCloseable> T closeQuiet(T obj) {
-    if (obj != null) {
-      try {
-        obj.close();
-      } catch (Exception ex) {
-        log.warn("Close FAILED", ex);
-      }
-    }
-    return obj;
+  public static <T extends AutoCloseable> @PolyNull @Nullable T closeQuiet(
+      @PolyNull @Nullable T obj) {
+    return quiet(AutoCloseable::close, obj);
   }
 
   /**
@@ -234,8 +232,8 @@ public final class Objects {
    *          are required to be of the same type in order to be resolved.
    */
   @SuppressWarnings({ "unchecked", "null" })
-  public static <R, @Nullable T> boolean deepEquals(T o1, T o2, Class<R> baseRefType,
-      Function<? super R, T> resolver, boolean raw) {
+  public static <R, T> boolean deepEquals(@Nullable T o1, @Nullable T o2, Class<R> baseRefType,
+      Function<? super R, @Nullable T> resolver, boolean raw) {
     if (o1 == o2)
       return true;
     else if (o1 == null || o2 == null)
@@ -352,22 +350,12 @@ public final class Objects {
   }
 
   /**
-   * Applies an action to the given object.
-   *
-   * @param action
-   *          Action applied if {@code obj} is defined.
-   */
-  public static <T> void ifPresent(@Nullable T obj, Consumer<? super T> action) {
-    if (obj != null) {
-      action.accept(obj);
-    }
-  }
-
-  /**
    * Initializes the given class.
+   * <p>
+   * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
+   * </p>
    *
    * @return Whether the initialization succeeded.
-   * @implNote This is the unchecked equivalent of {@link Class#forName(String)}
    */
   public static boolean init(Class<?> type) {
     return init(type.getName());
@@ -375,9 +363,11 @@ public final class Objects {
 
   /**
    * Initializes the given class.
+   * <p>
+   * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
+   * </p>
    *
    * @return Whether the initialization succeeded.
-   * @implNote This is the unchecked equivalent of {@link Class#forName(String)}
    */
   public static boolean init(String typeName) {
     try {
@@ -390,35 +380,32 @@ public final class Objects {
 
   /**
    * Initializes the given class.
+   * <p>
+   * This is the unchecked equivalent of {@link Class#forName(String)}.
+   * </p>
    *
    * @throws RuntimeException
    *           if class initialization fails.
-   * @implNote This is the unchecked equivalent of {@link Class#forName(String)}
    */
-  public static void initOrThrow(Class<?> type) {
-    initOrThrow(type.getName());
+  public static void initElseThrow(Class<?> type) {
+    initElseThrow(type.getName());
   }
 
   /**
    * Initializes the given class.
+   * <p>
+   * This is the unchecked equivalent of {@link Class#forName(String)}.
+   * </p>
    *
    * @throws RuntimeException
    *           if class initialization fails.
-   * @implNote This is the unchecked equivalent of {@link Class#forName(String)}
    */
-  public static void initOrThrow(String typeName) {
+  public static void initElseThrow(String typeName) {
     try {
       Class.forName(typeName);
     } catch (ClassNotFoundException ex) {
       throw runtime(ex);
     }
-  }
-
-  /**
-   * Gets whether the given object is an instance of the given type.
-   */
-  public static boolean isInstanceOf(@Nullable Object o, @Nullable Class<?> c) {
-    return c != null && c.isInstance(o);
   }
 
   /**
@@ -504,10 +491,10 @@ public final class Objects {
   /**
    * Casts the given object to a target type.
    * <p>
-   * The purpose of this method is to allow a safe cast without pre-check.
+   * Contrary to {@link Class#cast(Object)}, this method is safe without assignment compatibility.
    * </p>
    *
-   * @return {@code null} if {@code obj} is assignment-incompatible with {@code type}.
+   * @return {@code null}, if {@code obj} is assignment-incompatible with {@code type}.
    */
   @SuppressWarnings("unchecked")
   public static <T, R extends T> @Nullable R objCast(@Nullable T obj, Class<R> type) {
@@ -515,15 +502,14 @@ public final class Objects {
   }
 
   /**
-   * Applies an action to the given object.
+   * Applies an operation to the given object.
    *
-   * @param action
-   *          Action applied if {@code obj} is defined.
    * @return {@code obj}
+   * @see #quiet(FailableConsumer, Object)
    */
-  public static <T> @Nullable T objDo(@Nullable T obj, Consumer<? super T> action) {
+  public static <T> @PolyNull @Nullable T objDo(@PolyNull @Nullable T obj, Consumer<? super T> op) {
     if (obj != null) {
-      action.accept(obj);
+      op.accept(obj);
     }
     return obj;
   }
@@ -531,8 +517,8 @@ public final class Objects {
   /**
    * Returns the given object, if not null; otherwise, the supplied default.
    * <p>
-   * NOTE: This method doesn't enforce its result to be non-null; if you need such enforcement, use
-   * {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)} instead.
+   * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
+   * doesn't enforce its result to be non-null.
    * </p>
    *
    * @param <T>
@@ -582,10 +568,10 @@ public final class Objects {
           if (s.charAt(s.length() - 1) == c) {
             // Character literal without escape?
             if (c == SQUOTE && s.length() == 3)
-              return Character.valueOf(s.charAt(1));
+              return s.charAt(1);
             // Character literal with escape?
             else if (c == SQUOTE && s.length() == 4 && s.charAt(1) == '\\')
-              return Character.valueOf(s.charAt(2));
+              return s.charAt(2);
             // String literal.
             else
               return LITERAL_STRING_UNESCAPE.translate(s.substring(1, s.length() - 1));
@@ -656,7 +642,7 @@ public final class Objects {
    * @param defaultSupplier
    *          Result supplier if {@code obj} or {@code mapper}'s result are undefined.
    */
-  public static <T, @Nullable R> R objToElseGet(@Nullable T obj,
+  public static <T, R> @Nullable R objToElseGet(@Nullable T obj,
       Function<? super @NonNull T, ? extends R> mapper, Supplier<? extends R> defaultSupplier) {
     R ret;
     return obj != null && (ret = mapper.apply(obj)) != null ? ret : defaultSupplier.get();
@@ -717,8 +703,8 @@ public final class Objects {
   /**
    * Maps the given object to its string representation.
    * <p>
-   * NOTE: Contrary to the standard {@link java.util.Objects#toString(Object)} function, this one
-   * returns {@code null} as-is.
+   * Contrary to the standard {@link java.util.Objects#toString(Object)} function, this one returns
+   * {@code null} as-is.
    * </p>
    *
    * @param obj
@@ -734,6 +720,62 @@ public final class Objects {
    */
   public static <T> Optional<T> opt(@Nullable T obj) {
     return Optional.ofNullable(obj);
+  }
+
+  /**
+   * Quietly applies an operation to the given object.
+   *
+   * @return {@code obj}
+   * @see #objDo(Object, Consumer)
+   */
+  public static <T> @PolyNull @Nullable T quiet(FailableConsumer<T, ?> op,
+      @PolyNull @Nullable T obj) {
+    return quiet(op, obj, null);
+  }
+
+  /**
+   * Quietly applies the given operation to the object.
+   *
+   * @param exceptionHandler
+   *          Handles the exceptions thrown by {@code op}.
+   * @return {@code obj}
+   * @see #objDo(Object, Consumer)
+   */
+  public static <T> @PolyNull @Nullable T quiet(FailableConsumer<T, ?> op,
+      @PolyNull @Nullable T obj, @Nullable Consumer<Throwable> exceptionHandler) {
+    if (obj != null) {
+      try {
+        op.accept(obj);
+      } catch (Throwable ex) {
+        if (exceptionHandler != null) {
+          exceptionHandler.accept(ex);
+        }
+      }
+    }
+    return obj;
+  }
+
+  /**
+   * Quietly runs the given operation.
+   */
+  public static void quiet(FailableRunnable<?> op) {
+    quiet(op, null);
+  }
+
+  /**
+   * Quietly runs the given operation.
+   *
+   * @param exceptionHandler
+   *          Handles the exceptions thrown by {@code op}.
+   */
+  public static void quiet(FailableRunnable<?> op, @Nullable Consumer<Throwable> exceptionHandler) {
+    try {
+      op.run();
+    } catch (Throwable ex) {
+      if (exceptionHandler != null) {
+        exceptionHandler.accept(ex);
+      }
+    }
   }
 
   /**
@@ -997,35 +1039,31 @@ public final class Objects {
   }
 
   /**
-   * Tries the given operation, returning its result, if not null; otherwise, the given default.
+   * Tries the given supplier.
    *
-   * @param operation
-   *          Operation.
-   * @param defaultObj
-   *          Result in case {@code operation} fails or its result is undefined.
+   * @return Result of {@code supplier}.
    */
-  public static <@Nullable T> T tryOrElse(Supplier<? extends T> operation, T defaultObj) {
-    try {
-      T ret = operation.get();
-      if (ret != null)
-        return ret;
-    } catch (Exception ex) {
-      /* NOOP */
-    }
-    return defaultObj;
+  public static <T> @Nullable T tryGet(FailableSupplier<? extends @Nullable T, ?> supplier) {
+    return tryGetElse(supplier, null);
   }
 
   /**
-   * Quietly runs the given object.
+   * Tries the given supplier.
    *
-   * @implNote A warning is logged if this operation fails.
+   * @param defaultResult
+   *          Result in case {@code supplier} fails or its result is undefined.
+   * @return Result of {@code supplier}, if not {@code null}; otherwise, {@code defaultResult}.
    */
-  public static void tryQuiet(Runnable obj) {
+  public static <T> @Nullable T tryGetElse(FailableSupplier<? extends @Nullable T, ?> supplier,
+      @Nullable T defaultResult) {
     try {
-      obj.run();
+      var ret = supplier.get();
+      if (ret != null)
+        return ret;
     } catch (Throwable ex) {
-      log.warn("Execution FAILED", ex);
+      // NOOP
     }
+    return defaultResult;
   }
 
   /**
@@ -1048,13 +1086,16 @@ public final class Objects {
 
   /**
    * Gets the type of the given object.
+   *
+   * @see #asType(Object)
    */
   public static @PolyNull @Nullable Class<?> typeOf(@PolyNull @Nullable Object obj) {
     return obj != null ? obj.getClass() : null;
   }
 
-  private static <@Nullable R, @Nullable T> boolean deepEqualsCollection(Collection<R> c1,
-      Collection<R> c2, Class<R> baseRefType, Function<? super R, T> resolver, boolean raw) {
+  private static <R, T> boolean deepEqualsCollection(Collection<@Nullable R> c1,
+      Collection<@Nullable R> c2, Class<R> baseRefType,
+      Function<? super @Nullable R, @Nullable T> resolver, boolean raw) {
     if (c1.size() != c2.size())
       return false;
 
@@ -1077,8 +1118,8 @@ public final class Objects {
     return true;
   }
 
-  private static <@Nullable R, @Nullable T> boolean deepEqualsList(List<R> l1, List<R> l2,
-      Class<R> baseRefType, Function<? super R, T> resolver, boolean raw) {
+  private static <R, T> boolean deepEqualsList(List<@Nullable R> l1, List<@Nullable R> l2,
+      Class<R> baseRefType, Function<? super @Nullable R, @Nullable T> resolver, boolean raw) {
     if (l1.size() != l2.size())
       return false;
 
@@ -1089,8 +1130,8 @@ public final class Objects {
     return true;
   }
 
-  private static <@Nullable R, @Nullable T> boolean deepEqualsMap(Map<?, R> m1, Map<?, R> m2,
-      Class<R> baseRefType, Function<? super R, T> resolver, boolean raw) {
+  private static <R, T> boolean deepEqualsMap(Map<?, @Nullable R> m1, Map<?, @Nullable R> m2,
+      Class<R> baseRefType, Function<? super @Nullable R, @Nullable T> resolver, boolean raw) {
     if (m1.size() != m2.size())
       return false;
 

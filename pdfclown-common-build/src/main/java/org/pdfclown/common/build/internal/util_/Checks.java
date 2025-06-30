@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.annot.PolyNull;
@@ -74,7 +75,7 @@ public final class Checks {
     /**
      */
     public static Predicate<@Nullable String> isNotBlank() {
-      return $ -> !Strings.isBlank($);
+      return StringUtils::isNotBlank;
     }
 
     /**
