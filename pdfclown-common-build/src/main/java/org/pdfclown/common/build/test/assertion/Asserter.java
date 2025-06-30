@@ -65,12 +65,12 @@ public abstract class Asserter {
    * @author Stefano Chizzolini
    */
   public static class Config implements Cloneable {
-    final TestEnvironment env;
+    final org.pdfclown.common.build.test.assertion.Test test;
     @Nullable
     String testId;
 
-    public Config(TestEnvironment env) {
-      this.env = requireNonNull(env);
+    public Config(org.pdfclown.common.build.test.assertion.Test test) {
+      this.test = requireNonNull(test, "`test`");
     }
 
     @Override
@@ -83,7 +83,11 @@ public abstract class Asserter {
     }
 
     public TestEnvironment getEnv() {
-      return env;
+      return test.getEnv();
+    }
+
+    public org.pdfclown.common.build.test.assertion.Test getTest() {
+      return test;
     }
 
     public @Nullable String getTestId() {

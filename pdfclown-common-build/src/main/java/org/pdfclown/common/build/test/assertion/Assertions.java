@@ -259,7 +259,7 @@ public final class Assertions {
      * <pre>
      * &#64;ParameterizedTest
      * &#64;MethodSource
-     * public void %myTestName%(Expected&lt;String> expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
+     * public void %myTestName%(Expected&lt;String&gt; expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
      *   assertParameterizedOf(
      *       () -&gt; %myMethodToTest%(arg0, arg1, . . ., argN),
      *       expected,
@@ -980,7 +980,7 @@ public final class Assertions {
    * <pre>
    * &#64;ParameterizedTest
    * &#64;MethodSource
-   * public void %myTestName%(Expected&lt;String> expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
+   * public void %myTestName%(Expected&lt;String&gt; expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
    *   assertParameterizedOf(
    *       () -&gt; %myMethodToTest%(arg0, arg1, . . ., argN),
    *       expected,
@@ -1036,7 +1036,7 @@ public final class Assertions {
    * <pre>
    * &#64;ParameterizedTest
    * &#64;MethodSource
-   * public void uncapitalizeGreedy(Expected&lt;String> expected, String value) {
+   * public void uncapitalizeGreedy(Expected&lt;String&gt; expected, String value) {
    *   assertParameterizedOf(
    *       () -&gt; Strings.uncapitalizeGreedy(value),
    *       expected,
@@ -1258,7 +1258,7 @@ public final class Assertions {
    *          can be passed as-is (for {@linkplain Matchers#is(Object) exact match}), or associated
    *          to a custom {@linkplain Matcher matcher} (e.g.,
    *          {@linkplain Matchers#closeTo(double, double) approximate match}):<pre>
-   * expected.match(() -> isCloseTo(expected.getReturned())) // where `expected` is Expected&lt;Double></pre>
+   * expected.match(() -&gt; isCloseTo(expected.getReturned())) // where `expected` is Expected&lt;Double&gt;</pre>
    * @param generationSupplier
    *          Supplies the feed for expected results generation (see
    *          {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}).
@@ -1325,7 +1325,7 @@ public final class Assertions {
    *
    *   &#64;ParameterizedTest
    *   &#64;MethodSource
-   *   public void uncapitalizeGreedy(Expected&lt;String> expected, String value) {
+   *   public void uncapitalizeGreedy(Expected&lt;String&gt; expected, String value) {
    *     assertParameterizedOf(
    *         () -&gt; Strings.uncapitalizeGreedy(value)),
    *         expected,

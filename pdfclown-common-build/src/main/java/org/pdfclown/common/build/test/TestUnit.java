@@ -29,6 +29,7 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
+import org.pdfclown.common.build.test.assertion.Test;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
 import org.pdfclown.common.build.util.io.ResourceNames;
 
@@ -48,7 +49,7 @@ import org.pdfclown.common.build.util.io.ResourceNames;
  * @author Stefano Chizzolini
  */
 @TestInstance(Lifecycle.PER_CLASS)
-public abstract class TestUnit {
+public abstract class TestUnit implements Test {
   /**
    * Base directory resolver.
    *
@@ -177,7 +178,7 @@ public abstract class TestUnit {
            * NOTE: We catch any exception to ensure the initialization flag is reverted.
            */
           outputDirInitialized = false;
-          throw (ex instanceof RuntimeException ? (RuntimeException) ex : new RuntimeException(ex));
+          throw runtime(ex);
         }
       }
 
@@ -280,14 +281,15 @@ public abstract class TestUnit {
   protected TestUnit() {
   }
 
-  protected Environment __createEnv() {
-    return new Environment();
-  }
-
-  protected synchronized Environment env() {
+  @Override
+  public synchronized Environment getEnv() {
     if (this.env == null) {
       this.env = __createEnv();
     }
     return this.env;
+  }
+
+  protected Environment __createEnv() {
+    return new Environment();
   }
 }
