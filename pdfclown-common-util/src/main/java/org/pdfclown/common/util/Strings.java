@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.util;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -213,20 +215,6 @@ public final class Strings {
    */
   public static boolean indexFound(int index) {
     return index != INDEX__NOT_FOUND;
-  }
-
-  /**
-   * Gets whether the given string is null or blank.
-   */
-  public static boolean isBlank(@Nullable String value) {
-    return value == null || value.isBlank();
-  }
-
-  /**
-   * Gets whether the given string is null or empty.
-   */
-  public static boolean isEmpty(@Nullable CharSequence value) {
-    return value == null || value.length() == 0;
   }
 
   /**

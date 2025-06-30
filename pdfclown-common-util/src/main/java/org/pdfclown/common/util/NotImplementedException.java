@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.util;
 
-import static org.pdfclown.common.util.Strings.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.jspecify.annotations.Nullable;
 

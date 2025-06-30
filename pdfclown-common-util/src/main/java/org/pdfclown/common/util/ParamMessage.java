@@ -13,9 +13,9 @@
 package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.isEmpty;
 
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
