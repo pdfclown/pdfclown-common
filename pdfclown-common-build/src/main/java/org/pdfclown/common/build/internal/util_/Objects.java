@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.internal.util_;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
@@ -36,6 +37,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableRunnable;
@@ -51,6 +54,7 @@ import org.apache.commons.text.translate.OctalUnescaper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.annot.PolyNull;
+import org.pdfclown.common.build.internal.util_.regex.Patterns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +107,13 @@ public final class Objects {
           "\\'", "'",
           "\\", EMPTY)));
 
-  private static final String STRING__NULL = "null";
+  /**
+   * Literal representation of {@code null} value.
+   */
+  public static final String LITERAL_NULL = "null";
+
+  private static final Pattern PATTERN__QUALIFIED_TO_STRING =
+      Pattern.compile("((?:\\w+[.$])*\\w+)([^\\w.$].*)?");
 
   /**
    * Gets whether the given object matches the other one according to the given predicate.
@@ -409,15 +419,6 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given string is a literal null ({@code "null"}).
-   *
-   * @see #objFromLiteralString(String)
-   */
-  public static boolean isLiteralNull(@Nullable String s) {
-    return STRING__NULL.equals(s);
-  }
-
-  /**
    * Gets whether the objects are the same instance, or both null.
    */
   public static boolean isSame(@Nullable Object o1, @Nullable Object o2) {
@@ -545,18 +546,19 @@ public final class Objects {
    *
    * @return Depending on {@code s} format:
    *         <ul>
-   *         <li>{@code "null"}, or undefined ({@code null}), or invalid (any string not comprised
-   *         in known formats) — {@code null} (use {@link #isLiteralNull(String)} to tell literal
-   *         null apart)</li>
-   *         <li>boolean literal ({@code true}, {@code false}) — {@link Boolean}</li>
-   *         <li>numeric value — see {@link NumberUtils#createNumber(String)}</li>
+   *         <li>boolean literal ({@code "true"} or {@code "false"}, case-insensitive) —
+   *         {@link Boolean}</li>
+   *         <li>{@linkplain NumberUtils#createNumber(String) numeric value} — {@link Number}</li>
    *         <li>single-quoted character — {@link Character}</li>
-   *         <li>single- or double-quoted string — {@link String}, unescaped</li>
+   *         <li>single- or double-quoted string — {@link String} (unescaped)</li>
+   *         <li>{@code "null"}, or undefined ({@code null}), or invalid (any string not comprised
+   *         in known formats) — {@code null} (use {@link #LITERAL_NULL} to tell literal null
+   *         apart)</li>
    *         </ul>
    */
   public static @Nullable Object objFromLiteralString(@Nullable String s) {
     // Undefined, or null literal?
-    if (s == null || (s = s.trim()).equals(STRING__NULL))
+    if (s == null || (s = s.trim()).equals(LITERAL_NULL))
       return null;
 
     if (s.length() >= 2) {
@@ -654,17 +656,17 @@ public final class Objects {
    *
    * @return Depending on {@code obj} type:
    *         <ul>
-   *         <li>{@code null} — {@code "null"} (like
-   *         {@link java.util.Objects#toString(Object)})</li>
    *         <li>{@link Boolean}, {@link Number} — {@link Object#toString()}, as-is</li>
    *         <li>{@link Character} — {@link Object#toString()}, wrapped with single quotes</li>
    *         <li>any other type — {@link Object#toString()}, escaped and wrapped with double
    *         quotes</li>
+   *         <li>{@code null} — {@code "null"} (like
+   *         {@link java.util.Objects#toString(Object)})</li>
    *         </ul>
    */
   public static String objToLiteralString(@Nullable Object obj) {
     if (obj == null)
-      return STRING__NULL;
+      return LITERAL_NULL;
     else if (obj instanceof Float)
       /*
        * NOTE: Literal float MUST be marked by suffix to override default double type.
@@ -684,20 +686,60 @@ public final class Objects {
   }
 
   /**
+   * Maps the given object to its string representation, normalizing its qualification with
+   * {@linkplain #sqnd(Object) qualified dotted simple type name} (SQND).
+   *
+   * @return Considering the {@linkplain Matcher pattern match} of
+   *         {@code obj.}{@link Object#toString() toString()} as formed by two groups (qualification
+   *         and attributes), the resulting string will be:
+   *         <ul>
+   *         <li><code>group()</code> — if its qualification equals the SQND of {@code obj}</li>
+   *         <li><code>sqnd(obj) + group(2)</code>— if its qualification contains the
+   *         {@linkplain Class#getSimpleName() simple type name} of {@code obj}</li>
+   *         <li><code>sqnd(obj) + '{' + group() + '}'</code>— if its qualification does NOT contain
+   *         the simple type name of {@code obj}</li>
+   *         </ul>
+   */
+  public static @PolyNull @Nullable String objToNormalQualifiedString(
+      @PolyNull @Nullable Object obj) {
+    if (obj == null)
+      return null;
+
+    String objString = obj.toString();
+    String sqnd = sqnd(obj);
+    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
+        .map($ -> $.group(1).equals(sqnd) ? $.group()
+            : sqnd + ($.group(1).endsWith(obj.getClass().getSimpleName())
+                ? requireNonNullElse($.group(2), EMPTY)
+                : CURLY_BRACE_OPEN + $.group() + CURLY_BRACE_CLOSE))
+        .orElseThrow();
+  }
+
+  /**
    * Maps the given object to its string representation, ensuring its qualification with simple type
    * name.
    *
-   * @param obj
-   *          Object to map.
-   * @see #objToString(Object)
-   * @implNote If {@link #sqn(Object) SQN} is missing from the original {@link Object#toString()
-   *           toString()}, the latter is wrapped in curly braces and prepended by the former
-   *           (<code>%SQN%{%toString()%}</code>).
+   * @return {@code obj.}{@link Object#toString() toString()}, if it contains the
+   *         {@linkplain Class#getSimpleName() simple type name} of {@code obj}; otherwise, it is
+   *         wrapped in curly braces and prepended by its {@link #sqnd(Object) SQND}
+   *         (<code>"`sqnd(obj)`{`obj.toString()`}"</code>).
    */
-  public static String objToQualifiedString(Object obj) {
+  public static @PolyNull @Nullable String objToQualifiedString(@PolyNull @Nullable Object obj) {
+    if (obj == null)
+      return null;
+
     String objString = obj.toString();
-    return objString.contains(sqn(obj)) ? objString
-        : fqn(obj) + CURLY_BRACE_OPEN + objString + CURLY_BRACE_CLOSE;
+    String sqnd = sqnd(obj);
+    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
+        .filter($ -> {
+          if ($.group(1).equals(obj.getClass().getSimpleName()))
+            return true;
+
+          var norm = $.group(1).replace('$', DOT);
+          return norm.equals(sqnd) || norm.equals(fqnd(obj));
+        }).isPresent()
+            ? objString
+            : sqnd(obj) + CURLY_BRACE_OPEN + objString + CURLY_BRACE_CLOSE;
   }
 
   /**
@@ -707,8 +749,6 @@ public final class Objects {
    * {@code null} as-is.
    * </p>
    *
-   * @param obj
-   *          Object to map.
    * @see java.util.Objects#toString(Object, String)
    */
   public static @PolyNull @Nullable String objToString(@PolyNull @Nullable Object obj) {
@@ -1149,7 +1189,7 @@ public final class Objects {
   private static String fqn(@Nullable String typeName, boolean dotted) {
     return typeName != null
         ? dotted ? typeName.replace('$', DOT) : typeName
-        : STRING__NULL;
+        : LITERAL_NULL;
   }
 
   private static String sqn(@Nullable Object obj, boolean dotted) {

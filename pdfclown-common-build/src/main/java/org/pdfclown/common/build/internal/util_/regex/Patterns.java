@@ -46,6 +46,13 @@ public final class Patterns {
   }
 
   /**
+   * Tries to match the given regular expression.
+   */
+  public static Optional<Matcher> match(String regex, CharSequence input) {
+    return match(Pattern.compile(regex), input);
+  }
+
+  /**
    * Converts the given wildcard pattern to regex.
    *
    * @param pattern

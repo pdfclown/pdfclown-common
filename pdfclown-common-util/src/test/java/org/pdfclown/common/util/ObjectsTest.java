@@ -47,6 +47,22 @@ import org.pdfclown.common.util.__test.BaseTest;
  */
 class ObjectsTest extends BaseTest {
   /**
+   * Simulates an object with arbitrary {@link #toString()}.
+   */
+  static class ToStringObject {
+    final String toString;
+
+    public ToStringObject(String toString) {
+      this.toString = toString;
+    }
+
+    @Override
+    public String toString() {
+      return toString;
+    }
+  }
+
+  /**
    * @implNote Generated as {@code expected} source code within {@link #objToLiteralString()}.
    */
   private static final List<String> LITERAL_STRINGS = asList(
@@ -70,6 +86,33 @@ class ObjectsTest extends BaseTest {
       "\"Text with:\\n- \\\"quoted content\\\"\\n- newlines\"",
       // [10] obj[9]: "测试文本"
       "\"测试文本\"");
+
+  private static final List<String> TO_STRINGS = asList(
+      null,
+      // Simple type name (Class.getSimpleName()).
+      "ToStringObject",
+      // Simple type name (Class.getSimpleName()), with attributes.
+      "ToStringObject myprop=something",
+      // SQN.
+      "ObjectsTest$ToStringObject",
+      // SQN, with attributes.
+      "ObjectsTest$ToStringObject myprop: something",
+      // SQND, with attributes.
+      "ObjectsTest.ToStringObject myprop: something else",
+      // FQN (Class.getName()).
+      "org.pdfclown.common.util.ObjectsTest$ToStringObject",
+      // FQND, with attributes.
+      "org.pdfclown.common.util.ObjectsTest.ToStringObject something",
+      // Wrong simple type name.
+      "ToStringObjects",
+      // Wrong FQN.
+      "org.something.ToStringObject",
+      // Simple type name, with attributes.
+      "ToStringObject{myprop:AAA}",
+      // Simple type name nested in an attribute.
+      "myprop:List<ToStringObject>",
+      // Simple type name nested in an attribute.
+      "myprop:ToStringObject");
 
   static Stream<Arguments> objFromLiteralString() {
     return argumentsStream(
@@ -102,7 +145,7 @@ class ObjectsTest extends BaseTest {
 
   static Stream<Arguments> objToLiteralString() {
     return argumentsStream(
-        simple(),
+        cartesian(),
         // expected
         LITERAL_STRINGS,
         // obj
@@ -117,6 +160,78 @@ class ObjectsTest extends BaseTest {
             EMPTY,
             "Text with:\n- \"quoted content\"\n- newlines",
             "测试文本"));
+  }
+
+  static Stream<Arguments> objToNormalQualifiedString() {
+    return argumentsStream(
+        cartesian()
+            .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
+        // expected
+        java.util.Arrays.asList(
+            // [1] obj[0]: null
+            null,
+            // [2] obj[1]: "ToStringObject"
+            "ObjectsTest.ToStringObject",
+            // [3] obj[2]: "ToStringObject myprop=something"
+            "ObjectsTest.ToStringObject myprop=something",
+            // [4] obj[3]: "ObjectsTest$ToStringObject"
+            "ObjectsTest.ToStringObject",
+            // [5] obj[4]: "ObjectsTest$ToStringObject myprop: something"
+            "ObjectsTest.ToStringObject myprop: something",
+            // [6] obj[5]: "ObjectsTest.ToStringObject myprop: something else"
+            "ObjectsTest.ToStringObject myprop: something else",
+            // [7] obj[6]: "org.pdfclown.common.util.ObjectsTest$ToStringObject"
+            "ObjectsTest.ToStringObject",
+            // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
+            "ObjectsTest.ToStringObject something",
+            // [9] obj[8]: "ToStringObjects"
+            "ObjectsTest.ToStringObject{ToStringObjects}",
+            // [10] obj[9]: "org.something.ToStringObject"
+            "ObjectsTest.ToStringObject",
+            // [11] obj[10]: "ToStringObject{myprop:AAA}"
+            "ObjectsTest.ToStringObject{myprop:AAA}",
+            // [12] obj[11]: "myprop:List<ToStringObject>"
+            "ObjectsTest.ToStringObject{myprop:List<ToStringObject>}",
+            // [13] obj[12]: "myprop:ToStringObject"
+            "ObjectsTest.ToStringObject{myprop:ToStringObject}"),
+        // obj
+        TO_STRINGS);
+  }
+
+  static Stream<Arguments> objToQualifiedString() {
+    return argumentsStream(
+        cartesian()
+            .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
+        // expected
+        java.util.Arrays.asList(
+            // [1] obj[0]: null
+            null,
+            // [2] obj[1]: "ToStringObject"
+            "ToStringObject",
+            // [3] obj[2]: "ToStringObject myprop=something"
+            "ToStringObject myprop=something",
+            // [4] obj[3]: "ObjectsTest$ToStringObject"
+            "ObjectsTest$ToStringObject",
+            // [5] obj[4]: "ObjectsTest$ToStringObject myprop: something"
+            "ObjectsTest$ToStringObject myprop: something",
+            // [6] obj[5]: "ObjectsTest.ToStringObject myprop: something else"
+            "ObjectsTest.ToStringObject myprop: something else",
+            // [7] obj[6]: "org.pdfclown.common.util.ObjectsTest$ToStringObject"
+            "org.pdfclown.common.util.ObjectsTest$ToStringObject",
+            // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
+            "org.pdfclown.common.util.ObjectsTest.ToStringObject something",
+            // [9] obj[8]: "ToStringObjects"
+            "ObjectsTest.ToStringObject{ToStringObjects}",
+            // [10] obj[9]: "org.something.ToStringObject"
+            "ObjectsTest.ToStringObject{org.something.ToStringObject}",
+            // [11] obj[10]: "ToStringObject{myprop:AAA}"
+            "ToStringObject{myprop:AAA}",
+            // [12] obj[11]: "myprop:List<ToStringObject>"
+            "ObjectsTest.ToStringObject{myprop:List<ToStringObject>}",
+            // [13] obj[12]: "myprop:ToStringObject"
+            "ObjectsTest.ToStringObject{myprop:ToStringObject}"),
+        // obj
+        TO_STRINGS);
   }
 
   @Test
@@ -184,6 +299,26 @@ class ObjectsTest extends BaseTest {
         expected,
         () -> new ExpectedGeneration(of(
             entry("obj", obj))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void objToNormalQualifiedString(Expected<String> expected, Object obj) {
+    assertParameterizedOf(
+        () -> Objects.objToNormalQualifiedString(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))).setMaxArgCommentLength(100));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void objToQualifiedString(Expected<String> expected, Object obj) {
+    assertParameterizedOf(
+        () -> Objects.objToQualifiedString(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))).setMaxArgCommentLength(100));
   }
 
   /**
