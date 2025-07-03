@@ -213,7 +213,7 @@ class AssertionsTest extends BaseTest {
     doAssertParameterized_generation(expected, value, length, ""
         + "// expected\n"
         + "java.util.Arrays.asList(\n"
-        + "  // value[0]: \"The quick brow. . .\"\n"
+        + "  // value[0]: \"The quick brown fox jumps over the lazy dog\"\n"
         + "  // [1] length[0]: 50\n"
         + "  new org.pdfclown.common.build.test.assertion.Assertions.Failure("
         + "\"java.lang.IllegalArgumentException\", "
@@ -223,7 +223,7 @@ class AssertionsTest extends BaseTest {
         + "  // [3] length[2]: 5\n"
         + "  \"The q\",\n"
         + "  //\n"
-        + "  // value[1]: \"The lazy yello. . .\"\n"
+        + "  // value[1]: \"The lazy yellow dog was caught by the slow r. . .\"\n"
         + "  // [4] length[0]: 50\n"
         + "  \"The lazy yellow dog was caught by the slow red fox\",\n"
         + "  // [5] length[1]: 20\n"
@@ -256,11 +256,12 @@ class AssertionsTest extends BaseTest {
     doAssertParameterized_generation(expected, value, length, ""
         + "// expected\n"
         + "java.util.Arrays.asList(\n"
-        + "  // [1] value[0]: \"The quick brow. . .\"; length[0]: 50\n"
+        + "  // [1] value[0]: \"The quick brown fox jumps over the lazy dog\"; length[0]: 50\n"
         + "  new org.pdfclown.common.build.test.assertion.Assertions.Failure("
         + "\"java.lang.IllegalArgumentException\", "
         + "\"`length` (50): INVALID (should be less than 43)\"),\n"
-        + "  // [2] value[1]: \"The lazy yello. . .\"; length[1]: 20\n"
+        + "  // [2] value[1]: \"The lazy yellow dog was caught by the slow r. . .\"; "
+        + "length[1]: 20\n"
         + "  \"The lazy yellow dog \"),\n");
   }
 

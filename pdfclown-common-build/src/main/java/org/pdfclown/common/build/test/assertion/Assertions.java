@@ -29,6 +29,7 @@ import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianPro
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Objects.LITERAL_NULL;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.objToLiteralString;
@@ -445,6 +446,8 @@ public final class Assertions {
    * @see Assertions#assertParameterized(Object, Expected, Supplier)
    */
   public static class ExpectedGeneration {
+    private static final int MAX_ARG_COMMENT_LENGTH__DEFAULT = 50;
+
     /**
      * Gets the constructor source code to use in {@link #setExpectedSourceCodeGenerator(Function)}.
      *
@@ -470,7 +473,7 @@ public final class Assertions {
     Function<@Nullable Object, String> argCommentFormatter = Objects::objToLiteralString;
     final List<Entry<String, @Nullable Object>> args;
     Function<Object, String> expectedSourceCodeGenerator = Objects::objToLiteralString;
-    int maxArgCommentLength = 20;
+    int maxArgCommentLength = MAX_ARG_COMMENT_LENGTH__DEFAULT;
     PrintStream out = System.err;
     boolean outOverridable = true;
 
@@ -522,7 +525,7 @@ public final class Assertions {
     /**
      * Maximum length of argument values in comments accompanying expected results source code.
      * <p>
-     * DEFAULT: {@code 20}
+     * DEFAULT: {@value #MAX_ARG_COMMENT_LENGTH__DEFAULT}
      * </p>
      */
     public int getMaxArgCommentLength() {
@@ -758,11 +761,11 @@ public final class Assertions {
      * The expected result is mapped to source code representation based on its value type:
      * </p>
      * <ul>
-     * <li>{@code null} — to literal null ({@code "null"})</li>
      * <li>failed result (thrown {@link Throwable}) — to {@link Failure}</li>
      * <li>regular result — via
      * {@code generation.}{@link ExpectedGeneration#getExpectedSourceCodeGenerator()
      * expectedSourceCodeGenerator}</li>
+     * <li>{@code null} — to literal null ({@code "null"})</li>
      * </ul>
      *
      * @param expected
@@ -831,7 +834,7 @@ public final class Assertions {
         ExpectedGeneration generation) {
       String expectedSourceCode;
       if (expected == null) {
-        expectedSourceCode = "null";
+        expectedSourceCode = LITERAL_NULL;
       } else if (expected instanceof Failure) {
         var failure = (Failure) expected;
         expectedSourceCode = String.format("new %s(\"%s\", %s)",

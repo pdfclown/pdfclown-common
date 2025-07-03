@@ -55,7 +55,7 @@ class UnitsTest extends BaseTest {
       .<Unit, String>comparing(Unit::getSymbol, Comparator.nullsFirst(String::compareToIgnoreCase))
       .thenComparing(Unit::getName);
 
-  private static final List<? super XtUnit<?>> units = Units.getInstance().getUnits().stream()
+  private static final List<? super XtUnit<?>> UNITS = Units.getInstance().getUnits().stream()
       .peek($ -> assertThat($, isA(XtUnit.class)))
       .map(XtUnit.class::cast)
       .sorted(COMPARATOR__UNIT)
@@ -156,7 +156,7 @@ class UnitsTest extends BaseTest {
             1.0),
         // unit
         list()
-            .withAll(units)
+            .withAll(UNITS)
             .with(tech.units.indriya.unit.Units.WEEK)
             .with(tech.units.indriya.unit.Units.AMPERE));
   }
@@ -294,7 +294,7 @@ class UnitsTest extends BaseTest {
             // [42] unit[41]: '℃ (Celsius)'
             273.15),
         // unit
-        units);
+        UNITS);
   }
 
   static Stream<Arguments> getQuantityType() {
@@ -388,7 +388,7 @@ class UnitsTest extends BaseTest {
             // [42] unit[41]: '℃ (Celsius)'
             "javax.measure.quantity.Temperature"),
         // unit
-        units);
+        UNITS);
   }
 
   static Stream<Arguments> getQuantityType__external() {
