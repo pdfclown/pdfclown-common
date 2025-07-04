@@ -53,7 +53,6 @@
     <module>pdfclown-common-base</module>
     <module>pdfclown-common-build</module>
     <module>pdfclown-common-deps</module>
-    <module>pdfclown-common-maven-plugin</module>
     <module>pdfclown-common-parent</module>
     <module>pdfclown-common-super</module>
     <module>pdfclown-common-util</module>

@@ -45,7 +45,6 @@
     <!--
       OVERRIDDEN PROPERTIES
     -->
-    <pdfclown-common-maven-plugin.version>${revision}</pdfclown-common-maven-plugin.version>
   </properties>
 
   <build>

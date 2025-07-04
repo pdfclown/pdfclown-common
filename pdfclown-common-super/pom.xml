@@ -104,15 +104,6 @@ pdfclown-common-base instead)</description>
     <log4j.version>2.19.0</log4j.version>
     <mockito.version>5.14.2</mockito.version>
     <reflections.version>0.10.2</reflections.version>
-    <!--
-      NOTE: Because of cyclic reference, pdfclown-common-maven-plugin's version MUST lag one
-      release behind this project's.
-
-      TODO: Whenever pdfclown-common-base project version changes,
-            `pdfclown-common-maven-plugin.version` MUST be updated to the preceding one.
-
-      <pdfclown-common-maven-plugin.version>0.0.0-SNAPSHOT</pdfclown-common-maven-plugin.version>
-    -->
     <slf4j.version>1.7.36</slf4j.version>
 
     <!--
@@ -122,6 +113,7 @@ pdfclown-common-base instead)</description>
     <checkstyle.puppycrawl.version>10.23.0</checkstyle.puppycrawl.version>
     <codehaus.xml.version>1.0.2</codehaus.xml.version>
     <dependency.check.version>12.1.1</dependency.check.version>
+    <flatten-maven-plugin.version>1.7.1</flatten-maven-plugin.version>
     <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
     <javaVersion>11</javaVersion>
     <m2e.lifecycle.version>1.0.0</m2e.lifecycle.version>
@@ -307,7 +299,7 @@ pdfclown-common-base instead)</description>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
-          <version>1.7.0</version>
+          <version>${flatten-maven-plugin.version}</version>
           <configuration>
             <outputDirectory>${project.build.directory}</outputDirectory>
             <updatePomFile>true</updatePomFile>
@@ -614,27 +606,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           </executions>
         </plugin>
 
-        <!-- 
-            TODO: enable after first release
-        <plugin>
-          <groupId>org.pdfclown</groupId>
-          <artifactId>pdfclown-common-maven-plugin</artifactId>
-          <version>${pdfclown-common-maven-plugin.version}</version>
-          <configuration>
-            <outputDirectory>${project.build.directory}</outputDirectory>
-            <updatePomFile>true</updatePomFile>
-          </configuration>
-          <executions>
-            <execution>
-              <id>flatten</id>
-              <goals>
-                <goal>flatten</goal>
-              </goals>
-              <phase>process-resources</phase>
-            </execution>
-          </executions>
-        </plugin>
--->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
@@ -799,13 +770,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       </plugin>
 
       <!-- Packaging -->
-      <!--
-        TODO: enable after first release (cyclic dependency!)
-          <plugin>
-            <groupId>org.pdfclown</groupId>
-            <artifactId>pdfclown-common-maven-plugin</artifactId>
-          </plugin>
-      -->
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -1053,11 +1017,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>flatten-maven-plugin</artifactId>
-            <!-- 
-              TODO: enable after first release (cyclic dependency!)
-                <groupId>org.pdfclown</groupId>
-                <artifactId>pdfclown-common-maven-plugin</artifactId>
-            -->
             <configuration>
               <flattenMode>resolveCiFriendliesOnly</flattenMode>
             </configuration>
