@@ -12,13 +12,16 @@
  */
 package org.pdfclown.common.build.test.model;
 
-import static java.lang.Math.subtractExact;
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
+import static org.pdfclown.common.build.internal.util_.Objects.ancestors;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
+import static org.pdfclown.common.build.internal.util_.Strings.COLON;
+import static org.pdfclown.common.build.internal.util_.Strings.S;
+import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -33,12 +36,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.ToIntFunction;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util.Iterators;
-import org.pdfclown.common.build.internal.util.RelativeMap;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
+import org.pdfclown.common.build.internal.util_.Objects.HierarchicalTypeComparator;
+import org.pdfclown.common.build.internal.util_.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
+import org.pdfclown.common.build.internal.util_.RelativeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,14 +263,14 @@ public class ModelMapper<T> {
   protected static class ValueMapperMap extends RelativeMap<Class, ValueMapper> {
     private static final long serialVersionUID = 1L;
 
-    private static final ToIntFunction<Class> PRIORITY__INTERFACE =
-        $ -> $.isInterface() ? 1 : 0;
-    private static final ToIntFunction<String> PRIORITY__LIBRARY_NAME =
-        $ -> $.startsWith("org.pdfclown.") ? -1 : 0;
+    private static int libraryPriority(String name) {
+      return name.startsWith("org.pdfclown.") ? -1 : 0;
+    }
 
-    private int minPriority;
-    private int maxPriority;
-    private final Map<Class, Integer> priorities = new HashMap<>();
+    /**
+     * Explicit type priorities.
+     */
+    private final TypePriorityComparator priorities;
     /**
      * Explicitly mapped types.
      * <p>
@@ -276,48 +279,30 @@ public class ModelMapper<T> {
      */
     private final Map<ValueMapper, Class> rootTypes = new HashMap<>();
 
-    @SuppressWarnings("unchecked")
     ValueMapperMap() {
-      relatedKeysProvider = $ -> Iterators.ancestors($,
-          ($1, $2) -> {
-            if ($1 == $2)
-              return 0;
-
-            // Prioritize specialized types over super types!
-            if ($1.isAssignableFrom($2))
-              return 1;
-            else if ($2.isAssignableFrom($1))
-              return -1;
-
+      var hierarchicalComparator = HierarchicalTypeComparator.get()
+          .thenComparing(priorities = HierarchicalTypeComparator.Priorities.explicitPriority())
+          .thenComparing(HierarchicalTypeComparator.Priorities.interfacePriority())
+          .thenComparing(($1, $2) -> {
             int ret;
-
-            var priority1 = priorities.getOrDefault($1, 0);
-            var priority2 = priorities.getOrDefault($2, 0);
-            if ((ret = priority1 - priority2) != 0)
-              return ret;
-
-            // Prioritize concrete types over interfaces!
-            priority1 = PRIORITY__INTERFACE.applyAsInt($1);
-            priority2 = PRIORITY__INTERFACE.applyAsInt($2);
-            if ((ret = priority1 - priority2) != 0)
-              return ret;
+            var name1 = $1.getName();
+            var name2 = $2.getName();
 
             // Prioritize library-specific types!
-            var name1 = $1.getName();
-            priority1 = PRIORITY__LIBRARY_NAME.applyAsInt(name1);
-            var name2 = $2.getName();
-            priority2 = PRIORITY__LIBRARY_NAME.applyAsInt(name2);
-            if ((ret = priority1 - priority2) != 0)
+            if ((ret = libraryPriority(name1) - libraryPriority(name2)) != 0)
               return ret;
 
             // Compare arbitrarily (no more relevant aspects to evaluate)!
             return name1.compareTo(name2);
-          }, keySet(), false);
+          });
+      relatedKeysProvider = $ -> ancestors($, hierarchicalComparator, keySet(), false);
     }
 
-    public boolean isDefault(Class key) {
-      var value = get(key);
-      return value == null || value == get(Object.class);
+    /**
+     * Type priorities.
+     */
+    public TypePriorityComparator getPriorities() {
+      return priorities;
     }
 
     @Override
@@ -330,24 +315,13 @@ public class ModelMapper<T> {
 
     public @Nullable ValueMapper put(Class key, ValueMapper value,
         int priority) {
-      if (priority < minPriority) {
-        subtractExact(priority, maxPriority) /* Checks underflow */;
-        subtractExact(maxPriority, priority) /* Checks overflow */;
-        minPriority = priority;
-      } else if (priority > maxPriority) {
-        subtractExact(minPriority, priority) /* Checks underflow */;
-        subtractExact(priority, minPriority) /* Checks overflow */;
-        maxPriority = priority;
-      }
-
-      var ret = put(key, value);
-      priorities.put(key, priority);
-      return ret;
+      priorities.set(priority, key);
+      return put(key, value);
     }
 
     @Override
     protected void putRelated(Class relatedKey, Class key, ValueMapper value) {
-      put(key, value, priorities.getOrDefault(relatedKey, 0));
+      put(key, value, priorities.get(relatedKey));
 
       if (log.isDebugEnabled()) {
         log.debug("ValueMapper.putRelated: {} from {}", sqn(key), sqn(relatedKey));
@@ -383,7 +357,7 @@ public class ModelMapper<T> {
     valueMappers.put(Map.Entry.class, ($obj, $selectors, $visitedObjs, $level) -> {
       @SuppressWarnings("rawtypes")
       var entry = (Map.Entry) $obj;
-      return entry.getKey() + ": "
+      return entry.getKey() + S + COLON + SPACE
           + mapValue(entry.getValue(), $selectors, $visitedObjs, $level);
     });
   }

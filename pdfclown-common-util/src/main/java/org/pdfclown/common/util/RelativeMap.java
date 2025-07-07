@@ -3,18 +3,17 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (RelativeMap.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (RelativeMap.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.internal.util;
+package org.pdfclown.common.util;
 
-import static org.pdfclown.common.build.internal.util_.Objects.sqn;
+import static org.pdfclown.common.util.Objects.sqn;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * value, ensuring a match on next request.
  * </p>
  * <p>
- * Useful, eg, in case of maps keyed hierarchically, like {@link Class}: adding an entry for a
+ * Useful, e.g., in case of maps keyed hierarchically, like {@link Class}: adding an entry for a
  * certain class, all its subclasses will match the same entry value — an ordinary map would match
  * only the class explicitly associated to the entry.
  * </p>
@@ -50,12 +49,12 @@ public class RelativeMap<K, V> extends HashMap<K, V> {
   /**
    * Provides a sequence of keys related to the given one.
    */
-  protected @Nullable Function<K, Iterator<K>> relatedKeysProvider;
+  protected @Nullable Function<K, Iterable<K>> relatedKeysProvider;
 
   public RelativeMap() {
   }
 
-  public RelativeMap(@Nullable Function<K, Iterator<K>> relatedKeysProvider) {
+  public RelativeMap(@Nullable Function<K, Iterable<K>> relatedKeysProvider) {
     this.relatedKeysProvider = relatedKeysProvider;
   }
 
@@ -66,7 +65,7 @@ public class RelativeMap<K, V> extends HashMap<K, V> {
    * @param m
    *          Map whose mappings are to be copied to this map.
    */
-  public RelativeMap(@Nullable Function<K, Iterator<K>> relatedKeysProvider,
+  public RelativeMap(@Nullable Function<K, Iterable<K>> relatedKeysProvider,
       Map<? extends K, ? extends V> m) {
     this(relatedKeysProvider);
 
@@ -90,13 +89,12 @@ public class RelativeMap<K, V> extends HashMap<K, V> {
 
       @SuppressWarnings("unchecked")
       final var k = (K) key;
-      Iterator<K> relatedKeysItr = relatedKeysProvider.apply(k);
+      Iterator<K> relatedKeysItr = relatedKeysProvider.apply(k).iterator();
 
       if (log.isDebugEnabled()) {
         log.debug("Related key SEARCH for {}", sqn(k));
       }
 
-      var inheritKeys = new ArrayList<K>();
       while (relatedKeysItr.hasNext()) {
         var relatedKey = relatedKeysItr.next();
 
@@ -113,14 +111,7 @@ public class RelativeMap<K, V> extends HashMap<K, V> {
 
           // Make explicit the successful implicit mapping!
           putRelated(relatedKey, k, ret);
-
-          // Apply the implicit mapping to all the higher-priority related keys!
-          for (var inheritKey : inheritKeys) {
-            putRelated(relatedKey, inheritKey, ret);
-          }
           break;
-        } else {
-          inheritKeys.add(relatedKey);
         }
       }
     }

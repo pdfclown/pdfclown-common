@@ -15,19 +15,23 @@ package org.pdfclown.common.util;
 import static java.util.Arrays.asList;
 import static java.util.List.of;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.simple;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -59,6 +63,129 @@ class ObjectsTest extends BaseTest {
     @Override
     public String toString() {
       return toString;
+    }
+  }
+
+  /**
+   * Simulating {@code java.util.Collections.UnmodifiableCollection}.
+   */
+  static class UnmodifiableCollection<E> implements Collection<E>, Serializable {
+    @Override
+    public boolean add(E e) {
+      return false;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends E> c) {
+      return false;
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    @Override
+    public boolean contains(Object o) {
+      return false;
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+      return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return false;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+      return null;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+      return false;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+      return false;
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+      return false;
+    }
+
+    @Override
+    public int size() {
+      return 0;
+    }
+
+    @Override
+    public Object[] toArray() {
+      return new Object[0];
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+      return null;
+    }
+  }
+
+  /**
+   * Simulating {@code java.util.Collections.UnmodifiableList}.
+   */
+  static class UnmodifiableList<E> extends UnmodifiableCollection<E> implements List<E> {
+    @Override
+    public void add(int index, E element) {
+    }
+
+    @Override
+    public boolean addAll(int index, Collection<? extends E> c) {
+      return false;
+    }
+
+    @Override
+    public E get(int index) {
+      return null;
+    }
+
+    @Override
+    public int indexOf(Object o) {
+      return 0;
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+      return 0;
+    }
+
+    @Override
+    public ListIterator<E> listIterator() {
+      return null;
+    }
+
+    @Override
+    public ListIterator<E> listIterator(int index) {
+      return null;
+    }
+
+    @Override
+    public E remove(int index) {
+      return null;
+    }
+
+    @Override
+    public E set(int index, E element) {
+      return null;
+    }
+
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+      return List.of();
     }
   }
 
@@ -232,6 +359,24 @@ class ObjectsTest extends BaseTest {
             "ObjectsTest.ToStringObject{myprop:ToStringObject}"),
         // obj
         TO_STRINGS);
+  }
+
+  @Test
+  void ancestors() {
+    var actual = Objects.ancestors(UnmodifiableList.class,
+        Objects.HierarchicalTypeComparator.get()
+            .thenComparing(Objects.HierarchicalTypeComparator.Priorities.explicitPriority()
+                .set(999, Serializable.class))
+            .thenComparing(Objects.HierarchicalTypeComparator.Priorities.interfacePriority()
+                .reversed()));
+
+    assertThat(actual, contains(
+        List.class,
+        UnmodifiableCollection.class,
+        Collection.class,
+        Iterable.class,
+        Serializable.class,
+        Object.class));
   }
 
   @Test
