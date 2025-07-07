@@ -17,12 +17,17 @@ import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Strings.COLON;
+import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
 import static org.pdfclown.common.build.internal.util_.Strings.CURLY_BRACE_CLOSE;
 import static org.pdfclown.common.build.internal.util_.Strings.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.build.internal.util_.Strings.DOT;
 import static org.pdfclown.common.build.internal.util_.Strings.DQUOTE;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
+import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 import static org.pdfclown.common.build.internal.util_.Strings.SQUOTE;
 import static org.pdfclown.common.build.internal.util_.Strings.indexFound;
 
@@ -926,107 +931,99 @@ public final class Objects {
 
   /**
    * Gets the string representation of the given object, along with its features.
-   *
-   * @param features
-   *          Features (null values are ignored).
+   * <p>
+   * NOTE: {@code null} features are ignored.
+   * </p>
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object... features) {
-    var b = new StringBuilder(sqn(obj)).append(" (");
-    for (int i = 0; i < features.length; i++) {
-      if (features[i] == null) {
+    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(ROUND_BRACKET_OPEN);
+    var filled = false;
+    for (var feature : features) {
+      if (feature == null) {
         continue;
       }
 
-      if (i > 0) {
-        b.append(" ");
+      if (filled) {
+        b.append(SPACE);
       }
-      b.append(features[i]);
+      b.append(feature);
+      filled = true;
     }
-    return b.append(")").toString();
+    return b.append(ROUND_BRACKET_CLOSE).toString();
   }
 
   /**
    * Gets the string representation of the given object, along with its features.
-   *
-   * @param f1
-   *          Feature (null value is ignored).
+   * <p>
+   * NOTE: {@code null} feature is ignored.
+   * </p>
    */
-  public static String toStringWithFeatures(Object obj, @Nullable Object f1) {
-    var b = new StringBuilder(sqn(obj)).append(" ");
-    if (f1 instanceof Collection || f1 instanceof Map) {
-      b.append(f1);
+  public static String toStringWithFeatures(Object obj, @Nullable Object feature) {
+    var b = new StringBuilder(sqnd(obj)).append(SPACE);
+    if (feature instanceof Collection || feature instanceof Map) {
+      b.append(feature);
     } else {
-      b.append("(");
-      if (f1 != null) {
-        b.append(f1);
+      b.append(ROUND_BRACKET_OPEN);
+      if (feature != null) {
+        b.append(feature);
       }
-      b.append(")");
+      b.append(ROUND_BRACKET_CLOSE);
     }
     return b.toString();
   }
 
   /**
    * Gets the string representation of the given object, along with its features.
-   *
-   * @param f1
-   *          Feature (null value is ignored).
-   * @param f2
-   *          Feature (null value is ignored).
+   * <p>
+   * NOTE: {@code null} features are ignored.
+   * </p>
    */
-  public static String toStringWithFeatures(Object obj, @Nullable Object f1, @Nullable Object f2) {
-    var b = new StringBuilder(sqn(obj)).append(" (");
+  public static String toStringWithFeatures(Object obj, @Nullable Object feature1,
+      @Nullable Object feature2) {
+    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(ROUND_BRACKET_OPEN);
     var filled = false;
-    if (f1 != null) {
+    if (feature1 != null) {
       filled = true;
-
-      b.append(f1);
+      b.append(feature1);
     }
-    if (f2 != null) {
+    if (feature2 != null) {
       if (filled) {
-        b.append(" ");
+        b.append(SPACE);
       }
-
-      b.append(f2);
+      b.append(feature2);
     }
-    return b.append(")").toString();
+    return b.append(ROUND_BRACKET_CLOSE).toString();
   }
 
   /**
    * Gets the string representation of the given object, along with its features.
-   *
-   * @param f1
-   *          Feature (null value is ignored).
-   * @param f2
-   *          Feature (null value is ignored).
-   * @param f3
-   *          Feature (null value is ignored).
+   * <p>
+   * NOTE: {@code null} features are ignored.
+   * </p>
    */
-  public static String toStringWithFeatures(Object obj, @Nullable Object f1, @Nullable Object f2,
-      @Nullable Object f3) {
-    var b = new StringBuilder(sqn(obj)).append(" (");
+  public static String toStringWithFeatures(Object obj, @Nullable Object feature1,
+      @Nullable Object feature2, @Nullable Object feature3) {
+    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(ROUND_BRACKET_OPEN);
     var filled = false;
-    if (f1 != null) {
+    if (feature1 != null) {
       filled = true;
-
-      b.append(f1);
+      b.append(feature1);
     }
-    if (f2 != null) {
+    if (feature2 != null) {
       if (filled) {
-        b.append(" ");
+        b.append(SPACE);
       } else {
         filled = true;
       }
-
-      b.append(f2);
+      b.append(feature2);
     }
-    if (f3 != null) {
+    if (feature3 != null) {
       if (filled) {
-        b.append(" ");
+        b.append(SPACE);
       }
-
-      b.append(f3);
+      b.append(feature3);
     }
-    return b.append(")").toString();
+    return b.append(ROUND_BRACKET_CLOSE).toString();
   }
 
   /**
@@ -1036,23 +1033,23 @@ public final class Objects {
    *          Properties (key-value pairs; keys MUST be non-null).
    */
   public static String toStringWithProperties(Object obj, @Nullable Object... properties) {
-    var b = new StringBuilder(sqn(obj)).append(" {");
+    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(CURLY_BRACE_OPEN);
     for (int i = 0; i < properties.length;) {
       if (i > 0) {
-        b.append(", ");
+        b.append(COMMA).append(SPACE);
       }
-      b.append(requireNonNull(properties[i++])).append(": ").append(properties[i++]);
+      b.append(requireNonNull(properties[i++])).append(COLON).append(SPACE).append(properties[i++]);
     }
-    return b.append("}").toString();
+    return b.append(CURLY_BRACE_CLOSE).toString();
   }
 
   /**
    * Gets the string representation of the given object, along with its properties.
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1) {
-    return sqn(obj) + " {"
-        + requireNonNull(k1) + ": " + v1
-        + "}";
+    return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
+        + requireNonNull(k1) + COLON + SPACE + v1
+        + CURLY_BRACE_CLOSE;
   }
 
   /**
@@ -1060,10 +1057,10 @@ public final class Objects {
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
       @Nullable Object v2) {
-    return sqn(obj) + " {"
-        + requireNonNull(k1) + ": " + v1 + ", "
-        + requireNonNull(k2) + ": " + v2
-        + "}";
+    return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
+        + requireNonNull(k1) + COLON + SPACE + v1 + COMMA + SPACE
+        + requireNonNull(k2) + COLON + SPACE + v2
+        + CURLY_BRACE_CLOSE;
   }
 
   /**
@@ -1071,11 +1068,11 @@ public final class Objects {
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
       @Nullable Object v2, String k3, @Nullable Object v3) {
-    return sqn(obj) + " {"
-        + requireNonNull(k1) + ": " + v1 + ", "
-        + requireNonNull(k2) + ": " + v2 + ", "
-        + requireNonNull(k3) + ": " + v3
-        + "}";
+    return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
+        + requireNonNull(k1) + COLON + SPACE + v1 + COMMA + SPACE
+        + requireNonNull(k2) + COLON + SPACE + v2 + COMMA + SPACE
+        + requireNonNull(k3) + COLON + SPACE + v3
+        + CURLY_BRACE_CLOSE;
   }
 
   /**
