@@ -101,10 +101,10 @@ pdfclown-common-base instead)</description>
     <jsoup.version>1.18.3</jsoup.version>
     <jspecify.version>1.0.0</jspecify.version>
     <junit.version>5.11.4</junit.version>
-    <log4j.version>2.19.0</log4j.version>
+    <log4j.version>2.25.0</log4j.version>
     <mockito.version>5.14.2</mockito.version>
     <reflections.version>0.10.2</reflections.version>
-    <slf4j.version>1.7.36</slf4j.version>
+    <slf4j.version>2.0.17</slf4j.version>
 
     <!--
       PLUGIN VERSIONS

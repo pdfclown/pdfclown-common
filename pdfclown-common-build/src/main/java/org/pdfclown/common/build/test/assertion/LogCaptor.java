@@ -28,6 +28,7 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
+import org.slf4j.event.KeyValuePair;
 import org.slf4j.event.Level;
 import org.slf4j.event.LoggingEvent;
 
@@ -61,6 +62,16 @@ public abstract class LogCaptor
     }
 
     @Override
+    public List<Object> getArguments() {
+      return List.of();
+    }
+
+    @Override
+    public List<KeyValuePair> getKeyValuePairs() {
+      return List.of();
+    }
+
+    @Override
     public Level getLevel() {
       return level;
     }
@@ -71,8 +82,8 @@ public abstract class LogCaptor
     }
 
     @Override
-    public @Nullable Marker getMarker() {
-      return null;
+    public List<Marker> getMarkers() {
+      return List.of();
     }
 
     @Override
