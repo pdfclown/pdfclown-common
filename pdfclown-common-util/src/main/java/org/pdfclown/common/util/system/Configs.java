@@ -17,12 +17,13 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.wrap;
 import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Strings.COLON;
+import static org.pdfclown.common.util.Strings.BACKSLASH;
 import static org.pdfclown.common.util.Strings.COMMA;
 import static org.pdfclown.common.util.Strings.DQUOTE;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SEMICOLON;
 import static org.pdfclown.common.util.Strings.SPACE;
+import static org.pdfclown.common.util.Strings.SQUOTE;
 
 import java.io.File;
 import java.io.IOException;
@@ -119,12 +120,54 @@ public final class Configs {
   }
 
   /**
-   * Classpath resource protocol.
+   * Parses the given command line.
+   * <p>
+   * Supports argument (single- and double-) quoting and character escaping.
+   * </p>
    */
-  private static final String URI_SCHEME__CLASSPATH = "classpath";
+  public static List<String> parseArgs(final String argsString) {
+    var ret = new ArrayList<String>();
+    int delimiter = 0;
+    var b = new StringBuilder();
+    for (int i = 0, l = argsString.length(); i < l; i++) {
+      char c = argsString.charAt(i);
+      switch (c) {
+        case BACKSLASH:
+          b.append(argsString.charAt(++i));
+          break;
+        case SQUOTE:
+        case DQUOTE:
+          if (delimiter > 0) {
+            if (c == delimiter) {
+              delimiter = 0;
+            } else {
+              b.append(c);
+            }
+          } else {
+            delimiter = c;
+          }
+          break;
+        default:
+          if (delimiter > 0) {
+            b.append(c);
+          } else if (Character.isWhitespace(c)) {
+            // Argument ended?
+            if (b.length() > 0) {
+              ret.add(b.toString());
 
-  @SuppressWarnings("unused")
-  private static final String RESOURCE_NAME_PREFIX__CLASSPATH = URI_SCHEME__CLASSPATH + COLON;
+              b.setLength(0);
+            }
+          } else {
+            b.append(c);
+          }
+      }
+    }
+    // End last argument!
+    if (b.length() > 0) {
+      ret.add(b.toString());
+    }
+    return ret;
+  }
 
   /**
    * Parses the directory corresponding to the given path.
