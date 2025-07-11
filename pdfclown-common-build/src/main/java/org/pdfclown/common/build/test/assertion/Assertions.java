@@ -382,7 +382,7 @@ public final class Assertions {
     }
 
     @Nullable
-    Supplier<Matcher<T>> matcherSupplier;
+    Supplier<Matcher<? super T>> matcherSupplier;
     @Nullable
     final T returned;
     @Nullable
@@ -424,7 +424,7 @@ public final class Assertions {
     /**
      * Sets the custom matcher to validate {@link #getReturned() returned}.
      */
-    public Expected<T> match(Supplier<Matcher<T>> matcherSupplier) {
+    public Expected<T> match(Supplier<Matcher<? super T>> matcherSupplier) {
       this.matcherSupplier = matcherSupplier;
       return this;
     }
@@ -434,7 +434,7 @@ public final class Assertions {
       return java.util.Objects.toString(returned != null ? returned : thrown);
     }
 
-    Matcher<T> getMatcher() {
+    Matcher<? super T> getMatcher() {
       return matcherSupplier != null && returned != null ? matcherSupplier.get() : is(returned);
     }
   }
