@@ -17,6 +17,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.unsupported;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
+import static org.pdfclown.common.build.internal.util_.Objects.typeOf;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.io.Files.resetDir;
 
@@ -97,7 +98,7 @@ public abstract class TestUnit implements Test {
          * non-JPMS) projects only; the alternate solution applied here seems to reliably work in
          * modular as well as non-modular projects.
          */
-        resourceDir = Path.of(TestUnit.this.getClass().getProtectionDomain().getCodeSource()
+        resourceDir = Path.of(typeOf(TestUnit.this).getProtectionDomain().getCodeSource()
             .getLocation().toURI());
       } catch (URISyntaxException ex) {
         throw runtime(ex) /* Should NEVER happen */;
@@ -149,7 +150,7 @@ public abstract class TestUnit implements Test {
      * @see ResourceNames#localName(String, Class)
      */
     public String localName(String simpleName) {
-      return ResourceNames.localName(simpleName, TestUnit.this.getClass());
+      return ResourceNames.localName(simpleName, typeOf(TestUnit.this));
     }
 
     /**
@@ -183,8 +184,8 @@ public abstract class TestUnit implements Test {
       }
 
       return ResourceNames.path(
-          ResourceNames.isAbsolute(name) ? name : sqn(this) + SLASH + name,
-          dirPath(DirId.OUTPUT), TestUnit.this.getClass());
+          ResourceNames.isAbsolute(name) ? name : sqn(TestUnit.this) + SLASH + name,
+          dirPath(DirId.OUTPUT), typeOf(TestUnit.this));
     }
 
     /**
@@ -197,7 +198,7 @@ public abstract class TestUnit implements Test {
 
     @Override
     public Path resourcePath(String name) {
-      return ResourceNames.path(name, dirPath(DirId.RESOURCE), TestUnit.this.getClass());
+      return ResourceNames.path(name, dirPath(DirId.RESOURCE), typeOf(TestUnit.this));
     }
 
     /**
@@ -210,7 +211,7 @@ public abstract class TestUnit implements Test {
 
     @Override
     public Path resourceSrcPath(String name) {
-      return ResourceNames.path(name, dirPath(DirId.RESOURCE_SRC), TestUnit.this.getClass());
+      return ResourceNames.path(name, dirPath(DirId.RESOURCE_SRC), typeOf(TestUnit.this));
     }
 
     /**
@@ -223,16 +224,21 @@ public abstract class TestUnit implements Test {
 
     @Override
     public Path typeSrcPath(Class<?> type) {
+      Class<?> topLevelType = requireNonNull(type, "`type`");
+      while (topLevelType.getEnclosingClass() != null) {
+        topLevelType = topLevelType.getEnclosingClass();
+      }
       Path ret;
-      var filename = sqn(requireNonNull(type, "`type`")) + ".java";
-      if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.TYPE_SRC), type)))
+      var filename = topLevelType.getSimpleName() + ".java";
+      if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.TYPE_SRC), topLevelType)))
         return ret;
-      else if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.MAIN_TYPE_SRC), type)))
+      else if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.MAIN_TYPE_SRC),
+          topLevelType)))
         return ret;
       else
-        throw runtime(new FileNotFoundException(
-            String.format("Source file corresponding to `%s` NOT FOUND (search paths: %s, %s)",
-                type.getName(), dirPath(DirId.TYPE_SRC), dirPath(DirId.MAIN_TYPE_SRC))));
+        throw runtime(new FileNotFoundException(String.format(
+            "Source file corresponding to `%s` NOT FOUND (search paths: %s, %s)",
+            type.getName(), dirPath(DirId.TYPE_SRC), dirPath(DirId.MAIN_TYPE_SRC))));
     }
   }
 
