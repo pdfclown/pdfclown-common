@@ -73,6 +73,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.system.Desktops;
 import org.pdfclown.common.build.internal.util_.Objects;
+import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 import org.pdfclown.common.build.internal.util_.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Mode;
@@ -969,6 +970,16 @@ public final class Assertions {
   private static final ThreadLocal<@Nullable ExpectedGenerator> expectedGenerator =
       new ThreadLocal<>();
 
+  @Unmodifiable
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  private static final Expected EXPECTED__VOID = new Expected(null, null) {
+    @Override
+    public Expected match(Supplier supplier) {
+      // NOP
+      return this;
+    }
+  };
+
   /**
    * Combines the given argument lists into a stream of corresponding {@linkplain Arguments
    * parametric tuples} to feed a {@linkplain ParameterizedTest parameterized test}.
@@ -1204,7 +1215,7 @@ public final class Assertions {
 
     // Expected results generation mode?
     if (expected == null) {
-      expected = Collections.nCopies(expectedCount, null);
+      expected = Collections.nCopies(expectedCount, EXPECTED__VOID);
       expectedGenerator.set(expectedGeneratorProvider.apply(argsList));
     }
     if (expected.size() != expectedCount)
