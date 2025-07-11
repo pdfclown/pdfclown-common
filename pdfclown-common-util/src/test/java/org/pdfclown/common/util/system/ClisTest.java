@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (ConfigsTest.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (ClisTest.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -35,7 +35,7 @@ import org.pdfclown.common.util.Objects;
 /**
  * @author Stefano Chizzolini
  */
-class ConfigsTest {
+class ClisTest {
   static Stream<Arguments> parseArgs() {
     return argumentsStream(
         cartesian(),
@@ -73,7 +73,7 @@ class ConfigsTest {
   @MethodSource
   void parseArgs(Expected<List<String>> expected, String argsString) {
     assertParameterizedOf(
-        () -> Configs.parseArgs(argsString),
+        () -> Clis.parseArgs(argsString),
         expected.match(() -> contains(expected.getReturned().toArray(String[]::new))),
         () -> new ExpectedGeneration(of(
             entry("argsString", argsString)))

@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Configs.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (Clis.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -38,13 +38,13 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.io.Resource;
 
 /**
- * Configuration utilities.
+ * Command-line utilities.
  *
  * @author Stefano Chizzolini
  */
-public final class Configs {
+public final class Clis {
   /**
-   * Arguments collection, suitable for command line and other textual configuration contexts.
+   * Simple arguments collection for command line and other configuration contexts.
    *
    * @author Stefano Chizzolini
    */
@@ -339,6 +339,6 @@ public final class Configs {
         .collect(joining(S + SEMICOLON));
   }
 
-  private Configs() {
+  private Clis() {
   }
 }
