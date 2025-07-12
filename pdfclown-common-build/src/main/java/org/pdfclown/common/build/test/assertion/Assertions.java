@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianProduct;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Objects.LITERAL_NULL;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
@@ -76,7 +75,6 @@ import org.pdfclown.common.build.internal.util_.Objects;
 import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 import org.pdfclown.common.build.internal.util_.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
-import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Mode;
 import org.pdfclown.common.build.util.system.Runtimes;
 
 /**
@@ -217,39 +215,249 @@ public final class Assertions {
     }
 
     /**
-     * Arguments combination mode.
+     * {@linkplain #argumentsStream(ArgumentsStreamConfig, List, List[]) Arguments stream}
+     * configuration for Cartesian-product argument tuples.
+     *
+     * @author Stefano Chizzolini
      */
-    public enum Mode {
+    static class Cartesian extends ArgumentsStreamConfig {
       /**
-       * Plain argument tuples.
+       * {@link Cartesian} source code generator of the expected results of a parameterized test fed
+       * by {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
+       * <p>
+       * The generated source code looks like this:
+       * </p>
+       * <pre>
+       * // expected
+       * java.util.Arrays.asList(
+       *   // from[0]
+       *   "",
+       *   "../another/sub/to.html",
+       *   // from[1]
+       *   "to.html",
+       *   "another/sub/to.html",
+       *   . . .
+       *   // from[5]
+       *   "other/to.html",
+       *   "/sub/to.html"),</pre>
+       *
+       * @author Stefano Chizzolini
        */
-      SIMPLE,
-      /**
-       * Cartesian product.
-       */
-      CARTESIAN
+      static class Generator extends ExpectedGenerator {
+        /**
+         * Argument moduli.
+         */
+        private final int[] mods;
+
+        /**
+         * @param args
+         *          Arguments lists.
+         */
+        Generator(List<List<?>> args) {
+          super(count(args));
+
+          mods = new int[args.size()];
+          {
+            var count = getCount();
+            final var counts = new int[args.size()];
+            for (int i = 0; i < counts.length; i++) {
+              counts[i] = args.get(i).size();
+              mods[i] = (count /= counts[i]);
+            }
+          }
+        }
+
+        @Override
+        protected void generateExpectedComment(ExpectedGeneration generation) {
+          for (int i = 0, last = mods.length - 1; i <= last; i++) {
+            if (getIndex() % mods[i] == 0) {
+              // Main level separator.
+              if (i == 0 && generation.args.size() > 1 && getIndex() > 0) {
+                out().append(INDENT).println("//");
+              }
+
+              // Level title.
+              var arg = generation.args.get(i);
+              var indexLabel = i == last ? "[" + (getIndex() + 1) + "] " : EMPTY;
+              var argIndent = max(0, 2 * i - indexLabel.length());
+              out().append(INDENT).printf("// %s%s%s%s[%s]: %s\n",
+                  indexLabel,
+                  repeat('-', argIndent),
+                  argIndent == 0 ? EMPTY : SPACE,
+                  arg.getKey(),
+                  (i == 0 ? getIndex() : getIndex() % mods[i - 1]) / mods[i],
+                  formatArgComment(arg, generation));
+            }
+          }
+        }
+      }
+
+      private static int count(List<List<?>> args) {
+        return args.stream().mapToInt(List::size).reduce(1, Math::multiplyExact);
+      }
+
+      Cartesian() {
+        super(
+            ($expected, $args) -> {
+              var indexRef = new AtomicInteger();
+              return cartesianProduct($args)
+                  .map($ -> {
+                    $.add(0, $expected.get(indexRef.getAndIncrement()));
+                    return Arguments.of($.toArray());
+                  });
+            },
+            Cartesian::count,
+            Generator::new);
+      }
     }
 
     /**
-     * New configuration for Cartesian-product arguments stream.
+     * {@linkplain #argumentsStream(ArgumentsStreamConfig, List, List[]) Arguments stream}
+     * configuration for plain argument tuples.
+     *
+     * @author Stefano Chizzolini
+     */
+    static class Simple extends ArgumentsStreamConfig {
+      /**
+       * {@link Simple} source code generator of the expected results of a parameterized test fed by
+       * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
+       * <p>
+       * The generated source code looks like this:
+       * </p>
+       * <pre>
+       * // expected
+       * java.util.Arrays.asList(
+       *   // from[0]
+       *   "",
+       *   // from[1]
+       *   "to.html",
+       *   . . .
+       *   // from[5]
+       *   "other/to.html"),</pre>
+       *
+       * @author Stefano Chizzolini
+       */
+      static class Generator extends ExpectedGenerator {
+        /**
+         * @param args
+         *          Arguments lists.
+         */
+        Generator(List<List<?>> args) {
+          super(count(args));
+        }
+
+        @Override
+        protected void generateExpectedComment(ExpectedGeneration generation) {
+          out().append(INDENT).printf("// [%s] ", getIndex() + 1);
+          for (int i = 0; i < generation.args.size(); i++) {
+            if (i > 0) {
+              out().append("; ");
+            }
+
+            var arg = generation.args.get(i);
+            out().printf("%s[%s]: %s", arg.getKey(), getIndex(), formatArgComment(arg, generation));
+          }
+          out().append("\n");
+        }
+      }
+
+      private static int count(List<List<?>> args) {
+        int ret = 0;
+        for (var it = args.listIterator(); it.hasNext();) {
+          int argSize = it.next().size();
+          if (ret == 0) {
+            ret = argSize;
+          } else {
+            if (argSize != ret)
+              throw wrongArg("args[" + (it.nextIndex() - 1) + "].size", argSize,
+                  "INVALID (should be {})", ret);
+          }
+        }
+        return ret;
+      }
+
+      Simple() {
+        super(
+            ($expected, $args) -> IntStream.range(0, $expected.size())
+                .mapToObj($ -> {
+                  int i;
+                  var testArgs = new Object[1 + $args.size()];
+                  testArgs[i = 0] = $expected.get($);
+                  while (++i < testArgs.length) {
+                    testArgs[i] = $args.get(i - 1).get($);
+                  }
+                  return Arguments.of(testArgs);
+                }),
+            Simple::count,
+            Generator::new);
+      }
+    }
+
+    /**
+     * New configuration for Cartesian-product
+     * {@linkplain #argumentsStream(ArgumentsStreamConfig, List, List[]) arguments stream}.
+     * <p>
+     * The size of {@code expected} MUST be equal to the product of the sizes of {@code args}.
+     * </p>
+     * <p>
+     * The resulting argument tuples will be composed this way:
+     * </p>
+     * <pre>
+    * (expected[i], args[0][j0], args[1][j1], .&nbsp;.&nbsp;., args[n][jn])</pre>
+     * <p>
+     * where
+     * </p>
+     * <ul>
+     * <li><code>expected[i] = f(args[0][j0], args[1][j1], .&nbsp;.&nbsp;., args[n][jn])</code></li>
+     * <li><code>i ∈ N : 0 &lt;= i &lt; args[0].size() * args[1].size() * .&nbsp;.&nbsp;. * args[n].size()</code></li>
+     * <li><code>n = args.size() - 1</code></li>
+     * <li><code>jm ∈ N : 0 &lt;= jm &lt; args[m].size()</code></li>
+     * <li><code>m ∈ N : 0 &lt;= m &lt;= n</code></li>
+     * </ul>
      */
     public static ArgumentsStreamConfig cartesian() {
-      return new ArgumentsStreamConfig(Mode.CARTESIAN);
+      return new Cartesian();
     }
 
     /**
-     * New configuration for plain arguments stream.
+     * New configuration for plain {@linkplain #argumentsStream(ArgumentsStreamConfig, List, List[])
+     * arguments stream}.
+     * <p>
+     * All argument lists ({@code expected} and each list in {@code args}) MUST have the same size.
+     * </p>
+     * <p>
+     * The resulting argument tuples will be composed this way:
+     * </p>
+     * <pre>
+    * (expected[i], args[0][i], args[1][i], .&nbsp;.&nbsp;., args[n][i])</pre>
+     * <p>
+     * where
+     * </p>
+     * <ul>
+     * <li><code>expected[i] = f(args[0][i], args[1][i], .&nbsp;.&nbsp;., args[n][i])</code></li>
+     * <li><code>i ∈ N : 0 &lt;= i &lt; m</code></li>
+     * <li><code>m = expected.size() = args[0].size() = args[1].size() = .&nbsp;.&nbsp;. = args[n].size()</code></li>
+     * <li><code>n = args.size() - 1</code></li>
+     * </ul>
+     * </p>
      */
     public static ArgumentsStreamConfig simple() {
-      return new ArgumentsStreamConfig(Mode.SIMPLE);
+      return new Simple();
     }
 
+    final BiFunction<List<?>, List<List<?>>, Stream<Arguments>> argumentsStreamer;
     @Nullable
     Converter converter;
-    final Mode mode;
+    final ToIntFunction<List<List<?>>> expectedCounter;
+    final Function<List<List<?>>, ExpectedGenerator> expectedGeneratorProvider;
 
-    ArgumentsStreamConfig(Mode mode) {
-      this.mode = mode;
+    protected ArgumentsStreamConfig(
+        BiFunction<List<?>, List<List<?>>, Stream<Arguments>> argumentsStreamer,
+        ToIntFunction<List<List<?>>> expectedCounter,
+        Function<List<List<?>>, ExpectedGenerator> expectedGeneratorProvider) {
+      this.argumentsStreamer = argumentsStreamer;
+      this.expectedCounter = expectedCounter;
+      this.expectedGeneratorProvider = expectedGeneratorProvider;
     }
 
     /**
@@ -606,111 +814,6 @@ public final class Assertions {
   }
 
   /**
-   * Expected thrown exception.
-   *
-   * @author Stefano Chizzolini
-   * @see #assertParameterized(Object, Expected, Supplier)
-   */
-  public static class Failure {
-    private final @Nullable String message;
-    private final String name;
-
-    public Failure(String name, @Nullable String message) {
-      this.name = requireNonNull(name, "`name`");
-      this.message = message;
-    }
-
-    public @Nullable String getMessage() {
-      return message;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    @Override
-    public String toString() {
-      return sqnd(name) + " (" + abbreviate(message, 30) + ")";
-    }
-  }
-
-  /**
-   * Source code generator of the expected results of a parameterized test fed by
-   * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)} in
-   * {@link ArgumentsStreamConfig.Mode#CARTESIAN CARTESIAN} mode.
-   * <p>
-   * The generated source code looks like this:
-   * </p>
-   * <pre>
-   * // expected
-   * java.util.Arrays.asList(
-   *   // from[0]
-   *   "",
-   *   "../another/sub/to.html",
-   *   // from[1]
-   *   "to.html",
-   *   "another/sub/to.html",
-   *   . . .
-   *   // from[5]
-   *   "other/to.html",
-   *   "/sub/to.html"),</pre>
-   *
-   * @author Stefano Chizzolini
-   */
-  private static class CartesianExpectedGenerator extends ExpectedGenerator {
-    private static int count(List<List<?>> args) {
-      return args.stream().mapToInt(List::size).reduce(1, Math::multiplyExact);
-    }
-
-    /**
-     * Argument moduli.
-     */
-    private final int[] mods;
-
-    /**
-     * @param args
-     *          Arguments lists.
-     */
-    CartesianExpectedGenerator(List<List<?>> args) {
-      super(count(args));
-
-      mods = new int[args.size()];
-      {
-        var count = getCount();
-        final var counts = new int[args.size()];
-        for (int i = 0; i < counts.length; i++) {
-          counts[i] = args.get(i).size();
-          mods[i] = (count /= counts[i]);
-        }
-      }
-    }
-
-    @Override
-    protected void generateExpectedComment(ExpectedGeneration generation) {
-      for (int i = 0, last = mods.length - 1; i <= last; i++) {
-        if (getIndex() % mods[i] == 0) {
-          // Main level separator.
-          if (i == 0 && generation.args.size() > 1 && getIndex() > 0) {
-            out().append(INDENT).println("//");
-          }
-
-          // Level title.
-          var arg = generation.args.get(i);
-          var indexLabel = i == last ? "[" + (getIndex() + 1) + "] " : EMPTY;
-          var argIndent = max(0, 2 * i - indexLabel.length());
-          out().append(INDENT).printf("// %s%s%s%s[%s]: %s\n",
-              indexLabel,
-              repeat('-', argIndent),
-              argIndent == 0 ? EMPTY : SPACE,
-              arg.getKey(),
-              (i == 0 ? getIndex() : getIndex() % mods[i - 1]) / mods[i],
-              formatArgComment(arg, generation));
-        }
-      }
-    }
-  }
-
-  /**
    * Source code generator of the expected results of a parameterized test.
    * <p>
    * The generated source code looks like this:
@@ -728,7 +831,7 @@ public final class Assertions {
    *
    * @author Stefano Chizzolini
    */
-  private abstract static class ExpectedGenerator {
+  public abstract static class ExpectedGenerator {
     protected static final String INDENT = S + SPACE + SPACE;
 
     /**
@@ -909,61 +1012,31 @@ public final class Assertions {
   }
 
   /**
-   * Source code generator of the expected results of a parameterized test fed by
-   * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)} in
-   * {@link ArgumentsStreamConfig.Mode#SIMPLE SIMPLE} mode.
-   * <p>
-   * The generated source code looks like this:
-   * </p>
-   * <pre>
-   * // expected
-   * java.util.Arrays.asList(
-   *   // from[0]
-   *   "",
-   *   // from[1]
-   *   "to.html",
-   *   . . .
-   *   // from[5]
-   *   "other/to.html"),</pre>
+   * Expected thrown exception.
    *
    * @author Stefano Chizzolini
+   * @see #assertParameterized(Object, Expected, Supplier)
    */
-  private static class SimpleExpectedGenerator extends ExpectedGenerator {
-    private static int count(List<List<?>> args) {
-      int cardinality = 0;
-      for (var it = args.listIterator(); it.hasNext();) {
-        int argSize = it.next().size();
-        if (cardinality == 0) {
-          cardinality = argSize;
-        } else {
-          if (argSize != cardinality)
-            throw wrongArg("args[" + (it.nextIndex() - 1) + "].size", argSize,
-                "INVALID (should be {})", cardinality);
-        }
-      }
-      return cardinality;
+  public static class Failure {
+    private final @Nullable String message;
+    private final String name;
+
+    public Failure(String name, @Nullable String message) {
+      this.name = requireNonNull(name, "`name`");
+      this.message = message;
     }
 
-    /**
-     * @param args
-     *          Arguments lists.
-     */
-    SimpleExpectedGenerator(List<List<?>> args) {
-      super(count(args));
+    public @Nullable String getMessage() {
+      return message;
+    }
+
+    public String getName() {
+      return name;
     }
 
     @Override
-    protected void generateExpectedComment(ExpectedGeneration generation) {
-      out().append(INDENT).printf("// [%s] ", getIndex() + 1);
-      for (int i = 0; i < generation.args.size(); i++) {
-        if (i > 0) {
-          out().append("; ");
-        }
-
-        var arg = generation.args.get(i);
-        out().printf("%s[%s]: %s", arg.getKey(), getIndex(), formatArgComment(arg, generation));
-      }
-      out().append("\n");
+    public String toString() {
+      return sqnd(name) + " (" + abbreviate(message, 30) + ")";
     }
   }
 
@@ -972,7 +1045,7 @@ public final class Assertions {
 
   @Unmodifiable
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  private static final Expected EXPECTED__VOID = new Expected(null, null) {
+  private static final Expected<?> EXPECTED__VOID = new Expected(null, null) {
     @Override
     public Expected match(Supplier supplier) {
       // NOP
@@ -985,8 +1058,8 @@ public final class Assertions {
    * parametric tuples} to feed a {@linkplain ParameterizedTest parameterized test}.
    * <p>
    * The {@code expected} parameter shall contain both regular results and failures (i.e., thrown
-   * exception) of the method tested with the given {@code args}; failures will be represented as
-   * {@link Failure} for automatic handling.
+   * exceptions, represented as {@link Failure} for automatic handling) of the method tested with
+   * the given {@code args}.
    * </p>
    * <p>
    * The corresponding parameterized test shall follow this pattern:
@@ -1004,13 +1077,6 @@ public final class Assertions {
    *           . . .
    *           entry("argN", argN))));
    * }</pre>
-   * <p>
-   * NOTE: In the parameterized test method signature, <i>{@code expected} parameter should be
-   * declared as {@code Object}</i> (that's required whenever a failure (i.e., thrown exception) is
-   * among the expected results). In any case, it MUST NOT be declared as primitive type (e.g.,
-   * {@code boolean}), since it is passed {@code null} during expected results generation (see
-   * dedicated section here below).
-   * </p>
    * <p>
    * See {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} for more
    * information and a full example.
@@ -1110,120 +1176,60 @@ public final class Assertions {
    * @param expected
    *          Expected test results, or {@code null} to automatically generate them (see "Expected
    *          Results Generation" section here above). Corresponds to the <b>codomain of the
-   *          test</b>; its size MUST equal that of each {@code args} list.
+   *          test</b>.
    * @param args
-   *          Test arguments. Corresponds to the <b>domain of the respective test argument</b>; each
-   *          list MUST have the same size.
-   * @return A stream of tuples, each composed this way:
-   *         <ul>
-   *         <li>simple stream ({@code config.mode} == {@link Mode#SIMPLE}):<pre>
-  * (expected[y], args[0][x], args[1][x], .&nbsp;.&nbsp;., args[n][x])</pre>
-   *         <p>
-   *         where
-   *         </p>
-   *         <ul>
-   *         <li><code>expected[y] = f(args[0][x], args[1][x], .&nbsp;.&nbsp;., args[n][x])</code></li>
-   *         <li><code>n = args.size() - 1</code></li>
-   *         <li><code>m = args[0].size() = args[1].size() = .&nbsp;.&nbsp;. = args[n].size()</code></li>
-   *         <li><code>y ∈ N : 0 &lt;= y &lt;= m</code></li>
-   *         <li><code>x ∈ N : 0 &lt;= x &lt; m</code></li>
-   *         </ul>
-   *         </li>
-   *         <li>Cartesian product stream ({@code config.mode} == {@link Mode#CARTESIAN}):<pre>
-    * (expected[y], args[0][x0], args[1][x1], .&nbsp;.&nbsp;., args[n][xn])</pre>
-   *         <p>
-   *         where
-   *         </p>
-   *         <ul>
-   *         <li><code>expected[y] = f(args[0][x0], args[1][x1], .&nbsp;.&nbsp;., args[n][xn])</code></li>
-   *         <li><code>n = args.size() - 1</code></li>
-   *         <li><code>y ∈ N : 0 &lt;= y &lt; args[0].size() * args[1].size() * .&nbsp;.&nbsp;. * args[n].size()</code></li>
-   *         <li><code>m ∈ N : 0 &lt;= m &lt;= n</code></li>
-   *         <li><code>xm ∈ N : 0 &lt;= xm &lt; args[m].size()</code></li>
-   *         </ul>
-   *         </li>
-   *         </ul>
+   *          Test arguments. Corresponds to the <b>domain of the respective test argument</b>.
+   * @return A stream of tuples, composed according to the algorithm provided by {@code config}.
    */
   public static Stream<Arguments> argumentsStream(ArgumentsStreamConfig config,
       @Nullable List<?> expected, List<?>... args) {
-    ToIntFunction<List<List<?>>> expectedCounter;
-    Function<List<List<?>>, ExpectedGenerator> expectedGeneratorProvider;
-    BiFunction<List<?>, List<List<?>>, Stream<Arguments>> argumentsStreamer;
-    switch (config.mode) {
-      case SIMPLE:
-        expectedCounter = SimpleExpectedGenerator::count;
-        expectedGeneratorProvider = SimpleExpectedGenerator::new;
-        argumentsStreamer = ($expected, $args) -> IntStream.range(0, $expected.size())
-            .mapToObj($ -> {
-              int i;
-              var testArgs = new Object[1 + $args.size()];
-              testArgs[i = 0] = $expected.get($);
-              while (++i < testArgs.length) {
-                testArgs[i] = $args.get(i - 1).get($);
-              }
-              return Arguments.of(testArgs);
-            });
-        break;
-      case CARTESIAN:
-        expectedCounter = CartesianExpectedGenerator::count;
-        expectedGeneratorProvider = CartesianExpectedGenerator::new;
-        argumentsStreamer = ($expected, $args) -> {
-          var indexRef = new AtomicInteger();
-          return cartesianProduct($args)
-              .map($ -> {
-                $.add(0, $expected.get(indexRef.getAndIncrement()));
-                return Arguments.of($.toArray());
-              });
-        };
-        break;
-      default:
-        throw unexpected(config.mode);
-    }
-
-    // Arguments transformation:
-    // 1. Expected results (tested method output).
-    int paramIndex = 0;
-    if (expected != null) {
-      var targetList = new ArrayList<>(expected.size());
-      for (var e : expected) {
-        targetList.add(e instanceof Failure
-            ? Expected.failure((Failure) e)
-            : Expected.success(config.converter != null
-                ? config.converter.apply(paramIndex, e)
-                : e));
-      }
-      expected = unmodifiableList(targetList);
-    }
-    // 2. Arguments values (tested method inputs).
+    // Argument lists transformation.
+    List<Expected<?>> expectedList;
     List<List<?>> argsList;
-    if (config.converter != null) {
-      argsList = new ArrayList<>(args.length);
-      for (List<?> sourceList : args) {
-        var argList = new ArrayList<>(sourceList.size());
-        paramIndex++;
-        for (var e : sourceList) {
-          argList.add(config.converter.apply(paramIndex, e));
+    {
+      // 1. Arguments values (tested method inputs).
+      if (config.converter != null) {
+        argsList = new ArrayList<>(args.length);
+        int paramIndex = 1;
+        for (List<?> sourceList : args) {
+          var argList = new ArrayList<>(sourceList.size());
+          for (var e : sourceList) {
+            argList.add(config.converter.apply(paramIndex, e));
+          }
+          argsList.add(unmodifiableList(argList));
+          paramIndex++;
         }
-        argsList.add(unmodifiableList(argList));
+        argsList = unmodifiableList(argsList);
+      } else {
+        argsList = asList(args);
       }
-      argsList = unmodifiableList(argsList);
-    } else {
-      argsList = asList(args);
+      int expectedCount = config.expectedCounter.applyAsInt(argsList);
+
+      // 2. Expected results (tested method output).
+      if (expected != null) {
+        if (expected.size() != expectedCount)
+          throw wrongArg("`expected` size", expected.size(), "MISMATCH with `args` (SHOULD be {})",
+              expectedCount);
+
+        expectedList = new ArrayList<>(expected.size());
+        for (var e : expected) {
+          expectedList.add(e instanceof Failure
+              ? Expected.failure((Failure) e)
+              : Expected.success(config.converter != null
+                  ? config.converter.apply(0, e)
+                  : e));
+        }
+        expectedList = unmodifiableList(expectedList);
+      }
+      // Expected results generation mode.
+      else {
+        expectedList = Collections.nCopies(expectedCount, EXPECTED__VOID);
+        expectedGenerator.set(config.expectedGeneratorProvider.apply(argsList));
+      }
     }
 
-    int expectedCount = expectedCounter.applyAsInt(argsList);
-
-    // Expected results generation mode?
-    if (expected == null) {
-      expected = Collections.nCopies(expectedCount, EXPECTED__VOID);
-      expectedGenerator.set(expectedGeneratorProvider.apply(argsList));
-    }
-    if (expected.size() != expectedCount)
-      throw wrongArg("`expected` size", expected.size(), "MISMATCH with `args` (SHOULD be {})",
-          expectedCount);
-
-    // Build the argument sets!
-    return argumentsStreamer.apply(expected, argsList);
+    // Combine the argument lists into the arguments stream!
+    return config.argumentsStreamer.apply(expectedList, argsList);
   }
 
   /**
