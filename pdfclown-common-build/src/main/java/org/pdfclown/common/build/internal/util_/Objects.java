@@ -324,7 +324,7 @@ public final class Objects {
     //noinspection StatementWithEmptyBody
     while ((superType = superType.getSuperclass()) != null
         && collectTypeAndAncestorInterfaces(superType, ret, stoppers, stopperExclusive)) {
-      // NOOP
+      // NOP
     }
     return unmodifiableSet(ret);
   }
@@ -623,7 +623,7 @@ public final class Objects {
           }
           break;
         default:
-          // NOOP
+          // NOP
       }
     }
 

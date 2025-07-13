@@ -206,7 +206,7 @@ public final class Enums {
             : $ -> (K) ((Enum<?>) $).name();
         map(type, Collector.of(() -> target,
             ($map, $element) -> $map.put(keyMapper.apply($element), $element),
-            ($1, $2) -> $1 /* NOOP: Map combination makes no sense here */));
+            ($1, $2) -> $1 /* NOP: Map combination makes no sense here */));
       } else
         throw wrongArg("type", type, "MUST be an Enum-derived implementation "
             + "or an Xnum-derived interface");

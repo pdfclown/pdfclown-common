@@ -151,7 +151,7 @@ public interface Resource {
         return new FileResource(name, file);
     } catch (InvalidPathException | IOError ex) {
       /*
-       * NOOP: `name` is not a file path, so we fall back to generic URL (or implicit classpath
+       * NOP: `name` is not a file path, so we fall back to generic URL (or implicit classpath
        * resource).
        */
     }

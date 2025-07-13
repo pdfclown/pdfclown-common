@@ -483,7 +483,7 @@ public final class Xmls {
         node.removeChild(oldChild);
         continue;
       } else if (ret == WalkAction.SKIP || !child.hasChildNodes()) {
-        /* NOOP */
+        // NOP
       } else if (ret == WalkAction.CONTINUE || ret == null) {
         ret = walkDescendants(child, mapper);
         if (ret != null)

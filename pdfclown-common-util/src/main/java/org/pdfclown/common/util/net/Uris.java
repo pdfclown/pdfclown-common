@@ -126,7 +126,7 @@ public final class Uris {
       try {
         return new URI(uri);
       } catch (URISyntaxException ex) {
-        /* NOOP */
+        // NOP
       }
     }
     return null;
@@ -142,7 +142,7 @@ public final class Uris {
       try {
         return url.toURI();
       } catch (URISyntaxException ex) {
-        /* NOOP */
+        // NOP
       }
     }
     return null;
@@ -158,7 +158,7 @@ public final class Uris {
       try {
         return new URI(url).toURL();
       } catch (MalformedURLException | URISyntaxException ex) {
-        /* NOOP */
+        // NOP
       }
     }
     return null;
@@ -174,7 +174,7 @@ public final class Uris {
       try {
         return uri.toURL();
       } catch (MalformedURLException ex) {
-        /* NOOP */
+        // NOP
       }
     }
     return null;

@@ -502,7 +502,7 @@ public class IndentPrintStream extends XtPrintStream {
       super.print(indentChunk);
       switch (wrapStatus) {
         case WRAP_STATUS__INACTIVE:
-          // NOOP
+          // NOP
           break;
         case WRAP_STATUS__PENDING:
           wrapStatus = WRAP_STATUS__ACTIVE;

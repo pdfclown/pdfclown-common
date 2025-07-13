@@ -88,7 +88,7 @@ public final class Introspections {
       } else {
         //noinspection StatementWithEmptyBody
         while ((superType = superType.getSuperclass()) != null && superType != stopType) {
-          /* NOOP */
+          // NOP
         }
       }
       if (superType == null)
