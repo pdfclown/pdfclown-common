@@ -14,7 +14,7 @@ package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
-import static org.pdfclown.common.util.Objects.objToLiteralString;
+import static org.pdfclown.common.util.Objects.toLiteralString;
 import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
@@ -36,7 +36,7 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
     var b = new StringBuilder();
     b.append(argName);
     if (value != null) {
-      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(objToLiteralString(value))
+      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(toLiteralString(value))
           .append(ROUND_BRACKET_CLOSE);
     }
     if (b.length() > 0) {

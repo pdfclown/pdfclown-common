@@ -28,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianProduct;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Objects.LITERAL_NULL;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.objToLiteralString;
 import static org.pdfclown.common.build.internal.util_.Objects.requireState;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
 import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.NULL;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
@@ -439,7 +439,6 @@ public final class Assertions {
      * <li><code>m = expected.size() = args[0].size() = args[1].size() = .&nbsp;.&nbsp;. = args[n].size()</code></li>
      * <li><code>n = args.size() - 1</code></li>
      * </ul>
-     * </p>
      */
     public static ArgumentsStreamConfig simple() {
       return new Simple();
@@ -664,7 +663,7 @@ public final class Assertions {
      */
     public static String expectedSourceCodeForConstructor(Class<?> type, @Nullable Object... args) {
       return String.format("new %s(%s)", fqnd(type),
-          Arrays.stream(args).map(Objects::objToLiteralString).collect(Collectors.joining(",")));
+          Arrays.stream(args).map(Objects::toLiteralString).collect(Collectors.joining(",")));
     }
 
     /**
@@ -675,13 +674,13 @@ public final class Assertions {
     public static String expectedSourceCodeForFactory(Class<?> type, String methodName,
         @Nullable Object... args) {
       return String.format("%s.%s(%s)", fqnd(type), methodName,
-          Arrays.stream(args).map(Objects::objToLiteralString).collect(Collectors.joining(",")));
+          Arrays.stream(args).map(Objects::toLiteralString).collect(Collectors.joining(",")));
     }
 
     String argCommentAbbreviationMarker = ELLIPSIS__CHICAGO;
-    Function<@Nullable Object, String> argCommentFormatter = Objects::objToLiteralString;
+    Function<@Nullable Object, String> argCommentFormatter = Objects::toLiteralString;
     final List<Entry<String, @Nullable Object>> args;
-    Function<Object, String> expectedSourceCodeGenerator = Objects::objToLiteralString;
+    Function<Object, String> expectedSourceCodeGenerator = Objects::toLiteralString;
     int maxArgCommentLength = MAX_ARG_COMMENT_LENGTH__DEFAULT;
     PrintStream out = System.err;
     boolean outOverridable = true;
@@ -938,11 +937,11 @@ public final class Assertions {
         ExpectedGeneration generation) {
       String expectedSourceCode;
       if (expected == null) {
-        expectedSourceCode = LITERAL_NULL;
+        expectedSourceCode = NULL;
       } else if (expected instanceof Failure) {
         var failure = (Failure) expected;
         expectedSourceCode = String.format("new %s(\"%s\", %s)",
-            fqnd(Failure.class), failure.getName(), objToLiteralString(failure.getMessage()));
+            fqnd(Failure.class), failure.getName(), toLiteralString(failure.getMessage()));
       } else {
         //noinspection unchecked
         expectedSourceCode = generation.expectedSourceCodeGenerator.apply((T) expected);
@@ -1371,7 +1370,7 @@ public final class Assertions {
       if (actual instanceof Failure) {
         if (!expected.isFailure())
           fail(String.format("Failure UNEXPECTED (expected: %s (%s); actual: %s)",
-              objToLiteralString(expected), sqnd(expected.getReturned()), actual));
+              toLiteralString(expected), sqnd(expected.getReturned()), actual));
 
         var thrownActual = (Failure) actual;
         var thrownExpected = expected.getThrown();

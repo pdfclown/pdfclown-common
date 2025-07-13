@@ -190,7 +190,7 @@ class ObjectsTest extends BaseTest {
   }
 
   /**
-   * @implNote Generated as {@code expected} source code within {@link #objToLiteralString()}.
+   * @implNote Generated as {@code expected} source code within {@link #toLiteralString ()}.
    */
   private static final List<String> LITERAL_STRINGS = asList(
       // [1] obj[0]: null
@@ -241,7 +241,7 @@ class ObjectsTest extends BaseTest {
       // Simple type name nested in an attribute.
       "myprop:ToStringObject");
 
-  static Stream<Arguments> objFromLiteralString() {
+  static Stream<Arguments> fromLiteralString() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -270,7 +270,7 @@ class ObjectsTest extends BaseTest {
         LITERAL_STRINGS);
   }
 
-  static Stream<Arguments> objToLiteralString() {
+  static Stream<Arguments> toLiteralString() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -289,50 +289,14 @@ class ObjectsTest extends BaseTest {
             "测试文本"));
   }
 
-  static Stream<Arguments> objToNormalQualifiedString() {
+  static Stream<Arguments> toQualifiedString() {
     return argumentsStream(
         cartesian()
             .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
         // expected
         java.util.Arrays.asList(
             // [1] obj[0]: null
-            null,
-            // [2] obj[1]: "ToStringObject"
-            "ObjectsTest.ToStringObject",
-            // [3] obj[2]: "ToStringObject myprop=something"
-            "ObjectsTest.ToStringObject myprop=something",
-            // [4] obj[3]: "ObjectsTest$ToStringObject"
-            "ObjectsTest.ToStringObject",
-            // [5] obj[4]: "ObjectsTest$ToStringObject myprop: something"
-            "ObjectsTest.ToStringObject myprop: something",
-            // [6] obj[5]: "ObjectsTest.ToStringObject myprop: something else"
-            "ObjectsTest.ToStringObject myprop: something else",
-            // [7] obj[6]: "org.pdfclown.common.util.ObjectsTest$ToStringObject"
-            "ObjectsTest.ToStringObject",
-            // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
-            "ObjectsTest.ToStringObject something",
-            // [9] obj[8]: "ToStringObjects"
-            "ObjectsTest.ToStringObject{ToStringObjects}",
-            // [10] obj[9]: "org.something.ToStringObject"
-            "ObjectsTest.ToStringObject",
-            // [11] obj[10]: "ToStringObject{myprop:AAA}"
-            "ObjectsTest.ToStringObject{myprop:AAA}",
-            // [12] obj[11]: "myprop:List<ToStringObject>"
-            "ObjectsTest.ToStringObject{myprop:List<ToStringObject>}",
-            // [13] obj[12]: "myprop:ToStringObject"
-            "ObjectsTest.ToStringObject{myprop:ToStringObject}"),
-        // obj
-        TO_STRINGS);
-  }
-
-  static Stream<Arguments> objToQualifiedString() {
-    return argumentsStream(
-        cartesian()
-            .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
-        // expected
-        java.util.Arrays.asList(
-            // [1] obj[0]: null
-            null,
+            "null",
             // [2] obj[1]: "ToStringObject"
             "ToStringObject",
             // [3] obj[2]: "ToStringObject myprop=something"
@@ -348,15 +312,51 @@ class ObjectsTest extends BaseTest {
             // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
             "org.pdfclown.common.util.ObjectsTest.ToStringObject something",
             // [9] obj[8]: "ToStringObjects"
-            "ObjectsTest.ToStringObject{ToStringObjects}",
+            "ObjectsTest.ToStringObject {ToStringObjects}",
             // [10] obj[9]: "org.something.ToStringObject"
-            "ObjectsTest.ToStringObject{org.something.ToStringObject}",
+            "ObjectsTest.ToStringObject {org.something.ToStringObject}",
             // [11] obj[10]: "ToStringObject{myprop:AAA}"
             "ToStringObject{myprop:AAA}",
             // [12] obj[11]: "myprop:List<ToStringObject>"
-            "ObjectsTest.ToStringObject{myprop:List<ToStringObject>}",
+            "ObjectsTest.ToStringObject {myprop:List<ToStringObject>}",
             // [13] obj[12]: "myprop:ToStringObject"
-            "ObjectsTest.ToStringObject{myprop:ToStringObject}"),
+            "ObjectsTest.ToStringObject {myprop:ToStringObject}"),
+        // obj
+        TO_STRINGS);
+  }
+
+  static Stream<Arguments> toSqnQualifiedString() {
+    return argumentsStream(
+        cartesian()
+            .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
+        // expected
+        java.util.Arrays.asList(
+            // [1] obj[0]: null
+            "null",
+            // [2] obj[1]: "ToStringObject"
+            "ObjectsTest.ToStringObject",
+            // [3] obj[2]: "ToStringObject myprop=something"
+            "ObjectsTest.ToStringObject myprop=something",
+            // [4] obj[3]: "ObjectsTest$ToStringObject"
+            "ObjectsTest.ToStringObject",
+            // [5] obj[4]: "ObjectsTest$ToStringObject myprop: something"
+            "ObjectsTest.ToStringObject myprop: something",
+            // [6] obj[5]: "ObjectsTest.ToStringObject myprop: something else"
+            "ObjectsTest.ToStringObject myprop: something else",
+            // [7] obj[6]: "org.pdfclown.common.util.ObjectsTest$ToStringObject"
+            "ObjectsTest.ToStringObject",
+            // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
+            "ObjectsTest.ToStringObject something",
+            // [9] obj[8]: "ToStringObjects"
+            "ObjectsTest.ToStringObject {ToStringObjects}",
+            // [10] obj[9]: "org.something.ToStringObject"
+            "ObjectsTest.ToStringObject",
+            // [11] obj[10]: "ToStringObject{myprop:AAA}"
+            "ObjectsTest.ToStringObject {myprop:AAA}",
+            // [12] obj[11]: "myprop:List<ToStringObject>"
+            "ObjectsTest.ToStringObject {myprop:List<ToStringObject>}",
+            // [13] obj[12]: "myprop:ToStringObject"
+            "ObjectsTest.ToStringObject {myprop:ToStringObject}"),
         // obj
         TO_STRINGS);
   }
@@ -379,6 +379,16 @@ class ObjectsTest extends BaseTest {
         Object.class));
   }
 
+  @ParameterizedTest
+  @MethodSource
+  void fromLiteralString(Expected<@Nullable Object> expected, @Nullable String s) {
+    assertParameterizedOf(
+        () -> Objects.fromLiteralString(s),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("s", s))));
+  }
+
   @Test
   void objDo() {
     var obj = new MutableObject<>();
@@ -398,16 +408,6 @@ class ObjectsTest extends BaseTest {
 
     obj = null;
     assertThat(Objects.objElseGet(obj, defaultSupplier), is(defaultResult));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void objFromLiteralString(Expected<@Nullable Object> expected, @Nullable String s) {
-    assertParameterizedOf(
-        () -> Objects.objFromLiteralString(s),
-        expected,
-        () -> new ExpectedGeneration(of(
-            entry("s", s))));
   }
 
   @Test
@@ -434,36 +434,6 @@ class ObjectsTest extends BaseTest {
 
     obj = null;
     assertThat(Objects.objToElseGet(obj, List::size, defaultSupplier), is(defaultResult));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void objToLiteralString(Expected<Object> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.objToLiteralString(obj),
-        expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void objToNormalQualifiedString(Expected<String> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Objects.objToNormalQualifiedString(obj),
-        expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))).setMaxArgCommentLength(100));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void objToQualifiedString(Expected<String> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Objects.objToQualifiedString(obj),
-        expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))).setMaxArgCommentLength(100));
   }
 
   /**
@@ -534,6 +504,36 @@ class ObjectsTest extends BaseTest {
 
     assertThat(exceptionRef.getValue(), instanceOf(IllegalStateException.class));
     assertThat(exceptionRef.getValue().getMessage(), is("FAILED"));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void toLiteralString(Expected<Object> expected, @Nullable Object obj) {
+    assertParameterizedOf(
+        () -> Objects.toLiteralString(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void toQualifiedString(Expected<String> expected, Object obj) {
+    assertParameterizedOf(
+        () -> Objects.toQualifiedString(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))).setMaxArgCommentLength(100));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void toSqnQualifiedString(Expected<String> expected, Object obj) {
+    assertParameterizedOf(
+        () -> Objects.toSqnQualifiedString(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))).setMaxArgCommentLength(100));
   }
 
   @Test

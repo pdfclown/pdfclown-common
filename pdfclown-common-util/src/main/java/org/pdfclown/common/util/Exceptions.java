@@ -13,7 +13,7 @@
 package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNullElse;
-import static org.pdfclown.common.util.Objects.objToLiteralString;
+import static org.pdfclown.common.util.Objects.toLiteralString;
 import static org.pdfclown.common.util.ParamMessage.ARG;
 import static org.pdfclown.common.util.Strings.COMMA;
 import static org.pdfclown.common.util.Strings.CURLY_BRACE_CLOSE;
@@ -56,7 +56,7 @@ public final class Exceptions {
   public static IllegalArgumentException differingArg(@Nullable String name,
       @Nullable Object value, @Nullable Object otherValue, @Nullable String description) {
     return wrongArg(name, value, ARG + " (should be " + ARG + ")",
-        requireNonNullElse(description, "INVALID"), objToLiteralString(otherValue));
+        requireNonNullElse(description, "INVALID"), toLiteralString(otherValue));
   }
 
   public static NoSuchElementException missing() {

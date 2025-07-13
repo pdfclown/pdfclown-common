@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.nonNull;
-import static org.pdfclown.common.util.Objects.objToLiteralString;
+import static org.pdfclown.common.util.Objects.toLiteralString;
 import static org.pdfclown.common.util.Strings.strEmptyToNull;
 
 import java.io.File;
@@ -129,7 +129,7 @@ public final class Xmls {
     public void register(String prefix, String namespaceUri) {
       if (base.containsKey(prefix))
         throw wrongArg("prefix", prefix, "Already used for {} namespace",
-            objToLiteralString(base.get(prefix)));
+            toLiteralString(base.get(prefix)));
 
       base.put(prefix, namespaceUri);
     }

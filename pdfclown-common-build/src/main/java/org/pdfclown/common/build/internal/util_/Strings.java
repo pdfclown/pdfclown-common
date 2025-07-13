@@ -99,7 +99,10 @@ public final class Strings {
    * System-dependent line separator ({@link System#lineSeparator()} alias).
    */
   public static final String EOL = System.lineSeparator();
-
+  /**
+   * String representation of literal {@code null}.
+   */
+  public static final String NULL = "null";
   /**
    * Empty string, used as a marker to conveniently force the compiler to treat the following
    * concatenated character as a string.

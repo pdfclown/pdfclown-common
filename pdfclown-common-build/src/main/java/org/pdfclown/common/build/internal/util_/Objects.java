@@ -27,12 +27,14 @@ import static org.pdfclown.common.build.internal.util_.Strings.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.build.internal.util_.Strings.DOT;
 import static org.pdfclown.common.build.internal.util_.Strings.DQUOTE;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.NULL;
 import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 import static org.pdfclown.common.build.internal.util_.Strings.SQUOTE;
 import static org.pdfclown.common.build.internal.util_.Strings.indexFound;
+import static org.pdfclown.common.build.internal.util_.Strings.strNormToNull;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -191,6 +193,7 @@ public final class Objects {
       }
     }
 
+    @SuppressWarnings("unchecked")
     private static final HierarchicalTypeComparator INSTANCE =
         new HierarchicalTypeComparator(
             ($1, $2) -> {
@@ -276,11 +279,6 @@ public final class Objects {
           "\\\"", "\"",
           "\\'", "'",
           "\\", EMPTY)));
-
-  /**
-   * Literal representation of {@code null} value.
-   */
-  public static final String LITERAL_NULL = "null";
 
   private static final Pattern PATTERN__QUALIFIED_TO_STRING =
       Pattern.compile("((?:\\w+[.$])*\\w+)([^\\w.$].*)?");
@@ -537,14 +535,14 @@ public final class Objects {
   }
 
   /**
-   * Gets the fully qualified type name of the given object.
+   * Gets the fully-qualified class name of the given object.
+   * <p>
+   * Corresponds to the {@linkplain Class#getName() class name}; the class is resolved from
+   * {@code obj} through {@link #asType(Object)}.
+   * </p>
    *
-   * @return
-   *         <ul>
-   *         <li>{@code obj.getName()}, if {@code obj} is a {@link Class}</li>
-   *         <li>{@code obj.getClass().getName()}, if {@code obj} is not a {@code Class}</li>
-   *         <li>{@code "null"}, if {@code obj} is undefined</li>
-   *         </ul>
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @see #fqnd(Object)
    * @see #sqn(Object)
    */
   public static String fqn(@Nullable Object obj) {
@@ -552,27 +550,97 @@ public final class Objects {
   }
 
   /**
-   * Gets the fully qualified type name of the given object, replacing inner-class separators
-   * ({@code $}) with dots.
+   * Gets the dotted fully-qualified class name of the given object.
+   * <p>
+   * Corresponds to the {@linkplain Class#getName() class name}, replacing inner-class separators
+   * ({@code $}) with dots (e.g., {@code my.package.MyTopLevel.MyOuterClass.MyInnerClass}); the
+   * class is resolved from {@code obj} through {@link #asType(Object)}.
+   * </p>
    *
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
    * @see #fqn(Object)
-   * @see #sqn(Object)
+   * @see #sqnd(Object)
    */
   public static String fqnd(@Nullable Object obj) {
     return fqn(obj, true);
   }
 
   /**
-   * Ensures the given type name has inner-class separators ({@code $}) replaced with dots.
+   * Ensures the given class name has inner-class separators ({@code $}) replaced with dots.
    * <p>
    * No syntactic check is applied to {@code typeName}.
    * </p>
    *
-   * @see #fqn(Object)
-   * @see #sqn(Object)
+   * @return {@value Strings#NULL}, if {@code typeName} is undefined.
+   * @see #sqnd(String)
    */
   public static String fqnd(@Nullable String typeName) {
     return fqn(typeName, true);
+  }
+
+  /**
+   * Gets the object corresponding to the given literal string.
+   * <p>
+   * NOTE: This method is complementary to {@link #toLiteralString(Object)} only for primitive type
+   * representations.
+   * </p>
+   *
+   * @return
+   *         <ul>
+   *         <li>{@link Boolean} — if {@code s} corresponds to a boolean literal ({@code "true"} or
+   *         {@code "false"}, case-insensitive)</li>
+   *         <li>{@link Number} — if {@code s} corresponds to a
+   *         {@linkplain NumberUtils#createNumber(String) numeric value}</li>
+   *         <li>{@link Character} — if {@code s} corresponds to a single-quoted character</li>
+   *         <li>{@link String} (unescaped) — if {@code s} corresponds to a single- or double-quoted
+   *         string</li>
+   *         <li>{@code null} — if {@code s} corresponds to {@value Strings#NULL}, or undefined
+   *         ({@code null}), or unknown format</li>
+   *         </ul>
+   * @see #toLiteralString(Object)
+   */
+  public static @Nullable Object fromLiteralString(@Nullable String s) {
+    // Undefined, or null literal?
+    if (s == null || (s = s.trim()).equals(NULL))
+      return null;
+
+    if (s.length() >= 2) {
+      char c = s.charAt(0);
+      switch (c) {
+        case '"':
+        case '\'':
+          // Quoted literal?
+          if (s.charAt(s.length() - 1) == c) {
+            // Character literal without escape?
+            if (c == SQUOTE && s.length() == 3)
+              return s.charAt(1);
+            // Character literal with escape?
+            else if (c == SQUOTE && s.length() == 4 && s.charAt(1) == '\\')
+              return s.charAt(2);
+            // String literal.
+            else
+              return LITERAL_STRING_UNESCAPE.translate(s.substring(1, s.length() - 1));
+          }
+          break;
+        default:
+          // NOOP
+      }
+    }
+
+    s = s.toLowerCase();
+    // Boolean literal?
+    if (s.equals("true"))
+      return Boolean.TRUE;
+    else if (s.equals("false"))
+      return Boolean.FALSE;
+
+    try {
+      // Numeric literal.
+      return NumberUtils.createNumber(s);
+    } catch (NumberFormatException ex) {
+      // Invalid literal.
+      return null;
+    }
   }
 
   /**
@@ -754,66 +822,6 @@ public final class Objects {
   }
 
   /**
-   * Gets the object corresponding to the given literal string.
-   * <p>
-   * NOTE: This method is complementary to {@link #objToLiteralString(Object)} only for primitive
-   * type representations.
-   * </p>
-   *
-   * @return Depending on {@code s} format:
-   *         <ul>
-   *         <li>boolean literal ({@code "true"} or {@code "false"}, case-insensitive) —
-   *         {@link Boolean}</li>
-   *         <li>{@linkplain NumberUtils#createNumber(String) numeric value} — {@link Number}</li>
-   *         <li>single-quoted character — {@link Character}</li>
-   *         <li>single- or double-quoted string — {@link String} (unescaped)</li>
-   *         <li>{@code "null"}, or undefined ({@code null}), or invalid (any string not comprised
-   *         in known formats) — {@code null} (use {@link #LITERAL_NULL} to tell literal null
-   *         apart)</li>
-   *         </ul>
-   */
-  public static @Nullable Object objFromLiteralString(@Nullable String s) {
-    // Undefined, or null literal?
-    if (s == null || (s = s.trim()).equals(LITERAL_NULL))
-      return null;
-
-    if (s.length() >= 2) {
-      char c = s.charAt(0);
-      switch (c) {
-        case '"':
-        case '\'':
-          // Quoted literal?
-          if (s.charAt(s.length() - 1) == c) {
-            // Character literal without escape?
-            if (c == SQUOTE && s.length() == 3)
-              return s.charAt(1);
-            // Character literal with escape?
-            else if (c == SQUOTE && s.length() == 4 && s.charAt(1) == '\\')
-              return s.charAt(2);
-            // String literal.
-            else
-              return LITERAL_STRING_UNESCAPE.translate(s.substring(1, s.length() - 1));
-          }
-      }
-    }
-
-    s = s.toLowerCase();
-    // Boolean literal?
-    if (s.equals("true"))
-      return Boolean.TRUE;
-    else if (s.equals("false"))
-      return Boolean.FALSE;
-
-    try {
-      // Numeric literal.
-      return NumberUtils.createNumber(s);
-    } catch (NumberFormatException ex) {
-      // Invalid literal.
-      return null;
-    }
-  }
-
-  /**
    * Maps the given object.
    *
    * @param <T>
@@ -846,12 +854,15 @@ public final class Objects {
    */
   public static <T, R> R objToElse(@Nullable T obj,
       Function<? super @NonNull T, ? extends @Nullable R> mapper, R defaultResult) {
-    R ret;
-    return (ret = objTo(obj, mapper)) != null ? ret : defaultResult;
+    return requireNonNullElse(objTo(obj, mapper), defaultResult);
   }
 
   /**
    * Maps the given object.
+   * <p>
+   * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
+   * doesn't enforce its result to be non-null.
+   * </p>
    *
    * @param obj
    *          Object to map.
@@ -864,111 +875,6 @@ public final class Objects {
       Function<? super @NonNull T, ? extends R> mapper, Supplier<? extends R> defaultSupplier) {
     R ret;
     return obj != null && (ret = mapper.apply(obj)) != null ? ret : defaultSupplier.get();
-  }
-
-  /**
-   * Maps the given object to its literal string representation (that is, inclusive of markers such
-   * as quotes).
-   *
-   * @return Depending on {@code obj} type:
-   *         <ul>
-   *         <li>{@link Boolean}, {@link Number} — {@link Object#toString()}, as-is</li>
-   *         <li>{@link Character} — {@link Object#toString()}, wrapped with single quotes</li>
-   *         <li>any other type — {@link Object#toString()}, escaped and wrapped with double
-   *         quotes</li>
-   *         <li>{@code null} — {@code "null"} (like
-   *         {@link java.util.Objects#toString(Object)})</li>
-   *         </ul>
-   */
-  public static String objToLiteralString(@Nullable Object obj) {
-    if (obj == null)
-      return LITERAL_NULL;
-    else if (obj instanceof Float)
-      /*
-       * NOTE: Literal float MUST be marked by suffix to override default double type.
-       */
-      return obj + "F";
-    else if (obj instanceof Long)
-      /*
-       * NOTE: Literal long MUST be marked by suffix to override default integer type.
-       */
-      return obj + "L";
-    else if (obj instanceof Number || obj instanceof Boolean)
-      return obj.toString();
-    else if (obj instanceof Character)
-      return S + SQUOTE + ((Character) obj == SQUOTE ? "\\" : EMPTY) + obj + SQUOTE;
-    else
-      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(obj.toString()) + DQUOTE;
-  }
-
-  /**
-   * Maps the given object to its string representation, normalizing its qualification with
-   * {@linkplain #sqnd(Object) qualified dotted simple type name} (SQND).
-   *
-   * @return Considering the {@linkplain Matcher pattern match} of
-   *         {@code obj.}{@link Object#toString() toString()} as formed by two groups (qualification
-   *         and attributes), the resulting string will be:
-   *         <ul>
-   *         <li><code>group()</code> — if its qualification equals the SQND of {@code obj}</li>
-   *         <li><code>sqnd(obj) + group(2)</code>— if its qualification contains the
-   *         {@linkplain Class#getSimpleName() simple type name} of {@code obj}</li>
-   *         <li><code>sqnd(obj) + '{' + group() + '}'</code>— if its qualification does NOT contain
-   *         the simple type name of {@code obj}</li>
-   *         </ul>
-   */
-  public static @PolyNull @Nullable String objToNormalQualifiedString(
-      @PolyNull @Nullable Object obj) {
-    if (obj == null)
-      return null;
-
-    String objString = obj.toString();
-    String sqnd = sqnd(obj);
-    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
-        .map($ -> $.group(1).equals(sqnd) ? $.group()
-            : sqnd + ($.group(1).endsWith(obj.getClass().getSimpleName())
-                ? requireNonNullElse($.group(2), EMPTY)
-                : CURLY_BRACE_OPEN + $.group() + CURLY_BRACE_CLOSE))
-        .orElseThrow();
-  }
-
-  /**
-   * Maps the given object to its string representation, ensuring its qualification with simple type
-   * name.
-   *
-   * @return {@code obj.}{@link Object#toString() toString()}, if it contains the
-   *         {@linkplain Class#getSimpleName() simple type name} of {@code obj}; otherwise, it is
-   *         wrapped in curly braces and prepended by its {@link #sqnd(Object) SQND}
-   *         (<code>"`sqnd(obj)`{`obj.toString()`}"</code>).
-   */
-  public static @PolyNull @Nullable String objToQualifiedString(@PolyNull @Nullable Object obj) {
-    if (obj == null)
-      return null;
-
-    String objString = obj.toString();
-    String sqnd = sqnd(obj);
-    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
-        .filter($ -> {
-          if ($.group(1).equals(obj.getClass().getSimpleName()))
-            return true;
-
-          var norm = $.group(1).replace('$', DOT);
-          return norm.equals(sqnd) || norm.equals(fqnd(obj));
-        }).isPresent()
-            ? objString
-            : sqnd(obj) + CURLY_BRACE_OPEN + objString + CURLY_BRACE_CLOSE;
-  }
-
-  /**
-   * Maps the given object to its string representation.
-   * <p>
-   * Contrary to the standard {@link java.util.Objects#toString(Object)} function, this one returns
-   * {@code null} as-is.
-   * </p>
-   *
-   * @see java.util.Objects#toString(Object, String)
-   */
-  public static @PolyNull @Nullable String objToString(@PolyNull @Nullable Object obj) {
-    return obj != null ? obj.toString() : null;
   }
 
   /**
@@ -1072,25 +978,29 @@ public final class Objects {
   }
 
   /**
-   * Gets the given fully qualified name split into package and simple name parts.
+   * Splits the given fully-qualified name into package and class name parts.
    *
-   * @param fqn
-   *          Fully qualified name.
-   * @return Two-part string array, where the first item is empty if {@code fqn} has no package.
+   * @return Two-part string array, where the first item is empty if {@code typeName} has no
+   *         package.
    */
   @SuppressWarnings("null")
-  public static @NonNull String @NonNull [] splitFqn(String fqn) {
-    int pos = fqn.lastIndexOf(DOT);
+  public static String[] splitFqn(String typeName) {
+    int pos = typeName.lastIndexOf(DOT);
     return pos >= 0
-        ? new String[] { fqn.substring(0, pos), fqn.substring(pos + 1) }
-        : new String[] { EMPTY, fqn };
+        ? new String[] { typeName.substring(0, pos), typeName.substring(pos + 1) }
+        : new String[] { EMPTY, typeName };
   }
 
   /**
-   * Gets the qualified simple type name of the given object, that is the simple class name
-   * qualified with its outer class (for example, {@code MyOuterClass$MyInnerClass}), if present
-   * (otherwise, behaves like {@link Class#getSimpleName()}).
+   * Gets the simply-qualified class name of the given object.
+   * <p>
+   * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
+   * enclosing classes till the top level (e.g., {@code MyTopLevel$MyOuterClass$MyInnerClass}); the
+   * class is resolved from {@code obj} through {@link #asType(Object)}.
+   * </p>
    *
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @see #sqnd(Object)
    * @see #fqn(Object)
    */
   public static String sqn(@Nullable Object obj) {
@@ -1098,46 +1008,155 @@ public final class Objects {
   }
 
   /**
-   * Gets the qualified simple type name from the given type name, that is the simple class name
-   * qualified with its outer class (for example, {@code MyOuterClass$MyInnerClass}), if present
-   * (otherwise, behaves like {@link Class#getSimpleName()}).
+   * Gets the simply-qualified class name from the given name.
+   * <p>
+   * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
+   * enclosing classes till the top level (e.g., {@code MyTopLevel$MyOuterClass$MyInnerClass}).
+   * </p>
    * <p>
    * No syntactic check is applied to {@code typeName}.
    * </p>
    *
-   * @see #fqn(Object)
+   * @return {@value Strings#NULL}, if {@code typeName} is undefined.
+   * @see #sqnd(String)
    */
   public static String sqn(@Nullable String typeName) {
     return sqn(typeName, false);
   }
 
   /**
-   * Gets the qualified simple type name of the given object, replacing inner-class separators
-   * ({@code $}) with dots, that is the simple class name qualified with its outer class (for
-   * example, {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
-   * {@link Class#getSimpleName()}).
+   * Gets the dotted simply-qualified class name of the given object.
+   * <p>
+   * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
+   * enclosing classes till the top level, replacing inner-class separators ({@code $}) with dots
+   * (e.g., {@code MyTopLevel.MyOuterClass.MyInnerClass}); the class is resolved from {@code obj}
+   * through {@link #asType(Object)}.
+   * </p>
    *
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
    * @see #sqn(Object)
-   * @see #fqn(Object)
+   * @see #fqnd(Object)
    */
   public static String sqnd(@Nullable Object obj) {
     return sqn(obj, true);
   }
 
   /**
-   * Gets the qualified simple type name from the given type name, replacing inner-class separators
-   * ({@code $}) with dots, that is the simple class name qualified with its outer class (for
-   * example, {@code MyOuterClass.MyInnerClass}), if present (otherwise, behaves like
-   * {@link Class#getSimpleName()}).
+   * Gets the dotted simply-qualified class name from the given name.
+   * <p>
+   * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
+   * enclosing classes till the top level, replacing inner-class separators ({@code $}) with dots
+   * (e.g., {@code MyTopLevel.MyOuterClass.MyInnerClass}).
+   * </p>
    * <p>
    * No syntactic check is applied to {@code typeName}.
    * </p>
    *
-   * @see #sqn(Object)
-   * @see #fqn(Object)
+   * @return {@value Strings#NULL}, if {@code typeName} is undefined.
+   * @see #sqn(String)
+   * @see #fqnd(String)
    */
   public static String sqnd(@Nullable String typeName) {
     return sqn(typeName, true);
+  }
+
+  /**
+   * Maps the given object to its literal string representation (that is, inclusive of markers such
+   * as quotes).
+   *
+   * @return
+   *         <ul>
+   *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
+   *         <li>{@link Object#toString()} — if {@code obj} is {@link Boolean} or
+   *         {@link Number}</li>
+   *         <li>{@link Object#toString()}, wrapped with single quotes — if {@code obj} is
+   *         {@link Character}</li>
+   *         <li>{@link Object#toString()}, escaped and wrapped with double quotes — otherwise</li>
+   *         </ul>
+   * @see #fromLiteralString(String)
+   */
+  public static String toLiteralString(@Nullable Object obj) {
+    if (obj == null)
+      return NULL;
+    else if (obj instanceof Float)
+      /*
+       * NOTE: Literal float MUST be marked by suffix to override default double type.
+       */
+      return obj + "F";
+    else if (obj instanceof Long)
+      /*
+       * NOTE: Literal long MUST be marked by suffix to override default integer type.
+       */
+      return obj + "L";
+    else if (obj instanceof Number || obj instanceof Boolean)
+      return obj.toString();
+    else if (obj instanceof Character)
+      return S + SQUOTE + ((Character) obj == SQUOTE ? "\\" : EMPTY) + obj + SQUOTE;
+    else
+      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(obj.toString()) + DQUOTE;
+  }
+
+  /**
+   * Maps the given object to its string representation, ensuring its qualification at least with
+   * its {@linkplain Class#getSimpleName() simple class name}.
+   *
+   * @return
+   *         <ul>
+   *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
+   *         <li><code>obj.toString()</code> — if it contains the simple class name of
+   *         {@code obj}</li>
+   *         <li>{@link #sqnd(Object) sqnd(obj)}<code> + " {" + obj.toString() + "}"</code> —
+   *         otherwise</li>
+   *         </ul>
+   */
+  public static String toQualifiedString(@Nullable Object obj) {
+    if (obj == null)
+      return NULL;
+
+    String objString = obj.toString();
+    String sqnd = sqnd(obj);
+    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
+        .filter($ -> {
+          // Qualification corresponds to simple class name?
+          if ($.group(1).equals(obj.getClass().getSimpleName()))
+            return true;
+
+          // Qualification corresponds to either simply- or fully-qualified class name?
+          var norm = $.group(1).replace('$', DOT);
+          return norm.equals(sqnd) || norm.equals(fqnd(obj));
+        }).isPresent()
+            ? objString
+            : sqnd + SPACE + CURLY_BRACE_OPEN + objString + CURLY_BRACE_CLOSE;
+  }
+
+  /**
+   * Maps the given object to its string representation, normalizing its qualification with the
+   * {@linkplain #sqnd(Object) dotted simply-qualified class name}.
+   *
+   * @return Considering the {@linkplain Matcher pattern match} of
+   *         {@code obj.}{@link Object#toString() toString()} as formed by two groups (qualification
+   *         and attributes):
+   *         <ul>
+   *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
+   *         <li><code>group()</code> — if its qualification equals the dotted simply-qualified
+   *         class name of {@code obj}</li>
+   *         <li><code>sqnd(obj) + group(2)</code> — if its qualification contains the
+   *         {@linkplain Class#getSimpleName() simple class name} of {@code obj}</li>
+   *         <li><code>sqnd(obj) + " {" + group() + "}"</code> — otherwise</li>
+   *         </ul>
+   */
+  public static String toSqnQualifiedString(@Nullable Object obj) {
+    if (obj == null)
+      return NULL;
+
+    String objString = obj.toString();
+    String sqnd = sqnd(obj);
+    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
+        .map($ -> $.group(1).equals(sqnd) ? $.group()
+            : sqnd + ($.group(1).endsWith(obj.getClass().getSimpleName())
+                ? objToElse(strNormToNull($.group(2)), $$ -> S + SPACE + $$, EMPTY)
+                : S + SPACE + CURLY_BRACE_OPEN + $.group() + CURLY_BRACE_CLOSE))
+        .orElseThrow();
   }
 
   /**
@@ -1289,10 +1308,14 @@ public final class Objects {
   /**
    * Tries the given supplier.
    *
-   * @return Result of {@code supplier}.
+   * @return Result of {@code supplier}, or {@code null} if failed.
    */
-  public static <T> @Nullable T tryGet(FailableSupplier<? extends @Nullable T, ?> supplier) {
-    return tryGetElse(supplier, null);
+  public static <R> @Nullable R tryGet(FailableSupplier<? extends @Nullable R, ?> supplier) {
+    try {
+      return supplier.get();
+    } catch (Throwable ex) {
+      return null;
+    }
   }
 
   /**
@@ -1302,34 +1325,43 @@ public final class Objects {
    *          Result in case {@code supplier} fails or its result is undefined.
    * @return Result of {@code supplier}, if not {@code null}; otherwise, {@code defaultResult}.
    */
-  public static <T> @Nullable T tryGetElse(FailableSupplier<? extends @Nullable T, ?> supplier,
-      @Nullable T defaultResult) {
-    try {
-      var ret = supplier.get();
-      if (ret != null)
-        return ret;
-    } catch (Throwable ex) {
-      // NOOP
-    }
-    return defaultResult;
+  public static <R> R tryGetElse(FailableSupplier<? extends @Nullable R, ?> supplier,
+      R defaultResult) {
+    return requireNonNullElse(tryGet(supplier), defaultResult);
   }
 
   /**
-   * Gets the type corresponding to the given fully-qualified name.
+   * Gets the type corresponding to the given fully-qualified name, resolved in the loading context
+   * of the current class and initialized.
    *
-   * @return {@code null}, if no class matched {@code name}, or the latter is undefined.
-   * @implNote {@code name} nullability was introduced to simplify method referencing in lambda
-   *           expressions, avoiding NPE issues in case of nullable input.
+   * @return {@code null}, if no type matched {@code name}.
    */
-  public static @Nullable Class<?> type(@Nullable String name) {
-    if (name != null) {
-      try {
+  public static @Nullable Class<?> type(String name) {
+    return type(name, null);
+  }
+
+  /**
+   * Gets the type corresponding to the given fully-qualified name, resolved in the given loading
+   * context and initialized.
+   *
+   * @param loadingHint
+   *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
+   *          resolve with the class loader of the current class).
+   * @return {@code null}, if no type matched {@code name}.
+   */
+  public static @Nullable Class<?> type(String name, @Nullable Object loadingHint) {
+    try {
+      if (loadingHint != null) {
+        @SuppressWarnings("DataFlowIssue" /* @PolyNull */)
+        ClassLoader loader = loadingHint instanceof ClassLoader
+            ? (ClassLoader) loadingHint
+            : asType(loadingHint).getClassLoader();
+        return Class.forName(name, true, loader);
+      } else
         return Class.forName(name);
-      } catch (ClassNotFoundException ex) {
-        // NOOP
-      }
+    } catch (ClassNotFoundException ex) {
+      return null;
     }
-    return null;
   }
 
   /**
@@ -1427,7 +1459,7 @@ public final class Objects {
   private static String fqn(@Nullable String typeName, boolean dotted) {
     return typeName != null
         ? dotted ? typeName.replace('$', DOT) : typeName
-        : LITERAL_NULL;
+        : NULL;
   }
 
   private static String sqn(@Nullable Object obj, boolean dotted) {

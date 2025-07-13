@@ -18,8 +18,8 @@ import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.objToLiteralString;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
@@ -285,8 +285,7 @@ public abstract class Debug {
     if (record != null) {
       record.stop();
 
-      log.info("Flight recorder FINISHED (dumped to {})",
-          objToLiteralString(record.getDestination()));
+      log.info("Flight recorder FINISHED (dumped to {})", toLiteralString(record.getDestination()));
     }
   }
 

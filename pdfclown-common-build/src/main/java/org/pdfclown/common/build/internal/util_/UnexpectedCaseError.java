@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.build.internal.util_;
 
-import static org.pdfclown.common.build.internal.util_.Objects.objToLiteralString;
+import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
 import static org.pdfclown.common.build.internal.util_.Strings.strNorm;
 
 import org.jspecify.annotations.Nullable;
@@ -30,7 +30,7 @@ public class UnexpectedCaseError extends AssertionError {
   private static final long serialVersionUID = 1L;
 
   private static String buildMessage(@Nullable Object value, @Nullable String message) {
-    var b = new StringBuilder("Value (").append(objToLiteralString(value)).append(") UNEXPECTED");
+    var b = new StringBuilder("Value (").append(toLiteralString(value)).append(") UNEXPECTED");
     if (!(message = strNorm(message)).isEmpty()) {
       b.append(" (").append(message).append(")");
     }

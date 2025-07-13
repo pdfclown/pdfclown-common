@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.isA;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Aggregations.list;
+import static org.pdfclown.common.util.Objects.nonNull;
 
 import java.util.Comparator;
 import java.util.List;
@@ -300,7 +301,7 @@ class UnitsTest extends BaseTest {
   static Stream<Arguments> getQuantityType() {
     return argumentsStream(
         simpleArgumentsStreamConfig()
-            .composeExpectedConverter(Objects::type),
+            .<String>composeExpectedConverter(Objects::type),
         // expected
         java.util.Arrays.asList(
             // [1] unit[0]: 'a (Are)'
@@ -394,7 +395,7 @@ class UnitsTest extends BaseTest {
   static Stream<Arguments> getQuantityType__external() {
     return argumentsStream(
         simpleArgumentsStreamConfig()
-            .composeExpectedConverter(Objects::type),
+            .<String>composeExpectedConverter(Objects::type),
         // expected
         asList(
             // [1] unit[0]: "m³ (Cubic metre)"
@@ -529,7 +530,7 @@ class UnitsTest extends BaseTest {
   void getFactor_Unit(Expected<Double> expected, Argument<Unit<?>> unit) {
     assertParameterizedOf(
         () -> Units.getFactor(unit.getValue()),
-        expected.match(() -> isCloseTo(expected.getReturned())),
+        expected.match(() -> isCloseTo(nonNull(expected.getReturned()))),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit))));
   }
@@ -540,7 +541,7 @@ class UnitsTest extends BaseTest {
       Argument<Unit<?>> target) {
     assertParameterizedOf(
         () -> Units.getFactor((Unit) unit.getValue(), target.getValue()),
-        expected.match(() -> isCloseTo(expected.getReturned())),
+        expected.match(() -> isCloseTo(nonNull(expected.getReturned()))),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit),
             entry("target", target))));
@@ -551,7 +552,7 @@ class UnitsTest extends BaseTest {
   void getOffset_Unit(Expected<Double> expected, Argument<Unit<?>> unit) {
     assertParameterizedOf(
         () -> Units.getOffset(unit.getValue()),
-        expected.match(() -> isCloseTo(expected.getReturned())),
+        expected.match(() -> isCloseTo(nonNull(expected.getReturned()))),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit))));
   }
