@@ -129,7 +129,6 @@ pdfclown-common-base instead)</description>
     <maven.javadoc.version>3.11.2</maven.javadoc.version>
     <maven.plugin.plugin.version>3.15.1</maven.plugin.plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
-    <maven.remoteresources.version>3.0.0</maven.remoteresources.version>
     <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
     <maven.source.version>3.3.1</maven.source.version>
     <maven.surefire.version>3.5.2</maven.surefire.version>
@@ -199,9 +198,9 @@ pdfclown-common-base instead)</description>
             <includeResources>false</includeResources>
             <includeTestResources>false</includeTestResources>
             <linkXRef>false</linkXRef>
-            <propertiesLocation>${rootdir}/src/config/checkstyle/checkstyle.properties</propertiesLocation>
-            <suppressionsLocation>${rootdir}/src/config/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
-            <configLocation>${buildResourcesRootPath}/config/checkstyle/checkstyle-checks.xml</configLocation>
+            <propertiesLocation>${rootdir}/src/conf/checkstyle/checkstyle.properties</propertiesLocation>
+            <suppressionsLocation>${rootdir}/src/conf/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+            <configLocation>${buildResourcesRootPath}/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml</configLocation>
             <skip>${checkstyleSkip}</skip>
           </configuration>
           <dependencies>
@@ -385,12 +384,6 @@ pdfclown-common-base instead)</description>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
           <version>${maven-shade-plugin.version}</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-remote-resources-plugin</artifactId>
-          <version>${maven.remoteresources.version}</version>
         </plugin>
 
         <plugin>
@@ -1040,7 +1033,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <value>pom</value>
           </property>
           <file>
-            <exists>src/config/profiles/full-pom</exists>
+            <exists>src/conf/profiles/full-pom</exists>
           </file>
         </activation>
         <build>
@@ -1073,7 +1066,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       -->
       <activation>
         <file>
-          <exists>src/config/profiles/internal-pom</exists>
+          <exists>src/conf/profiles/internal-pom</exists>
         </file>
       </activation>
       <properties>
@@ -1124,7 +1117,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           <value>pom</value>
         </property>
         <file>
-          <exists>src/config/profiles/bom</exists>
+          <exists>src/conf/profiles/bom</exists>
         </file>
       </activation>
       <build>
@@ -1155,7 +1148,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       -->
       <activation>
         <file>
-          <missing>src/config/profiles/no-format</missing>
+          <missing>src/conf/profiles/no-format</missing>
         </file>
       </activation>
       <build>
@@ -1214,7 +1207,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
 
                     <type>XML</type>
                     <files>
-                      <file>${buildResourcesRootPath}/config/eclipse/org.eclipse.wst.xml.core.prefs</file>
+                      <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/org.eclipse.wst.xml.core.prefs</file>
                     </files>
                   </eclipseWtp>
                 </format>
@@ -1224,7 +1217,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
                 <eclipse>
                   <version>${spotless-maven-plugin.eclipseIde.version}</version>
 
-                  <file>${buildResourcesRootPath}/config/eclipse/java-style.xml</file>
+                  <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/java-style.xml</file>
 
                   <sortMembersEnabled>true</sortMembersEnabled>
                   <!-- Sort order of the member categories:
@@ -1249,7 +1242,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
                 </eclipse>
 
                 <importOrder>
-                  <file>${buildResourcesRootPath}/config/eclipse/java.importorder</file>
+                  <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/java.importorder</file>
                 </importOrder>
               </java>
             </configuration>

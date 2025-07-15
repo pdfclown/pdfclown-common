@@ -141,23 +141,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-remote-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>bundle</goal>
-            </goals>
-            <configuration>
-              <includes>
-                <include>config\/**</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <executions>
@@ -172,13 +155,13 @@
             <configuration>
               <transformationSets>
                 <transformationSet>
-                  <dir>src/main/resources/config/eclipse</dir>
+                  <dir>src/main/resources/org/pdfclown/common/build/conf/eclipse</dir>
                   <includes>
                     <include>java-cleanup.xml</include>
                     <include>java-style.xml</include>
                   </includes>
-                  <outputDir>src/main/resources/config/eclipse</outputDir>
-                  <stylesheet>src/config/eclipse/profile-normalize.xsl</stylesheet>
+                  <outputDir>src/main/resources/org/pdfclown/common/build/conf/eclipse</outputDir>
+                  <stylesheet>src/conf/eclipse/profile-normalize.xsl</stylesheet>
                 </transformationSet>
               </transformationSets>
             </configuration>
