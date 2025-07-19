@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.test.assertion.match;
 
 import static java.nio.file.Files.readString;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
@@ -43,7 +44,7 @@ public class MatchesTextFile extends TypeSafeMatcher<Path> {
       matcher = new MatchesText(readString(this.expectedContentPath = expectedContentPath),
           caseIgnored);
     } catch (IOException ex) {
-      throw new RuntimeException(ex);
+      throw runtime(ex);
     }
   }
 
@@ -63,7 +64,7 @@ public class MatchesTextFile extends TypeSafeMatcher<Path> {
     try {
       return matcher.matches(actual = readString(item));
     } catch (IOException ex) {
-      throw new RuntimeException(ex);
+      throw runtime(ex);
     }
   }
 }

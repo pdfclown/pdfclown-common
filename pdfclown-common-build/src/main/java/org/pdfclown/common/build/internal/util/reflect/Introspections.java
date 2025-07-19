@@ -92,8 +92,8 @@ public final class Introspections {
         }
       }
       if (superType == null)
-        throw new IntrospectionException(
-            String.format("%s is not a superclass of %s", stopType, type));
+        throw new IntrospectionException(String.format(
+            "%s is not a superclass of %s", stopType, type));
     }
 
     return new ArrayList<>(propertyDescriptors(type, interfaces(stopType, new HashSet<>()),

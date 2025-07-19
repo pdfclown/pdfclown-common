@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.util_.Exceptions.unsupported;
 import static org.pdfclown.common.build.internal.util_.Objects.OBJ_ARRAY__EMPTY;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
@@ -136,7 +137,7 @@ public abstract class LogCaptor
      */
     // Unknown.
     else
-      throw new UnsupportedOperationException("Logging implementation NOT supported: " + implName);
+      throw unsupported("Logging implementation NOT supported: {}", implName);
   }
 
   private @Nullable Level level;

@@ -559,7 +559,7 @@ public class ModelMapper<T> {
 
           log.warn("Value mapping failed", ex.getTargetException());
         } catch (Exception ex) {
-          throw ex instanceof RuntimeException ? (RuntimeException) ex : new RuntimeException(ex);
+          throw runtime(ex);
         }
         ret.put(objProperty.getName(), mappedValue);
       }
