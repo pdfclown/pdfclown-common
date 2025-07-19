@@ -36,6 +36,7 @@ To enforce their adoption, please set up the [**commit validation hooks**](build
 This project adheres to the following best practices:
 
 - [Open Source Guides](https://opensource.guide/)
+- [Reproducible Builds](https://reproducible-builds.org/)
 
 ## Project Structure
 
