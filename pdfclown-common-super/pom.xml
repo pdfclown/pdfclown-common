@@ -63,8 +63,6 @@ pdfclown-common-base instead)</description>
       via toolchain. -->
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
     <maven.compiler.target>${javaVersion}</maven.compiler.target>
-    <!-- [#ReproducibleBuilds] -->
-    <project.build.outputTimestamp>${git.commit.time}</project.build.outputTimestamp>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!--
@@ -115,6 +113,8 @@ pdfclown-common-base instead)</description>
     <dependency.check.version>12.1.1</dependency.check.version>
     <flatten-maven-plugin.version>1.7.1</flatten-maven-plugin.version>
     <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
+    <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
+    <groovy.version>4.0.27</groovy.version>
     <javaVersion>11</javaVersion>
     <m2e.lifecycle.version>1.0.0</m2e.lifecycle.version>
     <mavenVersion>3.6.3</mavenVersion>
@@ -149,6 +149,87 @@ pdfclown-common-base instead)</description>
           <groupId>io.github.git-commit-id</groupId>
           <artifactId>git-commit-id-maven-plugin</artifactId>
           <version>${git-commit-id-maven-plugin.version}</version>
+          <configuration>
+            <dateFormatTimeZone>UTC</dateFormatTimeZone>
+          </configuration>
+          <executions>
+            <execution>
+              <!--
+                See also:
+                - available properties (prepended with "git."): <https://github.com/git-commit-id/git-commit-id-plugin-core/blob/master/src/main/java/pl/project13/core/GitCommitPropertyConstant.java>
+              -->
+              <id>get-git-commit-info</id>
+              <goals>
+                <goal>revision</goal>
+              </goals>
+              <phase>initialize</phase>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.gmavenplus</groupId>
+          <artifactId>gmavenplus-plugin</artifactId>
+          <version>${gmavenplus-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.groovy</groupId>
+              <artifactId>groovy</artifactId>
+              <version>${groovy.version}</version>
+              <scope>runtime</scope>
+            </dependency>
+            <dependency>
+              <groupId>org.apache.groovy</groupId>
+              <artifactId>groovy-ant</artifactId>
+              <version>${groovy.version}</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>execute-jar-init</id>
+              <goals>
+                <goal>execute</goal>
+              </goals>
+              <configuration>
+                <scripts>
+                  <script><![CDATA[
+import java.time.ZonedDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+
+/*
+  Timestamp for reproducible builds (see
+  <https://maven.apache.org/guides/mini/guide-reproducible-builds.html>).
+
+  NOTE: Reproducible builds are meaningful for SCM-traceable code only; therefore, the current
+  commit's timestamp is used only if the working tree is clean. In case of dirty working tree, the
+  timestamp is generated on the fly, following the volatility of the built code.
+ */
+var buildTimestamp = ${git.dirty}
+    ? ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+        .format(DateTimeFormatter.ISO_INSTANT)
+    : "${git.commit.time}"
+
+project.properties.setProperty('buildTimestamp', buildTimestamp)
+/*
+  NOTE: Here the magic happens: documented examples (see, e.g.,
+  https://github.com/groovy/GMavenPlus/wiki/Examples#dynamic-properties) cite only
+  `project.properties` assignment but that doesn't work for dynamic reference substitution (i.e.,
+  "{..}" syntax); peering into the source code of git-commit-id-maven-plugin (whose dynamic
+  property references work perfectly), we can see that its property assignments are propagated also
+  to `session.userProperties` (see
+  https://github.com/git-commit-id/git-commit-id-maven-plugin/blob/34d009cc1c18dda05aeb843fa0983b4fbcff5222/src/main/java/pl/project13/maven/git/GitCommitIdMojo.java#L1415).
+ */
+session.userProperties.setProperty('buildTimestamp', buildTimestamp)
+
+log.info("buildTimestamp: " + buildTimestamp
+    + " (" + (${git.dirty} ? "DIRTY" : "REPRODUCIBLE") + ")")
+]]></script>
+                </scripts>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -451,7 +532,7 @@ pdfclown-common-base instead)</description>
 </div>
 ]]></top>
             <bottom><![CDATA[
-Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br><a href="${project.url}">Project Home</a> | <a href="${projectIssuesUrl}">Report a bug or suggest an enhancement</a><p class="footer-right">${maven.build.timestamp}</p>
+Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br><a href="${project.url}">Project Home</a> | <a href="${projectIssuesUrl}">Report a bug or suggest an enhancement</a><p class="footer-right">${buildTimestamp} (${git.commit.id.describe})</p>
 ]]></bottom>
 
             <detectLinks>true</detectLinks>
@@ -736,20 +817,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <plugin>
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
-        <configuration>
-          <dateFormatTimeZone>UTC</dateFormatTimeZone>
-        </configuration>
-        <executions>
-          <execution>
-            <!--
-              [#ReproducibleBuilds]
-              See <https://maven.apache.org/guides/mini/guide-reproducible-builds.html>
-            -->
-            <goals>
-              <goal>revision</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <!-- Code formatting -->
@@ -977,6 +1044,17 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       </activation>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.codehaus.gmavenplus</groupId>
+            <artifactId>gmavenplus-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>execute-jar-init</id>
+                <phase>initialize</phase>
+              </execution>
+            </executions>
+          </plugin>
+
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>flatten-maven-plugin</artifactId>
