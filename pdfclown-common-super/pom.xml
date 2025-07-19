@@ -527,7 +527,7 @@ log.info("buildTimestamp: " + buildTimestamp
             <top><![CDATA[
 <div class="header-top">
   <small>
-    <a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}">${project.groupId}:${project.artifactId}</a>:<a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/pom">${project.version}</a>
+    <a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}">${project.groupId}:${project.artifactId}</a>:<a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/jar">${project.version}</a>
   </small>
 </div>
 ]]></top>
