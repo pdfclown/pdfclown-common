@@ -41,6 +41,7 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.pdfclown.common.build.internal.util.system.Builds;
+import org.pdfclown.common.build.internal.util_.system.Systems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,38 +219,29 @@ public abstract class Asserter {
     {
       String paramValue = System.getProperty(paramName);
       if (paramValue != null) {
-        try {
-          switch (paramValue) {
-            // Any FQN.
-            /*
-             * NOTE: Unfortunately, System.getProperty() doesn't document the implicit value of
-             * parameters specified on CLI (eg, `-Dpdfclown.assert.update`); typically, it is an
-             * empty string BUT, oddly enough, running on OpenJDK (build 17.0.4+8-Ubuntu-122.04)
-             * returned "true" (sic!). Hopefully, there are no other weird implementations out
-             * there...
-             */
-            case EMPTY:
-            case "true":
-              defaultResult = true;
-              break;
-            // Specific FQNs.
-            default:
-              var b = new StringBuilder();
-              String[] paramValueItems = paramValue.split(S + COMMA);
-              for (int i = 0; i < paramValueItems.length; i++) {
-                if (i > 0) {
-                  b.append('|');
-                }
-                if (!paramValueItems[i].contains(S + SLASH)) {
-                  paramValueItems[i] = "/**" + paramValueItems[i];
-                }
-                b.append(ROUND_BRACKET_OPEN).append(globToRegex(paramValueItems[i]))
-                    .append(ROUND_BRACKET_CLOSE);
+        // Any FQN?
+        if (Systems.getBoolProperty(paramName)) {
+          defaultResult = true;
+        }
+        // Specific FQNs.
+        else {
+          try {
+            var b = new StringBuilder();
+            String[] paramValueItems = paramValue.split(S + COMMA);
+            for (int i = 0; i < paramValueItems.length; i++) {
+              if (i > 0) {
+                b.append('|');
               }
-              regex = b.toString();
+              if (!paramValueItems[i].contains(S + SLASH)) {
+                paramValueItems[i] = "/**" + paramValueItems[i];
+              }
+              b.append(ROUND_BRACKET_OPEN).append(globToRegex(paramValueItems[i]))
+                  .append(ROUND_BRACKET_CLOSE);
+            }
+            regex = b.toString();
+          } catch (Exception ex) {
+            log.error("{} CLI parameter initialization FAILED", paramName, ex);
           }
-        } catch (Exception ex) {
-          log.error("{} CLI parameter initialization FAILED", paramName, ex);
         }
       }
     }
