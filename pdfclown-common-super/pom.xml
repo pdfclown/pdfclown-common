@@ -144,6 +144,9 @@ pdfclown-common-base instead)</description>
     <defaultGoal>install</defaultGoal>
     <resources>
       <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
         <targetPath>META-INF</targetPath>
         <directory>${rootdir}</directory>
         <includes>
