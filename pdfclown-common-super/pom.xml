@@ -419,6 +419,7 @@ log.info("buildTimestamp: " + buildTimestamp
                 <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
               </manifest>
               <manifestEntries>
+                <Build-Timestamp>${buildTimestamp}</Build-Timestamp>
                 <scm-commit-id>${git.commit.id}</scm-commit-id>
                 <scm-commit-time>${git.commit.time}</scm-commit-time>
                 <scm-describe>${git.commit.id.describe}</scm-describe>
