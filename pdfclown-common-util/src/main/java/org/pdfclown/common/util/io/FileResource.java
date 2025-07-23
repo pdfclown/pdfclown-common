@@ -41,4 +41,9 @@ public class FileResource extends AbstractResource implements PathResource {
   public URL getUrl() {
     return urlOf(path);
   }
+
+  @Override
+  public String toString() {
+    return path.toString();
+  }
 }

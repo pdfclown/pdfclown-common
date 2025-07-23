@@ -34,4 +34,9 @@ public class WebResource extends AbstractResource {
   public URL getUrl() {
     return url;
   }
+
+  @Override
+  public String toString() {
+    return url.toString();
+  }
 }

@@ -116,4 +116,9 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   public URL getUrl() {
     return url;
   }
+
+  @Override
+  public String toString() {
+    return url.toString();
+  }
 }
