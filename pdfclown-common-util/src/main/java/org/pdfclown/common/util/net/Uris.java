@@ -12,11 +12,13 @@
  */
 package org.pdfclown.common.util.net;
 
+import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.countMatches;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.indexOfDifference;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
+import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SLASH;
 import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
@@ -27,7 +29,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Objects;
+import java.nio.file.Path;
+import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.stream.Streams;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -60,7 +64,7 @@ public final class Uris {
    * <p>
    * This method remedies {@link URI#relativize(URI)} limitations, since the latter cannot
    * relativize a target path if the source is a subpath (<cite>"if the path of this URI is not a
-   * prefix of the path of the given URI, then the given URI is returned."</cite>) — for example,
+   * prefix of the path of the given URI, then the given URI is returned."</cite>) — e.g.,
    * </p>
    * <pre>
    * URI.create("https://example.io/path/from.html").relativize(
@@ -78,8 +82,8 @@ public final class Uris {
    */
   public static URI relativeUri(URI from, URI to) {
     if (from.isOpaque() || to.isOpaque()
-        || !equalsIgnoreCase(from.getScheme(), to.getScheme())
-        || !Objects.equals(from.getAuthority(), to.getAuthority()))
+        || !Strings.CI.equals(from.getScheme(), to.getScheme())
+        || !Strings.CI.equals(from.getAuthority(), to.getAuthority()))
       return to;
 
     // Normalize paths!
@@ -117,7 +121,27 @@ public final class Uris {
   }
 
   /**
-   * Creates the given URI.
+   * Gets the URI corresponding to the given path.
+   * <p>
+   * <i>Contrary to {@link Path#toUri()}, this function supports also <b>relative URIs</b></i>,
+   * remedying the limitation of the standard API which forcibly resolves relative paths as absolute
+   * URIs against the current user directory. On the other hand, absolute paths are normalized
+   * before being converted.
+   * </p>
+   */
+  public static URI uri(Path path) {
+    return path.isAbsolute()
+        ? path.normalize().toUri()
+        : URI.create(Streams.of(path)
+            .map(Path::toString)
+            .collect(joining(S + SLASH) /*
+                                         * Forces the URI separator instead of the default
+                                         * filesystem separator
+                                         */));
+  }
+
+  /**
+   * Gets the URI corresponding to the given string.
    *
    * @return {@code null}, if {@code uri} is undefined or illegal.
    */
@@ -133,7 +157,7 @@ public final class Uris {
   }
 
   /**
-   * Converts the given URL to URI.
+   * Gets the URI corresponding to the given URL.
    *
    * @return {@code null}, if {@code url} is undefined or illegal.
    */
@@ -149,15 +173,31 @@ public final class Uris {
   }
 
   /**
-   * Converts the given URI to URL.
+   * Gets the URL corresponding to the given path.
+   *
+   * @throws IllegalArgumentException
+   *           if {@code path} is relative.
+   */
+  public static URL url(Path path) {
+    // TODO: support relative paths
+    try {
+      return uri(path).toURL();
+    } catch (MalformedURLException ex) {
+      throw wrongArg("path", path, ex);
+    }
+  }
+
+  /**
+   * Gets the URL corresponding to the given string.
    *
    * @return {@code null}, if {@code url} is undefined or illegal.
    */
   public static @Nullable URL url(@Nullable String url) {
-    if (url != null) {
+    URI uri = uri(url);
+    if (uri != null) {
       try {
-        return new URI(url).toURL();
-      } catch (MalformedURLException | URISyntaxException ex) {
+        return uri.toURL();
+      } catch (MalformedURLException ex) {
         // NOP
       }
     }
@@ -165,7 +205,7 @@ public final class Uris {
   }
 
   /**
-   * Converts the given URI to URL.
+   * Gets the URL corresponding to the given URI.
    *
    * @return {@code null}, if {@code uri} is undefined or illegal.
    */

@@ -173,7 +173,7 @@ public abstract class TestUnit implements Test {
          */
         try {
           outputDirInitialized = true;
-          resetDir(outputFile(EMPTY));
+          resetDir(outputPath(EMPTY));
         } catch (Exception ex) {
           /*
            * NOTE: We catch any exception to ensure the initialization flag is reverted.

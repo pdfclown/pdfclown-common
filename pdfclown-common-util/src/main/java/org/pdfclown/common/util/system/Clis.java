@@ -16,7 +16,6 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.wrap;
-import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Strings.BACKSLASH;
 import static org.pdfclown.common.util.Strings.COMMA;
 import static org.pdfclown.common.util.Strings.DQUOTE;
@@ -25,11 +24,11 @@ import static org.pdfclown.common.util.Strings.SEMICOLON;
 import static org.pdfclown.common.util.Strings.SPACE;
 import static org.pdfclown.common.util.Strings.SQUOTE;
 
-import java.io.File;
-import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -55,12 +54,16 @@ public final class Clis {
      * Adds the string representation of the given argument.
      *
      * @param o
-     *          ({@link Iterable} is joined in a semicolon-separated string, anything else is
+     *          ({@link Collection} is joined in a semicolon-separated string, anything else is
      *          converted to string).
      */
     public Args arg(Object o) {
-      if (o instanceof Iterable)
-        return arg(toArg((Iterable<?>) o));
+      /*
+       * IMPORTANT: DO NOT generalize to `Iterable`, as certain classes (like `Path`) get
+       * inappropriately split.
+       */
+      if (o instanceof Collection)
+        return arg(listArg((Collection<?>) o));
       else
         return arg(o.toString());
     }
@@ -91,6 +94,9 @@ public final class Clis {
 
     /**
      * Adds the given arguments.
+     *
+     * @param ee
+     *          Argument values (see {@link #arg(Object)}).
      */
     public Args args(Iterable<?> ee) {
       ee.forEach(this::arg);
@@ -99,6 +105,9 @@ public final class Clis {
 
     /**
      * Adds the given arguments.
+     *
+     * @param ee
+     *          Argument values (see {@link #arg(Object)}).
      */
     public Args args(Object[] ee) {
       return args(Arrays.asList(ee));
@@ -117,6 +126,31 @@ public final class Clis {
           .map($ -> $.contains(S + SPACE) ? wrap($, DQUOTE) : $)
           .collect(joining(S + SPACE));
     }
+  }
+
+  /**
+   * Converts the given iterable to a semicolon-separated textual argument.
+   *
+   * @see #parseStrList(String)
+   */
+  public static String listArg(Iterable<?> o) {
+    return listArg(o, Object::toString);
+  }
+
+  /**
+   * Converts the given iterable to a semicolon-separated textual argument.
+   *
+   * @param mapper
+   *          Maps each element to its textual representation.
+   * @see #parseList(String)
+   * @implNote Conventionally, list elements in an argument can be concatenated by either comma or
+   *           semicolon; the latter is herein applied, as it allows the use of commas (which are
+   *           typically more common) within elements.
+   */
+  public static <T> String listArg(Iterable<T> o, Function<T, String> mapper) {
+    return Streams.of(o)
+        .map(mapper)
+        .collect(joining(S + SEMICOLON));
   }
 
   /**
@@ -172,15 +206,16 @@ public final class Clis {
   /**
    * Parses the directory corresponding to the given path.
    * <p>
-   * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options) to their canonical form.
+   * Useful to convert textual references to filesystem resources (such as those coming from
+   * configuration files or command-line options) to their normalized absolute form.
    * </p>
    *
    * @return {@code null}, if the directory does not exist.
+   * @see #parsePath(String)
    */
-  public static @Nullable File parseDir(String s) {
+  public static @Nullable Path parseDir(String s) {
     var ret = parsePath(s);
-    return ret.isDirectory() ? ret : null;
+    return Files.isDirectory(ret) ? ret : null;
   }
 
   /**
@@ -209,18 +244,14 @@ public final class Clis {
   /**
    * Parses the given path, no matter whether it exists.
    * <p>
-   * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options) to their canonical form.
+   * Useful to convert textual references to filesystem resources (such as those coming from
+   * configuration files or command-line options) to their normalized absolute form.
    * </p>
+   *
+   * @see #parseDir(String)
    */
-  public static File parsePath(String s) {
-    var ret = new File(s);
-    try {
-      ret = ret.getCanonicalFile();
-    } catch (IOException ex) {
-      throw runtime(ex);
-    }
-    return ret;
+  public static Path parsePath(String s) {
+    return Path.of(s).toAbsolutePath().normalize();
   }
 
   /**
@@ -308,35 +339,10 @@ public final class Clis {
    * @param s
    *          List of semicolon-(or, alternatively, comma-)separated values.
    * @see #parseList(String)
-   * @see #toArg(Iterable)
+   * @see #listArg(Iterable)
    */
   public static List<String> parseStrList(String s) {
     return parseList(s).collect(toList());
-  }
-
-  /**
-   * Converts the given iterable to a semicolon-separated textual argument.
-   *
-   * @see #parseStrList(String)
-   */
-  public static String toArg(Iterable<?> o) {
-    return toArg(o, Object::toString);
-  }
-
-  /**
-   * Converts the given iterable to a semicolon-separated textual argument.
-   *
-   * @param mapper
-   *          Maps each element to its textual representation.
-   * @see #parseList(String)
-   * @implNote Conventionally, list elements in an argument can be concatenated by either comma or
-   *           semicolon; the latter is herein applied, as it allows the use of commas (which are
-   *           typically more common) within elements.
-   */
-  public static <T> String toArg(Iterable<T> o, Function<T, String> mapper) {
-    return Streams.of(o)
-        .map(mapper)
-        .collect(joining(S + SEMICOLON));
   }
 
   private Clis() {

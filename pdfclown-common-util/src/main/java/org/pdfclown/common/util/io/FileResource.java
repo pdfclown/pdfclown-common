@@ -13,7 +13,7 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.io.Files.urlOf;
+import static org.pdfclown.common.util.net.Uris.url;
 
 import java.net.URL;
 import java.nio.file.Path;
@@ -39,7 +39,7 @@ public class FileResource extends AbstractResource implements PathResource {
 
   @Override
   public URL getUrl() {
-    return urlOf(path);
+    return url(path);
   }
 
   @Override

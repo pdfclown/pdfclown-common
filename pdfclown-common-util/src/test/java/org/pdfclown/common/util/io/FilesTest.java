@@ -84,7 +84,7 @@ class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> fileName() {
+  static Stream<Arguments> filename() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -256,7 +256,7 @@ class FilesTest extends BaseTest {
         EXTENSIONS);
   }
 
-  static Stream<Arguments> pathOf_unix() {
+  static Stream<Arguments> path_unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix());
     //noinspection DataFlowIssue
     return argumentsStream(
@@ -289,7 +289,7 @@ class FilesTest extends BaseTest {
         List.of(fs));
   }
 
-  static Stream<Arguments> pathOf_win() {
+  static Stream<Arguments> path_win() {
     var fs = Jimfs.newFileSystem(Configuration.windows());
     //noinspection DataFlowIssue
     return argumentsStream(
@@ -426,9 +426,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fileName(Expected<String> expected, Argument<String> path) {
+  void filename(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
-        () -> Files.fileName(path.getValue()),
+        () -> Files.filename(path.getValue()),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));
@@ -469,9 +469,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void pathOf_unix(Expected<Path> expected, URI uri, FileSystem fs) {
+  void path_unix(Expected<Path> expected, URI uri, FileSystem fs) {
     assertParameterizedOf(
-        () -> Files.pathOf(uri, fs),
+        () -> Files.path(uri, fs),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("uri", uri),
@@ -481,9 +481,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void pathOf_win(Expected<Path> expected, URI uri, FileSystem fs) {
+  void path_win(Expected<Path> expected, URI uri, FileSystem fs) {
     assertParameterizedOf(
-        () -> Files.pathOf(uri, fs),
+        () -> Files.path(uri, fs),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("uri", uri),

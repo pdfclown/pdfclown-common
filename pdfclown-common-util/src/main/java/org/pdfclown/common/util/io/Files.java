@@ -13,9 +13,10 @@
 package org.pdfclown.common.util.io;
 
 import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.isRegularFile;
 import static java.nio.file.Files.writeString;
-import static java.util.stream.Collectors.joining;
-import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Strings.BACKSLASH;
 import static org.pdfclown.common.util.Strings.DOT;
@@ -24,9 +25,7 @@ import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SLASH;
 import static org.pdfclown.common.util.Strings.indexFound;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -37,7 +36,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.stream.Streams;
 
 /**
  * File utilities.
@@ -71,10 +69,20 @@ public final class Files {
   public static final String PATH_SUPER = S + DOT + DOT;
 
   /**
+   * Gets the base name (that is, the filename without {@linkplain #extension(String) extension}) of
+   * the given path.
+   *
+   * @see #simpleBaseName(String)
+   */
+  public static String baseName(String path) {
+    return FilenameUtils.getBaseName(path);
+  }
+
+  /**
    * Gets the simple extension of the given path.
    * <p>
-   * Contrary to {@link FilenameUtils#getExtension(String)}, <i>the extension is prefixed by
-   * dot</i>.
+   * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot, and
+   * is empty if missing or {@code path} is {@code null}.
    * </p>
    *
    * @return Empty, if no extension.
@@ -88,32 +96,8 @@ public final class Files {
   /**
    * Gets the last part of the given path.
    */
-  public static String fileName(String path) {
+  public static String filename(String path) {
     return FilenameUtils.getName(path);
-  }
-
-  /**
-   * Converts the given URI to the corresponding path.
-   * <p>
-   * <i>Contrary to {@link File#File(URI) new File(URI)}, this function supports also <b>relative
-   * URIs</b></i>, remedying the limitation of the standard API which rejects URIs missing their
-   * scheme.
-   * </p>
-   */
-  public static File fileOf(URI uri) {
-    return pathOf(uri).toFile();
-  }
-
-  /**
-   * Converts the given URL to the corresponding path.
-   * <p>
-   * <i>Contrary to {@link File#File(URI) new File(URI)}, this function supports also <b>relative
-   * URLs</b></i>, remedying the limitation of the standard API which rejects URIs missing their
-   * scheme.
-   * </p>
-   */
-  public static File fileOf(URL url) {
-    return pathOf(url).toFile();
   }
 
   /**
@@ -147,6 +131,19 @@ public final class Files {
   }
 
   /**
+   * Gets whether the given URI belongs to the {@code file} scheme.
+   * <p>
+   * NOTE: Undefined scheme is assimilated to the {@code file} scheme.
+   * </p>
+   */
+  public static boolean isFile(URI uri) {
+    /*
+     * NOTE: Scheme is case-insensitive.
+     */
+    return uri.getScheme() == null || uri.getScheme().equalsIgnoreCase("file");
+  }
+
+  /**
    * Gets whether the full extension of the given path corresponds to the specified one
    * (case-insensitive).
    *
@@ -163,8 +160,8 @@ public final class Files {
    * remedying the limitation of the standard API which rejects URIs missing their scheme.
    * </p>
    */
-  public static Path pathOf(URI uri) {
-    return pathOf(uri, FileSystems.getDefault());
+  public static Path path(URI uri) {
+    return path(uri, FileSystems.getDefault());
   }
 
   /**
@@ -177,9 +174,9 @@ public final class Files {
    * @throws IllegalArgumentException
    *           if {@code url} is an invalid URI.
    */
-  public static Path pathOf(URL url) {
+  public static Path path(URL url) {
     try {
-      return pathOf(url.toURI());
+      return path(url.toURI());
     } catch (URISyntaxException ex) {
       throw wrongArg("url", url, null, ex);
     }
@@ -188,17 +185,14 @@ public final class Files {
   /**
    * Gets the relative path from the given file to the other one.
    */
-  public static String relativePath(File from, File to) {
-    if (from.isFile())
-      return relativePath(from.getParentFile(), to);
-    else if (from.exists() && !from.isDirectory())
-      throw wrongArg("from", from, "NOT a directory");
-
-    try {
-      return from.getCanonicalFile().toPath().relativize(to.getCanonicalFile().toPath()).toString();
-    } catch (IOException ex) {
-      throw runtime(ex);
+  public static Path relativePath(Path from, Path to) {
+    if (isRegularFile(from)) {
+      from = from.getParent();
     }
+    if (!isDirectory(from))
+      throw wrongArg("from", from, "MUST be a directory");
+
+    return from.toAbsolutePath().normalize().relativize(to.toAbsolutePath().normalize());
   }
 
   /**
@@ -215,83 +209,28 @@ public final class Files {
    *
    * @return {@code dir}
    */
-  public static File resetDir(File dir) throws IOException {
-    if (dir.exists()) {
-      FileUtils.cleanDirectory(dir);
+  public static Path resetDir(Path dir) throws IOException {
+    if (exists(dir)) {
+      /*
+       * IMPORTANT: DO NOT use `PathUtils.cleanDirectory(..)`, as it doesn't delete subdirectories
+       * (weird asymmetry!).
+       */
+      FileUtils.cleanDirectory(dir.toFile());
     } else {
-      dir.mkdirs();
+      createDirectories(dir);
     }
     return dir;
   }
 
   /**
-   * Gets the simple base name (ie, the filename without {@linkplain #fullExtension(String) full
-   * extension}) of the given path.
+   * Gets the simple base name (that is, the filename without {@linkplain #fullExtension(String)
+   * full extension}) of the given path.
    *
-   * @see FilenameUtils#getBaseName(String)
+   * @see #baseName(String)
    */
   public static String simpleBaseName(String path) {
-    String fileName = fileName(path);
-    return fileName.substring(0, fileName.length() - fullExtension(fileName).length());
-  }
-
-  /**
-   * Converts the given path to the corresponding URI.
-   * <p>
-   * <i>Contrary to {@link File#toURI()}, this function supports also <b>relative URIs</b></i>,
-   * remedying the limitation of the standard API which forcibly resolves relative paths as absolute
-   * URIs against the current user directory. On the other hand, absolute paths are normalized
-   * before being converted.
-   * </p>
-   */
-  public static URI uriOf(File path) {
-    return uriOf(path.toPath());
-  }
-
-  /**
-   * Converts the given path to the corresponding URI.
-   * <p>
-   * <i>Contrary to {@link Path#toUri()}, this function supports also <b>relative URIs</b></i>,
-   * remedying the limitation of the standard API which forcibly resolves relative paths as absolute
-   * URIs against the current user directory. On the other hand, absolute paths are normalized
-   * before being converted.
-   * </p>
-   */
-  public static URI uriOf(Path path) {
-    return path.isAbsolute()
-        ? path.normalize().toUri()
-        : URI.create(Streams.of(path)
-            .map(Path::toString)
-            .collect(joining(S + SLASH) /*
-                                         * Forces the URI separator instead of the default
-                                         * filesystem separator
-                                         */));
-  }
-
-  /**
-   * Converts the given path to the corresponding URL.
-   *
-   * @throws IllegalArgumentException
-   *           if {@code path} is relative.
-   */
-  public static URL urlOf(File path) {
-    // TODO: support relative paths
-    return urlOf(path.toPath());
-  }
-
-  /**
-   * Converts the given path to the corresponding URL.
-   *
-   * @throws IllegalArgumentException
-   *           if {@code path} is relative.
-   */
-  public static URL urlOf(Path path) {
-    // TODO: support relative paths
-    try {
-      return uriOf(path).toURL();
-    } catch (MalformedURLException ex) {
-      throw wrongArg("path", path, ex);
-    }
+    String filename = filename(path);
+    return filename.substring(0, filename.length() - fullExtension(filename).length());
   }
 
   /**
@@ -313,24 +252,16 @@ public final class Files {
    * Writes the given string to the file, encoded in UTF-8 charset; any non-existent parent
    * directory is automatically created.
    */
-  public static void writeTo(File file, CharSequence content) throws IOException {
-    writeTo(file.toPath(), content);
-  }
-
-  /**
-   * Writes the given string to the file, encoded in UTF-8 charset; any non-existent parent
-   * directory is automatically created.
-   */
   public static void writeTo(Path path, CharSequence content) throws IOException {
     createDirectories(path.getParent());
     writeString(path, content);
   }
 
-  static Path pathOf(URI uri, FileSystem fs) {
+  static Path path(URI uri, FileSystem fs) {
     // Absolute URI?
     if (uri.isAbsolute()) {
-      if (!uri.getScheme().equalsIgnoreCase("file"))
-        throw wrongArg("uri", uri, "MUST be a file-scheme URI");
+      if (!isFile(uri))
+        throw wrongArg("uri", uri, "MUST be a file-schemed URI");
 
       var b = new StringBuilder();
       // Windows-like?
@@ -338,7 +269,8 @@ public final class Files {
         String s;
         // Host.
         if ((s = uri.getAuthority()) != null) {
-          b.append(fs.getSeparator()).append(fs.getSeparator()).append(s).append(fs.getSeparator());
+          b.append(fs.getSeparator()).append(fs.getSeparator()).append(s)
+              .append(fs.getSeparator());
         }
         // Path.
         s = uri.getPath();
@@ -368,7 +300,7 @@ public final class Files {
     }
     // Relative URI.
     else
-      return fs.getPath(EMPTY, uri.toString().split(S + SLASH));
+      return fs.getPath(EMPTY, uri.toString());
   }
 
   private Files() {
