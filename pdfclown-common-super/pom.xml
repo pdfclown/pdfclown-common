@@ -546,7 +546,8 @@ log.info("buildTimestamp: " + buildTimestamp
 </div>
 ]]></top>
             <bottom><![CDATA[
-Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br><a href="${project.url}">Project Home</a> | <a href="${projectIssuesUrl}">Report a bug or suggest an enhancement</a><p class="footer-right">${buildTimestamp} (${git.commit.id.describe})</p>
+Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br>
+<a href="${project.url}">Project Home</a> | <a href="${projectScmUrl}">Source Repository</a> | <a href="${projectIssuesUrl}">Report a bug or suggest an enhancement</a><p class="footer-right">${buildTimestamp} (${git.commit.id.describe})</p>
 ]]></bottom>
 
             <detectLinks>true</detectLinks>
