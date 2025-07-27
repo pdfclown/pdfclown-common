@@ -32,6 +32,7 @@ import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
@@ -69,6 +70,23 @@ public final class Files {
   public static final String PATH_SUPER = S + DOT + DOT;
 
   /**
+   * Gets the age of the given file.
+   */
+  public static Duration age(Path file) {
+    return Duration.ofMillis(System.currentTimeMillis() - file.toFile().lastModified());
+  }
+
+  /**
+   * Gets the base name (that is, the filename without {@linkplain #extension(Path) extension}) of
+   * the given path.
+   *
+   * @see #simpleBaseName(Path)
+   */
+  public static String baseName(Path path) {
+    return baseName(path.getFileName().toString());
+  }
+
+  /**
    * Gets the base name (that is, the filename without {@linkplain #extension(String) extension}) of
    * the given path.
    *
@@ -76,6 +94,20 @@ public final class Files {
    */
   public static String baseName(String path) {
     return FilenameUtils.getBaseName(path);
+  }
+
+  /**
+   * Gets the simple extension of the given path.
+   * <p>
+   * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot, and
+   * is empty if missing or {@code path} is {@code null}.
+   * </p>
+   *
+   * @return Empty, if no extension.
+   * @see #fullExtension(Path)
+   */
+  public static String extension(Path path) {
+    return extension(path.getFileName().toString());
   }
 
   /**
@@ -96,8 +128,30 @@ public final class Files {
   /**
    * Gets the last part of the given path.
    */
+  public static String filename(Path path) {
+    return path.getFileName().toString();
+  }
+
+  /**
+   * Gets the last part of the given path.
+   */
   public static String filename(String path) {
     return FilenameUtils.getName(path);
+  }
+
+  /**
+   * Gets the full extension of the given path.
+   * <p>
+   * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
+   * therefore, composite extensions (eg, ".tar.gz") are recognized, while version codes are ignored
+   * (eg, "commons-io-2.8.0.jar" returns ".jar", NOT ".8.0.jar").
+   * </p>
+   *
+   * @return Empty, if no extension.
+   * @see #extension(Path)
+   */
+  public static String fullExtension(Path path) {
+    return fullExtension(path.getFileName().toString());
   }
 
   /**
@@ -120,8 +174,22 @@ public final class Files {
    * Gets whether the extension of the given path corresponds to the specified one
    * (case-insensitive).
    * <p>
-   * NOTE: Contrary to {@link FilenameUtils#isExtension(String, String)}, <i>the extension is
-   * prefixed by dot and the match is case-insensitive</i>.
+   * NOTE: Contrary to {@link FilenameUtils#isExtension(String, String)}, the extension is prefixed
+   * by dot and the match is case-insensitive.
+   * </p>
+   *
+   * @see #isFullExtension(Path, String)
+   */
+  public static boolean isExtension(final Path path, final String extension) {
+    return isExtension(path.getFileName().toString(), extension);
+  }
+
+  /**
+   * Gets whether the extension of the given path corresponds to the specified one
+   * (case-insensitive).
+   * <p>
+   * NOTE: Contrary to {@link FilenameUtils#isExtension(String, String)}, the extension is prefixed
+   * by dot and the match is case-insensitive.
    * </p>
    *
    * @see #isFullExtension(String, String)
@@ -147,6 +215,16 @@ public final class Files {
    * Gets whether the full extension of the given path corresponds to the specified one
    * (case-insensitive).
    *
+   * @see #isExtension(Path, String)
+   */
+  public static boolean isFullExtension(final Path path, final String extension) {
+    return isFullExtension(path.getFileName().toString(), extension);
+  }
+
+  /**
+   * Gets whether the full extension of the given path corresponds to the specified one
+   * (case-insensitive).
+   *
    * @see #isExtension(String, String)
    */
   public static boolean isFullExtension(final String path, final String extension) {
@@ -154,11 +232,22 @@ public final class Files {
   }
 
   /**
+   * Normalizes the given path to its absolute form.
+   */
+  public static Path normal(Path path) {
+    return path.toAbsolutePath().normalize();
+  }
+
+  /**
    * Converts the given URI to the corresponding path.
    * <p>
-   * <i>Contrary to {@link Path#of(URI)}, this function supports also <b>relative URIs</b></i>,
-   * remedying the limitation of the standard API which rejects URIs missing their scheme.
+   * Contrary to {@link Path#of(URI)}, this function supports also relative URIs, remedying the
+   * limitation of the standard API which rejects URIs missing their scheme.
    * </p>
+   *
+   * @throws IllegalArgumentException
+   *           if {@code uri} does not represent a file (i.e., its scheme is neither {@code file}
+   *           nor undefined).
    */
   public static Path path(URI uri) {
     return path(uri, FileSystems.getDefault());
@@ -167,12 +256,13 @@ public final class Files {
   /**
    * Converts the given URL to the corresponding path.
    * <p>
-   * <i>Contrary to {@link Path#of(URI)}, this function supports also <b>relative URLs</b></i>,
-   * remedying the limitation of the standard API which rejects URIs missing their scheme.
+   * Contrary to {@link Path#of(URI)}, this function supports also relative URLs, remedying the
+   * limitation of the standard API which rejects URIs missing their scheme.
    * </p>
    *
    * @throws IllegalArgumentException
-   *           if {@code url} is an invalid URI.
+   *           if {@code uri} does not represent a file (i.e., its scheme is neither {@code file}
+   *           nor undefined).
    */
   public static Path path(URL url) {
     try {
@@ -196,15 +286,6 @@ public final class Files {
   }
 
   /**
-   * Replaces the {@linkplain #fullExtension(String) full extension} of the given path with the
-   * given extension.
-   */
-  public static String replaceFullExtension(String path, String newExtension) {
-    Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
-    return (m.find() ? path.substring(0, m.start()) : path) + newExtension;
-  }
-
-  /**
    * Cleans the given directory, or creates it if not existing.
    *
    * @return {@code dir}
@@ -223,6 +304,16 @@ public final class Files {
   }
 
   /**
+   * Gets the simple base name (that is, the filename without {@linkplain #fullExtension(Path) full
+   * extension}) of the given path.
+   *
+   * @see #baseName(Path)
+   */
+  public static String simpleBaseName(Path path) {
+    return simpleBaseName(path.getFileName().toString());
+  }
+
+  /**
    * Gets the simple base name (that is, the filename without {@linkplain #fullExtension(String)
    * full extension}) of the given path.
    *
@@ -234,18 +325,42 @@ public final class Files {
   }
 
   /**
-   * Gets the given path without its {@linkplain #extension(String) extension}.
+   * Gets the size of the given file.
+   *
+   * @return The length (bytes) of the file, or {@code 0} if the file does not exist.
    */
-  public static String withoutExtension(String path) {
+  public static long size(Path path) {
+    return path.toFile().length();
+  }
+
+  /**
+   * Strips the given path of its {@linkplain #extension(Path) extension}.
+   */
+  public static String stripExtension(Path path) {
+    return stripExtension(path.toString());
+  }
+
+  /**
+   * Strips the given path of its {@linkplain #extension(String) extension}.
+   */
+  public static String stripExtension(String path) {
     int extensionPos = FilenameUtils.indexOfExtension(path);
     return extensionPos >= 0 ? path.substring(0, extensionPos) : path;
   }
 
   /**
-   * Gets the given path without its {@linkplain #fullExtension(String) full extension}.
+   * Strips the given path of its {@linkplain #fullExtension(Path) full extension}.
    */
-  public static String withoutFullExtension(String path) {
-    return path.substring(0, path.length() - fullExtension(path).length());
+  public static String stripFullExtension(Path path) {
+    return stripFullExtension(path.toString());
+  }
+
+  /**
+   * Strips the given path of its {@linkplain #fullExtension(String) full extension}.
+   */
+  public static String stripFullExtension(String path) {
+    Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
+    return m.find() ? path.substring(0, m.start()) : path;
   }
 
   /**
@@ -257,6 +372,11 @@ public final class Files {
     writeString(path, content);
   }
 
+  /**
+   * @throws IllegalArgumentException
+   *           if {@code uri} does not represent a file (i.e., its scheme is neither {@code file}
+   *           nor undefined).
+   */
   static Path path(URI uri, FileSystem fs) {
     // Absolute URI?
     if (uri.isAbsolute()) {

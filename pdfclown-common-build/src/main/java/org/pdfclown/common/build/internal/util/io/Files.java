@@ -12,19 +12,20 @@
  */
 package org.pdfclown.common.build.internal.util.io;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__ZIP;
+import static org.pdfclown.common.build.internal.util_.io.Files.baseName;
+import static org.pdfclown.common.build.internal.util_.io.Files.isExtension;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import org.apache.commons.io.FileUtils;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -40,10 +41,10 @@ public final class Files {
    * </p>
    * <p>
    * NOTE: In case of compressed archive, this method would access only its first entry; in case of
-   * multi-entry archive, call {@link #readString(File, Predicate)} instead.
+   * multi-entry archive, call {@link #readString(Path, Predicate)} instead.
    * </p>
    */
-  public static @Nullable String readString(File file) throws IOException {
+  public static @Nullable String readString(Path file) throws IOException {
     return readString(file, null);
   }
 
@@ -60,13 +61,13 @@ public final class Files {
    * @param filter
    *          Entry filter (compressed file only; {@code null} for filtering the first entry).
    */
-  public static @Nullable String readString(File file, @Nullable Predicate<String> filter)
+  public static @Nullable String readString(Path file, @Nullable Predicate<String> filter)
       throws IOException {
-    if (file.getPath().endsWith(FILE_EXTENSION__ZIP)) {
+    if (isExtension(file.getFileName().toString(), FILE_EXTENSION__ZIP)) {
       if (filter == null) {
         filter = $ -> true;
       }
-      try (var in = new ZipInputStream(new FileInputStream(file))) {
+      try (var in = new ZipInputStream(new FileInputStream(file.toFile()))) {
         while (true) {
           ZipEntry zipEntry = in.getNextEntry();
           if (zipEntry == null) {
@@ -78,29 +79,14 @@ public final class Files {
               while ((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);
               }
-              return out.toString(StandardCharsets.UTF_8);
+              return out.toString(UTF_8);
             }
           }
         }
       }
       return null;
     } else
-      return java.nio.file.Files.readString(file.toPath());
-  }
-
-  /**
-   * Cleans the given directory, or creates it if not existing.
-   *
-   * @return {@code dir}
-   */
-  public static File resetDir(File dir) throws IOException {
-    if (dir.exists()) {
-      FileUtils.cleanDirectory(dir);
-    } else {
-      //noinspection ResultOfMethodCallIgnored
-      dir.mkdirs();
-    }
-    return dir;
+      return java.nio.file.Files.readString(file);
   }
 
   /**
@@ -111,15 +97,15 @@ public final class Files {
    *          ({@value org.pdfclown.common.build.internal.util_.io.Files#FILE_EXTENSION__ZIP}
    *          extension causes data to compress).
    */
-  public static void writeString(File file, String data) throws IOException {
-    if (file.getName().endsWith(FILE_EXTENSION__ZIP)) {
-      try (var out = new ZipOutputStream(new FileOutputStream(file))) {
-        out.putNextEntry(new ZipEntry(
-            file.getName().substring(0, file.getName().length() - FILE_EXTENSION__ZIP.length())));
-        out.write(data.getBytes(StandardCharsets.UTF_8));
+  public static void writeString(Path file, String data) throws IOException {
+    String filename = file.getFileName().toString();
+    if (isExtension(filename, FILE_EXTENSION__ZIP)) {
+      try (var out = new ZipOutputStream(new FileOutputStream(file.toFile()))) {
+        out.putNextEntry(new ZipEntry(baseName(filename)));
+        out.write(data.getBytes(UTF_8));
       }
     } else {
-      java.nio.file.Files.writeString(file.toPath(), data);
+      java.nio.file.Files.writeString(file, data);
     }
   }
 

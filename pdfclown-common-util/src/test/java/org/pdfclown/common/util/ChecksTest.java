@@ -65,20 +65,21 @@ class ChecksTest extends BaseTest {
 
   @Test
   void checkType() {
-    final String StringValue = "My value";
-    final String ArgumentName = "myParam";
+    final String stringValue = "My value";
+    final String argumentName = "myParam";
     {
-      assertEquals(StringValue, Checks.checkType(StringValue, ArgumentName, String.class));
+      assertEquals(stringValue, Checks.checkType(stringValue, argumentName, null, String.class));
     }
     {
       var exception = assertThrows(IllegalArgumentException.class, () -> {
-        Checks.checkType(StringValue, ArgumentName, Boolean.class);
+        Checks.checkType(stringValue, argumentName, null, Boolean.class);
       });
       assertEquals("myParam (\"My value\"): MUST be Boolean", exception.getMessage());
     }
     {
       var exception = assertThrows(IllegalArgumentException.class, () -> {
-        Checks.checkType(StringValue, ArgumentName, Boolean.class, Integer.class, Range.class);
+        Checks.checkType(stringValue, argumentName, null, Boolean.class, Integer.class,
+            Range.class);
       });
       assertEquals(
           "myParam (\"My value\"): MUST be one of { Boolean, Integer, "

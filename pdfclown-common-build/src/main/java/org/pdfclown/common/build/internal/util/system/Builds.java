@@ -47,7 +47,7 @@ public final class Builds {
       var pomFile = dir.resolve("pom.xml");
       if (Files.exists(pomFile))
         return projectArtifactIds.computeIfAbsent(dir, Failable.asFunction(
-            $k -> Xmls.filterNodeValue("project/artifactId", Xmls.xml(pomFile.toFile()))));
+            $k -> Xmls.filterNodeValue("project/artifactId", Xmls.xml(pomFile))));
 
       dir = dir.getParent();
     }

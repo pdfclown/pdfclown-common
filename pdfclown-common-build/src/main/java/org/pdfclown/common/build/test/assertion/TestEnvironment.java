@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Objects;
 import org.apache.commons.lang3.stream.Streams;
@@ -24,9 +23,9 @@ import org.pdfclown.common.build.util.io.ResourceNames;
  * <h2>Filesystem</h2>
  * <p>
  * On the filesystem, the test environment covers test resources (both on
- * {@linkplain #resourceFile(String) target} and {@linkplain #resourceSrcFile(String) source}
- * sides), {@linkplain #typeSrcFile(Class) type sources} (both main and test kinds) and
- * {@linkplain #outputFile(String) output files}. The test environment is focused on test execution,
+ * {@linkplain #resourcePath(String) target} and {@linkplain #resourceSrcPath(String) source}
+ * sides), {@linkplain #typeSrcPath(Class) type sources} (both main and test kinds) and
+ * {@linkplain #outputPath(String) output files}. The test environment is focused on test execution,
  * so any filesystem reference must be intended on the target side unless explicitly stated.
  * </p>
  * <h3>File object names</h3>
@@ -34,8 +33,8 @@ import org.pdfclown.common.build.util.io.ResourceNames;
  * Within the test environment, filesystem objects are addressed by <b>names</b> similar to
  * {@linkplain Class#getResource(String) Java resource names} (see
  * {@link ResourceNames#path(String, Path, Class)}) and are rooted in their respective
- * {@linkplain #dirPath(DirId) base directories}; <b>relative names</b> are based on the
- * subdirectory local to the current test environment.
+ * {@linkplain #dir(DirId) base directories}; <b>relative names</b> are based on the subdirectory
+ * local to the current test environment.
  * </p>
  * <table border="1">
  * <caption>Name case summary</caption>
@@ -113,24 +112,7 @@ public interface TestEnvironment {
   /**
    * Gets the base directory corresponding to the given identifier.
    */
-  default File dir(DirId id) {
-    return dirPath(id).toFile();
-  }
-
-  /**
-   * Gets the base directory corresponding to the given identifier.
-   */
-  Path dirPath(DirId id);
-
-  /**
-   * Gets the absolute path of the given output (no matter whether it exists).
-   *
-   * @param name
-   *          Output file name (either absolute or relative to this environment).
-   */
-  default File outputFile(String name) {
-    return outputPath(name).toFile();
-  }
+  Path dir(DirId id);
 
   /**
    * Gets the absolute path of the given output (no matter whether it exists).
@@ -145,32 +127,12 @@ public interface TestEnvironment {
    *
    * @return {@code null}, if {@code file} is outside the integration space.
    */
-  default @Nullable String resolveName(File file) {
-    return resolveName(file.toPath());
-  }
-
-  /**
-   * Resolves the absolute name of the given file.
-   *
-   * @return {@code null}, if {@code file} is outside the integration space.
-   */
   default @Nullable String resolveName(Path file) {
     return Streams.of(DirId.values())
-        .map($ -> ResourceNames.absName(file, dirPath($)))
+        .map($ -> ResourceNames.absName(file, dir($)))
         .filter(Objects::nonNull)
         .findFirst()
         .orElse(null);
-  }
-
-  /**
-   * Gets the absolute path of the given resource on target side (no matter whether it exists).
-   *
-   * @param name
-   *          Resource name (either absolute or relative to this environment).
-   * @see #resourceSrcFile(String)
-   */
-  default File resourceFile(String name) {
-    return resourcePath(name).toFile();
   }
 
   /**
@@ -187,33 +149,9 @@ public interface TestEnvironment {
    *
    * @param name
    *          Resource name (either absolute or relative to this environment).
-   * @see #resourceFile(String)
-   */
-  default File resourceSrcFile(String name) {
-    return resourceSrcPath(name).toFile();
-  }
-
-  /**
-   * Gets the absolute path of the given resource on source side (no matter whether it exists).
-   *
-   * @param name
-   *          Resource name (either absolute or relative to this environment).
    * @see #resourcePath(String)
    */
   Path resourceSrcPath(String name);
-
-  /**
-   * Gets the absolute path of the given type on source side (MUST exist either in test or main
-   * sources).
-   *
-   * @param type
-   *          Type.
-   * @throws RuntimeException
-   *           if file not found.
-   */
-  default File typeSrcFile(Class<?> type) {
-    return typeSrcPath(type).toFile();
-  }
 
   /**
    * Gets the absolute path of the given type on source side (MUST exist either in test or main

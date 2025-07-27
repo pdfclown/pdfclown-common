@@ -19,9 +19,9 @@ import static org.pdfclown.common.build.internal.util_.Exceptions.unsupported;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
 import static org.pdfclown.common.build.internal.util_.Objects.typeOf;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
+import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.build.internal.util_.io.Files.resetDir;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -115,16 +115,8 @@ public abstract class TestUnit implements Test {
       this.baseDirResolver = baseDirResolver;
     }
 
-    /**
-     * @implNote Method sealed, as it relies on {@link #dirPath(DirId)}.
-     */
     @Override
-    public final File dir(DirId id) {
-      return TestEnvironment.super.dir(id);
-    }
-
-    @Override
-    public Path dirPath(DirId id) {
+    public Path dir(DirId id) {
       switch (id) {
         case OUTPUT:
           return baseDirResolver.getOutputPath();
@@ -153,14 +145,6 @@ public abstract class TestUnit implements Test {
       return ResourceNames.localName(simpleName, typeOf(TestUnit.this));
     }
 
-    /**
-     * @implNote Method sealed, as it relies on {@link #outputPath(String)}.
-     */
-    @Override
-    public final File outputFile(String name) {
-      return TestEnvironment.super.outputFile(name);
-    }
-
     @Override
     public synchronized Path outputPath(String name) {
       if (!outputDirInitialized) {
@@ -185,41 +169,17 @@ public abstract class TestUnit implements Test {
 
       return ResourceNames.path(
           ResourceNames.isAbsolute(name) ? name : sqn(TestUnit.this) + SLASH + name,
-          dirPath(DirId.OUTPUT), typeOf(TestUnit.this));
-    }
-
-    /**
-     * @implNote Method sealed, as it relies on {@link #resourcePath(String)}.
-     */
-    @Override
-    public final File resourceFile(String name) {
-      return TestEnvironment.super.resourceFile(name);
+          dir(DirId.OUTPUT), typeOf(TestUnit.this));
     }
 
     @Override
     public Path resourcePath(String name) {
-      return ResourceNames.path(name, dirPath(DirId.RESOURCE), typeOf(TestUnit.this));
-    }
-
-    /**
-     * @implNote Method sealed, as it relies on {@link #resourceSrcPath(String)}.
-     */
-    @Override
-    public final File resourceSrcFile(String name) {
-      return TestEnvironment.super.resourceSrcFile(name);
+      return ResourceNames.path(name, dir(DirId.RESOURCE), typeOf(TestUnit.this));
     }
 
     @Override
     public Path resourceSrcPath(String name) {
-      return ResourceNames.path(name, dirPath(DirId.RESOURCE_SRC), typeOf(TestUnit.this));
-    }
-
-    /**
-     * @implNote Method sealed, as it relies on {@link #typeSrcPath(Class)}.
-     */
-    @Override
-    public final File typeSrcFile(Class<?> type) {
-      return TestEnvironment.super.typeSrcFile(type);
+      return ResourceNames.path(name, dir(DirId.RESOURCE_SRC), typeOf(TestUnit.this));
     }
 
     @Override
@@ -229,16 +189,16 @@ public abstract class TestUnit implements Test {
         topLevelType = topLevelType.getEnclosingClass();
       }
       Path ret;
-      var filename = topLevelType.getSimpleName() + ".java";
-      if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.TYPE_SRC), topLevelType)))
+      var filename = topLevelType.getSimpleName() + FILE_EXTENSION__JAVA;
+      if (Files.exists(ret = ResourceNames.path(filename, dir(DirId.TYPE_SRC), topLevelType)))
         return ret;
-      else if (Files.exists(ret = ResourceNames.path(filename, dirPath(DirId.MAIN_TYPE_SRC),
+      else if (Files.exists(ret = ResourceNames.path(filename, dir(DirId.MAIN_TYPE_SRC),
           topLevelType)))
         return ret;
       else
         throw runtime(new FileNotFoundException(String.format(
             "Source file corresponding to `%s` NOT FOUND (search paths: %s, %s)",
-            type.getName(), dirPath(DirId.TYPE_SRC), dirPath(DirId.MAIN_TYPE_SRC))));
+            type.getName(), dir(DirId.TYPE_SRC), dir(DirId.MAIN_TYPE_SRC))));
     }
   }
 

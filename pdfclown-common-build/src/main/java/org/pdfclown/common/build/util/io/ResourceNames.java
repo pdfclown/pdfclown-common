@@ -22,7 +22,6 @@ import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.UNDERSCORE;
 import static org.pdfclown.common.build.internal.util_.io.Files.PATH_SUPER;
 
-import java.io.File;
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.io.Files;
@@ -100,79 +99,6 @@ public final class ResourceNames {
   public static String baseName(String name) {
     name = simpleName(name);
     return name.substring(0, name.length() - nameExtension(name).length());
-  }
-
-  /**
-   * Gets the absolute path of the given resource.
-   * <p>
-   * {@code name} is resolved according to {@code baseDir}, no matter whether it is relative or
-   * absolute. Eg, assuming {@code baseDir} is
-   * {@code "/home/myusr/Projects/myproj/src/main/resources"}:
-   * </p>
-   * <ul>
-   * <li>in case of a <i>relative</i> {@code name} like {@code "subpath/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/subpath/obj.html"}</li>
-   * <li>in case of an <i>absolute</i> {@code name} like {@code "/html/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/html/obj.html"}</li>
-   * </ul>
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param baseDir
-   *          Root resource directory.
-   */
-  public static File file(String name, File baseDir) {
-    return file(name, baseDir, EMPTY);
-  }
-
-  /**
-   * Gets the absolute path of the given resource.
-   * <p>
-   * {@code name} is resolved to FQN based on {@code baseType}, then resolved according to
-   * {@code baseDir}. Eg, assuming {@code baseType} is {@code org.mysoft.myapp.Obj} and
-   * {@code baseDir} is {@code "/home/myusr/Projects/myproj/src/main/resources"}:
-   * </p>
-   * <ul>
-   * <li>in case of a <i>relative</i> {@code name} like {@code "subpath/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/org/mysoft/myapp/subpath/obj.html"}</li>
-   * <li>in case of an <i>absolute</i> {@code name} like {@code "/html/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/html/obj.html"}</li>
-   * </ul>
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param baseDir
-   *          Root resource directory.
-   * @param baseType
-   *          Context type (to resolve relative {@code name}).
-   */
-  public static File file(String name, File baseDir, @Nullable Class<?> baseType) {
-    return path(name, baseDir.toPath(), baseType).toFile();
-  }
-
-  /**
-   * Gets the absolute path of the given resource.
-   * <p>
-   * {@code name} is resolved to FQN based on {@code basePackage}, then resolved according to
-   * {@code baseDir}. Eg, assuming {@code basePackage} is {@code org.mysoft.myapp} and
-   * {@code baseDir} is {@code "/home/myusr/Projects/myproj/src/main/resources"}:
-   * </p>
-   * <ul>
-   * <li>in case of a <i>relative</i> {@code name} like {@code "subpath/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/org/mysoft/myapp/subpath/obj.html"}</li>
-   * <li>in case of an <i>absolute</i> {@code name} like {@code "/html/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/html/obj.html"}</li>
-   * </ul>
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param baseDir
-   *          Root resource directory.
-   * @param basePackage
-   *          Context package name (to resolve relative {@code name}).
-   */
-  public static File file(String name, File baseDir, String basePackage) {
-    return path(name, baseDir.toPath(), basePackage).toFile();
   }
 
   /**

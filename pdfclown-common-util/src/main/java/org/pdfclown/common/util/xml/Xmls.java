@@ -19,11 +19,11 @@ import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.Objects.toLiteralString;
 import static org.pdfclown.common.util.Strings.strEmptyToNull;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -499,32 +499,6 @@ public final class Xmls {
   /**
    * Loads the given XML document.
    */
-  public static Document xml(File file) throws IOException, SAXException {
-    return xml(file, (Source) null);
-  }
-
-  /**
-   * Loads the given XML document.
-   */
-  public static Document xml(File file, DocumentBuilderFactory factory)
-      throws IOException, SAXException {
-    try (var in = new FileInputStream(file)) {
-      return xml(in, factory);
-    }
-  }
-
-  /**
-   * Loads the given XML document.
-   */
-  public static Document xml(File file, @Nullable Source xsd) throws IOException, SAXException {
-    try (var in = new FileInputStream(file)) {
-      return xml(in, xsd);
-    }
-  }
-
-  /**
-   * Loads the given XML document.
-   */
   public static Document xml(InputStream in) throws IOException, SAXException {
     return xml(in, (Source) null);
   }
@@ -575,6 +549,32 @@ public final class Xmls {
       }
     }
     return xml(in, factory);
+  }
+
+  /**
+   * Loads the given XML document.
+   */
+  public static Document xml(Path file) throws IOException, SAXException {
+    return xml(file, (Source) null);
+  }
+
+  /**
+   * Loads the given XML document.
+   */
+  public static Document xml(Path file, DocumentBuilderFactory factory)
+      throws IOException, SAXException {
+    try (var in = new FileInputStream(file.toFile())) {
+      return xml(in, factory);
+    }
+  }
+
+  /**
+   * Loads the given XML document.
+   */
+  public static Document xml(Path file, @Nullable Source xsd) throws IOException, SAXException {
+    try (var in = new FileInputStream(file.toFile())) {
+      return xml(in, xsd);
+    }
   }
 
   @SuppressWarnings("null")

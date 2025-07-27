@@ -26,7 +26,7 @@ class BuildsTest extends BaseTest {
   @Test
   void artifactId() {
     //noinspection DataFlowIssue : assertThat(..) supports nullable actual.
-    assertThat(Builds.artifactId(getEnv().dirPath(DirId.MAIN_TYPE_SRC)),
+    assertThat(Builds.artifactId(getEnv().dir(DirId.MAIN_TYPE_SRC)),
         is("pdfclown-common-build"));
   }
 }

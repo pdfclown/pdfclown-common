@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.exists;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
@@ -19,11 +21,11 @@ import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.typeOf;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.io.Files.fullExtension;
-import static org.pdfclown.common.build.internal.util_.io.Files.replaceFullExtension;
+import static org.pdfclown.common.build.internal.util_.io.Files.stripFullExtension;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -207,7 +209,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
       final JsonElement actualJsonElement, final Config config) {
     final String expectedJsonResourceFqn = ResourceNames.absName(expectedJsonResourceName,
         typeOf(config.getTest()));
-    final File expectedJsonFile = config.getEnv().resourceFile(expectedJsonResourceFqn);
+    final Path expectedJsonFile = config.getEnv().resourcePath(expectedJsonResourceFqn);
 
     final String testId = getTestId(() -> expectedJsonResourceFqn, config);
 
@@ -225,14 +227,14 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
         } catch (AssertionError | FileNotFoundException ex) {
           // Unrecoverable?
           if (built || !isUpdatable(testId)) {
-            File actualJsonOutFile = null;
-            if (expectedJsonFile.exists()) {
-              actualJsonOutFile = config.getEnv().outputFile(replaceFullExtension(
-                  expectedJsonResourceFqn, "_UNEXPECTED" + fullExtension(expectedJsonResourceFqn)));
+            Path actualJsonOutFile = null;
+            if (exists(expectedJsonFile)) {
+              actualJsonOutFile = config.getEnv().outputPath(
+                  stripFullExtension(expectedJsonResourceFqn) + "_UNEXPECTED"
+                      + fullExtension(expectedJsonResourceFqn));
               try {
                 // Save unexpected actual object!
-                //noinspection ResultOfMethodCallIgnored
-                actualJsonOutFile.getParentFile().mkdirs();
+                createDirectories(actualJsonOutFile.getParent());
                 Files.writeString(actualJsonOutFile, actualJsonElement.toString());
 
                 log.info("Model sample '{}': unexpected actual object saved to '{}' "

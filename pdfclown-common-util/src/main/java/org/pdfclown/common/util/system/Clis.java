@@ -231,7 +231,7 @@ public final class Clis {
    * @param s
    *          List of semicolon-(or, alternatively, comma-)separated values.
    * @see #parseStrList(String)
-   * @see #toArg(Iterable, Function)
+   * @see #listArg(Iterable, Function)
    */
   public static Stream<String> parseList(String s) {
     return !s.isEmpty()

@@ -16,7 +16,6 @@ import static org.pdfclown.common.util.io.AbstractResource.URI_SCHEME_PART__CLAS
 import static org.pdfclown.common.util.net.Uris.uri;
 import static org.pdfclown.common.util.net.Uris.url;
 
-import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,20 +40,6 @@ import org.pdfclown.common.util.net.Uris;
  * @author Stefano Chizzolini
  */
 public interface Resource {
-  /**
-   * Gets the resource corresponding to the given file.
-   * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
-   * </p>
-   *
-   * @param file
-   *          File.
-   * @return {@code null}, if the resource corresponding to {@code file} does not exist.
-   */
-  static @Nullable PathResource of(File file) {
-    return (PathResource) of(file.toString());
-  }
-
   /**
    * Gets the resource corresponding to the given path.
    * <p>

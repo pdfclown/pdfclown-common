@@ -322,35 +322,6 @@ class FilesTest extends BaseTest {
         List.of(fs));
   }
 
-  static Stream<Arguments> replaceFullExtension() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part f. . .'
-            // -- newExtension[0]: '.zip'
-            "/home/me/my.sub/test/obj.zip",
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-pa. . .'
-            // -- newExtension[0]: '.zip'
-            "smb://myhost/my.sub/test/obj.zip",
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file ex. . .'
-            // -- newExtension[0]: '.zip'
-            "C:\\my.sub\\test\\obj.zip",
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part f. . .'
-            // -- newExtension[0]: '.zip'
-            "\\\\myhost\\my.sub\\test\\obj.zip",
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-par. . .'
-            // -- newExtension[0]: '.zip'
-            "/home/me/my/test/obj-5.2.9.zip",
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file e. . .'
-            // -- newExtension[0]: '.zip'
-            "C:\\my\\test-1.5\\obj.zip"),
-        // path
-        PATHS,
-        // newExtension
-        List.of(".zip"));
-  }
-
   static Stream<Arguments> simpleBaseName() {
     return argumentsStream(
         cartesian(),
@@ -372,7 +343,7 @@ class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> withoutExtension() {
+  static Stream<Arguments> stripExtension() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -393,7 +364,7 @@ class FilesTest extends BaseTest {
         PATHS);
   }
 
-  static Stream<Arguments> withoutFullExtension() {
+  static Stream<Arguments> stripFullExtension() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -493,18 +464,6 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void replaceFullExtension(Expected<String> expected, Argument<String> path,
-      String newExtension) {
-    assertParameterizedOf(
-        () -> Files.replaceFullExtension(path.getValue(), newExtension),
-        expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("path", path),
-            entry("newExtension", newExtension))));
-  }
-
-  @ParameterizedTest
-  @MethodSource
   void simpleBaseName(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
         () -> Files.simpleBaseName(path.getValue()),
@@ -515,9 +474,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void withoutExtension(Expected<String> expected, Argument<String> path) {
+  void stripExtension(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
-        () -> Files.withoutExtension(path.getValue()),
+        () -> Files.stripExtension(path.getValue()),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));
@@ -525,9 +484,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void withoutFullExtension(Expected<String> expected, Argument<String> path) {
+  void stripFullExtension(Expected<String> expected, Argument<String> path) {
     assertParameterizedOf(
-        () -> Files.withoutFullExtension(path.getValue()),
+        () -> Files.stripFullExtension(path.getValue()),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));

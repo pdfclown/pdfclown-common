@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
@@ -24,11 +25,10 @@ import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.abbreviateMultiline;
 import static org.pdfclown.common.build.internal.util_.regex.Patterns.globToRegex;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -283,8 +283,8 @@ public abstract class Asserter {
    * @throws AssertionError
    *           If {@code message} is not empty.
    */
-  protected void evalAssertionError(String testId, @Nullable String message, File expectedFile,
-      @Nullable File actualFile) throws AssertionError {
+  protected void evalAssertionError(String testId, @Nullable String message, Path expectedFile,
+      @Nullable Path actualFile) throws AssertionError {
     if (message == null || (message = message.strip()).isEmpty())
       return;
 
@@ -315,7 +315,7 @@ public abstract class Asserter {
           testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
     message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message);
-    String projectArtifactId = Builds.artifactId(expectedFile.toPath());
+    String projectArtifactId = Builds.artifactId(expectedFile);
     String hint = String.format(Locale.ROOT,
         "\nCompared files:\n"
             + " * EXPECTED: %s\n"
@@ -372,14 +372,12 @@ public abstract class Asserter {
    * @param config
    *          Assertion configuration.
    */
-  protected void writeExpectedFile(String resourceName, Consumer<File> writer, Config config)
+  protected void writeExpectedFile(String resourceName, Consumer<Path> writer, Config config)
       throws IOException {
     // Source file.
-    File sourceFile = config.getEnv().resourceSrcFile(resourceName);
+    Path sourceFile = config.getEnv().resourceSrcPath(resourceName);
     try {
-      File parentFile = requireNonNull(sourceFile.getParentFile());
-      //noinspection ResultOfMethodCallIgnored
-      parentFile.mkdirs();
+      Files.createDirectories(sourceFile.getParent());
       writer.accept(sourceFile);
     } catch (RuntimeException ex) {
       throw runtime("Expected resource build FAILED: " + sourceFile,
@@ -388,13 +386,10 @@ public abstract class Asserter {
     getLog().info("Expected resource BUILT at {}", sourceFile);
 
     // Target file.
-    File targetFile = config.getEnv().resourceFile(resourceName);
+    Path targetFile = config.getEnv().resourcePath(resourceName);
     try {
-      File parentFile = requireNonNull(targetFile.getParentFile());
-      //noinspection ResultOfMethodCallIgnored
-      parentFile.mkdirs();
-      Files.copy(sourceFile.toPath(), targetFile.toPath(),
-          StandardCopyOption.REPLACE_EXISTING);
+      Files.createDirectories(targetFile.getParent());
+      Files.copy(sourceFile, targetFile, REPLACE_EXISTING);
     } catch (RuntimeException ex) {
       throw runtime("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + targetFile, ex);
@@ -412,12 +407,12 @@ public abstract class Asserter {
    * @param config
    *          Assertion configuration.
    */
-  protected void writeExpectedFile(String resourceName, File actualFile, Config config)
+  protected void writeExpectedFile(String resourceName, Path actualFile, Config config)
       throws IOException {
     writeExpectedFile(resourceName,
         $ -> {
           try {
-            Files.copy(actualFile.toPath(), $.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(actualFile, $, REPLACE_EXISTING);
           } catch (IOException ex) {
             throw runtime(ex);
           }
