@@ -583,11 +583,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
                 <url>https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-core/${log4j.version}</url>
               </dependencyLink>
               <dependencyLink>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <url>https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-slf4j-impl/${log4j.version}</url>
-              </dependencyLink>
-              <dependencyLink>
                 <groupId>org.greenrobot</groupId>
                 <artifactId>eventbus-java</artifactId>
                 <url>https://www.javadoc.io/doc/org.greenrobot/eventbus-java/${eventbus.version}</url>
