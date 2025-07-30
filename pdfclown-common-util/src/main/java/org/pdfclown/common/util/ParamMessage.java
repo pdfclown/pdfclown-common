@@ -15,6 +15,7 @@ package org.pdfclown.common.util;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Objects.toLiteralString;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.Objects;
@@ -85,7 +86,8 @@ public class ParamMessage {
       for (int i = 0; i < argsCount; i++) {
         index = format.indexOf(ARG, oldIndex);
         if (index < 0) {
-          warn("Placeholder '{}' missing for argument {} (format: '{}')", ARG, i, format);
+          warn("Placeholder " + ARG + " missing for argument " + ARG + " (format: " + ARG + ")",
+              toLiteralString(ARG), i, toLiteralString(format));
           break;
         }
 
@@ -93,7 +95,8 @@ public class ParamMessage {
         oldIndex = index + ARG.length();
       }
       if (index >= 0 && format.indexOf(ARG, oldIndex) > 0) {
-        warn("Argument {} missing for placeholder '{}' (format: '{}')", argsCount, ARG, format);
+        warn("Argument " + ARG + " missing for placeholder " + ARG + " (format: " + ARG + ")",
+            argsCount, toLiteralString(ARG), toLiteralString(format));
       }
       return b.append(format.substring(oldIndex)).toString();
     }

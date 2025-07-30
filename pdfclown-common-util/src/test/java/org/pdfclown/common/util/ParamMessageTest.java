@@ -38,27 +38,29 @@ class ParamMessageTest extends BaseTest {
 
   @Test
   void format() {
-    assertThat(ParamMessage.format("{} message {}", "ARG0", 99), is("ARG0 message 99"));
+    assertThat(ParamMessage.format(ParamMessage.ARG + " message " + ParamMessage.ARG, "ARG0", 99),
+        is("ARG0 message 99"));
 
     assertThat(logged.noEvent(), is(true));
   }
 
   @Test
   void format__argument_missing() {
-    assertThat(ParamMessage.format("{} message {}", "ARG0"), is("ARG0 message {}"));
+    assertThat(ParamMessage.format(ParamMessage.ARG + " message " + ParamMessage.ARG, "ARG0"),
+        is("ARG0 message {}"));
 
     assertThat(logged.eventCount(), is(1));
     assertThat(logged.event(0), matchesEvent(Level.WARN,
-        "Argument 1 missing for placeholder '{}' (format: '{} message {}')", null));
+        "Argument 1 missing for placeholder \"{}\" (format: \"{} message {}\")", null));
   }
 
   @Test
   void format__placeholder_missing() {
-    assertThat(ParamMessage.format("{} message", "ARG0", 99), is("ARG0 message"));
+    assertThat(ParamMessage.format(ParamMessage.ARG + " message", "ARG0", 99), is("ARG0 message"));
 
     assertThat(logged.eventCount(), is(1));
     assertThat(logged.event(0), matchesEvent(Level.WARN,
-        "Placeholder '{}' missing for argument 1 (format: '{} message')", null));
+        "Placeholder \"{}\" missing for argument 1 (format: \"{} message\")", null));
   }
 
   /**
@@ -80,17 +82,17 @@ class ParamMessageTest extends BaseTest {
           .when(() -> ParamMessage.of(any(), any(), any()))
           .then(InvocationOnMock::callRealMethod);
 
-      ParamMessage.of("Message {}", "construction");
+      ParamMessage.of("Message " + ParamMessage.ARG, "construction");
 
-      staticMock.verify(() -> ParamMessage.format(ParamMessage.FORMATTER, "Message {}",
-          new Object[] { "construction" }, 1));
+      staticMock.verify(() -> ParamMessage.format(ParamMessage.FORMATTER,
+          "Message " + ParamMessage.ARG, new Object[] { "construction" }, 1));
     }
   }
 
   @Test
   void of__with_cause() {
     final var cause = new RuntimeException();
-    ParamMessage message = ParamMessage.of("Message {}", "construction", cause);
+    ParamMessage message = ParamMessage.of("Message " + ParamMessage.ARG, "construction", cause);
 
     assertThat(message.getDescription(), is("Message construction"));
     assertThat(message.getCause(), sameInstance(cause));
@@ -99,7 +101,7 @@ class ParamMessageTest extends BaseTest {
 
   @Test
   void of__without_cause() {
-    ParamMessage message = ParamMessage.of("Message {}", "construction");
+    ParamMessage message = ParamMessage.of("Message " + ParamMessage.ARG, "construction");
 
     assertThat(message.getDescription(), is("Message construction"));
     assertThat(message.getCause(), is(nullValue()));

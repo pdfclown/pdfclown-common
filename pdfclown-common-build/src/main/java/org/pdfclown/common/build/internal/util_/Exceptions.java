@@ -23,6 +23,7 @@ import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPE
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import java.io.EOFException;
+import java.util.Collection;
 import java.util.NoSuchElementException;
 import org.jspecify.annotations.Nullable;
 
@@ -30,7 +31,7 @@ import org.jspecify.annotations.Nullable;
  * Exception utilities.
  *
  * @author Stefano Chizzolini
- * @see Checks
+ * @see Conditions
  */
 public final class Exceptions {
   public static EOFException EOF() {
@@ -53,22 +54,8 @@ public final class Exceptions {
     return new NotImplementedException(message.getDescription(), message.getCause());
   }
 
-  public static IllegalArgumentException differingArg(@Nullable String name,
-      @Nullable Object value, @Nullable Object otherValue, @Nullable String description) {
-    return wrongArg(name, value, ARG + " (should be " + ARG + ")",
-        requireNonNullElse(description, "INVALID"), toLiteralString(otherValue));
-  }
-
   public static NoSuchElementException missing() {
     return new NoSuchElementException();
-  }
-
-  public static IllegalArgumentException requiredArg() {
-    return requiredArg(null);
-  }
-
-  public static IllegalArgumentException requiredArg(@Nullable String name) {
-    return wrongArg(name, null, "REQUIRED");
   }
 
   /**
@@ -174,6 +161,10 @@ public final class Exceptions {
     return new XtIllegalArgumentException(name == null ? "value" : name, value, format, args);
   }
 
+  public static <T> XtIllegalArgumentException wrongArgOpt(Collection<T> options) {
+    return wrongArgOpt(null, null, null, options);
+  }
+
   /**
    * @param <T>
    *          Value type.
@@ -186,43 +177,39 @@ public final class Exceptions {
    * @param options
    *          Any expected value which {@code value} may have matched.
    */
-  @SafeVarargs
   public static <T> XtIllegalArgumentException wrongArgOpt(@Nullable String name,
-      @Nullable Object value, @Nullable String description, T... options) {
+      @Nullable Object value, @Nullable String description, Collection<T> options) {
     var b = new StringBuilder();
     if (description != null) {
       b.append(description).append(SPACE).append(ROUND_BRACKET_OPEN);
     } else {
       b.append("MUST be").append(SPACE);
     }
-    if (options.length > 1) {
+    if (options.size() > 1) {
       b.append("one of").append(SPACE).append(CURLY_BRACE_OPEN).append(SPACE);
     }
-    var args = new @Nullable Object[options.length];
-    for (int i = 0; i < options.length; i++) {
-      if (i > 0) {
-        b.append(COMMA).append(SPACE);
+    /*
+     * NOTE: In order to leverage `ParamMessage` formatting, the options are passed as arguments
+     * rather than being appended as-is.
+     */
+    var args = new Object[options.size()];
+    {
+      int i = 0;
+      for (var it = options.iterator(); it.hasNext(); i++) {
+        if (i > 0) {
+          b.append(COMMA).append(SPACE);
+        }
+        b.append(ARG);
+        args[i] = it.next();
       }
-      b.append(ARG);
-      args[i] = options[i];
     }
-    if (options.length > 1) {
+    if (options.size() > 1) {
       b.append(SPACE).append(CURLY_BRACE_CLOSE);
     }
     if (description != null) {
       b.append(ROUND_BRACKET_CLOSE);
     }
     return wrongArg(name, value, b.toString(), args);
-  }
-
-  @SafeVarargs
-  public static <T> XtIllegalArgumentException wrongArgOpt(T... options) {
-    return wrongArgOpt(null, null, null, options);
-  }
-
-  public static IllegalStateException wrongState(Exception cause) {
-    return cause instanceof IllegalStateException ? (IllegalStateException) cause
-        : new IllegalStateException(cause);
   }
 
   /**
@@ -236,6 +223,11 @@ public final class Exceptions {
       @Nullable Object... args) {
     var message = ParamMessage.of(format, args);
     return new IllegalStateException(message.getDescription(), message.getCause());
+  }
+
+  public static IllegalStateException wrongState(Throwable cause) {
+    return cause instanceof IllegalStateException ? (IllegalStateException) cause
+        : new IllegalStateException(cause);
   }
 
   private Exceptions() {

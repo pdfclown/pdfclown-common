@@ -17,7 +17,7 @@ import static javax.measure.MetricPrefix.HECTO;
 import static javax.measure.MetricPrefix.KILO;
 import static javax.measure.MetricPrefix.MEGA;
 import static javax.measure.MetricPrefix.MILLI;
-import static org.pdfclown.common.util.Checks.checkType;
+import static org.pdfclown.common.util.Conditions.requireType;
 import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.fqn;
@@ -512,7 +512,7 @@ public class Units extends AbstractSystemOfUnits {
   @SuppressWarnings("unchecked")
   protected static <Q extends Quantity<Q>> XtUnit<Q> addBaseUnit(Units unitSystem,
       Class<Q> quantityType, Unit<Q> unit) {
-    return defaultUnit(quantityType, addUnit(unitSystem, checkType(unit, BaseUnit.class)),
+    return defaultUnit(quantityType, addUnit(unitSystem, requireType(unit, BaseUnit.class)),
         unitSystem);
   }
 

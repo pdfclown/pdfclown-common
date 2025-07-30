@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.util.measure;
 
-import static org.pdfclown.common.util.Checks.checkType;
+import static org.pdfclown.common.util.Conditions.requireType;
 import static org.pdfclown.common.util.Objects.requireState;
 import static org.pdfclown.common.util.measure.Units.unwrap;
 import static org.pdfclown.common.util.measure.Units.wrap;
@@ -48,7 +48,7 @@ public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
 
   @SuppressWarnings("unchecked")
   public static <Q extends Quantity<Q>> XtUnit<Q> of(Unit<Q> base) {
-    return new XtUnit<Q>(checkType(base, AbstractUnit.class));
+    return new XtUnit<Q>(requireType(base, AbstractUnit.class));
   }
 
   final AbstractUnit<Q> base;
