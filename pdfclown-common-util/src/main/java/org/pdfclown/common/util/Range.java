@@ -12,9 +12,20 @@
  */
 package org.pdfclown.common.util;
 
+import static java.lang.Math.signum;
+import static org.pdfclown.common.util.Conditions.requireEqual;
+import static org.pdfclown.common.util.Conditions.requireState;
 import static org.pdfclown.common.util.Objects.isSameType;
+import static org.pdfclown.common.util.Strings.COMMA;
+import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.util.Strings.SQUARE_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Strings.SQUARE_BRACKET_OPEN;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Immutable;
@@ -34,7 +45,7 @@ import org.pdfclown.common.util.annot.Immutable;
  * @author Stefano Chizzolini
  */
 @Immutable
-public final class Range<T> {
+public class Range<T> {
   /**
    * Interval endpoint.
    *
@@ -43,23 +54,23 @@ public final class Range<T> {
    * @author Stefano Chizzolini
    */
   @Immutable
-  public static final class Bound<T> {
+  public static final class Endpoint<T> {
     @SuppressWarnings({ "rawtypes" })
-    private static final Bound UNBOUND = new Bound<>(null, false);
+    static final Endpoint UNBOUND = new Endpoint<>(null, false);
 
     @SuppressWarnings("unchecked")
-    public static <T> Bound<T> of(@Nullable T value, boolean inclusive) {
-      return value != null ? new Bound<>(value, inclusive) : (Bound<T>) UNBOUND;
+    public static <T> Endpoint<T> of(@Nullable T value, boolean closed) {
+      return value != null ? new Endpoint<>(value, closed) : (Endpoint<T>) UNBOUND;
     }
 
-    private final T value;
-    private final boolean inclusive;
+    private final boolean closed;
+    private final @Nullable T value;
 
     /**
      */
-    private Bound(T value, boolean inclusive) {
+    private Endpoint(@Nullable T value, boolean closed) {
       this.value = value;
-      this.inclusive = inclusive;
+      this.closed = closed;
     }
 
     @Override
@@ -70,75 +81,192 @@ public final class Range<T> {
       else if (!isSameType(o, this))
         return false;
 
-      var that = (Bound<?>) o;
+      var that = (Endpoint<?>) o;
       assert that != null;
-      return that.inclusive == this.inclusive
+      return that.closed == this.closed
           && Objects.equals(that.value, this.value);
     }
 
+    /**
+     * Endpoint value.
+     *
+     * @throws IllegalStateException
+     *           if not {@link #isBounded() bounded}.
+     */
     public T getValue() {
-      return value;
+      return requireState(value, "UNBOUNDED");
     }
 
     @Override
     public int hashCode() {
-      var ret = Boolean.hashCode(inclusive);
+      var ret = Boolean.hashCode(closed);
       if (value != null) {
         ret ^= value.hashCode();
       }
       return ret;
     }
 
-    public boolean isInclusive() {
-      return inclusive;
+    /**
+     * Whether this endpoint is limited rather than infinite.
+     */
+    public boolean isBounded() {
+      return value != null;
+    }
+
+    /**
+     * Whether {@link #getValue() value} is included.
+     */
+    public boolean isClosed() {
+      return closed;
+    }
+
+    @Override
+    public String toString() {
+      return Objects.toString(value, "∞");
+    }
+
+    StringBuilder toString(int sign, StringBuilder b) {
+      if (sign < 0) {
+        b.append(closed ? SQUARE_BRACKET_OPEN : ROUND_BRACKET_OPEN);
+      }
+
+      if (value != null) {
+        b.append(value);
+      } else {
+        b.append(sign < 0 ? "-" : sign > 0 ? "+" : EMPTY).append("∞");
+      }
+
+      if (sign > 0) {
+        b.append(closed ? SQUARE_BRACKET_CLOSE : ROUND_BRACKET_CLOSE);
+      }
+
+      return b;
     }
   }
 
-  public static <T> Range<T> exclusive(@Nullable T low, @Nullable T high) {
-    return new Range<>(Bound.of(low, false), Bound.of(high, false));
+  static class NumericRange<T extends Number> extends Range<T> {
+    private static final Comparator<Number> COMPARATOR =
+        ($1, $2) -> (int) signum($1.doubleValue() - $2.doubleValue());
+
+    NumericRange(Endpoint<T> lowerEndpoint, Endpoint<T> upperEndpoint) {
+      super(lowerEndpoint, upperEndpoint);
+    }
+
+    @Override
+    public boolean contains(Object value) {
+      return contains(value, COMPARATOR);
+    }
   }
 
-  public static <T> Range<T> inclusive(@Nullable T low, @Nullable T high) {
-    return new Range<>(Bound.of(low, true), Bound.of(high, true));
-  }
+  private static final Map<Class<? extends Number>, Range<? extends Number>> normal =
+      new HashMap<>();
 
-  public static <T> Range<T> of(Bound<T> low, Bound<T> high) {
-    return new Range<>(low, high);
-  }
-
-  public static <T> Range<T> of(@Nullable T low, @Nullable T high) {
-    return inclusive(low, high);
-  }
-
-  private final Bound<T> high;
-  private final Bound<T> low;
-
-  private Range(Bound<T> low, Bound<T> high) {
-    this.low = low;
-    this.high = high;
+  /**
+   * New range, inclusive of lower endpoint.
+   */
+  public static <T> Range<T> atLeast(T lower) {
+    return new Range<>(Endpoint.of(lower, true), Endpoint.of(null, false));
   }
 
   /**
-   * Gets whether the given value is contained within this interval.
+   * New range, inclusive of upper endpoint.
+   */
+  public static <T> Range<T> atMost(T upper) {
+    return new Range<>(Endpoint.of(null, false), Endpoint.of(upper, true));
+  }
+
+  /**
+   * New range, inclusive of both endpoints.
    *
-   * @apiNote Comparison is performed via natural order, so values are required to be
-   *          {@link Comparable}.
+   * @param lower
+   *          ({@code null}, for unbounded endpoint)
+   * @param upper
+   *          ({@code null}, for unbounded endpoint)
+   * @throws XtIllegalArgumentException
+   *           if arguments are numbers of different types (allowing them would cause ambiguities on
+   *           value comparison — see also the observations in {@link #numeric(Range)}).
    */
-  public boolean contains(T value) {
-    return contains(value, Comparator.naturalOrder());
+  @SuppressWarnings("unchecked")
+  public static <T> Range<T> closed(@Nullable T lower, @Nullable T upper) {
+    if (lower instanceof Number && upper != null) {
+      var type = (Class<? extends Number>) requireEqual(upper.getClass(), lower.getClass(),
+          "upper.class");
+      if (((Number) lower).doubleValue() == 0 && ((Number) upper).doubleValue() == 1)
+        return (Range<T>) normal(type);
+    }
+
+    return new Range<>(Endpoint.of(lower, true), Endpoint.of(upper, true));
   }
 
   /**
-   * Gets whether the given value is contained within this interval.
+   * New range, exclusive of lower endpoint.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  public boolean contains(T value, Comparator comparator) {
-    int compare = low.value != null ? comparator.compare(value, low.value) : 1;
-    if (!(compare > 0 || (compare == 0 && low.inclusive)))
-      return false;
+  public static <T> Range<T> greaterThan(T lower) {
+    return new Range<>(Endpoint.of(lower, false), Endpoint.of(null, false));
+  }
 
-    compare = high.value != null ? comparator.compare(value, high.value) : -1;
-    return compare < 0 || (compare == 0 && high.inclusive);
+  /**
+   * New range, exclusive of upper endpoint.
+   */
+  public static <T> Range<T> lessThan(T upper) {
+    return new Range<>(Endpoint.of(null, false), Endpoint.of(upper, false));
+  }
+
+  /**
+   * Gets the normal range (that is {@code  0} to {@code  1}, inclusive) for the given type.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends Number> Range<T> normal(Class<T> type) {
+    return (Range<T>) normal.computeIfAbsent(type, $ -> new Range<>(
+        Endpoint.of(Numbers.to(0, type), true),
+        Endpoint.of(Numbers.to(1, type), true)));
+  }
+
+  /**
+   * Gets the numeric range equivalent to the given range.
+   * <p>
+   * A numeric range provides mathematical comparison across the {@link Number} hierarchy,
+   * overcoming the limitations of natural comparison, which works within the same boxed type only
+   * (e.g., {@link Float} cannot be compared directly with {@link Integer} or {@link Double}, so the
+   * number {@code 0.5f} will be considered NOT in the integer range {@code [0,1]}).
+   * </p>
+   */
+  public static <T extends Number> Range<T> numeric(Range<T> range) {
+    return range instanceof NumericRange ? range : new NumericRange<>(range.lower, range.upper);
+  }
+
+  /**
+   * New range.
+   */
+  public static <T> Range<T> of(Endpoint<T> lower, Endpoint<T> upper) {
+    return new Range<>(lower, upper);
+  }
+
+  /**
+   * New range, exclusive of both endpoints.
+   *
+   * @param lower
+   *          ({@code null}, for unbounded endpoint)
+   * @param upper
+   *          ({@code null}, for unbounded endpoint)
+   */
+  public static <T> Range<T> open(@Nullable T lower, @Nullable T upper) {
+    return new Range<>(Endpoint.of(lower, false), Endpoint.of(upper, false));
+  }
+
+  private final Endpoint<T> upper;
+  private final Endpoint<T> lower;
+
+  private Range(Endpoint<T> lower, Endpoint<T> upper) {
+    this.lower = lower;
+    this.upper = upper;
+  }
+
+  /**
+   * Gets whether the value is contained within this interval.
+   */
+  public boolean contains(Object value) {
+    return contains(value, Comparator.naturalOrder());
   }
 
   @Override
@@ -150,47 +278,53 @@ public final class Range<T> {
 
     var that = (Range<?>) o;
     assert that != null;
-    return Objects.equals(that.low, this.low)
-        && Objects.equals(that.high, this.high);
+    return Objects.equals(that.lower, this.lower)
+        && Objects.equals(that.upper, this.upper);
   }
 
   /**
-   * Upper bound.
+   * Lower endpoint.
    */
-  public T getHigh() {
-    return high.value;
+  public Endpoint<T> getLower() {
+    return lower;
   }
 
   /**
-   * Lower bound.
+   * Upper endpoint.
    */
-  public T getLow() {
-    return low.value;
+  public Endpoint<T> getUpper() {
+    return upper;
   }
 
   @Override
   public int hashCode() {
-    return low.hashCode() ^ high.hashCode();
-  }
-
-  /**
-   * Whether this interval is closed above (ie, inclusive).
-   */
-  public boolean isHighInclusive() {
-    return high.inclusive;
-  }
-
-  /**
-   * Whether this interval is closed below (ie, inclusive).
-   */
-  public boolean isLowInclusive() {
-    return low.inclusive;
+    return lower.hashCode() ^ upper.hashCode();
   }
 
   @Override
   public String toString() {
-    return getClass().getSimpleName()
-        + (low.inclusive ? "[" : "(") + (low.value != null ? low.value : "-INF") + ","
-        + (high.value != null ? high.value : "+INF") + (high.inclusive ? "]" : ")");
+    var b = new StringBuilder();
+    {
+      lower.toString(-1, b).append(COMMA);
+      upper.toString(1, b);
+    }
+    return b.toString();
+  }
+
+  /**
+   * Gets whether the value is contained within this interval, according to the given comparator.
+   */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  protected boolean contains(Object value, Comparator comparator) {
+    int compare = lower.isBounded()
+        ? comparator.compare(value, lower.getValue())
+        : 1;
+    if (compare < 0 || (compare == 0 && !lower.isClosed()))
+      return false;
+
+    compare = upper.isBounded()
+        ? comparator.compare(value, upper.getValue())
+        : -1;
+    return compare < 0 || (compare == 0 && upper.isClosed());
   }
 }
