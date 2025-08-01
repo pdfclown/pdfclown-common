@@ -16,8 +16,10 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.LF;
 import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
@@ -240,12 +242,12 @@ public abstract class Asserter {
             }
             regex = b.toString();
           } catch (Exception ex) {
-            log.error("{} CLI parameter initialization FAILED", paramName, ex);
+            log.error("`" + ARG + "` CLI parameter initialization FAILED", paramName, ex);
           }
         }
       }
     }
-    log.info("{} CLI parameter: {}", paramName,
+    log.info("`" + ARG + "` CLI parameter: " + ARG, paramName,
         regex != null ? regex : defaultResult ? "ANY" : "NONE");
 
     if (regex != null)
@@ -311,7 +313,7 @@ public abstract class Asserter {
             .orElse(EMPTY));
     if (testName.isEmpty())
       throw runtime("Failed test method NOT FOUND on stack trace (should be marked with any of "
-          + "these annotations: {})",
+          + "these annotations: " + ARG + ")",
           testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
     message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message);
@@ -330,7 +332,7 @@ public abstract class Asserter {
         projectArtifactId, PARAM_NAME__BUILDABLE, testId, testName);
 
     // Log (full message).
-    getLog().error(LogMarker.VERBOSE, "{}\n{}", message, hint);
+    getLog().error(LogMarker.VERBOSE, ARG + LF + ARG, message, hint);
 
     // Exception (shortened message).
     throw new AssertionError(String.format("%s\n"
@@ -383,7 +385,7 @@ public abstract class Asserter {
       throw runtime("Expected resource build FAILED: " + sourceFile,
           ex.getCause() != null ? ex.getCause() : ex);
     }
-    getLog().info("Expected resource BUILT at {}", sourceFile);
+    getLog().info("Expected resource BUILT at " + ARG, sourceFile);
 
     // Target file.
     Path targetFile = config.getEnv().resourcePath(resourceName);
@@ -394,7 +396,7 @@ public abstract class Asserter {
       throw runtime("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + targetFile, ex);
     }
-    getLog().info("Expected resource COPIED to target ({})", targetFile);
+    getLog().info("Expected resource COPIED to target (" + ARG + ")", targetFile);
   }
 
   /**

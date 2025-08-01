@@ -203,16 +203,24 @@ class ObjectsTest extends BaseTest {
       "1.5E-4",
       // [5] obj[4]: true
       "true",
-      // [6] obj[5]: '''
+      // [6] obj[5]: '\''
       "'\\''",
       // [7] obj[6]: '"'
       "'\"'",
       // [8] obj[7]: ""
       "\"\"",
-      // [9] obj[8]: "Text with:\n- . . ."
+      // [9] obj[8]: "Text with:\n- \"quoted content\"\n- newlines"
       "\"Text with:\\n- \\\"quoted content\\\"\\n- newlines\"",
       // [10] obj[9]: "测试文本"
-      "\"测试文本\"");
+      "\"测试文本\"",
+      // [11] obj[10]: String
+      "String",
+      // [12] obj[11]: java.util.stream.Stream
+      "java.util.stream.Stream",
+      // [13] obj[12]: org.pdfclown.common.util.Strings
+      "org.pdfclown.common.util.Strings",
+      // [14] obj[13]: [one, two]
+      "[one, two]");
 
   private static final List<String> TO_STRINGS = asList(
       null,
@@ -245,7 +253,7 @@ class ObjectsTest extends BaseTest {
     return argumentsStream(
         cartesian(),
         // expected
-        asList(
+        java.util.Arrays.asList(
             // [1] s[0]: "null"
             null,
             // [2] s[1]: "1234"
@@ -262,10 +270,18 @@ class ObjectsTest extends BaseTest {
             '"',
             // [8] s[7]: "\"\""
             "",
-            // [9] s[8]: "\"Text with:\\. . ."
+            // [9] s[8]: "\"Text with:\\n- \\\"quoted content\\\"\\n- . . ."
             "Text with:\n- \"quoted content\"\n- newlines",
             // [10] s[9]: "\"测试文本\""
-            "测试文本"),
+            "测试文本",
+            // [11] s[10]: "String"
+            "String",
+            // [12] s[11]: "java.util.stream.Stream"
+            "java.util.stream.Stream",
+            // [13] s[12]: "org.pdfclown.common.util.Strings"
+            "org.pdfclown.common.util.Strings",
+            // [14] s[13]: "[one, two]"
+            "[one, two]"),
         // s
         LITERAL_STRINGS);
   }
@@ -286,7 +302,11 @@ class ObjectsTest extends BaseTest {
             '"',
             EMPTY,
             "Text with:\n- \"quoted content\"\n- newlines",
-            "测试文本"));
+            "测试文本",
+            String.class,
+            Stream.class,
+            Strings.class,
+            List.of("one", "two")));
   }
 
   static Stream<Arguments> toQualifiedString() {

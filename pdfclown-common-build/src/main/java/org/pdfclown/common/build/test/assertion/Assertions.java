@@ -26,11 +26,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianProduct;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireEqual;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.requireState;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
 import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS__CHICAGO;
@@ -1206,9 +1207,7 @@ public final class Assertions {
 
       // 2. Expected results (tested method output).
       if (expected != null) {
-        if (expected.size() != expectedCount)
-          throw wrongArg("`expected` size", expected.size(), "MISMATCH with `args` (SHOULD be {})",
-              expectedCount);
+        requireEqual(expected.size(), expectedCount, "expected.size");
 
         expectedList = new ArrayList<>(expected.size());
         for (var e : expected) {

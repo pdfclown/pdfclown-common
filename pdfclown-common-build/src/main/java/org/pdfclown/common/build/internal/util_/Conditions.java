@@ -414,10 +414,7 @@ public final class Conditions {
     if (range.contains(value))
       return value;
 
-    throw wrongArg(name, value,
-        "MUST be between " + ARG + " (" + ARG + ") and " + ARG + " (" + ARG + ")",
-        range.getLow(), range.isLowInclusive() ? "inclusive" : "exclusive",
-        range.getHigh(), range.isHighInclusive() ? "inclusive" : "exclusive");
+    throw wrongArg(name, value, "MUST be within " + ARG + " range", range);
   }
 
   /**
@@ -465,6 +462,43 @@ public final class Conditions {
       throw wrongArg(name, value, "MUST be between " + ARG + " and " + ARG, min, max);
 
     return value;
+  }
+
+  /**
+   * (see {@link #requireState(Object, String)})
+   */
+  public static <T> T requireState(@Nullable T obj) {
+    return requireState(obj, "State UNDEFINED");
+  }
+
+  /**
+   * Requires the value is not null.
+   * <p>
+   * This method is the state counterpart of {@link java.util.Objects#requireNonNull(Object)}:
+   * contrary to the latter (which is primarily for input validation), it is designed for doing
+   * <b>output validation</b> in accessors, as demonstrated below:
+   * </p>
+   * <pre>
+   *public Bar getBar() {
+   *  return requireState((Bar)getExternalResource("bar"));
+   *}</pre>
+   * <p>
+   * Useful in case an accessor is expected to return a non-null reference, but depends on external
+   * state beyond its control, or on internal state available in specific phases of its containing
+   * object: if the caller tries to access it in a wrong moment, an {@link IllegalStateException} is
+   * thrown.
+   * </p>
+   *
+   * @return {@code obj}
+   * @throws IllegalStateException
+   *           if {@code obj} is {@code null}.
+   * @see java.util.Objects#requireNonNull(Object)
+   */
+  public static <T> T requireState(@Nullable T value, String message) {
+    if (value != null)
+      return value;
+
+    throw new IllegalStateException(message);
   }
 
   /**

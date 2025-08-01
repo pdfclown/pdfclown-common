@@ -33,6 +33,7 @@ public final class Strings {
   public static final char ANGLE_BRACKET_OPEN = '<';
   public static final char APOSTROPHE = '\'';
   public static final char BACKSLASH = '\\';
+  public static final char BACKTICK = '`';
   public static final char COLON = ':';
   public static final char COMMA = ',';
   /**

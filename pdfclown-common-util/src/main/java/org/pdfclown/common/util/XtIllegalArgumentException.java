@@ -15,6 +15,7 @@ package org.pdfclown.common.util;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.pdfclown.common.util.Objects.toLiteralString;
+import static org.pdfclown.common.util.Strings.BACKTICK;
 import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
@@ -34,7 +35,7 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
     requireNonNull(argName, "`argName`");
 
     var b = new StringBuilder();
-    b.append(argName);
+    b.append(BACKTICK).append(argName).append(BACKTICK);
     if (value != null) {
       b.append(SPACE).append(ROUND_BRACKET_OPEN).append(toLiteralString(value))
           .append(ROUND_BRACKET_CLOSE);

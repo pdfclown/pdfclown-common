@@ -17,9 +17,11 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
+import static org.pdfclown.common.util.Booleans.strToBool;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Strings.BACKSLASH;
 import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.Strings.COMMA;
 import static org.pdfclown.common.util.Strings.CURLY_BRACE_CLOSE;
@@ -283,6 +285,18 @@ public final class Objects {
   private static final Pattern PATTERN__QUALIFIED_TO_STRING =
       Pattern.compile("((?:\\w+[.$])*\\w+)([^\\w.$].*)?");
 
+  private static final Set<Class<?>> BASIC_TYPES = Set.of(
+      Boolean.class,
+      Byte.class,
+      Character.class,
+      Double.class,
+      Float.class,
+      Integer.class,
+      Long.class,
+      Short.class,
+      String.class,
+      Void.class);
+
   /**
    * Gets the ancestors of the given type, ordered by {@linkplain HierarchicalTypeComparator#get()
    * default comparator}.
@@ -414,15 +428,6 @@ public final class Objects {
    */
   public static @PolyNull @Nullable Class<?> asType(@PolyNull @Nullable Object obj) {
     return obj != null ? (obj instanceof Class ? (Class<?>) obj : obj.getClass()) : null;
-  }
-
-  /**
-   * Gets the integer representation of the given boolean value.
-   *
-   * @return {@code 1}, if {@code value} is {@code true}, otherwise {@code 0}.
-   */
-  public static int boolToInt(boolean value) {
-    return Boolean.compare(value, false);
   }
 
   /**
@@ -587,6 +592,8 @@ public final class Objects {
    *
    * @return
    *         <ul>
+   *         <li>{@code null} — if {@code s} corresponds to {@value Strings#NULL} or is undefined
+   *         ({@code null})</li>
    *         <li>{@link Boolean} — if {@code s} corresponds to a boolean literal ({@code "true"} or
    *         {@code "false"}, case-insensitive)</li>
    *         <li>{@link Number} — if {@code s} corresponds to a
@@ -594,8 +601,7 @@ public final class Objects {
    *         <li>{@link Character} — if {@code s} corresponds to a single-quoted character</li>
    *         <li>{@link String} (unescaped) — if {@code s} corresponds to a single- or double-quoted
    *         string</li>
-   *         <li>{@code null} — if {@code s} corresponds to {@value Strings#NULL}, or undefined
-   *         ({@code null}), or unknown format</li>
+   *         <li>{@link String} (as-is) — otherwise</li>
    *         </ul>
    * @see #toLiteralString(Object)
    */
@@ -627,19 +633,19 @@ public final class Objects {
       }
     }
 
-    s = s.toLowerCase();
-    // Boolean literal?
-    if (s.equals("true"))
-      return Boolean.TRUE;
-    else if (s.equals("false"))
-      return Boolean.FALSE;
+    {
+      var bool = strToBool(s);
+      // Boolean literal?
+      if (bool != null)
+        return bool;
+    }
 
     try {
       // Numeric literal.
       return NumberUtils.createNumber(s);
     } catch (NumberFormatException ex) {
-      // Invalid literal.
-      return null;
+      // Generic literal.
+      return s;
     }
   }
 
@@ -700,6 +706,26 @@ public final class Objects {
     } catch (ClassNotFoundException ex) {
       throw runtime(ex);
     }
+  }
+
+  /**
+   * Gets whether the type is basic.
+   * <p>
+   * <b>Basic types</b> comprise primitive wrappers and {@link String}.
+   * </p>
+   */
+  public static boolean isBasic(@Nullable Class<?> type) {
+    return BASIC_TYPES.contains(type);
+  }
+
+  /**
+   * Gets whether the object belongs to a basic type.
+   * <p>
+   * <b>Basic types</b> comprise primitive wrappers and {@link String}.
+   * </p>
+   */
+  public static boolean isBasic(@Nullable Object obj) {
+    return isBasic(typeOf(obj));
   }
 
   /**
@@ -941,43 +967,6 @@ public final class Objects {
   }
 
   /**
-   * (see {@link #requireState(Object, String)})
-   */
-  public static <T> @NonNull T requireState(@Nullable T obj) {
-    return requireState(obj, "State UNDEFINED");
-  }
-
-  /**
-   * Checks that the given object reference is not null.
-   * <p>
-   * This method is the state counterpart of {@link java.util.Objects#requireNonNull(Object)}:
-   * contrary to the latter (which is primarily for input validation), it is designed for doing
-   * <b>output validation</b> in accessors, as demonstrated below:
-   * </p>
-   * <pre>
-   *public Bar getBar() {
-   *  return requireState((Bar)getExternalResource("bar"));
-   *}</pre>
-   * <p>
-   * Useful in case an accessor is expected to return a non-null reference, but depends on external
-   * state beyond its control, or on internal state available in specific phases of its containing
-   * object: if the caller tries to access it in a wrong moment, an {@link IllegalStateException} is
-   * thrown.
-   * </p>
-   *
-   * @return {@code obj}
-   * @throws IllegalStateException
-   *           if {@code obj} is {@code null}.
-   * @see java.util.Objects#requireNonNull(Object)
-   */
-  public static <T> @NonNull T requireState(@Nullable T obj, String message) {
-    if (obj == null)
-      throw new IllegalStateException(message);
-
-    return obj;
-  }
-
-  /**
    * Splits the given fully-qualified name into package and class name parts.
    *
    * @return Two-part string array, where the first item is empty if {@code typeName} has no
@@ -1067,11 +1056,16 @@ public final class Objects {
    * @return
    *         <ul>
    *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
-   *         <li>{@link Object#toString()} — if {@code obj} is {@link Boolean} or
-   *         {@link Number}</li>
-   *         <li>{@link Object#toString()}, wrapped with single quotes — if {@code obj} is
-   *         {@link Character}</li>
-   *         <li>{@link Object#toString()}, escaped and wrapped with double quotes — otherwise</li>
+   *         <li>{@link Object#toString()}, suffixed with literal qualifier — if {@code obj} is
+   *         {@link Float} or {@link Long} (disambiguation against respective default literal types,
+   *         {@link Double} or {@link Integer})</li>
+   *         <li>{@link Object#toString()}, escaped and wrapped with single quotes — if {@code obj}
+   *         is {@link Character}</li>
+   *         <li>{@link Object#toString()}, escaped and wrapped with double quotes — if {@code obj}
+   *         is {@link String}</li>
+   *         <li>{@link Class#getName()} — if {@code obj} is {@link Class}
+   *         ({@link Class#getSimpleName()} for common types, under {@code java.lang} package)</li>
+   *         <li>{@link Object#toString()}, as-is — otherwise</li>
    *         </ul>
    * @see #fromLiteralString(String)
    */
@@ -1088,12 +1082,19 @@ public final class Objects {
        * NOTE: Literal long MUST be marked by suffix to override default integer type.
        */
       return obj + "L";
-    else if (obj instanceof Number || obj instanceof Boolean)
-      return obj.toString();
     else if (obj instanceof Character)
-      return S + SQUOTE + ((Character) obj == SQUOTE ? "\\" : EMPTY) + obj + SQUOTE;
+      return S + SQUOTE + ((Character) obj == SQUOTE ? S + BACKSLASH : EMPTY) + obj + SQUOTE;
+    else if (obj instanceof String)
+      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate((String) obj) + DQUOTE;
+    else if (obj instanceof Class)
+      /*
+       * NOTE: The names of classes belonging to common packages are simplified to reduce noise.
+       */
+      return objTo((Class<?>) obj, $ -> $.getPackageName().startsWith("java.lang")
+          ? $.getSimpleName()
+          : $.getName());
     else
-      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(obj.toString()) + DQUOTE;
+      return obj.toString();
   }
 
   /**

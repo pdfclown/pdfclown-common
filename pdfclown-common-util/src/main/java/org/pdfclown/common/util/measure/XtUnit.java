@@ -12,8 +12,8 @@
  */
 package org.pdfclown.common.util.measure;
 
+import static org.pdfclown.common.util.Conditions.requireState;
 import static org.pdfclown.common.util.Conditions.requireType;
-import static org.pdfclown.common.util.Objects.requireState;
 import static org.pdfclown.common.util.measure.Units.unwrap;
 import static org.pdfclown.common.util.measure.Units.wrap;
 

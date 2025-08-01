@@ -15,6 +15,7 @@ package org.pdfclown.common.build.internal.util_;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Objects.isBasic;
 import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
@@ -119,16 +120,10 @@ public class ParamMessage {
      * Formats the given argument.
      */
     protected String formatArg(@Nullable Object arg) {
-      if (arg instanceof Class) {
-        /*
-         * NOTE: The names of classes belonging to common packages are simplified to reduce noise.
-         */
-        Class<?> type = (Class<?>) arg;
-        arg = type.getPackageName().startsWith("java.lang")
-            ? type.getSimpleName()
-            : type.getName();
-      }
-      return Objects.toString(arg);
+      /*
+       * NOTE: Basic types are standardly formatted, whilst other types are specially formatted.
+       */
+      return arg == null || isBasic(arg) ? Objects.toString(arg) : toLiteralString(arg);
     }
 
     private void warn(String format, @Nullable Object... args) {

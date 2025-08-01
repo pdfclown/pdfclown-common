@@ -171,7 +171,7 @@ class AssertionsTest extends BaseTest {
             50,
             20,
             5)));
-    assertEquals("args[1].size (3): INVALID (should be 2)", exception.getMessage());
+    assertEquals("`args[1].size` (3): INVALID (should be 2)", exception.getMessage());
 
     return Stream.of(Arguments.of(null, "", 0));
   }
