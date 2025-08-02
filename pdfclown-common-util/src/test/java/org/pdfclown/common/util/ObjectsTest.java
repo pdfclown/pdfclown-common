@@ -13,6 +13,7 @@
 package org.pdfclown.common.util;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.List.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -27,13 +28,16 @@ import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.mutable.MutableObject;
@@ -185,7 +189,7 @@ class ObjectsTest extends BaseTest {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-      return List.of();
+      return of();
     }
   }
 
@@ -249,11 +253,87 @@ class ObjectsTest extends BaseTest {
       // Simple type name nested in an attribute.
       "myprop:ToStringObject");
 
+  private static final List<@Nullable Object> QN_OBJS = asList(
+      null,
+      .5,
+      'a',
+      "a string",
+      String.class,
+      Map.Entry.class);
+
+  private static final List<@Nullable String> QN_TYPENAMES = unmodifiableList(
+      (List<@Nullable String>) QN_OBJS.stream()
+          .map($ -> $ != null ? ($ instanceof Class ? (Class<?>) $ : $.getClass()).getName() : null)
+          .collect(Collectors.toCollection(ArrayList::new)));
+
+  static Stream<Arguments> fqn_Object() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] obj[0]: null
+            "null",
+            // [2] obj[1]: 0.5
+            "java.lang.Double",
+            // [3] obj[2]: 'a'
+            "java.lang.Character",
+            // [4] obj[3]: "a string"
+            "java.lang.String",
+            // [5] obj[4]: String
+            "java.lang.String",
+            // [6] obj[5]: java.util.Map$Entry
+            "java.util.Map$Entry"),
+        // obj
+        QN_OBJS);
+  }
+
+  static Stream<Arguments> fqnd_Object() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] obj[0]: null
+            "null",
+            // [2] obj[1]: 0.5
+            "java.lang.Double",
+            // [3] obj[2]: 'a'
+            "java.lang.Character",
+            // [4] obj[3]: "a string"
+            "java.lang.String",
+            // [5] obj[4]: String
+            "java.lang.String",
+            // [6] obj[5]: java.util.Map$Entry
+            "java.util.Map.Entry"),
+        // obj
+        QN_OBJS);
+  }
+
+  static Stream<Arguments> fqnd_String() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] typename[0]: null
+            "null",
+            // [2] typename[1]: "java.lang.Double"
+            "java.lang.Double",
+            // [3] typename[2]: "java.lang.Character"
+            "java.lang.Character",
+            // [4] typename[3]: "java.lang.String"
+            "java.lang.String",
+            // [5] typename[4]: "java.lang.String"
+            "java.lang.String",
+            // [6] typename[5]: "java.util.Map$Entry"
+            "java.util.Map.Entry"),
+        // obj
+        QN_TYPENAMES);
+  }
+
   static Stream<Arguments> fromLiteralString() {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // [1] s[0]: "null"
             null,
             // [2] s[1]: "1234"
@@ -286,6 +366,90 @@ class ObjectsTest extends BaseTest {
         LITERAL_STRINGS);
   }
 
+  static Stream<Arguments> sqn_Object() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] obj[0]: null
+            "null",
+            // [2] obj[1]: 0.5
+            "Double",
+            // [3] obj[2]: 'a'
+            "Character",
+            // [4] obj[3]: "a string"
+            "String",
+            // [5] obj[4]: String
+            "String",
+            // [6] obj[5]: java.util.Map$Entry
+            "Map$Entry"),
+        // obj
+        QN_OBJS);
+  }
+
+  static Stream<Arguments> sqn_String() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] typename[0]: null
+            "null",
+            // [2] typename[1]: "java.lang.Double"
+            "Double",
+            // [3] typename[2]: "java.lang.Character"
+            "Character",
+            // [4] typename[3]: "java.lang.String"
+            "String",
+            // [5] typename[4]: "java.lang.String"
+            "String",
+            // [6] typename[5]: "java.util.Map$Entry"
+            "Map$Entry"),
+        // obj
+        QN_TYPENAMES);
+  }
+
+  static Stream<Arguments> sqnd_Object() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] obj[0]: null
+            "null",
+            // [2] obj[1]: 0.5
+            "Double",
+            // [3] obj[2]: 'a'
+            "Character",
+            // [4] obj[3]: "a string"
+            "String",
+            // [5] obj[4]: String
+            "String",
+            // [6] obj[5]: java.util.Map$Entry
+            "Map.Entry"),
+        // obj
+        QN_OBJS);
+  }
+
+  static Stream<Arguments> sqnd_String() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] typename[0]: null
+            "null",
+            // [2] typename[1]: "java.lang.Double"
+            "Double",
+            // [3] typename[2]: "java.lang.Character"
+            "Character",
+            // [4] typename[3]: "java.lang.String"
+            "String",
+            // [5] typename[4]: "java.lang.String"
+            "String",
+            // [6] typename[5]: "java.util.Map$Entry"
+            "Map.Entry"),
+        // obj
+        QN_TYPENAMES);
+  }
+
   static Stream<Arguments> toLiteralString() {
     return argumentsStream(
         cartesian(),
@@ -306,7 +470,7 @@ class ObjectsTest extends BaseTest {
             String.class,
             Stream.class,
             Strings.class,
-            List.of("one", "two")));
+            of("one", "two")));
   }
 
   static Stream<Arguments> toQualifiedString() {
@@ -314,7 +478,7 @@ class ObjectsTest extends BaseTest {
         cartesian()
             .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // [1] obj[0]: null
             "null",
             // [2] obj[1]: "ToStringObject"
@@ -350,7 +514,7 @@ class ObjectsTest extends BaseTest {
         cartesian()
             .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // [1] obj[0]: null
             "null",
             // [2] obj[1]: "ToStringObject"
@@ -397,6 +561,36 @@ class ObjectsTest extends BaseTest {
         Iterable.class,
         Serializable.class,
         Object.class));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void fqn_Object(Expected<String> expected, @Nullable Object obj) {
+    assertParameterizedOf(
+        () -> Objects.fqn(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void fqnd_Object(Expected<String> expected, @Nullable Object obj) {
+    assertParameterizedOf(
+        () -> Objects.fqnd(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void fqnd_String(Expected<String> expected, @Nullable String typename) {
+    assertParameterizedOf(
+        () -> Objects.fqnd(typename),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("typename", typename))));
   }
 
   @ParameterizedTest
@@ -524,6 +718,46 @@ class ObjectsTest extends BaseTest {
 
     assertThat(exceptionRef.getValue(), instanceOf(IllegalStateException.class));
     assertThat(exceptionRef.getValue().getMessage(), is("FAILED"));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void sqn_Object(Expected<String> expected, @Nullable Object obj) {
+    assertParameterizedOf(
+        () -> Objects.sqn(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void sqn_String(Expected<String> expected, @Nullable String typename) {
+    assertParameterizedOf(
+        () -> Objects.sqn(typename),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("typename", typename))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void sqnd_Object(Expected<String> expected, @Nullable Object obj) {
+    assertParameterizedOf(
+        () -> Objects.sqnd(obj),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("obj", obj))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void sqnd_String(Expected<String> expected, @Nullable String typename) {
+    assertParameterizedOf(
+        () -> Objects.sqnd(typename),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("typename", typename))));
   }
 
   @ParameterizedTest

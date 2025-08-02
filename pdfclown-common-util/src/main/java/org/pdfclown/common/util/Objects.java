@@ -29,13 +29,13 @@ import static org.pdfclown.common.util.Strings.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.util.Strings.DOT;
 import static org.pdfclown.common.util.Strings.DQUOTE;
 import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.NULL;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SPACE;
 import static org.pdfclown.common.util.Strings.SQUOTE;
-import static org.pdfclown.common.util.Strings.indexFound;
 import static org.pdfclown.common.util.Strings.strNormToNull;
 
 import java.util.Collection;
@@ -1468,9 +1468,10 @@ public final class Objects {
   }
 
   private static String sqn(@Nullable String typeName, boolean dotted) {
-    return fqn(objTo(typeName, $ -> indexFound($.indexOf(DOT))
-        ? $.substring($.lastIndexOf(DOT) + 1)
-        : typeName), dotted);
+    return fqn(objTo(typeName, $ -> {
+      int index = $.lastIndexOf(DOT);
+      return index != INDEX__NOT_FOUND ? $.substring(index + 1) : $;
+    }), dotted);
   }
 
   private Objects() {
