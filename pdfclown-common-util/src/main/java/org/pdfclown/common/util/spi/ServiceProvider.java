@@ -18,7 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Stream;
-import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.annot.GraphImmutable;
 
 /**
  * Pluggable extension based on the {@link ServiceLoader} mechanism.
@@ -28,7 +28,7 @@ import org.pdfclown.common.util.annot.Immutable;
  *
  * @author Stefano Chizzolini
  */
-@Immutable
+@GraphImmutable
 public interface ServiceProvider {
   /**
    * Retrieves available providers of the given type, sorted by priority.

@@ -29,7 +29,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.annot.ReadOnly;
+import org.pdfclown.common.util.annot.Unmodifiable;
 import org.pdfclown.common.util.spi.ServiceProvider;
 import org.pdfclown.common.util.spi.XnumProvider;
 
@@ -316,7 +316,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
    * @param type
    *          Augmented enumeration type.
    */
-  public static <E extends Xnum<K>, K> @Nullable @ReadOnly Collection<E> values(Class<E> type) {
+  public static <E extends Xnum<K>, K> @Nullable @Unmodifiable Collection<E> values(Class<E> type) {
     /*
      * NOTE: The unmodifiable collection guarantees that changes to the backing collections are
      * visible to it too.

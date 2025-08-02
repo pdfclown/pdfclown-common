@@ -13,14 +13,14 @@
 package org.pdfclown.common.util.spi;
 
 import org.pdfclown.common.util.Xnum;
-import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.annot.GraphImmutable;
 
 /**
  * Augmented enumeration provider.
  *
  * @author Stefano Chizzolini
  */
-@Immutable
+@GraphImmutable
 public interface XnumProvider extends ServiceProvider {
   /**
    * Tries to load the implementation of the given {@link Xnum}-derived interface.

@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.annot.Immutable;
+import org.pdfclown.common.build.internal.util_.annot.GraphImmutable;
 
 /**
  * Interval of comparable objects.
@@ -44,7 +44,7 @@ import org.pdfclown.common.build.internal.util_.annot.Immutable;
  *          </p>
  * @author Stefano Chizzolini
  */
-@Immutable
+@GraphImmutable
 public class Range<T> {
   /**
    * Interval endpoint.
@@ -53,7 +53,7 @@ public class Range<T> {
    *          Value type.
    * @author Stefano Chizzolini
    */
-  @Immutable
+  @GraphImmutable
   public static final class Endpoint<T> {
     @SuppressWarnings({ "rawtypes" })
     static final Endpoint UNBOUND = new Endpoint<>(null, false);

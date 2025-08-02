@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Immutable.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (GraphImmutable.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -21,12 +21,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated type or type use is <i>shallowly immutable</i>, that is its
- * immutability is limited to itself, thus excluding the graph of the objects it references.
+ * Indicates that the annotated type or type use is <i>deeply immutable</i>, that is its
+ * immutability includes the graph of the objects it references.
  * <p>
- * <b>Shallow immutability</b> is about the <i>stability of the externally-observable object state,
- * referenced objects exclusive</i>; it is stricter than {@linkplain Unmodifiable view
- * unmodifiability} and looser than {@linkplain GraphImmutable deep immutability}.
+ * <b>Deep immutability</b> is about the <i>stability of the externally-observable object state,
+ * referenced objects inclusive</i>; it is stricter than {@linkplain Immutable shallow immutability}
+ * and {@linkplain Unmodifiable view unmodifiability}.
  * </p>
  * <p>
  * <b>Externally-observable state</b> comprises values and object references directly associated to
@@ -42,10 +42,12 @@ import java.lang.annotation.Target;
  * classes (any additional state MUST be immutable itself), the former are limited to their own
  * definition (derived interfaces and implementing classes may declare additional state as mutable).
  * Consequently, <span class="important">an object referenced as an immutable interface isn't itself
- * immutable, unless the type exposing that reference is {@linkplain GraphImmutable deeply
- * immutable}</span>. All considered, immutable interfaces are mostly relevant to implementers
- * rather than users, since immutable classes are required to implement only (effectively) immutable
- * interfaces.
+ * immutable, unless the class exposing that reference is deeply immutable</span>: in such case, the
+ * class MUST guarantee that the underlying referenced class is immutable itself (i.e., the object
+ * MUST be <i>effectively immutable</i> — e.g., it may declare a {@link java.util.List List} whose
+ * actual class is a fixed-size list from {@link java.util.List#of(Object[]) List.of(...)}). All
+ * considered, immutable interfaces are mostly relevant to implementers rather than users, since
+ * immutable classes are required to implement only (effectively) immutable interfaces.
  * </p>
  * <table>
  * <caption>Stability on type definition</caption>
@@ -72,9 +74,9 @@ import java.lang.annotation.Target;
  * </tr>
  * <tr>
  * <th>Indirect (referenced objects)</th>
- * <td>NO</td>
- * <td>NO</td>
- * <td>NO</td>
+ * <td>YES</td>
+ * <td>YES</td>
+ * <td>YES</td>
  * <td>NO</td>
  * </tr>
  * </table>
@@ -83,16 +85,17 @@ import java.lang.annotation.Target;
  * <li>class:
  * <ul>
  * <li>the annotated class has only immutable state (inherited state is also effectively immutable),
- * whose types may be mutable</li>
+ * whose types are themselves deeply immutable</li>
  * <li>the annotated class may be final (<b>strong immutability</b>), or not (<b>weak
- * immutability</b>); in the latter case, derived classes MUST honour the immutability
+ * immutability</b>); in the latter case, derived classes MUST honour the deep immutability
  * themselves</li>
  * </ul>
  * </li>
  * <li>interface:
  * <ul>
- * <li>the annotated interface declares only immutable state, whose types may be mutable</li>
- * <li>the parents of the annotated interface are themselves immutable</li>
+ * <li>the annotated interface declares only immutable state, whose types are themselves deeply
+ * immutable</li>
+ * <li>the parents of the annotated interface are themselves deeply immutable</li>
  * <li>the children of the annotated interface MUST honour the immutability of the inherited
  * interface, but can add mutable state of their own</li>
  * </ul>
@@ -100,11 +103,11 @@ import java.lang.annotation.Target;
  * </ul>
  *
  * @author Stefano Chizzolini
- * @see GraphImmutable
+ * @see Immutable
  * @see Unmodifiable
  */
 @Documented
 @Retention(CLASS)
 @Target({ TYPE, TYPE_USE })
-public @interface Immutable {
+public @interface GraphImmutable {
 }

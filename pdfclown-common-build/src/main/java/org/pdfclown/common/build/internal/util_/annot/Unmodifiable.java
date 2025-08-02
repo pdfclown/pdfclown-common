@@ -21,33 +21,64 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated type or type use is unmodifiable.
+ * Indicates that the annotated type or type use is an <i>unmodifiable view</i>, allowing only read
+ * access to its state.
  * <p>
- * Unmodifiability is about the <i>stability of the object state, referenced objects exclusive</i>;
- * it is stricter than {@linkplain ReadOnly view unmodifiability} and looser than
- * {@linkplain Immutable immutability}.
+ * <b>View unmodifiability</b> is about the <i>stability of the externally-observable object state,
+ * referenced objects exclusive, against observers' write access</i> (i.e.,
+ * <span class="important">the object state is mutable per-se, but the observers cannot mutate
+ * it</span>); it is looser than {@linkplain Immutable shallow immutability} and
+ * {@linkplain GraphImmutable deep immutability}.
  * </p>
+ * <p>
+ * <b>Externally-observable state</b> comprises values and object references directly associated to
+ * the class, and the objects indirectly associated to the class through object references. Mutable
+ * private fields which don't influence the externally-observable state are irrelevant (e.g.,
+ * defensive copy of arrays and other mutable objects makes them effectively immutable;
+ * <a href="https://en.wikipedia.org/wiki/Memoization">memoization</a> doesn't affect the
+ * externally-observable state).
+ * </p>
+ * <table>
+ * <caption>Stability on type use</caption>
+ * <tr>
+ * <th rowspan="2">State</th>
+ * <th colspan="3">Stability</th>
+ * </tr>
+ * <tr>
+ * <th>Observers</th>
+ * <th>Owners</th>
+ * <th>Overall</th>
+ * </tr>
+ * <tr>
+ * <th>Direct (values and object references)</th>
+ * <td>YES</td>
+ * <td>NO</td>
+ * <td>NO</td>
+ * </tr>
+ * <tr>
+ * <th>Indirect (referenced objects)</th>
+ * <td>NO</td>
+ * <td>NO</td>
+ * <td>NO</td>
+ * </tr>
+ * </table>
  * <h2>Requirements</h2>
  * <ul>
  * <li>class:
  * <ul>
- * <li>the annotated class has only unmodifiable fields, whose types may be mutable</li>
- * <li>the annotated class is {@code final} (<b>strong unmodifiability</b>), or not (<b>weak
- * unmodifiability</b>)</li>
+ * <li>the annotated class has effectively no member with mutation semantics (any setter or other
+ * method with side effects throws {@link UnsupportedOperationException})</li>
+ * <li>the annotated class is final (<b>strong unmodifiability</b>), or not (<b>weak
+ * unmodifiability</b>); in the latter case, derived classes MUST honour the unmodifiability
+ * themselves</li>
  * </ul>
  * </li>
- * <li>interface:
- * <ul>
- * <li>the annotated interface has no member with mutation semantics (setters or other methods with
- * side effects), whilst its getters may return types which are mutable</li>
- * <li>the parent interfaces of the annotated interface are themselves unmodifiable</li>
- * </ul>
- * </li>
+ * <li>interface: not applicable (view unmodifiability is an implementation detail)</li>
  * </ul>
  *
  * @author Stefano Chizzolini
  * @see Immutable
- * @see ReadOnly
+ * @see GraphImmutable
  */
 @Documented
 @Retention(CLASS)
