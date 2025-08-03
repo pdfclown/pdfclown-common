@@ -3,16 +3,16 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (RelativeMap.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (RelatedMap.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.internal.util_;
+package org.pdfclown.common.util;
 
-import static org.pdfclown.common.build.internal.util_.Objects.sqn;
+import static org.pdfclown.common.util.Objects.sqn;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Implicit matches are discovered looking for keys related to missing ones, provided by
  * {@link #relatedKeysProvider}; once a related key is found, the missing key is mapped to its
- * value, ensuring a match on next request.
+ * value, ensuring a match on next requests.
  * </p>
  * <p>
  * Useful, e.g., in case of maps keyed hierarchically, like {@link Class}: adding an entry for a
@@ -41,20 +41,20 @@ import org.slf4j.LoggerFactory;
  *           explicit, user-defined ones} — this is useful for tracing entries back to their
  *           respective root assignments.
  */
-public class RelativeMap<K, V> extends HashMap<K, V> {
+public class RelatedMap<K, V> extends HashMap<K, V> {
   private static final long serialVersionUID = 1L;
 
-  private static final Logger log = LoggerFactory.getLogger(RelativeMap.class);
+  private static final Logger log = LoggerFactory.getLogger(RelatedMap.class);
 
   /**
    * Provides a sequence of keys related to the given one.
    */
   protected @Nullable Function<K, Iterable<K>> relatedKeysProvider;
 
-  public RelativeMap() {
+  public RelatedMap() {
   }
 
-  public RelativeMap(@Nullable Function<K, Iterable<K>> relatedKeysProvider) {
+  public RelatedMap(@Nullable Function<K, Iterable<K>> relatedKeysProvider) {
     this.relatedKeysProvider = relatedKeysProvider;
   }
 
@@ -65,7 +65,7 @@ public class RelativeMap<K, V> extends HashMap<K, V> {
    * @param m
    *          Map whose mappings are to be copied to this map.
    */
-  public RelativeMap(@Nullable Function<K, Iterable<K>> relatedKeysProvider,
+  public RelatedMap(@Nullable Function<K, Iterable<K>> relatedKeysProvider,
       Map<? extends K, ? extends V> m) {
     this(relatedKeysProvider);
 

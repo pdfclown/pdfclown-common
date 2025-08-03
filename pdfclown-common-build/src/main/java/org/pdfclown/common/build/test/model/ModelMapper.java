@@ -41,7 +41,7 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
 import org.pdfclown.common.build.internal.util_.Objects.HierarchicalTypeComparator;
 import org.pdfclown.common.build.internal.util_.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
-import org.pdfclown.common.build.internal.util_.RelativeMap;
+import org.pdfclown.common.build.internal.util_.RelatedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,7 +260,7 @@ public class ModelMapper<T> {
    * @author Stefano Chizzolini
    */
   @SuppressWarnings("rawtypes")
-  protected static class ValueMapperMap extends RelativeMap<Class, ValueMapper> {
+  protected static class ValueMapperMap extends RelatedMap<Class, ValueMapper> {
     private static final long serialVersionUID = 1L;
 
     private static int libraryPriority(String name) {
