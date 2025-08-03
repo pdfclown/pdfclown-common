@@ -36,23 +36,33 @@ public final class Ref<T> extends MutableObject<T> {
   }
 
   /**
-   * Sets {@link #getValue() value} as undefined.
+   * Sets {@link #get() value} as undefined.
    */
   public void clear() {
-    setValue(null);
+    set(null);
   }
 
   /**
-   * Whether {@link #getValue() value} is undefined.
+   * Whether {@link #get() value} is undefined.
    */
   public boolean isEmpty() {
-    return getValue() == null;
+    return get() == null;
   }
 
   /**
-   * Whether {@link #getValue() value} is defined.
+   * Whether {@link #get() value} is defined.
    */
   public boolean isPresent() {
-    return getValue() != null;
+    return get() != null;
+  }
+
+  /**
+   * Sets {@link #get() value}.
+   *
+   * @implNote Weirdly enough, {@link org.apache.commons.lang3.mutable.Mutable Mutable} deprecated
+   *           {@link #getValue() getValue} but kept {@link #setValue(Object) setValue}.
+   */
+  public void set(@Nullable T value) {
+    setValue(value);
   }
 }
