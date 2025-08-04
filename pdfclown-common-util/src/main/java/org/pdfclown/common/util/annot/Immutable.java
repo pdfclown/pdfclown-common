@@ -21,12 +21,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated type or type use is <i>shallowly immutable</i>, that is its
- * immutability is limited to itself, thus excluding the graph of the objects it references.
+ * Indicates that the annotated type or type use is immutable.
  * <p>
- * <b>Shallow immutability</b> is about the <i>stability of the externally-observable object state,
- * referenced objects exclusive</i>; it is stricter than {@linkplain Unmodifiable view
- * unmodifiability} and looser than {@linkplain GraphImmutable deep immutability}.
+ * <b>Immutability</b> is about the <i>stability of the externally-observable object state,
+ * referenced objects inclusive</i>; it is stricter than {@linkplain UnmodifiableView view
+ * unmodifiability} and {@linkplain Unmodifiable proper unmodifiability}.
  * </p>
  * <p>
  * <b>Externally-observable state</b> comprises values and object references directly associated to
@@ -37,15 +36,23 @@ import java.lang.annotation.Target;
  * externally-observable state).
  * </p>
  * <p>
- * Because of the intrinsic flexibility of interfaces, <i>the semantics of annotated interfaces are
- * much weaker than annotated classes</i>: whilst the latter extend their immutability to derived
- * classes (any additional state MUST be immutable itself), the former are limited to their own
- * definition (derived interfaces and implementing classes may declare additional state as mutable).
+ * Due to the intrinsic flexibility of interfaces, <i>the semantics of annotated interfaces are much
+ * weaker than annotated classes</i>: whilst the latter extend their immutability to derived classes
+ * (any additional state MUST be immutable itself), the former are limited to their own definition
+ * (derived interfaces and implementing classes may declare additional state as mutable).
  * Consequently, <span class="important">an object referenced as an immutable interface isn't itself
- * immutable, unless the type exposing that reference is {@linkplain GraphImmutable deeply
- * immutable}</span>. All considered, immutable interfaces are mostly relevant to implementers
- * rather than users, since immutable classes are required to implement only (effectively) immutable
- * interfaces.
+ * immutable, unless the class exposing that reference is immutable or marks its use as
+ * immutable</span>: in such case, the class MUST guarantee that the underlying referenced class is
+ * immutable itself (i.e., the object MUST be <i>effectively immutable</i> — e.g., it may declare a
+ * {@link java.util.List List} whose actual class is an immutable list from
+ * {@link java.util.List#of(Object[]) List.of(...)}). All considered, immutable interfaces are
+ * mostly relevant to implementers rather than users, since immutable classes are required to
+ * implement only (effectively) immutable interfaces.
+ * </p>
+ * <p>
+ * NOTE: <span class="important">This annotation is NOT inheritable, it MUST explicitly mark each
+ * and every applicable type.</span> The rationale, beside the fact that immutability does not
+ * extend to derived interfaces, is that clarity should win over succinctness.
  * </p>
  * <table>
  * <caption>Stability on type definition</caption>
@@ -64,17 +71,17 @@ import java.lang.annotation.Target;
  * <th>Derived types</th>
  * </tr>
  * <tr>
- * <th>Direct (values and object references)</th>
+ * <th>Direct/Shallow (values and object references)</th>
  * <td>YES</td>
  * <td>YES</td>
  * <td>YES</td>
  * <td>NO</td>
  * </tr>
  * <tr>
- * <th>Indirect (referenced objects)</th>
- * <td>NO</td>
- * <td>NO</td>
- * <td>NO</td>
+ * <th>Indirect/Deep (referenced objects)</th>
+ * <td>YES</td>
+ * <td>YES</td>
+ * <td>YES</td>
  * <td>NO</td>
  * </tr>
  * </table>
@@ -83,7 +90,7 @@ import java.lang.annotation.Target;
  * <li>class:
  * <ul>
  * <li>the annotated class has only immutable state (inherited state is also effectively immutable),
- * whose types may be mutable</li>
+ * whose types are themselves immutable</li>
  * <li>the annotated class may be final (<b>strong immutability</b>), or not (<b>weak
  * immutability</b>); in the latter case, derived classes MUST honour the immutability
  * themselves</li>
@@ -91,7 +98,8 @@ import java.lang.annotation.Target;
  * </li>
  * <li>interface:
  * <ul>
- * <li>the annotated interface declares only immutable state, whose types may be mutable</li>
+ * <li>the annotated interface declares only immutable state, whose types are themselves
+ * immutable</li>
  * <li>the parents of the annotated interface are themselves immutable</li>
  * <li>the children of the annotated interface MUST honour the immutability of the inherited
  * interface, but can add mutable state of their own</li>
@@ -100,8 +108,10 @@ import java.lang.annotation.Target;
  * </ul>
  *
  * @author Stefano Chizzolini
- * @see GraphImmutable
  * @see Unmodifiable
+ * @see UnmodifiableView
+ * @see <a href="https://docs.oracle.com/javase/tutorial/essential/concurrency/imstrat.html">A
+ *      Strategy for Defining Immutable Objects</a>
  */
 @Documented
 @Retention(CLASS)

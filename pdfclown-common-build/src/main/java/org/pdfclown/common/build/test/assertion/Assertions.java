@@ -73,7 +73,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.system.Desktops;
 import org.pdfclown.common.build.internal.util_.Objects;
-import org.pdfclown.common.build.internal.util_.annot.Immutable;
+import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 import org.pdfclown.common.build.internal.util_.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
 import org.pdfclown.common.build.util.system.Runtimes;
@@ -1043,7 +1043,7 @@ public final class Assertions {
   private static final ThreadLocal<@Nullable ExpectedGenerator> expectedGenerator =
       new ThreadLocal<>();
 
-  @Immutable
+  @Unmodifiable
   @SuppressWarnings({ "rawtypes", "unchecked" })
   private static final Expected<?> EXPECTED__VOID = new Expected(null, null) {
     @Override

@@ -17,14 +17,14 @@ import static org.pdfclown.common.build.internal.util_.Objects.objCast;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.annot.GraphImmutable;
+import org.pdfclown.common.build.internal.util_.annot.Immutable;
 
 /**
  * <a href="https://en.wikipedia.org/wiki/Fluent_interface">Fluent</a> object.
  *
  * @author Stefano Chizzolini
  */
-@GraphImmutable
+@Immutable
 public interface Fluent {
   /**
    * Applies the given action to this object.

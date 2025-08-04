@@ -21,14 +21,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated type or type use is an <i>unmodifiable view</i>, allowing only read
- * access to its state.
+ * Indicates that the annotated type or type use is unmodifiable.
  * <p>
- * <b>View unmodifiability</b> is about the <i>stability of the externally-observable object state,
- * referenced objects exclusive, against observers' write access</i> (i.e.,
- * <span class="important">the object state is mutable per-se, but the observers cannot mutate
- * it</span>); it is looser than {@linkplain Immutable shallow immutability} and
- * {@linkplain GraphImmutable deep immutability}.
+ * <b>Unmodifiability</b> is about the <i>stability of the externally-observable object state,
+ * referenced objects exclusive</i>; it is stricter than {@linkplain UnmodifiableView view
+ * unmodifiability} and looser than {@linkplain Immutable immutability}.
  * </p>
  * <p>
  * <b>Externally-observable state</b> comprises values and object references directly associated to
@@ -38,25 +35,48 @@ import java.lang.annotation.Target;
  * <a href="https://en.wikipedia.org/wiki/Memoization">memoization</a> doesn't affect the
  * externally-observable state).
  * </p>
+ * <p>
+ * Due to the intrinsic flexibility of interfaces, <i>the semantics of annotated interfaces are much
+ * weaker than annotated classes</i>: whilst the latter extend their unmodifiability to derived
+ * classes (any additional state MUST be unmodifiable itself), the former are limited to their own
+ * definition (derived interfaces and implementing classes may declare additional state as mutable).
+ * Consequently, <span class="important">an object referenced as an unmodifiable interface isn't
+ * itself unmodifiable, unless the type exposing that reference is {@linkplain Immutable immutable}
+ * or marks its use as unmodifiable</span>. All considered, unmodifiable interfaces are mostly
+ * relevant to implementers rather than users, since unmodifiable classes are required to implement
+ * only (effectively) unmodifiable interfaces.
+ * </p>
+ * <p>
+ * NOTE: <span class="important">This annotation is NOT inheritable, it MUST explicitly mark each
+ * and every applicable type.</span> The rationale, beside the fact that unmodifiability does not
+ * extend to derived interfaces, is that clarity should win over succinctness.
+ * </p>
  * <table>
- * <caption>Stability on type use</caption>
+ * <caption>Stability on type definition</caption>
  * <tr>
- * <th rowspan="2">State</th>
- * <th colspan="3">Stability</th>
+ * <th rowspan="3">State</th>
+ * <th colspan="4">Stability</th>
  * </tr>
  * <tr>
- * <th>Observers</th>
- * <th>Owners</th>
- * <th>Overall</th>
+ * <th colspan="2">Class</th>
+ * <th colspan="2">Interface</th>
  * </tr>
  * <tr>
- * <th>Direct (values and object references)</th>
+ * <th>Self</th>
+ * <th>Derived types</th>
+ * <th>Self</th>
+ * <th>Derived types</th>
+ * </tr>
+ * <tr>
+ * <th>Direct/Shallow (values and object references)</th>
+ * <td>YES</td>
+ * <td>YES</td>
  * <td>YES</td>
  * <td>NO</td>
- * <td>NO</td>
  * </tr>
  * <tr>
- * <th>Indirect (referenced objects)</th>
+ * <th>Indirect/Deep (referenced objects)</th>
+ * <td>NO</td>
  * <td>NO</td>
  * <td>NO</td>
  * <td>NO</td>
@@ -66,19 +86,26 @@ import java.lang.annotation.Target;
  * <ul>
  * <li>class:
  * <ul>
- * <li>the annotated class has effectively no member with mutation semantics (any setter or other
- * method with side effects throws {@link UnsupportedOperationException})</li>
- * <li>the annotated class is final (<b>strong unmodifiability</b>), or not (<b>weak
+ * <li>the annotated class has only unmodifiable state (inherited state is also effectively
+ * unmodifiable), whose types may be mutable</li>
+ * <li>the annotated class may be final (<b>strong unmodifiability</b>), or not (<b>weak
  * unmodifiability</b>); in the latter case, derived classes MUST honour the unmodifiability
  * themselves</li>
  * </ul>
  * </li>
- * <li>interface: not applicable (view unmodifiability is an implementation detail)</li>
+ * <li>interface:
+ * <ul>
+ * <li>the annotated interface declares only unmodifiable state, whose types may be mutable</li>
+ * <li>the parents of the annotated interface are themselves unmodifiable</li>
+ * <li>the children of the annotated interface MUST honour the unmodifiability of the inherited
+ * interface, but can add mutable state of their own</li>
+ * </ul>
+ * </li>
  * </ul>
  *
  * @author Stefano Chizzolini
  * @see Immutable
- * @see GraphImmutable
+ * @see UnmodifiableView
  */
 @Documented
 @Retention(CLASS)

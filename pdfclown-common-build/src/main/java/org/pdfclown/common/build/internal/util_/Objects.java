@@ -69,8 +69,8 @@ import org.apache.commons.text.translate.LookupTranslator;
 import org.apache.commons.text.translate.OctalUnescaper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.annot.Immutable;
 import org.pdfclown.common.build.internal.util_.annot.PolyNull;
+import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 import org.pdfclown.common.build.internal.util_.regex.Patterns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,7 +302,7 @@ public final class Objects {
    * default comparator}.
    */
   @SuppressWarnings("rawtypes")
-  public static @Immutable Iterable<Class> ancestors(Class type) {
+  public static @Unmodifiable Iterable<Class> ancestors(Class type) {
     return ancestors(type, HierarchicalTypeComparator.get());
   }
 
@@ -310,7 +310,7 @@ public final class Objects {
    * Gets the ancestors of the given type, ordered by {@code comparator}.
    */
   @SuppressWarnings("rawtypes")
-  public static @Immutable Iterable<Class> ancestors(Class type,
+  public static @Unmodifiable Iterable<Class> ancestors(Class type,
       HierarchicalTypeComparator comparator) {
     return ancestors(type, comparator, Set.of(), false);
   }
@@ -324,7 +324,7 @@ public final class Objects {
    *          Whether stopped types are excluded from returned ancestors.
    */
   @SuppressWarnings("rawtypes")
-  public static @Immutable Iterable<Class> ancestors(Class type,
+  public static @Unmodifiable Iterable<Class> ancestors(Class type,
       HierarchicalTypeComparator comparator, Set<Class> stoppers, boolean stopperExclusive) {
     var ret = new TreeSet<>(comparator);
 

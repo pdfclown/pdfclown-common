@@ -90,6 +90,7 @@ public final class Strings {
    */
   public static final char SQUOTE = APOSTROPHE;
   public static final char STAR = '*';
+  public static final char TAB = '\t';
   public static final char UNDERSCORE = LOW_LINE;
 
   /**

@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.annot.Immutable;
+import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 
 /**
  * Aggregation (ie, collection or map) utilities.
@@ -415,7 +415,7 @@ public final class Aggregations {
    *
    * @see Map#entry( Object, Object)
    */
-  public static <K, V> Map.@Immutable Entry<K, V> entry(@Nullable K key, @Nullable V value) {
+  public static <K, V> Map.@Unmodifiable Entry<K, V> entry(@Nullable K key, @Nullable V value) {
     return new AbstractMap.SimpleImmutableEntry<>(key, value);
   }
 
