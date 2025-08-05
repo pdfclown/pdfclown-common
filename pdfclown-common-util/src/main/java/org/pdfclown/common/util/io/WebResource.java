@@ -14,29 +14,47 @@ package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URL;
+import java.net.URI;
+import org.pdfclown.common.util.annot.Immutable;
 
 /**
  * Generic web resource.
  *
  * @author Stefano Chizzolini
  */
+@Immutable
 public class WebResource extends AbstractResource {
-  private final URL url;
+  private final URI uri;
 
-  WebResource(String name, URL url) {
+  WebResource(String name, URI uri) {
     super(name);
 
-    this.url = requireNonNull(url, "`url`");
+    this.uri = requireNonNull(uri, "`uri`");
   }
 
   @Override
-  public URL getUrl() {
-    return url;
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    else if (o == null || this.getClass() != o.getClass())
+      return false;
+
+    var that = (WebResource) o;
+    return this.uri.equals(that.uri);
+  }
+
+  @Override
+  public URI getUri() {
+    return uri;
+  }
+
+  @Override
+  public int hashCode() {
+    return uri.hashCode();
   }
 
   @Override
   public String toString() {
-    return url.toString();
+    return uri.toString();
   }
 }

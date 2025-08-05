@@ -13,16 +13,18 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.net.Uris.url;
+import static org.pdfclown.common.util.net.Uris.uri;
 
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
+import org.pdfclown.common.util.annot.Immutable;
 
 /**
  * Plain filesystem resource.
  *
  * @author Stefano Chizzolini
  */
+@Immutable
 public class FileResource extends AbstractResource implements PathResource {
   private final Path path;
 
@@ -33,13 +35,29 @@ public class FileResource extends AbstractResource implements PathResource {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    else if (o == null || this.getClass() != o.getClass())
+      return false;
+
+    var that = (FileResource) o;
+    return this.path.equals(that.path);
+  }
+
+  @Override
   public Path getPath() {
     return path;
   }
 
   @Override
-  public URL getUrl() {
-    return url(path);
+  public URI getUri() {
+    return uri(path);
+  }
+
+  @Override
+  public int hashCode() {
+    return path.hashCode();
   }
 
   @Override

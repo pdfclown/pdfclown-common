@@ -14,29 +14,19 @@ package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Strings.COLON;
+import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
+import static org.pdfclown.common.util.net.Uris.SCHEME__FILE;
+
+import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.net.Uris;
 
 /**
  * {@link Resource} base implementation.
  *
  * @author Stefano Chizzolini
  */
+@Immutable
 public abstract class AbstractResource implements Resource {
-  /**
-   * "{@code classpath}" resource protocol.
-   */
-  static final String URI_SCHEME__CLASSPATH = "classpath";
-  /**
-   * "{@code file}" resource protocol.
-   */
-  static final String URI_SCHEME__FILE = "file";
-  /**
-   * "{@code jar}" resource protocol.
-   */
-  static final String URI_SCHEME__JAR = "jar";
-
-  static final String URI_SCHEME_PART__CLASSPATH = URI_SCHEME__CLASSPATH + COLON;
-  static final String URI_SCHEME_PART__FILE = URI_SCHEME__FILE + COLON;
-
   private final String name;
 
   protected AbstractResource(String name) {

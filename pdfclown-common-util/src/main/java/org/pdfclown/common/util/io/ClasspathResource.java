@@ -13,9 +13,17 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Strings.COLON;
+import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.SLASH;
+import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
+import static org.pdfclown.common.util.net.Uris.SCHEME__FILE;
+import static org.pdfclown.common.util.net.Uris.SCHEME__JAR;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -26,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.annot.Immutable;
 
 /**
  * Classpath resource.
@@ -45,8 +54,12 @@ import org.jspecify.annotations.Nullable;
  *
  * @author Stefano Chizzolini
  */
+@Immutable
 public class ClasspathResource extends AbstractResource implements PathResource {
-  private static final String JAR_ENTRY_SEPARATOR = "!/";
+  /**
+   * JAR URL separator (see {@link java.net.JarURLConnection}).
+   */
+  private static final String JAR_URL_SEPARATOR = "!/";
 
   /*
    * TODO: cache soft refs!
@@ -56,10 +69,14 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   static @Nullable ClasspathResource of(String name, ClassLoader cl) {
     URL url;
     {
-      int index = 0;
-      if (name.startsWith(URI_SCHEME_PART__CLASSPATH)) {
-        index = URI_SCHEME_PART__CLASSPATH.length();
+      int index = name.indexOf(COLON);
+      // Strip classpath scheme!
+      if (index != INDEX__NOT_FOUND && name.substring(0, index).equals(SCHEME__CLASSPATH)) {
+        index++;
+      } else {
+        index = 0;
       }
+      // Strip leading slash!
       if (name.charAt(index) == SLASH) {
         index++;
       }
@@ -77,34 +94,53 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   }
 
   private static String jarEntryName(String path) {
-    return path.substring(path.indexOf(JAR_ENTRY_SEPARATOR) + JAR_ENTRY_SEPARATOR.length());
+    return path.substring(path.indexOf(JAR_URL_SEPARATOR) + JAR_URL_SEPARATOR.length());
   }
 
   private static String jarFileName(String path) {
-    return path.substring(URI_SCHEME_PART__FILE.length(), path.indexOf(JAR_ENTRY_SEPARATOR));
+    return path.substring((SCHEME__FILE + COLON).length(), path.indexOf(JAR_URL_SEPARATOR));
   }
 
   private final Path path;
-  private final URL url;
+  private final URI uri;
 
   protected ClasspathResource(String name, URL url) {
     super(name);
 
-    this.url = requireNonNull(url, "`url`");
+    try {
+      this.uri = requireNonNull(url, "`url`").toURI();
+    } catch (URISyntaxException ex) {
+      throw runtime(ex);
+    }
 
-    switch (url.getProtocol()) {
-      case URI_SCHEME__JAR: {
+    switch (uri.getScheme()) {
+      case SCHEME__JAR: {
+        /*
+         * NOTE: We have to access `URL.path` instead of `URI.path`, as the latter returns `null`
+         * since URI treats JAR protocol as opaque (i.e., non-hierarchical).
+         */
         Path jarFile = Path.of(jarFileName(url.getPath()));
         String jarEntryName = jarEntryName(url.getPath());
         path = asFileSystem(jarFile).getPath(jarEntryName);
       }
         break;
-      case URI_SCHEME__FILE:
+      case SCHEME__FILE:
         path = Path.of(url.getPath());
         break;
       default:
-        throw unexpected("url.protocol", url.getProtocol());
+        throw unexpected("uri.scheme", uri.getScheme());
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    else if (o == null || this.getClass() != o.getClass())
+      return false;
+
+    var that = (ClasspathResource) o;
+    return this.uri.equals(that.uri);
   }
 
   @Override
@@ -113,12 +149,17 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   }
 
   @Override
-  public URL getUrl() {
-    return url;
+  public URI getUri() {
+    return uri;
+  }
+
+  @Override
+  public int hashCode() {
+    return uri.hashCode();
   }
 
   @Override
   public String toString() {
-    return url.toString();
+    return uri.toString();
   }
 }

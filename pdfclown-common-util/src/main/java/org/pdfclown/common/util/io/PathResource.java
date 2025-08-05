@@ -13,12 +13,14 @@
 package org.pdfclown.common.util.io;
 
 import java.nio.file.Path;
+import org.pdfclown.common.util.annot.Immutable;
 
 /**
  * Filesystem resource.
  *
  * @author Stefano Chizzolini
  */
+@Immutable
 public interface PathResource extends Resource {
   /**
    * Resource path.

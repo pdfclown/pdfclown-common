@@ -41,22 +41,38 @@ import org.jspecify.annotations.Nullable;
  */
 public final class Uris {
   /**
+   * {@code classpath} resource protocol.
+   */
+  public static final String SCHEME__CLASSPATH = "classpath";
+  /**
+   * <a href="https://en.wikipedia.org/wiki/File_URI_scheme">{@code file}</a> scheme.
+   */
+  public static final String SCHEME__FILE = "file";
+  /**
+   * {@link java.net.JarURLConnection jar} resource protocol.
+   */
+  public static final String SCHEME__JAR = "jar";
+
+  /**
    * Checks whether the given resource exists.
    */
-  public static boolean exists(URL url) {
-    try {
-      URLConnection c = url.openConnection();
-      if (c instanceof HttpURLConnection) {
-        var hc = (HttpURLConnection) c;
-        hc.setRequestMethod("HEAD") /* Avoids body transfer on response */;
-        return hc.getResponseCode() == HttpURLConnection.HTTP_OK;
-      } else {
-        c.connect();
-        return true;
+  public static boolean exists(@Nullable URL url) {
+    if (url != null) {
+      try {
+        URLConnection c = url.openConnection();
+        if (c instanceof HttpURLConnection) {
+          var hc = (HttpURLConnection) c;
+          hc.setRequestMethod("HEAD") /* Avoids body transfer on response */;
+          return hc.getResponseCode() == HttpURLConnection.HTTP_OK;
+        } else {
+          c.connect();
+          return true;
+        }
+      } catch (IOException ex) {
+        // NOP
       }
-    } catch (IOException ex) {
-      return false;
     }
+    return false;
   }
 
   /**

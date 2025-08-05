@@ -12,19 +12,22 @@
  */
 package org.pdfclown.common.util.io;
 
-import static org.pdfclown.common.util.io.AbstractResource.URI_SCHEME_PART__CLASSPATH;
+import static org.pdfclown.common.util.Strings.COLON;
+import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
 import static org.pdfclown.common.util.net.Uris.uri;
 import static org.pdfclown.common.util.net.Uris.url;
 
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.annot.Immutable;
 import org.pdfclown.common.util.net.Uris;
 
 /**
@@ -39,9 +42,10 @@ import org.pdfclown.common.util.net.Uris;
  *
  * @author Stefano Chizzolini
  */
+@Immutable
 public interface Resource {
   /**
-   * Gets the resource corresponding to the given path.
+   * Gets the resource corresponding to the path.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
@@ -55,7 +59,7 @@ public interface Resource {
   }
 
   /**
-   * Gets the resource corresponding to the given name.
+   * Gets the resource corresponding to the name.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
@@ -69,7 +73,7 @@ public interface Resource {
   }
 
   /**
-   * Gets the resource corresponding to the given name.
+   * Gets the resource corresponding to the name.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
@@ -85,7 +89,7 @@ public interface Resource {
   }
 
   /**
-   * Gets the resource corresponding to the given name.
+   * Gets the resource corresponding to the name.
    * <p>
    * Supported resource types:
    * </p>
@@ -122,7 +126,7 @@ public interface Resource {
    */
   static @Nullable Resource of(String name, ClassLoader cl,
       Function<Path, Path> fileResolver) {
-    if (name.startsWith(URI_SCHEME_PART__CLASSPATH))
+    if (name.startsWith(SCHEME__CLASSPATH + COLON))
       // [explicit classpath resource]
       return ClasspathResource.of(name, cl);
 
@@ -141,11 +145,12 @@ public interface Resource {
        */
     }
 
-    var uri = uri(name);
-    if (uri != null && uri.isAbsolute()) {
-      var ret = url(uri);
-      // [generic URL resource]
-      return ret != null && Uris.exists(ret) ? new WebResource(name, ret) : null;
+    {
+      var uri = uri(name);
+      if (uri != null && uri.isAbsolute()) {
+        // [generic URL resource]
+        return Uris.exists(url(uri)) ? new WebResource(name, uri) : null;
+      }
     }
 
     // [implicit classpath resource]
@@ -153,7 +158,7 @@ public interface Resource {
   }
 
   /**
-   * Gets the resource corresponding to the given name.
+   * Gets the resource corresponding to the name.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
@@ -169,13 +174,23 @@ public interface Resource {
   }
 
   /**
-   * Gets the resource corresponding to the given URL.
+   * Gets the resource corresponding to the URI.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
    *
-   * @param url
-   *          URL.
+   * @return {@code null}, if the resource corresponding to {@code url} does not exist.
+   */
+  static @Nullable Resource of(URI uri) {
+    return of(uri.toString());
+  }
+
+  /**
+   * Gets the resource corresponding to the URL.
+   * <p>
+   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * </p>
+   *
    * @return {@code null}, if the resource corresponding to {@code url} does not exist.
    */
   static @Nullable Resource of(URL url) {
@@ -190,12 +205,12 @@ public interface Resource {
   /**
    * Location of this resource.
    */
-  URL getUrl();
+  URI getUri();
 
   /**
    * Opens a connection to this resource.
    */
   default InputStream openStream() throws IOException {
-    return getUrl().openStream();
+    return getUri().toURL().openStream();
   }
 }
