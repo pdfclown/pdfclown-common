@@ -36,7 +36,7 @@ public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-License-Identifier: CC0-1.0
   //
   // Source: https://github.com/stleary/JSON-java/blob/82a02d879e9177105bb248a10cad1f18844b7964/src/main/java/org/json/JSONObject.java
-  // SourceFQN: org.json.JSONObject.NUMBER_PATTERN
+  // SourceName: org.json.JSONObject.NUMBER_PATTERN
   /**
    * Regular Expression Pattern that matches JSON Numbers. This is primarily used for output to
    * guarantee that we are always writing valid JSON.
@@ -50,7 +50,7 @@ public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-License-Identifier: CC0-1.0
   //
   // Source: ibid.
-  // SourceFQN: org.json.JSONObject.indent(Writer, int)
+  // SourceName: org.json.JSONObject.indent(Writer, int)
   private static void indent(Writer writer, int indent) throws IOException {
     for (int i = 0; i < indent; i += 1) {
       writer.write(' ');
@@ -63,7 +63,7 @@ public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-License-Identifier: CC0-1.0
   //
   // Source: ibid.
-  // SourceFQN: org.json.JSONObject.writeValue(Writer, Object, int, int)
+  // SourceName: org.json.JSONObject.writeValue(Writer, Object, int, int)
   // Changes: null value flaw fixed.
   @SuppressWarnings("UnusedReturnValue")
   private static Writer writeValue(Writer writer, @Nullable Object value,
@@ -127,7 +127,7 @@ public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-License-Identifier: CC0-1.0
   //
   // Source: ibid.
-  // SourceFQN: org.json.JSONObject.write(Writer, int, int)
+  // SourceName: org.json.JSONObject.write(Writer, int, int)
   // Changes: sort entries by key for serialization predictability.
   @Override
   public Writer write(Writer writer, int indentFactor, int indent) throws JSONException {

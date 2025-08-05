@@ -130,7 +130,7 @@ public final class Executions {
   // SPDX-License-Identifier: Apache-2.0
   //
   // Source: https://github.com/talsma-ict/umldoclet/blob/a1776aa4b3c9af1b073c31969721e867233fe727/src/test/java/nl/talsmasoftware/umldoclet/issues/Issue267Test.java
-  // SourceFQN: nl.talsmasoftware.umldoclet.issues.Issue267Test.interceptSystemOut
+  // SourceName: nl.talsmasoftware.umldoclet.issues.Issue267Test.interceptSystemOut
   // Changes: adaptation to pdfClown
   /**
    * Executes the given task, intercepting the output from the standard streams.

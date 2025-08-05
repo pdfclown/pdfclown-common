@@ -242,7 +242,7 @@ public final class Strings {
   // SPDX-License-Identifier: Apache-2.0
   //
   // Source: https://github.com/apache/commons-lang/blob/73f99230910010c1056bb6c04b36a04261da8b7d/src/main/java/org/apache/commons/lang3/StringUtils.java#L3682
-  // SourceFQN: org.apache.commons.lang3.StringUtils.isNumeric(CharSequence)
+  // SourceName: org.apache.commons.lang3.StringUtils.isNumeric(CharSequence)
   // Changes: see @implNote
   /**
    * Gets whether the given string contains only Unicode digits, with optional leading sign, either
@@ -383,7 +383,7 @@ public final class Strings {
   // SPDX-License-Identifier: Apache-2.0
   //
   // Source: https://github.com/apache/commons-lang/blob/73f99230910010c1056bb6c04b36a04261da8b7d/src/main/java/org/apache/commons/lang3/StringUtils.java#L5364
-  // SourceFQN: org.apache.commons.lang3.StringUtils.normalizeSpace(String)
+  // SourceName: org.apache.commons.lang3.StringUtils.normalizeSpace(String)
   // Changes: see @implNote
   /**
    * Normalizes the given value replacing sequences of whitespace characters by a single space
