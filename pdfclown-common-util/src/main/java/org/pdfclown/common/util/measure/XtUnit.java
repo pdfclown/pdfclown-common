@@ -24,6 +24,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.annot.Immutable;
 import tech.units.indriya.AbstractUnit;
 
 /**
@@ -43,6 +44,7 @@ import tech.units.indriya.AbstractUnit;
  *          Quantity type measured by this unit.
  * @author Stefano Chizzolini
  */
+@Immutable
 public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
   private static final long serialVersionUID = 1L;
 

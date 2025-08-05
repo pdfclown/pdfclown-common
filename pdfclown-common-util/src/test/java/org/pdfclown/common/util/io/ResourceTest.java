@@ -156,51 +156,54 @@ class ResourceTest extends BaseTest {
         cartesian(),
         // expected
         asList(
-            // [1] name[0]: "classpath:org/pdfclown/common/build/conf/che. . ."
+            // [1] name[0]: null
+            null,
+            // [2] name[1]: "classpath:org/pdfclown/common/build/conf/che. . ."
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
                 requireNonNull(uri(
                     "jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"))),
-            // [2] name[1]: "classpath:org/pdfclown/common/build/absent/c. . ."
+            // [3] name[2]: "classpath:org/pdfclown/common/build/absent/c. . ."
             null,
-            // [3] name[2]: "org/pdfclown/common/build/conf/checkstyle/ch. . ."
+            // [4] name[3]: "org/pdfclown/common/build/conf/checkstyle/ch. . ."
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
                 requireNonNull(uri(
                     "jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"))),
-            // [4] name[3]: "org/pdfclown/common/build/absent/conf/checks. . ."
+            // [5] name[4]: "org/pdfclown/common/build/absent/conf/checks. . ."
             null,
-            // [5] name[4]: "classpath:org/pdfclown/common/util/conf/chec. . ."
+            // [6] name[5]: "classpath:org/pdfclown/common/util/conf/chec. . ."
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml",
                 requireNonNull(
                     uri("file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"))),
-            // [6] name[5]: "classpath:org/pdfclown/common/util/absent/co. . ."
+            // [7] name[6]: "classpath:org/pdfclown/common/util/absent/co. . ."
             null,
-            // [7] name[6]: "org/pdfclown/common/util/conf/checkstyle/che. . ."
+            // [8] name[7]: "org/pdfclown/common/util/conf/checkstyle/che. . ."
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml",
                 requireNonNull(
                     uri("file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"))),
-            // [8] name[7]: "org/pdfclown/common/util/absent/conf/checkst. . ."
+            // [9] name[8]: "org/pdfclown/common/util/absent/conf/checkst. . ."
             null,
-            // [9] name[8]: "/home/myuser/conf/checkstyle/checkstyle-chec. . ."
+            // [10] name[9]: "/home/myuser/conf/checkstyle/checkstyle-chec. . ."
             new ResourceResult("FileResource", "/home/myuser/conf/checkstyle/checkstyle-checks.xml",
                 requireNonNull(
                     uri("jimfs://local/home/myuser/conf/checkstyle/checkstyle-checks.xml"))),
-            // [10] name[9]: "conf/checkstyle/checkstyle-checks.xml"
+            // [11] name[10]: "conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("FileResource", "conf/checkstyle/checkstyle-checks.xml",
                 requireNonNull(
                     uri("jimfs://local/home/test/root/conf/checkstyle/checkstyle-checks.xml"))),
-            // [11] name[10]: "https://www.example.io/conf/checkstyle/check. . ."
+            // [12] name[11]: "https://www.example.io/conf/checkstyle/check. . ."
             new ResourceResult("WebResource",
                 "https://www.example.io/conf/checkstyle/checkstyle-checks.xml",
                 requireNonNull(
                     uri("https://www.example.io/conf/checkstyle/checkstyle-checks.xml"))),
-            // [12] name[11]: "https://www.example.io/absent/conf/checkstyl. . ."
+            // [13] name[12]: "https://www.example.io/absent/conf/checkstyl. . ."
             null),
         // name
         asList(
+            null,
             // explicit classpath resource, mocked to resolve to JAR URL
             "classpath:org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
             // explicit classpath resource, mocked to resolve to JAR URL, inexistent

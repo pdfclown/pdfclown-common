@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util.io;
 
+import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
 import static org.pdfclown.common.util.net.Uris.uri;
@@ -54,8 +55,8 @@ public interface Resource {
    *          Path.
    * @return {@code null}, if the resource corresponding to {@code path} does not exist.
    */
-  static @Nullable PathResource of(Path path) {
-    return (PathResource) of(path.toString());
+  static @Nullable PathResource of(@Nullable Path path) {
+    return (PathResource) of(objTo(path, Object::toString));
   }
 
   /**
@@ -68,7 +69,7 @@ public interface Resource {
    *          Resource name.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(String name) {
+  static @Nullable Resource of(@Nullable String name) {
     return of(name, Resource.class.getClassLoader());
   }
 
@@ -84,7 +85,7 @@ public interface Resource {
    *          Class loader for resource lookup.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(String name, ClassLoader cl) {
+  static @Nullable Resource of(@Nullable String name, ClassLoader cl) {
     return of(name, cl, Path::toAbsolutePath);
   }
 
@@ -124,9 +125,11 @@ public interface Resource {
    *           returned.
    *           </p>
    */
-  static @Nullable Resource of(String name, ClassLoader cl,
+  static @Nullable Resource of(@Nullable String name, ClassLoader cl,
       Function<Path, Path> fileResolver) {
-    if (name.startsWith(SCHEME__CLASSPATH + COLON))
+    if (name == null)
+      return null;
+    else if (name.startsWith(SCHEME__CLASSPATH + COLON))
       // [explicit classpath resource]
       return ClasspathResource.of(name, cl);
 
@@ -169,7 +172,7 @@ public interface Resource {
    *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(String name, Function<Path, Path> fileResolver) {
+  static @Nullable Resource of(@Nullable String name, Function<Path, Path> fileResolver) {
     return of(name, Resource.class.getClassLoader(), fileResolver);
   }
 
@@ -181,8 +184,8 @@ public interface Resource {
    *
    * @return {@code null}, if the resource corresponding to {@code url} does not exist.
    */
-  static @Nullable Resource of(URI uri) {
-    return of(uri.toString());
+  static @Nullable Resource of(@Nullable URI uri) {
+    return of(objTo(uri, Object::toString));
   }
 
   /**
@@ -193,8 +196,8 @@ public interface Resource {
    *
    * @return {@code null}, if the resource corresponding to {@code url} does not exist.
    */
-  static @Nullable Resource of(URL url) {
-    return of(url.toString());
+  static @Nullable Resource of(@Nullable URL url) {
+    return of(objTo(url, Object::toString));
   }
 
   /**

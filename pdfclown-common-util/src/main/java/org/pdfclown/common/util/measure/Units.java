@@ -38,6 +38,7 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.Temperature;
 import javax.measure.quantity.Time;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.annot.Immutable;
 import tech.units.indriya.AbstractSystemOfUnits;
 import tech.units.indriya.AbstractUnit;
 import tech.units.indriya.format.SimpleUnitFormat;
@@ -52,6 +53,7 @@ import tech.units.indriya.unit.TransformedUnit;
  *
  * @author Stefano Chizzolini
  */
+@Immutable
 public class Units extends AbstractSystemOfUnits {
   private static final Units INSTANCE = new Units();
 
