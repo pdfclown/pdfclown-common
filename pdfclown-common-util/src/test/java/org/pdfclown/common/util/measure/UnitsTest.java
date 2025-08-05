@@ -530,7 +530,7 @@ class UnitsTest extends BaseTest {
   void getFactor_Unit(Expected<Double> expected, Argument<Unit<?>> unit) {
     assertParameterizedOf(
         () -> Units.getFactor(unit.getValue()),
-        expected.match(() -> isCloseTo(nonNull(expected.getReturned()))),
+        expected.match($ -> isCloseTo(nonNull($))),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit))));
   }
@@ -541,7 +541,7 @@ class UnitsTest extends BaseTest {
       Argument<Unit<?>> target) {
     assertParameterizedOf(
         () -> Units.getFactor((Unit) unit.getValue(), target.getValue()),
-        expected.match(() -> isCloseTo(nonNull(expected.getReturned()))),
+        expected.match($ -> isCloseTo(nonNull($))),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit),
             entry("target", target))));
@@ -552,7 +552,7 @@ class UnitsTest extends BaseTest {
   void getOffset_Unit(Expected<Double> expected, Argument<Unit<?>> unit) {
     assertParameterizedOf(
         () -> Units.getOffset(unit.getValue()),
-        expected.match(() -> isCloseTo(nonNull(expected.getReturned()))),
+        expected.match($ -> isCloseTo(nonNull($))),
         () -> new ExpectedGeneration(List.of(
             entry("unit", unit))));
   }

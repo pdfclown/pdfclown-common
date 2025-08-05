@@ -591,7 +591,7 @@ public final class Assertions {
     }
 
     @Nullable
-    Supplier<Matcher<? super T>> matcherSupplier;
+    Function<T, Matcher<? super T>> matcherProvider;
     @Nullable
     final T returned;
     @Nullable
@@ -631,10 +631,10 @@ public final class Assertions {
     }
 
     /**
-     * Sets the custom matcher to validate {@link #getReturned() returned}.
+     * Sets the custom matcher to validate the actual regular result against the expected one.
      */
-    public Expected<T> match(Supplier<Matcher<? super T>> matcherSupplier) {
-      this.matcherSupplier = matcherSupplier;
+    public Expected<T> match(Function<T, Matcher<? super T>> matcherProvider) {
+      this.matcherProvider = matcherProvider;
       return this;
     }
 
@@ -644,7 +644,9 @@ public final class Assertions {
     }
 
     Matcher<? super T> getMatcher() {
-      return matcherSupplier != null && returned != null ? matcherSupplier.get() : is(returned);
+      return matcherProvider != null && returned != null
+          ? matcherProvider.apply(returned)
+          : is(returned);
     }
   }
 
@@ -1047,7 +1049,7 @@ public final class Assertions {
   @SuppressWarnings({ "rawtypes", "unchecked" })
   private static final Expected<?> EXPECTED__VOID = new Expected(null, null) {
     @Override
-    public Expected match(Supplier supplier) {
+    public Expected match(Function matcherProvider) {
       // NOP
       return this;
     }

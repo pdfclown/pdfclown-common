@@ -74,7 +74,7 @@ class ClisTest {
   void parseArgs(Expected<List<String>> expected, String argsString) {
     assertParameterizedOf(
         () -> Clis.parseArgs(argsString),
-        expected.match(() -> contains(expected.getReturned().toArray(String[]::new))),
+        expected.match($ -> contains($.toArray(String[]::new))),
         () -> new ExpectedGeneration(of(
             entry("argsString", argsString)))
                 .setExpectedSourceCodeGenerator(
