@@ -412,8 +412,10 @@ public final class Aggregations {
 
   /**
    * Creates a new entry.
-   *
-   * @see Map#entry( Object, Object)
+   * <p>
+   * Contrary to standard {@link Map#entry(Object, Object) Map.entry(..)}, this method allows
+   * nullable objects.
+   * </p>
    */
   public static <K, V> Map.@Unmodifiable Entry<K, V> entry(@Nullable K key, @Nullable V value) {
     return new AbstractMap.SimpleImmutableEntry<>(key, value);

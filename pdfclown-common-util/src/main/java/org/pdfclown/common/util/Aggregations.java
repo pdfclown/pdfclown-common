@@ -412,8 +412,10 @@ public final class Aggregations {
 
   /**
    * Creates a new entry.
-   *
-   * @see Map#entry( Object, Object)
+   * <p>
+   * Contrary to standard {@link Map#entry(Object, Object) Map.entry(..)}, this method allows
+   * nullable objects.
+   * </p>
    */
   public static <K, V> Map.@Unmodifiable Entry<K, V> entry(@Nullable K key, @Nullable V value) {
     return new AbstractMap.SimpleImmutableEntry<>(key, value);
@@ -432,7 +434,7 @@ public final class Aggregations {
     Iterator<E> itr1 = i1.iterator();
     Iterator<E> itr2 = i2.iterator();
     while (itr1.hasNext()) {
-      if (!itr2.hasNext() || !java.util.Objects.equals(itr1.next(), itr2.next()))
+      if (!itr2.hasNext() || !Objects.equals(itr1.next(), itr2.next()))
         return false;
     }
     return !itr2.hasNext();

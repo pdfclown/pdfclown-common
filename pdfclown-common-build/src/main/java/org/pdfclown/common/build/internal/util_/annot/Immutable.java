@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * <p>
  * <b>Immutability</b> is about the <i>stability of the externally-observable object state,
  * referenced objects inclusive</i>; it is stricter than {@linkplain UnmodifiableView view
- * unmodifiability} and {@linkplain Unmodifiable proper unmodifiability}.
+ * unmodifiability} and {@linkplain Unmodifiable real unmodifiability}.
  * </p>
  * <p>
  * <b>Externally-observable state</b> comprises values and object references directly associated to
