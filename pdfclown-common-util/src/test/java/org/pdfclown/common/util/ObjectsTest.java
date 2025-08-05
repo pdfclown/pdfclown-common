@@ -197,34 +197,89 @@ class ObjectsTest extends BaseTest {
    * @implNote Generated as {@code expected} source code within {@link #toLiteralString ()}.
    */
   private static final List<String> LITERAL_STRINGS = asList(
-      // [1] obj[0]: null
+      // obj[0]: null
+      // [1] nonBasicForced[0]: false
       "null",
-      // [2] obj[1]: 1234
+      // [2] nonBasicForced[1]: true
+      "null",
+      //
+      // obj[1]: 1234
+      // [3] nonBasicForced[0]: false
       "1234",
-      // [3] obj[2]: 1.987
+      // [4] nonBasicForced[1]: true
+      "1234",
+      //
+      // obj[2]: 1.987
+      // [5] nonBasicForced[0]: false
       "1.987",
-      // [4] obj[3]: 1.5E-4
+      // [6] nonBasicForced[1]: true
+      "1.987",
+      //
+      // obj[3]: 1.5E-4
+      // [7] nonBasicForced[0]: false
       "1.5E-4",
-      // [5] obj[4]: true
+      // [8] nonBasicForced[1]: true
+      "1.5E-4",
+      //
+      // obj[4]: true
+      // [9] nonBasicForced[0]: false
       "true",
-      // [6] obj[5]: '\''
+      // [10] nonBasicForced[1]: true
+      "true",
+      //
+      // obj[5]: '\''
+      // [11] nonBasicForced[0]: false
       "'\\''",
-      // [7] obj[6]: '"'
+      // [12] nonBasicForced[1]: true
+      "'\\''",
+      //
+      // obj[6]: '"'
+      // [13] nonBasicForced[0]: false
       "'\"'",
-      // [8] obj[7]: ""
+      // [14] nonBasicForced[1]: true
+      "'\"'",
+      //
+      // obj[7]: ""
+      // [15] nonBasicForced[0]: false
       "\"\"",
-      // [9] obj[8]: "Text with:\n- \"quoted content\"\n- newlines"
+      // [16] nonBasicForced[1]: true
+      "\"\"",
+      //
+      // obj[8]: "Text with:\n- \"quoted content\"\n- newlines"
+      // [17] nonBasicForced[0]: false
       "\"Text with:\\n- \\\"quoted content\\\"\\n- newlines\"",
-      // [10] obj[9]: "测试文本"
+      // [18] nonBasicForced[1]: true
+      "\"Text with:\\n- \\\"quoted content\\\"\\n- newlines\"",
+      //
+      // obj[9]: "测试文本"
+      // [19] nonBasicForced[0]: false
       "\"测试文本\"",
-      // [11] obj[10]: String
+      // [20] nonBasicForced[1]: true
+      "\"测试文本\"",
+      //
+      // obj[10]: String
+      // [21] nonBasicForced[0]: false
       "String",
-      // [12] obj[11]: java.util.stream.Stream
+      // [22] nonBasicForced[1]: true
+      "\"String\"",
+      //
+      // obj[11]: java.util.stream.Stream
+      // [23] nonBasicForced[0]: false
       "java.util.stream.Stream",
-      // [13] obj[12]: org.pdfclown.common.util.Strings
+      // [24] nonBasicForced[1]: true
+      "\"java.util.stream.Stream\"",
+      //
+      // obj[12]: org.pdfclown.common.util.Strings
+      // [25] nonBasicForced[0]: false
       "org.pdfclown.common.util.Strings",
-      // [14] obj[13]: [one, two]
-      "[one, two]");
+      // [26] nonBasicForced[1]: true
+      "\"org.pdfclown.common.util.Strings\"",
+      //
+      // obj[13]: [one, two]
+      // [27] nonBasicForced[0]: false
+      "[one, two]",
+      // [28] nonBasicForced[1]: true
+      "\"[one, two]\"");
 
   private static final List<String> TO_STRINGS = asList(
       null,
@@ -336,31 +391,59 @@ class ObjectsTest extends BaseTest {
         asList(
             // [1] s[0]: "null"
             null,
-            // [2] s[1]: "1234"
+            // [2] s[1]: "null"
+            null,
+            // [3] s[2]: "1234"
             1234,
-            // [3] s[2]: "1.987"
+            // [4] s[3]: "1234"
+            1234,
+            // [5] s[4]: "1.987"
             1.987F,
-            // [4] s[3]: "1.5E-4"
+            // [6] s[5]: "1.987"
+            1.987F,
+            // [7] s[6]: "1.5E-4"
             1.5E-4F,
-            // [5] s[4]: "true"
+            // [8] s[7]: "1.5E-4"
+            1.5E-4F,
+            // [9] s[8]: "true"
             true,
-            // [6] s[5]: "'\\''"
+            // [10] s[9]: "true"
+            true,
+            // [11] s[10]: "'\\''"
             '\'',
-            // [7] s[6]: "'\"'"
+            // [12] s[11]: "'\\''"
+            '\'',
+            // [13] s[12]: "'\"'"
             '"',
-            // [8] s[7]: "\"\""
+            // [14] s[13]: "'\"'"
+            '"',
+            // [15] s[14]: "\"\""
             "",
-            // [9] s[8]: "\"Text with:\\n- \\\"quoted content\\\"\\n- . . ."
+            // [16] s[15]: "\"\""
+            "",
+            // [17] s[16]: "\"Text with:\\n- \\\"quoted content\\\"\\n- . . ."
             "Text with:\n- \"quoted content\"\n- newlines",
-            // [10] s[9]: "\"测试文本\""
+            // [18] s[17]: "\"Text with:\\n- \\\"quoted content\\\"\\n- . . ."
+            "Text with:\n- \"quoted content\"\n- newlines",
+            // [19] s[18]: "\"测试文本\""
             "测试文本",
-            // [11] s[10]: "String"
+            // [20] s[19]: "\"测试文本\""
+            "测试文本",
+            // [21] s[20]: "String"
             "String",
-            // [12] s[11]: "java.util.stream.Stream"
+            // [22] s[21]: "\"String\""
+            "String",
+            // [23] s[22]: "java.util.stream.Stream"
             "java.util.stream.Stream",
-            // [13] s[12]: "org.pdfclown.common.util.Strings"
+            // [24] s[23]: "\"java.util.stream.Stream\""
+            "java.util.stream.Stream",
+            // [25] s[24]: "org.pdfclown.common.util.Strings"
             "org.pdfclown.common.util.Strings",
-            // [14] s[13]: "[one, two]"
+            // [26] s[25]: "\"org.pdfclown.common.util.Strings\""
+            "org.pdfclown.common.util.Strings",
+            // [27] s[26]: "[one, two]"
+            "[one, two]",
+            // [28] s[27]: "\"[one, two]\""
             "[one, two]"),
         // s
         LITERAL_STRINGS);
@@ -470,7 +553,11 @@ class ObjectsTest extends BaseTest {
             String.class,
             Stream.class,
             Strings.class,
-            of("one", "two")));
+            of("one", "two")),
+        // nonBasicForced
+        asList(
+            false,
+            true));
   }
 
   static Stream<Arguments> toQualifiedString() {
@@ -762,12 +849,13 @@ class ObjectsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void toLiteralString(Expected<Object> expected, @Nullable Object obj) {
+  void toLiteralString(Expected<Object> expected, @Nullable Object obj, boolean nonBasicForced) {
     assertParameterizedOf(
-        () -> Objects.toLiteralString(obj),
+        () -> Objects.toLiteralString(obj, nonBasicForced),
         expected,
         () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
+            entry("obj", obj),
+            entry("nonBasicForced", nonBasicForced))));
   }
 
   @ParameterizedTest

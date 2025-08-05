@@ -1070,6 +1070,33 @@ public final class Objects {
    * @see #fromLiteralString(String)
    */
   public static String toLiteralString(@Nullable Object obj) {
+    return toLiteralString(obj, false);
+  }
+
+  /**
+   * Maps the given object to its literal string representation (that is, inclusive of markers such
+   * as quotes).
+   *
+   * @param nonBasicForced
+   *          Whether, in case {@code obj} is non-{@linkplain #isBasic(Object) basic}, the resulting
+   *          string is treated as {@link String} (i.e., escaped and double-quoted).
+   * @return
+   *         <ul>
+   *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
+   *         <li>{@link Object#toString()}, suffixed with literal qualifier — if {@code obj} is
+   *         {@link Float} or {@link Long} (disambiguation against respective default literal types,
+   *         {@link Double} or {@link Integer})</li>
+   *         <li>{@link Object#toString()}, escaped and wrapped with single quotes — if {@code obj}
+   *         is {@link Character}</li>
+   *         <li>{@link Object#toString()}, escaped and wrapped with double quotes — if {@code obj}
+   *         is {@link String}</li>
+   *         <li>{@link Class#getName()} — if {@code obj} is {@link Class}
+   *         ({@link Class#getSimpleName()} for common types, under {@code java.lang} package)</li>
+   *         <li>{@link Object#toString()}, as-is — otherwise</li>
+   *         </ul>
+   * @see #fromLiteralString(String)
+   */
+  public static String toLiteralString(@Nullable Object obj, boolean nonBasicForced) {
     if (obj == null)
       return NULL;
     else if (obj instanceof Float)
@@ -1082,19 +1109,25 @@ public final class Objects {
        * NOTE: Literal long MUST be marked by suffix to override default integer type.
        */
       return obj + "L";
+    else if (obj instanceof Number || obj instanceof Boolean)
+      return obj.toString();
     else if (obj instanceof Character)
       return S + SQUOTE + ((Character) obj == SQUOTE ? S + BACKSLASH : EMPTY) + obj + SQUOTE;
-    else if (obj instanceof String)
-      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate((String) obj) + DQUOTE;
-    else if (obj instanceof Class)
-      /*
-       * NOTE: The names of classes belonging to common packages are simplified to reduce noise.
-       */
-      return objTo((Class<?>) obj, $ -> $.getPackageName().startsWith("java.lang")
-          ? $.getSimpleName()
-          : $.getName());
-    else
-      return obj.toString();
+    else if (!(obj instanceof String)) {
+      if (obj instanceof Class) {
+        /*
+         * NOTE: The names of classes belonging to common packages are simplified to reduce noise.
+         */
+        obj = objTo((Class<?>) obj, $ -> $.getPackageName().startsWith("java.lang")
+            ? $.getSimpleName()
+            : $.getName());
+      } else {
+        obj = obj.toString();
+      }
+      if (!nonBasicForced)
+        return (String) obj;
+    }
+    return S + DQUOTE + LITERAL_STRING_ESCAPE.translate((String) obj) + DQUOTE;
   }
 
   /**
