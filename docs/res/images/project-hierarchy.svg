@@ -686,7 +686,7 @@
                      font-style="normal"
                      class="text-inner-tspan"
                      font-weight="normal"
-                     id="tspan55">«external»</tspan></tspan></text>
+                     id="tspan55">«public»</tspan></tspan></text>
             </g>
           </g>
         </g>
@@ -853,7 +853,7 @@
                      font-style="normal"
                      class="text-inner-tspan"
                      font-weight="normal"
-                     id="tspan73">external»</tspan></tspan></text>
+                     id="tspan73">public»</tspan></tspan></text>
             </g>
           </g>
         </g>
@@ -1102,7 +1102,7 @@
                      font-style="normal"
                      class="text-inner-tspan"
                      font-weight="normal"
-                     id="tspan98">external»</tspan></tspan></text>
+                     id="tspan98">public»</tspan></tspan></text>
             </g>
           </g>
         </g>
@@ -1507,7 +1507,7 @@
                      font-style="normal"
                      class="text-inner-tspan"
                      font-weight="normal"
-                     id="tspan138">«internal»</tspan></tspan></text>
+                     id="tspan138">«private»</tspan></tspan></text>
             </g>
           </g>
         </g>
@@ -1682,7 +1682,7 @@
                      font-style="normal"
                      class="text-inner-tspan"
                      font-weight="normal"
-                     id="tspan153">«internal»</tspan></tspan></text>
+                     id="tspan153">«private»</tspan></tspan></text>
             </g>
           </g>
         </g>

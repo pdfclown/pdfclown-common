@@ -3,16 +3,16 @@ classDiagram
     direction LR
     namespace pdfclown-xxxxx {
       class _base_ {
-          <<external>>
+          <<public>>
           plugins
       }
       class _bom_ {
-          <<root : minimal BOM : external>>
+          <<root : minimal BOM : public>>
           dependencies
       }
       class build
       class _deps_ {
-          <<full BOM : external>>
+          <<full BOM : public>>
           dependencies
       }
       class lib1
