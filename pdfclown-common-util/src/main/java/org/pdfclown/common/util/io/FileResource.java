@@ -13,6 +13,7 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.util.Objects.isSameType;
 import static org.pdfclown.common.util.net.Uris.uri;
 
 import java.net.URI;
@@ -38,7 +39,7 @@ public class FileResource extends AbstractResource implements PathResource {
   public boolean equals(Object o) {
     if (this == o)
       return true;
-    else if (o == null || this.getClass() != o.getClass())
+    else if (!isSameType(this, o))
       return false;
 
     var that = (FileResource) o;

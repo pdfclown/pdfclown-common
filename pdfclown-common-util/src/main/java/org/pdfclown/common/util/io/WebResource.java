@@ -13,6 +13,7 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.util.Objects.isSameType;
 
 import java.net.URI;
 import org.pdfclown.common.util.annot.Immutable;
@@ -36,7 +37,7 @@ public class WebResource extends AbstractResource {
   public boolean equals(Object o) {
     if (this == o)
       return true;
-    else if (o == null || this.getClass() != o.getClass())
+    else if (!isSameType(this, o))
       return false;
 
     var that = (WebResource) o;

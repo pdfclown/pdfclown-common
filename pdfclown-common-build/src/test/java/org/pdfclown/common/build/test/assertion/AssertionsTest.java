@@ -22,6 +22,8 @@ import static org.pdfclown.common.build.internal.util_.Aggregations.entry;
 
 import java.awt.Shape;
 import java.awt.geom.Path2D;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -33,7 +35,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.opentest4j.AssertionFailedError;
 import org.pdfclown.common.build.__test.BaseTest;
-import org.pdfclown.common.build.internal.util_.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;
@@ -186,7 +187,8 @@ class AssertionsTest extends BaseTest {
     return ret;
   }
 
-  private @Nullable XtPrintStream out;
+  private @Nullable PrintStream out;
+  private @Nullable ByteArrayOutputStream outBuffer;
 
   /**
    * Tests the regular execution of
@@ -330,7 +332,7 @@ class AssertionsTest extends BaseTest {
   }
 
   private void beginOut() {
-    out = new XtPrintStream();
+    out = new PrintStream(outBuffer = new ByteArrayOutputStream());
   }
 
   private void doAssertParameterized(Expected<String> expected, String value, int length) {
@@ -368,7 +370,7 @@ class AssertionsTest extends BaseTest {
   }
 
   private String endOut() {
-    var ret = requireNonNull(requireNonNull(out).toDataString());
+    var ret = requireNonNull(requireNonNull(outBuffer).toString());
     out = null;
     return ret;
   }

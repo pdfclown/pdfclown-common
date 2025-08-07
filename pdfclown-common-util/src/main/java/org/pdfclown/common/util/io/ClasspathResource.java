@@ -15,6 +15,7 @@ package org.pdfclown.common.util.io;
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Objects.isSameType;
 import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.SLASH;
@@ -136,7 +137,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   public boolean equals(Object o) {
     if (this == o)
       return true;
-    else if (o == null || this.getClass() != o.getClass())
+    else if (!isSameType(this, o))
       return false;
 
     var that = (ClasspathResource) o;

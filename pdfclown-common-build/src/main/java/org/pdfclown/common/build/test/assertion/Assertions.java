@@ -74,7 +74,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.system.Desktops;
 import org.pdfclown.common.build.internal.util_.Objects;
 import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
-import org.pdfclown.common.build.internal.util_.io.XtPrintStream;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
 import org.pdfclown.common.build.util.system.Runtimes;
 
@@ -845,15 +844,17 @@ public final class Assertions {
      */
     private int index = -1;
     /**
-     * Target stream (either <b>internal</b> (for output redirection to clipboard, in case of debug
-     * mode) or <b>{@linkplain #generateExpected(Object, ExpectedGeneration) provided}</b>) the
-     * generated representation is written to.
+     * Target stream (either internal (for output redirection to clipboard, in case of debug mode)
+     * or {@linkplain #generateExpected(Object, ExpectedGeneration) provided}) the generated
+     * representation is written to.
      */
     private @Nullable PrintStream out;
     /**
-     * Whether {@link #out} lifecycle is internal responsibility of this class.
+     * Internal target stream buffer.
+     *
+     * @see #out
      */
-    private boolean outManaged;
+    private @Nullable ByteArrayOutputStream outBuffer;
 
     protected ExpectedGenerator(int count) {
       this.count = count;
@@ -960,8 +961,7 @@ public final class Assertions {
     private void begin(ExpectedGeneration generation) {
       // Output redirect to clipboard?
       if (generation.outOverridable && Runtimes.isDebugging() && Desktops.isGUI()) {
-        out = new XtPrintStream(new ByteArrayOutputStream(), true, UTF_8);
-        outManaged = true;
+        out = new PrintStream(outBuffer = new ByteArrayOutputStream(), true, UTF_8);
       }
       // No output redirect.
       else {
@@ -984,9 +984,9 @@ public final class Assertions {
       assert out != null;
 
       var message = new StringBuilder("Expected results source code GENERATED");
-      if (outManaged) {
+      if (outBuffer != null) {
         // Transfer output to clipboard!
-        Desktops.copyToClipboard(((XtPrintStream) out).toDataString());
+        Desktops.copyToClipboard(outBuffer.toString(UTF_8));
 
         message.append(", and COPIED to clipboard (IMPORTANT: in order to work, a clipboard "
             + "manager must be active on the system)");
