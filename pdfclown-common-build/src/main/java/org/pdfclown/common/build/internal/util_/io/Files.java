@@ -54,7 +54,6 @@ public final class Files {
    */
   private static final Pattern PATTERN__FULL_EXTENSION = Pattern.compile("(\\.\\D[^.\\\\/]+)+$");
 
-  public static final String FILE_EXTENSION__EPS = ".eps";
   public static final String FILE_EXTENSION__HTML = ".html";
   public static final String FILE_EXTENSION__JAVA = ".java";
   public static final String FILE_EXTENSION__JPG = ".jpg";
@@ -65,7 +64,6 @@ public final class Files {
   public static final String FILE_EXTENSION__XSD = ".xsd";
   public static final String FILE_EXTENSION__XSL = ".xsl";
   public static final String FILE_EXTENSION__ZIP = ".zip";
-  public static final String FILE_EXTENSION__JSON_ZIP = ".json" + FILE_EXTENSION__ZIP;
 
   public static final String PATH_SUPER = S + DOT + DOT;
 
