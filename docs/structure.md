@@ -18,7 +18,7 @@ For clarity, [subproject directory names MUST match the `project/artifactID` ele
 
 ## Project Hierarchy
 
-A pdfClown.org project SHALL be defined according to this hierarchy (initially drafted via [Copilot](https://github.com/copilot/share/820d121c-42e4-8cb2-b011-1a0be4ce2032)):
+A pdfClown.org project SHALL be defined according to this hierarchy:
 
 ![Image](res/images/project-hierarchy.svg)
 
@@ -40,7 +40,7 @@ A pdfClown.org project SHALL be defined according to this hierarchy (initially d
 <tr>
   <td><code>base</code></td>
   <td>:wrench:<br/>public parent</td>
-  <td>Build configuration meant to be reused outside the project hierarchy via inheritance; inherits from the same subproject as <code>bom</code>.
+  <td>Build configuration meant to be reused outside the project hierarchy via inheritance.
   <br><br>Example: <a href="../pdfclown-common-base/pom.xml"><code>pdfclown-common-base</code></a></td>
   <td>:satellite:</td>
 </tr>
