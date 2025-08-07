@@ -12,7 +12,7 @@ This is a collection of conventions adopted by pdfClown.org projects for their d
 
 ### Requirement level keywords
 
-Throughtout the documentation, source code comments included, the keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
+Throughtout the documentation, source code comments inclusive, the keywords “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” are to be interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 
 ### Formal grammar notation
 

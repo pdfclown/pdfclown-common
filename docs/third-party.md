@@ -62,9 +62,9 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
    **Additional tags**:
 
-   - `Source`: in case of detached file, specifies its *permalink in the original repository*.
+   - `Source`: specifies its *permalink in the original repository*, in case of detached file.
 
-   - `SourceName`: in case of detached file or if the incorporation changed it, specifies the *original name of the type, or type member (i.e., field or method)*.
+   - `SourceName`: specifies the *original name of the type, or type member (i.e., field or method)*, in case of detached file or if the incorporation changed it.
 
    - `Changes`: specifies *relevant differences between the local file and its source*.
 
