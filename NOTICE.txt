@@ -9,10 +9,6 @@ commons-lang <https://github.com/apache/commons-lang>
 Copyright 2001-2025 Apache Software Foundation (ASF)
 Licensed under Apache License 2.0 <https://www.apache.org/licenses/LICENSE-2.0>
 
-flatten-maven-plugin <https://github.com/mojohaus/flatten-maven-plugin>
-Copyright 2014-2025 Apache Software Foundation (ASF)
-Licensed under Apache License 2.0 <https://www.apache.org/licenses/LICENSE-2.0>
-
 JSON-java (org.json) <https://github.com/stleary/JSON-java>
 Copyright NONE
 Licensed under generic Public Domain license <https://creativecommons.org/publicdomain/zero/1.0/>
