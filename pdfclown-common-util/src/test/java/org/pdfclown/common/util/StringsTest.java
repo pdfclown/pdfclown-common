@@ -13,6 +13,7 @@
 package org.pdfclown.common.util;
 
 import static java.util.Arrays.asList;
+import static java.util.List.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
@@ -29,18 +30,19 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
+import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
  * @author Stefano Chizzolini
  */
-@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
+@SuppressWarnings({ "ArraysAsListWithZeroOrOneArgument", "ConcatenationWithEmptyString" })
 class StringsTest extends BaseTest {
   static Stream<Arguments> abbreviateMultiline() {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // value[0]: '1:  A multi-line text to test whether Strings. . .'
             // -- maxLineCount[0]: '10'
             // ---- averageLineLength[0]: '80'
@@ -261,11 +263,64 @@ class StringsTest extends BaseTest {
             "[...]"));
   }
 
+  static Stream<Arguments> stripEmptyLines() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] s[0]: null
+            new Failure("java.lang.NullPointerException", null),
+            // [2] s[1]: ""
+            "",
+            // [3] s[2]: "\n"
+            "",
+            // [4] s[3]: "\n\n           \nFirst non-empty line\n     . . ."
+            "           \nFirst non-empty line\n     Second line   \n\nThird line"),
+        // s
+        asList(
+            null,
+            "",
+            "\n",
+            "\n\n"
+                + "           \n"
+                + "First non-empty line\n"
+                + "     Second line   \n"
+                + "\n"
+                + "Third line\n\n"));
+  }
+
+  static Stream<Arguments> stripIndent() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] s[0]: "       \nSimple, without incidental whitespa. . ."
+            "\nSimple, without incidental whitespace\n  among its non-blank lines,\n\n\n  just internal indentation.",
+            // [2] s[1]: "       \n    Jagged, with incidental whitesp. . ."
+            "\n  Jagged, with incidental whitespace\n        among its non-blank lines,\n\n\ntrailing whitespace, and ending newline.\n"),
+        // s
+        asList(
+            ""
+                + "       \n"
+                + "Simple, without incidental whitespace\n"
+                + "  among its non-blank lines,\n"
+                + "   \n"
+                + "\n"
+                + "  just internal indentation.",
+            ""
+                + "       \n"
+                + "    Jagged, with incidental whitespace  \n"
+                + "          among its non-blank lines,     \n"
+                + "   \n"
+                + "\n"
+                + "  trailing whitespace, and ending newline.\n"));
+  }
+
   static Stream<Arguments> uncapitalizeGreedy() {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // value[0]: 'Capitalized'
             "capitalized",
             // value[1]: 'uncapitalized'
@@ -301,7 +356,7 @@ class StringsTest extends BaseTest {
     assertParameterizedOf(
         () -> Strings.abbreviateMultiline(value, maxLineCount, averageLineLength, marker),
         expected,
-        () -> new ExpectedGeneration(List.of(
+        () -> new ExpectedGeneration(of(
             entry("value", value),
             entry("maxLineCount", maxLineCount),
             entry("averageLineLength", averageLineLength),
@@ -318,11 +373,31 @@ class StringsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
+  void stripEmptyLines(Expected<String> expected, String s) {
+    assertParameterizedOf(
+        () -> Strings.stripEmptyLines(s),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("s", s))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void stripIndent(Expected<String> expected, String s) {
+    assertParameterizedOf(
+        () -> Strings.stripIndent(s),
+        expected,
+        () -> new ExpectedGeneration(of(
+            entry("s", s))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
   void uncapitalizeGreedy(Expected<String> expected, String value) {
     assertParameterizedOf(
         () -> Strings.uncapitalizeGreedy(value),
         expected,
-        () -> new ExpectedGeneration(List.of(
+        () -> new ExpectedGeneration(of(
             entry("value", value))));
   }
 

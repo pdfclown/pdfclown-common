@@ -12,8 +12,18 @@
  */
 package org.pdfclown.common.build.internal.util_;
 
+import static java.lang.Character.isDigit;
+import static java.lang.Character.isLowerCase;
+import static java.lang.Character.isUpperCase;
+import static java.lang.Character.isWhitespace;
+import static java.lang.Math.min;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.IntPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -90,6 +100,7 @@ public final class Strings {
    */
   public static final char SQUOTE = APOSTROPHE;
   public static final char STAR = '*';
+  public static final char TAB = '\t';
   public static final char UNDERSCORE = LOW_LINE;
 
   /**
@@ -111,7 +122,7 @@ public final class Strings {
    * Example:
    * </p>
    * <pre>
-   *String str = S + HYPHEN;</pre>
+   * String str = S + HYPHEN;</pre>
    */
   public static final String S = EMPTY;
 
@@ -131,11 +142,9 @@ public final class Strings {
   public static final String[] STR_ARRAY__EMPTY = new String[0];
 
   /**
-   * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
-   * substring with a standard ellipsis.
+   * Ensures the string doesn't exceed the limits; otherwise, replaces the exceeding substring with
+   * a standard ellipsis.
    *
-   * @param value
-   *          String to clip.
    * @param maxLineCount
    *          Maximum number of lines.
    * @param averageLineLength
@@ -143,19 +152,17 @@ public final class Strings {
    *          maximum string length).
    * @see StringUtils#abbreviate(String, int)
    */
-  public static String abbreviateMultiline(String value, int maxLineCount, int averageLineLength) {
-    return abbreviateMultiline(value, maxLineCount, averageLineLength, ELLIPSIS);
+  public static String abbreviateMultiline(String s, int maxLineCount, int averageLineLength) {
+    return abbreviateMultiline(s, maxLineCount, averageLineLength, ELLIPSIS);
   }
 
   /**
-   * Ensures the given string doesn't exceed the given limits; otherwise, replaces the exceeding
-   * substring with a marker.
+   * Ensures the string doesn't exceed the limits; otherwise, replaces the exceeding substring with
+   * a marker.
    * <p>
    * The string is clipped by {@code maxLineCount}, then by overall string length.
    * </p>
    *
-   * @param value
-   *          String to clip.
    * @param maxLineCount
    *          Maximum number of lines.
    * @param averageLineLength
@@ -165,12 +172,12 @@ public final class Strings {
    *          Replacement marker.
    * @see StringUtils#abbreviate(String, String, int)
    */
-  public static String abbreviateMultiline(String value, int maxLineCount, int averageLineLength,
+  public static String abbreviateMultiline(String s, int maxLineCount, int averageLineLength,
       String marker) {
     if (maxLineCount <= 0 && averageLineLength <= 0)
-      return value;
+      return s;
 
-    String ret = value;
+    String ret = s;
     {
       int pos = -1;
       int lineCount = 1;
@@ -189,19 +196,19 @@ public final class Strings {
       }
     }
     //noinspection StringEquality
-    if (ret != value) {
+    if (ret != s) {
       ret += marker;
     }
     return ret;
   }
 
   /**
-   * Gets the number of substring occurrences in the given value.
+   * Gets the number of substring occurrences in the string.
    */
-  public static int count(String value, String sub) {
+  public static int count(String s, String sub) {
     int ret = 0;
     for (int i = 0;; i++) {
-      i = value.indexOf(sub, i);
+      i = s.indexOf(sub, i);
       if (i < 0) {
         break;
       }
@@ -212,29 +219,64 @@ public final class Strings {
   }
 
   /**
-   * Gets whether the given index represents a matching.
+   * Gets whether the index represents a match.
    *
    * @see String#indexOf(String)
    * @see String#lastIndexOf(String)
    */
-  public static boolean indexFound(int index) {
+  public static boolean found(int index) {
     return index != INDEX__NOT_FOUND;
   }
 
   /**
-   * Gets whether the given string represents an integer number (ie, contains only Unicode digits,
-   * with optional leading sign, either positive or negative).
+   * Gets the index of the first matching character.
+   *
+   * @return {@value INDEX__NOT_FOUND}, if no match was found.
    */
-  public static boolean isInteger(@Nullable CharSequence value) {
-    return isNumeric(value, true, true);
+  public static int indexOf(String s, IntPredicate condition) {
+    return indexOf(s, condition, 0);
   }
 
   /**
-   * Gets whether the given string represents a generic number (ie, contains only Unicode digits,
-   * with optional leading sign, either positive or negative, and decimal point).
+   * Gets the index of the first matching character.
+   *
+   * @return {@value INDEX__NOT_FOUND}, if no match was found.
    */
-  public static boolean isNumeric(@Nullable CharSequence value) {
-    return isNumeric(value, false, true);
+  public static int indexOf(String s, IntPredicate condition, int fromIndex) {
+    for (int i = fromIndex, l = s.length(); i < l; i++) {
+      if (condition.test(s.charAt(i)))
+        return i;
+    }
+    return INDEX__NOT_FOUND;
+  }
+
+  /**
+   * Gets whether the character is an end of line.
+   */
+  public static boolean isEOL(int c) {
+    return c == LF || c == CR;
+  }
+
+  /**
+   * Gets whether the string represents an integer number.
+   * <p>
+   * <b>Integer number</b> contains only Unicode digits, with optional leading sign, either positive
+   * or negative.
+   * </p>
+   */
+  public static boolean isInteger(@Nullable CharSequence s) {
+    return isNumeric(s, true, true);
+  }
+
+  /**
+   * Gets whether the string represents a generic number.
+   * <p>
+   * <b>Generic number</b> contains only Unicode digits, with optional leading sign, either positive
+   * or negative, and decimal point.
+   * </p>
+   */
+  public static boolean isNumeric(@Nullable CharSequence s) {
+    return isNumeric(s, false, true);
   }
 
   // SPDX-SnippetBegin
@@ -245,49 +287,49 @@ public final class Strings {
   // SourceName: org.apache.commons.lang3.StringUtils.isNumeric(CharSequence)
   // Changes: see @implNote
   /**
-   * Gets whether the given string contains only Unicode digits, with optional leading sign, either
-   * positive or negative, and decimal point.
+   * Gets whether the string represents a generic number.
+   * <p>
+   * <b>Generic number</b> contains only Unicode digits, with optional leading sign, either positive
+   * or negative, and decimal point.
+   * </p>
    * <p>
    * NOTE: Even if a string passes this test, it may still generate an exception when parsed by
-   * Integer.parseInt or Long.parseLong (eg, if the value is outside the range for int or long
-   * respectively).
+   * {@link Integer#parseInt(String)} or {@link Long#parseLong(String)} (e.g., if the value is
+   * outside the range for int or long, respectively).
    * </p>
-   *
    * <pre>
-   *isNumeric(null,*,*)       = false
-   *isNumeric("",*,*)         = false
-   *isNumeric("  ",*,*)       = false
-   *isNumeric("123",*,*)      = true
-   *isNumeric("\u0967\u0968\u0969",*,*) = true
-   *isNumeric("12 3",*,*)     = false
-   *isNumeric("ab2c",*,*)     = false
-   *isNumeric("12-3",*,*)     = false
-   *isNumeric("12.3",false,*) = true
-   *isNumeric("12.3",true,*)  = false
-   *isNumeric("-123",*,true)  = true
-   *isNumeric("-123",*,false) = false
-   *isNumeric("+123",*,true)  = true
-   *isNumeric("+123",*,false) = false</pre>
+   * isNumeric(null,*,*)       = false
+   * isNumeric("",*,*)         = false
+   * isNumeric("  ",*,*)       = false
+   * isNumeric("123",*,*)      = true
+   * isNumeric("\u0967\u0968\u0969",*,*) = true
+   * isNumeric("12 3",*,*)     = false
+   * isNumeric("ab2c",*,*)     = false
+   * isNumeric("12-3",*,*)     = false
+   * isNumeric("12.3",false,*) = true
+   * isNumeric("12.3",true,*)  = false
+   * isNumeric("-123",*,true)  = true
+   * isNumeric("-123",*,false) = false
+   * isNumeric("+123",*,true)  = true
+   * isNumeric("+123",*,false) = false</pre>
    *
-   * @param value
-   *          String to check.
    * @param integer
-   *          Whether {@code value} should be integer (ie, without decimal point).
+   *          Whether {@code s} should be integer (i.e., without decimal point).
    * @param signable
-   *          Whether {@code value} can contain a leading sign.
+   *          Whether {@code s} can contain a leading sign.
    * @implNote Contrary to the original implementation
    *           ({@code org.apache.commons.lang3.StringUtils.isNumeric(CharSequence)}), this method
    *           allows for a leading sign, either positive or negative, and a decimal point.
    */
-  public static boolean isNumeric(@Nullable final CharSequence value, final boolean integer,
+  public static boolean isNumeric(@Nullable final CharSequence s, final boolean integer,
       final boolean signable) {
-    if (isEmpty(value))
+    if (isEmpty(s))
       return false;
 
     boolean decimal = false;
-    for (int i = 0; i < value.length(); i++) {
-      char c = value.charAt(i);
-      if (!Character.isDigit(c)) {
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      if (!isDigit(c)) {
         switch (c) {
           case '.':
             if (!decimal && !integer) {
@@ -311,71 +353,89 @@ public final class Strings {
   // SPDX-SnippetEnd
 
   /**
-   * Gets whether the given string represents an unsigned integer number (ie, contains only Unicode
-   * digits, with no leading sign).
+   * Gets whether the string represents an unsigned integer number.
+   * <p>
+   * <b>Unsigned integer number</b> contains only Unicode digits, with no leading sign.
+   * </p>
    */
-  public static boolean isUInteger(@Nullable CharSequence value) {
-    return isNumeric(value, true, false);
+  public static boolean isUInteger(@Nullable CharSequence s) {
+    return isNumeric(s, true, false);
   }
 
   /**
-   * Gets the end (exclusive) of the line at the given position.
-   */
-  public static int lineEnd(String text, int position) {
-    position = text.indexOf('\n', position);
-    return position < 0 ? text.length() : position;
-  }
-
-  /**
-   * Gets the start (inclusive) of the line at the given position.
-   */
-  public static int lineStart(String text, int position) {
-    return text.lastIndexOf('\n', position) + 1;
-  }
-
-  /**
-   * Normalizes the given value, converting to {@code null} if empty.
+   * Gets the index of the last matching character, searched backwards.
    *
-   * @param value
-   *          String to normalize.
-   * @return {@code null}, if {@code value} is empty.
+   * @return {@value INDEX__NOT_FOUND}, if no match was found.
    */
-  public static @Nullable String strEmptyToNull(@Nullable String value) {
-    return value != null && !value.isEmpty() ? value : null;
+  public static int lastIndexOf(String s, IntPredicate condition) {
+    return lastIndexOf(s, condition, s.length());
   }
 
   /**
-   * Normalizes the given value, stripping and converting to empty if {@code null}.
+   * Gets the index of the last matching character, searched backwards.
    *
-   * @param value
-   *          String to normalize.
-   * @return Empty, if {@code value} is {@code null}.
+   * @return {@value INDEX__NOT_FOUND}, if no match was found.
    */
-  public static String strNorm(@Nullable String value) {
-    return strNorm(value, EMPTY);
+  public static int lastIndexOf(String s, IntPredicate condition, int fromIndex) {
+    for (int i = min(fromIndex, s.length() - 1); i >= 0; i--) {
+      if (condition.test(s.charAt(i)))
+        return i;
+    }
+    return INDEX__NOT_FOUND;
   }
 
   /**
-   * Normalizes the given value, stripping and converting to default if needed.
+   * Gets the end of the line at the given position.
+   */
+  public static int lineEnd(String s, int index) {
+    var ret = indexOf(s, Strings::isEOL, index);
+    return found(ret) ? ret : s.length();
+  }
+
+  /**
+   * Gets the start of the line at the given position.
+   */
+  public static int lineStart(String s, int index) {
+    return lastIndexOf(s, Strings::isEOL, index) + 1;
+  }
+
+  /**
+   * Normalizes the string, converting to {@code null} if empty.
    *
-   * @param value
-   *          String to normalize.
+   * @return {@code null}, if {@code s} is empty.
+   */
+  public static @Nullable String strEmptyToNull(@Nullable String s) {
+    return s != null && !s.isEmpty() ? s : null;
+  }
+
+  /**
+   * Normalizes the string, stripping and converting to empty if {@code null}.
+   *
+   * @return Empty, if {@code s} is {@code null}.
+   */
+  public static String strNorm(@Nullable String s) {
+    return strNorm(s, EMPTY);
+  }
+
+  /**
+   * Normalizes the string, stripping and converting to default if needed.
+   *
    * @param defaultValue
-   *          String to return in case {@code value} is {@code null} or empty.
-   * @return {@code defaultValue}, if {@code value} is {@code null} or normalized value is empty.
+   *          String to return in case {@code s} is {@code null} or empty.
+   * @return {@code defaultValue}, if {@code s} is {@code null} or normalized value is empty.
    * @see java.util.Objects#requireNonNullElse(Object, Object)
    */
-  public static String strNorm(@Nullable String value, String defaultValue) {
-    return value == null || (value = value.strip()).isEmpty() ? defaultValue : value;
+  public static String strNorm(@Nullable String s, String defaultValue) {
+    return s == null || (s = s.strip()).isEmpty() ? defaultValue : s;
   }
 
   /**
    * (see {@link #strNormAll(String, String, boolean)})
    *
-   * @return Empty, if {@code value} is {@code null}.
+   * @return Empty, if {@code s} is {@code null}.
    */
-  public static String strNormAll(@Nullable String value) {
-    return strNormAll(value, EMPTY, true);
+  public static String strNormAll(@Nullable String s) {
+    return strNormAll(s, EMPTY, true);
   }
 
   // SPDX-SnippetBegin
@@ -386,8 +446,8 @@ public final class Strings {
   // SourceName: org.apache.commons.lang3.StringUtils.normalizeSpace(String)
   // Changes: see @implNote
   /**
-   * Normalizes the given value replacing sequences of whitespace characters by a single space
-   * (similar to <a href=
+   * Normalizes the string replacing sequences of whitespace characters by a single space (similar
+   * to <a href=
    * "https://www.w3.org/TR/xpath/#function-normalize-space">https://www.w3.org/TR/xpath/#function-normalize
    * -space</a>).
    * <p>
@@ -400,12 +460,12 @@ public final class Strings {
    * For reference:
    * </p>
    * <pre>
-   *\x0B = vertical tab
-   *\f = #xC = form feed
-   *#x20 = space
-   *#x9 = \t
-   *#xA = \n
-   *#xD = \r</pre>
+   * \x0B = vertical tab
+   * \f = #xC = form feed
+   * #x20 = space
+   * #x9 = \t
+   * #xA = \n
+   * #xD = \r</pre>
    * <p>
    * The difference is that Java's whitespace includes vertical tab and form feed, which this
    * function will also normalize.
@@ -414,33 +474,31 @@ public final class Strings {
    * @see #strNorm(String)
    * @see <a href=
    *      "https://www.w3.org/TR/xpath/#function-normalize-space">https://www.w3.org/TR/xpath/#function-normalize-space</a>
-   * @param value
-   *          String to normalize.
    * @param defaultValue
-   *          String to return in case {@code value} is {@code null} or empty.
+   *          String to return in case {@code s} is {@code null} or empty.
    * @param trimmed
-   *          Whether {@code value} must be trimmed.
-   * @return {@code defaultValue}, if {@code value} is {@code null} or normalized value is empty.
+   *          Whether {@code s} must be trimmed.
+   * @return {@code defaultValue}, if {@code s} is {@code null} or normalized value is empty.
    * @implNote Contrary to the original implementation
    *           ({@code org.apache.commons.lang3.StringUtils.normalizeSpace(String)}), this method
    *           allows to control trimming and default value.
    */
-  public static String strNormAll(@Nullable String value, String defaultValue, boolean trimmed) {
+  public static String strNormAll(@Nullable String s, String defaultValue, boolean trimmed) {
     /*
      * LANG-1020: Improved performance significantly by normalizing manually instead of using regex
      * See https://github.com/librucha/commons-lang-normalizespaces-benchmark for performance test
      */
-    if (isEmpty(value))
+    if (isEmpty(s))
       return defaultValue;
 
-    final int size = value.length();
+    final int size = s.length();
     final var newChars = new char[size];
     int count = 0;
     int whitespacesCount = 0;
     boolean startWhitespaces = trimmed;
     for (int i = 0; i < size; i++) {
-      final char actualChar = value.charAt(i);
-      if (Character.isWhitespace(actualChar)) {
+      final char actualChar = s.charAt(i);
+      if (isWhitespace(actualChar)) {
         if (whitespacesCount == 0 && !startWhitespaces) {
           newChars[count++] = SPACE;
         }
@@ -462,50 +520,124 @@ public final class Strings {
    *
    * @return {@code null}, if empty after normalization.
    */
-  public static @Nullable String strNormAllToNull(@Nullable String value) {
-    return (value = strNormAll(value)).isEmpty() ? null : value;
+  public static @Nullable String strNormAllToNull(@Nullable String s) {
+    return (s = strNormAll(s)).isEmpty() ? null : s;
   }
 
   /**
-   * Normalizes the given value, stripping and converting to {@code null} if empty.
+   * Normalizes the string, stripping and converting to {@code null} if empty.
    *
-   * @param value
-   *          String to normalize.
    * @return {@code null}, if empty after stripping.
    */
-  public static @Nullable String strNormToNull(@Nullable String value) {
-    return (value = strNorm(value)).isEmpty() ? null : value;
+  public static @Nullable String strNormToNull(@Nullable String s) {
+    return (s = strNorm(s)).isEmpty() ? null : s;
   }
 
   /**
-   * Normalizes the given value, converting to empty if {@code null}.
+   * Normalizes the string, converting to empty if {@code null}.
    *
-   * @param value
-   *          String to normalize.
-   * @return Empty, if {@code value} is {@code null}.
+   * @return Empty, if {@code s} is {@code null}.
    */
-  public static String strNullToEmpty(@Nullable String value) {
-    return value != null ? value : EMPTY;
+  public static String strNullToEmpty(@Nullable String s) {
+    return s != null ? s : EMPTY;
   }
 
   /**
-   * Converts the given string to integer.
+   * Converts the string to integer.
    *
-   * @return {@code null}, if {@code value} is invalid.
+   * @return {@code null}, if {@code s} is invalid.
    */
-  public static @Nullable Integer strToInteger(String value) {
+  public static @Nullable Integer strToInteger(String s) {
     try {
-      return Integer.parseInt(value);
+      return Integer.parseInt(s);
     } catch (NumberFormatException ex) {
       return null;
     }
   }
 
   /**
+   * Strips leading and trailing empty lines.
+   * <p>
+   * Contrary to {@link String#strip()}, only leading and trailing {@linkplain #isEOL(int)
+   * end-of-line} characters are removed.
+   * </p>
+   */
+  public static String stripEmptyLines(String s) {
+    int begin = indexOf(s, $ -> !isEOL($));
+    if (!found(begin))
+      return EMPTY;
+
+    int end = lastIndexOf(s, $ -> !isEOL($)) + 1;
+    return begin > 0 || end < s.length() ? s.substring(begin, end) : s;
+  }
+
+  /**
+   * Strips incidental leading and trailing whitespace from each line in the string.
+   * <p>
+   * <b>Incidental whitespace</b> is any other than internal indentation; the latter is what remains
+   * after removing the same amount of leading whitespace from all the lines, until at least one
+   * line has no more left.
+   * </p>
+   * <p>
+   * This method mimics Java 15's <code><a href=
+   * "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html#stripIndent()">String.stripIndent()</a></code>.
+   * </p>
+   */
+  public static String stripIndent(String s) {
+    if (s.isEmpty())
+      return s;
+
+    List<String> lines = s.lines().collect(Collectors.toCollection(ArrayList::new));
+
+    // Detect incidental leading whitespace!
+    int minLeadSpaceCount = Integer.MAX_VALUE;
+    var changed = false;
+    for (var it = lines.listIterator(); it.hasNext();) {
+      var line = it.next();
+      if (line.isEmpty()) {
+        continue;
+      }
+
+      /*
+       * Strip trailing whitespace!
+       *
+       * NOTE: This also prevents blank lines from interfering with the detection.
+       */
+      {
+        var strippedLine = line.stripTrailing();
+        if (!strippedLine.equals(line)) {
+          it.set(line = strippedLine);
+          changed = true;
+          if (line.isEmpty()) {
+            continue;
+          }
+        }
+      }
+
+      if (minLeadSpaceCount > 0) {
+        minLeadSpaceCount = min(minLeadSpaceCount, indexOf(line, $ -> !isWhitespace($)));
+      }
+    }
+    if (!changed && minLeadSpaceCount == 0)
+      return s;
+
+    // Strip incidental leading whitespace!
+    Stream<String> stream = lines.stream();
+    if (minLeadSpaceCount > 0) {
+      int indexOfNonIncidental = minLeadSpaceCount;
+      stream = stream
+          .map($ -> $.isEmpty() ? $
+              : $.substring(min(indexOf($, $$ -> !isWhitespace($$)), indexOfNonIncidental)));
+    }
+    return stream.collect(Collectors.joining(S + LF, EMPTY,
+        isEOL(s.charAt(s.length() - 1)) ? S + LF /* Preserves EOL on last line */ : EMPTY));
+  }
+
+  /**
    * Ensures leading characters are lower-case.
    * <p>
    * Contrary to {@link StringUtils#uncapitalize(String)}, this method lowers all consecutive
-   * leading upper-case characters except the last one if followed by a lower-case letter. Eg:
+   * leading upper-case characters except the last one if followed by a lower-case letter — e.g.:
    * </p>
    * <ul>
    * <li>{@code "Capitalized"} to {@code "capitalized"}</li>
@@ -517,19 +649,19 @@ public final class Strings {
    * <li>{@code "UNDERSCORE_TEST"} to {@code "underscore_TEST"}</li>
    * </ul>
    */
-  public static String uncapitalizeGreedy(String value) {
-    char[] valueChars = value.toCharArray();
-    for (int i = 0, limit = valueChars.length - 1; i <= limit; i++) {
+  public static String uncapitalizeGreedy(String s) {
+    char[] cc = s.toCharArray();
+    for (int i = 0, limit = cc.length - 1; i <= limit; i++) {
       /*-
        * Not upper-case letter?
        *
-       * Eg, "UTF8Test" --> "utf8Test"
-       *         ^
+       * E.g., "UTF8Test" --> "utf8Test"
+       *           ^
        */
-      if (!Character.isUpperCase(valueChars[i])) {
+      if (!isUpperCase(cc[i])) {
         // Unchanged?
         if (i == 0)
-          return value;
+          return s;
         // Changed.
         else {
           break;
@@ -538,16 +670,16 @@ public final class Strings {
       /*-
        * Non-initial upper-case letter followed by lower-case letter?
        *
-       * Eg, "IOException" --> "ioException"
-       *        ^
+       * E.g., "IOException" --> "ioException"
+       *          ^
        */
-      else if (i > 0 && i < limit && Character.isLowerCase(valueChars[i + 1])) {
+      else if (i > 0 && i < limit && isLowerCase(cc[i + 1])) {
         break;
       }
 
-      valueChars[i] = Character.toLowerCase(valueChars[i]);
+      cc[i] = Character.toLowerCase(cc[i]);
     }
-    return new String(valueChars);
+    return new String(cc);
   }
 
   private Strings() {

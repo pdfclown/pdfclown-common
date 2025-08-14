@@ -23,7 +23,7 @@ import static org.pdfclown.common.util.Strings.DOT;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SLASH;
-import static org.pdfclown.common.util.Strings.indexFound;
+import static org.pdfclown.common.util.Strings.found;
 
 import java.io.IOException;
 import java.net.URI;
@@ -120,7 +120,7 @@ public final class Files {
    */
   public static String extension(String path) {
     int extensionIndex = FilenameUtils.indexOfExtension(path);
-    return indexFound(extensionIndex) ? path.substring(extensionIndex) : EMPTY;
+    return found(extensionIndex) ? path.substring(extensionIndex) : EMPTY;
   }
 
   /**
@@ -141,8 +141,8 @@ public final class Files {
    * Gets the full extension of the given path.
    * <p>
    * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (eg, ".tar.gz") are recognized, while version codes are ignored
-   * (eg, "commons-io-2.8.0.jar" returns ".jar", NOT ".8.0.jar").
+   * therefore, composite extensions (e.g., ".tar.gz") are recognized, while version codes are
+   * ignored (e.g., "commons-io-2.8.0.jar" returns ".jar", NOT ".8.0.jar").
    * </p>
    *
    * @return Empty, if no extension.
@@ -156,8 +156,8 @@ public final class Files {
    * Gets the full extension of the given path.
    * <p>
    * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (eg, ".tar.gz") are recognized, while version codes are ignored
-   * (eg, "commons-io-2.8.0.jar" returns ".jar", NOT ".8.0.jar").
+   * therefore, composite extensions (e.g., ".tar.gz") are recognized, while version codes are
+   * ignored (e.g., "commons-io-2.8.0.jar" returns ".jar", NOT ".8.0.jar").
    * </p>
    *
    * @return Empty, if no extension.

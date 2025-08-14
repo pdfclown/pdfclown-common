@@ -28,6 +28,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Strings.SPACE;
+import static org.pdfclown.common.util.Strings.isEOL;
 
 import java.io.Flushable;
 import java.io.IOException;
@@ -59,13 +60,6 @@ public class IndentWriter extends Writer {
     return base instanceof IndentWriter
         ? ((IndentWriter) base).withIndent(indent)
         : new IndentWriter(base, indent);
-  }
-
-  /**
-   * Gets whether the character is an end of line.
-   */
-  private static boolean isEol(char ch) {
-    return ch == '\r' || ch == '\n';
   }
 
   // SourceName: delegate
@@ -204,7 +198,7 @@ public class IndentWriter extends Writer {
         }
         for (int i = 0; i < len; i++) {
           c = cbuf[off + i];
-          if (isEol(lastWritten) && !isEol(c)) {
+          if (isEOL(lastWritten) && !isEOL(c)) {
             base.append(indent);
           }
           base.append(c);
