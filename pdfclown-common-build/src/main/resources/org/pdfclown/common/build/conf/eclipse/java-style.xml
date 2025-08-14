@@ -270,7 +270,7 @@
       value="false"/>
     <setting
       id="org.eclipse.jdt.core.formatter.comment.clear_blank_lines_in_javadoc_comment"
-      value="false"/>
+      value="true"/>
     <setting
       id="org.eclipse.jdt.core.formatter.comment.count_line_length_from_starting_position"
       value="true"/>

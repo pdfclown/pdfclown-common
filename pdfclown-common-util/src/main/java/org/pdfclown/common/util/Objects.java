@@ -520,7 +520,6 @@ public final class Objects {
 
   /**
    * Gets whether the given object is equal to or contains the other one.
-   *
    * <p>
    * Containment is verified via {@link Collection#contains(Object)} and
    * {@link Map#containsValue(Object)}.

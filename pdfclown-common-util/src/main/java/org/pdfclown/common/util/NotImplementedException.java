@@ -18,7 +18,6 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Thrown to indicate that a block of code has not been implemented yet.
- *
  * <p>
  * Differs from generic {@link UnsupportedOperationException} because the lack of support is
  * unintended and temporary rather than purposeful and permanent.

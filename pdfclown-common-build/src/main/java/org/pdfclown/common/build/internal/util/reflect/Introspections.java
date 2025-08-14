@@ -45,7 +45,6 @@ public final class Introspections {
 
   /**
    * Retrieves the property descriptors (getters only) of the given type.
-   *
    * <p>
    * This is a highly-specialized implementation that works around some limitations of vanilla
    * {@linkplain java.beans.Introspector#getBeanInfo(Class, Class) introspection}:

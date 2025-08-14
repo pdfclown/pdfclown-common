@@ -202,7 +202,6 @@ public class ParamMessage {
   }
 
   /**
-   *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args

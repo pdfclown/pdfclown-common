@@ -34,7 +34,6 @@ import org.jspecify.annotations.Nullable;
 public interface JsonElement {
   /**
    * Ensures proper value definition.
-   *
    * <p>
    * There are two kinds of values:
    * </p>
