@@ -445,9 +445,9 @@ public final class Objects {
    * Gets whether the two resolved elements are equal.
    *
    * @param <R>
-   *          Reference (ie, unresolved element) type.
+   *          Reference (i.e., unresolved element) type.
    * @param <T>
-   *          Object (ie, resolved element) type.
+   *          Object (i.e., resolved element) type.
    * @param o1
    *          Resolved element 1.
    * @param o2
@@ -484,9 +484,9 @@ public final class Objects {
    * Gets whether the two unresolved elements are equal.
    *
    * @param <R>
-   *          Reference (ie, unresolved element) type.
+   *          Reference (i.e., unresolved element) type.
    * @param <T>
-   *          Object (ie, resolved element) type.
+   *          Object (i.e., resolved element) type.
    * @param ref1
    *          Unresolved element 1.
    * @param ref2

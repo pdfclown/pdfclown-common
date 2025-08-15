@@ -100,7 +100,7 @@ public class ModelMapper<T> {
      * Gets the all-but-these-properties selector for the given type.
      *
      * @param level
-     *          Exclusion level (ie, selection is applied from this level).
+     *          Exclusion level (i.e., selection is applied from this level).
      */
     public static PropertySelector excludeProperties(Class<?> type, int level,
         String... properties) {
@@ -118,7 +118,7 @@ public class ModelMapper<T> {
      * Gets the nothing-but-these-properties selector for the given type.
      *
      * @param level
-     *          Inclusion level (ie, selection is applied up to this level).
+     *          Inclusion level (i.e., selection is applied up to this level).
      */
     public static PropertySelector includeProperties(Class<?> type, int level,
         String... properties) {
@@ -444,7 +444,7 @@ public class ModelMapper<T> {
    * {@code obj} is added to {@code visitedObjs} to prevent duplicated mappings and infinite loops
    * on circular references: <span class="important">it is caller's responsibility to check
    * {@code visitedObjs} <i>before</i> calling this method in order to fall back to an alternate,
-   * reference-like representation</span> (eg, as a PDF reference (say, "14 0 R") instead of its
+   * reference-like representation</span> (e.g., as a PDF reference (say, "14 0 R") instead of its
    * referenced PDF object) in case {@code obj} has already been visited.
    * </p>
    *

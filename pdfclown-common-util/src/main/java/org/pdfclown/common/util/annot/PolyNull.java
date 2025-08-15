@@ -27,29 +27,29 @@ import org.jspecify.annotations.Nullable;
  * Arguments marked with this annotation will cause the method to return a non-null result, and vice
  * versa — like if there were two method overloads, e.g. [*]:
  * </p>
- * <pre>
- *{@code @}NullMarked
- *class Class{@code <T>} {
- *  {@code @}PolyNull {@code @}Nullable T cast({@code @}PolyNull {@code @}Nullable Object obj) {
- *    . . .
- *  }
- *}</pre>
+ * <pre class="lang-java"><code>
+ * &#64;NullMarked
+ * class Class{@code <T>} {
+ *   &#64;PolyNull &#64;Nullable T cast(&#64;PolyNull &#64;Nullable Object obj) {
+ *     . . .
+ *   }
+ * }</code></pre>
  * <p>
  * equals (if only nullness information could be used during overload resolution) to
  * </p>
- * <pre>
- *{@code @}NullMarked
- *class Class{@code <T>} {
- *  // this method as before
- *  {@code @}Nullable T cast({@code @}Nullable Object obj) {
- *    . . .
- *  }
+ * <pre class="lang-java"><code>
+ * &#64;NullMarked
+ * class Class{@code <T>} {
+ *   // this method as before
+ *   &#64;Nullable T cast(&#64;Nullable Object obj) {
+ *     . . .
+ *   }
  *
- *  // but also this "overload"!
- *  T cast(Object obj) {
- *    . . .
- *  }
- *}</pre>
+ *   // but also this "overload"!
+ *   T cast(Object obj) {
+ *     . . .
+ *   }
+ * }</code></pre>
  * <p>
  * <span class="important">[*] IMPORTANT: Because of the lack of standardization, this annotation is
  * currently for documentation purposes only; as a consequence, <i>it MUST be accompanied by

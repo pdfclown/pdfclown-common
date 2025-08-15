@@ -428,7 +428,7 @@ public final class Xmls {
   }
 
   /**
-   * Walks along the ancestor-or-self axis of the given node until the mapping succeeds (ie, a
+   * Walks along the ancestor-or-self axis of the given node until the mapping succeeds (that is, a
    * non-null result is returned by the mapper).
    *
    * @param <R>
@@ -459,8 +459,8 @@ public final class Xmls {
   }
 
   /**
-   * Walks along the descendant axis of the given node until the mapping succeeds (ie, a non-null
-   * result is returned by the mapper).
+   * Walks along the descendant axis of the given node until the mapping succeeds (that is, a
+   * non-null result is returned by the mapper).
    *
    * @param <R>
    *          Result type.

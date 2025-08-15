@@ -88,7 +88,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the base name (ie, the filename without extension) of the given resource name.
+   * Gets the base name (i.e., the filename without extension) of the given resource name.
    * <p>
    * Eg, if {@code name} is "/my/res/html/obj.html", returns "obj".
    * </p>
@@ -159,7 +159,7 @@ public final class ResourceNames {
   /**
    * Gets the name corresponding to the concatenation of the given parts, normalized.
    *
-   * @return Empty (ie, relative root), if {@code parts} is empty.
+   * @return Empty (i.e., relative root), if {@code parts} is empty.
    */
   public static String name(String... parts) {
     switch (parts.length) {
@@ -218,7 +218,7 @@ public final class ResourceNames {
     StringBuilder b = null;
     int lastEnd = 0;
     /*
-     * Whether current character is on separator boundary (ie, the previous character was a slash,
+     * Whether current character is on separator boundary (i.e., the previous character was a slash,
      * so no contiguous separator is acceptable).
      */
     boolean separated = false;

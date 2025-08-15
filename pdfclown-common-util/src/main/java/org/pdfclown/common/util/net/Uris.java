@@ -82,9 +82,9 @@ public final class Uris {
    * relativize a target path if the source is a subpath (<cite>"if the path of this URI is not a
    * prefix of the path of the given URI, then the given URI is returned."</cite>) — e.g.,
    * </p>
-   * <pre>
-   * URI.create("https://example.io/path/from.html").relativize(
-   *   URI.create("https://example.io/path/way/longer/to.html"))</pre>
+   * <pre class="lang-java"><code>
+   * URI.create("https://example.io/path/from.html")
+   *     .relativize(URI.create("https://example.io/path/way/longer/to.html"))</code></pre>
    * <p>
    * weirdly returns
    * </p>
@@ -122,7 +122,7 @@ public final class Uris {
       /*
        * Mutually-incompatible relative URIs (one of them is rooted)?
        *
-       * NOTE: If one of the relative URIs is rooted (ie, with a leading slash, kinda local
+       * NOTE: If one of the relative URIs is rooted (i.e., with a leading slash, kinda local
        * absolute), then they cannot be related to each other, and `to` must be returned as-is.
        */
       if (fromPath.charAt(index) == SLASH || toPath.charAt(index) == SLASH)

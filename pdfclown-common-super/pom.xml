@@ -70,7 +70,7 @@ pdfclown-common-base instead)</description>
     -->
     <!--
       NOTE: Derived POMs MUST override this property either specifying their own filesystem-based
-      resources path, or setting it empty (ie, classpath-based resources) and declaring the build
+      resources path, or setting it empty (i.e., classpath-based resources) and declaring the build
       resources artifact (namely, pdfclown-common-build) as dependency of the plugins referencing
       those resources (BTW, some plugins support also the equivalent "classpath:" protocol, but
       that's not a standard practice, so we have to stick to common heuristics). -->
@@ -435,7 +435,7 @@ log.info("buildTimestamp: " + buildTimestamp
 
                   NOTE: This entry should be named `Target-Jdk-Spec` but, due to a bug in
                   maven-bundle-plugin, `Build-Jdk-Spec` entry is wrongly valued with the JDK
-                  Maven runs under (eg, 21) instead of the toolchain JDK (11): in order to avoid
+                  Maven runs under (e.g., 21) instead of the toolchain JDK (11): in order to avoid
                   resembling a weak compilation (target JDK 11 compiled on JDK 21, whilst the
                   actual toolchain is on JDK 11 itself), stronger `Release-Jdk-Spec` is used
                   instead.
@@ -520,6 +520,7 @@ log.info("buildTimestamp: " + buildTimestamp
             <sourcepath>${project.build.sourceDirectory}</sourcepath>
 
             <additionalOptions>
+              <additionalOption>--allow-script-in-comments</additionalOption>
               <additionalOption>-tag "implSpec:a:Implementation Requirements:"</additionalOption>
               <additionalOption>-tag "implNote:a:Implementation Note:"</additionalOption>
               <additionalOption>-tag "apiNote:a:API Note:"</additionalOption>
@@ -539,6 +540,9 @@ log.info("buildTimestamp: " + buildTimestamp
               its default path should be just this one. -->
             <overview>${basedir}/src/main/javadoc/overview.html</overview>
             <top><![CDATA[
+<link rel="stylesheet" type="text/css" href="{@docRoot}/resources/highlight/prism.css">
+<script src="{@docRoot}/resources/highlight/prism.min.js"></script>
+
 <div class="header-top">
   <small>
     <a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}">${project.groupId}:${project.artifactId}</a>:<a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/jar">${project.version}</a>
@@ -665,11 +669,14 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               SYSTEM
             -->
             <!--
-              NOTE: Missing comments are ignored.
+              - `-missing`: missing comments are ignored
+              - `-html`: HTML 5 check is disabled, as it wrongly prohibits legal data attributes
+                (e.g., `<pre data-line="5"><code>` used by Prism code highlighter) — see also
+                <https://developer.mozilla.org/en-US/docs/Web/HTML/How_to/Use_data_attributes>
             -->
             <!--
               TODO: enable after jada configured
-            <doclint>all,-missing</doclint>
+            <doclint>all,-missing,-html</doclint>
             -->
             <doclint>none</doclint>
             <quiet>true</quiet>
@@ -802,11 +809,11 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           <toolchains>
             <jdk>
               <!--
-                NOTE: maven-toolchains-plugin doesn't match by version prefix (eg, version "11"
+                NOTE: maven-toolchains-plugin doesn't match by version prefix (e.g., version "11"
                 doesn't match a toolchain whose version is "11.0.25"), nor the Version Range
                 Specification <https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html>
                 provides any primitive way to express the condition "any version within the same
-                major" (eg, 'any version 11' can only be expressed as "[11,12)", but this implies
+                major" (e.g., 'any version 11' can only be expressed as "[11,12)", but this implies
                 defining also the upper bound major in another property (since the interpolation
                 mechanism doesn't support a transformation to express `${javaVersion} + 1`); as a
                 workaround, we specify an arbitrarily large minor (9) to cover all the plausible

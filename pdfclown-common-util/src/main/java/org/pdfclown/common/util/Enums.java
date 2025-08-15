@@ -153,7 +153,7 @@ public final class Enums {
    * Maps the given enumeration type to its default key definition ({@link Enum#name() name} for
    * {@link Enum}, {@link XtEnum#getCode() code} for {@link XtEnum}).
    * <p>
-   * {@link Xnum}-derived types are mapped to their closest enumeration (ie, augmented enumeration
+   * {@link Xnum}-derived types are mapped to their closest enumeration (i.e., augmented enumeration
    * only in case of interfaces, otherwise their own enumeration). Eg, let's say that {@code MyXnum}
    * is an interface extending {@code Xnum}, whilst {@code MyEnum1} and {@code MyEnum2} are
    * enumerations implementing {@code MyXnum}: if {@code type} is {@code MyXnum}, its augmented

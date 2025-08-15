@@ -267,7 +267,7 @@ public abstract class Debug {
 
   /**
    * @implSpec Implementations MUST call their overridden counterpart respecting proper call nesting
-   *           with {@link #onStart()}, like this:<pre>
+   *           with {@link #onStart()}, like this:<pre class="lang-java"><code>
    * &#64;Override
    * protected void onStart(){
    *   super.onStart();
@@ -278,7 +278,7 @@ public abstract class Debug {
    * protected void onEnd(){
    *   . . .
    *   super.onEnd();
-   * }</pre>
+   * }</code></pre>
    * @see #onStart()
    */
   protected void onEnd() {

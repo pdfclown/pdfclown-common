@@ -39,40 +39,41 @@ import org.slf4j.LoggerFactory;
  * @author Stefano Chizzolini
  * @apiNote To decouple code relying on non-essential dependencies:
  *          <ol>
- *          <li>declare the <b>non-essential dependencies</b>:<pre>
- *public class Config {
- *  public static final String DEPENDENCY__JAVACV = "org.bytedeco:javacv-platform";
- *  static {
- *    DependsOn.Registry.register(DEPENDENCY__JAVACV, "org.bytedeco.javacv.Frame");
- *  }
+ *          <li>declare the <b>non-essential dependencies</b>:<pre class="lang-java"><code>
+ * public class Config {
+ *   public static final String DEPENDENCY__JAVACV = "org.bytedeco:javacv-platform";
+ *   static {
+ *     DependsOn.Registry.register(DEPENDENCY__JAVACV, "org.bytedeco.javacv.Frame");
+ *   }
  *
- *  {@code public static <T> T resolve(
- *      Class<? extends T> dependentType,
- *      Class<? extends T> fallbackType)} {
- *    return DependsOn.Registry.resolve(dependentType, fallbackType);
- *  }
- *}</pre></li>
+ *   public static &lt;T&gt; T resolve(
+ *       Class&lt;? extends T&gt; dependentType,
+ *       Class&lt;? extends T&gt; fallbackType) {
+ *     return DependsOn.Registry.resolve(dependentType, fallbackType);
+ *   }
+ * }</code></pre></li>
  *          <li>define a <b>fall-back implementation</b> of the functionality, which doesn't rely on
- *          non-essential dependencies:<pre>
- *public class MyType {
- *  public String myMethod(. . .) {
- *    . . .
- *  }
- *}</pre></li>
+ *          non-essential dependencies:<pre class="lang-java"><code>
+ * public class MyType {
+ *   public String myMethod(. . .) {
+ *     . . .
+ *   }
+ * }</code></pre></li>
  *          <li>define one or more <b>full implementations</b> of the functionality, which rely on
- *          non-essential dependencies:<pre>
- *{@code @}DependsOn(DEPENDENCY_JAVACV)
- *public class MyFullType extends MyType {
- *  {@code @}Override
- *  public String myMethod(. . .) {
- *    . . .
- *  }
- *}</pre></li>
- *          <li>resolve at runtime the <b>best implementation</b> available:<pre>
- *public class MyType {
- *  public static final MyType INSTANCE = Config.resolve(MyFullType.class, MyType.class);
- *  . . .
- *}</pre></li>
+ *          non-essential dependencies:<pre class="lang-java"><code>
+ * &#64;DependsOn(DEPENDENCY_JAVACV)
+ * public class MyFullType extends MyType {
+ *   &#64;Override
+ *   public String myMethod(. . .) {
+ *     . . .
+ *   }
+ * }</code></pre></li>
+ *          <li>resolve at runtime the <b>best implementation</b>
+ *          available:<pre class="lang-java"><code>
+ * public class MyType {
+ *   public static final MyType INSTANCE = Config.resolve(MyFullType.class, MyType.class);
+ *   . . .
+ * }</code></pre></li>
  *          </ol>
  */
 @Documented

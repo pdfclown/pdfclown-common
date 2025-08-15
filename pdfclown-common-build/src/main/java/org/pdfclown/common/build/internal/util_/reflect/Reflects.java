@@ -76,18 +76,18 @@ public final class Reflects {
    *
    * @param evaluator
    *          Frame chooser.
-   * @implNote The call stack looks like this: <pre>{@code
-   *## reflection frames ##
-   *   . . .
-   *  <caller[x+n-1]>      <-- we are HERE (Reflects.callerFrame(..))
-   *   . . .
-   *  <caller[x+1]>        <-- Reflects...(..)
-   *## actual frames ##
-   *  <caller[x]>          <-- this is YOU
-   *  <caller[x-1]>        <-- this is the first frame to evaluate
-   *  <caller[x-2]>
-   *   . . .
-   *  <caller[0]>          <-- this is the last frame to evaluate}</pre>
+   * @implNote The call stack looks like this: <pre>
+   * ## reflection frames ##
+   *    . . .
+   *   &lt;caller[x+n-1]&gt;      &lt;-- we are HERE (Reflects.callerFrame(..))
+   *    . . .
+   *   &lt;caller[x+1]&gt;        &lt;-- Reflects...(..)
+   * ## actual frames ##
+   *   &lt;caller[x]&gt;          &lt;-- this is YOU
+   *   &lt;caller[x-1]&gt;        &lt;-- this is the first frame to evaluate
+   *   &lt;caller[x-2]&gt;
+   *    . . .
+   *   &lt;caller[0]&gt;          &lt;-- this is the last frame to evaluate</pre>
    */
   public static Optional<StackFrame> callerFrame(Predicate<StackFrame> evaluator) {
     var step = new MutableInt(-1);
@@ -120,7 +120,7 @@ public final class Reflects {
    * @param <T>
    *          Return type.
    * @param getter
-   *          Method name of the property getter (eg "getMyProperty").
+   *          Method name of the property getter (e.g. "getMyProperty").
    */
   @SuppressWarnings({ "unchecked" })
   public static <T> T get(Object obj, String getter) {

@@ -391,7 +391,7 @@
     </module>
     <module name="MemberName">
       <!-- [CUSTOM] Allow any non-capitalized name, with trailing underscore for special cases
-      (eg, reserved keyword conflict like "extends"). -->
+      (e.g., reserved keyword conflict like "extends"). -->
       <property
         name="format"
         value="^[a-z][a-zA-Z0-9]*[_]?$"/>
@@ -404,7 +404,7 @@
     </module>
     <module name="ParameterName">
       <!-- [CUSTOM] Allow any non-capitalized name, with trailing underscore for special cases
-      (eg, reserved keyword conflict like "extends"). -->
+      (e.g., reserved keyword conflict like "extends"). -->
       <property
         name="format"
         value="^[a-z][a-zA-Z0-9]*[_]?$"/>
@@ -438,7 +438,7 @@
     </module>
     <module name="LocalVariableName">
       <!-- [CUSTOM] Allow any non-capitalized name, with trailing underscore for special cases
-      (eg, reserved keyword conflict like "extends"). -->
+      (e.g., reserved keyword conflict like "extends"). -->
       <property
         name="format"
         value="^[a-z][a-zA-Z0-9]*[_]?$"/>

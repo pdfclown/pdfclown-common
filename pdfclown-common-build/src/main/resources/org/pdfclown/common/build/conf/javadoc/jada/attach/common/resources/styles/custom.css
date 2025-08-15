@@ -29,10 +29,6 @@ pre {
   margin: 1em;
 }
 
-th {
-  white-space: nowrap;
-}
-
 .biblio-author {
   font-variant: small-caps;
 }
@@ -66,4 +62,15 @@ th {
 
 #all-packages-table {
   margin-top: 2em;
+}
+
+/*
+  Code highlight (PrismJS) -------------------------------------------------------------------------
+*/
+pre[data-line] {
+  padding: 1em 0 1em 2em !important;
+}
+
+.line-highlight {
+  background-color: #ffff0020 !important;
 }

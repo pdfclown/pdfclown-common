@@ -94,7 +94,7 @@ public interface ServiceProvider {
   }
 
   /**
-   * Implementation priority, ie a capability index used to rank available implementations (the
+   * Implementation priority, that is a capability index used to rank available implementations (the
    * lesser, the better — zero means full capability).
    * <p>
    * Each implementation is expected to declare a priority comparable to other implementations of

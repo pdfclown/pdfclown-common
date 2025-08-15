@@ -32,8 +32,9 @@ import org.jspecify.annotations.Nullable;
  *          for visitors that do not need a {@code data} parameter.
  * @author Stefano Chizzolini
  * @see Visitable
- * @implSpec Implementers are expected to define one method per element type, as follows:<pre>
- *R visit(%ElementType% obj, D data);</pre>
+ * @implSpec Implementers are expected to define one method per element type, as
+ *           follows:<pre class="lang-java"><code>
+ * R visit(%ElementType% obj, D data);</code></pre>
  *           <p>
  *           Each element type, in turn, is expected to implement {@link Visitable}.
  *           </p>
@@ -41,58 +42,59 @@ import org.jspecify.annotations.Nullable;
  *           Visits are expected to cross an inheritance line within the element type hierarchy
  *           until a meaningful operation can be performed (this arrangement is the most robust
  *           possible, as any missing operation would eventually end up visiting the method
- *           associated to the root type of the hierarchy — perfect point to trap malfunctions), eg:
+ *           associated to the root type of the hierarchy — perfect point to trap malfunctions),
+ *           e.g.:
  *           </p>
- *           <pre>
- *public class MyVisitor{@code <R, D> implements Visitor<R, D>} {
- *  . . .
+ *           <pre class="lang-java"><code>
+ * public class MyVisitor&lt;R, D&gt; implements Visitor&lt;R, D&gt; {
+ *   . . .
  *
- *  {@code @}Override
- *  public R visit(Bicycle obj, D data) {
- *    return visit((HumanPoweredVehicle) obj, data);
- *  }
+ *   &#64;Override
+ *   public R visit(Bicycle obj, D data) {
+ *     return visit((HumanPoweredVehicle) obj, data);
+ *   }
  *
- *  {@code @}Override
- *  public R visit(Car obj, D data) {
- *    return visit((MotorVehicle) obj, data);
- *  }
+ *   &#64;Override
+ *   public R visit(Car obj, D data) {
+ *     return visit((MotorVehicle) obj, data);
+ *   }
  *
- *  {@code @}Override
- *  public R visit(HumanPoweredVehicle obj, D data) {
- *    return visit((Vehicle) obj, data);
- *  }
+ *   &#64;Override
+ *   public R visit(HumanPoweredVehicle obj, D data) {
+ *     return visit((Vehicle) obj, data);
+ *   }
  *
- *  {@code @}Override
- *  public R visit(Motorcycle obj, D data) {
- *    return visit((MotorVehicle) obj, data);
- *  }
+ *   &#64;Override
+ *   public R visit(Motorcycle obj, D data) {
+ *     return visit((MotorVehicle) obj, data);
+ *   }
  *
- *  {@code @}Override
- *  public R visit(MotorVehicle obj, D data) {
- *    return visit((Vehicle) obj, data);
- *  }
+ *   &#64;Override
+ *   public R visit(MotorVehicle obj, D data) {
+ *     return visit((Vehicle) obj, data);
+ *   }
  *
- *  {@code @}Override
- *  public R visit(Vehicle obj, D data) {
- *    {@code /}*
- *     * NOTE: `Vehicle` is the root type of this hierarchy.
- *     *
- *     * As terminal visit for each and every inheritance line, this method can work like a
- *     * trap for any element type in the hierarchy whose visit implementation is missing. The
- *     * following statement throws a `org.pdfclown.util.NotImplementedException` reporting
- *     * what implementation is missing; its error stack would be like this:
- *     *
- *     * Exception in thread "main" org.pdfclown.util.NotImplementedException:
- *     *     MyVisitor.visit(mydomain.vehicle.Car, D)
- *     *{@code /}
- *    throw org.pdfclown.common.util.Exceptions.TODO(
- *      "{}.visit({}, D)",
- *      org.pdfclown.util.Objects.sqn(this),
- *      org.pdfclown.util.Objects.fqn(obj));
- *  }
+ *   &#64;Override
+ *   public R visit(Vehicle obj, D data) {
+ *     &#47;*
+ *      * NOTE: `Vehicle` is the root type of this hierarchy.
+ *      *
+ *      * As terminal visit for each and every inheritance line, this method can work like a
+ *      * trap for any element type in the hierarchy whose visit implementation is missing. The
+ *      * following statement throws a `org.pdfclown.util.NotImplementedException` reporting
+ *      * what implementation is missing; its error stack would be like this:
+ *      *
+ *      * Exception in thread "main" org.pdfclown.util.NotImplementedException:
+ *      *     MyVisitor.visit(mydomain.vehicle.Car, D)
+ *      *&#47;
+ *     throw org.pdfclown.common.util.Exceptions.TODO(
+ *       "{}.visit({}, D)",
+ *       org.pdfclown.util.Objects.sqn(this),
+ *       org.pdfclown.util.Objects.fqn(obj));
+ *   }
  *
- *  . . .
- *}</pre>
+ *   . . .
+ * }</code></pre>
  */
 public interface Visitor<R extends @Nullable Object, D extends @Nullable Object> {
 }

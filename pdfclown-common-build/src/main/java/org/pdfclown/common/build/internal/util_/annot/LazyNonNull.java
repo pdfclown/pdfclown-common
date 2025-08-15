@@ -33,28 +33,28 @@ import org.jspecify.annotations.Nullable;
  * accessor method is called</i>.</span>
  * </p>
  * <p>
- * Useful for lazy field initialization — eg [*]:
+ * Useful for lazy field initialization — e.g. [*]:
  * </p>
- * <pre>
- *{@code @}NullMarked
- *class MyClass {
- *  {@code @}LazyNonNull {@code @}Nullable Object object;
+ * <pre class="lang-java"><code>
+ * &#64;NullMarked
+ * class MyClass {
+ *   &#64;LazyNonNull &#64;Nullable Object object;
  *
- *  MyClass() {
- *    . . .
- *  }
+ *   MyClass() {
+ *     . . .
+ *   }
  *
- *  public Object getObject() {
- *    if (object == null) {
- *      object = . . .;
- *    }
- *    return object;
- *  }
+ *   public Object getObject() {
+ *     if (object == null) {
+ *       object = . . .;
+ *     }
+ *     return object;
+ *   }
  *
- *  public void setObject(Object value) {
- *    object = requireNonNull(value);
- *  }
- *}</pre>
+ *   public void setObject(Object value) {
+ *     object = requireNonNull(value);
+ *   }
+ * }</code></pre>
  * <p>
  * <span class="important">[*] IMPORTANT: This annotation is for documentation purposes only; since
  * static analyzers don't recognize its semantics, <i>it MUST be accompanied by

@@ -18,8 +18,11 @@ import java.util.Set;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Indexed map, ie a map whose entries are associated to a positional index which can be arbitrarily
- * manipulated by users.
+ * Indexed map.
+ * <p>
+ * A map whose entries are associated to a positional index which can be arbitrarily manipulated by
+ * users.
+ * </p>
  *
  * @param <K>
  *          Map key type.

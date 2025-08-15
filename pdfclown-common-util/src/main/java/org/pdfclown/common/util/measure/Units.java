@@ -216,14 +216,14 @@ public class Units extends AbstractSystemOfUnits {
   /**
    * <a href="https://en.wikipedia.org/wiki/Hectare#Are">Are</a>
    * (<a href="https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI">SI-accepted</a> unit,
-   * 10^2), ie square decametre (dam²).
+   * 10^2), i.e. square decametre (dam²).
    */
   public static final XtUnit<Area> ARE = addUnit(HECTO(SQUARE_METRE),
       "Are", "a");
   /**
    * <a href="https://en.wikipedia.org/wiki/Hectare">Hectare</a>
    * (<a href="https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI">SI-accepted</a> unit,
-   * 10^4), ie square hectometre (hm²).
+   * 10^4), i.e. square hectometre (hm²).
    */
   public static final XtUnit<Area> HECTARE = addUnit(HECTO(ARE),
       "Hectare", "ha");

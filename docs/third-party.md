@@ -14,7 +14,7 @@ It may be incorporated either keeping track of its original repository (fork), o
 
 Whenever any source code from third-party projects is incorporated, it must be documented as follows:
 
-1. in case of *files from a new third-party project*, add an **entry to the NOTICE.txt file** in the root directory, eg:
+1. in case of *files from a new third-party project*, add an **entry to the NOTICE.txt file** in the root directory, e.g.:
 
       ```
       JSONassert <https://github.com/skyscreamer/JSONassert>

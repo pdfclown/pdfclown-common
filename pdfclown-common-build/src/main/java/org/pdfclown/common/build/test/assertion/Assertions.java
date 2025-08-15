@@ -227,19 +227,19 @@ public final class Assertions {
        * <p>
        * The generated source code looks like this:
        * </p>
-       * <pre>
+       * <pre class="lang-java"><code>
        * // expected
        * java.util.Arrays.asList(
-       *   // from[0]
-       *   "",
-       *   "../another/sub/to.html",
-       *   // from[1]
-       *   "to.html",
-       *   "another/sub/to.html",
-       *   . . .
-       *   // from[5]
-       *   "other/to.html",
-       *   "/sub/to.html"),</pre>
+       *     // from[0]
+       *     "",
+       *     "../another/sub/to.html",
+       *     // from[1]
+       *     "to.html",
+       *     "another/sub/to.html",
+       *     . . .
+       *     // from[5]
+       *     "other/to.html",
+       *     "/sub/to.html"),</code></pre>
        *
        * @author Stefano Chizzolini
        */
@@ -324,16 +324,16 @@ public final class Assertions {
        * <p>
        * The generated source code looks like this:
        * </p>
-       * <pre>
+       * <pre class="lang-java"><code>
        * // expected
        * java.util.Arrays.asList(
-       *   // from[0]
-       *   "",
-       *   // from[1]
-       *   "to.html",
-       *   . . .
-       *   // from[5]
-       *   "other/to.html"),</pre>
+       *     // from[0]
+       *     "",
+       *     // from[1]
+       *     "to.html",
+       *     . . .
+       *     // from[5]
+       *     "other/to.html"),</code></pre>
        *
        * @author Stefano Chizzolini
        */
@@ -403,17 +403,17 @@ public final class Assertions {
      * The resulting argument tuples will be composed this way:
      * </p>
      * <pre>
-    * (expected[i], args[0][j0], args[1][j1], .&nbsp;.&nbsp;., args[n][jn])</pre>
+    * (expected[i], args[0][j<sub>0</sub>], args[1][j<sub>1</sub>], .&nbsp;.&nbsp;., args[n][j<sub>n</sub>])</pre>
      * <p>
      * where
      * </p>
-     * <ul>
-     * <li><code>expected[i] = f(args[0][j0], args[1][j1], .&nbsp;.&nbsp;., args[n][jn])</code></li>
-     * <li><code>i ∈ N : 0 &lt;= i &lt; args[0].size() * args[1].size() * .&nbsp;.&nbsp;. * args[n].size()</code></li>
-     * <li><code>n = args.size() - 1</code></li>
-     * <li><code>jm ∈ N : 0 &lt;= jm &lt; args[m].size()</code></li>
-     * <li><code>m ∈ N : 0 &lt;= m &lt;= n</code></li>
-     * </ul>
+     * <pre>
+     * expected[i] = f(args[0][j<sub>0</sub>], args[1][j<sub>1</sub>], .&nbsp;.&nbsp;., args[n][j<sub>n</sub>])
+     * i ∈ N : 0 &lt;= i &lt; args[0].size() * args[1].size() * .&nbsp;.&nbsp;. * args[n].size()
+     * n = args.size() - 1
+     * j<sub>m</sub> ∈ N : 0 &lt;= j<sub>m</sub> &lt; args[m].size()
+     * m ∈ N : 0 &lt;= m &lt;= n
+     * </pre>
      */
     public static ArgumentsStreamConfig cartesian() {
       return new Cartesian();
@@ -433,12 +433,12 @@ public final class Assertions {
      * <p>
      * where
      * </p>
-     * <ul>
-     * <li><code>expected[i] = f(args[0][i], args[1][i], .&nbsp;.&nbsp;., args[n][i])</code></li>
-     * <li><code>i ∈ N : 0 &lt;= i &lt; m</code></li>
-     * <li><code>m = expected.size() = args[0].size() = args[1].size() = .&nbsp;.&nbsp;. = args[n].size()</code></li>
-     * <li><code>n = args.size() - 1</code></li>
-     * </ul>
+     * <pre>
+     * expected[i] = f(args[0][i], args[1][i], .&nbsp;.&nbsp;., args[n][i])
+     * i ∈ N : 0 &lt;= i &lt; m
+     * m = expected.size() = args[0].size() = args[1].size() = .&nbsp;.&nbsp;. = args[n].size()
+     * n = args.size() - 1
+     * </pre>
      */
     public static ArgumentsStreamConfig simple() {
       return new Simple();
@@ -465,21 +465,21 @@ public final class Assertions {
      * <p>
      * For example, if the parameterized test looks like this:
      * </p>
-     * <pre>
+     * <pre class="lang-java"><code>
      * &#64;ParameterizedTest
      * &#64;MethodSource
-     * public void %myTestName%(Expected&lt;String&gt; expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
+     * public void myTestName(Expected&lt;String&gt; expected, ArgType0 arg0, ArgType1 arg1, . . ., ArgTypeN argN) {
      *   assertParameterizedOf(
-     *       () -&gt; %myMethodToTest%(arg0, arg1, . . ., argN),
+     *       () -&gt; myMethodToTest(arg0, arg1, . . ., argN),
      *       expected,
      *       () -&gt; new ExpectedGeneration(List.of(
      *           entry("arg0", arg0),
      *           entry("arg1", arg1),
      *           . . .
      *           entry("argN", argN))));
-     * }</pre>
+     * }</code></pre>
      * <p>
-     * then {@code argIndex} = 0 will define the converter to {@code %ArgType0%} of the input values
+     * then {@code argIndex} = 0 will define the converter to {@code ArgType0} of the input values
      * of parameterized test argument {@code arg0} which corresponds to {@code args[0]} of
      * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}.
      * </p>
@@ -819,16 +819,16 @@ public final class Assertions {
    * <p>
    * The generated source code looks like this:
    * </p>
-   * <pre>
+   * <pre class="lang-java"><code>
    * // expected
    * java.util.Arrays.asList(
-   *   // %expectedComment[0]%
-   *   %expected[0]%,
-   *   // %expectedComment[1]%
-   *   %expected[1]%,
-   *   . . .
-   *   // %expectedComment[n]%
-   *   %expected[n]%),</pre>
+   *     // expectedComment_0
+   *     expected_0,
+   *     // expectedComment_1
+   *     expected_1,
+   *     . . .
+   *     // expectedComment_n
+   *     expected_n),</code></pre>
    *
    * @author Stefano Chizzolini
    */
@@ -1064,21 +1064,21 @@ public final class Assertions {
    * the given {@code args}.
    * </p>
    * <p>
-   * The corresponding parameterized test shall follow this pattern:
+   * The corresponding parameterized test shall look like this:
    * </p>
-   * <pre>
+   * <pre class="lang-java"><code>
    * &#64;ParameterizedTest
    * &#64;MethodSource
-   * public void %myTestName%(Expected&lt;String&gt; expected, %ArgType0% arg0, %ArgType0% arg1, . . ., %ArgTypeN% argN) {
+   * public void myTestName(Expected&lt;String&gt; expected, ArgType0 arg0, ArgType1 arg1, . . ., ArgTypeN argN) {
    *   assertParameterizedOf(
-   *       () -&gt; %myMethodToTest%(arg0, arg1, . . ., argN),
+   *       () -&gt; myMethodToTest(arg0, arg1, . . ., argN),
    *       expected,
    *       () -&gt; new ExpectedGeneration(List.of(
    *           entry("arg0", arg0),
    *           entry("arg1", arg1),
    *           . . .
    *           entry("argN", argN))));
-   * }</pre>
+   * }</code></pre>
    * <p>
    * See {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} for more
    * information and a full example.
@@ -1087,35 +1087,37 @@ public final class Assertions {
    * <p>
    * The source code representation of {@code expected} is automatically generated as described in
    * this section — this simplifies the preparation and maintenance of test cases, also unifying the
-   * way failed results (i.e., thrown exceptions) are handled along with regular results.
+   * way failed results (i.e., thrown exceptions) are handled along with regular ones.
    * </p>
    * <p>
    * Here, the steps to generate {@code expected} (based on the example in
    * {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)}):
    * </p>
    * <ol>
-   * <li>pass {@code null} as {@code expected} argument to this method:<pre>
+   * <li>pass {@code null} as {@code expected} argument to this
+   * method:<pre class="lang-java" data-line="5"><code>
    * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
-   *     return argumentsStream(
-   *         ArgumentsStreamConfig.cartesian(),
-   *         // expected
-   *         <span style="background-color:yellow;color:black;">null</span>,
-   *         // value
-   *         asList(
-   *             "Capitalized",
-   *             "uncapitalized",
-   *             . . .
-   *             "UNDERSCORE_TEST"));
-   * }</pre></li>
-   * <li>in your IDE, <i>run the test in debug mode</i> — this will cause the generated source code
-   * to be copied directly into your clipboard.
+   *   return argumentsStream(
+   *       ArgumentsStreamConfig.cartesian(),
+   *       // expected
+   *       <span style="background-color:yellow;color:black;">null</span>,
+   *       // value
+   *       asList(
+   *           "Capitalized",
+   *           "uncapitalized",
+   *           . . .
+   *           "UNDERSCORE_TEST"));
+   * }</code></pre></li>
+   * <li>in your IDE, <i>run the test in debug mode — this will cause the generated source code to
+   * be copied directly into your clipboard</i>, ready to get pasted as {@code expected} argument
+   * (see next step).
    * <p>
-   * If run in normal mode, the generated source code will be output to
+   * Conversely, if run in normal mode, the generated source code will be output to
    * {@link ExpectedGeneration#out}, as specified in the
    * {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} call (by
    * default, {@linkplain System#err stderr}):
    * </p>
-   * <pre>
+   * <pre class="lang-java" data-line="8"><code>
    * &#64;ParameterizedTest
    * &#64;MethodSource
    * public void uncapitalizeGreedy(Expected&lt;String&gt; expected, String value) {
@@ -1124,29 +1126,29 @@ public final class Assertions {
    *       expected,
    *       () -&gt; new ExpectedGeneration(List.of(
    *           entry("value", value)))); // <span style=
-  "background-color:yellow;color:black;">&lt;- No `out` stream specified here, so it defaults to stderr</span>
-   * }</pre></li>
-   * <li>replace {@code null} (step 1) with the generated source code as {@code expected}
-   * argument:<pre>
+   * "background-color:yellow;color:black;">&lt;- No `out` stream specified here, so it defaults to stderr</span>
+   * }</code></pre></li>
+   * <li>replace {@code null} (step 1) with the generated source code (step 2) as {@code expected}
+   * argument:<pre class="lang-java" data-line="5-12"><code>
    * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
-   *     return argumentsStream(
-   *         ArgumentsStreamConfig.cartesian(),
-   *         // expected
-   *         <span style="background-color:yellow;color:black;">java.util.Arrays.asList(
-   *             // value[0]: 'Capitalized'
-   *             "capitalized",
-   *             // value[1]: 'uncapitalized'
-   *             "uncapitalized",
-   *             . . .
-   *             // value[7]: 'UNDERSCORE_TEST'
-   *             "underscore_TEST")</span>,
-   *         // value
-   *         asList(
-   *             "Capitalized",
-   *             "uncapitalized",
-   *             . . .
-   *             "UNDERSCORE_TEST"));
-   * }</pre></li>
+   *   return argumentsStream(
+   *       ArgumentsStreamConfig.cartesian(),
+   *       // expected
+   *       <span style="background-color:yellow;color:black;">java.util.Arrays.asList(
+   *           // value[0]: 'Capitalized'
+   *           "capitalized",
+   *           // value[1]: 'uncapitalized'
+   *           "uncapitalized",
+   *           . . .
+   *           // value[7]: 'UNDERSCORE_TEST'
+   *           "underscore_TEST")</span>,
+   *       // value
+   *       asList(
+   *           "Capitalized",
+   *           "uncapitalized",
+   *           . . .
+   *           "UNDERSCORE_TEST"));
+   * }</code></pre></li>
    * </ol>
    * <h2>Arguments Conversion</h2>
    * <p>
@@ -1276,9 +1278,10 @@ public final class Assertions {
    *          Expected result, provided by
    *          {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}; it
    *          can be passed as-is (for {@linkplain Matchers#is(Object) exact match}), or associated
-   *          to a custom {@linkplain Matcher matcher} (e.g.,
-   *          {@linkplain Matchers#closeTo(double, double) approximate match}):<pre>
-   * expected.match(() -&gt; isCloseTo(expected.getReturned())) // where `expected` is Expected&lt;Double&gt;</pre>
+   *          to a custom {@linkplain Matcher matcher} — e.g.,
+   *          {@linkplain Matchers#closeTo(double, double) approximate
+   *          match}:<pre class="lang-java"><code>
+   * expected.match($ -&gt; isCloseTo($)) // where `expected` is Expected&lt;Double&gt;</code></pre>
    * @param generationSupplier
    *          Supplies the feed for expected results generation (see
    *          {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}).
@@ -1293,11 +1296,11 @@ public final class Assertions {
    *          generator is closed earlier)</li>
    *          </ul>
    * @apiNote For example, to test a method whose signature is
-   *          {@code Strings.uncapitalizeGreedy(String value)}:<pre>
+   *          {@code Strings.uncapitalizeGreedy(String value)}:<pre class="lang-java" data-line=
+   *          "18"><code>
    * import static java.util.Arrays.asList;
    * import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
-   * import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
-   * import static org.pdfclown.common.build.test.assertion.Assertions.evalParameterized;
+   * import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
    *
    * import java.util.List;
    * import java.util.stream.Stream;
@@ -1314,7 +1317,7 @@ public final class Assertions {
    *         ArgumentsStreamConfig.cartesian(),
    *         // expected <span style=
   "background-color:yellow;color:black;">&lt;- THIS list is generated automatically (see argumentsStream(..))</span>
-   *         java.util.Arrays.asList(
+   *         asList(
    *             // value[0]: 'Capitalized'
    *             "capitalized",
    *             // value[1]: 'uncapitalized'
@@ -1352,7 +1355,7 @@ public final class Assertions {
    *         () -&gt; new ExpectedGeneration(List.of(
    *             entry("value", value))));
    *   }
-   * }</pre>
+   * }</code></pre>
    */
   public static <T> void assertParameterized(@Nullable Object actual,
       @Nullable Expected<T> expected,
@@ -1548,15 +1551,15 @@ public final class Assertions {
    * @param assertWrap
    *          Lambda wrapping the assertion to probe.
    * @apiNote To use it, wrap your assertion inside {@code assertWrap}, wiring its argument as the
-   *          delta of your assertion; eg, if the assertion is:<pre>
-   * assertEquals(myExpected, myActual, myDelta);</pre>
+   *          delta of your assertion; e.g., if the assertion is:<pre class="lang-java"><code>
+   * assertEquals(myExpected, myActual, myDelta);</code></pre>
    *          <p>
    *          wrap it this way:
    *          </p>
-   *          <pre>
+   *          <pre class="lang-java"><code>
    * Assertions.probeDelta($ {@code ->} {
    *   assertEquals(myExpected, myActual, $);
-   * });</pre>
+   * });</code></pre>
    *          <p>
    *          and run your test; probeDelta will iterate until success, printing to stdout the
    *          resulting delta:

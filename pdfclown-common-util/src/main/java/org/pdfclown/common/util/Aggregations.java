@@ -41,7 +41,7 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Unmodifiable;
 
 /**
- * Aggregation (ie, collection or map) utilities.
+ * Aggregation (i.e., collection or map) utilities.
  *
  * @author Stefano Chizzolini
  */

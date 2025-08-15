@@ -54,7 +54,7 @@ public final class Matchers {
     /*
      * NOTE: Cast is necessary because, due to type erasure, we are forced to declare
      * `List<Matcher<? super E>>` as return type instead of List<T>, since the latter would be
-     * statically resolved as List<Object>, causing the linker to match wrong overloads (eg, see
+     * statically resolved as List<Object>, causing the linker to match wrong overloads (e.g., see
      * org.hamcrest.Matchers.arrayContaining(..)).
      */
     return (List<Matcher<? super E>>) ret;

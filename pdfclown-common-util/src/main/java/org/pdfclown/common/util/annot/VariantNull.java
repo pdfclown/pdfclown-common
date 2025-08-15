@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Indicates that the subclass implementations of the method where the annotated type is used are
- * responsible to decide over its nullness (ie, whether to specialize (in case of output) or
+ * responsible to decide over its nullness (i.e., whether to specialize (in case of output) or
  * generalize (in case of input)).
  * <p>
  * In detail:
@@ -42,7 +42,7 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * For example:
  * </p>
- * <pre>
+ * <pre class="lang-java"><code>
  * &#64;NullMarked
  * abstract class MyRootType {
  *   private &#64;Nullable Object myProperty;
@@ -92,7 +92,7 @@ import org.jspecify.annotations.Nullable;
  *   public void setMyProperty(Object value) {
  *     return super.setMyProperty(requireNonNull(value));
  *   }
- * }</pre>
+ * }</code></pre>
  *
  * @author Stefano Chizzolini
  */

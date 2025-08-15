@@ -28,23 +28,23 @@ import org.jspecify.annotations.Nullable;
  * "https://checkerframework.org/api/org/checkerframework/checker/nullness/qual/MonotonicNonNull.html">MonotonicNonNull</a>.
  * </p>
  * <p>
- * Useful for field initialization outside the constructor (ie, subroutines called by the
- * constructor, mandatory subclass delegation or automated initialization) — eg [*]:
+ * Useful for field initialization outside the constructor (i.e., subroutines called by the
+ * constructor, mandatory subclass delegation or automated initialization) — e.g. [*]:
  * </p>
- * <pre>
- *{@code @}NullMarked
- *class MyClass {
- *  {@code @}InitNonNull Object object;
+ * <pre class="lang-java"><code>
+ * &#64;NullMarked
+ * class MyClass {
+ *   &#64;InitNonNull Object object;
  *
- *  MyClass() {
- *    . . .
- *    load();
- *  }
+ *   MyClass() {
+ *     . . .
+ *     load();
+ *   }
  *
- *  private void load() {
- *    object = . . .;
- *  }
- *}</pre>
+ *   private void load() {
+ *     object = . . .;
+ *   }
+ * }</code></pre>
  * <p>
  * [*] NOTE: This annotation is for documentation purposes only; since static analyzers don't
  * recognize its semantics, corresponding nullness warnings have to be suppressed.

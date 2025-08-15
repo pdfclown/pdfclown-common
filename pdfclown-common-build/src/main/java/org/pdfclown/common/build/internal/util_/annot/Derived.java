@@ -39,30 +39,30 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * For example [*]:
  * </p>
- * <pre>
- *{@code @}NullMarked
- *class MyClass {
- *  {@code @}Derived
- *  transient {@code @}Nullable Object object;
- *  Object primaryData = "Something";
+ * <pre class="lang-java"><code>
+ * &#64;NullMarked
+ * class MyClass {
+ *   &#64;Derived
+ *   transient &#64;Nullable Object object;
+ *   Object primaryData = "Something";
  *
- *  MyClass() {
- *    . . .
- *  }
+ *   MyClass() {
+ *     . . .
+ *   }
  *
- *  public Object getObject() {
- *    if (object == null) {
- *      object = primaryData.toString();
- *    }
- *    return object;
- *  }
+ *   public Object getObject() {
+ *     if (object == null) {
+ *       object = primaryData.toString();
+ *     }
+ *     return object;
+ *   }
  *
- *  public void setPrimaryData(Object value) {
- *    primaryData = value;
+ *   public void setPrimaryData(Object value) {
+ *     primaryData = value;
  *
- *    object = null;
- *  }
- *}</pre>
+ *     object = null;
+ *   }
+ * }</code></pre>
  * <p>
  * <span class="important">[*] IMPORTANT: To semantically denote its derivative nature, <i>it is
  * recommended to accompany this annotation with the {@code transient} keyword</i>, even if no

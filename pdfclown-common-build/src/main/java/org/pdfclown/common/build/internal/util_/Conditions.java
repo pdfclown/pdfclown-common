@@ -478,10 +478,10 @@ public final class Conditions {
    * contrary to the latter (which is primarily for input validation), it is designed for doing
    * <b>output validation</b> in accessors, as demonstrated below:
    * </p>
-   * <pre>
-   *public Bar getBar() {
-   *  return requireState((Bar)getExternalResource("bar"));
-   *}</pre>
+   * <pre class="lang-java"><code>
+   * public Bar getBar() {
+   *   return requireState((Bar)getExternalResource("bar"));
+   * }</code></pre>
    * <p>
    * Useful in case an accessor is expected to return a non-null reference, but depends on external
    * state beyond its control, or on internal state available in specific phases of its containing
