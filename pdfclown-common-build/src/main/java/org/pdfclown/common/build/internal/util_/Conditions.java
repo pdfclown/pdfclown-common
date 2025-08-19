@@ -15,6 +15,7 @@ package org.pdfclown.common.build.internal.util_;
 import static java.util.Collections.singletonList;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 
 import java.util.Collection;
@@ -23,6 +24,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.annot.PolyNull;
 
@@ -465,13 +467,6 @@ public final class Conditions {
   }
 
   /**
-   * (see {@link #requireState(Object, String)})
-   */
-  public static <T> T requireState(@Nullable T obj) {
-    return requireState(obj, "State UNDEFINED");
-  }
-
-  /**
    * Requires the value is not null.
    * <p>
    * This method is the state counterpart of {@link java.util.Objects#requireNonNull(Object)}:
@@ -489,16 +484,36 @@ public final class Conditions {
    * thrown.
    * </p>
    *
-   * @return {@code obj}
+   * @return {@code value}
    * @throws IllegalStateException
-   *           if {@code obj} is {@code null}.
+   *           if {@code value} is {@code null}.
    * @see java.util.Objects#requireNonNull(Object)
    */
-  public static <T> T requireState(@Nullable T value, String message) {
-    if (value != null)
-      return value;
+  public static <T> T requireState(@Nullable T value) {
+    if (value == null)
+      throw wrongState("State UNDEFINED");
 
-    throw new IllegalStateException(message);
+    return value;
+  }
+
+  /**
+   * (see {@link #requireState(Object)})
+   */
+  public static <T> T requireState(@Nullable T value, String message) {
+    if (value == null)
+      throw wrongState(message);
+
+    return value;
+  }
+
+  /**
+   * (see {@link #requireState(Object)})
+   */
+  public static <T> T requireState(@Nullable T value, Supplier<String> messageSupplier) {
+    if (value == null)
+      throw wrongState(messageSupplier.get());
+
+    return value;
   }
 
   /**

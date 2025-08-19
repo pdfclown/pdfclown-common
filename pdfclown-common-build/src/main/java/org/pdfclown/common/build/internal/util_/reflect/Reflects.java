@@ -19,7 +19,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.function.Predicate;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -30,7 +29,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class Reflects {
   /**
-   * Calls the given method on the target object.
+   * Calls the method on the target object.
    *
    * @param <T>
    *          Return type.
@@ -47,7 +46,7 @@ public final class Reflects {
   }
 
   /**
-   * Calls the given method on the target object.
+   * Calls the method on the target object.
    *
    * @param <T>
    *          Return type.
@@ -65,57 +64,17 @@ public final class Reflects {
 
   /**
    * Gets the calling frame.
+   * <p>
+   * {@link StackFrame#getDeclaringClass()} is supported.
+   * </p>
    */
   public static StackFrame callerFrame() {
     //noinspection OptionalGetWithoutIsPresent : Exception should NEVER happen.
-    return callerFrame($ -> true).get();
+    return stackFrame($ -> true).get();
   }
 
   /**
-   * Gets the frame chosen walking down the call stack.
-   *
-   * @param evaluator
-   *          Frame chooser.
-   * @implNote The call stack looks like this: <pre>
-   * ## reflection frames ##
-   *    . . .
-   *   &lt;caller[x+n-1]&gt;      &lt;-- we are HERE (Reflects.callerFrame(..))
-   *    . . .
-   *   &lt;caller[x+1]&gt;        &lt;-- Reflects...(..)
-   * ## actual frames ##
-   *   &lt;caller[x]&gt;          &lt;-- this is YOU
-   *   &lt;caller[x-1]&gt;        &lt;-- this is the first frame to evaluate
-   *   &lt;caller[x-2]&gt;
-   *    . . .
-   *   &lt;caller[0]&gt;          &lt;-- this is the last frame to evaluate</pre>
-   */
-  public static Optional<StackFrame> callerFrame(Predicate<StackFrame> evaluator) {
-    var step = new MutableInt(-1);
-    return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk($ -> $
-        .skip(1) /* Skips the current frame */
-        .filter($$ -> {
-          switch (step.intValue()) {
-            case -1:
-              // Skip infrastructural frames!
-              if (!$$.getClassName().equals(Reflects.class.getName())) {
-                step.increment();
-              }
-              break;
-            case 0:
-              // Skip the primary caller!
-              step.increment();
-              break;
-            default:
-              if (evaluator.test($$))
-                return true;
-          }
-          return false;
-        })
-        .findFirst());
-  }
-
-  /**
-   * Gets a property value from the given object.
+   * Gets a property value from the object.
    *
    * @param <T>
    *          Return type.
@@ -132,15 +91,45 @@ public final class Reflects {
   }
 
   /**
-   * Gets the method corresponding to the given stack frame.
+   * Gets the method corresponding to the stack frame.
    */
   public static Method method(StackFrame frame) {
     try {
       return frame.getDeclaringClass().getDeclaredMethod(frame.getMethodName(),
           frame.getMethodType().parameterArray());
     } catch (NoSuchMethodException ex) {
-      throw new RuntimeException(ex);
+      throw runtime(ex);
     }
+  }
+
+  /**
+   * Selects a frame walking down the call stack.
+   * <p>
+   * {@link StackFrame#getDeclaringClass()} is supported.
+   * </p>
+   * <p>
+   * The call stack looks like this:
+   * </p>
+   * <pre>
+   * ## INCIDENTAL FRAMES ##
+   *   frame[x+n]    &lt;-- we are HERE (Reflects.stackFrame(Predicate))
+   *   . . .         &lt;-- Reflects...(..)
+   *   frame[x+1]    &lt;-- Reflects...(..)
+   *   frame[x]      &lt;-- this is YOU (current frame)
+   * ## SELECTABLE FRAMES ##
+   *   frame[x-1]    &lt;-- this is the first frame to evaluate
+   *   frame[x-2]
+   *   . . .
+   *   frame[0]      &lt;-- this is the last frame to evaluate</pre>
+   */
+  public static Optional<StackFrame> stackFrame(Predicate<StackFrame> selector) {
+    return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk($ -> $
+        // Skip incidental frames!
+        .dropWhile($$ -> $$.getClassName().equals(Reflects.class.getName()))
+        // Skip current frame!
+        .skip(1)
+        .filter(selector)
+        .findFirst());
   }
 
   private Reflects() {

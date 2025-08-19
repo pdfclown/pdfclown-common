@@ -34,12 +34,12 @@ public final class Tests {
    * Useful to detect which test is currently executing.
    * </p>
    * <p>
-   * Test detection is based on junit annotations (see <b>test method</b> definition in
+   * Test detection is based on JUnit 5 annotations (see <b>test method</b> definition in
    * {@link Test @Test}).
    * </p>
    */
   public static Optional<StackFrame> testFrame() {
-    return Reflects.callerFrame($ -> {
+    return Reflects.stackFrame($ -> {
       Method m = Reflects.method($);
       return m.isAnnotationPresent(Test.class)
           || m.isAnnotationPresent(RepeatedTest.class)
