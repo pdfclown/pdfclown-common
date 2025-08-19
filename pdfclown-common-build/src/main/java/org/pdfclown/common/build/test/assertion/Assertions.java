@@ -1297,7 +1297,7 @@ public final class Assertions {
    *          </ul>
    * @apiNote For example, to test a method whose signature is
    *          {@code Strings.uncapitalizeGreedy(String value)}:<pre class="lang-java" data-line=
-   *          "18"><code>
+   *          "18-35"><code>
    * import static java.util.Arrays.asList;
    * import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
    * import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
@@ -1315,8 +1315,8 @@ public final class Assertions {
    *   private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
    *     return argumentsStream(
    *         ArgumentsStreamConfig.cartesian(),
-   *         // expected <span style=
-  "background-color:yellow;color:black;">&lt;- THIS list is generated automatically (see argumentsStream(..))</span>
+   *         <span style=
+  "background-color:yellow;color:black;">// expected &lt;- THIS list is generated automatically (see argumentsStream(..))
    *         asList(
    *             // value[0]: 'Capitalized'
    *             "capitalized",
@@ -1333,7 +1333,7 @@ public final class Assertions {
    *             // value[6]: 'UTF8TEST'
    *             "utf8TEST",
    *             // value[7]: 'UNDERSCORE_TEST'
-   *             "underscore_TEST"),
+   *             "underscore_TEST")</span>,
    *         // value
    *         asList(
    *             "Capitalized",

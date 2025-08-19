@@ -16,7 +16,7 @@ Throughtout the documentation, source code comments inclusive, the keywords “M
 
 ### Formal grammar notation
 
-Throughtout the documentation, source code comments included, formal grammar definitions are expressed with the [Extended Backus-Naur Form (EBNF) notation described in the XML specification](https://www.w3.org/TR/REC-xml/#sec-notation).
+Throughtout the documentation, source code comments inclusive, formal grammar definitions are expressed with the [Extended Backus-Naur Form (EBNF) notation described in the XML specification](https://www.w3.org/TR/REC-xml/#sec-notation).
 
 ##  Public Conventions
 

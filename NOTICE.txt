@@ -15,7 +15,7 @@ Licensed under generic Public Domain license <https://creativecommons.org/public
 
 Open HTML to PDF <https://github.com/danfickle/openhtmltopdf>
 Copyright 2015-2022 Daniel Fickling, 2015 Patrick Wright
-Licensed under GNU General Public License 3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>
+Licensed under GNU Lesser General Public License 3.0 <https://www.gnu.org/licenses/lgpl-3.0.html>
 
 UMLDoclet <https://github.com/talsma-ict/umldoclet>
 Copyright 2016-2022 Talsma ICT
