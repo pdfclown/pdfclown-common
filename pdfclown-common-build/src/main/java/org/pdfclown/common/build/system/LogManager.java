@@ -19,6 +19,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.event.Level;
 
 /**
@@ -44,6 +45,8 @@ public final class LogManager {
    * Appender for assertion-related logs.
    */
   public static final String APPENDER_NAME__ASSERT = "Assert";
+
+  private static @Nullable Level defaultLevel;
 
   /**
    * Applies the given logging profile.
@@ -84,11 +87,25 @@ public final class LogManager {
 
   /**
    * Sets the root logging level.
+   *
+   * @param value
+   *          ({@code null}, to restore the default level)
    */
-  public static void setLevel(Level value) {
+  public static void setLevel(@Nullable Level value) {
+    if (value == null) {
+      if (defaultLevel == null)
+        // NOP
+        return;
+
+      value = defaultLevel;
+    }
     var implLevel = org.apache.logging.log4j.Level.valueOf(value.name());
     var logContext = getContext();
-    logContext.getConfiguration().getRootLogger().setLevel(implLevel);
+    var rootLogger = logContext.getConfiguration().getRootLogger();
+    if (defaultLevel == null) {
+      defaultLevel = Level.valueOf(rootLogger.getLevel().name());
+    }
+    rootLogger.setLevel(implLevel);
     logContext.updateLoggers();
   }
 

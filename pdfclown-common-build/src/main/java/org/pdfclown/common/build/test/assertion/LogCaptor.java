@@ -19,6 +19,7 @@ import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -165,24 +166,17 @@ public abstract class LogCaptor
   }
 
   /**
-   * Filters the captured events by the given predicate.
+   * Gets the first captured event matching the predicate.
    */
-  public Stream<LoggingEvent> event(Predicate<? super LoggingEvent> predicate) {
-    return getEvents().stream().filter(predicate);
+  public Optional<LoggingEvent> event(Predicate<? super LoggingEvent> predicate) {
+    return events(predicate).findFirst();
   }
 
   /**
-   * Gets the event captured at the given position.
+   * Gets the captured event at the position.
    */
   public LoggingEvent event(int index) {
     return getEvents().get(index);
-  }
-
-  /**
-   * Gets the captured events transformed according to the given mapper.
-   */
-  public <R> Stream<R> eventAs(Function<? super LoggingEvent, ? extends R> mapper) {
-    return getEvents().stream().map(mapper);
   }
 
   /**
@@ -190,6 +184,13 @@ public abstract class LogCaptor
    */
   public int eventCount() {
     return getEvents().size();
+  }
+
+  /**
+   * Filters the captured events by the predicate.
+   */
+  public Stream<LoggingEvent> events(Predicate<? super LoggingEvent> predicate) {
+    return getEvents().stream().filter(predicate);
   }
 
   /**
