@@ -12,6 +12,11 @@
  */
 package org.pdfclown.common.build.internal.util.system;
 
+import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.util_.Strings.strNormToNull;
+import static org.pdfclown.common.build.internal.util_.xml.Xmls.xml;
+import static org.pdfclown.common.build.internal.util_.xml.Xmls.xpath;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -19,6 +24,7 @@ import java.util.Map;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.xml.Xmls;
+import org.pdfclown.common.build.internal.util_.xml.Xmls.XPath;
 
 /**
  * Build utilities.
@@ -28,15 +34,19 @@ import org.pdfclown.common.build.internal.util_.xml.Xmls;
 public final class Builds {
   private static final Map<Path, String> projectArtifactIds = new HashMap<>();
 
+  private static final String NS_PREFIX__POM = "pom";
+
+  private static final XPath.Expression XPATH__ARTIFACT_ID = xpath(XPath.Namespaces.of()
+      .register(NS_PREFIX__POM, Xmls.NS__POM))
+          .compile(NS_PREFIX__POM + ":project/" + NS_PREFIX__POM + ":artifactId");
+
   /**
    * Gets the artifact ID the given path belongs to.
-   * <p>
-   * NOTE: Currently supports Maven only.
-   * </p>
    *
    * @param path
-   *          Position within the subproject.
+   *          A position within the subproject.
    * @return {@code null}, if {@code path} is outside any project.
+   * @implNote Currently supports Maven only.
    */
   public static @Nullable String artifactId(Path path) {
     Path dir = Files.isDirectory(path) ? path : path.getParent();
@@ -47,7 +57,8 @@ public final class Builds {
       var pomFile = dir.resolve("pom.xml");
       if (Files.exists(pomFile))
         return projectArtifactIds.computeIfAbsent(dir, Failable.asFunction(
-            $k -> Xmls.filterNodeValue("project/artifactId", Xmls.xml(pomFile))));
+            $k -> requireNonNull(strNormToNull(XPATH__ARTIFACT_ID.nodeValue(xml(pomFile))),
+                () -> "`artifactId` NOT FOUND in " + pomFile)));
 
       dir = dir.getParent();
     }
