@@ -95,7 +95,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
    * @throws AssertionError
    *           if the difference between {@code inputObj} and {@code outputObj} doesn't match the
    *           one loaded from {@code expectedDiffResourceName}.
-   * @see Asserter#PARAM_NAME__BUILDABLE
+   * @see Asserter#PARAM_NAME__UPDATE
    */
   public void assertDiffEquals(String expectedDiffResourceName, TDiff inputObj, TDiff outputObj,
       Config config) {
@@ -121,7 +121,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
    * @throws AssertionError
    *           if {@code actualObj} doesn't match the one loaded from
    *           {@code expectedObjResourceName}.
-   * @see Asserter#PARAM_NAME__BUILDABLE
+   * @see Asserter#PARAM_NAME__UPDATE
    */
   public void assertEquals(String expectedObjResourceName, TMap actualObj, Config config) {
     assertEquals(expectedObjResourceName, actualObj, List.of(), config);
@@ -141,7 +141,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
    * @throws AssertionError
    *           if {@code actualObj} doesn't match the one loaded from
    *           {@code expectedObjResourceName}.
-   * @see Asserter#PARAM_NAME__BUILDABLE
+   * @see Asserter#PARAM_NAME__UPDATE
    */
   public void assertEquals(String expectedObjResourceName, TMap actualObj,
       List<PropertySelector> objSelectors, Config config) {
@@ -203,7 +203,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
    * @throws AssertionError
    *           if {@code actualJsonElement} doesn't match the one loaded from
    *           {@code expectedJsonResourceName}.
-   * @see Asserter#PARAM_NAME__BUILDABLE
+   * @see Asserter#PARAM_NAME__UPDATE
    */
   protected void assertEquals(final String expectedJsonResourceName,
       final JsonElement actualJsonElement, final Config config) {

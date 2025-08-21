@@ -73,6 +73,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.system.Desktops;
 import org.pdfclown.common.build.internal.util_.Objects;
+import org.pdfclown.common.build.internal.util_.annot.Immutable;
 import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
 import org.pdfclown.common.build.util.system.Runtimes;
@@ -1019,6 +1020,7 @@ public final class Assertions {
    * @author Stefano Chizzolini
    * @see #assertParameterized(Object, Expected, Supplier)
    */
+  @Immutable
   public static class Failure {
     private final @Nullable String message;
     private final String name;

@@ -198,9 +198,9 @@ public abstract class Asserter {
    *          to use their actual names, as they are internally resolved by JUnit.
    *          </p>
    */
-  public static final String PARAM_NAME__BUILDABLE = "pdfclown.assert.update";
+  public static final String PARAM_NAME__UPDATE = "pdfclown.assert.update";
 
-  private static final Predicate<String> FILTER__BUILDABLE = fqnFilter(PARAM_NAME__BUILDABLE);
+  private static final Predicate<String> FILTER__UPDATE = fqnFilter(PARAM_NAME__UPDATE);
 
   /**
    * Builds the predicate corresponding to the given CLI parameter, whose value is a string of
@@ -328,7 +328,7 @@ public abstract class Asserter {
             + "  mvn verify -pl %s -D%s=\"%s\" -Dtest=\"%s\"\n",
         expectedFile, requireNonNull(actualFile, "N/A"),
         projectArtifactId, testName,
-        projectArtifactId, PARAM_NAME__BUILDABLE, testId, testName);
+        projectArtifactId, PARAM_NAME__UPDATE, testId, testName);
 
     // Log (full message).
     getLog().error(LogMarker.VERBOSE, ARG + LF + ARG, message, hint);
@@ -360,7 +360,7 @@ public abstract class Asserter {
    * mismatch with their actual counterparts.
    */
   protected boolean isUpdatable(String testId) {
-    return FILTER__BUILDABLE.test(testId);
+    return FILTER__UPDATE.test(testId);
   }
 
   /**
