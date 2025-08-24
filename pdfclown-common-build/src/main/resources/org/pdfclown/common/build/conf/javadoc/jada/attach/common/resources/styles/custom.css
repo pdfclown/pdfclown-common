@@ -41,6 +41,10 @@ pre {
   margin: 1em 0;
 }
 
+.uml-class {
+  margin-left: 1em;
+}
+
 .header-top {
   padding: 3px 10px;
 }
