@@ -1127,7 +1127,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <value>pom</value>
           </property>
           <file>
-            <exists>src/conf/profiles/full-pom</exists>
+            <exists>.profile.full-pom</exists>
           </file>
         </activation>
         <build>
@@ -1160,7 +1160,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       -->
       <activation>
         <file>
-          <exists>src/conf/profiles/internal-pom</exists>
+          <exists>.profile.internal-pom</exists>
         </file>
       </activation>
       <properties>
@@ -1211,7 +1211,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           <value>pom</value>
         </property>
         <file>
-          <exists>src/conf/profiles/bom</exists>
+          <exists>.profile.bom</exists>
         </file>
       </activation>
       <build>
@@ -1242,7 +1242,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       -->
       <activation>
         <file>
-          <missing>src/conf/profiles/no-format</missing>
+          <missing>.profile.no-format</missing>
         </file>
       </activation>
       <build>
