@@ -34,6 +34,11 @@
     <!--
       CUSTOM PROPERTIES
     -->
+
+    <!--
+      VERSIONS
+    -->
+    <maven-invoker.version>3.3.0</maven-invoker.version>
   </properties>
 
   <dependencies>
@@ -82,6 +87,19 @@
       <artifactId>reflections</artifactId>
     </dependency>
 
+    <!-- Build -->
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-invoker</artifactId>
+      <version>${maven-invoker.version}</version>
+    </dependency>
+
+    <!-- CLI -->
+    <dependency>
+      <groupId>info.picocli</groupId>
+      <artifactId>picocli</artifactId>
+    </dependency>
+
     <!-- Logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -94,12 +112,6 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j2-impl</artifactId>
-    </dependency>
-
-    <!-- Interface -->
-    <dependency>
-      <groupId>info.picocli</groupId>
-      <artifactId>picocli</artifactId>
     </dependency>
 
     <!-- Testing -->

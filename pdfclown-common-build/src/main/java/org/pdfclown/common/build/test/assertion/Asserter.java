@@ -42,8 +42,8 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.pdfclown.common.build.internal.util.system.Builds;
 import org.pdfclown.common.build.internal.util_.system.Systems;
+import org.pdfclown.common.build.util.system.Builds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -316,7 +316,7 @@ public abstract class Asserter {
           testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
     message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message);
-    String projectArtifactId = Builds.artifactId(expectedFile);
+    String projectArtifactId = Builds.projectArtifactId(expectedFile);
     String hint = String.format(Locale.ROOT,
         "\nCompared files:\n"
             + " * EXPECTED: %s\n"

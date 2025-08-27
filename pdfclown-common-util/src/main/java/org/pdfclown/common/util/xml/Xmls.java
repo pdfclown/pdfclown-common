@@ -574,8 +574,8 @@ public final class Xmls {
   }
 
   private static final Logger log = LoggerFactory.getLogger(Xmls.class);
-  private static final String PATTERN_GROUP__PSEUDO_ATTR__NAME = "name";
 
+  private static final String PATTERN_GROUP__PSEUDO_ATTR__NAME = "name";
   private static final String PATTERN_GROUP__PSEUDO_ATTR__VALUE = "value";
 
   /**
@@ -585,10 +585,6 @@ public final class Xmls {
       "(?<" + PATTERN_GROUP__PSEUDO_ATTR__NAME + ">[^\\s=]+)"
           + "\\s?=\\s?"
           + "([\"'])(?<" + PATTERN_GROUP__PSEUDO_ATTR__VALUE + ">(?:(?!\\2).)*)\\2");
-  /**
-   * <a href="https://maven.apache.org/pom.html">Maven Project Object Model (POM) 4.0</a> namespace.
-   */
-  public static final String NS__POM = "http://maven.apache.org/POM/4.0.0";
 
   /**
    * <a href="https://www.w3.org/1999/xhtml/">XHTML namespace</a>.

@@ -12,8 +12,6 @@
  */
 package org.pdfclown.common.util.system;
 
-import org.jspecify.annotations.Nullable;
-
 /**
  * System utilities.
  *
