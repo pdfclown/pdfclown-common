@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.util.Comparator.comparing;
+
 import java.nio.file.Path;
 import java.util.Objects;
 import org.apache.commons.lang3.stream.Streams;
@@ -88,25 +90,33 @@ public interface TestEnvironment {
    */
   enum DirId {
     /**
+     * Base directory of the project.
+     */
+    BASE,
+    /**
      * Base directory of test output (typically, {@code "target/test-output"}).
      */
     OUTPUT,
     /**
-     * Base directory of test resources' target (typically, {@code "target/test-classes"}).
+     * Test build directory (typically, {@code "target/test-classes"}).
      */
-    RESOURCE,
+    TARGET,
     /**
-     * Base directory of test resources' source (typically, {@code "src/test/resources"}).
+     * Source directory of test resources (typically, {@code "src/test/resources"}).
      */
-    RESOURCE_SRC,
+    RESOURCE_SOURCE,
     /**
-     * Base directory of test types' source (typically, {@code "src/test/java"}).
+     * Source directory of test types (typically, {@code "src/test/java"}).
      */
-    TYPE_SRC,
+    TYPE_SOURCE,
     /**
-     * Base directory of main types' source (typically, {@code "src/main/java"}).
+     * Main build directory (typically, {@code "target/classes"}).
      */
-    MAIN_TYPE_SRC
+    MAIN_TARGET,
+    /**
+     * Source directory of main types (typically, {@code "src/main/java"}).
+     */
+    MAIN_TYPE_SOURCE
   }
 
   /**
@@ -125,18 +135,18 @@ public interface TestEnvironment {
   /**
    * Resolves the absolute name of the given file.
    *
-   * @return {@code null}, if {@code file} is outside the integration space.
+   * @return {@code null}, if {@code file} is outside the test space.
    */
   default @Nullable String resolveName(Path file) {
     return Streams.of(DirId.values())
         .map($ -> ResourceNames.absName(file, dir($)))
         .filter(Objects::nonNull)
-        .findFirst()
+        .min(comparing(String::length) /* Keeps the most specific name */)
         .orElse(null);
   }
 
   /**
-   * Gets the absolute path of the given resource on target side (no matter whether it exists).
+   * Gets the absolute path of the given test resource on target side (no matter whether it exists).
    *
    * @param name
    *          Resource name (either absolute or relative to this environment).
@@ -145,7 +155,7 @@ public interface TestEnvironment {
   Path resourcePath(String name);
 
   /**
-   * Gets the absolute path of the given resource on source side (no matter whether it exists).
+   * Gets the absolute path of the given test resource on source side (no matter whether it exists).
    *
    * @param name
    *          Resource name (either absolute or relative to this environment).

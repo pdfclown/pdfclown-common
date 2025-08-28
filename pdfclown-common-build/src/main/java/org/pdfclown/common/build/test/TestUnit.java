@@ -13,25 +13,28 @@
 package org.pdfclown.common.build.test;
 
 import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Exceptions.unsupported;
+import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
 import static org.pdfclown.common.build.internal.util_.Objects.typeOf;
+import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
+import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__JAVA;
+import static org.pdfclown.common.build.internal.util_.io.Files.normal;
 import static org.pdfclown.common.build.internal.util_.io.Files.resetDir;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
 import org.pdfclown.common.build.test.assertion.Test;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
+import org.pdfclown.common.build.test.assertion.TestEnvironment.DirId;
 import org.pdfclown.common.build.util.io.ResourceNames;
 
 /**
@@ -40,9 +43,9 @@ import org.pdfclown.common.build.util.io.ResourceNames;
  * Assumptions:
  * </p>
  * <ul>
- * <li>the filesystem is {@linkplain MavenBaseDirResolver organized according to Maven} (otherwise,
- * a custom filesystem mapping can be specified overriding {@link #__createEnv()} and passing a
- * {@link BaseDirResolver} via {@linkplain TestUnit.Environment#Environment(BaseDirResolver)
+ * <li>the filesystem is {@linkplain MavenDirResolver organized according to Maven} (otherwise, a
+ * custom filesystem mapping can be specified overriding {@link #__createEnv()} and passing a
+ * {@link DirResolver} via {@linkplain TestUnit.Environment#Environment(DirResolver)
  * constructor})</li>
  * <li>tests are executed directly from plain filesystem directory (no jar embedding)</li>
  * </ul>
@@ -52,30 +55,41 @@ import org.pdfclown.common.build.util.io.ResourceNames;
 @TestInstance(Lifecycle.PER_CLASS)
 public abstract class TestUnit implements Test {
   /**
-   * Base directory resolver.
+   * {@link DirResolver} base implementation.
    *
    * @author Stefano Chizzolini
    */
-  public interface BaseDirResolver {
-    /**
-     * Main types' source base directory.
-     */
-    Path getMainTypeSrcPath();
+  public abstract static class AbstractDirResolver implements DirResolver {
+    private final Map<DirId, Path> base = new HashMap<>();
+
+    public AbstractDirResolver() {
+      this(Path.of(EMPTY));
+    }
+
+    public AbstractDirResolver(Path baseDir) {
+      base.put(DirId.BASE, normal(baseDir));
+    }
+
+    @Override
+    public Path resolve(DirId id) {
+      return base.computeIfAbsent(id, $k -> base.get(DirId.BASE).resolve(relativePath($k)));
+    }
 
     /**
-     * Test output's base directory.
+     * Gets the path associated to the given ID, relative to the {@linkplain DirId#BASE base
+     * directory of the project}.
      */
-    Path getOutputPath();
+    protected abstract String relativePath(DirId id);
+  }
 
-    /**
-     * Test resources' source base directory.
-     */
-    Path getResourceSrcPath();
-
-    /**
-     * Test types' source base directory.
-     */
-    Path getTypeSrcPath();
+  /**
+   * Project directory resolver.
+   *
+   * @author Stefano Chizzolini
+   */
+  @FunctionalInterface
+  public interface DirResolver {
+    Path resolve(DirId id);
   }
 
   /**
@@ -84,53 +98,21 @@ public abstract class TestUnit implements Test {
    * @author Stefano Chizzolini
    */
   public class Environment implements TestEnvironment {
-    private final BaseDirResolver baseDirResolver;
-
-    /**
-     * Test resources' target base directory.
-     */
-    private final Path resourceDir;
-    {
-      try {
-        /*
-         * NOTE: The classic way to retrieve the base directory would be via
-         * `getClass().getResource("/")`, but, unfortunately, it works in non-modular (i.e.,
-         * non-JPMS) projects only; the alternate solution applied here seems to reliably work in
-         * modular as well as non-modular projects.
-         */
-        resourceDir = Path.of(typeOf(TestUnit.this).getProtectionDomain().getCodeSource()
-            .getLocation().toURI());
-      } catch (URISyntaxException ex) {
-        throw runtime(ex) /* Should NEVER happen */;
-      }
-    }
+    private final DirResolver dirResolver;
 
     private boolean outputDirInitialized;
 
     public Environment() {
-      this(BASE_DIR_RESOLVER__MAVEN);
+      this(new MavenDirResolver());
     }
 
-    public Environment(BaseDirResolver baseDirResolver) {
-      this.baseDirResolver = baseDirResolver;
+    public Environment(DirResolver dirResolver) {
+      this.dirResolver = dirResolver;
     }
 
     @Override
     public Path dir(DirId id) {
-      switch (id) {
-        case OUTPUT:
-          return baseDirResolver.getOutputPath();
-        case RESOURCE:
-          return resourceDir;
-        case RESOURCE_SRC:
-          return baseDirResolver.getResourceSrcPath();
-        case TYPE_SRC:
-          return baseDirResolver.getTypeSrcPath();
-        case MAIN_TYPE_SRC:
-          return baseDirResolver.getMainTypeSrcPath();
-        default:
-          throw unsupported("Unexpected `id`: " + id);
-      }
+      return dirResolver.resolve(id);
     }
 
     /**
@@ -174,12 +156,12 @@ public abstract class TestUnit implements Test {
 
     @Override
     public Path resourcePath(String name) {
-      return ResourceNames.path(name, dir(DirId.RESOURCE), typeOf(TestUnit.this));
+      return ResourceNames.path(name, dir(DirId.TARGET), typeOf(TestUnit.this));
     }
 
     @Override
     public Path resourceSrcPath(String name) {
-      return ResourceNames.path(name, dir(DirId.RESOURCE_SRC), typeOf(TestUnit.this));
+      return ResourceNames.path(name, dir(DirId.RESOURCE_SOURCE), typeOf(TestUnit.this));
     }
 
     @Override
@@ -190,15 +172,15 @@ public abstract class TestUnit implements Test {
       }
       Path ret;
       var filename = topLevelType.getSimpleName() + FILE_EXTENSION__JAVA;
-      if (Files.exists(ret = ResourceNames.path(filename, dir(DirId.TYPE_SRC), topLevelType)))
+      if (Files.exists(ret = ResourceNames.path(filename, dir(DirId.TYPE_SOURCE), topLevelType)))
         return ret;
-      else if (Files.exists(ret = ResourceNames.path(filename, dir(DirId.MAIN_TYPE_SRC),
+      else if (Files.exists(ret = ResourceNames.path(filename, dir(DirId.MAIN_TYPE_SOURCE),
           topLevelType)))
         return ret;
       else
-        throw runtime(new FileNotFoundException(String.format(
-            "Source file corresponding to `%s` NOT FOUND (search paths: %s, %s)",
-            type.getName(), dir(DirId.TYPE_SRC), dir(DirId.MAIN_TYPE_SRC))));
+        throw runtime("Source file corresponding to " + ARG + " NOT FOUND "
+            + "(search paths: " + ARG + ", " + ARG + ")", type, dir(DirId.TYPE_SOURCE),
+            dir(DirId.MAIN_TYPE_SOURCE));
     }
   }
 
@@ -209,38 +191,36 @@ public abstract class TestUnit implements Test {
    *
    * @author Stefano Chizzolini
    */
-  public static class MavenBaseDirResolver implements BaseDirResolver {
-    private static final Path MAIN_TYPE_SRC_PATH = Path.of("src", "main", "java")
-        .toAbsolutePath();
-    private static final Path OUTPUT_PATH = Path.of("target", "test-output")
-        .toAbsolutePath();
-    private static final Path RESOURCE_SRC_PATH = Path.of("src", "test", "resources")
-        .toAbsolutePath();
-    private static final Path TYPE_SRC_PATH = Path.of("src", "test", "java")
-        .toAbsolutePath();
+  public static class MavenDirResolver extends AbstractDirResolver {
+    public MavenDirResolver() {
+    }
 
-    @Override
-    public Path getMainTypeSrcPath() {
-      return MAIN_TYPE_SRC_PATH;
+    public MavenDirResolver(Path baseDir) {
+      super(baseDir);
     }
 
     @Override
-    public Path getOutputPath() {
-      return OUTPUT_PATH;
-    }
-
-    @Override
-    public Path getResourceSrcPath() {
-      return RESOURCE_SRC_PATH;
-    }
-
-    @Override
-    public Path getTypeSrcPath() {
-      return TYPE_SRC_PATH;
+    protected String relativePath(DirId id) {
+      switch (id) {
+        case BASE:
+          return EMPTY;
+        case MAIN_TARGET:
+          return "target/classes";
+        case MAIN_TYPE_SOURCE:
+          return "src/main/java";
+        case OUTPUT:
+          return "target/test-output";
+        case TARGET:
+          return "target/test-classes";
+        case TYPE_SOURCE:
+          return "src/test/java";
+        case RESOURCE_SOURCE:
+          return "src/test/resources";
+        default:
+          throw unexpected(id);
+      }
     }
   }
-
-  private static final BaseDirResolver BASE_DIR_RESOLVER__MAVEN = new MavenBaseDirResolver();
 
   private @LazyNonNull @Nullable Environment env;
 
