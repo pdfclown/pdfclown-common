@@ -13,7 +13,7 @@
 package org.pdfclown.common.build.internal.util_;
 
 import static java.util.Objects.requireNonNullElse;
-import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
+import static org.pdfclown.common.build.internal.util_.Objects.objTo;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
 import static org.pdfclown.common.build.internal.util_.Strings.CURLY_BRACE_CLOSE;
@@ -44,7 +44,7 @@ public final class Exceptions {
 
   /**
    * @param format
-   *          Parameterized message (use <code>{}</code> as argument placeholder).
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link Throwable#getCause() cause}.
@@ -55,12 +55,34 @@ public final class Exceptions {
   }
 
   public static NoSuchElementException missing() {
-    return new NoSuchElementException();
+    return missing(null);
+  }
+
+  public static NoSuchElementException missing(@Nullable Object value) {
+    return missing(value, null);
+  }
+
+  /**
+   * @param value
+   *          Mismatching value.
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments.
+   */
+  public static NoSuchElementException missing(@Nullable Object value, @Nullable String format,
+      @Nullable Object... args) {
+    String valueLiteral = objTo(value, Objects::toLiteralString);
+    String message = objTo(format, $ -> ParamMessage.of($, args).getDescription());
+    return new NoSuchElementException(
+        valueLiteral == null ? message
+            : message == null ? valueLiteral
+            : String.format("%s (%s)", valueLiteral, message));
   }
 
   /**
    * @param format
-   *          Parameterized message (use <code>{}</code> as argument placeholder).
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link Throwable#getCause() cause}.
@@ -103,7 +125,7 @@ public final class Exceptions {
    * @param value
    *          Invalid value.
    * @param format
-   *          Parameterized message (use <code>{}</code> as argument placeholder).
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link Throwable#getCause() cause}.
@@ -124,7 +146,7 @@ public final class Exceptions {
 
   /**
    * @param format
-   *          Parameterized message (use <code>{}</code> as argument placeholder).
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link Throwable#getCause() cause}.
@@ -151,14 +173,16 @@ public final class Exceptions {
    * @param value
    *          Invalid value.
    * @param format
-   *          Parameterized message (use <code>{}</code> as argument placeholder).
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link Throwable#getCause() cause}.
    */
   public static XtIllegalArgumentException wrongArg(@Nullable String name,
       @Nullable Object value, @Nullable String format, @Nullable Object... args) {
-    return new XtIllegalArgumentException(name == null ? "value" : name, value, format, args);
+    var message = ParamMessage.of(format, args);
+    return new XtIllegalArgumentException(requireNonNullElse(name, "value"), value,
+        message.getDescription(), message.getCause());
   }
 
   public static <T> XtIllegalArgumentException wrongArgOpt(Collection<T> options) {
@@ -214,7 +238,7 @@ public final class Exceptions {
 
   /**
    * @param format
-   *          Parameterized message (use <code>{}</code> as argument placeholder).
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link Throwable#getCause() cause}.

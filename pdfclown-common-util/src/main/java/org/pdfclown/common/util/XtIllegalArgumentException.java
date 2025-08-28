@@ -20,48 +20,53 @@ import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Strings.SPACE;
-import static org.pdfclown.common.util.Strings.strNormToNull;
 
 import org.jspecify.annotations.Nullable;
 
 /**
  * Extended {@link IllegalArgumentException}.
+ * <p>
+ * NOTE: {@code null} {@link #getArgValue() argValue} means the argument was defined on caller side,
+ * but wasn't passed to this exception, for any reason (such as to avoid leaking of sensitive
+ * information); conversely, in case of argument undefined on caller side, use
+ * {@link NullPointerException} (see {@link java.util.Objects#requireNonNull(Object)}) instead.
+ * </p>
  *
  * @author Stefano Chizzolini
  */
 public class XtIllegalArgumentException extends IllegalArgumentException {
-  private static ParamMessage format(String argName,
-      @Nullable Object value, @Nullable String format, @Nullable Object... args) {
-    requireNonNull(argName, "`argName`");
-
+  private static String buildMessage(String argName,
+      @Nullable Object argValue, @Nullable String message) {
     var b = new StringBuilder();
-    b.append(BACKTICK).append(argName).append(BACKTICK);
-    if (value != null) {
-      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(toLiteralString(value))
+    b.append(BACKTICK).append(requireNonNull(argName, "`argName`")).append(BACKTICK);
+    if (argValue != null) {
+      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(toLiteralString(argValue))
           .append(ROUND_BRACKET_CLOSE);
     }
     if (b.length() > 0) {
       b.append(COLON).append(SPACE);
     }
-    b.append(requireNonNullElse(format, "INVALID"));
-    return ParamMessage.of(b.toString(), args);
+    return b.append(requireNonNullElse(message, "INVALID")).toString();
   }
 
   private final String argName;
 
   private final @Nullable Object argValue;
 
+  public XtIllegalArgumentException(String argName, @Nullable Object argValue) {
+    this(argName, argValue, null);
+  }
+
+  public XtIllegalArgumentException(String argName, @Nullable Object argValue,
+      @Nullable String message) {
+    this(argName, argValue, message, null);
+  }
+
   /**
   */
   public XtIllegalArgumentException(String argName, @Nullable Object argValue,
-      @Nullable String format, @Nullable Object... args) {
-    this(argName = requireNonNull(strNormToNull(argName), "`argName`"), argValue,
-        format(argName, argValue, format, args));
-  }
-
-  private XtIllegalArgumentException(String argName, @Nullable Object argValue,
-      ParamMessage paramMessage) {
-    super(paramMessage.getDescription(), paramMessage.getCause());
+      @Nullable String message, @Nullable Throwable cause) {
+    super(buildMessage(argName, argValue, message), cause);
 
     this.argName = argName;
     this.argValue = argValue;
@@ -77,7 +82,7 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
   /**
    * Argument value.
    *
-   * @return {@code null}, if it was omitted.
+   * @return {@code null}, if omitted.
    */
   public @Nullable Object getArgValue() {
     return argValue;
