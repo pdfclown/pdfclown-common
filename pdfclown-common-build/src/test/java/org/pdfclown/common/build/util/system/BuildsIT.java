@@ -13,14 +13,17 @@
 package org.pdfclown.common.build.util.system;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.__test.BaseIT;
+import org.pdfclown.common.build.internal.util_.XtIllegalArgumentException;
 import org.pdfclown.common.build.test.assertion.TestEnvironment.DirId;
 
 /**
@@ -60,9 +63,23 @@ class BuildsIT extends BaseIT {
   }
 
   @Test
-  void mavenCommand() {
+  void classpath__failure() {
+    {
+      var throwable = assertThrows(RuntimeException.class, () -> Builds.classpath(Path.of(""),
+          "gibberish"));
+      assertThat(throwable.getMessage(), containsStringIgnoringCase("invalid scope"));
+    }
+    {
+      var throwable = assertThrows(XtIllegalArgumentException.class,
+          () -> Builds.classpath(Path.of("gibberish"), null));
+      assertThat(throwable.getArgName(), is("projectDir"));
+    }
+  }
+
+  @Test
+  void mavenExecutable() {
     //noinspection DataFlowIssue : assertThat(..) supports nullable actual.
-    assertThat(Builds.mavenCommand(), is(not(nullValue())));
+    assertThat(Builds.mavenExecutable(), is(not(nullValue())));
   }
 
   @Test
