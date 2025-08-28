@@ -53,7 +53,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T require(@PolyNull @Nullable T value,
-      Consumer<T> validator) {
+      Consumer<@Nullable T> validator) {
     return require(value, validator, null);
   }
 
@@ -75,7 +75,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T require(@PolyNull @Nullable T value,
-      Consumer<T> validator, @Nullable String name) {
+      Consumer<@Nullable T> validator, @Nullable String name) {
     try {
       validator.accept(value);
     } catch (RuntimeException ex) {
@@ -100,7 +100,7 @@ public final class Conditions {
    *           (supplied by {@code exceptionSupplier}) if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T require(@PolyNull @Nullable T value,
-      Predicate<T> condition, Function<T, RuntimeException> exceptionSupplier) {
+      Predicate<@Nullable T> condition, Function<@Nullable T, RuntimeException> exceptionSupplier) {
     if (!condition.test(value))
       throw exceptionSupplier.apply(value);
 

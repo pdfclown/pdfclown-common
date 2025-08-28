@@ -16,7 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.function.Consumer;
 
 /**
  * Process utilities.
@@ -30,23 +30,17 @@ public final class Processes {
    * @param command
    *          Command along with its arguments.
    * @param consumer
-   *          Consumes the process output line by line, returning whether it completed.
+   *          Consumes the process output line by line.
    * @return Exit code.
    */
-  public static int runWithConsumer(List<String> command, Predicate<String> consumer)
+  public static int execute(List<String> command, Consumer<String> consumer)
       throws IOException, InterruptedException {
     var processBuilder = new ProcessBuilder(command);
     Process process = processBuilder.start();
     try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-      /*
-       * NOTE: We MUST consume all the process output, otherwise it would hang indefinitely.
-       */
       String line;
-      var processing = true;
       while ((line = reader.readLine()) != null) {
-        if (processing && consumer.test(line)) {
-          processing = false;
-        }
+        consumer.accept(line);
       }
     }
     return process.waitFor();
