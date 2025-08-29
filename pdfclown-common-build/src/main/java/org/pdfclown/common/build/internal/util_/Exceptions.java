@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.internal.util_;
 
-import static java.util.Objects.requireNonNullElse;
 import static org.pdfclown.common.build.internal.util_.Objects.objTo;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
@@ -181,8 +180,8 @@ public final class Exceptions {
   public static XtIllegalArgumentException wrongArg(@Nullable String name,
       @Nullable Object value, @Nullable String format, @Nullable Object... args) {
     var message = ParamMessage.of(format, args);
-    return new XtIllegalArgumentException(requireNonNullElse(name, "value"), value,
-        message.getDescription(), message.getCause());
+    return new XtIllegalArgumentException(name, value, message.getDescription(),
+        message.getCause());
   }
 
   public static <T> XtIllegalArgumentException wrongArgOpt(Collection<T> options) {

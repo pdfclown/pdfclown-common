@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.util;
 
-import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.pdfclown.common.util.Objects.toLiteralString;
 import static org.pdfclown.common.util.Strings.BACKTICK;
@@ -20,6 +19,7 @@ import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Strings.SPACE;
+import static org.pdfclown.common.util.Strings.strNormToNull;
 
 import org.jspecify.annotations.Nullable;
 
@@ -38,7 +38,7 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
   private static String buildMessage(String argName,
       @Nullable Object argValue, @Nullable String message) {
     var b = new StringBuilder();
-    b.append(BACKTICK).append(requireNonNull(argName, "`argName`")).append(BACKTICK);
+    b.append(BACKTICK).append(argName).append(BACKTICK);
     if (argValue != null) {
       b.append(SPACE).append(ROUND_BRACKET_OPEN).append(toLiteralString(argValue))
           .append(ROUND_BRACKET_CLOSE);
@@ -46,27 +46,28 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
     if (b.length() > 0) {
       b.append(COLON).append(SPACE);
     }
-    return b.append(requireNonNullElse(message, "INVALID")).toString();
+    return b.append(requireNonNullElse(strNormToNull(message), "INVALID")).toString();
   }
 
   private final String argName;
 
   private final @Nullable Object argValue;
 
-  public XtIllegalArgumentException(String argName, @Nullable Object argValue) {
+  public XtIllegalArgumentException(@Nullable String argName, @Nullable Object argValue) {
     this(argName, argValue, null);
   }
 
-  public XtIllegalArgumentException(String argName, @Nullable Object argValue,
+  public XtIllegalArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message) {
     this(argName, argValue, message, null);
   }
 
   /**
   */
-  public XtIllegalArgumentException(String argName, @Nullable Object argValue,
+  public XtIllegalArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message, @Nullable Throwable cause) {
-    super(buildMessage(argName, argValue, message), cause);
+    super(buildMessage(argName = requireNonNullElse(strNormToNull(argName), "value"), argValue,
+        message), cause);
 
     this.argName = argName;
     this.argValue = argValue;
