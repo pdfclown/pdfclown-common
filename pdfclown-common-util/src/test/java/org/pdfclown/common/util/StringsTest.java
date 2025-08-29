@@ -405,7 +405,7 @@ class StringsTest extends BaseTest {
    * Tests that unchanged strings are returned without creating new instances of the same string.
    */
   @Test
-  void uncapitalizeGreedy_sameInstance() {
+  void uncapitalizeGreedy__sameInstance() {
     final var value = "notApplicable";
 
     assertThat(Strings.uncapitalizeGreedy(value), is(sameInstance(value)));

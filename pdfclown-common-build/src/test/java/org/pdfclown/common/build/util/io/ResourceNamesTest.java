@@ -59,7 +59,7 @@ class ResourceNamesTest extends BaseTest {
       arg("Slash- and backslash-ridden relative name",
           "my/\\\\other\\/\\deep//relative\\resource/"));
 
-  static Stream<Arguments> absName_filePath_unix() {
+  static Stream<Arguments> absName_Path__unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build());
     return argumentsStream(
@@ -107,7 +107,7 @@ class ResourceNamesTest extends BaseTest {
             fs.getPath("/host/absolute")));
   }
 
-  static Stream<Arguments> absName_filePath_win() {
+  static Stream<Arguments> absName_Path__win() {
     var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build());
     return argumentsStream(
@@ -155,65 +155,7 @@ class ResourceNamesTest extends BaseTest {
             fs.getPath("c:\\absolute")));
   }
 
-  static Stream<Arguments> fullName_basePackage() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        java.util.Arrays.asList(
-            // name[0]: '/ (Normal absolute root)'
-            // -- basePackage[0]: '???'
-            "/",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "/",
-            // name[1]: '\ (Backslash absolute root)'
-            // -- basePackage[0]: '???'
-            "/",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "/",
-            // name[2]: '/my/absolute/resource (Normal absolute name)'
-            // -- basePackage[0]: '???'
-            "/my/absolute/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "/my/absolute/resource",
-            // name[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
-            // -- basePackage[0]: '???'
-            "/my/absolute/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "/my/absolute/resource",
-            // name[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
-            // -- basePackage[0]: '???'
-            "/my/other/deep/absolute/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "/my/other/deep/absolute/resource",
-            // name[5]: ' (Relaive root)'
-            // -- basePackage[0]: '???'
-            "",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "org/pdfclown/common/build/util/io",
-            // name[6]: 'my/relative/resource (Normal relative name)'
-            // -- basePackage[0]: '???'
-            "my/relative/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "org/pdfclown/common/build/util/io/my/relative/resource",
-            // name[7]: 'my/relative/resource/ (Slash-trailing relative name)'
-            // -- basePackage[0]: '???'
-            "my/relative/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "org/pdfclown/common/build/util/io/my/relative/resource",
-            // name[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
-            // -- basePackage[0]: '???'
-            "my/other/deep/relative/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
-            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource"),
-        // name
-        NAMES,
-        // basePackage
-        asList(
-            EMPTY,
-            ResourceNames.class.getPackageName()));
-  }
-
-  static Stream<Arguments> fullName_baseType() {
+  static Stream<Arguments> fullName_Class() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -269,6 +211,64 @@ class ResourceNamesTest extends BaseTest {
         asList(
             null,
             ResourceNames.class));
+  }
+
+  static Stream<Arguments> fullName_String() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        java.util.Arrays.asList(
+            // name[0]: '/ (Normal absolute root)'
+            // -- basePackage[0]: '???'
+            "/",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "/",
+            // name[1]: '\ (Backslash absolute root)'
+            // -- basePackage[0]: '???'
+            "/",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "/",
+            // name[2]: '/my/absolute/resource (Normal absolute name)'
+            // -- basePackage[0]: '???'
+            "/my/absolute/resource",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "/my/absolute/resource",
+            // name[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // -- basePackage[0]: '???'
+            "/my/absolute/resource",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "/my/absolute/resource",
+            // name[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // -- basePackage[0]: '???'
+            "/my/other/deep/absolute/resource",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "/my/other/deep/absolute/resource",
+            // name[5]: ' (Relaive root)'
+            // -- basePackage[0]: '???'
+            "",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "org/pdfclown/common/build/util/io",
+            // name[6]: 'my/relative/resource (Normal relative name)'
+            // -- basePackage[0]: '???'
+            "my/relative/resource",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "org/pdfclown/common/build/util/io/my/relative/resource",
+            // name[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // -- basePackage[0]: '???'
+            "my/relative/resource",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "org/pdfclown/common/build/util/io/my/relative/resource",
+            // name[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // -- basePackage[0]: '???'
+            "my/other/deep/relative/resource",
+            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource"),
+        // name
+        NAMES,
+        // basePackage
+        asList(
+            EMPTY,
+            ResourceNames.class.getPackageName()));
   }
 
   static Stream<Arguments> name_1() {
@@ -536,7 +536,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void absName_filePath_unix(Expected<String> expected, Path filePath, Path baseDir) {
+  void absName_Path__unix(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
         () -> ResourceNames.absName(filePath, baseDir),
         expected,
@@ -547,7 +547,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void absName_filePath_win(Expected<String> expected, Path filePath, Path baseDir) {
+  void absName_Path__win(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
         () -> ResourceNames.absName(filePath, baseDir),
         expected,
@@ -558,18 +558,7 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullName_basePackage(Expected<String> expected, Argument<String> name, String basePackage) {
-    assertParameterizedOf(
-        () -> ResourceNames.fullName(name.getValue(), basePackage),
-        expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("name", name),
-            entry("basePackage", basePackage))));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void fullName_baseType(Expected<String> expected, Argument<String> name,
+  void fullName_Class(Expected<String> expected, Argument<String> name,
       @Nullable Class<?> baseType) {
     assertParameterizedOf(
         () -> ResourceNames.fullName(name.getValue(), baseType),
@@ -577,6 +566,17 @@ class ResourceNamesTest extends BaseTest {
         () -> new ExpectedGeneration(List.of(
             entry("name", name),
             entry("baseType", baseType))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void fullName_String(Expected<String> expected, Argument<String> name, String basePackage) {
+    assertParameterizedOf(
+        () -> ResourceNames.fullName(name.getValue(), basePackage),
+        expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("name", name),
+            entry("basePackage", basePackage))));
   }
 
   void name_0() {

@@ -256,7 +256,7 @@ class FilesTest extends BaseTest {
         EXTENSIONS);
   }
 
-  static Stream<Arguments> path_unix() {
+  static Stream<Arguments> path__unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix());
     //noinspection DataFlowIssue
     return argumentsStream(
@@ -289,7 +289,7 @@ class FilesTest extends BaseTest {
         List.of(fs));
   }
 
-  static Stream<Arguments> path_win() {
+  static Stream<Arguments> path__win() {
     var fs = Jimfs.newFileSystem(Configuration.windows());
     //noinspection DataFlowIssue
     return argumentsStream(
@@ -440,7 +440,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void path_unix(Expected<Path> expected, URI uri, FileSystem fs) {
+  void path__unix(Expected<Path> expected, URI uri, FileSystem fs) {
     assertParameterizedOf(
         () -> Files.path(uri, fs),
         expected,
@@ -452,7 +452,7 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void path_win(Expected<Path> expected, URI uri, FileSystem fs) {
+  void path__win(Expected<Path> expected, URI uri, FileSystem fs) {
     assertParameterizedOf(
         () -> Files.path(uri, fs),
         expected,

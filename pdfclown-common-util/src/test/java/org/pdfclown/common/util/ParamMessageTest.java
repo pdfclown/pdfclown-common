@@ -45,7 +45,7 @@ class ParamMessageTest extends BaseTest {
   }
 
   @Test
-  void format__argument_missing() {
+  void format__argumentMissing() {
     assertThat(ParamMessage.format(ParamMessage.ARG + " message " + ParamMessage.ARG, "ARG0"),
         is("ARG0 message {}"));
 
@@ -55,7 +55,7 @@ class ParamMessageTest extends BaseTest {
   }
 
   @Test
-  void format__placeholder_missing() {
+  void format__placeholderMissing() {
     assertThat(ParamMessage.format(ParamMessage.ARG + " message", "ARG0", 99), is("ARG0 message"));
 
     assertThat(logged.eventCount(), is(1));
@@ -69,7 +69,7 @@ class ParamMessageTest extends BaseTest {
    * ParamMessage.of(..)} — this spares us from redundant formatting tests on the latter.
    */
   @Test
-  void of__verify_format() {
+  void of__verifyFormat() {
     try (var staticMock = mockStatic(ParamMessage.class)) {
       staticMock
           /* base ParamMessage.format(..) overload (ALL other format calls end up here) */
@@ -90,7 +90,7 @@ class ParamMessageTest extends BaseTest {
   }
 
   @Test
-  void of__with_cause() {
+  void of__withCause() {
     final var cause = new RuntimeException();
     ParamMessage message = ParamMessage.of("Message " + ParamMessage.ARG, "construction", cause);
 
@@ -100,7 +100,7 @@ class ParamMessageTest extends BaseTest {
   }
 
   @Test
-  void of__without_cause() {
+  void of__withoutCause() {
     ParamMessage message = ParamMessage.of("Message " + ParamMessage.ARG, "construction");
 
     assertThat(message.getDescription(), is("Message construction"));

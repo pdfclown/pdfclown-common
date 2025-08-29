@@ -78,79 +78,6 @@ class ResourceTest extends BaseTest {
     }
   }
 
-  static final MockedStatic<FileSystems> fileSystemsMock;
-  static {
-    /*
-     * NOTE: Called before mocking `FileSystems`, as it relies on its real implementation (sic!).
-     */
-    var defaultFsMock = Jimfs.newFileSystem("local", Configuration.unix());
-
-    fileSystemsMock = mockStatic(FileSystems.class);
-    var fileSystemMock = mock(FileSystem.class);
-    {
-      /*
-       * Relays to default mocked filesystem.
-       */
-      when(fileSystemMock.getPath(any())).then($ -> Path.of($.<String>getArgument(0)));
-    }
-    //noinspection resource
-    fileSystemsMock.when(() -> FileSystems.newFileSystem(any(Path.class), any()))
-        .thenReturn(fileSystemMock);
-    fileSystemsMock.when(FileSystems::getDefault).thenReturn(defaultFsMock);
-  }
-
-  static final MockedStatic<Files> filesMock = mockStatic(Files.class, CALLS_REAL_METHODS);
-  static {
-    filesMock.when(() -> Files.exists(any(Path.class), any(LinkOption[].class)))
-        .then($ -> {
-          var path = $.<Path>getArgument(0).toString();
-          return !(path.contains("org/pdfclown/common") /*
-                                                         * Simulates that paths containing
-                                                         * "org/pdfclown/common" don't belong to the
-                                                         * filesystem (so they are treated as
-                                                         * classpath resources)
-                                                         */
-              || path.contains(":") /*
-                                     * Simulates that paths containing the colon symbol don't belong
-                                     * to the filesystem (so they are treated as URI-based resources
-                                     * -- the assumption here is that the filesystem is Unix-like)
-                                     */);
-        });
-  }
-
-  static final MockedStatic<Uris> urisMock = mockStatic(Uris.class, CALLS_REAL_METHODS);
-  static {
-    /*
-     * Simulates that URLs containing "absent" are inexistent.
-     */
-    urisMock.when(() -> Uris.exists(any()))
-        .then($ -> !$.<URL>getArgument(0).getPath().contains("absent"));
-  }
-
-  static final ClassLoader ofClassLoaderMock = mock(ClassLoader.class);
-  static {
-    when(ofClassLoaderMock.getResource(org.mockito.ArgumentMatchers.anyString()))
-        .then($ -> {
-          var name = $.<String>getArgument(0);
-          return name.contains("absent")
-              // Simulates inexistent resource (in case its path contains "absent").
-              ? null
-              : Uris.url((name.contains("build")
-                  // Simulates JAR URL (in case its path contains "build").
-                  ? "jar:file:/pdfclown-common-build.jar!/"
-                  // Simulates FILE URL.
-                  : "file:/")
-                  + name);
-        });
-  }
-
-  @AfterAll
-  static void _afterAll() {
-    fileSystemsMock.close();
-    filesMock.close();
-    urisMock.close();
-  }
-
   static Stream<Arguments> of() {
     return argumentsStream(
         cartesian(),
@@ -230,6 +157,72 @@ class ResourceTest extends BaseTest {
             "https://www.example.io/absent/conf/checkstyle/checkstyle-checks.xml"));
   }
 
+  final MockedStatic<FileSystems> fileSystemsMock;
+  {
+    /*
+     * NOTE: Called before mocking `FileSystems`, as it relies on its real implementation (sic!).
+     */
+    var defaultFsMock = Jimfs.newFileSystem("local", Configuration.unix());
+
+    fileSystemsMock = mockStatic(FileSystems.class);
+    var fileSystemMock = mock(FileSystem.class);
+    {
+      /*
+       * Relays to default mocked filesystem.
+       */
+      when(fileSystemMock.getPath(any())).then($ -> Path.of($.<String>getArgument(0)));
+    }
+    //noinspection resource
+    fileSystemsMock.when(() -> FileSystems.newFileSystem(any(Path.class), any()))
+        .thenReturn(fileSystemMock);
+    fileSystemsMock.when(FileSystems::getDefault).thenReturn(defaultFsMock);
+  }
+
+  final MockedStatic<Files> filesMock = mockStatic(Files.class, CALLS_REAL_METHODS);
+  {
+    filesMock.when(() -> Files.exists(any(Path.class), any(LinkOption[].class)))
+        .then($ -> {
+          var path = $.<Path>getArgument(0).toString();
+          return !(path.contains("org/pdfclown/common") /*
+                                                         * Simulates that paths containing
+                                                         * "org/pdfclown/common" don't belong to the
+                                                         * filesystem (so they are treated as
+                                                         * classpath resources)
+                                                         */
+              || path.contains(":") /*
+                                     * Simulates that paths containing the colon symbol don't belong
+                                     * to the filesystem (so they are treated as URI-based resources
+                                     * -- the assumption here is that the filesystem is Unix-like)
+                                     */);
+        });
+  }
+
+  final MockedStatic<Uris> urisMock = mockStatic(Uris.class, CALLS_REAL_METHODS);
+  {
+    /*
+     * Simulates that URLs containing "absent" are inexistent.
+     */
+    urisMock.when(() -> Uris.exists(any()))
+        .then($ -> !$.<URL>getArgument(0).getPath().contains("absent"));
+  }
+
+  final ClassLoader ofClassLoaderMock = mock(ClassLoader.class);
+  {
+    when(ofClassLoaderMock.getResource(org.mockito.ArgumentMatchers.anyString()))
+        .then($ -> {
+          var name = $.<String>getArgument(0);
+          return name.contains("absent")
+              // Simulates inexistent resource (in case its path contains "absent").
+              ? null
+              : Uris.url((name.contains("build")
+                  // Simulates JAR URL (in case its path contains "build").
+                  ? "jar:file:/pdfclown-common-build.jar!/"
+                  // Simulates FILE URL.
+                  : "file:/")
+                  + name);
+        });
+  }
+
   @ParameterizedTest
   @MethodSource
   void of(Expected<Resource> expected, String name) {
@@ -250,5 +243,12 @@ class ResourceTest extends BaseTest {
                       toLiteralString(sqn(e)), toLiteralString(e.getName()),
                       toLiteralString(e.getUri(), true));
                 }));
+  }
+
+  @AfterAll
+  void onAllAfter() {
+    fileSystemsMock.close();
+    filesMock.close();
+    urisMock.close();
   }
 }
