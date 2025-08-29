@@ -14,11 +14,13 @@ package org.pdfclown.common.util.system;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.wrap;
+import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Strings.BACKSLASH;
 import static org.pdfclown.common.util.Strings.COMMA;
 import static org.pdfclown.common.util.Strings.DQUOTE;
+import static org.pdfclown.common.util.Strings.MINUS;
+import static org.pdfclown.common.util.Strings.PLUS;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SEMICOLON;
 import static org.pdfclown.common.util.Strings.SPACE;
@@ -29,9 +31,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.stream.Streams;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.io.Resource;
@@ -129,16 +137,103 @@ public final class Clis {
   }
 
   /**
-   * Converts the given iterable to a semicolon-separated textual argument.
+   * Target collection adapter for {@link #parseListIncremental(String, Function, Collection)}.
    *
-   * @see #parseStrList(String)
+   * @author Stefano Chizzolini
+   */
+  public abstract static class ListIncrementalAdapter<E> implements Collection<E> {
+    @Override
+    public final boolean addAll(Collection<? extends E> c) {
+      throw unsupported();
+    }
+
+    @Override
+    public final boolean contains(Object o) {
+      throw unsupported();
+    }
+
+    @Override
+    public final boolean containsAll(Collection<?> c) {
+      throw unsupported();
+    }
+
+    @Override
+    public final void forEach(Consumer<? super E> action) {
+      throw unsupported();
+    }
+
+    @Override
+    public final boolean isEmpty() {
+      throw unsupported();
+    }
+
+    @Override
+    public final Iterator<E> iterator() {
+      throw unsupported();
+    }
+
+    @Override
+    public final Stream<E> parallelStream() {
+      throw unsupported();
+    }
+
+    @Override
+    public final boolean removeAll(Collection<?> c) {
+      throw unsupported();
+    }
+
+    @Override
+    public final boolean removeIf(Predicate<? super E> filter) {
+      throw unsupported();
+    }
+
+    @Override
+    public final boolean retainAll(Collection<?> c) {
+      throw unsupported();
+    }
+
+    @Override
+    public final int size() {
+      throw unsupported();
+    }
+
+    @Override
+    public final Spliterator<E> spliterator() {
+      throw unsupported();
+    }
+
+    @Override
+    public final Stream<E> stream() {
+      throw unsupported();
+    }
+
+    @Override
+    public final Object[] toArray() {
+      throw unsupported();
+    }
+
+    @Override
+    public final <T> T[] toArray(IntFunction<T[]> generator) {
+      throw unsupported();
+    }
+
+    @Override
+    public final <T> T[] toArray(T[] a) {
+      throw unsupported();
+    }
+  }
+
+  /**
+   * Converts an iterable to a semicolon-separated textual argument.
+   *
+   * @see #parseList(String)
    */
   public static String listArg(Iterable<?> o) {
     return listArg(o, Object::toString);
   }
 
   /**
-   * Converts the given iterable to a semicolon-separated textual argument.
+   * Converts an iterable to a semicolon-separated textual argument.
    *
    * @param mapper
    *          Maps each element to its textual representation.
@@ -154,7 +249,7 @@ public final class Clis {
   }
 
   /**
-   * Parses the given command line.
+   * Parses a command line.
    * <p>
    * Supports argument (single- and double-) quoting and character escaping.
    * </p>
@@ -204,7 +299,7 @@ public final class Clis {
   }
 
   /**
-   * Parses the directory corresponding to the given path.
+   * Parses a directory.
    * <p>
    * Useful to convert textual references to filesystem resources (such as those coming from
    * configuration files or command-line options) to their normalized absolute form.
@@ -219,7 +314,7 @@ public final class Clis {
   }
 
   /**
-   * Parses the given string as a stream of values.
+   * Parses a string as a stream of values.
    * <p>
    * Useful to convert textual lists of references (such as those coming from configuration files or
    * command-line options) to be transformed through {@link Stream}.
@@ -229,20 +324,82 @@ public final class Clis {
    * </p>
    *
    * @param s
-   *          List of semicolon-(or, alternatively, comma-)separated values.
-   * @see #parseStrList(String)
+   *          String of comma- (or semicolon-) separated argument values.
+   * @see #parseListIncremental(String, Function, Collection)
    * @see #listArg(Iterable, Function)
    */
   public static Stream<String> parseList(String s) {
     return !s.isEmpty()
         ? Stream.of(s.split(s.contains(S + SEMICOLON) ? S + SEMICOLON : S + COMMA))
             .map(String::trim)
-            .filter($ -> !$.isEmpty())
+            .filter(StringUtils::isNotEmpty)
         : Stream.empty();
   }
 
   /**
-   * Parses the given path, no matter whether it exists.
+   * Parses a string as elements applied incrementally to the collection.
+   * <p>
+   * If {@code s} is prefixed by a modifier ({@code '+'} or {@code '-'}), then the elements mapped
+   * from the argument values are, respectively, appended or removed to/from {@code target};
+   * otherwise, the elements replace the whole {@code target} contents.
+   * </p>
+   * <p>
+   * Useful to convert textual lists of references (such as those coming from configuration files or
+   * command-line options) providing the flexibility to either modify the existing state or redefine
+   * it from scratch.
+   * </p>
+   *
+   * @param s
+   *          String of comma- (or semicolon-) separated argument values. It can be prefixed by a
+   *          modifier, as described above.
+   * @param transformer
+   *          Maps to elements the argument values from {@code s} as split by
+   *          {@link #parseList(String)}.
+   * @param target
+   *          Collection the mapped elements are applied to. Use {@link ListIncrementalAdapter} for
+   *          custom mapping of the modifications.
+   * @param <E>
+   *          Element type.
+   * @param <C>
+   *          Target collection type.
+   * @return {@code target}
+   * @see #parseList(String)
+   * @see #listArg(Iterable, Function)
+   */
+  public static <E, C extends Collection<E>> C parseListIncremental(String s,
+      Function<Stream<String>, Stream<E>> transformer, C target) {
+    if (!s.isEmpty()) {
+      final char modifier;
+      {
+        char c = s.charAt(0);
+        switch (c) {
+          case PLUS:
+          case MINUS:
+            modifier = c;
+            s = s.substring(1);
+            break;
+          default:
+            target.clear();
+            modifier = PLUS;
+        }
+      }
+      transformer
+          .apply(parseList(s))
+          .forEach($ -> {
+            if (modifier == PLUS) {
+              target.add($);
+            } else {
+              target.remove($);
+            }
+          });
+    } else {
+      target.clear();
+    }
+    return target;
+  }
+
+  /**
+   * Parses a path, no matter whether it exists.
    * <p>
    * Useful to convert textual references to filesystem resources (such as those coming from
    * configuration files or command-line options) to their normalized absolute form.
@@ -324,25 +481,6 @@ public final class Clis {
    */
   public static @Nullable Resource parseResource(String name, Function<Path, Path> fileResolver) {
     return Resource.of(name, fileResolver);
-  }
-
-  /**
-   * Parses the given string as a list of values.
-   * <p>
-   * Useful to convert textual lists of values (such as those coming from configuration files or
-   * command-line options).
-   * </p>
-   * <p>
-   * Values are trimmed and filtered out if empty.
-   * </p>
-   *
-   * @param s
-   *          List of semicolon-(or, alternatively, comma-)separated values.
-   * @see #parseList(String)
-   * @see #listArg(Iterable)
-   */
-  public static List<String> parseStrList(String s) {
-    return parseList(s).collect(toList());
   }
 
   private Clis() {
