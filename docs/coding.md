@@ -22,34 +22,37 @@ The rationale behind these naming conventions is to *avoid ambiguity between pri
 
       Example:
       <pre>
-      // test package for `org.example.myapp` main-code package
-      package org.example.myapp;</pre>
+      // test package for `org.example.myapp.util` main-code package
+      package org.example.myapp.util;</pre>
 
-    - **containing ancillary testing code**: `mainCodePackage '._' testSpecificSubPackagePart`
+    - **containing ancillary testing code**: `mainCodePackage '._' ancillarySubPackagePart ('.' subPackage)*`
 
-      Ancillary testing code is every piece of code (sample objects, mocks specific to a tested part, etc.) which is NOT intended for reuse across a testing suite.
-
-      Subpackage SHALL be prefixed by an underscore (to make it stick out in code editors and file listings).
+      Ancillary testing code is every piece of code (sample objects, mocks specific to a tested part, etc.) which is NOT intended for reuse within the current testing suite. SHALL be prefixed by single underscore (to avoid ambiguities with main-code packages).
 
       Example:
       <pre>
       // test package for issues of the project with `org.example.myapp` as root package
       package org.example.myapp._issues;</pre>
 
-    - **containing internal testing harness functionality**: `mainCodePackage '.__' testHarnessSubPackagePart`
+    - **containing internal testing harness functionality**: `mainCodePackage '.__test' ('.' subPackage)*`
 
-      Internal testing harness functionality is every piece of code (utilities, models, shared mocks, etc.) which is intended for reuse across a testing suite.
-
-      Subpackage SHALL be prefixed by double underscore (to make it stick out in code editors and file listings).
+      Internal testing harness functionality is every piece of code (utilities, models, shared mocks, etc.) which is intended for reuse within the current testing suite. SHALL be prefixed by double underscore (to avoid ambiguities with `*.test` packages containing public testing harness functionality — see next item).
 
       Example:
       <pre>
-      // test package containing testing utilities for the project with `org.example.myapp` as root package
+      // test package for internal testing harness functionality of the project with
+      // `org.example.myapp` as root package
       package org.example.myapp.__test;</pre>
 
-    - **containing public testing harness functionality**: `mainCodePackage '.test.' testHarnessSubPackagePart`
+    - **containing public testing harness functionality**: `mainCodePackage '.test' ('.' subPackage)*`
 
-      Public testing harness functionality is every piece of code (utilities, models, shared mocks, etc.) which is intended for reuse outside the current module and exported in test-jar artifacts.
+      Public testing harness functionality is every piece of code (utilities, models, shared mocks, etc.) which is intended for reuse outside the current testing suite, exported in a test-jar artifact.
+
+      Example:
+      <pre>
+      // test package for public testing harness functionality of the project with
+      // `org.example.myapp` as root package
+      package org.example.myapp.test;</pre>
 
 - **Test classes**:
 
@@ -57,52 +60,45 @@ The rationale behind these naming conventions is to *avoid ambiguity between pri
 
       Example:
       <pre>
-      // unit tests for class `PrintStream`
+      // unit tests on class `PrintStream`
       class PrintStreamTest { . . .</pre>
 
     - **Integration tests**: `TestedClassName 'IT'`
 
       Example:
       <pre>
-      // integration tests for class `PrintStream`
+      // integration tests on class `PrintStream`
       class PrintStreamIT { . . .</pre>
 
 - **Test methods**:
-    - **Unit tests**:
-      - **on API method**
+    - **on API method**
 
-        Methods testing the behavior of specific API methods SHALL be named as-is, without any prefix; in case of ambiguity, they SHALL specify their signature as suffix.
+      Methods testing the behavior of specific API methods SHALL be named as-is, without any prefix; in case of ambiguity, they SHALL specify their signature as suffix.
 
-          - main case: `apiMethodName ( '_' ArgumentType )*`
-
-            Example:
-            <pre>
-            // main test for method `PrintStream.append(CharSequence, int, int)`
-            @Test
-            void append_CharSequence_int_int() { . . .</pre>
-          - special cases:
-            `apiMethodName ( '_' ArgumentType )* '__' specialCase ( '_' specialCasePart )*`
-
-            Special test cases on an API method SHALL be named separating the name of the test case with a double underscore (to avoid ambiguity with method signature).
-            `specialCasePart` SHALL be a subcase or a descriptive suffix of the test case.
-
-            Example:
-            <pre>
-            // failure test for method `PrintStream.append(CharSequence, int, int)`
-            @Test
-            void append_CharSequence_int_int__indexOutOfBounds() { . . .</pre>
-      - **on API class**: `'_' testCase ( '_' testCasePart )*`
-
-        Methods testing the behavior across a class SHALL be prefixed by an underscore (to make them grouped via code formatter and stick out in code editors).
-        `testCasePart`
-        SHALL be either a subcase or a descriptive suffix of the test case.
+      - main case: `apiMethodName ('_' ArgumentType)*`
 
         Example:
         <pre>
-        // test for a fixed issue about the tested class
+        // main test on method `PrintStream.append(CharSequence, int, int)`
         @Test
-        void _issue123_missingNewLine() { . . .</pre>
+        void append_CharSequence_int_int() { . . .</pre>
 
-    - **Integration tests**: `testCase ( '_' testCasePart )*`
+      - special cases: `apiMethodName ('_' ArgumentType)* '__' specialCase ('_' specialCasePart)*`
 
-      Methods testing the behavior of an API class on integration SHALL NOT be prefixed by underscores (since there are no tests on API members like in unit testing, no ambiguity is possible).
+        Special test cases on an API method SHALL be named separating the test case with double underscore (to avoid ambiguity with method signature). `specialCasePart` SHALL be a subcase or a descriptive suffix of the test case.
+
+        Example:
+        <pre>
+        // failure test on method `PrintStream.append(CharSequence, int, int)`
+        @Test
+        void append_CharSequence_int_int__indexOutOfBounds() { . . .</pre>
+
+    - **on API class**: `'_' testCase ('_' testCasePart)*`
+
+      Methods testing the behavior across a class SHALL be prefixed by single underscore (to make them grouped via code formatter and stick out in code editors). `testCasePart` SHALL be either a subcase or a descriptive suffix of the test case.
+
+      Example:
+      <pre>
+      // test on a fixed issue about the tested class
+      @Test
+      void _issue123_missingNewLine() { . . .</pre>
