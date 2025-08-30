@@ -20,7 +20,6 @@ import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
@@ -43,16 +42,18 @@ import org.slf4j.event.LoggingEvent;
 public abstract class LogCaptor
     implements AutoCloseable, AfterAllCallback, BeforeAllCallback, AfterEachCallback {
   /**
-   * Log entry capture.
+   * Log event capture.
    *
    * @author Stefano Chizzolini
    */
-  protected static class Capture implements LoggingEvent {
+  public static class Capture implements LoggingEvent {
     private final Level level;
     private final String message;
     private final @Nullable Throwable throwable;
 
-    protected Capture(Level level, String message, @Nullable Throwable throwable) {
+    /**
+     */
+    public Capture(Level level, String message, @Nullable Throwable throwable) {
       this.level = requireNonNull(level, "`level`");
       this.message = requireNonNull(message, "`message`");
       this.throwable = throwable;

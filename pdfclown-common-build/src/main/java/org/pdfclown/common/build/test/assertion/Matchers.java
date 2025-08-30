@@ -114,6 +114,25 @@ public final class Matchers {
 
   /**
    * Creates a matcher that matches when the examined event has the given attributes.
+   *
+   * @apiNote Usage example: <pre class="lang-java" data-line="7-8"><code>
+   * import static org.hamcrest.MatcherAssert.assertThat;
+   * import static org.hamcrest.Matchers.hasItem;
+   *
+   * import org.junit.jupiter.api.extension.RegisterExtension;
+   * import org.pdfclown.common.build.test.assertion.LogCaptor;
+   *
+   * class MyObjectTest {
+   *   &#64;RegisterExtension
+   *   static LogCaptor logged = LogCaptor.of(MyObject.class);
+   *
+   *   &#64;Test
+   *   void myTest() {
+   *     assertThat(logged.getEvents(), hasItem(<span style=
+  "background-color:yellow;color:black;">matchesEvent(Level.WARN,
+   *         "Text of my warning log event", null)</span>));
+   *   }
+   * }</code></pre>
    */
   public static Matcher<LoggingEvent> matchesEvent(Level level, String message,
       @Nullable Class<Throwable> causeType) {

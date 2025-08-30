@@ -13,6 +13,7 @@
 package org.pdfclown.common.util;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -49,18 +50,16 @@ class ParamMessageTest extends BaseTest {
     assertThat(ParamMessage.format(ParamMessage.ARG + " message " + ParamMessage.ARG, "ARG0"),
         is("ARG0 message {}"));
 
-    assertThat(logged.eventCount(), is(1));
-    assertThat(logged.event(0), matchesEvent(Level.WARN,
-        "Argument 1 missing for placeholder \"{}\" (format: \"{} message {}\")", null));
+    assertThat(logged.getEvents(), contains(matchesEvent(Level.WARN,
+        "Argument 1 missing for placeholder \"{}\" (format: \"{} message {}\")", null)));
   }
 
   @Test
   void format__placeholderMissing() {
     assertThat(ParamMessage.format(ParamMessage.ARG + " message", "ARG0", 99), is("ARG0 message"));
 
-    assertThat(logged.eventCount(), is(1));
-    assertThat(logged.event(0), matchesEvent(Level.WARN,
-        "Placeholder \"{}\" missing for argument 1 (format: \"{} message\")", null));
+    assertThat(logged.getEvents(), contains(matchesEvent(Level.WARN,
+        "Placeholder \"{}\" missing for argument 1 (format: \"{} message\")", null)));
   }
 
   /**
