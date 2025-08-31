@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.SynchronousQueue;
@@ -98,10 +99,34 @@ public final class Assertions {
   /**
    * Argument value wrapper to use within {@link Arguments}.
    * <p>
-   * Contrary to {@link Named}, its payload isn't unwrapped, so this argument goes to the
+   * Contrary to {@link Named}, its payload isn't unwrapped, so this argument is passed to the
    * parameterized test as-is — useful for expected result generation (see
    * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}).
    * </p>
+   * <table>
+   * <caption>Argument instantiation summary</caption>
+   * <tr>
+   * <th>Scope</th>
+   * <th>Representation<br>
+   * (<code>toString()</code>)</th>
+   * <th>Use</th>
+   * </tr>
+   * <tr>
+   * <td>Display only (unwrap to test)</td>
+   * <td>Name only</td>
+   * <td>{@link Named#named(String, Object)}</td>
+   * </tr>
+   * <tr>
+   * <td>Display only (unwrap to test)</td>
+   * <td>Name and value</td>
+   * <td>{@link Argument#qnamed(String, Object)}</td>
+   * </tr>
+   * <tr>
+   * <td>Display and pass (as-is to test)</td>
+   * <td>Name and value</td>
+   * <td>{@link Argument#arg(String, Object)}</td>
+   * </tr>
+   * </table>
    *
    * @param <T>
    *          Argument value type.
@@ -114,6 +139,16 @@ public final class Assertions {
 
     public static <T> Argument<T> of(String label, @Nullable T value) {
       return new Argument<>(label, value);
+    }
+
+    public static <T> Named<T> qnamed(String label, @Nullable T value) {
+      //noinspection DataFlowIssue : `value` can be null
+      return Named.of(toString(label, value), value);
+    }
+
+    private static String toString(String label, Object value) {
+      return label.isEmpty() ? toLiteralString(value)
+          : String.format(Locale.ROOT, "%s (%s)", toLiteralString(value), label);
     }
 
     private final String label;
@@ -160,7 +195,7 @@ public final class Assertions {
 
     @Override
     public String toString() {
-      return label;
+      return toString(label, value);
     }
   }
 
@@ -640,7 +675,7 @@ public final class Assertions {
 
     @Override
     public String toString() {
-      return java.util.Objects.toString(returned != null ? returned : thrown);
+      return toLiteralString(returned != null ? returned : thrown);
     }
 
     Matcher<? super T> getMatcher() {
@@ -662,7 +697,7 @@ public final class Assertions {
     /**
      * Gets the constructor source code to use in {@link #setExpectedSourceCodeGenerator(Function)}.
      *
-     * @see #expectedSourceCodeForFactory( Class, String, Object...)
+     * @see #expectedSourceCodeForFactory(Class, String, Object...)
      */
     public static String expectedSourceCodeForConstructor(Class<?> type, @Nullable Object... args) {
       return String.format("new %s(%s)", fqnd(type),
@@ -672,7 +707,7 @@ public final class Assertions {
     /**
      * Gets factory source code to use in {@link #setExpectedSourceCodeGenerator(Function)}.
      *
-     * @see #expectedSourceCodeForConstructor( Class, Object...)
+     * @see #expectedSourceCodeForConstructor(Class, Object...)
      */
     public static String expectedSourceCodeForFactory(Class<?> type, String methodName,
         @Nullable Object... args) {
@@ -692,6 +727,15 @@ public final class Assertions {
      */
     public ExpectedGeneration(List<Entry<String, @Nullable Object>> args) {
       this.args = requireNonNull(args);
+    }
+
+    /**
+     * Prepends to {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator} the given
+     * function.
+     */
+    public ExpectedGeneration composeExpectedSourceCodeGenerator(Function<Object, String> before) {
+      expectedSourceCodeGenerator = expectedSourceCodeGenerator.compose(before);
+      return this;
     }
 
     /**

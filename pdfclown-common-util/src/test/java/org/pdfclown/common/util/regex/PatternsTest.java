@@ -61,9 +61,9 @@ class PatternsTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // glob[0]: '/**/my*.* ()'
+            // [1] glob[0]: "/**/my*.*"
             "/.*/my[^/]*\\.[^/]*",
-            // glob[1]: '/home/*User/**/foo?a?/*.md ()'
+            // [2] glob[1]: "/home/*User/**/foo?a?/*.md"
             "/home/[^/]*User/.*/foo.a./[^/]*\\.md"),
         // pattern
         asList(
@@ -91,7 +91,7 @@ class PatternsTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // pattern[0]: 'Som? content. * more (*)\? ()'
+            // [1] pattern[0]: "Som? content. * more (*)\\?"
             "Som. content\\. .* more \\(.*\\)\\?"),
         // pattern
         asList(

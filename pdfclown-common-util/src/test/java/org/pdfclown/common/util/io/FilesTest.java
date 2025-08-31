@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.util.io;
 
-import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
+import static org.pdfclown.common.build.test.assertion.Assertions.Argument.qnamed;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
@@ -25,10 +25,10 @@ import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.assertion.Assertions.Argument;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
@@ -37,48 +37,42 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini
  */
 class FilesTest extends BaseTest {
-  private static final List<Argument<String>> EXTENSIONS = List.of(
-      arg("Multi-part, normal",
+  private static final List<Named<String>> EXTENSIONS = List.of(
+      qnamed("Multi-part, normal",
           ".tar.gz"),
-      arg("Multi-part, alt-case",
+      qnamed("Multi-part, alt-case",
           ".tar.GZ"),
-      arg("Simple, normal",
+      qnamed("Simple, normal",
           ".gz"),
-      arg("Simple, alt-case",
+      qnamed("Simple, alt-case",
           ".GZ"));
 
-  private static final List<Argument<String>> PATHS = List.of(
-      // path[0]
-      arg("Multi-part file extension, dot before directory separator, Unix path",
-          "/home/me/my.sub/test/obj.tar.gz"),
-      arg("Multi-part file extension, dot before directory separator, URI path",
-          "smb://myhost/my.sub/test/obj.tar.gz"),
-      arg("Multi-part file extension, dot before directory separator, Windows DOS path",
-          "C:\\my.sub\\test\\obj.tar.gz"),
-      // path[3]
-      arg("Multi-part file extension, dot before directory separator, Windows UNC path",
+  private static final List<Named<String>> PATHS = List.of(
+      qnamed("Unix path, dot inside directory, multi-part file extension",
+          "/home/me/my.sub/test/obj.TAR.GZ"),
+      qnamed("URI path, dot inside directory, multi-part file extension",
+          "smb://myhost/my.sub/test/obj.TAR.gz"),
+      qnamed("Windows DOS path, dot inside directory, multi-part file extension",
+          "C:\\my.sub\\test\\obj.tar.GZ"),
+      qnamed("Windows UNC path, dot inside directory, multi-part file extension",
           "\\\\myhost\\my.sub\\test\\obj.tar.gz"),
-      arg("Multi-part file extension, dot in base filename",
-          "/home/me/my/test/obj-5.2.9.tar2.gz"),
-      arg("Multi-part file extension, dot before base filename",
-          "C:\\my\\test-1.5\\obj.tar2.gz"));
+      qnamed("Dot inside base filename, multi-part file extension",
+          "/home/me/my/test/obj-5.2.9.tar2.gz"));
 
   static Stream<Arguments> extension() {
     return argumentsStream(
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
+            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            ".GZ",
+            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
             ".gz",
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-part file extension, dot before . . .'
+            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            ".GZ",
+            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
             ".gz",
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file extension, dot before directory . . .'
-            ".gz",
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part file extension, dot before dire. . .'
-            ".gz",
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-part file extension, dot in base . . .'
-            ".gz",
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file extension, dot before base filename)'
+            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
             ".gz"),
         // path
         PATHS);
@@ -89,18 +83,16 @@ class FilesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
+            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            "obj.TAR.GZ",
+            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            "obj.TAR.gz",
+            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            "obj.tar.GZ",
+            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
             "obj.tar.gz",
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-part file extension, dot before . . .'
-            "obj.tar.gz",
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file extension, dot before directory . . .'
-            "obj.tar.gz",
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part file extension, dot before dire. . .'
-            "obj.tar.gz",
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-part file extension, dot in base . . .'
-            "obj-5.2.9.tar2.gz",
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file extension, dot before base filename)'
-            "obj.tar2.gz"),
+            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            "obj-5.2.9.tar2.gz"),
         // path
         PATHS);
   }
@@ -110,17 +102,15 @@ class FilesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
+            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            ".TAR.GZ",
+            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            ".TAR.gz",
+            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            ".tar.GZ",
+            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
             ".tar.gz",
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-part file extension, dot before . . .'
-            ".tar.gz",
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file extension, dot before directory . . .'
-            ".tar.gz",
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part file extension, dot before dire. . .'
-            ".tar.gz",
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-part file extension, dot in base . . .'
-            ".tar2.gz",
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file extension, dot before base filename)'
+            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
             ".tar2.gz"),
         // path
         PATHS);
@@ -131,59 +121,54 @@ class FilesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            // path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            // [1] extension[0]: ".tar.gz"
             false,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [2] extension[1]: ".tar.GZ"
             false,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [3] extension[2]: ".gz"
             true,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [4] extension[3]: ".GZ"
             true,
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-part file extension, dot before . . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            //
+            // path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            // [5] extension[0]: ".tar.gz"
             false,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [6] extension[1]: ".tar.GZ"
             false,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [7] extension[2]: ".gz"
             true,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [8] extension[3]: ".GZ"
             true,
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file extension, dot before directory . . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            //
+            // path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            // [9] extension[0]: ".tar.gz"
             false,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [10] extension[1]: ".tar.GZ"
             false,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [11] extension[2]: ".gz"
             true,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [12] extension[3]: ".GZ"
             true,
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part file extension, dot before dire. . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            //
+            // path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            // [13] extension[0]: ".tar.gz"
             false,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [14] extension[1]: ".tar.GZ"
             false,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [15] extension[2]: ".gz"
             true,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [16] extension[3]: ".GZ"
             true,
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-part file extension, dot in base . . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            //
+            // path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            // [17] extension[0]: ".tar.gz"
             false,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [18] extension[1]: ".tar.GZ"
             false,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [19] extension[2]: ".gz"
             true,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
-            true,
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file extension, dot before base filename)'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
-            false,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
-            false,
-            // -- extension[2]: '.gz (Simple, normal)'
-            true,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [20] extension[3]: ".GZ"
             true),
         // path
         PATHS,
@@ -196,59 +181,54 @@ class FilesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            // path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            // [1] extension[0]: ".tar.gz"
             true,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [2] extension[1]: ".tar.GZ"
             true,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [3] extension[2]: ".gz"
             false,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [4] extension[3]: ".GZ"
             false,
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-part file extension, dot before . . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            //
+            // path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            // [5] extension[0]: ".tar.gz"
             true,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [6] extension[1]: ".tar.GZ"
             true,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [7] extension[2]: ".gz"
             false,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [8] extension[3]: ".GZ"
             false,
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file extension, dot before directory . . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            //
+            // path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            // [9] extension[0]: ".tar.gz"
             true,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [10] extension[1]: ".tar.GZ"
             true,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [11] extension[2]: ".gz"
             false,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [12] extension[3]: ".GZ"
             false,
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part file extension, dot before dire. . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            //
+            // path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            // [13] extension[0]: ".tar.gz"
             true,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [14] extension[1]: ".tar.GZ"
             true,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [15] extension[2]: ".gz"
             false,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [16] extension[3]: ".GZ"
             false,
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-part file extension, dot in base . . .'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
+            //
+            // path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            // [17] extension[0]: ".tar.gz"
             false,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
+            // [18] extension[1]: ".tar.GZ"
             false,
-            // -- extension[2]: '.gz (Simple, normal)'
+            // [19] extension[2]: ".gz"
             false,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
-            false,
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file extension, dot before base filename)'
-            // -- extension[0]: '.tar.gz (Multi-part, normal)'
-            false,
-            // -- extension[1]: '.tar.GZ (Multi-part, alt-case)'
-            false,
-            // -- extension[2]: '.gz (Simple, normal)'
-            false,
-            // -- extension[3]: '.GZ (Simple, alt-case)'
+            // [20] extension[3]: ".GZ"
             false),
         // path
         PATHS,
@@ -327,18 +307,16 @@ class FilesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
+            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
             "obj",
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-part file extension, dot before . . .'
+            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
             "obj",
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file extension, dot before directory . . .'
+            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
             "obj",
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part file extension, dot before dire. . .'
+            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
             "obj",
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-part file extension, dot in base . . .'
-            "obj-5.2.9",
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file extension, dot before base filename)'
-            "obj"),
+            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            "obj-5.2.9"),
         // path
         PATHS);
   }
@@ -348,18 +326,16 @@ class FilesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
-            "/home/me/my.sub/test/obj.tar",
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-part file extension, dot before . . .'
-            "smb://myhost/my.sub/test/obj.tar",
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file extension, dot before directory . . .'
+            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            "/home/me/my.sub/test/obj.TAR",
+            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            "smb://myhost/my.sub/test/obj.TAR",
+            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
             "C:\\my.sub\\test\\obj.tar",
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part file extension, dot before dire. . .'
+            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
             "\\\\myhost\\my.sub\\test\\obj.tar",
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-part file extension, dot in base . . .'
-            "/home/me/my/test/obj-5.2.9.tar2",
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file extension, dot before base filename)'
-            "C:\\my\\test-1.5\\obj.tar2"),
+            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            "/home/me/my/test/obj-5.2.9.tar2"),
         // path
         PATHS);
   }
@@ -369,27 +345,25 @@ class FilesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // path[0]: '/home/me/my.sub/test/obj.tar.gz (Multi-part file extension, dot before dire. . .'
+            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
             "/home/me/my.sub/test/obj",
-            // path[1]: 'smb://myhost/my.sub/test/obj.tar.gz (Multi-part file extension, dot before . . .'
+            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
             "smb://myhost/my.sub/test/obj",
-            // path[2]: 'C:\my.sub\test\obj.tar.gz (Multi-part file extension, dot before directory . . .'
+            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
             "C:\\my.sub\\test\\obj",
-            // path[3]: '\\myhost\my.sub\test\obj.tar.gz (Multi-part file extension, dot before dire. . .'
+            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
             "\\\\myhost\\my.sub\\test\\obj",
-            // path[4]: '/home/me/my/test/obj-5.2.9.tar2.gz (Multi-part file extension, dot in base . . .'
-            "/home/me/my/test/obj-5.2.9",
-            // path[5]: 'C:\my\test-1.5\obj.tar2.gz (Multi-part file extension, dot before base filename)'
-            "C:\\my\\test-1.5\\obj"),
+            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            "/home/me/my/test/obj-5.2.9"),
         // path
         PATHS);
   }
 
   @ParameterizedTest
   @MethodSource
-  void extension(Expected<String> expected, Argument<String> path) {
+  void extension(Expected<String> expected, String path) {
     assertParameterizedOf(
-        () -> Files.extension(path.getValue()),
+        () -> Files.extension(path),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));
@@ -397,9 +371,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void filename(Expected<String> expected, Argument<String> path) {
+  void filename(Expected<String> expected, String path) {
     assertParameterizedOf(
-        () -> Files.filename(path.getValue()),
+        () -> Files.filename(path),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));
@@ -407,9 +381,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullExtension(Expected<String> expected, Argument<String> path) {
+  void fullExtension(Expected<String> expected, String path) {
     assertParameterizedOf(
-        () -> Files.fullExtension(path.getValue()),
+        () -> Files.fullExtension(path),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));
@@ -417,9 +391,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void isExtension(Expected<Boolean> expected, Argument<String> path, Argument<String> extension) {
+  void isExtension(Expected<Boolean> expected, String path, String extension) {
     assertParameterizedOf(
-        () -> Files.isExtension(path.getValue(), extension.getValue()),
+        () -> Files.isExtension(path, extension),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path),
@@ -428,10 +402,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void isFullExtension(Expected<Boolean> expected, Argument<String> path,
-      Argument<String> extension) {
+  void isFullExtension(Expected<Boolean> expected, String path, String extension) {
     assertParameterizedOf(
-        () -> Files.isFullExtension(path.getValue(), extension.getValue()),
+        () -> Files.isFullExtension(path, extension),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path),
@@ -464,9 +437,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void simpleBaseName(Expected<String> expected, Argument<String> path) {
+  void simpleBaseName(Expected<String> expected, String path) {
     assertParameterizedOf(
-        () -> Files.simpleBaseName(path.getValue()),
+        () -> Files.simpleBaseName(path),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));
@@ -474,9 +447,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void stripExtension(Expected<String> expected, Argument<String> path) {
+  void stripExtension(Expected<String> expected, String path) {
     assertParameterizedOf(
-        () -> Files.stripExtension(path.getValue()),
+        () -> Files.stripExtension(path),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));
@@ -484,9 +457,9 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void stripFullExtension(Expected<String> expected, Argument<String> path) {
+  void stripFullExtension(Expected<String> expected, String path) {
     assertParameterizedOf(
-        () -> Files.stripFullExtension(path.getValue()),
+        () -> Files.stripFullExtension(path),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("path", path))));

@@ -12,9 +12,11 @@
  */
 package org.pdfclown.common.util.__test;
 
+import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
+import static org.pdfclown.common.util.Objects.objTo;
+
 import javax.measure.Unit;
 import org.pdfclown.common.build.test.Test;
-import org.pdfclown.common.build.test.assertion.Assertions.Argument;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
 
 /**
@@ -25,8 +27,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig
 public abstract class BaseTest extends Test {
   private static final ArgumentsStreamConfig.Converter ARGUMENTS_CONVERTER = ($index, $obj) -> {
     if ($obj instanceof Unit) {
-      var unit = (Unit<?>) $obj;
-      return Argument.of(String.format("%s (%s)", unit, unit.getName()), unit);
+      return objTo((Unit<?>) $obj, $ -> arg($.getName(), $));
     } else
       return $obj;
   };

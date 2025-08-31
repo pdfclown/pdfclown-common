@@ -15,7 +15,7 @@ package org.pdfclown.common.build.util.io;
 import static java.util.Arrays.asList;
 import static org.pdfclown.common.build.internal.util_.Aggregations.entry;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
+import static org.pdfclown.common.build.test.assertion.Assertions.Argument.qnamed;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
@@ -27,11 +27,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.__test.BaseTest;
-import org.pdfclown.common.build.test.assertion.Assertions.Argument;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 
@@ -39,24 +39,24 @@ import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
  * @author Stefano Chizzolini
  */
 class ResourceNamesTest extends BaseTest {
-  private static final List<Argument<String>> NAMES = asList(
-      arg("Normal absolute root",
+  private static final List<Named<String>> NAMES = asList(
+      qnamed("Normal absolute root",
           "/"),
-      arg("Backslash absolute root",
+      qnamed("Backslash absolute root",
           "\\"),
-      arg("Normal absolute name",
+      qnamed("Normal absolute name",
           "/my/absolute/resource"),
-      arg("Slash-trailing absolute name",
+      qnamed("Slash-trailing absolute name",
           "/my/absolute/resource/"),
-      arg("Slash- and backslash-ridden absolute name",
+      qnamed("Slash- and backslash-ridden absolute name",
           "//my/\\\\other\\/\\deep//absolute\\resource/"),
-      arg("Relaive root",
+      qnamed("Relaive root",
           ""),
-      arg("Normal relative name",
+      qnamed("Normal relative name",
           "my/relative/resource"),
-      arg("Slash-trailing relative name",
+      qnamed("Slash-trailing relative name",
           "my/relative/resource/"),
-      arg("Slash- and backslash-ridden relative name",
+      qnamed("Slash- and backslash-ridden relative name",
           "my/\\\\other\\/\\deep//relative\\resource/"));
 
   static Stream<Arguments> absName_Path__unix() {
@@ -66,33 +66,36 @@ class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // filePath[0]: 'relative/index1.html'
-            // -- baseDir[0]: 'local'
+            // filePath[0]: relative/index1.html
+            // [1] baseDir[0]: local
             "/relative/index1.html",
-            // -- baseDir[1]: '../local'
+            // [2] baseDir[1]: ../local
             "/relative/index1.html",
-            // -- baseDir[2]: '/host/absolute'
+            // [3] baseDir[2]: /host/absolute
             "/relative/index1.html",
-            // filePath[1]: '../relative/index2.html'
-            // -- baseDir[0]: 'local'
+            //
+            // filePath[1]: ../relative/index2.html
+            // [4] baseDir[0]: local
             null,
-            // -- baseDir[1]: '../local'
+            // [5] baseDir[1]: ../local
             null,
-            // -- baseDir[2]: '/host/absolute'
+            // [6] baseDir[2]: /host/absolute
             null,
-            // filePath[2]: '/host/cwd/local/index3.html'
-            // -- baseDir[0]: 'local'
+            //
+            // filePath[2]: /host/cwd/local/index3.html
+            // [7] baseDir[0]: local
             "/index3.html",
-            // -- baseDir[1]: '../local'
+            // [8] baseDir[1]: ../local
             null,
-            // -- baseDir[2]: '/host/absolute'
+            // [9] baseDir[2]: /host/absolute
             null,
-            // filePath[3]: '/host/absolute/another/index4.html'
-            // -- baseDir[0]: 'local'
+            //
+            // filePath[3]: /host/absolute/another/index4.html
+            // [10] baseDir[0]: local
             null,
-            // -- baseDir[1]: '../local'
+            // [11] baseDir[1]: ../local
             null,
-            // -- baseDir[2]: '/host/absolute'
+            // [12] baseDir[2]: /host/absolute
             "/another/index4.html"),
         // filePath
         asList(
@@ -114,33 +117,36 @@ class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // filePath[0]: 'relative\index1.html'
-            // -- baseDir[0]: 'local'
+            // filePath[0]: relative\index1.html
+            // [1] baseDir[0]: local
             "/relative/index1.html",
-            // -- baseDir[1]: '..\local'
+            // [2] baseDir[1]: ..\local
             "/relative/index1.html",
-            // -- baseDir[2]: 'c:\absolute'
+            // [3] baseDir[2]: c:\absolute
             "/relative/index1.html",
-            // filePath[1]: '..\relative\index2.html'
-            // -- baseDir[0]: 'local'
+            //
+            // filePath[1]: ..\relative\index2.html
+            // [4] baseDir[0]: local
             null,
-            // -- baseDir[1]: '..\local'
+            // [5] baseDir[1]: ..\local
             null,
-            // -- baseDir[2]: 'c:\absolute'
+            // [6] baseDir[2]: c:\absolute
             null,
-            // filePath[2]: 'c:\cwd\local\index3.html'
-            // -- baseDir[0]: 'local'
+            //
+            // filePath[2]: c:\cwd\local\index3.html
+            // [7] baseDir[0]: local
             "/index3.html",
-            // -- baseDir[1]: '..\local'
+            // [8] baseDir[1]: ..\local
             null,
-            // -- baseDir[2]: 'c:\absolute'
+            // [9] baseDir[2]: c:\absolute
             null,
-            // filePath[3]: 'c:\absolute\another\index4.html'
-            // -- baseDir[0]: 'local'
+            //
+            // filePath[3]: c:\absolute\another\index4.html
+            // [10] baseDir[0]: local
             null,
-            // -- baseDir[1]: '..\local'
+            // [11] baseDir[1]: ..\local
             null,
-            // -- baseDir[2]: 'c:\absolute'
+            // [12] baseDir[2]: c:\absolute
             "/another/index4.html"),
         // filePath
         asList(
@@ -160,50 +166,58 @@ class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // name[0]: '/ (Normal absolute root)'
-            // -- baseType[0]: 'null'
+            // name[0]: "/"
+            // [1] baseType[0]: null
             "/",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [2] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "/",
-            // name[1]: '\ (Backslash absolute root)'
-            // -- baseType[0]: 'null'
+            //
+            // name[1]: "\\"
+            // [3] baseType[0]: null
             "/",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [4] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "/",
-            // name[2]: '/my/absolute/resource (Normal absolute name)'
-            // -- baseType[0]: 'null'
+            //
+            // name[2]: "/my/absolute/resource"
+            // [5] baseType[0]: null
             "/my/absolute/resource",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [6] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "/my/absolute/resource",
-            // name[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
-            // -- baseType[0]: 'null'
+            //
+            // name[3]: "/my/absolute/resource/"
+            // [7] baseType[0]: null
             "/my/absolute/resource",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [8] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "/my/absolute/resource",
-            // name[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
-            // -- baseType[0]: 'null'
+            //
+            // name[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
+            // [9] baseType[0]: null
             "/my/other/deep/absolute/resource",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [10] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "/my/other/deep/absolute/resource",
-            // name[5]: ' (Relaive root)'
-            // -- baseType[0]: 'null'
+            //
+            // name[5]: ""
+            // [11] baseType[0]: null
             "",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [12] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "org/pdfclown/common/build/util/io",
-            // name[6]: 'my/relative/resource (Normal relative name)'
-            // -- baseType[0]: 'null'
+            //
+            // name[6]: "my/relative/resource"
+            // [13] baseType[0]: null
             "my/relative/resource",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [14] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "org/pdfclown/common/build/util/io/my/relative/resource",
-            // name[7]: 'my/relative/resource/ (Slash-trailing relative name)'
-            // -- baseType[0]: 'null'
+            //
+            // name[7]: "my/relative/resource/"
+            // [15] baseType[0]: null
             "my/relative/resource",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [16] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "org/pdfclown/common/build/util/io/my/relative/resource",
-            // name[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
-            // -- baseType[0]: 'null'
+            //
+            // name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
+            // [17] baseType[0]: null
             "my/other/deep/relative/resource",
-            // -- baseType[1]: 'class org.pdfclown.common.build.util.io.ResourceNames'
+            // [18] baseType[1]: org.pdfclown.common.build.util.io.ResourceNames
             "org/pdfclown/common/build/util/io/my/other/deep/relative/resource"),
         // name
         NAMES,
@@ -218,50 +232,58 @@ class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // name[0]: '/ (Normal absolute root)'
-            // -- basePackage[0]: '???'
+            // name[0]: "/"
+            // [1] basePackage[0]: ""
             "/",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [2] basePackage[1]: "org.pdfclown.common.build.util.io"
             "/",
-            // name[1]: '\ (Backslash absolute root)'
-            // -- basePackage[0]: '???'
+            //
+            // name[1]: "\\"
+            // [3] basePackage[0]: ""
             "/",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [4] basePackage[1]: "org.pdfclown.common.build.util.io"
             "/",
-            // name[2]: '/my/absolute/resource (Normal absolute name)'
-            // -- basePackage[0]: '???'
+            //
+            // name[2]: "/my/absolute/resource"
+            // [5] basePackage[0]: ""
             "/my/absolute/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [6] basePackage[1]: "org.pdfclown.common.build.util.io"
             "/my/absolute/resource",
-            // name[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
-            // -- basePackage[0]: '???'
+            //
+            // name[3]: "/my/absolute/resource/"
+            // [7] basePackage[0]: ""
             "/my/absolute/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [8] basePackage[1]: "org.pdfclown.common.build.util.io"
             "/my/absolute/resource",
-            // name[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
-            // -- basePackage[0]: '???'
+            //
+            // name[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
+            // [9] basePackage[0]: ""
             "/my/other/deep/absolute/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [10] basePackage[1]: "org.pdfclown.common.build.util.io"
             "/my/other/deep/absolute/resource",
-            // name[5]: ' (Relaive root)'
-            // -- basePackage[0]: '???'
+            //
+            // name[5]: ""
+            // [11] basePackage[0]: ""
             "",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [12] basePackage[1]: "org.pdfclown.common.build.util.io"
             "org/pdfclown/common/build/util/io",
-            // name[6]: 'my/relative/resource (Normal relative name)'
-            // -- basePackage[0]: '???'
+            //
+            // name[6]: "my/relative/resource"
+            // [13] basePackage[0]: ""
             "my/relative/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [14] basePackage[1]: "org.pdfclown.common.build.util.io"
             "org/pdfclown/common/build/util/io/my/relative/resource",
-            // name[7]: 'my/relative/resource/ (Slash-trailing relative name)'
-            // -- basePackage[0]: '???'
+            //
+            // name[7]: "my/relative/resource/"
+            // [15] basePackage[0]: ""
             "my/relative/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [16] basePackage[1]: "org.pdfclown.common.build.util.io"
             "org/pdfclown/common/build/util/io/my/relative/resource",
-            // name[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
-            // -- basePackage[0]: '???'
+            //
+            // name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
+            // [17] basePackage[0]: ""
             "my/other/deep/relative/resource",
-            // -- basePackage[1]: 'org.pdfclown.common.build.util.io'
+            // [18] basePackage[1]: "org.pdfclown.common.build.util.io"
             "org/pdfclown/common/build/util/io/my/other/deep/relative/resource"),
         // name
         NAMES,
@@ -276,23 +298,23 @@ class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // name0[0]: '/ (Normal absolute root)'
+            // [1] name0[0]: "/"
             "/",
-            // name0[1]: '\ (Backslash absolute root)'
+            // [2] name0[1]: "\\"
             "/",
-            // name0[2]: '/my/absolute/resource (Normal absolute name)'
+            // [3] name0[2]: "/my/absolute/resource"
             "/my/absolute/resource",
-            // name0[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [4] name0[3]: "/my/absolute/resource/"
             "/my/absolute/resource",
-            // name0[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [5] name0[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/other/deep/absolute/resource",
-            // name0[5]: ' (Relaive root)'
+            // [6] name0[5]: ""
             "",
-            // name0[6]: 'my/relative/resource (Normal relative name)'
+            // [7] name0[6]: "my/relative/resource"
             "my/relative/resource",
-            // name0[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [8] name0[7]: "my/relative/resource/"
             "my/relative/resource",
-            // name0[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [9] name0[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "my/other/deep/relative/resource"),
         // name0
         NAMES);
@@ -303,176 +325,184 @@ class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // name0[0]: '/ (Normal absolute root)'
-            // -- name1[0]: '/ (Normal absolute root)'
+            // name0[0]: "/"
+            // [1] name1[0]: "/"
             "/",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [2] name1[1]: "\\"
             "/",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [3] name1[2]: "/my/absolute/resource"
             "/my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [4] name1[3]: "/my/absolute/resource/"
             "/my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [5] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [6] name1[5]: ""
             "/",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [7] name1[6]: "my/relative/resource"
             "/my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [8] name1[7]: "my/relative/resource/"
             "/my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [9] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "/my/other/deep/relative/resource",
-            // name0[1]: '\ (Backslash absolute root)'
-            // -- name1[0]: '/ (Normal absolute root)'
+            //
+            // name0[1]: "\\"
+            // [10] name1[0]: "/"
             "/",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [11] name1[1]: "\\"
             "/",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [12] name1[2]: "/my/absolute/resource"
             "/my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [13] name1[3]: "/my/absolute/resource/"
             "/my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [14] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [15] name1[5]: ""
             "/",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [16] name1[6]: "my/relative/resource"
             "/my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [17] name1[7]: "my/relative/resource/"
             "/my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [18] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "/my/other/deep/relative/resource",
-            // name0[2]: '/my/absolute/resource (Normal absolute name)'
-            // -- name1[0]: '/ (Normal absolute root)'
+            //
+            // name0[2]: "/my/absolute/resource"
+            // [19] name1[0]: "/"
             "/my/absolute/resource",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [20] name1[1]: "\\"
             "/my/absolute/resource",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [21] name1[2]: "/my/absolute/resource"
             "/my/absolute/resource/my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [22] name1[3]: "/my/absolute/resource/"
             "/my/absolute/resource/my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [23] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/absolute/resource/my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [24] name1[5]: ""
             "/my/absolute/resource",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [25] name1[6]: "my/relative/resource"
             "/my/absolute/resource/my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [26] name1[7]: "my/relative/resource/"
             "/my/absolute/resource/my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [27] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "/my/absolute/resource/my/other/deep/relative/resource",
-            // name0[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
-            // -- name1[0]: '/ (Normal absolute root)'
+            //
+            // name0[3]: "/my/absolute/resource/"
+            // [28] name1[0]: "/"
             "/my/absolute/resource",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [29] name1[1]: "\\"
             "/my/absolute/resource",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [30] name1[2]: "/my/absolute/resource"
             "/my/absolute/resource/my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [31] name1[3]: "/my/absolute/resource/"
             "/my/absolute/resource/my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [32] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/absolute/resource/my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [33] name1[5]: ""
             "/my/absolute/resource",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [34] name1[6]: "my/relative/resource"
             "/my/absolute/resource/my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [35] name1[7]: "my/relative/resource/"
             "/my/absolute/resource/my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [36] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "/my/absolute/resource/my/other/deep/relative/resource",
-            // name0[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
-            // -- name1[0]: '/ (Normal absolute root)'
+            //
+            // name0[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
+            // [37] name1[0]: "/"
             "/my/other/deep/absolute/resource",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [38] name1[1]: "\\"
             "/my/other/deep/absolute/resource",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [39] name1[2]: "/my/absolute/resource"
             "/my/other/deep/absolute/resource/my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [40] name1[3]: "/my/absolute/resource/"
             "/my/other/deep/absolute/resource/my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [41] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/other/deep/absolute/resource/my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [42] name1[5]: ""
             "/my/other/deep/absolute/resource",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [43] name1[6]: "my/relative/resource"
             "/my/other/deep/absolute/resource/my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [44] name1[7]: "my/relative/resource/"
             "/my/other/deep/absolute/resource/my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [45] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "/my/other/deep/absolute/resource/my/other/deep/relative/resource",
-            // name0[5]: ' (Relaive root)'
-            // -- name1[0]: '/ (Normal absolute root)'
+            //
+            // name0[5]: ""
+            // [46] name1[0]: "/"
             "",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [47] name1[1]: "\\"
             "",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [48] name1[2]: "/my/absolute/resource"
             "my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [49] name1[3]: "/my/absolute/resource/"
             "my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [50] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [51] name1[5]: ""
             "",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [52] name1[6]: "my/relative/resource"
             "my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [53] name1[7]: "my/relative/resource/"
             "my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [54] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "my/other/deep/relative/resource",
-            // name0[6]: 'my/relative/resource (Normal relative name)'
-            // -- name1[0]: '/ (Normal absolute root)'
+            //
+            // name0[6]: "my/relative/resource"
+            // [55] name1[0]: "/"
             "my/relative/resource",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [56] name1[1]: "\\"
             "my/relative/resource",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [57] name1[2]: "/my/absolute/resource"
             "my/relative/resource/my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [58] name1[3]: "/my/absolute/resource/"
             "my/relative/resource/my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [59] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "my/relative/resource/my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [60] name1[5]: ""
             "my/relative/resource",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [61] name1[6]: "my/relative/resource"
             "my/relative/resource/my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [62] name1[7]: "my/relative/resource/"
             "my/relative/resource/my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [63] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "my/relative/resource/my/other/deep/relative/resource",
-            // name0[7]: 'my/relative/resource/ (Slash-trailing relative name)'
-            // -- name1[0]: '/ (Normal absolute root)'
+            //
+            // name0[7]: "my/relative/resource/"
+            // [64] name1[0]: "/"
             "my/relative/resource",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [65] name1[1]: "\\"
             "my/relative/resource",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [66] name1[2]: "/my/absolute/resource"
             "my/relative/resource/my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [67] name1[3]: "/my/absolute/resource/"
             "my/relative/resource/my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [68] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "my/relative/resource/my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [69] name1[5]: ""
             "my/relative/resource",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [70] name1[6]: "my/relative/resource"
             "my/relative/resource/my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [71] name1[7]: "my/relative/resource/"
             "my/relative/resource/my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [72] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "my/relative/resource/my/other/deep/relative/resource",
-            // name0[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
-            // -- name1[0]: '/ (Normal absolute root)'
+            //
+            // name0[8]: "my/\\\\other\\/\\deep//relative\\resource/"
+            // [73] name1[0]: "/"
             "my/other/deep/relative/resource",
-            // -- name1[1]: '\ (Backslash absolute root)'
+            // [74] name1[1]: "\\"
             "my/other/deep/relative/resource",
-            // -- name1[2]: '/my/absolute/resource (Normal absolute name)'
+            // [75] name1[2]: "/my/absolute/resource"
             "my/other/deep/relative/resource/my/absolute/resource",
-            // -- name1[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [76] name1[3]: "/my/absolute/resource/"
             "my/other/deep/relative/resource/my/absolute/resource",
-            // -- name1[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [77] name1[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "my/other/deep/relative/resource/my/other/deep/absolute/resource",
-            // -- name1[5]: ' (Relaive root)'
+            // [78] name1[5]: ""
             "my/other/deep/relative/resource",
-            // -- name1[6]: 'my/relative/resource (Normal relative name)'
+            // [79] name1[6]: "my/relative/resource"
             "my/other/deep/relative/resource/my/relative/resource",
-            // -- name1[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [80] name1[7]: "my/relative/resource/"
             "my/other/deep/relative/resource/my/relative/resource",
-            // -- name1[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [81] name1[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "my/other/deep/relative/resource/my/other/deep/relative/resource"),
         // name0
         NAMES,
@@ -485,23 +515,23 @@ class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // name[0]: '/ (Normal absolute root)'
+            // [1] name[0]: "/"
             "/",
-            // name[1]: '\ (Backslash absolute root)'
+            // [2] name[1]: "\\"
             "/",
-            // name[2]: '/my/absolute/resource (Normal absolute name)'
+            // [3] name[2]: "/my/absolute/resource"
             "/my/absolute/resource",
-            // name[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [4] name[3]: "/my/absolute/resource/"
             "/my/absolute/resource",
-            // name[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [5] name[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/other/deep/absolute/resource",
-            // name[5]: ' (Relaive root)'
+            // [6] name[5]: ""
             "",
-            // name[6]: 'my/relative/resource (Normal relative name)'
+            // [7] name[6]: "my/relative/resource"
             "my/relative/resource",
-            // name[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [8] name[7]: "my/relative/resource/"
             "my/relative/resource",
-            // name[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [9] name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "my/other/deep/relative/resource"),
         // name
         NAMES);
@@ -512,23 +542,23 @@ class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         java.util.Arrays.asList(
-            // name[0]: '/ (Normal absolute root)'
+            // [1] name[0]: "/"
             null,
-            // name[1]: '\ (Backslash absolute root)'
+            // [2] name[1]: "\\"
             null,
-            // name[2]: '/my/absolute/resource (Normal absolute name)'
+            // [3] name[2]: "/my/absolute/resource"
             "/my/absolute",
-            // name[3]: '/my/absolute/resource/ (Slash-trailing absolute name)'
+            // [4] name[3]: "/my/absolute/resource/"
             "/my/absolute",
-            // name[4]: '//my/\\other\/\deep//absolute\resource/ (Slash- and backslash-ridden absolu. . .'
+            // [5] name[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/other/deep/absolute",
-            // name[5]: ' (Relaive root)'
+            // [6] name[5]: ""
             null,
-            // name[6]: 'my/relative/resource (Normal relative name)'
+            // [7] name[6]: "my/relative/resource"
             "my/relative",
-            // name[7]: 'my/relative/resource/ (Slash-trailing relative name)'
+            // [8] name[7]: "my/relative/resource/"
             "my/relative",
-            // name[8]: 'my/\\other\/\deep//relative\resource/ (Slash- and backslash-ridden relative. . .'
+            // [9] name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             "my/other/deep/relative"),
         // name
         NAMES);
@@ -558,10 +588,10 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullName_Class(Expected<String> expected, Argument<String> name,
+  void fullName_Class(Expected<String> expected, String name,
       @Nullable Class<?> baseType) {
     assertParameterizedOf(
-        () -> ResourceNames.fullName(name.getValue(), baseType),
+        () -> ResourceNames.fullName(name, baseType),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name", name),
@@ -570,9 +600,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullName_String(Expected<String> expected, Argument<String> name, String basePackage) {
+  void fullName_String(Expected<String> expected, String name, String basePackage) {
     assertParameterizedOf(
-        () -> ResourceNames.fullName(name.getValue(), basePackage),
+        () -> ResourceNames.fullName(name, basePackage),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name", name),
@@ -585,9 +615,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void name_1(Expected<String> expected, Argument<String> name0) {
+  void name_1(Expected<String> expected, String name0) {
     assertParameterizedOf(
-        () -> ResourceNames.name(name0.getValue()),
+        () -> ResourceNames.name(name0),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name0", name0))));
@@ -595,9 +625,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void name_2(Expected<String> expected, Argument<String> name0, Argument<String> name1) {
+  void name_2(Expected<String> expected, String name0, String name1) {
     assertParameterizedOf(
-        () -> ResourceNames.name(name0.getValue(), name1.getValue()),
+        () -> ResourceNames.name(name0, name1),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name0", name0),
@@ -606,9 +636,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void normalize(Expected<String> expected, Argument<String> name) {
+  void normalize(Expected<String> expected, String name) {
     assertParameterizedOf(
-        () -> ResourceNames.normalize(name.getValue()),
+        () -> ResourceNames.normalize(name),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name", name))));
@@ -616,9 +646,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void parent(Expected<String> expected, Argument<String> name) {
+  void parent(Expected<String> expected, String name) {
     assertParameterizedOf(
-        () -> ResourceNames.parent(name.getValue()),
+        () -> ResourceNames.parent(name),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name", name))));
