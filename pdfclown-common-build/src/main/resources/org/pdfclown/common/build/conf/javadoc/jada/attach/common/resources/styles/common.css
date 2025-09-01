@@ -12,6 +12,11 @@ h1.title:not([title]):only-child:before {
   width: 90px;
 }
 
+caption {
+  font-variant-caps: small-caps;
+  margin: 1em;
+}
+
 cite {
   font-size: smaller;
   font-style: normal;
@@ -21,12 +26,46 @@ dt {
   margin-top: 0.25em;
 }
 
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 18px;
+  font-style: normal;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 15px;
+  font-style: italic;
+}
+
+h6 {
+  font-size: 14px;
+}
+
 li > p {
   margin: 0;
 }
 
 pre {
   margin: 1em;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  text-align: center;
 }
 
 .biblio-author {
@@ -69,12 +108,11 @@ pre {
 }
 
 /*
-  Code highlight (PrismJS) -------------------------------------------------------------------------
-*/
+ * Code highlight (PrismJS)
+ */
 pre[data-line] {
   padding: 1em 0 1em 2em !important;
 }
-
 .line-highlight {
   background-color: #ffff0020 !important;
 }

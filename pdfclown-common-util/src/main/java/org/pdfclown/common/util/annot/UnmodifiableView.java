@@ -50,19 +50,19 @@ import java.lang.annotation.Target;
  * <th>Effective</th>
  * </tr>
  * <tr>
- * <th>Direct/Shallow (values and object references)</th>
+ * <td>Direct/Shallow (values and object references)</td>
  * <td>YES</td>
  * <td>NO</td>
  * <td>NO</td>
  * </tr>
  * <tr>
- * <th>Indirect/Deep (referenced objects)</th>
+ * <td>Indirect/Deep (referenced objects)</td>
  * <td>NO</td>
  * <td>NO</td>
  * <td>NO</td>
  * </tr>
  * </table>
- * <h2>Requirements</h2>
+ * <h4>Requirements</h4>
  * <ul>
  * <li>class:
  * <ul>

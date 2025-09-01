@@ -8,11 +8,19 @@
 
 # Coding Conventions
 
+## Comments
+
+### Javadoc
+
+#### Headings
+
+For classic (HTML-based) Javadoc, use `<h4>` or lower tags.
+
+RATIONALE: headings within Javadoc comments are a controversial topic: the [official specification](https://docs.oracle.com/en/java/javase/11/docs/specs/doc-comment-spec.html) discourages their use, as they may interfere with the standard page structure; Javadoc tool's doclint even prohibits certain levels, but [it hasn't been consistent across JDK versions](https://bugs.openjdk.org/browse/JDK-8223552) — the consensus seems to avoid level 3 and higher.
+
 ## Tests
 
 ### Naming
-
-The rationale behind these naming conventions is to *avoid ambiguity between primary test-code elements (directly associated to tested main-code elements) and secondary test-code elements (NOT directly associated to any main-code element*).
 
 - **Test packages**:
 
@@ -102,3 +110,5 @@ The rationale behind these naming conventions is to *avoid ambiguity between pri
       // test on a fixed issue about the tested class
       @Test
       void _issue123_missingNewLine() { . . .</pre>
+
+RATIONALE: avoid ambiguity between primary test-code elements (directly associated to tested main-code elements) and secondary test-code elements (NOT directly associated to any main-code element).

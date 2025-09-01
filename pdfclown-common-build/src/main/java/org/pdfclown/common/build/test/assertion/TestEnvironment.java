@@ -22,7 +22,7 @@ import org.pdfclown.common.build.util.io.ResourceNames;
 
 /**
  * Test environment.
- * <h2>Filesystem</h2>
+ * <h4>Filesystem</h4>
  * <p>
  * On the filesystem, the test environment covers test resources (both on
  * {@linkplain #resourcePath(String) target} and {@linkplain #resourceSrcPath(String) source}
@@ -30,7 +30,7 @@ import org.pdfclown.common.build.util.io.ResourceNames;
  * {@linkplain #outputPath(String) output files}. The test environment is focused on test execution,
  * so any filesystem reference must be intended on the target side unless explicitly stated.
  * </p>
- * <h3>File object names</h3>
+ * <h5>File object names</h5>
  * <p>
  * Within the test environment, filesystem objects are addressed by <b>names</b> similar to
  * {@linkplain Class#getResource(String) Java resource names} (see

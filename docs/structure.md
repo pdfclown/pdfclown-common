@@ -108,8 +108,6 @@ A pdfClown.org project SHALL be defined according to this hierarchy:
 </table>
 &dagger; Currently, because of technical limitations in Maven toolset, it is transitively inherited outside the project (ideally, it should be flattened inside <code>base</code> and not published).
 
-### Rationale
-
 The notorious verbosity of Maven configuration is prone to quickly degenerate into a cluttered mess of plugin and dependency declarations and references. The following guidelines are meant to define a healthy structure, and are at the basis of the hierarchy here-above illustrated:
 
 - **plugin and dependency declarations** MUST be decoupled to take advantage of inheritance and import mechanisms, and MUST be pushed as high as possible in the inheritance hierarchy for appropriate reuse:

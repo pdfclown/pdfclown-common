@@ -1129,7 +1129,7 @@ public final class Assertions {
    * See {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} for more
    * information and a full example.
    * </p>
-   * <h2>Expected Results Generation</h2>
+   * <h4>Expected Results Generation</h4>
    * <p>
    * The source code representation of {@code expected} is automatically generated as described in
    * this section — this simplifies the preparation and maintenance of test cases, also unifying the
@@ -1196,7 +1196,7 @@ public final class Assertions {
    *           "UNDERSCORE_TEST"));
    * }</code></pre></li>
    * </ol>
-   * <h2>Arguments Conversion</h2>
+   * <h4>Arguments Conversion</h4>
    * <p>
    * JUnit 5 allows to customize the representation of input values for parameterized test arguments
    * in the invocation display name via {@link Named}, and to explicitly convert such input values

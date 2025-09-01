@@ -672,10 +672,13 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               - `-html`: HTML 5 check is disabled, as it wrongly prohibits legal data attributes
                 (e.g., `<pre data-line="5"><code>` used by Prism code highlighter) — see also
                 <https://developer.mozilla.org/en-US/docs/Web/HTML/How_to/Use_data_attributes>
+              - `-accessibility`: accessibility is disabled, as it weirdly interferes with things
+                like heading tags (<h*>); in particular, after java 11, <h3> is
+                forbidden <https://bugs.openjdk.org/browse/JDK-8223552>
             -->
             <!--
               TODO: enable after jada configured
-            <doclint>all,-missing,-html</doclint>
+            <doclint>all,-missing,-html,-accessibility</doclint>
             -->
             <doclint>none</doclint>
             <quiet>true</quiet>
