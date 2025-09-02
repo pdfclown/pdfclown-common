@@ -117,10 +117,12 @@
   </spec>
   <spec
     id="URI"
-    name="RFC 2396"
-    year="1998"
-    title="Uniform Resource Identifiers (URI): Generic Syntax"
-    src="http://www.ietf.org/rfc/rfc2396.txt"/>
+    name="RFC 3986"
+    year="2005"
+    title="Uniform Resource Identifier (URI): Generic Syntax"
+    author="Berners-Lee, Fielding, Masinter"
+    publisher="IETF"
+    src="https://www.rfc-editor.org/rfc/rfc3986.html"/>
   <spec
     id="W3C-EBNF"
     year="2008"
