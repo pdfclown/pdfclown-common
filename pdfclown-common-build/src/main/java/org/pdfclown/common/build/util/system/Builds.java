@@ -14,6 +14,7 @@ package org.pdfclown.common.build.util.system;
 
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
+import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.pdfclown.common.build.internal.util_.Conditions.require;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
@@ -24,7 +25,6 @@ import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.LF;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SQUARE_BRACKET_OPEN;
-import static org.pdfclown.common.build.internal.util_.Strings.strNormToNull;
 import static org.pdfclown.common.build.internal.util_.system.Processes.execute;
 import static org.pdfclown.common.build.internal.util_.xml.Xmls.xml;
 import static org.pdfclown.common.build.internal.util_.xml.Xmls.xpath;
@@ -304,7 +304,7 @@ public final class Builds {
       var pomFile = dir.resolve("pom.xml");
       if (exists(pomFile)) {
         return projectArtifactIds.computeIfAbsent(dir, Failable.asFunction(
-            $k -> requireState(strNormToNull(
+            $k -> requireState(stripToNull(
                 XPATH__POM.nodeValue(NS_PREFIX__POM + ":project/" + NS_PREFIX__POM + ":artifactId",
                     xml(pomFile))),
                 () -> "`artifactId` NOT FOUND in " + pomFile)));

@@ -14,6 +14,7 @@ package org.pdfclown.common.util.xml;
 
 import static java.util.Objects.checkIndex;
 import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.util.Conditions.requireState;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unsupported;
@@ -21,7 +22,6 @@ import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.fqn;
 import static org.pdfclown.common.util.Objects.toLiteralString;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.strEmptyToNull;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -801,7 +801,7 @@ public final class Xmls {
    */
   public static @Nullable String getInheritableAttributeValue(String name, Element element) {
     return walkAncestors(element, $ -> $.getNodeType() == Node.ELEMENT_NODE
-        ? strEmptyToNull(((Element) $).getAttribute(name))
+        ? stripToNull(((Element) $).getAttribute(name))
         : null);
   }
 

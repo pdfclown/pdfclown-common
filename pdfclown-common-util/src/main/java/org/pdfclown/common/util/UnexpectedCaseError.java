@@ -12,8 +12,8 @@
  */
 package org.pdfclown.common.util;
 
+import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.pdfclown.common.util.Objects.toLiteralString;
-import static org.pdfclown.common.util.Strings.strNorm;
 
 import org.jspecify.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public class UnexpectedCaseError extends AssertionError {
 
   private static String buildMessage(@Nullable Object value, @Nullable String message) {
     var b = new StringBuilder("Value (").append(toLiteralString(value)).append(") UNEXPECTED");
-    if (!(message = strNorm(message)).isEmpty()) {
+    if (!(message = stripToEmpty(message)).isEmpty()) {
       b.append(" (").append(message).append(")");
     }
     return b.toString();

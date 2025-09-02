@@ -13,13 +13,13 @@
 package org.pdfclown.common.build.internal.util_;
 
 import static java.util.Objects.requireNonNullElse;
+import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
 import static org.pdfclown.common.build.internal.util_.Strings.BACKTICK;
 import static org.pdfclown.common.build.internal.util_.Strings.COLON;
 import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
-import static org.pdfclown.common.build.internal.util_.Strings.strNormToNull;
 
 import org.jspecify.annotations.Nullable;
 
@@ -46,7 +46,7 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
     if (b.length() > 0) {
       b.append(COLON).append(SPACE);
     }
-    return b.append(requireNonNullElse(strNormToNull(message), "INVALID")).toString();
+    return b.append(requireNonNullElse(stripToNull(message), "INVALID")).toString();
   }
 
   private final String argName;
@@ -66,7 +66,7 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
   */
   public XtIllegalArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message, @Nullable Throwable cause) {
-    super(buildMessage(argName = requireNonNullElse(strNormToNull(argName), "value"), argValue,
+    super(buildMessage(argName = requireNonNullElse(stripToNull(argName), "value"), argValue,
         message), cause);
 
     this.argName = argName;

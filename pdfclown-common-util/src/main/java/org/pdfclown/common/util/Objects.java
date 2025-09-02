@@ -17,6 +17,7 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
+import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.util.Booleans.strToBool;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
@@ -36,7 +37,6 @@ import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SPACE;
 import static org.pdfclown.common.util.Strings.SQUOTE;
-import static org.pdfclown.common.util.Strings.strNormToNull;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -1187,7 +1187,7 @@ public final class Objects {
     return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
         .map($ -> $.group(1).equals(sqnd) ? $.group()
             : sqnd + ($.group(1).endsWith(obj.getClass().getSimpleName())
-                ? objToElse(strNormToNull($.group(2)), $$ -> S + SPACE + $$, EMPTY)
+                ? objToElse(stripToNull($.group(2)), $$ -> S + SPACE + $$, EMPTY)
                 : S + SPACE + CURLY_BRACE_OPEN + $.group() + CURLY_BRACE_CLOSE))
         .orElseThrow();
   }
