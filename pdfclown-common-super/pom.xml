@@ -540,7 +540,7 @@ log.info("buildTimestamp: " + buildTimestamp
             <overview>${basedir}/src/main/javadoc/overview.html</overview>
             <top><![CDATA[
 <link rel="stylesheet" type="text/css" href="{@docRoot}/resources/highlight/prism.css">
-<script src="{@docRoot}/resources/highlight/prism.min.js"></script>
+<script src="{@docRoot}/resources/highlight/prism.js"></script>
 
 <div class="header-top">
   <small>

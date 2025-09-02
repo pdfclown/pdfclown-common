@@ -1,5 +1,12 @@
-/* PrismJS 1.30.0
-https://prismjs.com/download#themes=prism-tomorrow&languages=markup+css+clike+bash+bnf+ebnf+java&plugins=line-highlight */
+/*!
+ * PrismJS 1.30.0
+ * https://prismjs.com/download#themes=prism-tomorrow&languages=markup+css+clike+bash+bnf+ebnf+java&plugins=line-highlight
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */
 /// <reference lib="WebWorker"/>
 
 var _self = (typeof window !== 'undefined')
@@ -10,14 +17,6 @@ var _self = (typeof window !== 'undefined')
 			: {}   // if in node js
 	);
 
-/**
- * Prism: Lightweight, robust, elegant syntax highlighting
- *
- * @license MIT <https://opensource.org/licenses/MIT>
- * @author Lea Verou <https://lea.verou.me>
- * @namespace
- * @public
- */
 var Prism = (function (_self) {
 
 	// Private helper vars
