@@ -18,6 +18,8 @@ import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.leftPad;
 import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.LF;
+import static org.pdfclown.common.build.internal.util_.Strings.found;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -35,6 +37,7 @@ import org.hamcrest.core.IsEqual;
  */
 public class MatchesText extends TypeSafeMatcher<String> {
   private static final int CHUNK_LENGTH__MAX = 80;
+  private static final int CHUNK_LENGTH__TAIL = 30;
 
   private final boolean caseIgnored;
   private final String expected;
@@ -63,22 +66,28 @@ public class MatchesText extends TypeSafeMatcher<String> {
       prefix = ELLIPSIS;
     }
     int chunkStart = lineStart + column - offset;
-    int chunkEnd = chunkStart + offset + 30;
-    String suffix = ELLIPSIS;
+    int chunkEnd = chunkStart + offset + CHUNK_LENGTH__TAIL;
+    String suffix = EMPTY;
     {
-      int lineEnd = item.indexOf('\n', chunkStart);
-      if (chunkEnd > lineEnd) {
+      int lineEnd = item.indexOf(LF, chunkStart);
+      if (!found(lineEnd)) {
+        chunkEnd = item.length();
+      } else if (chunkEnd > lineEnd) {
         chunkEnd = lineEnd;
-        suffix = EMPTY;
+      } else {
+        suffix = ELLIPSIS;
       }
     }
-    int expectedChunkEnd = chunkStart + offset + 30;
-    String expectedSuffix = ELLIPSIS;
+    int expectedChunkEnd = chunkStart + offset + CHUNK_LENGTH__TAIL;
+    String expectedSuffix = EMPTY;
     {
-      int expectedLineEnd = expected.indexOf('\n', chunkStart);
-      if (expectedChunkEnd > expectedLineEnd) {
+      int expectedLineEnd = expected.indexOf(LF, chunkStart);
+      if (!found(expectedLineEnd)) {
+        expectedChunkEnd = expected.length();
+      } else if (expectedChunkEnd > expectedLineEnd) {
         expectedChunkEnd = expectedLineEnd;
-        expectedSuffix = EMPTY;
+      } else {
+        expectedSuffix = ELLIPSIS;
       }
     }
     description.appendText("differed at line ")
@@ -103,7 +112,7 @@ public class MatchesText extends TypeSafeMatcher<String> {
       if (actualChar != expectedChar)
         return false;
 
-      if (actualChar == '\n') {
+      if (actualChar == LF) {
         line++;
         lineStart += column;
         column = 1;
