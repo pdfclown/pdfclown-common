@@ -54,8 +54,11 @@ public final class Files {
    */
   private static final Pattern PATTERN__FULL_EXTENSION = Pattern.compile("(\\.\\D[^.\\\\/]+)+$");
 
+  public static final String FILE_EXTENSION__CSS = ".css";
+  public static final String FILE_EXTENSION__GROOVY = ".groovy";
   public static final String FILE_EXTENSION__HTML = ".html";
   public static final String FILE_EXTENSION__JAVA = ".java";
+  public static final String FILE_EXTENSION__JAVASCRIPT = ".js";
   public static final String FILE_EXTENSION__JPG = ".jpg";
   public static final String FILE_EXTENSION__PDF = ".pdf";
   public static final String FILE_EXTENSION__PNG = ".png";
@@ -97,8 +100,7 @@ public final class Files {
   /**
    * Gets the simple extension of the given path.
    * <p>
-   * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot, and
-   * is empty if missing or {@code path} is {@code null}.
+   * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot.
    * </p>
    *
    * @return Empty, if no extension.
@@ -111,8 +113,7 @@ public final class Files {
   /**
    * Gets the simple extension of the given path.
    * <p>
-   * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot, and
-   * is empty if missing or {@code path} is {@code null}.
+   * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot.
    * </p>
    *
    * @return Empty, if no extension.
@@ -141,8 +142,9 @@ public final class Files {
    * Gets the full extension of the given path.
    * <p>
    * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (e.g., ".tar.gz") are recognized, while version codes are
-   * ignored (e.g., "commons-io-2.8.0.jar" returns ".jar", NOT ".8.0.jar").
+   * therefore, composite extensions (e.g., {@code ".tar.gz"}) are recognized, whilst version codes
+   * are ignored (e.g., {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
+   * {@code ".8.0.jar"}).
    * </p>
    *
    * @return Empty, if no extension.
@@ -156,8 +158,9 @@ public final class Files {
    * Gets the full extension of the given path.
    * <p>
    * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (e.g., ".tar.gz") are recognized, while version codes are
-   * ignored (e.g., "commons-io-2.8.0.jar" returns ".jar", NOT ".8.0.jar").
+   * therefore, composite extensions (e.g., {@code ".tar.gz"}) are recognized, whilst version codes
+   * are ignored (e.g., {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
+   * {@code ".8.0.jar"}).
    * </p>
    *
    * @return Empty, if no extension.
@@ -165,7 +168,7 @@ public final class Files {
    */
   public static String fullExtension(String path) {
     Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
-    return m.find() ? m.group() : "";
+    return m.find() ? m.group() : EMPTY;
   }
 
   /**
