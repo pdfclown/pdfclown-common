@@ -103,6 +103,7 @@ div.block:has(span.descfrmTypeLabel) {
 .contentContainer .details dl dt,
 .serializedFormContainer dl dt {
   font-size: smaller;
+  margin-bottom: 0.25em;
 }
 
 .subNav {
