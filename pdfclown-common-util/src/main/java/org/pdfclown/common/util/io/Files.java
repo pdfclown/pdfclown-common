@@ -16,7 +16,6 @@ import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.Files.writeString;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Strings.BACKSLASH;
 import static org.pdfclown.common.util.Strings.DOT;
@@ -275,15 +274,18 @@ public final class Files {
 
   /**
    * Gets the relative path from the given file to the other one.
+   *
+   * @throws IllegalArgumentException
+   *           if {@code from} does not exist.
    */
   public static Path relativePath(Path from, Path to) {
-    if (isRegularFile(from)) {
+    if (isRegularFile(from = normal(from))) {
       from = from.getParent();
     }
     if (!isDirectory(from))
       throw wrongArg("from", from, "MUST be a directory");
 
-    return from.toAbsolutePath().normalize().relativize(to.toAbsolutePath().normalize());
+    return from.relativize(normal(to));
   }
 
   /**
@@ -291,7 +293,7 @@ public final class Files {
    *
    * @return {@code dir}
    */
-  public static Path resetDir(Path dir) throws IOException {
+  public static Path resetDirectory(Path dir) throws IOException {
     if (exists(dir)) {
       /*
        * IMPORTANT: DO NOT use `PathUtils.cleanDirectory(..)`, as it doesn't delete subdirectories
@@ -362,15 +364,6 @@ public final class Files {
   public static String stripFullExtension(String path) {
     Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
     return m.find() ? path.substring(0, m.start()) : path;
-  }
-
-  /**
-   * Writes the given string to the file, encoded in UTF-8 charset; any non-existent parent
-   * directory is automatically created.
-   */
-  public static void writeTo(Path path, CharSequence content) throws IOException {
-    createDirectories(path.getParent());
-    writeString(path, content);
   }
 
   /**

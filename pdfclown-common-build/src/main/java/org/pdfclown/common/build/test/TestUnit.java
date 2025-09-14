@@ -22,7 +22,7 @@ import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.build.internal.util_.io.Files.normal;
-import static org.pdfclown.common.build.internal.util_.io.Files.resetDir;
+import static org.pdfclown.common.build.internal.util_.io.Files.resetDirectory;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -139,7 +139,7 @@ public abstract class TestUnit implements Test {
          */
         try {
           outputDirInitialized = true;
-          resetDir(outputPath(EMPTY));
+          resetDirectory(outputPath(EMPTY));
         } catch (Exception ex) {
           /*
            * NOTE: We catch any exception to ensure the initialization flag is reverted.
