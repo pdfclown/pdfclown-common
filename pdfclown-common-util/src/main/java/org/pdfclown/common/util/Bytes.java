@@ -23,7 +23,7 @@ public class Bytes {
   public static final byte[] BYTE_ARRAY__EMPTY = new byte[0];
 
   /**
-   * Concatenates the given arrays.
+   * Concatenates arrays.
    */
   public static byte[] concat(byte[]... aa) {
     byte[] ret;
@@ -43,14 +43,14 @@ public class Bytes {
   }
 
   /**
-   * Concatenates the given arrays.
+   * Concatenates arrays.
    */
   public static byte[] concat(byte[] a1, byte[] a2) {
     return concat(a1, a2, BYTE_ARRAY__EMPTY);
   }
 
   /**
-   * Concatenates the given arrays.
+   * Concatenates arrays.
    */
   public static byte[] concat(byte[] a1, byte[] a2, byte[] a3) {
     var ret = new byte[a1.length + a2.length + a3.length];

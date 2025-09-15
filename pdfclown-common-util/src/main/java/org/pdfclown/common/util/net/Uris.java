@@ -54,7 +54,7 @@ public final class Uris {
   public static final String SCHEME__JAR = "jar";
 
   /**
-   * Checks whether the given resource exists.
+   * Checks whether the resource exists.
    */
   public static boolean exists(@Nullable URL url) {
     if (url != null) {
@@ -76,11 +76,11 @@ public final class Uris {
   }
 
   /**
-   * Gets the relative URI from the given URI to the other one.
+   * Gets the relative URI from the URI to the other one.
    * <p>
    * This method remedies {@link URI#relativize(URI)} limitations, since the latter cannot
    * relativize a target path if the source is a subpath (<cite>"if the path of this URI is not a
-   * prefix of the path of the given URI, then the given URI is returned."</cite>) — e.g.,
+   * prefix of the path of the given URI, then the given URI is returned."</cite>) — for example,
    * </p>
    * <pre class="lang-java"><code>
    * URI.create("https://example.io/path/from.html")
@@ -122,7 +122,7 @@ public final class Uris {
       /*
        * Mutually-incompatible relative URIs (one of them is rooted)?
        *
-       * NOTE: If one of the relative URIs is rooted (i.e., with a leading slash, kinda local
+       * NOTE: If one of the relative URIs is rooted (that is, with a leading slash, kinda local
        * absolute), then they cannot be related to each other, and `to` must be returned as-is.
        */
       if (fromPath.charAt(index) == SLASH || toPath.charAt(index) == SLASH)
@@ -137,7 +137,7 @@ public final class Uris {
   }
 
   /**
-   * Gets the URI corresponding to the given path.
+   * Gets the URI corresponding to the path.
    * <p>
    * <i>Contrary to {@link Path#toUri()}, this function supports also <b>relative URIs</b></i>,
    * remedying the limitation of the standard API which forcibly resolves relative paths as absolute
@@ -157,7 +157,7 @@ public final class Uris {
   }
 
   /**
-   * Gets the URI corresponding to the given string.
+   * Gets the URI corresponding to the string.
    *
    * @return {@code null}, if {@code uri} is undefined or illegal.
    */
@@ -173,7 +173,7 @@ public final class Uris {
   }
 
   /**
-   * Gets the URI corresponding to the given URL.
+   * Gets the URI corresponding to the URL.
    *
    * @return {@code null}, if {@code url} is undefined or illegal.
    */
@@ -189,7 +189,7 @@ public final class Uris {
   }
 
   /**
-   * Gets the URL corresponding to the given path.
+   * Gets the URL corresponding to the path.
    *
    * @throws IllegalArgumentException
    *           if {@code path} is relative.
@@ -204,7 +204,7 @@ public final class Uris {
   }
 
   /**
-   * Gets the URL corresponding to the given string.
+   * Gets the URL corresponding to the string.
    *
    * @return {@code null}, if {@code url} is undefined or illegal.
    */
@@ -221,7 +221,7 @@ public final class Uris {
   }
 
   /**
-   * Gets the URL corresponding to the given URI.
+   * Gets the URL corresponding to the URI.
    *
    * @return {@code null}, if {@code uri} is undefined or illegal.
    */

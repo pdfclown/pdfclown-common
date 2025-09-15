@@ -79,7 +79,7 @@ public final class Indent implements CharSequence, Serializable {
   public static final Indent NONE = new Indent(0, SPACE, 0);
 
   /**
-   * Gets the space indentation corresponding to the given coordinates.
+   * Gets the space indentation corresponding to the coordinates.
    *
    * @param width
    *          Indentation step length.
@@ -95,7 +95,7 @@ public final class Indent implements CharSequence, Serializable {
   }
 
   /**
-   * Gets the tab indentation corresponding to the given level.
+   * Gets the tab indentation corresponding to the level.
    *
    * @param level
    *          Indentation level.
@@ -105,7 +105,7 @@ public final class Indent implements CharSequence, Serializable {
   }
 
   /**
-   * Gets the indentation corresponding to the given coordinates, reusing cached instances whenever
+   * Gets the indentation corresponding to the coordinates, reusing cached instances whenever
    * available.
    */
   private static Indent resolve(final int width, final char symbol, final int level) {
@@ -211,7 +211,7 @@ public final class Indent implements CharSequence, Serializable {
   }
 
   /**
-   * Gets an indentation with the given level.
+   * Gets an indentation with the level.
    */
   public Indent withLevel(int value) {
     if (value < 0) {

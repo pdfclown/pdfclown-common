@@ -79,7 +79,7 @@ public final class Reflects {
    * @param <T>
    *          Return type.
    * @param getter
-   *          Method name of the property getter (e.g. "getMyProperty").
+   *          Method name of the property getter (for example "getMyProperty").
    */
   @SuppressWarnings({ "unchecked" })
   public static <T> T get(Object obj, String getter) {

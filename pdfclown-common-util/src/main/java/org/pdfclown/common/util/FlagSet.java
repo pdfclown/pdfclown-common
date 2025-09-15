@@ -23,7 +23,7 @@ import org.jspecify.annotations.NonNull;
  */
 public interface FlagSet<@NonNull E extends Flag> extends XtSet<E> {
   /**
-   * Sets the given flag.
+   * Sets the flag.
    *
    * @param flag
    *          Flag to set.

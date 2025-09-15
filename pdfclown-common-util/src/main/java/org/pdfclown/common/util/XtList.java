@@ -61,8 +61,8 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
   }
 
   /**
-   * Performs the given action for each element of this list until all elements have been processed
-   * or the action throws an exception (relayed to the caller).
+   * Performs the action for each element of this list until all elements have been processed or the
+   * action throws an exception (relayed to the caller).
    * <p>
    * The behavior of this method is unspecified if the action performs side effects that modify the
    * underlying source of elements, unless an overriding class has specified a concurrent

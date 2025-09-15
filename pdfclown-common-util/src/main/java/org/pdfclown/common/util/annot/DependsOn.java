@@ -92,7 +92,7 @@ public @interface DependsOn {
     private static final Map<String, String> detectFqns = new HashMap<>();
 
     /**
-     * Gets whether the given dependency is available.
+     * Gets whether the dependency is available.
      *
      * @param dependency
      *          Dependency ({@code groupId:artifactId}).
@@ -112,7 +112,7 @@ public @interface DependsOn {
     }
 
     /**
-     * Gets whether all the non-essential dependencies of the given object are available.
+     * Gets whether all the non-essential dependencies of the object are available.
      *
      * @param obj
      *          Either an instance or a class.
@@ -135,7 +135,7 @@ public @interface DependsOn {
     }
 
     /**
-     * Registers the given non-essential dependency.
+     * Registers a non-essential dependency.
      *
      * @param dependency
      *          Dependency ({@code groupId:artifactId}).
@@ -149,7 +149,7 @@ public @interface DependsOn {
     }
 
     /**
-     * Instantiates the best viable implementation among the given types.
+     * Instantiates the best viable implementation among the types.
      *
      * @param <T>
      *          Interface.

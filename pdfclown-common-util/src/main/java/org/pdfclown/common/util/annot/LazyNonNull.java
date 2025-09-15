@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
  * accessor method is called</i>.</span>
  * </p>
  * <p>
- * Useful for lazy field initialization — e.g. [*]:
+ * Useful for lazy field initialization — for example [*]:
  * </p>
  * <pre class="lang-java"><code>
  * &#64;NullMarked

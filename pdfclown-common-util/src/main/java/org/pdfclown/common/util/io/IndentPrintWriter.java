@@ -39,7 +39,7 @@ import org.jspecify.annotations.Nullable;
 public class IndentPrintWriter extends PrintWriter {
   // SourceName: wrap
   /**
-   * Augments the given appendable with indenting capabilities.
+   * Augments the appendable with indenting capabilities.
    *
    * @param indent
    *          Initial indentation ({@code null}, for {@linkplain Indent#DEFAULT default

@@ -213,7 +213,7 @@ public class Range<T> {
   }
 
   /**
-   * Gets the normal range (that is {@code  0} to {@code  1}, inclusive) for the given type.
+   * Gets the normal range (that is {@code  0} to {@code  1}, inclusive) for the type.
    */
   @SuppressWarnings("unchecked")
   public static <T extends Number> Range<T> normal(Class<T> type) {
@@ -223,12 +223,12 @@ public class Range<T> {
   }
 
   /**
-   * Gets the numeric range equivalent to the given range.
+   * Gets the numeric range equivalent to the range.
    * <p>
    * A numeric range provides mathematical comparison across the {@link Number} hierarchy,
    * overcoming the limitations of natural comparison, which works within the same boxed type only
-   * (e.g., {@link Float} cannot be compared directly with {@link Integer} or {@link Double}, so the
-   * number {@code 0.5f} will be considered NOT in the integer range {@code [0,1]}).
+   * (for example, {@link Float} cannot be compared directly with {@link Integer} or {@link Double},
+   * so the number {@code 0.5f} will be considered NOT in the integer range {@code [0,1]}).
    * </p>
    */
   public static <T extends Number> Range<T> numeric(Range<T> range) {
@@ -312,7 +312,7 @@ public class Range<T> {
   }
 
   /**
-   * Gets whether the value is contained within this interval, according to the given comparator.
+   * Gets whether the value is contained within this interval, according to the comparator.
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
   protected boolean contains(Object value, Comparator comparator) {

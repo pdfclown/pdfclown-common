@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A deque which ensures element uniqueness, possibly extended across the whole life of the deque
- * (i.e., once an element is removed, it cannot be reinserted anymore).
+ * (that is, once an element is removed, it cannot be reinserted anymore).
  *
  * @param <E>
  *          Element type.

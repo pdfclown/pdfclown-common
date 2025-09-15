@@ -90,7 +90,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
    * Augmented enumeration descriptor.
    *
    * @param <E>
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    * @param <K>
    *          Domain-specific identity type.
    * @author Stefano Chizzolini
@@ -122,7 +122,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
     }
 
     /**
-     * Adds to this augmented enumeration the constants associated to the given enumeration.
+     * Adds to this augmented enumeration the constants associated to the enumeration.
      *
      * @param enumType
      *          Enum type.
@@ -153,7 +153,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
     }
 
     /**
-     * Gets the constant associated to the given code.
+     * Gets the constant associated to the code.
      *
      * @param code
      *          {@linkplain XtEnum#getCode() Domain-specific identity value}.
@@ -249,14 +249,14 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
       ServiceProvider.discover(XnumProvider.class);
 
   /**
-   * Gets whether the constant corresponding to the given code exists.
+   * Gets whether the constant corresponding to the code exists.
    *
    * @param <E>
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    * @param <K>
    *          Domain-specific identity type.
    * @param type
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    * @param code
    *          Domain-specific identity.
    */
@@ -265,17 +265,17 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   }
 
   /**
-   * Gets the augmented enumeration type associated to the given interface.
+   * Gets the augmented enumeration type associated to the interface.
    *
    * @param <E>
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    * @param <K>
    *          Domain-specific identity type.
    * @param type
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    */
   @SuppressWarnings("unchecked")
-  public static <E extends Xnum<K>, @NonNull K> @Nullable XnumType<E, K> get(Class<E> type) {
+  public static <E extends Xnum<K>, K> @Nullable XnumType<E, K> get(Class<E> type) {
     var ret = types.get(requireNonNull(type));
     if (ret == null) {
       /*
@@ -291,14 +291,14 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   }
 
   /**
-   * Gets the constant corresponding to the given code.
+   * Gets the constant corresponding to the code.
    *
    * @param <E>
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    * @param <K>
    *          Domain-specific identity type.
    * @param type
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    * @param code
    *          Domain-specific identity.
    */
@@ -307,14 +307,14 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   }
 
   /**
-   * Gets the constants associated to the given type.
+   * Gets the constants associated to the type.
    *
    * @param <E>
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    * @param <K>
    *          Domain-specific identity type.
    * @param type
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    */
   public static <E extends Xnum<K>,
       K> @Nullable @UnmodifiableView Collection<E> values(Class<E> type) {
@@ -326,14 +326,14 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   }
 
   /**
-   * Registers the given {@linkplain Xnum augmented enumeration}.
+   * Registers an {@linkplain Xnum augmented enumeration}.
    * <p>
    * Its constants are gathered in a map common to all the types implementing the same
    * {@link Xnum}-derived interface.
    * </p>
    *
    * @param <E>
-   *          Augmented enumeration type.
+   *          Augmented enumeration interface.
    * @param <K>
    *          Domain-specific identity type.
    * @param type

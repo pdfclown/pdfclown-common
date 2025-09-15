@@ -102,7 +102,7 @@ public final class Builds {
    * @param projectDir
    *          Base directory of the project.
    * @param scope
-   *          Scope threshold. Includes dependencies up to the given scope, as described by the
+   *          Scope threshold. Includes dependencies up to the scope, as described by the
    *          {@code includeScope} parameter of <a href=
    *          "https://maven.apache.org/plugins/maven-dependency-plugin/build-classpath-mojo.html#includeScope">dependency:build-classpath
    *          goal</a>:
@@ -147,9 +147,9 @@ public final class Builds {
         }
         $.setOutputHandler($line -> {
           /*
-           * NOTE: The interactive output is preceded by level tags (e.g. "[INFO]") on each log line
-           * except the classpath. Apparently, Maven error log lines ("[ERROR]" tag) are sent to
-           * stdout, so `setErrorHandler(..)` is useless.
+           * NOTE: The interactive output is preceded by level tags (for example "[INFO]") on each
+           * log line except the classpath. Apparently, Maven error log lines ("[ERROR]" tag) are
+           * sent to stdout, so `setErrorHandler(..)` is useless.
            */
           Matcher logMatcher = PATTERN__MAVEN_LOG_LINE.matcher($line);
           if (logMatcher.find()) {

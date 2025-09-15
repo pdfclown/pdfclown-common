@@ -49,7 +49,7 @@ public final class LogManager {
   private static @Nullable Level defaultLevel;
 
   /**
-   * Applies the given logging profile.
+   * Applies a logging profile.
    */
   public static void applyProfile(Profile profile) {
     switch (profile) {
@@ -62,7 +62,7 @@ public final class LogManager {
   }
 
   /**
-   * Binds the loggers associated to the given package to an existing log appender.
+   * Binds the loggers associated to a package to an existing log appender.
    *
    * @param packageType
    *          A type belonging to the intended package.

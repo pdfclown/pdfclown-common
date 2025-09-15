@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class Files {
   /**
-   * Gets the content of the given (either plain or ZIP-compressed) file as string.
+   * Gets the content of a (either plain or ZIP-compressed) file as string.
    * <p>
    * This is an extension to {@link java.nio.file.Files#readString(java.nio.file.Path)}.
    * </p>
@@ -49,7 +49,7 @@ public final class Files {
   }
 
   /**
-   * Gets the content of the given (either plain or ZIP-compressed) file as string.
+   * Gets the content of a (either plain or ZIP-compressed) file as string.
    * <p>
    * This is an extension to {@link java.nio.file.Files#readString(java.nio.file.Path)}.
    * </p>
@@ -90,7 +90,7 @@ public final class Files {
   }
 
   /**
-   * Writes the given data string to file.
+   * Writes a data string to file.
    *
    * @param file
    *          Target file

@@ -76,8 +76,8 @@ public abstract class TestUnit implements Test {
     }
 
     /**
-     * Gets the path associated to the given ID, relative to the {@linkplain DirId#BASE base
-     * directory of the project}.
+     * Gets the path associated to an ID, relative to the {@linkplain DirId#BASE base directory of
+     * the project}.
      */
     protected abstract String relativePath(DirId id);
   }
@@ -116,7 +116,7 @@ public abstract class TestUnit implements Test {
     }
 
     /**
-     * Qualifies the given simple resource name prepending the simple name of this class.
+     * Qualifies a simple resource name prepending the simple name of this class.
      * <p>
      * Useful for referencing resources specific to this test unit.
      * </p>

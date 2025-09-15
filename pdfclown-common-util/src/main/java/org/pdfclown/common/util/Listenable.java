@@ -23,16 +23,16 @@ import org.jspecify.annotations.NonNull;
  */
 public interface Listenable<T extends Listener> {
   /**
-   * Adds the given listener as a weak reference.
+   * Adds the listener as a weak reference.
    *
    * @return Self.
    */
   Listenable<T> addListener(@NonNull T listener);
 
   /**
-   * Removes the given listener.
+   * Removes the listener.
    *
-   * @return Whether the given listener was removed.
+   * @return Whether the listener was removed.
    */
   boolean removeListener(@NonNull T listener);
 }

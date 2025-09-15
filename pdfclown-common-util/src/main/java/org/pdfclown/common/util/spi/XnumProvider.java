@@ -23,7 +23,7 @@ import org.pdfclown.common.util.annot.Immutable;
 @Immutable
 public interface XnumProvider extends ServiceProvider {
   /**
-   * Tries to load the implementation of the given {@link Xnum}-derived interface.
+   * Tries to load the implementation of the {@link Xnum}-derived interface.
    *
    * @param <T>
    *          Interface type.

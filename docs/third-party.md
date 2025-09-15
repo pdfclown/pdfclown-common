@@ -14,7 +14,7 @@ It may be incorporated either keeping track of its original repository (fork), o
 
 Whenever any source code from third-party projects is incorporated, it must be documented as follows:
 
-1. in case of *files from a new third-party project*, add an **entry to the NOTICE.txt file** in the root directory, e.g.:
+1. in case of *files from a new third-party project*, add an **entry to the NOTICE.txt file** in the root directory, for example:
 
       ```
       JSONassert <https://github.com/skyscreamer/JSONassert>
@@ -24,7 +24,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
 2. in the source file reusing the third-party code, add a **licensing notice** formatted in accordance with the extent of the incorporation, accompanied by additional information (such as `Source`, `SourceName` and `Changes` tags — see down below) whenever appropriate:
 
-    - **third-party file** (as a new project file): append to the file header the third-party copyright notice in its equivalent SPDX representation — e.g.:
+    - **third-party file** (as a new project file): append to the file header the third-party copyright notice in its equivalent SPDX representation — for example:
 
          ```java
          . . . file header . . .
@@ -46,7 +46,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
            . . .
          ```
 
-     - **third-party code fragment** (into an existing project file): wrap the fragment as an SPDX snippet — e.g.:
+     - **third-party code fragment** (into an existing project file): wrap the fragment as an SPDX snippet — for example:
 
          ```java
          // SPDX-SnippetBegin
@@ -64,7 +64,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
    - `Source`: specifies its *permalink in the original repository*, in case of detached file.
 
-   - `SourceName`: specifies the *original name of the type, or type member (i.e., field or method)*, in case of detached file or if the incorporation changed it.
+   - `SourceName`: specifies the *original name of the type, or type member (that is, field or method)*, in case of detached file or if the incorporation changed it.
 
    - `Changes`: specifies *relevant differences between the local file and its source*.
 

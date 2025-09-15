@@ -142,11 +142,10 @@ public final class Assertions {
     }
 
     public static <T> Named<T> qnamed(String label, @Nullable T value) {
-      //noinspection DataFlowIssue : `value` can be null
       return Named.of(toString(label, value), value);
     }
 
-    private static String toString(String label, Object value) {
+    private static String toString(String label, @Nullable Object value) {
       return label.isEmpty() ? toLiteralString(value)
           : String.format(Locale.ROOT, "%s (%s)", toLiteralString(value), label);
     }
@@ -228,8 +227,8 @@ public final class Assertions {
       }
 
       /**
-       * Maps the given argument value to the type of the corresponding parameter in the
-       * parameterized test method.
+       * Maps an argument value to the type of the corresponding parameter in the parameterized test
+       * method.
        *
        * @param index
        *          Parameter index.
@@ -496,8 +495,8 @@ public final class Assertions {
     }
 
     /**
-     * Prepends to {@link #getConverter() converter} the given function for the argument at
-     * {@code argIndex} position in {@code args} argument.
+     * Prepends to {@link #getConverter() converter} a function for the argument at the given
+     * position in the arguments list.
      * <p>
      * For example, if the parameterized test looks like this:
      * </p>
@@ -522,9 +521,9 @@ public final class Assertions {
      *
      * @param <T>
      *          Input type.
-     * @implNote {@code <T>} provides implicit casting to the type commanded by the given function;
-     *           this works conveniently like a type declaration, considering the weakly-typed
-     *           context of arguments streams, sparing redundant explicit casting.
+     * @implNote {@code <T>} provides implicit casting to the type commanded by the function; this
+     *           works conveniently like a type declaration, considering the weakly-typed context of
+     *           arguments streams, sparing redundant explicit casting.
      * @see #composeExpectedConverter(Function)
      */
     @SuppressWarnings("unchecked")
@@ -537,7 +536,7 @@ public final class Assertions {
     }
 
     /**
-     * Prepends to {@link #getConverter() converter} the given function.
+     * Prepends to {@link #getConverter() converter} a function.
      *
      * @see #composeArgConverter(int, Function)
      * @see #composeExpectedConverter(Function)
@@ -548,14 +547,13 @@ public final class Assertions {
     }
 
     /**
-     * Prepends to {@link #getConverter() converter} the given function for {@code expected}
-     * argument.
+     * Prepends to {@link #getConverter() converter} a function for {@code expected} argument.
      *
      * @param <T>
      *          Input type.
-     * @implNote {@code <T>} provides implicit casting to the type commanded by the given function;
-     *           this works conveniently like a type declaration, considering the weakly-typed
-     *           context of arguments streams, sparing redundant explicit casting.
+     * @implNote {@code <T>} provides implicit casting to the type commanded by the function; this
+     *           works conveniently like a type declaration, considering the weakly-typed context of
+     *           arguments streams, sparing redundant explicit casting.
      * @see #composeArgConverter(int, Function)
      */
     @SuppressWarnings("unchecked")
@@ -571,7 +569,7 @@ public final class Assertions {
      * <p>
      * Transforms the values of {@code expected} and {@code args} arguments of
      * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)} before they
-     * are streamed (useful, e.g., to wrap a parameterized test argument as {@linkplain Named
+     * are streamed (useful, for example, to wrap a parameterized test argument as {@linkplain Named
      * named}).
      * </p>
      * <p>
@@ -730,8 +728,7 @@ public final class Assertions {
     }
 
     /**
-     * Prepends to {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator} the given
-     * function.
+     * Prepends to {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator} a function.
      */
     public ExpectedGeneration composeExpectedSourceCodeGenerator(Function<Object, String> before) {
       expectedSourceCodeGenerator = expectedSourceCodeGenerator.compose(before);
@@ -1102,12 +1099,12 @@ public final class Assertions {
   };
 
   /**
-   * Combines the given argument lists into a stream of corresponding {@linkplain Arguments
-   * parametric tuples} to feed a {@linkplain ParameterizedTest parameterized test}.
+   * Combines argument lists into a stream of corresponding {@linkplain Arguments parametric tuples}
+   * to feed a {@linkplain ParameterizedTest parameterized test}.
    * <p>
-   * The {@code expected} parameter shall contain both regular results and failures (i.e., thrown
+   * The {@code expected} parameter shall contain both regular results and failures (that is, thrown
    * exceptions, represented as {@link Failure} for automatic handling) of the method tested with
-   * the given {@code args}.
+   * {@code args}.
    * </p>
    * <p>
    * The corresponding parameterized test shall look like this:
@@ -1133,7 +1130,7 @@ public final class Assertions {
    * <p>
    * The source code representation of {@code expected} is automatically generated as described in
    * this section — this simplifies the preparation and maintenance of test cases, also unifying the
-   * way failed results (i.e., thrown exceptions) are handled along with regular ones.
+   * way failed results (that is, thrown exceptions) are handled along with regular ones.
    * </p>
    * <p>
    * Here, the steps to generate {@code expected} (based on the example in
@@ -1281,7 +1278,7 @@ public final class Assertions {
   }
 
   /**
-   * Asserts that {@code expected} and {@code actual} are equal applying the given comparator.
+   * Asserts that {@code expected} and {@code actual} are equal applying a comparator.
    * <p>
    * This method supplements junit's
    * {@link org.junit.jupiter.api.Assertions#assertIterableEquals(Iterable, Iterable)
@@ -1311,7 +1308,7 @@ public final class Assertions {
    * Asserts the actual value corresponds to the expected one.
    * <p>
    * Intended for use within {@linkplain ParameterizedTest parameterized tests}, to check both
-   * regular results and failures (i.e., {@link Throwable}) in a unified and consistent manner.
+   * regular results and failures (that is, {@link Throwable}) in a unified and consistent manner.
    * </p>
    * <p>
    * See {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)} for more
@@ -1324,7 +1321,7 @@ public final class Assertions {
    *          Expected result, provided by
    *          {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}; it
    *          can be passed as-is (for {@linkplain Matchers#is(Object) exact match}), or associated
-   *          to a custom {@linkplain Matcher matcher} — e.g.,
+   *          to a custom {@linkplain Matcher matcher} — for example,
    *          {@linkplain Matchers#closeTo(double, double) approximate
    *          match}:<pre class="lang-java"><code>
    * expected.match($ -&gt; isCloseTo($)) // where `expected` is Expected&lt;Double&gt;</code></pre>
@@ -1481,7 +1478,7 @@ public final class Assertions {
   }
 
   /**
-   * Asserts that {@code expected} and {@code actual} paths are equal within the given non-negative
+   * Asserts that {@code expected} and {@code actual} paths are equal within a non-negative
    * {@code delta}.
    */
   public static void assertPathEquals(PathIterator expected, PathIterator actual, double delta) {
@@ -1540,15 +1537,14 @@ public final class Assertions {
   }
 
   /**
-   * Asserts that {@code expected} and {@code actual} are equal within the given non-negative
-   * {@code delta}.
+   * Asserts that {@code expected} and {@code actual} are equal within a non-negative {@code delta}.
    */
   public static void assertShapeEquals(Shape expected, Shape actual, double delta) {
     assertPathEquals(expected.getPathIterator(null), actual.getPathIterator(null), delta);
   }
 
   /**
-   * Evaluates the given expression.
+   * Evaluates an expression.
    * <p>
    * Intended for use within {@linkplain ParameterizedTest parameterized tests}; its result is
    * expected to be checked via {@link #assertParameterized(Object, Expected, Supplier)
@@ -1563,6 +1559,7 @@ public final class Assertions {
    *         <li>regular result — if {@code expression} succeeded</li>
    *         </ul>
    */
+  @SuppressWarnings("AssignmentToCatchBlockParameter")
   public static @Nullable Object evalParameterized(
       FailableSupplier<@Nullable Object, Exception> expression) {
     try {
@@ -1588,7 +1585,7 @@ public final class Assertions {
 
   /**
    * Gets the absolute floating-point error tolerance with the minimum order of magnitude, enough to
-   * pass the given assertion.
+   * pass the assertion.
    * <p>
    * Useful to quickly tune assertions in a robust manner, wherever
    * {@linkplain Double#compare(double, double) exact} floating-point comparison is unsuitable.
@@ -1597,7 +1594,8 @@ public final class Assertions {
    * @param assertWrap
    *          Lambda wrapping the assertion to probe.
    * @apiNote To use it, wrap your assertion inside {@code assertWrap}, wiring its argument as the
-   *          delta of your assertion; e.g., if the assertion is:<pre class="lang-java"><code>
+   *          delta of your assertion; for example, if the assertion
+   *          is:<pre class="lang-java"><code>
    * assertEquals(myExpected, myActual, myDelta);</code></pre>
    *          <p>
    *          wrap it this way:

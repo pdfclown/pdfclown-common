@@ -49,7 +49,7 @@ import org.jspecify.annotations.Nullable;
 public class IndentWriter extends Writer {
   // SourceName: wrap
   /**
-   * Augments the given appendable with indenting capabilities.
+   * Augments the appendable with indenting capabilities.
    *
    * @param indent
    *          Initial indentation ({@code null}, for {@linkplain Indent#DEFAULT default
@@ -170,7 +170,7 @@ public class IndentWriter extends Writer {
 
   // SourceName: withIndentation
   /**
-   * Gets an instance with the given indentation.
+   * Gets an instance with the indentation.
    */
   public IndentWriter withIndent(@Nullable Indent value) {
     return value != null && !indent.equals(value)

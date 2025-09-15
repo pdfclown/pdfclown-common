@@ -32,7 +32,7 @@ import org.jspecify.annotations.Nullable;
  */
 public interface IndexedMap<K, V> extends XtMap<K, V> {
   /**
-   * Gets the index of the specified key in this map.
+   * Gets the index of the key in this map.
    *
    * @return {@code -1} if this map does not contain the key.
    */
@@ -48,7 +48,7 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
   }
 
   /**
-   * Gets the index of the specified value in this map.
+   * Gets the index of the value in this map.
    *
    * @return {@code -1} if this map does not contain the value.
    */
@@ -64,7 +64,7 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
   }
 
   /**
-   * Gets the key at the specified position.
+   * Gets the key at the position.
    *
    * @param index
    *          Entry position.
@@ -88,8 +88,8 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
   Set<K> keySet();
 
   /**
-   * Moves the entry at the specified position to the specified destination (if the new position is
-   * greater than the old one, it is decreased to offset the entry removal from its old position).
+   * Moves the entry at the given position to the destination (if the new position is greater than
+   * the old one, it is decreased to offset the entry removal from its old position).
    *
    * @param index
    *          Current position.
@@ -102,8 +102,8 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
   Map.Entry<K, V> move(int index, int targetIndex);
 
   /**
-   * Associates the specified value with the specified key in this map, either at the current
-   * position (if the map previously contained a mapping for the key) or to the end of this map.
+   * Associates the value with the key in this map, either at the current position (if the map
+   * previously contained a mapping for the key) or to the end of this map.
    *
    * @param key
    *          Entry key.
@@ -117,12 +117,11 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
   V put(K key, V value);
 
   /**
-   * Associates the specified value with the specified key in this map at the specified position,
-   * shifting the entry currently at that position (if any) and any subsequent entries to the right
-   * (adds one to their indices). If the map previously contained a mapping for the key, the old
-   * value is replaced by the specified one and the entry is moved to the new position (if the new
-   * position is greater than the old one, it is decreased to offset the entry removal from its old
-   * position).
+   * Associates the value with the key in this map at the given position, shifting the entry
+   * currently at that position (if any) and any subsequent entries to the right (adds one to their
+   * indices). If the map previously contained a mapping for the key, the old value is replaced by
+   * the specified one and the entry is moved to the new position (if the new position is greater
+   * than the old one, it is decreased to offset the entry removal from its old position).
    *
    * @param index
    *          Entry position.

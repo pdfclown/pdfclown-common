@@ -41,7 +41,7 @@ import org.slf4j.event.LoggingEvent;
  */
 public final class Matchers {
   /**
-   * Maps the given items to the corresponding matchers.
+   * Maps items to the corresponding matchers.
    */
   @SafeVarargs
   @SuppressWarnings("unchecked")
@@ -54,28 +54,28 @@ public final class Matchers {
     /*
      * NOTE: Cast is necessary because, due to type erasure, we are forced to declare
      * `List<Matcher<? super E>>` as return type instead of List<T>, since the latter would be
-     * statically resolved as List<Object>, causing the linker to match wrong overloads (e.g., see
-     * org.hamcrest.Matchers.arrayContaining(..)).
+     * statically resolved as List<Object>, causing the linker to match wrong overloads (for
+     * example, see org.hamcrest.Matchers.arrayContaining(..)).
      */
     return (List<Matcher<? super E>>) ret;
   }
 
   /**
-   * Creates a matcher that matches when the examined text contains the given pattern.
+   * Creates a matcher that matches when the examined text contains a pattern.
    */
   public static Matcher<String> containsPattern(Pattern pattern) {
     return new ContainsPattern(pattern);
   }
 
   /**
-   * Creates a matcher that matches when the examined text contains the given regular expression.
+   * Creates a matcher that matches when the examined text contains a regular expression.
    */
   public static Matcher<String> containsPattern(String regex) {
     return containsPattern(regex, 0);
   }
 
   /**
-   * Creates a matcher that matches when the examined text contains the given regular expression.
+   * Creates a matcher that matches when the examined text contains a regular expression.
    *
    * @param flags
    *          (see {@link Pattern#compile(String, int)})
@@ -86,8 +86,8 @@ public final class Matchers {
   }
 
   /**
-   * Creates a matcher that matches when the transformation of the examined object satisfies the
-   * given matcher.
+   * Creates a matcher that matches when the transformation of the examined object satisfies a
+   * matcher.
    *
    * @param mappingDescription
    *          Description of the transformation (typically, should be expressed as the bean path
@@ -105,8 +105,7 @@ public final class Matchers {
   }
 
   /**
-   * Creates a matcher that matches the expected value to another one on the basis of the given
-   * condition.
+   * Creates a matcher that matches the expected value to another one on the basis of a condition.
    */
   public static <T> Matcher<T> matches(T expectedValue, BiPredicate<T, T> predicate) {
     return new Matches<>(expectedValue, predicate);
@@ -115,7 +114,7 @@ public final class Matchers {
   /**
    * Creates a matcher that matches when the examined event has the given attributes.
    *
-   * @apiNote Usage example: <pre class="lang-java" data-line="7-8"><code>
+   * @apiNote Usage example: <pre class="lang-java" data-line="13-14"><code>
    * import static org.hamcrest.MatcherAssert.assertThat;
    * import static org.hamcrest.Matchers.hasItem;
    *
@@ -165,21 +164,21 @@ public final class Matchers {
   }
 
   /**
-   * Creates a matcher that matches when the examined text matches the given pattern.
+   * Creates a matcher that matches when the examined text matches a pattern.
    */
   public static Matcher<String> matchesPattern(Pattern pattern) {
     return org.hamcrest.Matchers.matchesPattern(pattern);
   }
 
   /**
-   * Creates a matcher that matches when the examined text matches the given regular expression.
+   * Creates a matcher that matches when the examined text matches a regular expression.
    */
   public static Matcher<String> matchesPattern(String regex) {
     return matchesPattern(regex, 0);
   }
 
   /**
-   * Creates a matcher that matches when the examined text matches the given regular expression.
+   * Creates a matcher that matches when the examined text matches a regular expression.
    *
    * @param flags
    *          (see {@link Pattern#compile(String, int)})

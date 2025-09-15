@@ -44,7 +44,7 @@ public final class Introspections {
       PROPERTY_MODIFIER_MASK__ON | PROPERTY_MODIFIER_MASK__OFF;
 
   /**
-   * Retrieves the property descriptors (getters only) of the given type.
+   * Retrieves the property descriptors (getters only) of a type.
    * <p>
    * This is a highly-specialized implementation that works around some limitations of vanilla
    * {@linkplain java.beans.Introspector#getBeanInfo(Class, Class) introspection}:

@@ -41,7 +41,7 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 
 /**
- * Aggregation (i.e., collection or map) utilities.
+ * Aggregation (that is, collection or map) utilities.
  *
  * @author Stefano Chizzolini
  */
@@ -266,7 +266,7 @@ public final class Aggregations {
   }
 
   /**
-   * Inserts an array of elements in the given list.
+   * Inserts an array of elements in a list.
    *
    * @param target
    *          Target list.
@@ -274,7 +274,7 @@ public final class Aggregations {
    *          Insertion position.
    * @param a
    *          Array of elements to insert.
-   * @return Whether the given list changed as a result of the call.
+   * @return Whether the list changed as a result of the call.
    * @see Collections#addAll( Collection, Object[])
    */
   public static <E> boolean addAll(List<E> target, int index, E[] a) {
@@ -288,7 +288,7 @@ public final class Aggregations {
   }
 
   /**
-   * Gets the Cartesian product of the given lists.
+   * Gets the Cartesian product of lists.
    *
    * @return Sequential stream.
    */
@@ -321,7 +321,7 @@ public final class Aggregations {
   }
 
   /**
-   * Gets whether the given collection contains any of the elements.
+   * Gets whether the collection contains any of the elements.
    */
   @SafeVarargs
   public static <E> boolean containsAny(Collection<E> c, E... ee) {
@@ -350,7 +350,7 @@ public final class Aggregations {
   }
 
   /**
-   * Gets whether the given map contains any of the keys.
+   * Gets whether the map contains any of the keys.
    *
    * @param <K>
    *          Key type.
@@ -422,10 +422,7 @@ public final class Aggregations {
   }
 
   /**
-   * Gets whether the given iterable objects are equal.
-   *
-   * @implSpec Intrinsic {@link #equals(Object)} implementation of the given objects is ignored, as
-   *           their iterators are evaluated only.
+   * Gets whether the iterable objects are equal.
    */
   public static <E> boolean equals(Iterable<E> i1, Iterable<E> i2) {
     if (i1 == i2)
@@ -448,7 +445,7 @@ public final class Aggregations {
   }
 
   /**
-   * Wraps the give map inside a set that is safe for concurrent modifications.
+   * Wraps the map inside a set that is safe for concurrent modifications.
    *
    * @param m
    *          Base map.
@@ -458,7 +455,7 @@ public final class Aggregations {
   }
 
   /**
-   * Wraps the give set inside a set that is safe for concurrent modifications.
+   * Wraps the set inside a set that is safe for concurrent modifications.
    *
    * @param s
    *          Base set.
@@ -475,8 +472,8 @@ public final class Aggregations {
   }
 
   /**
-   * Performs an action for each element of the given list until all elements have been processed or
-   * the action throws an exception (relayed to the caller).
+   * Performs an action for each element of the list until all elements have been processed or the
+   * action throws an exception (relayed to the caller).
    * <p>
    * The behavior of this method is unspecified if the action performs side effects that modify the
    * underlying source of elements, unless an overriding class has specified a concurrent
@@ -493,10 +490,10 @@ public final class Aggregations {
   }
 
   /**
-   * Gets the key associated to the given value.
+   * Gets the key associated to the value.
    * <p>
    * NOTE: This implementation is the most simple and inefficient, iterating the whole map (O(n)
-   * complexity). Use it for occasional calls only.
+   * complexity) — use it for occasional calls only.
    * </p>
    */
   public static <K, V> @Nullable K getKey(Map<K, V> map, @Nullable V value) {
@@ -508,7 +505,7 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new hash set populated with the given collections.
+   * Creates a new hash set populated with the collections.
    */
   @SafeVarargs
   public static <E> HashSet<E> hashSet(@NonNull Collection<E>... cc) {
@@ -520,7 +517,7 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new hash set populated with the given elements.
+   * Creates a new hash set populated with the elements.
    */
   @SafeVarargs
   public static <E> HashSet<E> hashSet(E... ee) {
@@ -530,42 +527,42 @@ public final class Aggregations {
   }
 
   /**
-   * Whether the given collection is empty.
+   * Whether the collection is empty.
    */
   public static boolean isEmpty(@Nullable Collection<?> c) {
     return c == null || c.isEmpty();
   }
 
   /**
-   * Whether the given map is empty.
+   * Whether the map is empty.
    */
   public static boolean isEmpty(@Nullable Map<?, ?> m) {
     return m == null || m.isEmpty();
   }
 
   /**
-   * Whether the given array is empty.
+   * Whether the array is empty.
    */
   public static <T> boolean isEmpty(T @Nullable [] a) {
     return a == null || a.length == 0;
   }
 
   /**
-   * Whether the given collection is not empty.
+   * Whether the collection is not empty.
    */
   public static boolean isFilled(@Nullable Collection<?> c) {
     return !isEmpty(c);
   }
 
   /**
-   * Whether the given map is not empty.
+   * Whether the map is not empty.
    */
   public static boolean isFilled(@Nullable Map<?, ?> m) {
     return !isEmpty(m);
   }
 
   /**
-   * Whether the given array is not empty.
+   * Whether the array is not empty.
    */
   public static <T> boolean isFilled(T @Nullable [] a) {
     return !isEmpty(a);
@@ -579,7 +576,7 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new mutable list populated with the given elements.
+   * Creates a new mutable list populated with the elements.
    */
   @SafeVarargs
   public static <E> XtList<E> list(E... ee) {
@@ -589,7 +586,7 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new mutable list of the given type.
+   * Creates a new mutable list of the type.
    */
   public static <E> XtList<E> listOf(Class<E> type) {
     return list();
@@ -603,7 +600,7 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new mutable map populated with the given entries.
+   * Creates a new mutable map populated with the entries.
    */
   @SafeVarargs
   public static <K, V> XtMap<K, V> map(Map.Entry<K, V>... ee) {
@@ -615,7 +612,7 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new mutable map of the given types.
+   * Creates a new mutable map of the types.
    */
   public static <K, V> XtMap<K, V> mapOf(Class<K> keyType, Class<V> valueType) {
     return map();
@@ -646,7 +643,7 @@ public final class Aggregations {
   }
 
   /**
-   * Gets an element in the given list without throwing {@link IndexOutOfBoundsException}.
+   * Gets an element in the list without throwing {@link IndexOutOfBoundsException}.
    *
    * @param target
    *          Target list.
@@ -660,7 +657,7 @@ public final class Aggregations {
   }
 
   /**
-   * Sets an element in the given list at an unrestricted position.
+   * Sets an element in the list at an unrestricted position.
    * <p>
    * If {@code index} is below the lower- or above the upper-bound, this method makes room to the
    * new element accordingly (possibly inserting {@code null} elements in the intermediate
@@ -687,7 +684,7 @@ public final class Aggregations {
   }
 
   /**
-   * Removes an element in the given list without throwing {@link IndexOutOfBoundsException}.
+   * Removes an element in the list without throwing {@link IndexOutOfBoundsException}.
    * <p>
    * If {@code index} is out of bounds, nothing happens.
    * </p>
@@ -716,7 +713,7 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new mutable set populated with the given elements.
+   * Creates a new mutable set populated with the elements.
    */
   @SafeVarargs
   public static <E> XtSet<E> set(E... ee) {
@@ -726,8 +723,7 @@ public final class Aggregations {
   }
 
   /**
-   * Sets the {@link List#size() size} of the given list, shrinking or expanding it with the given
-   * element.
+   * Sets the {@link List#size() size} of the list, shrinking or expanding it with the element.
    *
    * @param target
    *          Target list.
@@ -764,8 +760,8 @@ public final class Aggregations {
   }
 
   /**
-   * Sets the {@link List#size() size} of the given list, shrinking or expanding it with
-   * {@code null} elements.
+   * Sets the {@link List#size() size} of the list, shrinking or expanding it with {@code null}
+   * elements.
    *
    * @param target
    *          Target list.
@@ -778,8 +774,8 @@ public final class Aggregations {
   }
 
   /**
-   * Sets the {@link List#size() size} of the given list, shrinking or expanding it with
-   * {@code null} elements.
+   * Sets the {@link List#size() size} of the list, shrinking or expanding it with {@code null}
+   * elements.
    *
    * @param target
    *          Target list.
@@ -796,14 +792,14 @@ public final class Aggregations {
   }
 
   /**
-   * Converts the given iterator into a stream.
+   * Converts the iterator into a stream.
    */
   public static <E> Stream<E> stream(Iterator<E> iterator) {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
   }
 
   /**
-   * Trims the given list of its trailing {@code null} elements.
+   * Trims the list of its trailing {@code null} elements.
    *
    * @param target
    *          Target list.
@@ -818,14 +814,14 @@ public final class Aggregations {
   }
 
   /**
-   * Traverses depth-first the given collection of tree nodes.
+   * Traverses depth-first the collection of tree nodes.
    *
    * @param <T>
    *          Node type.
    * @param c
    *          Node children.
    * @param childrenGetter
-   *          Returns the children of the provided node.
+   *          Returns the children of a node.
    * @param nodeEvaluator
    *          Returns whether the search is complete and consequently the traversal must end;
    *          otherwise, the traversal continues.

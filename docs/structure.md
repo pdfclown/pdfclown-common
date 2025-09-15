@@ -24,9 +24,9 @@ A pdfClown.org project SHALL be defined according to this hierarchy:
 
 **Legend:**
 - _italic style_ denotes **subprojects with "pom" packaging** (assimilated to abstract classes)
-- `<<private>>` stereotype denotes **private artifacts** (i.e., not published, consumed only internally to the project hierarchy)
-- `<<public>>` stereotype denotes **published artifacts** (i.e., consumed also externally to the project hierarchy)
-- properties represent **declarations** (e.g. `dependencies`, `plugins`)
+- `<<private>>` stereotype denotes **private artifacts** (that is, not published, consumed only internally to the project hierarchy)
+- `<<public>>` stereotype denotes **published artifacts** (that is, consumed also externally to the project hierarchy)
+- properties represent **declarations** (for example `dependencies`, `plugins`)
 - solid arrow lines represent **Maven `parent` (inheritance) relationships**, pointing from child to parent
 - dashed arrow lines represent **Maven dependencies usage** (import or regular)
 
@@ -93,7 +93,7 @@ A pdfClown.org project SHALL be defined according to this hierarchy:
 <tr>
   <td><code>(lib*)</code></td>
   <td>:package:<br/>concrete artifacts</td>
-  <td>Any other concrete (i.e., without "pom" packaging) subproject <i>inside</i> the project hierarchy.</td>
+  <td>Any other concrete (that is, without "pom" packaging) subproject <i>inside</i> the project hierarchy.</td>
   <td>:satellite:</td>
 </tr>
 <tr>
@@ -102,7 +102,7 @@ A pdfClown.org project SHALL be defined according to this hierarchy:
 <tr>
   <td><code>(external&#x2011;root*)</code></td>
   <td>:wrench:<br/>external children</td>
-  <td>Root projects <i>outside</i> the project hierarchy (i.e., external projects consuming the published <code>base</code> subproject).</td>
+  <td>Root projects <i>outside</i> the project hierarchy (that is, external projects consuming the published <code>base</code> subproject).</td>
   <td>N/A</td>
 </tr>
 </table>

@@ -27,7 +27,7 @@ import org.pdfclown.common.util.annot.Immutable;
 @Immutable
 public interface Fluent {
   /**
-   * Applies the given action to this object.
+   * Applies the action to this object.
    * <p>
    * <span class="warning">WARNING: This method leverages unchecked generic casts: because of their
    * double-edged nature (they can elegantly adapt to the receiving context but are also prone to
@@ -67,7 +67,7 @@ public interface Fluent {
   }
 
   /**
-   * Casts this object to the given target type.
+   * Casts this object to the target type.
    * <p>
    * The purpose of this method is to allow a safe cast without pre-check.
    * </p>
@@ -79,7 +79,7 @@ public interface Fluent {
   }
 
   /**
-   * Transforms this object according to the given mapper.
+   * Transforms this object according to the mapper.
    * <p>
    * <span class="warning">WARNING: This method leverages unchecked generic casts: because of their
    * double-edged nature (they can elegantly adapt to the receiving context but are also prone to

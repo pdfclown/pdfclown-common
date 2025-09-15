@@ -118,7 +118,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
       case SCHEME__JAR: {
         /*
          * NOTE: We have to access `URL.path` instead of `URI.path`, as the latter returns `null`
-         * since URI treats JAR protocol as opaque (i.e., non-hierarchical).
+         * since URI treats JAR protocol as opaque (that is, non-hierarchical).
          */
         Path jarFile = Path.of(jarFileName(url.getPath()));
         String jarEntryName = jarEntryName(url.getPath());

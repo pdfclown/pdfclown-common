@@ -25,7 +25,7 @@ import java.util.List;
  */
 public abstract class ModelComparator<TModel, TDiff> {
   /**
-   * Compares the given objects.
+   * Compares objects.
    *
    * @return Differences.
    */

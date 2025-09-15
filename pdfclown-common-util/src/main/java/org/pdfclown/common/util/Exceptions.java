@@ -92,7 +92,7 @@ public final class Exceptions {
   }
 
   /**
-   * Wraps the given throwable into an unchecked exception.
+   * Wraps the throwable into an unchecked exception.
    *
    * @param cause
    *          Throwable to wrap.
@@ -104,7 +104,7 @@ public final class Exceptions {
   }
 
   /**
-   * Wraps the given throwable into a {@linkplain UncheckedException temporary unchecked exception}.
+   * Wraps the throwable into a {@linkplain UncheckedException temporary unchecked exception}.
    *
    * @param cause
    *          Throwable to wrap.

@@ -118,14 +118,14 @@ public abstract class LogCaptor
   }
 
   /**
-   * New instance capturing events of the given logger.
+   * New instance capturing events of a logger.
    */
   public static LogCaptor of(Class<?> loggerClass) {
     return of(loggerClass.getName());
   }
 
   /**
-   * New instance capturing events of the given logger.
+   * New instance capturing events of a logger.
    */
   public static LogCaptor of(String loggerName) {
     String implName = fqn(LoggerFactory.getILoggerFactory()).toLowerCase();

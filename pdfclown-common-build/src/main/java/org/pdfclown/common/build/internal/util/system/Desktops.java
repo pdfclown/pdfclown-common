@@ -24,7 +24,7 @@ import java.awt.datatransfer.StringSelection;
  */
 public final class Desktops {
   /**
-   * Copies the given data to the system clipboard.
+   * Copies data to the system clipboard.
    * <p>
    * IMPORTANT: Before calling this method, {@linkplain #isGUI() check whether a windowing system is
    * present}.

@@ -128,7 +128,8 @@ public final class Xmls {
        * Enables external DOCTYPEs support, along with inline.
        * <p>
        * <span class="warning">WARNING: This is dangerous; it MUST be accompanied by whitelisting
-       * (e.g., through {@link org.xml.sax.XMLReader#setEntityResolver(EntityResolver)})</span>.
+       * (for example, through
+       * {@link org.xml.sax.XMLReader#setEntityResolver(EntityResolver)})</span>.
        * </p>
        */
       EXTERNAL_DTD,

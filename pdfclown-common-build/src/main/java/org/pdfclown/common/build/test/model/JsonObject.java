@@ -79,7 +79,7 @@ public class JsonObject extends JSONObject implements JsonElement {
       }
       writer.write(o != null ? o.toString() : quote(value.toString()));
     } else if (value instanceof Number) {
-      // not all Numbers may match actual JSON Numbers. i.e. fractions or Imaginary
+      // not all Numbers may match actual JSON Numbers. that is fractions or Imaginary
       final String numberAsString = numberToString((Number) value);
       if (NUMBER_PATTERN.matcher(numberAsString).matches()) {
         writer.write(numberAsString);

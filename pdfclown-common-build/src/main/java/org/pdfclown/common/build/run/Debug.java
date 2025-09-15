@@ -129,7 +129,7 @@ public abstract class Debug {
   }
 
   /**
-   * Initializes the CLI execution of the given debug application.
+   * Initializes the CLI execution of a debug application.
    *
    * @param debugType
    *          Debug application class.
@@ -137,7 +137,7 @@ public abstract class Debug {
    *          Debug application title.
    * @param cliArgs
    *          Debug application arguments.
-   * @return Command line for the given arguments.
+   * @return Command line corresponding to the arguments.
    */
   protected static CommandLine init(Class<? extends Debug> debugType, String title,
       CliArgs cliArgs) {
@@ -152,7 +152,7 @@ public abstract class Debug {
   }
 
   /**
-   * Loads and validates the given CLI arguments.
+   * Loads and validates CLI arguments.
    *
    * @param cli
    *          Command line created via {@link #init(Class, String, CliArgs) init(..)}.
@@ -193,15 +193,15 @@ public abstract class Debug {
   }
 
   /**
-   * Requests to enter via CLI the value of the given argument.
+   * Requests to enter via CLI the value of an argument.
    *
    * @param name
    *          Argument name.
    * @param description
    *          Argument description.
    * @param hint
-   *          Value suggestion (e.g., "[y/N]" for a boolean (yes/no) where {@code false} (no) is
-   *          default).
+   *          Value suggestion (for example, "[y/N]" for a boolean (yes/no) where {@code false} (no)
+   *          is default).
    * @return Entered value.
    */
   protected static String promptArg(String name, String description, @Nullable String hint) {

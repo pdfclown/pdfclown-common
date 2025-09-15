@@ -25,7 +25,7 @@ import org.jspecify.annotations.Nullable;
  * between annotated inputs and outputs of a method</a>.
  * <p>
  * Arguments marked with this annotation will cause the method to return a non-null result, and vice
- * versa — like if there were two method overloads, e.g. [*]:
+ * versa — like if there were two method overloads, for example [*]:
  * </p>
  * <pre class="lang-java"><code>
  * &#64;NullMarked

@@ -20,7 +20,7 @@ import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 /**
  * Generalized, strongly-typed alternative to {@link org.hamcrest.beans.HasPropertyWithValue},
- * asserting that a transformation of an argument meets the provided matcher.
+ * asserting that a transformation of an argument meets the matcher.
  *
  * @param <T>
  *          Argument type.

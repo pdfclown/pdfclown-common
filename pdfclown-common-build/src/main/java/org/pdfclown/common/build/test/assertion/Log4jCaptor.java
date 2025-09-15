@@ -68,7 +68,7 @@ class Log4jCaptor extends LogCaptor {
   private final LoggerConfig logConfig;
 
   /**
-   * New instance capturing events of the given logger.
+   * New instance capturing events of a logger.
    */
   Log4jCaptor(String loggerName) {
     Configuration config = ((LoggerContext) LogManager.getContext(false)).getConfiguration();

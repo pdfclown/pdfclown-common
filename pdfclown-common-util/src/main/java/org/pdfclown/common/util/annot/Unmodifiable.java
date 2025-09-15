@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * <p>
  * <b>Externally-observable state</b> comprises values and object references directly associated to
  * the class, and the objects indirectly associated to the class through object references. Mutable
- * private fields which don't influence the externally-observable state are irrelevant (e.g.,
+ * private fields which don't influence the externally-observable state are irrelevant (for example,
  * defensive copy of arrays and other mutable objects makes them effectively immutable;
  * <a href="https://en.wikipedia.org/wiki/Memoization">memoization</a> doesn't affect the
  * externally-observable state).

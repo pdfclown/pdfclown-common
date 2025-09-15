@@ -112,8 +112,8 @@ public abstract class Asserter {
     private final StringBuilder base = new StringBuilder();
 
     /**
-     * Appends the {@linkplain Object#toString() string representation} of the given object to the
-     * current error entry.
+     * Appends the {@linkplain Object#toString() string representation} of an object to the current
+     * error entry.
      */
     public ErrorMessageBuilder append(Object obj) {
       base.append(obj);
@@ -121,7 +121,7 @@ public abstract class Asserter {
     }
 
     /**
-     * Appends the given text to the current error entry.
+     * Appends text to the current error entry.
      */
     public ErrorMessageBuilder append(String text) {
       base.append(text);
@@ -177,15 +177,15 @@ public abstract class Asserter {
    *          <li>to regenerate all the mismatching resources, no matter the tests they belong to:
    *          <pre class="lang-shell"><code>
    * mvn verify ... -Dpdfclown.assert.update</code></pre></li>
-   *          <li>to regenerate the mismatching resources belonging to specific test classes (e.g.,
-   *          "MyObjectIT"): <pre class="lang-shell"><code>
+   *          <li>to regenerate the mismatching resources belonging to specific test classes (for
+   *          example, "MyObjectIT"): <pre class="lang-shell"><code>
    * mvn verify ... -Dpdfclown.assert.update -Dtest=MyObjectIT</code></pre></li>
-   *          <li>to regenerate the mismatching resources belonging to specific test cases (e.g.,
-   *          "MyObjectIT.myTest"): <pre class="lang-shell"><code>
+   *          <li>to regenerate the mismatching resources belonging to specific test cases (for
+   *          example, "MyObjectIT.myTest"): <pre class="lang-shell"><code>
    * mvn verify ... -Dpdfclown.assert.update -Dtest=MyObjectIT#myTest</code></pre></li>
-   *          <li>to regenerate the mismatching resources belonging to multiple test classes (e.g.,
-   *          MyObjectIT and MyOtherObjectIT), they can be specified as a comma-separated list:
-   *          <pre class="lang-shell"><code>
+   *          <li>to regenerate the mismatching resources belonging to multiple test classes (for
+   *          example, MyObjectIT and MyOtherObjectIT), they can be specified as a comma-separated
+   *          list: <pre class="lang-shell"><code>
    * mvn verify ... -Dpdfclown.assert.update -Dtest=MyObjectIT,MyOtherObjectIT</code></pre></li>
    *          </ul>
    *          <p>
@@ -194,8 +194,8 @@ public abstract class Asserter {
    *          the corresponding JUnit system property which allows fine-grained test selection (see
    *          the relevant documentation); if your building system doesn't support it, adjust your
    *          commands accordingly. Furthermore, if the names of your test cases are overridden
-   *          (i.e., their names are different from the corresponding test methods), it's up to you
-   *          to use their actual names, as they are internally resolved by JUnit.
+   *          (that is, their names are different from the corresponding test methods), it's up to
+   *          you to use their actual names, as they are internally resolved by JUnit.
    *          </p>
    */
   public static final String PARAM_NAME__UPDATE = "pdfclown.assert.update";
@@ -203,10 +203,10 @@ public abstract class Asserter {
   private static final Predicate<String> FILTER__UPDATE = fqnFilter(PARAM_NAME__UPDATE);
 
   /**
-   * Builds the predicate corresponding to the given CLI parameter, whose value is a string of
+   * Builds the predicate corresponding to a CLI parameter, whose value is a string of
    * comma-separated FQNs.
    * <p>
-   * The predicate is expected to evaluate fully-qualified test identifiers (e.g.,
+   * The predicate is expected to evaluate fully-qualified test identifiers (for example,
    * "/org/pdfclown/layout/LayoutIT_testPdfAConformance.pdf").
    * </p>
    *
@@ -261,7 +261,7 @@ public abstract class Asserter {
    * Evaluates the assertion result and throws an assertion error in case of failure.
    * <p>
    * This method is expected to be invoked at the end of the assertion, after all the detected
-   * errors were combined in the given message:
+   * errors were combined in the message:
    * </p>
    * <ul>
    * <li>if {@code message} is empty, the assertion succeeded: this method quietly returns</li>
@@ -272,7 +272,7 @@ public abstract class Asserter {
    *
    * @param testId
    *          Test identifier (either simple or fully-qualified). Typically corresponds to the
-   *          test-unit-specific resource name of the expected file (e.g.,
+   *          test-unit-specific resource name of the expected file (for example,
    *          "LayoutIT_testPdfAConformance.pdf", or fully-qualified
    *          "/org/pdfclown/layout/LayoutIT_testPdfAConformance.pdf").
    * @param message
@@ -356,8 +356,8 @@ public abstract class Asserter {
   }
 
   /**
-   * Gets whether the expected resources associated to the given ID can be overwritten in case of
-   * mismatch with their actual counterparts.
+   * Gets whether the expected resources associated to an ID can be overwritten in case of mismatch
+   * with their actual counterparts.
    */
   protected boolean isUpdatable(String testId) {
     return FILTER__UPDATE.test(testId);

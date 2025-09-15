@@ -28,7 +28,7 @@ import java.awt.geom.PathIterator;
 @FunctionalInterface
 public interface PathEvaluator {
   /**
-   * Evaluates the given graphical path.
+   * Evaluates a graphical path.
    */
   static void eval(PathIterator itr, PathEvaluator evaluator) {
     var coords = new double[3 * 2];
@@ -61,14 +61,14 @@ public interface PathEvaluator {
   }
 
   /**
-   * Evaluates the given shape.
+   * Evaluates a shape.
    */
   static void eval(Shape shape, PathEvaluator evaluator) {
     eval(shape.getPathIterator(null), evaluator);
   }
 
   /**
-   * Evaluates the given graphical path segment.
+   * Evaluates a graphical path segment.
    *
    * @param segmentKind
    *          Segment type (see {@link PathIterator#currentSegment(double[])}).

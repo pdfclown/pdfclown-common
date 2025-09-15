@@ -36,7 +36,7 @@ import org.pdfclown.common.build.internal.util_.annot.PolyNull;
  */
 public final class Conditions {
   /**
-   * Requires the value matches the given validator.
+   * Requires the value matches the validator.
    * <p>
    * Useful wherever inline code is syntactically impossible and calling a full-fledged validation
    * method is inconvenient.
@@ -58,7 +58,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value matches the given validator.
+   * Requires the value matches the validator.
    * <p>
    * Useful wherever inline code is syntactically impossible and calling a full-fledged validation
    * method is inconvenient.
@@ -85,7 +85,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value matches the given condition.
+   * Requires the value matches the condition.
    *
    * @param <T>
    *          Value type.
@@ -126,7 +126,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is among the given options.
+   * Requires the value is among the options.
    *
    * @param value
    *          Value to validate.
@@ -142,7 +142,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is among the given options.
+   * Requires the value is among the options.
    *
    * @param value
    *          Value to validate.
@@ -385,7 +385,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is within the given range.
+   * Requires the value is within the range.
    *
    * @param value
    *          Value to validate.
@@ -400,7 +400,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is within the given range.
+   * Requires the value is within the range.
    *
    * @param value
    *          Value to validate.
@@ -420,7 +420,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is within the given range (inclusive).
+   * Requires the value is within the range (inclusive).
    * <p>
    * For arbitrary bounds, use {@link #requireRange(Number, Range, String)} instead.
    * </p>
@@ -440,7 +440,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is within the given range (inclusive).
+   * Requires the value is within the range (inclusive).
    * <p>
    * For arbitrary bounds, use {@link #requireRange(Number, Range, String)} instead.
    * </p>
@@ -517,7 +517,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is an instance of the given type (or undefined), and casts it accordingly.
+   * Requires the value is an instance of the type (or undefined), and casts it accordingly.
    * <p>
    * Useful anytime an argument is required to be cast to a subtype in spite of its declaration,
    * such as in case of a specialized implementation of an interface.
@@ -543,7 +543,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is an instance of the given type (or undefined), and casts it accordingly.
+   * Requires the value is an instance of the type (or undefined), and casts it accordingly.
    * <p>
    * Useful anytime an argument is required to be cast to a subtype in spite of its declaration,
    * such as in case of a specialized implementation of an interface.
@@ -572,7 +572,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is an instance of the given types (or undefined).
+   * Requires the value is an instance of the types (or undefined).
    *
    * @param value
    *          Value to validate.
@@ -590,7 +590,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is an instance of the given types (or undefined).
+   * Requires the value is an instance of the types (or undefined).
    *
    * @param value
    *          Value to validate.

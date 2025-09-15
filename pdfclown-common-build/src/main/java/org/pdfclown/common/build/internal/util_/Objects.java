@@ -113,7 +113,7 @@ public final class Objects {
         }
 
         /**
-         * Gets the priority associated to the given type.
+         * Gets the priority associated to the type.
          *
          * @return {@code 0}, if no priority is associated to {@code type}.
          */
@@ -122,7 +122,7 @@ public final class Objects {
         }
 
         /**
-         * Gets the priority associated to the given type.
+         * Gets the priority associated to the type.
          *
          * @return {@code defaultValue}, if no priority is associated to {@code type}.
          */
@@ -131,7 +131,7 @@ public final class Objects {
         }
 
         /**
-         * Associates a priority to the given type.
+         * Associates a priority to the type.
          */
         public TypePriorityComparator set(int priority, Class<?> type) {
           if (priority < minPriority) {
@@ -148,7 +148,7 @@ public final class Objects {
         }
 
         /**
-         * Associates a priority to the given types.
+         * Associates a priority to the types.
          */
         public TypePriorityComparator set(int priority, Class<?>... types) {
           for (var type : types) {
@@ -158,7 +158,7 @@ public final class Objects {
         }
 
         /**
-         * Associates a sequence of priorities to the given types.
+         * Associates a sequence of priorities to the types.
          */
         public TypePriorityComparator setInOrder(int priority, Class<?>... types) {
           for (var type : types) {
@@ -298,8 +298,8 @@ public final class Objects {
       Void.class);
 
   /**
-   * Gets the ancestors of the given type, ordered by {@linkplain HierarchicalTypeComparator#get()
-   * default comparator}.
+   * Gets the ancestors of the type, ordered by {@linkplain HierarchicalTypeComparator#get() default
+   * comparator}.
    */
   @SuppressWarnings("rawtypes")
   public static @Unmodifiable Iterable<Class> ancestors(Class type) {
@@ -307,7 +307,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the ancestors of the given type, ordered by {@code comparator}.
+   * Gets the ancestors of the type, ordered by {@code comparator}.
    */
   @SuppressWarnings("rawtypes")
   public static @Unmodifiable Iterable<Class> ancestors(Class type,
@@ -316,7 +316,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the ancestors of the given type, ordered by {@code comparator}.
+   * Gets the ancestors of the type, ordered by {@code comparator}.
    *
    * @param stoppers
    *          Types at which to stop ancestor hierarchy traversal.
@@ -344,7 +344,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given object matches the other one according to the given predicate.
+   * Gets whether the object matches the other one according to the predicate.
    * <p>
    * NOTE: This method is redundant; it's intended as a placeholder in case the implementer expects
    * further objects to be added later.
@@ -356,7 +356,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given object matches any of the others according to the given predicate.
+   * Gets whether the object matches any of the others according to the predicate.
    */
   public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
       @Nullable U other1, @Nullable U other2) {
@@ -365,7 +365,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given object matches any of the others according to the given predicate.
+   * Gets whether the object matches any of the others according to the predicate.
    *
    * @implNote Because of the limited expressiveness of varargs, in order to force the caller to
    *           specify at least two other objects we have to declare two corresponding parameters
@@ -386,7 +386,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given object matches any of the others according to the given predicate.
+   * Gets whether the object matches any of the others according to the predicate.
    */
   public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
       @Nullable U other1, @Nullable U other2, @Nullable U other3) {
@@ -396,7 +396,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given object matches any of the others according to the given predicate.
+   * Gets whether the object matches any of the others according to the predicate.
    */
   public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
       @Nullable U other1, @Nullable U other2, @Nullable U other3, @Nullable U other4) {
@@ -407,7 +407,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given object matches any of the others according to the given predicate.
+   * Gets whether the object matches any of the others according to the predicate.
    */
   public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
       @Nullable U other1, @Nullable U other2, @Nullable U other3, @Nullable U other4,
@@ -420,7 +420,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the type corresponding to the given object.
+   * Gets the type corresponding to the object.
    * <p>
    * Same as {@link #typeOf(Object) typeOf(..)}, unless {@code obj} is {@link Class} (in such case,
    * returns itself).
@@ -431,7 +431,7 @@ public final class Objects {
   }
 
   /**
-   * Quietly closes the given object.
+   * Quietly closes the object.
    *
    * @return {@code obj}
    * @see #quiet(FailableConsumer, Object)
@@ -445,9 +445,9 @@ public final class Objects {
    * Gets whether the two resolved elements are equal.
    *
    * @param <R>
-   *          Reference (i.e., unresolved element) type.
+   *          Reference (that is, unresolved element) type.
    * @param <T>
-   *          Object (i.e., resolved element) type.
+   *          Object (that is, resolved element) type.
    * @param o1
    *          Resolved element 1.
    * @param o2
@@ -484,9 +484,9 @@ public final class Objects {
    * Gets whether the two unresolved elements are equal.
    *
    * @param <R>
-   *          Reference (i.e., unresolved element) type.
+   *          Reference (that is, unresolved element) type.
    * @param <T>
-   *          Object (i.e., resolved element) type.
+   *          Object (that is, resolved element) type.
    * @param ref1
    *          Unresolved element 1.
    * @param ref2
@@ -519,7 +519,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given object is equal to or contains the other one.
+   * Gets whether the object is equal to or contains the other one.
    * <p>
    * Containment is verified via {@link Collection#contains(Object)} and
    * {@link Map#containsValue(Object)}.
@@ -532,14 +532,14 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given object is equal to the other one or undefined.
+   * Gets whether the object is equal to the other one or undefined.
    */
   public static boolean equalsOrNull(@Nullable Object obj, @Nullable Object other) {
     return obj == null || java.util.Objects.equals(obj, other);
   }
 
   /**
-   * Gets the fully-qualified class name of the given object.
+   * Gets the fully-qualified class name of the object.
    * <p>
    * Corresponds to the {@linkplain Class#getName() class name}; the class is resolved from
    * {@code obj} through {@link #asType(Object)}.
@@ -554,11 +554,11 @@ public final class Objects {
   }
 
   /**
-   * Gets the dotted fully-qualified class name of the given object.
+   * Gets the dotted fully-qualified class name of the object.
    * <p>
    * Corresponds to the {@linkplain Class#getName() class name}, replacing inner-class separators
-   * ({@code $}) with dots (e.g., {@code my.package.MyTopLevel.MyOuterClass.MyInnerClass}); the
-   * class is resolved from {@code obj} through {@link #asType(Object)}.
+   * ({@code $}) with dots (for example, {@code my.package.MyTopLevel.MyOuterClass.MyInnerClass});
+   * the class is resolved from {@code obj} through {@link #asType(Object)}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -570,7 +570,7 @@ public final class Objects {
   }
 
   /**
-   * Ensures the given class name has inner-class separators ({@code $}) replaced with dots.
+   * Ensures the class name has inner-class separators ({@code $}) replaced with dots.
    * <p>
    * No syntactic check is applied to {@code typeName}.
    * </p>
@@ -583,7 +583,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the object corresponding to the given literal string.
+   * Gets the object corresponding to the literal string.
    * <p>
    * NOTE: This method is complementary to {@link #toLiteralString(Object)} only for primitive type
    * representations.
@@ -649,7 +649,7 @@ public final class Objects {
   }
 
   /**
-   * Initializes the given class.
+   * Initializes the class.
    * <p>
    * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
    * </p>
@@ -661,7 +661,7 @@ public final class Objects {
   }
 
   /**
-   * Initializes the given class.
+   * Initializes the class.
    * <p>
    * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
    * </p>
@@ -678,7 +678,7 @@ public final class Objects {
   }
 
   /**
-   * Initializes the given class.
+   * Initializes the class.
    * <p>
    * This is the unchecked equivalent of {@link Class#forName(String)}.
    * </p>
@@ -691,7 +691,7 @@ public final class Objects {
   }
 
   /**
-   * Initializes the given class.
+   * Initializes the class.
    * <p>
    * This is the unchecked equivalent of {@link Class#forName(String)}.
    * </p>
@@ -735,14 +735,14 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the given objects belong to exactly the same type.
+   * Gets whether the objects belong to exactly the same type.
    */
   public static boolean isSameType(@Nullable Object o1, @Nullable Object o2) {
     return typeOf(o1) == typeOf(o2);
   }
 
   /**
-   * Gets the locale corresponding to the given language tag.
+   * Gets the locale corresponding to the language tag.
    *
    * @throws IllegalArgumentException
    *           if {@code languageTag} is non-conformant.
@@ -762,7 +762,7 @@ public final class Objects {
   }
 
   /**
-   * Normalizes the given locale.
+   * Normalizes the locale.
    *
    * @return {@linkplain Locale#getDefault() Default} if {@code locale} is undefined.
    */
@@ -771,7 +771,7 @@ public final class Objects {
   }
 
   /**
-   * Asserts the given object is non-null.
+   * Asserts the object is non-null.
    * <p>
    * This is a shorthand to explicit non-null assertion, useful to confirm expected state to
    * compiler when null check is redundant (contrary to
@@ -799,7 +799,7 @@ public final class Objects {
   }
 
   /**
-   * Casts the given object to a target type.
+   * Casts the object to a target type.
    * <p>
    * Contrary to {@link Class#cast(Object)}, this method is safe without assignment compatibility.
    * </p>
@@ -812,7 +812,7 @@ public final class Objects {
   }
 
   /**
-   * Applies an operation to the given object.
+   * Applies an operation to the object.
    *
    * @return {@code obj}
    * @see #quiet(FailableConsumer, Object)
@@ -825,7 +825,7 @@ public final class Objects {
   }
 
   /**
-   * Returns the given object, if not null; otherwise, the supplied default.
+   * Returns the object, if not null; otherwise, the supplied default.
    * <p>
    * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
    * doesn't enforce its result to be non-null.
@@ -847,7 +847,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the given object.
+   * Maps the object.
    *
    * @param <T>
    *          Object type.
@@ -864,7 +864,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the given object.
+   * Maps the object.
    *
    * @param <T>
    *          Object type.
@@ -883,7 +883,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the given object.
+   * Maps the object.
    * <p>
    * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
    * doesn't enforce its result to be non-null.
@@ -903,14 +903,14 @@ public final class Objects {
   }
 
   /**
-   * Wraps the given object in a null-aware container.
+   * Wraps the object in a null-aware container.
    */
   public static <T> Optional<T> opt(@Nullable T obj) {
     return Optional.ofNullable(obj);
   }
 
   /**
-   * Quietly applies an operation to the given object.
+   * Quietly applies an operation to the object.
    *
    * @return {@code obj}
    * @see #objDo(Object, Consumer)
@@ -921,7 +921,7 @@ public final class Objects {
   }
 
   /**
-   * Quietly applies the given operation to the object.
+   * Quietly applies the operation to the object.
    *
    * @param exceptionHandler
    *          Handles the exceptions thrown by {@code op}.
@@ -943,14 +943,14 @@ public final class Objects {
   }
 
   /**
-   * Quietly runs the given operation.
+   * Quietly runs the operation.
    */
   public static void quiet(FailableRunnable<?> op) {
     quiet(op, null);
   }
 
   /**
-   * Quietly runs the given operation.
+   * Quietly runs the operation.
    *
    * @param exceptionHandler
    *          Handles the exceptions thrown by {@code op}.
@@ -966,7 +966,7 @@ public final class Objects {
   }
 
   /**
-   * Splits the given fully-qualified name into package and class name parts.
+   * Splits the fully-qualified name into package and class name parts.
    *
    * @return Two-part string array, where the first item is empty if {@code typeName} has no
    *         package.
@@ -980,11 +980,12 @@ public final class Objects {
   }
 
   /**
-   * Gets the simply-qualified class name of the given object.
+   * Gets the simply-qualified class name of the object.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
-   * enclosing classes till the top level (e.g., {@code MyTopLevel$MyOuterClass$MyInnerClass}); the
-   * class is resolved from {@code obj} through {@link #asType(Object)}.
+   * enclosing classes till the top level (for example,
+   * {@code MyTopLevel$MyOuterClass$MyInnerClass}); the class is resolved from {@code obj} through
+   * {@link #asType(Object)}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -996,10 +997,11 @@ public final class Objects {
   }
 
   /**
-   * Gets the simply-qualified class name from the given name.
+   * Gets the simply-qualified class name from the name.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
-   * enclosing classes till the top level (e.g., {@code MyTopLevel$MyOuterClass$MyInnerClass}).
+   * enclosing classes till the top level (for example,
+   * {@code MyTopLevel$MyOuterClass$MyInnerClass}).
    * </p>
    * <p>
    * No syntactic check is applied to {@code typeName}.
@@ -1013,12 +1015,12 @@ public final class Objects {
   }
 
   /**
-   * Gets the dotted simply-qualified class name of the given object.
+   * Gets the dotted simply-qualified class name of the object.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
    * enclosing classes till the top level, replacing inner-class separators ({@code $}) with dots
-   * (e.g., {@code MyTopLevel.MyOuterClass.MyInnerClass}); the class is resolved from {@code obj}
-   * through {@link #asType(Object)}.
+   * (for example, {@code MyTopLevel.MyOuterClass.MyInnerClass}); the class is resolved from
+   * {@code obj} through {@link #asType(Object)}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -1030,11 +1032,11 @@ public final class Objects {
   }
 
   /**
-   * Gets the dotted simply-qualified class name from the given name.
+   * Gets the dotted simply-qualified class name from the name.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
    * enclosing classes till the top level, replacing inner-class separators ({@code $}) with dots
-   * (e.g., {@code MyTopLevel.MyOuterClass.MyInnerClass}).
+   * (for example, {@code MyTopLevel.MyOuterClass.MyInnerClass}).
    * </p>
    * <p>
    * No syntactic check is applied to {@code typeName}.
@@ -1049,8 +1051,8 @@ public final class Objects {
   }
 
   /**
-   * Maps the given object to its literal string representation (that is, inclusive of markers such
-   * as quotes).
+   * Maps the object to its literal string representation (that is, inclusive of markers such as
+   * quotes).
    *
    * @return
    *         <ul>
@@ -1073,12 +1075,12 @@ public final class Objects {
   }
 
   /**
-   * Maps the given object to its literal string representation (that is, inclusive of markers such
-   * as quotes).
+   * Maps the object to its literal string representation (that is, inclusive of markers such as
+   * quotes).
    *
    * @param nonBasicForced
    *          Whether, in case {@code obj} is non-{@linkplain #isBasic(Object) basic}, the resulting
-   *          string is treated as {@link String} (i.e., escaped and double-quoted).
+   *          string is treated as {@link String} (that is, escaped and double-quoted).
    * @return
    *         <ul>
    *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
@@ -1130,8 +1132,8 @@ public final class Objects {
   }
 
   /**
-   * Maps the given object to its string representation, ensuring its qualification at least with
-   * its {@linkplain Class#getSimpleName() simple class name}.
+   * Maps the object to its string representation, ensuring its qualification at least with its
+   * {@linkplain Class#getSimpleName() simple class name}.
    *
    * @return
    *         <ul>
@@ -1163,7 +1165,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the given object to its string representation, normalizing its qualification with the
+   * Maps the object to its string representation, normalizing its qualification with the
    * {@linkplain #sqnd(Object) dotted simply-qualified class name}.
    *
    * @return Considering the {@linkplain Matcher pattern match} of
@@ -1193,7 +1195,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the given object, along with its features.
+   * Gets the string representation of the object, along with its features.
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
@@ -1216,7 +1218,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the given object, along with its features.
+   * Gets the string representation of the object, along with its features.
    * <p>
    * NOTE: {@code null} feature is ignored.
    * </p>
@@ -1236,7 +1238,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the given object, along with its features.
+   * Gets the string representation of the object, along with its features.
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
@@ -1259,7 +1261,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the given object, along with its features.
+   * Gets the string representation of the object, along with its features.
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
@@ -1290,7 +1292,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the given object, along with its properties.
+   * Gets the string representation of the object, along with its properties.
    *
    * @param properties
    *          Properties (key-value pairs; keys MUST be non-null).
@@ -1307,7 +1309,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the given object, along with its properties.
+   * Gets the string representation of the object, along with its properties.
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1) {
     return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
@@ -1316,7 +1318,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the given object, along with its properties.
+   * Gets the string representation of the object, along with its properties.
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
       @Nullable Object v2) {
@@ -1327,7 +1329,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the given object, along with its properties.
+   * Gets the string representation of the object, along with its properties.
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
       @Nullable Object v2, String k3, @Nullable Object v3) {
@@ -1339,7 +1341,7 @@ public final class Objects {
   }
 
   /**
-   * Tries the given supplier.
+   * Tries the supplier.
    *
    * @return Result of {@code supplier}, or {@code null} if failed.
    */
@@ -1352,7 +1354,7 @@ public final class Objects {
   }
 
   /**
-   * Tries the given supplier.
+   * Tries the supplier.
    *
    * @param defaultResult
    *          Result in case {@code supplier} fails or its result is undefined.
@@ -1364,8 +1366,8 @@ public final class Objects {
   }
 
   /**
-   * Gets the type corresponding to the given fully-qualified name, resolved in the loading context
-   * of the current class and initialized.
+   * Gets the type corresponding to the fully-qualified name, resolved in the loading context of the
+   * current class and initialized.
    *
    * @return {@code null}, if no type matched {@code name}.
    */
@@ -1374,8 +1376,8 @@ public final class Objects {
   }
 
   /**
-   * Gets the type corresponding to the given fully-qualified name, resolved in the given loading
-   * context and initialized.
+   * Gets the type corresponding to the fully-qualified name, resolved in the loading context and
+   * initialized.
    *
    * @param loadingHint
    *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
@@ -1398,7 +1400,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the type of the given object.
+   * Gets the type of the object.
    *
    * @see #asType(Object)
    */
@@ -1407,7 +1409,7 @@ public final class Objects {
   }
 
   /**
-   * Recursively collects the given type and its interfaces until stopped.
+   * Recursively collects the type and its interfaces until stopped.
    * <p>
    * If {@code type} is contained in {@code stoppers}, this operation stops; in such case,
    * {@code type} is collected only if not {@code stopperExclusive}, while its interfaces are
@@ -1420,7 +1422,7 @@ public final class Objects {
    *          Types at which to stop ancestor hierarchy traversal.
    * @param stopperExclusive
    *          Whether stopped types are excluded from iterated ancestors.
-   * @return Whether this operation completed (i.e., it wasn't stopped).
+   * @return Whether this operation completed (that is, it wasn't stopped).
    */
   @SuppressWarnings("rawtypes")
   private static boolean collectTypeAndAncestorInterfaces(Class type, Set<Class> ancestors,

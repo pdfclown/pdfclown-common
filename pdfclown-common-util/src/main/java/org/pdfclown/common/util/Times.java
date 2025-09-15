@@ -24,7 +24,7 @@ import org.pdfclown.common.util.annot.PolyNull;
  */
 public final class Times {
   /**
-   * Converts the given time.
+   * Converts the time.
    */
   public static @PolyNull @Nullable GregorianCalendar calendar(
       @PolyNull @Nullable OffsetDateTime value) {
@@ -32,7 +32,7 @@ public final class Times {
   }
 
   /**
-   * Converts the given time.
+   * Converts the time.
    */
   public static @PolyNull @Nullable OffsetDateTime offsetDateTime(
       @PolyNull @Nullable GregorianCalendar value) {

@@ -82,7 +82,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
   }
 
   /**
-   * Asserts that the difference between the provided objects matches the expected one.
+   * Asserts that the difference between objects matches the expected one.
    *
    * @param expectedDiffResourceName
    *          Resource name of the expected object difference in serialized (JSON) form.
@@ -110,7 +110,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
   }
 
   /**
-   * Asserts that the provided object matches the expected one.
+   * Asserts that an object matches the expected one.
    *
    * @param expectedObjResourceName
    *          Resource name of the expected object in serialized (JSON) form.
@@ -128,14 +128,14 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
   }
 
   /**
-   * Asserts that the provided object matches the expected one.
+   * Asserts that an object matches the expected one.
    *
    * @param expectedObjResourceName
    *          Resource name of the expected object in serialized (JSON) form.
    * @param actualObj
    *          Actual object.
    * @param objSelectors
-   *          Property selectors for the given object.
+   *          Property selectors for the object.
    * @param config
    *          Assertion configuration.
    * @throws AssertionError
@@ -192,7 +192,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
   }
 
   /**
-   * Asserts that the provided element matches the expected one.
+   * Asserts that an element matches the expected one.
    *
    * @param expectedJsonResourceName
    *          Resource name of the expected object in serialized (JSON) form.

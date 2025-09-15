@@ -738,8 +738,8 @@ class ObjectsTest extends BaseTest {
   }
 
   /**
-   * NOTE: {@link Objects#quiet(FailableConsumer, Object)} can NEVER fail per-se; if the given
-   * object fails on called operation, that's part of its regular execution.
+   * NOTE: {@link Objects#quiet(FailableConsumer, Object)} can NEVER fail per-se; if the object
+   * fails on called operation, that's part of its regular execution.
    */
   @Test
   void quiet_FailableConsumer() {
@@ -759,7 +759,7 @@ class ObjectsTest extends BaseTest {
 
   /**
    * NOTE: {@link Objects#quiet(FailableConsumer, Object, Consumer)} can NEVER fail per-se; if the
-   * given object fails on called operation, that's part of its regular execution.
+   * object fails on called operation, that's part of its regular execution.
    */
   @Test
   void quiet_FailableConsumer_Consumer() {
@@ -779,7 +779,7 @@ class ObjectsTest extends BaseTest {
 
   /**
    * NOTE: {@link Objects#quiet(org.apache.commons.lang3.function.FailableRunnable)} can NEVER fail
-   * per-se; if the given operation fails on call, that's part of its regular execution.
+   * per-se; if the operation fails on call, that's part of its regular execution.
    */
   @Test
   void quiet_FailableRunnable() {
@@ -794,7 +794,7 @@ class ObjectsTest extends BaseTest {
 
   /**
    * NOTE: {@link Objects#quiet(org.apache.commons.lang3.function.FailableRunnable)} can NEVER fail
-   * per-se; if the given operation fails on call, that's part of its regular execution.
+   * per-se; if the operation fails on call, that's part of its regular execution.
    */
   @Test
   void quiet_FailableRunnable_Consumer() {

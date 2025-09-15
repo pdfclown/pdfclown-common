@@ -42,8 +42,8 @@ import org.jspecify.annotations.Nullable;
  *           Visits are expected to cross an inheritance line within the element type hierarchy
  *           until a meaningful operation can be performed (this arrangement is the most robust
  *           possible, as any missing operation would eventually end up visiting the method
- *           associated to the root type of the hierarchy — perfect point to trap malfunctions),
- *           e.g.:
+ *           associated to the root type of the hierarchy — perfect point to trap malfunctions), for
+ *           example:
  *           </p>
  *           <pre class="lang-java"><code>
  * public class MyVisitor&lt;R, D&gt; implements Visitor&lt;R, D&gt; {

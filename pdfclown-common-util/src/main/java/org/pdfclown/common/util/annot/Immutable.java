@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * <p>
  * <b>Externally-observable state</b> comprises values and object references directly associated to
  * the class, and the objects indirectly associated to the class through object references. Mutable
- * private fields which don't influence the externally-observable state are irrelevant (e.g.,
+ * private fields which don't influence the externally-observable state are irrelevant (for example,
  * defensive copy of arrays and other mutable objects makes them effectively immutable;
  * <a href="https://en.wikipedia.org/wiki/Memoization">memoization</a> doesn't affect the
  * externally-observable state).
@@ -43,8 +43,8 @@ import java.lang.annotation.Target;
  * Consequently, <span class="important">an object referenced as an immutable interface isn't itself
  * immutable, unless the class exposing that reference is immutable or marks its use as
  * immutable</span>: in such case, the class MUST guarantee that the underlying referenced class is
- * immutable itself (i.e., the object MUST be <i>effectively immutable</i> — e.g., it may declare a
- * {@link java.util.List List} whose actual class is an immutable list from
+ * immutable itself (that is, the object MUST be <i>effectively immutable</i> — for example, it may
+ * declare a {@link java.util.List List} whose actual class is an immutable list from
  * {@link java.util.List#of(Object[]) List.of(...)}). All considered, immutable interfaces are
  * mostly relevant to implementers rather than users, since immutable classes are required to
  * implement only (effectively) immutable interfaces.

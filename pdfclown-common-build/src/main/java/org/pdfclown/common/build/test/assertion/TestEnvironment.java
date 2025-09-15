@@ -120,20 +120,20 @@ public interface TestEnvironment {
   }
 
   /**
-   * Gets the base directory corresponding to the given identifier.
+   * Gets the base directory corresponding to an ID.
    */
   Path dir(DirId id);
 
   /**
-   * Gets the absolute path of the given output (no matter whether it exists).
+   * Gets the absolute path of an output file (no matter whether it exists).
    *
    * @param name
-   *          Output file name (either absolute or relative to this environment).
+   *          Output name (either absolute or relative to this environment).
    */
   Path outputPath(String name);
 
   /**
-   * Resolves the absolute name of the given file.
+   * Resolves the absolute name of a file.
    *
    * @return {@code null}, if {@code file} is outside the test space.
    */
@@ -146,7 +146,7 @@ public interface TestEnvironment {
   }
 
   /**
-   * Gets the absolute path of the given test resource on target side (no matter whether it exists).
+   * Gets the absolute path of a test resource on target side (no matter whether it exists).
    *
    * @param name
    *          Resource name (either absolute or relative to this environment).
@@ -155,7 +155,7 @@ public interface TestEnvironment {
   Path resourcePath(String name);
 
   /**
-   * Gets the absolute path of the given test resource on source side (no matter whether it exists).
+   * Gets the absolute path of a test resource on source side (no matter whether it exists).
    *
    * @param name
    *          Resource name (either absolute or relative to this environment).
@@ -164,8 +164,7 @@ public interface TestEnvironment {
   Path resourceSrcPath(String name);
 
   /**
-   * Gets the absolute path of the given type on source side (MUST exist either in test or main
-   * sources).
+   * Gets the absolute path of a type on source side (MUST exist either in test or main sources).
    *
    * @param type
    *          Type.

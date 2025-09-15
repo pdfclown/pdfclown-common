@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
  * @implSpec In order to leverage the double-dispatch mechanism, implementers are expected to invoke
  *           the methods of the visitor associated to a type hierarchy from the
  *           {@link #accept(Visitor, Object)} method implemented by each type belonging to that
- *           hierarchy, e.g.:<pre class="lang-java"><code>
+ *           hierarchy, for example:<pre class="lang-java"><code>
  * public class MyObject implements Visitable&lt;MyVisitor&lt;?,?&gt;&gt; {
  *   . . .
  *   &#64;Override

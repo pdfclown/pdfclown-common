@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 public final class Patterns {
   /**
-   * Converts the given (filesystem-aware) glob to regex.
+   * Converts the (filesystem-aware) glob to regex.
    *
    * @param glob
    *          Glob pattern interpreted according to the classic
@@ -38,7 +38,7 @@ public final class Patterns {
   }
 
   /**
-   * Tries to match the given pattern.
+   * Tries to match the pattern.
    */
   public static Optional<Matcher> match(Pattern pattern, CharSequence input) {
     Matcher ret = pattern.matcher(input);
@@ -46,14 +46,14 @@ public final class Patterns {
   }
 
   /**
-   * Tries to match the given regular expression.
+   * Tries to match the regular expression.
    */
   public static Optional<Matcher> match(String regex, CharSequence input) {
     return match(Pattern.compile(regex), input);
   }
 
   /**
-   * Converts the given wildcard pattern to regex.
+   * Converts the wildcard pattern to regex.
    *
    * @param pattern
    *          Wildcard pattern supporting

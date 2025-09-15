@@ -294,8 +294,8 @@ public final class Strings {
    * </p>
    * <p>
    * NOTE: Even if a string passes this test, it may still generate an exception when parsed by
-   * {@link Integer#parseInt(String)} or {@link Long#parseLong(String)} (e.g., if the value is
-   * outside the range for int or long, respectively).
+   * {@link Integer#parseInt(String)} or {@link Long#parseLong(String)} (for example, if the value
+   * is outside the range for int or long, respectively).
    * </p>
    * <pre>
    * isNumeric(null,*,*)       = false
@@ -314,7 +314,7 @@ public final class Strings {
    * isNumeric("+123",*,false) = false</pre>
    *
    * @param integer
-   *          Whether {@code s} should be integer (i.e., without decimal point).
+   *          Whether {@code s} should be integer (that is, without decimal point).
    * @param signable
    *          Whether {@code s} can contain a leading sign.
    * @implNote Contrary to the original implementation
@@ -385,7 +385,7 @@ public final class Strings {
   }
 
   /**
-   * Gets the end of the line at the given position.
+   * Gets the end of the line at the position.
    */
   public static int lineEnd(String s, int index) {
     var ret = indexOf(s, Strings::isEOL, index);
@@ -393,7 +393,7 @@ public final class Strings {
   }
 
   /**
-   * Gets the start of the line at the given position.
+   * Gets the start of the line at the position.
    */
   public static int lineStart(String s, int index) {
     return lastIndexOf(s, Strings::isEOL, index) + 1;
@@ -494,7 +494,8 @@ public final class Strings {
    * Ensures leading characters are lower-case.
    * <p>
    * Contrary to {@link StringUtils#uncapitalize(String)}, this method lowers all consecutive
-   * leading upper-case characters except the last one if followed by a lower-case letter — e.g.:
+   * leading upper-case characters except the last one if followed by a lower-case letter — for
+   * example:
    * </p>
    * <ul>
    * <li>{@code "Capitalized"} to {@code "capitalized"}</li>
@@ -512,8 +513,8 @@ public final class Strings {
       /*-
        * Not upper-case letter?
        *
-       * E.g., "UTF8Test" --> "utf8Test"
-       *           ^
+       * For example, "UTF8Test" --> "utf8Test"
+       *                  ^
        */
       if (!isUpperCase(cc[i])) {
         // Unchanged?
@@ -527,8 +528,8 @@ public final class Strings {
       /*-
        * Non-initial upper-case letter followed by lower-case letter?
        *
-       * E.g., "IOException" --> "ioException"
-       *          ^
+       * For example, "IOException" --> "ioException"
+       *                 ^
        */
       else if (i > 0 && i < limit && isLowerCase(cc[i + 1])) {
         break;

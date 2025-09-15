@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
  * value, ensuring a match on next requests.
  * </p>
  * <p>
- * Useful, e.g., in case of maps keyed hierarchically, like {@link Class}: adding an entry for a
- * certain class, all its subclasses will match the same entry value — an ordinary map would match
- * only the class explicitly associated to the entry.
+ * Useful, for example, in case of maps keyed hierarchically, like {@link Class}: adding an entry
+ * for a certain class, all its subclasses will match the same entry value — an ordinary map would
+ * match only the class explicitly associated to the entry.
  * </p>
  *
  * @author Stefano Chizzolini

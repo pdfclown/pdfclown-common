@@ -31,8 +31,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class Executions {
   /**
-   * Synchronously executes the given tasks in parallel, canceling all of them in case an exception
-   * occurs.
+   * Synchronously executes tasks in parallel, canceling all of them in case an exception occurs.
    *
    * @param tasks
    *          Operations to execute.
@@ -59,7 +58,7 @@ public final class Executions {
   }
 
   /**
-   * Executes the given task, returning its output from {@link System#err stderr}.
+   * Executes a task, returning its output from {@link System#err stderr}.
    * <p>
    * <span class="important">IMPORTANT: If {@code task} fails, its exception is propagated to the
    * calling stack, preventing this method from returning the generated output. If you need to get
@@ -81,7 +80,7 @@ public final class Executions {
   }
 
   /**
-   * Executes the given task and returns its output from {@link System#out stdout}.
+   * Executes a task and returns its output from {@link System#out stdout}.
    * <p>
    * <span class="important">IMPORTANT: If {@code task} fails, its exception is propagated to the
    * calling stack, preventing this method from returning the generated output. If you need to get
@@ -103,8 +102,8 @@ public final class Executions {
   }
 
   /**
-   * Executes the given task and returns its output from the standard streams (both
-   * {@link System#out stdout} and {@link System#err stderr}).
+   * Executes a task and returns its output from the standard streams (both {@link System#out
+   * stdout} and {@link System#err stderr}).
    * <p>
    * <span class="important">IMPORTANT: If {@code task} fails, its exception is propagated to the
    * calling stack, preventing this method from returning the generated output. If you need to get
@@ -133,7 +132,7 @@ public final class Executions {
   // SourceName: nl.talsmasoftware.umldoclet.issues.Issue267Test.interceptSystemOut
   // Changes: adaptation to pdfClown
   /**
-   * Executes the given task, intercepting the output from the standard streams.
+   * Executes a task, intercepting the output from the standard streams.
    *
    * @param task
    *          Operation to execute.

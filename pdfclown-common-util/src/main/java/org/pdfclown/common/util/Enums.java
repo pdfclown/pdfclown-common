@@ -45,7 +45,7 @@ public final class Enums {
   private static final Map<Class<?>, Map<?, ?>> values = new HashMap<>();
 
   /**
-   * Gets the constant matching the given code.
+   * Gets the constant matching the code.
    *
    * @param <E>
    *          Constant type.
@@ -69,7 +69,7 @@ public final class Enums {
   }
 
   /**
-   * Gets the constant matching the given code.
+   * Gets the constant matching the code.
    *
    * @param <E>
    *          Constant type.
@@ -88,7 +88,7 @@ public final class Enums {
   }
 
   /**
-   * Gets the constant associated to the given key.
+   * Gets the constant associated to the key.
    *
    * @param <E>
    *          Constant type.
@@ -108,7 +108,7 @@ public final class Enums {
   }
 
   /**
-   * Gets the constant associated to the given fully qualified name.
+   * Gets the constant associated to the fully-qualified name.
    *
    * @param <E>
    *          Constant type.
@@ -150,15 +150,15 @@ public final class Enums {
   }
 
   /**
-   * Maps the given enumeration type to its default key definition ({@link Enum#name() name} for
+   * Maps the enumeration type to its default key definition ({@link Enum#name() name} for
    * {@link Enum}, {@link XtEnum#getCode() code} for {@link XtEnum}).
    * <p>
-   * {@link Xnum}-derived types are mapped to their closest enumeration (i.e., augmented enumeration
-   * only in case of interfaces, otherwise their own enumeration). Eg, let's say that {@code MyXnum}
-   * is an interface extending {@code Xnum}, whilst {@code MyEnum1} and {@code MyEnum2} are
-   * enumerations implementing {@code MyXnum}: if {@code type} is {@code MyXnum}, its augmented
-   * enumeration is retrieved as-is; on the contrary, if {@code type} is {@code MyEnum1} or
-   * {@code MyEnum2}, only their respective enumeration is retrieved.
+   * {@link Xnum}-derived types are mapped to their closest enumeration (that is, augmented
+   * enumeration only in case of interfaces, otherwise their own enumeration). For example, let's
+   * say that {@code MyXnum} is an interface extending {@code Xnum}, whilst {@code MyEnum1} and
+   * {@code MyEnum2} are enumerations implementing {@code MyXnum}: if {@code type} is
+   * {@code MyXnum}, its augmented enumeration is retrieved as-is; on the contrary, if {@code type}
+   * is {@code MyEnum1} or {@code MyEnum2}, only their respective enumeration is retrieved.
    * </p>
    * <p>
    * Because of caching, this method is idempotent.
@@ -215,7 +215,7 @@ public final class Enums {
   }
 
   /**
-   * Maps the given enumeration type to a custom key definition.
+   * Maps the enumeration type to a custom key definition.
    * <p>
    * NOTE: The returned map is NEVER cached; <i>if your key definition is default, call
    * {@link #map(Class)} instead</i>, so you can leverage caching.

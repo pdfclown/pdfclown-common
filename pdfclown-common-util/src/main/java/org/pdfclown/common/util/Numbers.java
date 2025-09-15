@@ -35,7 +35,7 @@ public final class Numbers {
   // SourceName: com.openhtmltopdf.layout.CounterLanguage.toLatin
   // Changes: adaptation to pdfClown
   /**
-   * Converts the given number to latin-alphabet numeral.
+   * Converts the number to latin-alphabet numeral.
    *
    * @return (A to Z for the first 26 pages, AA to ZZ for the next 26, etc.)
    */
@@ -59,7 +59,7 @@ public final class Numbers {
   // SourceName: com.openhtmltopdf.layout.CounterLanguage.toRoman
   // Changes: adaptation to pdfClown
   /**
-   * Converts the given number to roman numeral.
+   * Converts the number to roman numeral.
    *
    * @return (I, II, III, IV, V, VI, ..., IX, X, etc.)
    */
@@ -78,7 +78,7 @@ public final class Numbers {
   // SPDX-SnippetEnd
 
   /**
-   * Converts the value to the given type.
+   * Converts the value to the type.
    */
   @SuppressWarnings("unchecked")
   public static <T extends Number> T to(Number value, Class<T> type) {

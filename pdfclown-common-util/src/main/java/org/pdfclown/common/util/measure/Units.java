@@ -216,14 +216,14 @@ public class Units extends AbstractSystemOfUnits {
   /**
    * <a href="https://en.wikipedia.org/wiki/Hectare#Are">Are</a>
    * (<a href="https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI">SI-accepted</a> unit,
-   * 10^2), i.e. square decametre (dam²).
+   * 10^2), that is square decametre (dam²).
    */
   public static final XtUnit<Area> ARE = addUnit(HECTO(SQUARE_METRE),
       "Are", "a");
   /**
    * <a href="https://en.wikipedia.org/wiki/Hectare">Hectare</a>
    * (<a href="https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI">SI-accepted</a> unit,
-   * 10^4), i.e. square hectometre (hm²).
+   * 10^4), that is square hectometre (hm²).
    */
   public static final XtUnit<Area> HECTARE = addUnit(HECTO(ARE),
       "Hectare", "ha");
@@ -408,7 +408,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Gets the dimension corresponding to the given quantity type.
+   * Gets the dimension corresponding to the quantity type.
    *
    * @return {@code null}, if {@code quantityType} isn't mapped.
    */
@@ -419,7 +419,7 @@ public class Units extends AbstractSystemOfUnits {
   /**
    * Gets the <a href="https://en.wikipedia.org/wiki/Conversion_of_units">conversion factor</a>
    * against the {@linkplain Unit#getSystemUnit() system unit}, that is how many system units
-   * correspond to the given unit.
+   * correspond to the unit.
    */
   public static <Q extends Quantity<Q>> double getFactor(Unit<Q> unit) {
     return getFactor(unit, unit.getSystemUnit());
@@ -427,7 +427,7 @@ public class Units extends AbstractSystemOfUnits {
 
   /**
    * Gets the <a href="https://en.wikipedia.org/wiki/Conversion_of_units">conversion factor</a>
-   * against the target unit, that is how many target units correspond to the given unit.
+   * against the target unit, that is how many target units correspond to the unit.
    */
   public static <Q extends Quantity<Q>> double getFactor(Unit<Q> unit, Unit<Q> target) {
     UnitConverter converter = unit.getConverterTo(target);
@@ -477,7 +477,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Gets the quantity type corresponding to the given unit.
+   * Gets the quantity type corresponding to the unit.
    * <p>
    * All {@link javax.measure.quantity standard quantity types} are supported.
    * </p>
@@ -497,7 +497,7 @@ public class Units extends AbstractSystemOfUnits {
   /**
    * Adds the
    * <a href="https://en.wikipedia.org/wiki/Unit_of_measurement#Base_and_derived_units">base
-   * unit</a> of the given quantity type.
+   * unit</a> of the quantity type.
    *
    * @param unitSystem
    *          Target unit system.
@@ -519,8 +519,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Imports in the given system a unit from another {@linkplain tech.units.indriya indriya-based}
-   * system.
+   * Imports in the system a unit from another {@linkplain tech.units.indriya indriya-based} system.
    *
    * @param unitSystem
    *          Target unit system.
@@ -538,7 +537,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Adds a new unit to the given system.
+   * Adds a new unit to the system.
    *
    * @param unitSystem
    *          Target unit system.
@@ -556,7 +555,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Adds a new unit to the given system.
+   * Adds a new unit to the system.
    *
    * @param unitSystem
    *          Target unit system.
@@ -578,7 +577,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Defines the unit as default for the given quantity type in the given system.
+   * Defines the unit as default for the quantity type in the system.
    *
    * @param quantityType
    *          Quantity type {@code unit} has to be associated to.
@@ -626,7 +625,7 @@ public class Units extends AbstractSystemOfUnits {
   /**
    * Adds the
    * <a href="https://en.wikipedia.org/wiki/Unit_of_measurement#Base_and_derived_units">base
-   * unit</a> of the given quantity type.
+   * unit</a> of the quantity type.
    *
    * @param quantityType
    *          Quantity type {@code unit} has to be associated to.
@@ -690,7 +689,7 @@ public class Units extends AbstractSystemOfUnits {
   }
 
   /**
-   * Defines the unit as default for the given quantity type.
+   * Defines the unit as default for the quantity type.
    *
    * @param quantityType
    *          Quantity type {@code unit} has to be associated to.

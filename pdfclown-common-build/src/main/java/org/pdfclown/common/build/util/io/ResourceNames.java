@@ -36,7 +36,7 @@ import org.pdfclown.common.build.internal.util_.io.Files;
  */
 public final class ResourceNames {
   /**
-   * Gets the absolute name of the given resource, resolved according to the given base directory.
+   * Gets the absolute name of a resource, resolved according to the base directory.
    *
    * @param filePath
    *          Resource path.
@@ -64,7 +64,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the absolute name of the given resource, resolved according to the given type.
+   * Gets the absolute name of a resource, resolved according to the base type.
    *
    * @param name
    *          Resource name (either relative or absolute; slash-separated).
@@ -76,7 +76,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the absolute name of the given resource, resolved according to the given package.
+   * Gets the absolute name of a resource, resolved according to the base package.
    *
    * @param name
    *          Resource name (either relative or absolute; slash-separated).
@@ -88,9 +88,9 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the base name (i.e., the filename without extension) of the given resource name.
+   * Gets the base name (that is, the filename without extension) of a resource name.
    * <p>
-   * Eg, if {@code name} is "/my/res/html/obj.html", returns "obj".
+   * For example, if {@code name} is "/my/res/html/obj.html", returns "obj".
    * </p>
    *
    * @param name
@@ -102,7 +102,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the fully-qualified name of the given resource, resolved according to the given type.
+   * Gets the fully-qualified name of a resource, resolved according to the base type.
    *
    * @param name
    *          Resource name (either relative or absolute; slash-separated).
@@ -114,7 +114,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the fully-qualified name of the given resource, resolved according to the given package.
+   * Gets the fully-qualified name of a resource, resolved according to the base package.
    *
    * @param name
    *          Resource name (either relative or absolute; slash-separated).
@@ -128,16 +128,16 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets whether the given name is absolute.
+   * Gets whether a name is absolute.
    */
   public static boolean isAbsolute(String name) {
     return name.startsWith(S + SLASH);
   }
 
   /**
-   * Qualifies the given simple resource name prepending the simple name of the given base object.
+   * Qualifies a simple resource name prepending the simple name of the base type.
    * <p>
-   * Eg, if {@code simpleName} is {@code "MyResource"} and {@code baseType}'s FQN is
+   * For example, if {@code simpleName} is {@code "MyResource"} and {@code baseType}'s FQN is
    * {@code "io.mydomain.myproject.MyOuterClass$MyInnerClass"}, it returns
    * {@code "MyOuterClass.MyInnerClass_MyResource"}.
    * </p>
@@ -157,9 +157,9 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the name corresponding to the concatenation of the given parts, normalized.
+   * Gets the name corresponding to the concatenation of the parts, normalized.
    *
-   * @return Empty (i.e., relative root), if {@code parts} is empty.
+   * @return Empty (that is, relative root), if {@code parts} is empty.
    */
   public static String name(String... parts) {
     switch (parts.length) {
@@ -204,7 +204,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Normalizes the given name.
+   * Normalizes a name.
    * <p>
    * Transformations applied to {@code name}:
    * </p>
@@ -218,8 +218,8 @@ public final class ResourceNames {
     StringBuilder b = null;
     int lastEnd = 0;
     /*
-     * Whether current character is on separator boundary (i.e., the previous character was a slash,
-     * so no contiguous separator is acceptable).
+     * Whether current character is on separator boundary (that is, the previous character was a
+     * slash, so no contiguous separator is acceptable).
      */
     boolean separated = false;
     for (int i = 0, limit = name.length() - 1; i <= limit; i++) {
@@ -259,9 +259,9 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the parent of the given resource name, normalized.
+   * Gets the parent of a resource name, normalized.
    * <p>
-   * Eg:
+   * For example:
    * </p>
    * <ul>
    * <li>if {@code name} is {@code "/my/res/html/obj.html"}, returns {@code "/my/res/html"}</li>
@@ -300,10 +300,10 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the absolute path of the given resource.
+   * Gets the absolute path of a resource.
    * <p>
    * {@code name} is resolved according to {@code baseDir}, no matter whether it is relative or
-   * absolute. Eg, assuming {@code baseDir} is
+   * absolute. For example, assuming {@code baseDir} is
    * {@code "/home/myusr/Projects/myproj/src/main/resources"}:
    * </p>
    * <ul>
@@ -323,10 +323,10 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the absolute path of the given resource.
+   * Gets the absolute path of a resource.
    * <p>
    * {@code name} is resolved to FQN based on {@code baseType}, then resolved according to
-   * {@code baseDir}. Eg, assuming {@code baseType} is {@code org.mysoft.myapp.Obj} and
+   * {@code baseDir}. For example, assuming {@code baseType} is {@code org.mysoft.myapp.Obj} and
    * {@code baseDir} is {@code "/home/myusr/Projects/myproj/src/main/resources"}:
    * </p>
    * <ul>
@@ -348,10 +348,10 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the absolute path of the given resource.
+   * Gets the absolute path of a resource.
    * <p>
    * {@code name} is resolved to FQN based on {@code basePackage}, then resolved according to
-   * {@code baseDir}. Eg, assuming {@code basePackage} is {@code org.mysoft.myapp} and
+   * {@code baseDir}. For example, assuming {@code basePackage} is {@code org.mysoft.myapp} and
    * {@code baseDir} is {@code "/home/myusr/Projects/myproj/src/main/resources"}:
    * </p>
    * <ul>
@@ -377,9 +377,9 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the filename of the given resource name.
+   * Gets the filename of a resource name.
    * <p>
-   * Eg, if {@code name} is "/my/res/html/obj.html", returns "obj.html".
+   * For example, if {@code name} is "/my/res/html/obj.html", returns "obj.html".
    * </p>
    *
    * @param name

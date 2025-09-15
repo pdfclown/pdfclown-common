@@ -35,7 +35,7 @@ public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
   }
 
   /**
-   * Returns whether this collection contains any of the specified elements.
+   * Returns whether this collection contains any of the elements.
    */
   @SuppressWarnings("unchecked")
   default boolean containsAny(E... c) {
@@ -47,14 +47,14 @@ public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
   }
 
   /**
-   * Returns whether this collection contains any of the specified elements.
+   * Returns whether this collection contains any of the elements.
    */
   default boolean containsAny(E e1, E e2) {
     return contains(e1) || contains(e2);
   }
 
   /**
-   * Returns whether this collection contains any of the specified elements.
+   * Returns whether this collection contains any of the elements.
    */
   default boolean containsAny(E e1, E e2, E e3) {
     return contains(e1) || contains(e2) || contains(e3);

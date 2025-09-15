@@ -87,7 +87,7 @@ public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
   }
 
   /**
-   * Converts the value from the given unit.
+   * Converts the value from the unit.
    *
    * @param source
    *          Source unit.
@@ -170,7 +170,7 @@ public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
   }
 
   /**
-   * Converts the value to the given unit.
+   * Converts the value to the unit.
    *
    * @param target
    *          Target unit.

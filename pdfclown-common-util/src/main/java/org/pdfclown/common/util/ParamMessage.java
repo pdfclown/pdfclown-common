@@ -47,7 +47,7 @@ public class ParamMessage {
     private boolean quiet = true;
 
     /**
-     * Formats the given parameterized string.
+     * Formats the parameterized string.
      * <p>
      * NOTE: If {@link #isQuiet() quiet}, cardinality mismatches between arguments and placeholders
      * are ignored and logged as warnings; otherwise, an exception is thrown.
@@ -63,7 +63,7 @@ public class ParamMessage {
     }
 
     /**
-     * Formats the given parameterized string.
+     * Formats the parameterized string.
      * <p>
      * NOTE: If {@link #isQuiet() quiet}, cardinality mismatches between arguments and placeholders
      * are ignored and logged as warnings; otherwise, an exception is thrown.
@@ -117,7 +117,7 @@ public class ParamMessage {
     }
 
     /**
-     * Formats the given argument.
+     * Formats the argument.
      */
     protected String formatArg(@Nullable Object arg) {
       /*
@@ -147,7 +147,7 @@ public class ParamMessage {
   static final Formatter FORMATTER = new Formatter();
 
   /**
-   * Formats the given parameterized string with the default formatter.
+   * Formats the parameterized string with the default formatter.
    * <p>
    * NOTE: For leniency, cardinality mismatches between arguments and placeholders are ignored and
    * logged as warnings.
@@ -163,7 +163,7 @@ public class ParamMessage {
   }
 
   /**
-   * Resolves the given parameterized message with the given formatter.
+   * Resolves the parameterized message with the formatter.
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder). It is
@@ -184,7 +184,7 @@ public class ParamMessage {
   }
 
   /**
-   * Resolves the given parameterized message with the default formatter.
+   * Resolves the parameterized message with the default formatter.
    * <p>
    * NOTE: For leniency, cardinality mismatches between arguments and placeholders are ignored and
    * logged as warnings.

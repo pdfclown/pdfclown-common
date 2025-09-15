@@ -28,8 +28,8 @@ import org.jspecify.annotations.Nullable;
  * "https://checkerframework.org/api/org/checkerframework/checker/nullness/qual/MonotonicNonNull.html">MonotonicNonNull</a>.
  * </p>
  * <p>
- * Useful for field initialization outside the constructor (i.e., subroutines called by the
- * constructor, mandatory subclass delegation or automated initialization) — e.g. [*]:
+ * Useful for field initialization outside the constructor (that is, subroutines called by the
+ * constructor, mandatory subclass delegation or automated initialization) — for example [*]:
  * </p>
  * <pre class="lang-java"><code>
  * &#64;NullMarked

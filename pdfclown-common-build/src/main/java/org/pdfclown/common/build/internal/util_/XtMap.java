@@ -28,7 +28,7 @@ import org.jspecify.annotations.Nullable;
  */
 public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   /**
-   * Gets whether any of the given keys exists.
+   * Gets whether any of the keys exists.
    *
    * @param keys
    *          Keys to evaluate.
@@ -39,7 +39,7 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   }
 
   /**
-   * Gets whether any of the given keys exists.
+   * Gets whether any of the keys exists.
    *
    * @param key1
    *          First key to evaluate.
@@ -51,7 +51,7 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   }
 
   /**
-   * Gets whether any of the given keys exists.
+   * Gets whether any of the keys exists.
    *
    * @param key1
    *          First key to evaluate.
@@ -65,7 +65,7 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   }
 
   /**
-   * Gets the value corresponding to one of the given keys. Keys are evaluated sequentially until a
+   * Gets the value corresponding to one of the keys. Keys are evaluated sequentially until a
    * matching entry is found.
    *
    * @param keys
@@ -83,14 +83,14 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   }
 
   /**
-   * Gets the value corresponding to one of the given keys. Keys are evaluated sequentially until a
+   * Gets the value corresponding to one of the keys. Keys are evaluated sequentially until a
    * matching entry is found.
    *
    * @param key1
    *          First key to evaluate.
    * @param key2
    *          Second key to evaluate.
-   * @return {@code null}, if no match to the given keys was found.
+   * @return {@code null}, if no match to the keys was found.
    */
   default @Nullable V getAny(K key1, K key2) {
     V value = get(key1);
@@ -101,7 +101,7 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   }
 
   /**
-   * Gets the value corresponding to one of the given keys. Keys are evaluated sequentially until a
+   * Gets the value corresponding to one of the keys. Keys are evaluated sequentially until a
    * matching entry is found.
    *
    * @param key1
@@ -110,7 +110,7 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
    *          Second key to evaluate.
    * @param key3
    *          Third key to evaluate.
-   * @return {@code null}, if no match to the given keys was found.
+   * @return {@code null}, if no match to the keys was found.
    */
   default @Nullable V getAny(K key1, K key2, K key3) {
     V value = get(key1);
@@ -125,7 +125,7 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   }
 
   /**
-   * Gets the key associated to the given value.
+   * Gets the key associated to the value.
    *
    * @implNote The default implementation doesn't rely on bidirectional maps, to say that the only
    *           abstract way to retrieve a key from a value is to iterate the whole map (O(n)
@@ -141,7 +141,7 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   }
 
   @Override
-  default Iterator<@NonNull Entry<K, V>> iterator() {
+  default Iterator<Map.@NonNull Entry<K, V>> iterator() {
     return entrySet().iterator();
   }
 

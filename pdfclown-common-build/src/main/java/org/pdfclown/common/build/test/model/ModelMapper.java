@@ -90,17 +90,17 @@ public class ModelMapper<T> {
     }
 
     /**
-     * Gets the all-but-these-properties selector for the given type.
+     * Gets the all-but-these-properties selector for the type.
      */
     public static PropertySelector excludeProperties(Class<?> type, String... properties) {
       return excludeProperties(type, 0, properties);
     }
 
     /**
-     * Gets the all-but-these-properties selector for the given type.
+     * Gets the all-but-these-properties selector for the type.
      *
      * @param level
-     *          Exclusion level (i.e., selection is applied from this level).
+     *          Exclusion level (that is, selection is applied from this level).
      */
     public static PropertySelector excludeProperties(Class<?> type, int level,
         String... properties) {
@@ -108,17 +108,17 @@ public class ModelMapper<T> {
     }
 
     /**
-     * Gets the nothing-but-these-properties selector for the given type.
+     * Gets the nothing-but-these-properties selector for the type.
      */
     public static PropertySelector includeProperties(Class<?> type, String... properties) {
       return includeProperties(type, Integer.MAX_VALUE, properties);
     }
 
     /**
-     * Gets the nothing-but-these-properties selector for the given type.
+     * Gets the nothing-but-these-properties selector for the type.
      *
      * @param level
-     *          Inclusion level (i.e., selection is applied up to this level).
+     *          Inclusion level (that is, selection is applied up to this level).
      */
     public static PropertySelector includeProperties(Class<?> type, int level,
         String... properties) {
@@ -197,7 +197,7 @@ public class ModelMapper<T> {
     }
 
     /**
-     * Gets whether the given property at the given level is selected.
+     * Gets whether a property at a level is selected.
      */
     public boolean isSelected(String propertyName, int level) {
       /*
@@ -212,7 +212,7 @@ public class ModelMapper<T> {
     }
 
     /**
-     * Merges the given selector into this one.
+     * Merges a selector into this one.
      */
     public void merge(PropertySelector other) {
       if (!mutable)
@@ -376,7 +376,7 @@ public class ModelMapper<T> {
   }
 
   /**
-   * Maps the given object to its JSON counterpart.
+   * Maps an object to its JSON counterpart.
    *
    * @param obj
    *          Object to map.
@@ -389,7 +389,7 @@ public class ModelMapper<T> {
   }
 
   /**
-   * Maps the given object to its JSON counterpart.
+   * Maps an object to its JSON counterpart.
    *
    * @param obj
    *          Object to map.
@@ -405,7 +405,7 @@ public class ModelMapper<T> {
   }
 
   /**
-   * Maps the given objects to their JSON counterparts.
+   * Maps objects to their JSON counterparts.
    *
    * @param objs
    *          Objects to map.
@@ -418,7 +418,7 @@ public class ModelMapper<T> {
   }
 
   /**
-   * Maps the given objects to their JSON counterparts.
+   * Maps objects to their JSON counterparts.
    *
    * @param objs
    *          Objects to map.
@@ -439,13 +439,13 @@ public class ModelMapper<T> {
   }
 
   /**
-   * Maps the given object to its JSON counterpart.
+   * Maps an object to its JSON counterpart.
    * <p>
    * {@code obj} is added to {@code visitedObjs} to prevent duplicated mappings and infinite loops
    * on circular references: <span class="important">it is caller's responsibility to check
    * {@code visitedObjs} <i>before</i> calling this method in order to fall back to an alternate,
-   * reference-like representation</span> (e.g., as a PDF reference (say, "14 0 R") instead of its
-   * referenced PDF object) in case {@code obj} has already been visited.
+   * reference-like representation</span> (for example, as a PDF reference (say, "14 0 R") instead
+   * of its referenced PDF object) in case {@code obj} has already been visited.
    * </p>
    *
    * @param obj
@@ -568,7 +568,7 @@ public class ModelMapper<T> {
   }
 
   /**
-   * Maps custom properties which don't belong to the actual interface of the given object.
+   * Maps custom properties which don't belong to the actual interface of the object.
    * <p>
    * Such properties are placed before all the other properties.
    * </p>
@@ -585,7 +585,7 @@ public class ModelMapper<T> {
   }
 
   /**
-   * Maps the given value to its JSON counterpart.
+   * Maps a value to its JSON counterpart.
    *
    * @param value
    *          Value to map.

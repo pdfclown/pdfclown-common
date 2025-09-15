@@ -70,7 +70,7 @@ public final class Files {
   public static final String PATH_SUPER = S + DOT + DOT;
 
   /**
-   * Gets the age of the given file.
+   * Gets the age of the file.
    */
   public static Duration age(Path file) {
     return Duration.ofMillis(System.currentTimeMillis() - file.toFile().lastModified());
@@ -78,7 +78,7 @@ public final class Files {
 
   /**
    * Gets the base name (that is, the filename without {@linkplain #extension(Path) extension}) of
-   * the given path.
+   * the path.
    *
    * @see #simpleBaseName(Path)
    */
@@ -88,7 +88,7 @@ public final class Files {
 
   /**
    * Gets the base name (that is, the filename without {@linkplain #extension(String) extension}) of
-   * the given path.
+   * the path.
    *
    * @see #simpleBaseName(String)
    */
@@ -97,7 +97,7 @@ public final class Files {
   }
 
   /**
-   * Gets the simple extension of the given path.
+   * Gets the simple extension of the path.
    * <p>
    * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot.
    * </p>
@@ -110,7 +110,7 @@ public final class Files {
   }
 
   /**
-   * Gets the simple extension of the given path.
+   * Gets the simple extension of the path.
    * <p>
    * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot.
    * </p>
@@ -124,25 +124,25 @@ public final class Files {
   }
 
   /**
-   * Gets the last part of the given path.
+   * Gets the last part of the path.
    */
   public static String filename(Path path) {
     return path.getFileName().toString();
   }
 
   /**
-   * Gets the last part of the given path.
+   * Gets the last part of the path.
    */
   public static String filename(String path) {
     return FilenameUtils.getName(path);
   }
 
   /**
-   * Gets the full extension of the given path.
+   * Gets the full extension of the path.
    * <p>
    * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (e.g., {@code ".tar.gz"}) are recognized, whilst version codes
-   * are ignored (e.g., {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
+   * therefore, composite extensions (for example, {@code ".tar.gz"}) are recognized, whilst version
+   * codes are ignored (for example, {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
    * {@code ".8.0.jar"}).
    * </p>
    *
@@ -154,11 +154,11 @@ public final class Files {
   }
 
   /**
-   * Gets the full extension of the given path.
+   * Gets the full extension of the path.
    * <p>
    * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (e.g., {@code ".tar.gz"}) are recognized, whilst version codes
-   * are ignored (e.g., {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
+   * therefore, composite extensions (for example, {@code ".tar.gz"}) are recognized, whilst version
+   * codes are ignored (for example, {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
    * {@code ".8.0.jar"}).
    * </p>
    *
@@ -171,8 +171,7 @@ public final class Files {
   }
 
   /**
-   * Gets whether the extension of the given path corresponds to the specified one
-   * (case-insensitive).
+   * Gets whether the extension of the path corresponds to the given one (case-insensitive).
    * <p>
    * NOTE: Contrary to {@link FilenameUtils#isExtension(String, String)}, the extension is prefixed
    * by dot and the match is case-insensitive.
@@ -185,8 +184,7 @@ public final class Files {
   }
 
   /**
-   * Gets whether the extension of the given path corresponds to the specified one
-   * (case-insensitive).
+   * Gets whether the extension of the path corresponds to the given one (case-insensitive).
    * <p>
    * NOTE: Contrary to {@link FilenameUtils#isExtension(String, String)}, the extension is prefixed
    * by dot and the match is case-insensitive.
@@ -199,7 +197,7 @@ public final class Files {
   }
 
   /**
-   * Gets whether the given URI belongs to the {@code file} scheme.
+   * Gets whether the URI belongs to the {@code file} scheme.
    * <p>
    * NOTE: Undefined scheme is assimilated to the {@code file} scheme.
    * </p>
@@ -212,8 +210,7 @@ public final class Files {
   }
 
   /**
-   * Gets whether the full extension of the given path corresponds to the specified one
-   * (case-insensitive).
+   * Gets whether the full extension of the path corresponds to the given one (case-insensitive).
    *
    * @see #isExtension(Path, String)
    */
@@ -222,8 +219,7 @@ public final class Files {
   }
 
   /**
-   * Gets whether the full extension of the given path corresponds to the specified one
-   * (case-insensitive).
+   * Gets whether the full extension of the path corresponds to the given one (case-insensitive).
    *
    * @see #isExtension(String, String)
    */
@@ -232,21 +228,21 @@ public final class Files {
   }
 
   /**
-   * Normalizes the given path to its absolute form.
+   * Normalizes the path to its absolute form.
    */
   public static Path normal(Path path) {
     return path.toAbsolutePath().normalize();
   }
 
   /**
-   * Converts the given URI to the corresponding path.
+   * Converts the URI to the corresponding path.
    * <p>
    * Contrary to {@link Path#of(URI)}, this function supports also relative URIs, remedying the
    * limitation of the standard API which rejects URIs missing their scheme.
    * </p>
    *
    * @throws IllegalArgumentException
-   *           if {@code uri} does not represent a file (i.e., its scheme is neither {@code file}
+   *           if {@code uri} does not represent a file (that is, its scheme is neither {@code file}
    *           nor undefined).
    */
   public static Path path(URI uri) {
@@ -254,14 +250,14 @@ public final class Files {
   }
 
   /**
-   * Converts the given URL to the corresponding path.
+   * Converts the URL to the corresponding path.
    * <p>
    * Contrary to {@link Path#of(URI)}, this function supports also relative URLs, remedying the
    * limitation of the standard API which rejects URIs missing their scheme.
    * </p>
    *
    * @throws IllegalArgumentException
-   *           if {@code uri} does not represent a file (i.e., its scheme is neither {@code file}
+   *           if {@code uri} does not represent a file (that is, its scheme is neither {@code file}
    *           nor undefined).
    */
   public static Path path(URL url) {
@@ -273,7 +269,7 @@ public final class Files {
   }
 
   /**
-   * Gets the relative path from the given file to the other one.
+   * Gets the relative path from the file to the other one.
    *
    * @throws IllegalArgumentException
    *           if {@code from} does not exist.
@@ -289,7 +285,7 @@ public final class Files {
   }
 
   /**
-   * Cleans the given directory, or creates it if not existing.
+   * Cleans the directory, or creates it if not existing.
    *
    * @return {@code dir}
    */
@@ -308,7 +304,7 @@ public final class Files {
 
   /**
    * Gets the simple base name (that is, the filename without {@linkplain #fullExtension(Path) full
-   * extension}) of the given path.
+   * extension}) of the path.
    *
    * @see #baseName(Path)
    */
@@ -318,7 +314,7 @@ public final class Files {
 
   /**
    * Gets the simple base name (that is, the filename without {@linkplain #fullExtension(String)
-   * full extension}) of the given path.
+   * full extension}) of the path.
    *
    * @see #baseName(String)
    */
@@ -328,7 +324,7 @@ public final class Files {
   }
 
   /**
-   * Gets the size of the given file.
+   * Gets the size of the file.
    *
    * @return The length (bytes) of the file, or {@code 0} if the file does not exist.
    */
@@ -337,14 +333,14 @@ public final class Files {
   }
 
   /**
-   * Strips the given path of its {@linkplain #extension(Path) extension}.
+   * Strips the path of its {@linkplain #extension(Path) extension}.
    */
   public static String stripExtension(Path path) {
     return stripExtension(path.toString());
   }
 
   /**
-   * Strips the given path of its {@linkplain #extension(String) extension}.
+   * Strips the path of its {@linkplain #extension(String) extension}.
    */
   public static String stripExtension(String path) {
     int extensionPos = FilenameUtils.indexOfExtension(path);
@@ -352,14 +348,14 @@ public final class Files {
   }
 
   /**
-   * Strips the given path of its {@linkplain #fullExtension(Path) full extension}.
+   * Strips the path of its {@linkplain #fullExtension(Path) full extension}.
    */
   public static String stripFullExtension(Path path) {
     return stripFullExtension(path.toString());
   }
 
   /**
-   * Strips the given path of its {@linkplain #fullExtension(String) full extension}.
+   * Strips the path of its {@linkplain #fullExtension(String) full extension}.
    */
   public static String stripFullExtension(String path) {
     Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
@@ -368,7 +364,7 @@ public final class Files {
 
   /**
    * @throws IllegalArgumentException
-   *           if {@code uri} does not represent a file (i.e., its scheme is neither {@code file}
+   *           if {@code uri} does not represent a file (that is, its scheme is neither {@code file}
    *           nor undefined).
    */
   static Path path(URI uri, FileSystem fs) {

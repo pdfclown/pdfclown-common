@@ -31,7 +31,7 @@ import org.pdfclown.common.util.annot.Immutable;
 @Immutable
 public interface ServiceProvider {
   /**
-   * Retrieves available providers of the given type, sorted by priority.
+   * Retrieves available providers of the type, sorted by priority.
    *
    * @param <T>
    *          Provider type.
@@ -42,7 +42,7 @@ public interface ServiceProvider {
   }
 
   /**
-   * Retrieves all the providers of the given type, whatever their status, sorted by priority.
+   * Retrieves all the providers of the type, whatever their status, sorted by priority.
    * <p>
    * Useful to reveal unavailable providers for diagnostic purposes.
    * </p>
@@ -56,7 +56,7 @@ public interface ServiceProvider {
   }
 
   /**
-   * Retrieves the best available provider of the given type.
+   * Retrieves the best available provider of the type.
    *
    * @param <T>
    *          Provider type.
@@ -98,11 +98,11 @@ public interface ServiceProvider {
    * lesser, the better — zero means full capability).
    * <p>
    * Each implementation is expected to declare a priority comparable to other implementations of
-   * the same {@linkplain ServiceProvider provider type} — e.g., barcode renderers would return
-   * their level of graphical inaccuracy (a ZXing-based renderer is, despite equivalent encoding
-   * accuracy, less refined than an Okapi-based renderer as only the latter differentiates bar
-   * lengths in 1D labels and adjusts the placement of human-readable symbols at character level,
-   * making for a more professionally-looking rendering)
+   * the same {@linkplain ServiceProvider provider type} — for example, barcode renderers would
+   * return their level of graphical inaccuracy (a ZXing-based renderer is, despite equivalent
+   * encoding accuracy, less refined than an Okapi-based renderer as only the latter differentiates
+   * bar lengths in 1D labels and adjusts the placement of human-readable symbols at character
+   * level, making for a more professionally-looking rendering)
    * </p>
    */
   int getPriority();

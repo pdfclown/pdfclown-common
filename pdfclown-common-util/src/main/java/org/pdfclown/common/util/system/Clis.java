@@ -59,7 +59,7 @@ public final class Clis {
     protected final List<String> base = new ArrayList<>();
 
     /**
-     * Adds the string representation of the given argument.
+     * Adds the string representation of the argument.
      *
      * @param o
      *          ({@link Collection} is joined in a semicolon-separated string, anything else is
@@ -77,7 +77,7 @@ public final class Clis {
     }
 
     /**
-     * Adds the given argument.
+     * Adds an argument.
      */
     public Args arg(String s) {
       base.add(s);
@@ -85,7 +85,7 @@ public final class Clis {
     }
 
     /**
-     * Adds the given option.
+     * Adds an option.
      *
      * @param option
      *          Option name.
@@ -101,7 +101,7 @@ public final class Clis {
     }
 
     /**
-     * Adds the given arguments.
+     * Adds arguments.
      *
      * @param ee
      *          Argument values (see {@link #arg(Object)}).
@@ -112,7 +112,7 @@ public final class Clis {
     }
 
     /**
-     * Adds the given arguments.
+     * Adds arguments.
      *
      * @param ee
      *          Argument values (see {@link #arg(Object)}).
@@ -122,7 +122,7 @@ public final class Clis {
     }
 
     /**
-     * Gets whether this collection contains the given argument.
+     * Gets whether this collection contains the argument.
      */
     public boolean contains(String arg) {
       return base.contains(arg);
@@ -412,7 +412,7 @@ public final class Clis {
   }
 
   /**
-   * Parses the resource corresponding to the given name.
+   * Parses the resource corresponding to the name.
    * <p>
    * Useful to convert textual references to resources (such as those coming from configuration
    * files or command-line options).
@@ -432,7 +432,7 @@ public final class Clis {
   }
 
   /**
-   * Parses the resource corresponding to the given name.
+   * Parses the resource corresponding to the name.
    * <p>
    * Useful to convert textual references to resources (such as those coming from configuration
    * files or command-line options).
@@ -462,7 +462,7 @@ public final class Clis {
   }
 
   /**
-   * Parses the resource corresponding to the given name.
+   * Parses the resource corresponding to the name.
    * <p>
    * Useful to convert textual references to resources (such as those coming from configuration
    * files or command-line options).

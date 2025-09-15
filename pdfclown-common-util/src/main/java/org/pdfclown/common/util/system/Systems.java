@@ -19,11 +19,11 @@ package org.pdfclown.common.util.system;
  */
 public final class Systems {
   /**
-   * Gets the boolean {@linkplain System#getProperty(String) system property} indicated by the
-   * specified key.
+   * Gets the boolean {@linkplain System#getProperty(String) system property} indicated by the key.
    * <p>
    * Contrary to {@link Boolean#getBoolean(String)}, this method takes into account also the
-   * behavior of CLI flags (e.g., {@code -Dmyflag}), whose empty string represents {@code true}.
+   * behavior of CLI flags (for example, {@code -Dmyflag}), whose empty string represents
+   * {@code true}.
    * </p>
    *
    * @return {@code true}, if {@code value} is empty or equals {@code "true"} (case-insensitive).

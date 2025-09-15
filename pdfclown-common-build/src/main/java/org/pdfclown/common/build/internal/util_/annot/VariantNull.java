@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Indicates that the subclass implementations of the method where the annotated type is used are
- * responsible to decide over its nullness (i.e., whether to specialize (in case of output) or
+ * responsible to decide over its nullness (that is, whether to specialize (in case of output) or
  * generalize (in case of input)).
  * <p>
  * In detail:

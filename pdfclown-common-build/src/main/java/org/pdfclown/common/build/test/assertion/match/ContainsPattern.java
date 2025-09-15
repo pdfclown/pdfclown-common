@@ -19,7 +19,7 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
- * Matches when the examined text contains the provided regular expression.
+ * Matches when the examined text contains the pattern.
  *
  * @author Stefano Chizzolini
  * @see org.hamcrest.text.MatchesPattern

@@ -36,7 +36,7 @@ import org.jspecify.annotations.Nullable;
  */
 public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
   /**
-   * Gets whether the given key has a match for the given type.
+   * Gets whether the key has a match for the type.
    *
    * @param type
    *          Value type.
@@ -50,7 +50,7 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
   }
 
   /**
-   * Gets the value associated to the given key for the given type.
+   * Gets the value associated to the key for the type.
    *
    * @param <T>
    *          Value type.
@@ -67,7 +67,7 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
   }
 
   /**
-   * Gets the key corresponding to the given value.
+   * Gets the key corresponding to the value.
    *
    * @param value
    *          Value whose key is looked up.
@@ -80,19 +80,19 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
   }
 
   /**
-   * Gets the sub-map associated to the given type.
+   * Gets the sub-map associated to the type.
    *
    * @param type
    *          Value type.
    * @return {@code null}, if {@code type} has no mapping.
    * @implSpec Implementations are expected to support type resolution in case of mismatch: the
-   *           ancestor graph (both concrete classes and interfaces) of the given type must be
-   *           traversed until a match is found.
+   *           ancestor graph (both concrete classes and interfaces) of the type must be traversed
+   *           until a match is found.
    */
   <R extends M> @Nullable R getMap(Class<? extends V> type);
 
   /**
-   * Associates the value to the given key.
+   * Associates the value to the key.
    * <p>
    * The entry is placed in the sub-map corresponding to its value type.
    * </p>
@@ -110,7 +110,7 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
   }
 
   /**
-   * Associates the sub-map to the given type.
+   * Associates the sub-map to the type.
    *
    * @param type
    *          Sub-map value type.
