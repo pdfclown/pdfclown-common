@@ -38,6 +38,11 @@ import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.SPACE;
 import static org.pdfclown.common.util.Strings.SQUOTE;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -56,6 +61,13 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
+import net.bytebuddy.implementation.FieldAccessor;
+import net.bytebuddy.implementation.InvocationHandlerAdapter;
+import net.bytebuddy.implementation.MethodCall;
+import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableRunnable;
 import org.apache.commons.lang3.function.FailableSupplier;
@@ -296,6 +308,11 @@ public final class Objects {
       Short.class,
       String.class,
       Void.class);
+
+  private static final Map<Object, Object> proxies = new HashMap<>();
+
+  @SuppressWarnings("rawtypes")
+  private static final Map<String, Class> proxyTypes = new HashMap<>();
 
   /**
    * Gets the ancestors of the type, ordered by {@linkplain HierarchicalTypeComparator#get() default
@@ -1409,6 +1426,87 @@ public final class Objects {
   }
 
   /**
+   * Cross-casts the object to the current {@linkplain ClassLoader class loader}.
+   * <p>
+   * (see {@linkplain #xcast(Object, Object) main overload} for further information)
+   * </p>
+   *
+   * @param <T>
+   *          Target type (useful for final casting, but irrelevant for actual cross-casting).
+   * @param obj
+   *          Source object.
+   */
+  public static <T> @Nullable T xcast(Object obj) {
+    return xcast(obj, null);
+  }
+
+  /**
+   * Cross-casts the object to the target {@linkplain ClassLoader class loader}.
+   * <p>
+   * Split types (that is, binary-incompatible types with same fully-qualified name and different
+   * class loaders) are transparently bridged through proxy, providing a convenient alternative to
+   * manual reflection.
+   * </p>
+   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy">
+   *
+   * @param <T>
+   *          Target type (useful for final casting, but irrelevant for actual cross-casting).
+   * @param obj
+   *          Source object.
+   * @param loadingHint
+   *          Object whose class loader must be used as target ({@code null}, for the current class
+   *          loader).
+   */
+  public static <T> @Nullable T xcast(Object obj, @Nullable Object loadingHint) {
+    return xcast(obj, loadingHint, null, null);
+  }
+
+  /**
+   * Flattens the object, extracting the source object (proxy base) in case of
+   * {@linkplain #xcast(Object, Object) cross-cast proxy}.
+   *
+   * @see #xcast(Object, Object)
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T xflat(Object obj) {
+    try {
+      // Try to extract the source object (proxy base)!
+      Field baseField = obj.getClass().getField("proxyBase");
+      return (T) baseField.get(obj);
+    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException
+        | IllegalAccessException e) {
+      // No cross-cast proxy, just a regular object.
+      return (T) obj;
+    }
+  }
+
+  /**
+   * Gets whether the object is a cross-instance of the type.
+   * <p>
+   * A {@linkplain #xcast(Object, Object) cross-instance} is a superset of a regular instance: it
+   * encompasses both its own class hierarchy and the class hierarchies of its split types (that is,
+   * binary-incompatible types with same fully-qualified name and different {@linkplain ClassLoader
+   * class loader}s). With the regular {@code instanceof} operator, an object can relate only to the
+   * class hierarchy within its own class loader; on the contrary, this method takes care to
+   * cross-cast {@code obj} to the same class loader as {@code type} before evaluating it.
+   * </p>
+   *
+   * @param type
+   *          Supertype candidate (the evaluation happens within its class loader).
+   * @implNote {@code obj} is {@linkplain #xflat(Object) flattened} to extract the source object
+   *           (proxy base), then its type is cross-cast to {@code type}'s class loader, and
+   *           evaluated.
+   * @see #xcast(Object, Object)
+   */
+  public static boolean xinstanceof(Object obj, Class<?> type) {
+    // Extract the source object!
+    Object base = xflat(obj);
+    // Cross-cast the source type to target type's class loader!
+    Class<?> xbaseType = nonNull(xcast(base.getClass(), type));
+    return type.isAssignableFrom(xbaseType);
+  }
+
+  /**
    * Recursively collects the type and its interfaces until stopped.
    * <p>
    * If {@code type} is contained in {@code stoppers}, this operation stops; in such case,
@@ -1497,6 +1595,15 @@ public final class Objects {
         : NULL;
   }
 
+  private static boolean isAutoInstantiable(Class<?> type) {
+    try {
+      type.getDeclaredConstructor();
+      return true;
+    } catch (NoSuchMethodException | SecurityException e) {
+      return false;
+    }
+  }
+
   private static String sqn(@Nullable Object obj, boolean dotted) {
     return sqn(fqn(obj, false), dotted);
   }
@@ -1506,6 +1613,250 @@ public final class Objects {
       int index = $.lastIndexOf(DOT);
       return index != INDEX__NOT_FOUND ? $.substring(index + 1) : $;
     }), dotted);
+  }
+
+  /**
+   * Cross-casts the object to the target {@linkplain ClassLoader class loader}.
+   * <p>
+   * (see {@linkplain #xcast(Object, Object) main overload} for further information)
+   * </p>
+   *
+   * @param <T>
+   *          Target type (useful for final casting, but irrelevant for actual cross-casting).
+   * @param obj
+   *          Source object.
+   * @param loadingHint
+   *          Object whose class loader must be used as target ({@code null}, for the current class
+   *          loader).
+   * @param sourceTypeHint
+   *          Suggested source cast type.
+   * @param targetTypeHint
+   *          Suggested target cast type. Useful whenever {@code obj} may be an instance of a
+   *          subclass of an expected type, like a parameter type in a target method (the assumption
+   *          is that the target method shall work with the interface of the parameter type only,
+   *          without casting to any of its subclasses, so the proxy can implement just that
+   *          interface — if that's not the case, such subclasses must be added to the classpath
+   *          visible to the target class loader).
+   */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  private static <T> @Nullable T xcast(@Nullable Object obj, @Nullable Object loadingHint,
+      @Nullable Class<?> sourceTypeHint, @Nullable Class<?> targetTypeHint) {
+    if (obj == null)
+      return null;
+
+    if (loadingHint == null) {
+      /*
+       * NOTE: In order to resolve the type in a predictable way, it is fundamental to explicitly
+       * set the class loader to this one whenever unspecified.
+       */
+      loadingHint = Objects.class;
+    }
+
+    if (obj instanceof Class) {
+      var type = (Class<?>) obj;
+      if (type.isPrimitive())
+        return (T) type;
+      else if (type.isArray()) {
+        Class<?> targetComponentType = type(type.getComponentType().getName(), loadingHint);
+        return (T) (targetComponentType == type.getComponentType() ? type
+            : Array.newInstance(targetComponentType, 0).getClass());
+      } else
+        return (T) type(((Class<?>) obj).getName(), loadingHint);
+    }
+
+    // Extract the source object in case `obj` is a proxy!
+    obj = xflat(obj);
+
+    Class<?> candidateSourceType = obj.getClass();
+    // Source object is array?
+    if (candidateSourceType.isArray())
+      return (T) xcastArray((Object[]) obj, loadingHint, null);
+    // Source object is enum?
+    else if (candidateSourceType.isEnum())
+      return (T) Enum.valueOf((Class<Enum>) (sourceTypeHint != null && sourceTypeHint.isEnum()
+          ? sourceTypeHint
+          : nonNull(type(candidateSourceType.getName(), loadingHint))), ((Enum<?>) obj).name());
+    // Source object is compatible with target?
+    else if (candidateSourceType == type(candidateSourceType.getName(), loadingHint))
+      return (T) obj;
+
+    // Map the incompatible source object to proxy!
+    var ret = (T) proxies.get(obj);
+    if (ret != null)
+      return ret;
+
+    var proxyType = proxyTypes.get(candidateSourceType.getName());
+    if (proxyType == null) {
+      final Class<?> sourceType;
+      final Class<?> targetType;
+      {
+        // Source type candidate is unsuitable for proxying?
+        if (!isAutoInstantiable(candidateSourceType)) {
+          if (sourceTypeHint != null && sourceTypeHint != Object.class
+              && isAutoInstantiable(sourceTypeHint)) {
+            candidateSourceType = sourceTypeHint;
+          } else {
+            /*
+             * Find source type suitable for proxying!
+             *
+             * HACK: This ugly block was added to work around the notorious type erasure of return
+             * types of generic methods.
+             *
+             * TODO: See <https://github.com/raphw/byte-buddy/issues/1725> to implement a more
+             * robust solution; in particular, this hint
+             * (<https://github.com/raphw/byte-buddy/issues/1725#issuecomment-2464707817>):
+             *
+             * " Simply load a class using `TypeDescription.ForLoadedType.of(...)`. Then navigate
+             * the hierarchy as you would with the reflection API where generic types are resolved
+             * transparently. To resolve the return type of methods, use `MethodGraph.Compiler`. "
+             */
+            sourceTypeHint = candidateSourceType;
+            while (sourceTypeHint != Object.class) {
+              var interfaceTypes = sourceTypeHint.getInterfaces();
+              if (interfaceTypes.length > 0) {
+                candidateSourceType = interfaceTypes[0];
+                break;
+              }
+
+              sourceTypeHint = sourceTypeHint.getSuperclass();
+            }
+          }
+        }
+        sourceType = candidateSourceType;
+        targetType = java.util.Objects.requireNonNullElse(type(sourceType.getName(), loadingHint),
+            targetTypeHint);
+        if (sourceType == targetType)
+          return (T) obj;
+      }
+
+      proxyType = proxyTypes.computeIfAbsent(sourceType.getName(),
+          $typeKey -> {
+            try {
+              return new ByteBuddy()
+                  .subclass(targetType, ConstructorStrategy.Default.NO_CONSTRUCTORS)
+                  .defineField("proxyBase", Object.class, Modifier.PUBLIC + Modifier.FINAL)
+                  .defineConstructor(Visibility.PUBLIC)
+                  .withParameters(Object.class)
+                  .intercept(MethodCall.invoke((!targetType.isInterface() ? targetType
+                      : Object.class).getDeclaredConstructor()).onSuper()
+                      .andThen(FieldAccessor.ofField("proxyBase").setsArgumentAt(0)))
+                  .method(ElementMatchers.any())
+                  .intercept(InvocationHandlerAdapter.of(new InvocationHandler() {
+                    @Override
+                    public @Nullable Object invoke(Object proxy, Method method, Object[] args)
+                        throws Throwable {
+                      // Retrieve the source object associated to this proxy instance!
+                      var base = proxy.getClass().getDeclaredField("proxyBase").get(proxy);
+                      var baseType = base.getClass();
+
+                      /*
+                       * Get the source method corresponding to the invoked proxy method!
+                       *
+                       * NOTE: (proxy) `method` is binary-incompatible with (source) `base`, so its
+                       * argument types must be cross-cast to their base counterparts in order to
+                       * find a matching method signature in `baseType`.
+                       */
+                      Class<?>[] baseParamTypes = xcastArray(method.getParameterTypes(), baseType,
+                          null);
+                      Method baseMethod = null;
+                      try {
+                        baseMethod = baseType.getMethod(method.getName(), baseParamTypes);
+                      } catch (Exception ex) {
+                        /*
+                         * NOTE: No matching public method found, so we have to hack through the
+                         * non-public interface, hoping for the best.
+                         */
+                        var type = baseType;
+                        do {
+                          try {
+                            baseMethod = type.getDeclaredMethod(method.getName(), baseParamTypes);
+                            break;
+                          } catch (Exception ex1) {
+                            // NOP
+                          }
+                        } while ((type = type.getSuperclass()) != null);
+                        if (baseMethod == null)
+                          throw runtime("Base method NOT FOUND", ex);
+
+                        baseMethod.setAccessible(true);
+                      }
+
+                      /*
+                       * Delegate the invocation to the source object!
+                       *
+                       * NOTE: Return value is cross-cast in turn, to ensure any binary-incompatible
+                       * type is encapsulated into its own proxy.
+                       */
+                      Object[] baseArgs = xcastArray(args, baseType, baseParamTypes);
+                      return xcast(baseMethod.invoke(base, baseArgs), null,
+                          method.getReturnType(), null);
+                    }
+                  }))
+                  .make()
+                  .load(targetType.getClassLoader())
+                  /*
+                   * TODO: Injection sometimes fails (for example, if debugging Jada on a JPMS
+                   * project. Remove if unsolvable.
+                   */
+                  //.load(targetType.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+                  .getLoaded();
+            } catch (Exception ex) {
+              throw runtime(ex);
+            }
+          });
+    }
+
+    try {
+      proxies.put(obj, ret = (T) proxyType.getConstructor(Object.class).newInstance(obj));
+    } catch (Exception ex) {
+      throw runtime(ex);
+    }
+    return ret;
+  }
+
+  /**
+   * {@linkplain #xcast(Object, Object) Cross-casts} the object to the target
+   * {@linkplain ClassLoader class loader}.
+   *
+   * @param <T>
+   *          Target type (useful for final casting, but irrelevant for actual cross-casting).
+   * @param objs
+   *          Source objects.
+   * @param loadingHint
+   *          Object whose class loader must be used as target ({@code null}, for the current class
+   *          loader).
+   * @param targetTypeHints
+   *          Target cast types suggested for the respective item in {@code objs}. Useful whenever
+   *          {@code objs} may be instances of subclasses of expected types, like parameter types in
+   *          a target method (the assumption is that the target method shall work with the
+   *          interface of the parameter type only, without casting to any of its subclasses, so the
+   *          proxy can implement just that interface — if that's not the case, such subclasses must
+   *          be added to the classpath visible to the target class loader).
+   */
+  @SuppressWarnings("unchecked")
+  private static <T> T @Nullable [] xcastArray(Object @Nullable [] objs,
+      @Nullable Object loadingHint, Class<?> @Nullable [] targetTypeHints) {
+    if (objs == null || objs.length == 0)
+      return (T[]) objs;
+
+    T[] ret = null;
+    for (int i = 0; i < objs.length; i++) {
+      var obj = objs[i];
+      var targetObj = (T) xcast(obj, loadingHint, null,
+          targetTypeHints != null ? targetTypeHints[i] : null);
+      if (ret != null) {
+        ret[i] = targetObj;
+      } else if (targetObj != obj) {
+        ret = (T[]) Array.newInstance(xcast(objs.getClass().getComponentType(), loadingHint),
+            objs.length);
+        if (i > 0) {
+          i = -1;
+        } else {
+          ret[i] = targetObj;
+        }
+      }
+    }
+    return ret != null ? ret : (T[]) objs;
   }
 
   private Objects() {
