@@ -102,10 +102,9 @@ public final class Builds {
    * @param projectDir
    *          Base directory of the project.
    * @param scope
-   *          Scope threshold. Includes dependencies up to the scope, as described by the
-   *          {@code includeScope} parameter of <a href=
-   *          "https://maven.apache.org/plugins/maven-dependency-plugin/build-classpath-mojo.html#includeScope">dependency:build-classpath
-   *          goal</a>:
+   *          Scope threshold. Includes dependencies up to the scope, as described by the <a href=
+   *          "https://maven.apache.org/plugins/maven-dependency-plugin/build-classpath-mojo.html#includeScope">{@code includeScope}
+   *          parameter of dependency:build-classpath goal</a>:
    *          <ul>
    *          <li>runtime — runtime and compile dependencies</li>
    *          <li>compile — compile, provided, and system dependencies</li>
