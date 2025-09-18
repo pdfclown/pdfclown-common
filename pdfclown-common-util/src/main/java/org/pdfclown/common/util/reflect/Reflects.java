@@ -67,6 +67,8 @@ public final class Reflects {
    * <p>
    * {@link StackFrame#getDeclaringClass()} is supported.
    * </p>
+   *
+   * @see #stackFrame(Predicate)
    */
   public static StackFrame callerFrame() {
     //noinspection OptionalGetWithoutIsPresent : Exception should NEVER happen.
@@ -121,6 +123,8 @@ public final class Reflects {
    *   frame[x-2]
    *   . . .
    *   frame[0]      &lt;-- this is the last frame to evaluate</pre>
+   *
+   * @see #callerFrame()
    */
   public static Optional<StackFrame> stackFrame(Predicate<StackFrame> selector) {
     return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk($ -> $
