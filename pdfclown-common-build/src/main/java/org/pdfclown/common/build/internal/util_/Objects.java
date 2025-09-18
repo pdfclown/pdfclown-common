@@ -37,6 +37,7 @@ import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPE
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 import static org.pdfclown.common.build.internal.util_.Strings.SQUOTE;
+import static org.pdfclown.common.build.internal.util_.reflect.Reflects.stackFrame;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -1426,7 +1427,7 @@ public final class Objects {
   }
 
   /**
-   * Cross-casts the object to the current {@linkplain ClassLoader class loader}.
+   * Cross-casts the object to the caller's {@linkplain ClassLoader class loader}.
    * <p>
    * (see {@linkplain #xcast(Object, Object) main overload} for further information)
    * </p>
@@ -1454,7 +1455,7 @@ public final class Objects {
    * @param obj
    *          Source object.
    * @param loadingHint
-   *          Object whose class loader must be used as target ({@code null}, for the current class
+   *          Object whose class loader must be used as target ({@code null}, for the caller's class
    *          loader).
    */
   public static <T> @Nullable T xcast(Object obj, @Nullable Object loadingHint) {
@@ -1626,7 +1627,7 @@ public final class Objects {
    * @param obj
    *          Source object.
    * @param loadingHint
-   *          Object whose class loader must be used as target ({@code null}, for the current class
+   *          Object whose class loader must be used as target ({@code null}, for the caller's class
    *          loader).
    * @param sourceTypeHint
    *          Suggested source cast type.
@@ -1645,11 +1646,9 @@ public final class Objects {
       return null;
 
     if (loadingHint == null) {
-      /*
-       * NOTE: In order to resolve the type in a predictable way, it is fundamental to explicitly
-       * set the class loader to this one whenever unspecified.
-       */
-      loadingHint = Objects.class;
+      loadingHint = stackFrame($ -> $.getDeclaringClass() != Objects.class)
+          .orElseThrow(() -> runtime("Caller NOT FOUND"))
+          .getDeclaringClass();
     }
 
     if (obj instanceof Class) {
