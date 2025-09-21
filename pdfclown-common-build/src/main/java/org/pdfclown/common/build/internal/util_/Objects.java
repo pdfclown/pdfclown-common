@@ -19,6 +19,7 @@ import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.build.internal.util_.Booleans.strToBool;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
@@ -55,6 +56,7 @@ import java.util.MissingResourceException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.WeakHashMap;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -85,8 +87,6 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.annot.PolyNull;
 import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 import org.pdfclown.common.build.internal.util_.regex.Patterns;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Object utilities.
@@ -94,6 +94,29 @@ import org.slf4j.LoggerFactory;
  * @author Stefano Chizzolini
  */
 public final class Objects {
+  /**
+   * Thrown to indicate that the code has failed to {@linkplain Objects#xcast(Object, Object)
+   * cross-cast} an object.
+   * <p>
+   * Failure is typically caused by lack of corresponding type in target class loader context.
+   * </p>
+   */
+  public static class ClassXCastException extends ClassCastException {
+    /**
+    */
+    public ClassXCastException(String message) {
+      super(message);
+    }
+
+    /**
+    */
+    public ClassXCastException(String message, Throwable cause) {
+      this(message);
+
+      initCause(cause);
+    }
+  }
+
   /**
    * Hierarchical type comparator.
    *
@@ -252,7 +275,17 @@ public final class Objects {
     }
   }
 
-  private static final Logger log = LoggerFactory.getLogger(Objects.class);
+  static class ProxySpace {
+    /**
+     * Proxy instances by source instance.
+     */
+    final Map<Object, Object> instances = new WeakHashMap<>();
+    /**
+     * Proxy types by fully-qualified name.
+     */
+    @SuppressWarnings("rawtypes")
+    final Map<String, Class> types = new HashMap<>();
+  }
 
   /**
    * Empty object array.
@@ -310,10 +343,7 @@ public final class Objects {
       String.class,
       Void.class);
 
-  private static final Map<Object, Object> proxies = new HashMap<>();
-
-  @SuppressWarnings("rawtypes")
-  private static final Map<String, Class> proxyTypes = new HashMap<>();
+  private static final Map<ClassLoader, ProxySpace> proxySpaces = new WeakHashMap<>();
 
   /**
    * Gets the ancestors of the type, ordered by {@linkplain HierarchicalTypeComparator#get() default
@@ -757,6 +787,16 @@ public final class Objects {
    */
   public static boolean isSameType(@Nullable Object o1, @Nullable Object o2) {
     return typeOf(o1) == typeOf(o2);
+  }
+
+  /**
+   * Gets the class loader of the object.
+   */
+  public static @PolyNull @Nullable ClassLoader loaderOf(@PolyNull @Nullable Object obj) {
+    //noinspection DataFlowIssue : @PolyNull
+    return obj == null ? null
+        : obj instanceof ClassLoader ? (ClassLoader) obj
+        : asType(obj).getClassLoader();
   }
 
   /**
@@ -1405,11 +1445,7 @@ public final class Objects {
   public static @Nullable Class<?> type(String name, @Nullable Object loadingHint) {
     try {
       if (loadingHint != null) {
-        @SuppressWarnings("DataFlowIssue" /* @PolyNull */)
-        ClassLoader loader = loadingHint instanceof ClassLoader
-            ? (ClassLoader) loadingHint
-            : asType(loadingHint).getClassLoader();
-        return Class.forName(name, true, loader);
+        return Class.forName(name, true, loaderOf(loadingHint));
       } else
         return Class.forName(name);
     } catch (ClassNotFoundException ex) {
@@ -1436,8 +1472,10 @@ public final class Objects {
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
    * @param obj
    *          Source object.
+   * @throws ClassXCastException
+   *           if {@code obj} has no corresponding type in target class loader context.
    */
-  public static <T> @Nullable T xcast(Object obj) {
+  public static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj) {
     return xcast(obj, null);
   }
 
@@ -1457,9 +1495,12 @@ public final class Objects {
    * @param loadingHint
    *          Object whose class loader must be used as target ({@code null}, for the caller's class
    *          loader).
+   * @throws ClassXCastException
+   *           if {@code obj} has no corresponding type in target class loader context.
    */
-  public static <T> @Nullable T xcast(Object obj, @Nullable Object loadingHint) {
-    return xcast(obj, loadingHint, null, null);
+  public static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj,
+      @Nullable Object loadingHint) {
+    return xcast(obj, loadingHint, null);
   }
 
   /**
@@ -1469,13 +1510,16 @@ public final class Objects {
    * @see #xcast(Object, Object)
    */
   @SuppressWarnings("unchecked")
-  public static <T> T xflat(Object obj) {
+  public static <T> @PolyNull @Nullable T xflat(@PolyNull @Nullable Object obj) {
+    if (obj == null)
+      return null;
+
     try {
       // Try to extract the source object (proxy base)!
       Field baseField = obj.getClass().getField("proxyBase");
       return (T) baseField.get(obj);
     } catch (NoSuchFieldException | SecurityException | IllegalArgumentException
-        | IllegalAccessException e) {
+        | IllegalAccessException ex) {
       // No cross-cast proxy, just a regular object.
       return (T) obj;
     }
@@ -1499,11 +1543,18 @@ public final class Objects {
    *           evaluated.
    * @see #xcast(Object, Object)
    */
-  public static boolean xinstanceof(Object obj, Class<?> type) {
+  public static boolean xinstanceof(@Nullable Object obj, Class<?> type) {
+    if (obj == null)
+      return false /* Same as regular `instanceof` */;
+
     // Extract the source object!
     Object base = xflat(obj);
+    assert base != null;
+
     // Cross-cast the source type to target type's class loader!
-    Class<?> xbaseType = nonNull(xcast(base.getClass(), type));
+    Class<?> xbaseType = xcast(base.getClass(), requireNonNull(type, "`type`"));
+    assert xbaseType != null;
+
     return type.isAssignableFrom(xbaseType);
   }
 
@@ -1629,8 +1680,6 @@ public final class Objects {
    * @param loadingHint
    *          Object whose class loader must be used as target ({@code null}, for the caller's class
    *          loader).
-   * @param sourceTypeHint
-   *          Suggested source cast type.
    * @param targetTypeHint
    *          Suggested target cast type. Useful whenever {@code obj} may be an instance of a
    *          subclass of an expected type, like a parameter type in a target method (the assumption
@@ -1638,107 +1687,130 @@ public final class Objects {
    *          without casting to any of its subclasses, so the proxy can implement just that
    *          interface — if that's not the case, such subclasses must be added to the classpath
    *          visible to the target class loader).
+   * @throws ClassXCastException
+   *           if {@code obj} has no corresponding type in target class loader context.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  private static <T> @Nullable T xcast(@Nullable Object obj, @Nullable Object loadingHint,
-      @Nullable Class<?> sourceTypeHint, @Nullable Class<?> targetTypeHint) {
+  private static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj,
+      final @Nullable Object loadingHint, final @Nullable Class<?> targetTypeHint) {
     if (obj == null)
       return null;
 
-    if (loadingHint == null) {
-      loadingHint = stackFrame($ -> $.getDeclaringClass() != Objects.class)
-          .orElseThrow(() -> runtime("Caller NOT FOUND"))
-          .getDeclaringClass();
-    }
+    ClassLoader targetLoader = loaderOf(loadingHint != null ? loadingHint
+        : stackFrame($ -> $.getDeclaringClass() != Objects.class)
+            .orElseThrow(() -> runtime("Caller NOT FOUND"))
+            .getDeclaringClass());
+    assert targetLoader != null;
 
     if (obj instanceof Class) {
       var type = (Class<?>) obj;
       if (type.isPrimitive())
         return (T) type;
       else if (type.isArray()) {
-        Class<?> targetComponentType = type(type.getComponentType().getName(), loadingHint);
+        Class<?> targetComponentType = type(type.getComponentType().getName(), targetLoader);
         return (T) (targetComponentType == type.getComponentType() ? type
             : Array.newInstance(targetComponentType, 0).getClass());
-      } else
-        return (T) type(((Class<?>) obj).getName(), loadingHint);
+      } else {
+        String fqn = ((Class<?>) obj).getName();
+        return (T) requireNonNullElseThrow(type(fqn, targetLoader),
+            () -> new ClassXCastException(String.format(
+                "`%s` has no corresponding type in target class loader", fqn)));
+      }
     }
 
     // Extract the source object in case `obj` is a proxy!
     obj = xflat(obj);
+    assert obj != null;
 
-    Class<?> candidateSourceType = obj.getClass();
+    final Class<?> objType = obj.getClass();
     // Source object is array?
-    if (candidateSourceType.isArray())
-      return (T) xcastArray((Object[]) obj, loadingHint, null);
+    if (objType.isArray())
+      return (T) xcastArray((Object[]) obj, targetLoader, null);
     // Source object is enum?
-    else if (candidateSourceType.isEnum())
-      return (T) Enum.valueOf((Class<Enum>) (sourceTypeHint != null && sourceTypeHint.isEnum()
-          ? sourceTypeHint
-          : nonNull(type(candidateSourceType.getName(), loadingHint))), ((Enum<?>) obj).name());
+    else if (objType.isEnum())
+      return (T) Enum.valueOf((Class<Enum>) (targetTypeHint != null && targetTypeHint.isEnum()
+          ? targetTypeHint
+          : nonNull(type(objType.getName(), targetLoader))), ((Enum<?>) obj).name());
     // Source object is compatible with target?
-    else if (candidateSourceType == type(candidateSourceType.getName(), loadingHint))
+    else if (objType == type(objType.getName(), targetLoader))
       return (T) obj;
 
+    var proxySpace = proxySpaces.computeIfAbsent(targetLoader, $k -> new ProxySpace());
+
     // Map the incompatible source object to proxy!
-    var ret = (T) proxies.get(obj);
+    var ret = (T) proxySpace.instances.get(obj);
     if (ret != null)
       return ret;
 
-    var proxyType = proxyTypes.get(candidateSourceType.getName());
+    var proxyType = proxySpace.types.get(objType.getName());
     if (proxyType == null) {
-      final Class<?> sourceType;
+      final String fqn;
       final Class<?> targetType;
       {
-        // Source type candidate is unsuitable for proxying?
-        if (!isAutoInstantiable(candidateSourceType)) {
-          if (sourceTypeHint != null && sourceTypeHint != Object.class
-              && isAutoInstantiable(sourceTypeHint)) {
-            candidateSourceType = sourceTypeHint;
-          } else {
-            /*
-             * Find source type suitable for proxying!
-             *
-             * HACK: This ugly block was added to work around the notorious type erasure of return
-             * types of generic methods.
-             *
-             * TODO: See <https://github.com/raphw/byte-buddy/issues/1725> to implement a more
-             * robust solution; in particular, this hint
-             * (<https://github.com/raphw/byte-buddy/issues/1725#issuecomment-2464707817>):
-             *
-             * " Simply load a class using `TypeDescription.ForLoadedType.of(...)`. Then navigate
-             * the hierarchy as you would with the reflection API where generic types are resolved
-             * transparently. To resolve the return type of methods, use `MethodGraph.Compiler`. "
-             */
-            sourceTypeHint = candidateSourceType;
-            while (sourceTypeHint != Object.class) {
-              var interfaceTypes = sourceTypeHint.getInterfaces();
-              if (interfaceTypes.length > 0) {
-                candidateSourceType = interfaceTypes[0];
-                break;
-              }
-
-              sourceTypeHint = sourceTypeHint.getSuperclass();
+        // Find type suitable for proxying!
+        if (isAutoInstantiable(objType)) {
+          fqn = objType.getName();
+        } else if (targetTypeHint != null && targetTypeHint != Object.class
+            && isAutoInstantiable(targetTypeHint)) {
+          fqn = targetTypeHint.getName();
+        } else {
+          /*
+           * HACK: This ugly block was added to work around the notorious type erasure of return
+           * types of generic methods.
+           *
+           * TODO: See <https://github.com/raphw/byte-buddy/issues/1725> to implement a more robust
+           * solution; in particular, this hint
+           * (<https://github.com/raphw/byte-buddy/issues/1725#issuecomment-2464707817>):
+           *
+           * " Simply load a class using `TypeDescription.ForLoadedType.of(...)`. Then navigate the
+           * hierarchy as you would with the reflection API where generic types are resolved
+           * transparently. To resolve the return type of methods, use `MethodGraph.Compiler`. "
+           */
+          var t = objType;
+          Class<?> altType = null;
+          while (t != Object.class) {
+            var altTypes = t.getInterfaces();
+            if (altTypes.length > 0) {
+              altType = altTypes[0];
+              break;
             }
+
+            t = t.getSuperclass();
           }
+          if (altType == null)
+            throw new ClassXCastException(String.format("`%s` cannot be proxied "
+                + "(no-argument constructor missing and `targetTypeHint` undefined)",
+                objType.getName()));
+
+          fqn = altType.getName();
         }
-        sourceType = candidateSourceType;
-        targetType = java.util.Objects.requireNonNullElse(type(sourceType.getName(), loadingHint),
-            targetTypeHint);
-        if (sourceType == targetType)
-          return (T) obj;
+        /*
+         * NOTE: `fqn` may NOT exist in `targetLoader` context; in such case, `targetTypeHint`
+         * provides the alternate target type. For example, an application may define the method
+         * `move(Vehicle)`, while a plugin (loaded in its own class loader context) may define
+         * `Bike` as a subclass of `Vehicle`: if the plugin calls `myMethod(..)` passing an instance
+         * of `Bike`, such type will be invisible to the application; it will be `targetTypeHint` to
+         * provide `Vehicle` as an alternate.
+         */
+        targetType = requireNonNullElse(type(fqn, targetLoader), targetTypeHint);
       }
 
-      proxyType = proxyTypes.computeIfAbsent(sourceType.getName(),
+      proxyType = proxySpace.types.computeIfAbsent(fqn,
           $typeKey -> {
             try {
               return new ByteBuddy()
                   .subclass(targetType, ConstructorStrategy.Default.NO_CONSTRUCTORS)
+                  // Fields
                   .defineField("proxyBase", Object.class, Modifier.PUBLIC + Modifier.FINAL)
+                  // Constructors
                   .defineConstructor(Visibility.PUBLIC)
                   .withParameters(Object.class)
-                  .intercept(MethodCall.invoke((!targetType.isInterface() ? targetType
-                      : Object.class).getDeclaredConstructor()).onSuper()
+                  .intercept(MethodCall.invoke(
+                      (!targetType.isInterface() ? targetType : Object.class)
+                          .getDeclaredConstructor())
+                      .onSuper()
                       .andThen(FieldAccessor.ofField("proxyBase").setsArgumentAt(0)))
+                  // Methods
                   .method(ElementMatchers.any())
                   .intercept(InvocationHandlerAdapter.of(new InvocationHandler() {
                     @Override
@@ -1751,7 +1823,7 @@ public final class Objects {
                       /*
                        * Get the source method corresponding to the invoked proxy method!
                        *
-                       * NOTE: (proxy) `method` is binary-incompatible with (source) `base`, so its
+                       * NOTE: (target) `method` is binary-incompatible with (source) `base`, so its
                        * argument types must be cross-cast to their base counterparts in order to
                        * find a matching method signature in `baseType`.
                        */
@@ -1787,8 +1859,8 @@ public final class Objects {
                        * type is encapsulated into its own proxy.
                        */
                       Object[] baseArgs = xcastArray(args, baseType, baseParamTypes);
-                      return xcast(baseMethod.invoke(base, baseArgs), null,
-                          method.getReturnType(), null);
+                      return xcast(baseMethod.invoke(base, baseArgs), targetType,
+                          method.getReturnType());
                     }
                   }))
                   .make()
@@ -1800,15 +1872,29 @@ public final class Objects {
                   //.load(targetType.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                   .getLoaded();
             } catch (Exception ex) {
-              throw runtime(ex);
+              var b = new StringBuilder("Proxy type `").append(fqn).append("` creation FAILED");
+              if (!fqn.equals(targetType.getName())) {
+                b.append(" (targetType: ").append(targetType.getName()).append(")");
+              }
+              throw new ClassXCastException(b.toString(), ex);
             }
           });
     }
 
     try {
-      proxies.put(obj, ret = (T) proxyType.getConstructor(Object.class).newInstance(obj));
+      /*
+       * NOTE: `obj` MUST be wrapped inside the proxy as a strong reference, otherwise as a weak
+       * reference it may get dropped amid execution.
+       */
+      proxySpace.instances.put(obj, ret = (T) proxyType.getConstructor(Object.class)
+          .newInstance(obj));
     } catch (Exception ex) {
-      throw runtime(ex);
+      var b = new StringBuilder("`").append(objType.getName())
+          .append("` proxy instantiation FAILED");
+      if (!objType.getName().equals(proxyType.getName())) {
+        b.append(" (proxyType: ").append(proxyType.getName()).append(")");
+      }
+      throw new ClassXCastException(b.toString(), ex);
     }
     return ret;
   }
@@ -1822,8 +1908,7 @@ public final class Objects {
    * @param objs
    *          Source objects.
    * @param loadingHint
-   *          Object whose class loader must be used as target ({@code null}, for the current class
-   *          loader).
+   *          Object whose class loader must be used as target.
    * @param targetTypeHints
    *          Target cast types suggested for the respective item in {@code objs}. Useful whenever
    *          {@code objs} may be instances of subclasses of expected types, like parameter types in
@@ -1833,16 +1918,18 @@ public final class Objects {
    *          be added to the classpath visible to the target class loader).
    */
   @SuppressWarnings("unchecked")
-  private static <T> T @Nullable [] xcastArray(Object @Nullable [] objs,
-      @Nullable Object loadingHint, Class<?> @Nullable [] targetTypeHints) {
+  private static <T> T @Nullable [] xcastArray(Object @Nullable [] objs, Object loadingHint,
+      Class<?> @Nullable [] targetTypeHints) {
     if (objs == null || objs.length == 0)
       return (T[]) objs;
+
+    requireNonNull(loadingHint, "`loadingHint`");
 
     T[] ret = null;
     for (int i = 0; i < objs.length; i++) {
       var obj = objs[i];
-      var targetObj = (T) xcast(obj, loadingHint, null,
-          targetTypeHints != null ? targetTypeHints[i] : null);
+      var targetObj = (T) xcast(obj, loadingHint, targetTypeHints != null ? targetTypeHints[i]
+          : null);
       if (ret != null) {
         ret[i] = targetObj;
       } else if (targetObj != obj) {

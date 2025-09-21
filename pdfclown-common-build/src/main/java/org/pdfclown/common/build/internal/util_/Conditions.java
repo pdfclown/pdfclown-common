@@ -353,6 +353,29 @@ public final class Conditions {
   }
 
   /**
+   * Requires the value is not null, otherwise throws an exception.
+   *
+   * @param <T>
+   *          Value type.
+   * @param <X>
+   *          Validation exception type.
+   * @param value
+   *          Value to validate.
+   * @param exceptionSupplier
+   *          Supplies the exception to throw if {@code value} is invalid.
+   * @return {@code value}
+   * @throws X
+   *           if {@code value} is invalid.
+   */
+  public static <T, X extends Throwable> T requireNonNullElseThrow(@Nullable T value,
+      Supplier<? extends X> exceptionSupplier) throws X {
+    if (value != null)
+      return value;
+
+    throw exceptionSupplier.get();
+  }
+
+  /**
    * Requires the value is within normal range, that is between 0 and 1 (inclusive).
    *
    * @param <T>
