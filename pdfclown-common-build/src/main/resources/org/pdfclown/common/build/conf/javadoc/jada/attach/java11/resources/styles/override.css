@@ -17,10 +17,6 @@ p {
   margin: 10px 0;
 }
 
-pre {
-  font-family: monospace;
-}
-
 div.block td,
 div.block th {
   border: 1px solid grey;

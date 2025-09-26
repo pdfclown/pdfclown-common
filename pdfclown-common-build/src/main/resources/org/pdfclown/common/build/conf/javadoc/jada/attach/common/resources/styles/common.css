@@ -57,7 +57,9 @@ li > p {
 }
 
 pre {
+  font-family: monospace;
   margin: 1em;
+  overflow: auto;
 }
 
 table {
