@@ -34,7 +34,7 @@ import org.pdfclown.common.build.util.io.ResourceNames;
  * <p>
  * Within the test environment, filesystem objects are addressed by <b>names</b> similar to
  * {@linkplain Class#getResource(String) Java resource names} (see
- * {@link ResourceNames#path(String, Path, Class)}) and are rooted in their respective
+ * {@link ResourceNames#path(String, Path)}) and are rooted in their respective
  * {@linkplain #dir(DirId) base directories}; <b>relative names</b> are based on the subdirectory
  * local to the current test environment.
  * </p>
@@ -139,7 +139,7 @@ public interface TestEnvironment {
    */
   default @Nullable String resolveName(Path file) {
     return Streams.of(DirId.values())
-        .map($ -> ResourceNames.absName(file, dir($)))
+        .map($ -> ResourceNames.abs(file, dir($)))
         .filter(Objects::nonNull)
         .min(comparing(String::length) /* Keeps the most specific name */)
         .orElse(null);

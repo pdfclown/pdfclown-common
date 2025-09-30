@@ -24,7 +24,6 @@ import static org.pdfclown.common.build.internal.util_.io.Files.PATH_SUPER;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.io.Files;
 
 /**
  * Resource utilities.
@@ -38,67 +37,50 @@ public final class ResourceNames {
   /**
    * Gets the absolute name of a resource, resolved according to the base directory.
    *
-   * @param filePath
-   *          Resource path.
+   * @param file
+   *          Resource file.
    * @param baseDir
    *          Root resource directory.
-   * @return {@code null} if {@code filePath} is outside {@code baseDir}.
+   * @return
+   *         <ul>
+   *         <li>if {@code file} is absolute and under {@code baseDir}: relativized, converted to
+   *         name and prefixed with slash</li>
+   *         <li>if {@code file} is relative and under {@code baseDir} (that is, not prefixed with
+   *         {@code ..}): converted to name and prefixed with slash</li>
+   *         <li>if {@code file} is outside {@code baseDir}: {@code null}</li>
+   *         </ul>
+   * @see #isAbs(String)
    */
-  public static @Nullable String absName(Path filePath, Path baseDir) {
-    filePath = filePath.normalize();
-    if (filePath.isAbsolute()) {
+  public static @Nullable String abs(Path file, Path baseDir) {
+    file = file.normalize();
+    if (file.isAbsolute()) {
       baseDir = baseDir.toAbsolutePath().normalize();
-      if (!filePath.startsWith(baseDir))
+      // Absolute file outside `baseDir`?
+      if (!file.startsWith(baseDir))
         return null;
 
-      filePath = baseDir.relativize(filePath);
+      file = baseDir.relativize(file);
     }
-    // File path relative to ancestors?
-    else if (filePath.getName(0).toString().equals(PATH_SUPER))
-      /*
-       * NOTE: By definition, ancestors are outside the resource context rooted in `baseDir`.
-       */
+    /*
+     * Relative file outside `baseDir`?
+     *
+     * NOTE: By definition, ancestors are outside the resource context rooted in `baseDir`.
+     */
+    else if (file.getName(0).toString().equals(PATH_SUPER))
       return null;
 
-    return normalize(SLASH + filePath.toString());
+    return normal(SLASH + file.toString());
   }
 
   /**
-   * Gets the absolute name of a resource, resolved according to the base type.
+   * Ensures the resource name is absolute.
    *
    * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param baseType
-   *          Context type (to resolve relative {@code name}).
+   *          Resource name.
+   * @see #isAbs(String)
    */
-  public static String absName(String name, @Nullable Class<?> baseType) {
-    return isAbsolute(name) ? name : SLASH + fullName(name, baseType);
-  }
-
-  /**
-   * Gets the absolute name of a resource, resolved according to the base package.
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param basePackage
-   *          Context package name (to resolve relative {@code name}).
-   */
-  public static String absName(String name, String basePackage) {
-    return isAbsolute(name) ? name : SLASH + fullName(name, basePackage);
-  }
-
-  /**
-   * Gets the base name (that is, the filename without extension) of a resource name.
-   * <p>
-   * For example, if {@code name} is "/my/res/html/obj.html", returns "obj".
-   * </p>
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   */
-  public static String baseName(String name) {
-    name = simpleName(name);
-    return name.substring(0, name.length() - nameExtension(name).length());
+  public static String abs(String name) {
+    return isAbs(name) ? name : SLASH + name;
   }
 
   /**
@@ -109,8 +91,8 @@ public final class ResourceNames {
    * @param baseType
    *          Context type (to resolve relative {@code name}).
    */
-  public static String fullName(String name, @Nullable Class<?> baseType) {
-    return fullName(name, baseType != null ? baseType.getPackageName() : EMPTY);
+  public static String full(String name, @Nullable Class<?> baseType) {
+    return full(name, baseType != null ? baseType.getPackageName() : EMPTY);
   }
 
   /**
@@ -121,16 +103,16 @@ public final class ResourceNames {
    * @param basePackage
    *          Context package name (to resolve relative {@code name}).
    */
-  public static String fullName(String name, String basePackage) {
-    name = normalize(name);
-    return isAbsolute(name) || basePackage.isEmpty() ? name
+  public static String full(String name, String basePackage) {
+    name = normal(name);
+    return isAbs(name) || basePackage.isEmpty() ? name
         : name(basePackage.replace(DOT, SLASH), name);
   }
 
   /**
-   * Gets whether a name is absolute.
+   * Gets whether the name is absolute (that is, prefixed by {@code /}).
    */
-  public static boolean isAbsolute(String name) {
+  public static boolean isAbs(String name) {
     return name.startsWith(S + SLASH);
   }
 
@@ -149,7 +131,7 @@ public final class ResourceNames {
    * @throws IllegalArgumentException
    *           if {@code simpleName} is not a simple resource name.
    */
-  public static String localName(String simpleName, Class<?> baseType) {
+  public static String local(String simpleName, Class<?> baseType) {
     if (simpleName.indexOf(SLASH) >= 0)
       throw wrongArg("simpleName", simpleName, "INVALID (cannot contain slashes)");
 
@@ -166,14 +148,14 @@ public final class ResourceNames {
       case 0:
         return EMPTY;
       case 1:
-        return normalize(parts[0]);
+        return normal(parts[0]);
       default: {
         var b = new StringBuilder();
         for (int i = 0, limit = parts.length - 1; i <= limit; i++) {
           /*
            * NOTE: Normalized part may have single leading slash, but never trailing slash.
            */
-          var part = normalize(parts[i]);
+          var part = normal(parts[i]);
           if (part.isEmpty()) {
             continue;
           } else if (part.startsWith(S + SLASH) && i > 0) {
@@ -194,16 +176,6 @@ public final class ResourceNames {
   }
 
   /**
-   * (see {@link Files#fullExtension(String)})
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   */
-  public static String nameExtension(String name) {
-    return Files.fullExtension(name);
-  }
-
-  /**
    * Normalizes a name.
    * <p>
    * Transformations applied to {@code name}:
@@ -214,7 +186,7 @@ public final class ResourceNames {
    * <li>resulting trailing slash is suppressed if non-root</li>
    * </ul>
    */
-  public static String normalize(String name) {
+  public static String normal(String name) {
     StringBuilder b = null;
     int lastEnd = 0;
     /*
@@ -283,7 +255,7 @@ public final class ResourceNames {
     /*
      * NOTE: After normalization, no trailing slash other than root is possible.
      */
-    name = normalize(name);
+    name = normal(name);
     int sepIndex = name.lastIndexOf(SLASH);
     switch (sepIndex) {
       case -1:
@@ -319,75 +291,11 @@ public final class ResourceNames {
    *          Root resource directory.
    */
   public static Path path(String name, Path baseDir) {
-    return path(name, baseDir, EMPTY);
-  }
-
-  /**
-   * Gets the absolute path of a resource.
-   * <p>
-   * {@code name} is resolved to FQN based on {@code baseType}, then resolved according to
-   * {@code baseDir}. For example, assuming {@code baseType} is {@code org.mysoft.myapp.Obj} and
-   * {@code baseDir} is {@code "/home/myusr/Projects/myproj/src/main/resources"}:
-   * </p>
-   * <ul>
-   * <li>in case of a <i>relative</i> {@code name} like {@code "subpath/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/org/mysoft/myapp/subpath/obj.html"}</li>
-   * <li>in case of an <i>absolute</i> {@code name} like {@code "/html/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/html/obj.html"}</li>
-   * </ul>
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param baseDir
-   *          Root resource directory.
-   * @param baseType
-   *          Context type (to resolve relative {@code name}).
-   */
-  public static Path path(String name, Path baseDir, @Nullable Class<?> baseType) {
-    return path(name, baseDir, baseType != null ? baseType.getPackageName() : EMPTY);
-  }
-
-  /**
-   * Gets the absolute path of a resource.
-   * <p>
-   * {@code name} is resolved to FQN based on {@code basePackage}, then resolved according to
-   * {@code baseDir}. For example, assuming {@code basePackage} is {@code org.mysoft.myapp} and
-   * {@code baseDir} is {@code "/home/myusr/Projects/myproj/src/main/resources"}:
-   * </p>
-   * <ul>
-   * <li>in case of a <i>relative</i> {@code name} like {@code "subpath/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/org/mysoft/myapp/subpath/obj.html"}</li>
-   * <li>in case of an <i>absolute</i> {@code name} like {@code "/html/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/html/obj.html"}</li>
-   * </ul>
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param baseDir
-   *          Root resource directory.
-   * @param basePackage
-   *          Context package name (to resolve relative {@code name}).
-   */
-  public static Path path(String name, Path baseDir, String basePackage) {
-    name = fullName(name, basePackage);
-    if (name.startsWith(S + SLASH)) {
+    //    return path(name, baseDir, EMPTY);
+    if ((name = normal(name)).startsWith(S + SLASH)) {
       name = name.substring(1);
     }
     return baseDir.resolve(name);
-  }
-
-  /**
-   * Gets the filename of a resource name.
-   * <p>
-   * For example, if {@code name} is "/my/res/html/obj.html", returns "obj.html".
-   * </p>
-   *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   */
-  public static String simpleName(String name) {
-    int pos = name.lastIndexOf(SLASH);
-    return pos >= 0 ? name.substring(pos + 1) : name;
   }
 
   private ResourceNames() {

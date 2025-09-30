@@ -207,8 +207,8 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
    */
   protected void assertEquals(final String expectedJsonResourceName,
       final JsonElement actualJsonElement, final Config config) {
-    final String expectedJsonResourceFqn = ResourceNames.absName(expectedJsonResourceName,
-        typeOf(config.getTest()));
+    final String expectedJsonResourceFqn = ResourceNames.abs(ResourceNames.full(
+        expectedJsonResourceName, typeOf(config.getTest())));
     final Path expectedJsonFile = config.getEnv().resourcePath(expectedJsonResourceFqn);
 
     final String testId = getTestId(() -> expectedJsonResourceFqn, config);

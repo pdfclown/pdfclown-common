@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.test;
 
+import static java.nio.file.Files.exists;
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
@@ -121,10 +122,10 @@ public abstract class TestUnit implements Test {
      * Useful for referencing resources specific to this test unit.
      * </p>
      *
-     * @see ResourceNames#localName(String, Class)
+     * @see ResourceNames#local(String, Class)
      */
     public String localName(String simpleName) {
-      return ResourceNames.localName(simpleName, typeOf(TestUnit.this));
+      return ResourceNames.local(simpleName, typeOf(TestUnit.this));
     }
 
     @Override
@@ -149,19 +150,21 @@ public abstract class TestUnit implements Test {
         }
       }
 
-      return ResourceNames.path(
-          ResourceNames.isAbsolute(name) ? name : sqn(TestUnit.this) + SLASH + name,
-          dir(DirId.OUTPUT), typeOf(TestUnit.this));
+      return ResourceNames.path(ResourceNames.full(
+          ResourceNames.isAbs(name) ? name : sqn(TestUnit.this) + SLASH + name,
+          typeOf(TestUnit.this)), dir(DirId.OUTPUT));
     }
 
     @Override
     public Path resourcePath(String name) {
-      return ResourceNames.path(name, dir(DirId.TARGET), typeOf(TestUnit.this));
+      return ResourceNames.path(ResourceNames.full(name, typeOf(TestUnit.this)),
+          dir(DirId.TARGET));
     }
 
     @Override
     public Path resourceSrcPath(String name) {
-      return ResourceNames.path(name, dir(DirId.RESOURCE_SOURCE), typeOf(TestUnit.this));
+      return ResourceNames.path(ResourceNames.full(name, typeOf(TestUnit.this)),
+          dir(DirId.RESOURCE_SOURCE));
     }
 
     @Override
@@ -171,11 +174,11 @@ public abstract class TestUnit implements Test {
         topLevelType = topLevelType.getEnclosingClass();
       }
       Path ret;
-      var filename = topLevelType.getSimpleName() + FILE_EXTENSION__JAVA;
-      if (Files.exists(ret = ResourceNames.path(filename, dir(DirId.TYPE_SOURCE), topLevelType)))
+      var fullName = ResourceNames.full(topLevelType.getSimpleName() + FILE_EXTENSION__JAVA,
+          topLevelType);
+      if (exists(ret = ResourceNames.path(fullName, dir(DirId.TYPE_SOURCE))))
         return ret;
-      else if (Files.exists(ret = ResourceNames.path(filename, dir(DirId.MAIN_TYPE_SOURCE),
-          topLevelType)))
+      else if (exists(ret = ResourceNames.path(fullName, dir(DirId.MAIN_TYPE_SOURCE))))
         return ret;
       else
         throw runtime("Source file corresponding to " + ARG + " NOT FOUND "

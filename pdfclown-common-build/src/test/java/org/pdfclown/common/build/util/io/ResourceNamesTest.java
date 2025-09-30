@@ -50,7 +50,7 @@ class ResourceNamesTest extends BaseTest {
           "/my/absolute/resource/"),
       qnamed("Slash- and backslash-ridden absolute name",
           "//my/\\\\other\\/\\deep//absolute\\resource/"),
-      qnamed("Relaive root",
+      qnamed("Relative root",
           ""),
       qnamed("Normal relative name",
           "my/relative/resource"),
@@ -59,7 +59,7 @@ class ResourceNamesTest extends BaseTest {
       qnamed("Slash- and backslash-ridden relative name",
           "my/\\\\other\\/\\deep//relative\\resource/"));
 
-  static Stream<Arguments> absName_Path__unix() {
+  static Stream<Arguments> abs_Path__unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build());
     return argumentsStream(
@@ -110,7 +110,7 @@ class ResourceNamesTest extends BaseTest {
             fs.getPath("/host/absolute")));
   }
 
-  static Stream<Arguments> absName_Path__win() {
+  static Stream<Arguments> abs_Path__win() {
     var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build());
     return argumentsStream(
@@ -161,7 +161,7 @@ class ResourceNamesTest extends BaseTest {
             fs.getPath("c:\\absolute")));
   }
 
-  static Stream<Arguments> fullName_Class() {
+  static Stream<Arguments> full_Class() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -227,7 +227,7 @@ class ResourceNamesTest extends BaseTest {
             ResourceNames.class));
   }
 
-  static Stream<Arguments> fullName_String() {
+  static Stream<Arguments> full_String() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -510,7 +510,7 @@ class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
-  static Stream<Arguments> normalize() {
+  static Stream<Arguments> normal() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -566,9 +566,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void absName_Path__unix(Expected<String> expected, Path filePath, Path baseDir) {
+  void abs_Path__unix(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
-        () -> ResourceNames.absName(filePath, baseDir),
+        () -> ResourceNames.abs(filePath, baseDir),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("filePath", filePath),
@@ -577,9 +577,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void absName_Path__win(Expected<String> expected, Path filePath, Path baseDir) {
+  void abs_Path__win(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
-        () -> ResourceNames.absName(filePath, baseDir),
+        () -> ResourceNames.abs(filePath, baseDir),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("filePath", filePath),
@@ -588,10 +588,10 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullName_Class(Expected<String> expected, String name,
+  void full_Class(Expected<String> expected, String name,
       @Nullable Class<?> baseType) {
     assertParameterizedOf(
-        () -> ResourceNames.fullName(name, baseType),
+        () -> ResourceNames.full(name, baseType),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name", name),
@@ -600,9 +600,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullName_String(Expected<String> expected, String name, String basePackage) {
+  void full_String(Expected<String> expected, String name, String basePackage) {
     assertParameterizedOf(
-        () -> ResourceNames.fullName(name, basePackage),
+        () -> ResourceNames.full(name, basePackage),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name", name),
@@ -636,9 +636,9 @@ class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void normalize(Expected<String> expected, String name) {
+  void normal(Expected<String> expected, String name) {
     assertParameterizedOf(
-        () -> ResourceNames.normalize(name),
+        () -> ResourceNames.normal(name),
         expected,
         () -> new ExpectedGeneration(List.of(
             entry("name", name))));
