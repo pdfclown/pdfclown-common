@@ -97,6 +97,21 @@ public final class Files {
   }
 
   /**
+   * Recursively copies the source directory to the target.
+   * <p>
+   * NOTE: This method differs from
+   * {@link org.apache.commons.io.file.PathUtils#copyDirectory(Path, Path, java.nio.file.CopyOption...)}
+   * in its return value.
+   * </p>
+   *
+   * @return {@code targetDir}
+   */
+  public static Path copyDirectory(Path sourceDir, Path targetDir) throws IOException {
+    FileUtils.copyDirectory(sourceDir.toFile(), targetDir.toFile());
+    return targetDir;
+  }
+
+  /**
    * Gets the simple extension of the path.
    * <p>
    * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot.

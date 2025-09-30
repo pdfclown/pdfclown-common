@@ -52,11 +52,13 @@ public final class Strings {
   public static final char CR = '\r';
   public static final char CURLY_BRACE_CLOSE = '}';
   public static final char CURLY_BRACE_OPEN = '{';
+  public static final char DOLLAR = '$';
   public static final char DOT = '.';
   /**
    * Double quote (aka quotation mark).
    */
   public static final char DQUOTE = '\"';
+  public static final char HASH = '#';
   public static final char HYPHEN = '-';
   /**
    * Greater-than character.
@@ -251,6 +253,27 @@ public final class Strings {
   }
 
   /**
+   * Gets the index within the string of the first occurrence of the given character; if not found,
+   * returns the end of the string.
+   *
+   * @see String#indexOf(int)
+   */
+  public static int indexOfOrEnd(String s, int c) {
+    return indexOfOrEnd(s, c, 0);
+  }
+
+  /**
+   * Gets the index within the string of the first occurrence of the given character, searched from
+   * the given index; if not found, returns the end of the string.
+   *
+   * @see String#indexOf(int, int)
+   */
+  public static int indexOfOrEnd(String s, int c, int fromIndex) {
+    int index = s.indexOf(c, fromIndex);
+    return found(index) ? index : s.length();
+  }
+
+  /**
    * Gets whether the character is an end of line.
    */
   public static boolean isEOL(int c) {
@@ -385,6 +408,27 @@ public final class Strings {
   }
 
   /**
+   * Gets the index within the string of the last occurrence of the given character; if not found,
+   * returns the start of the string.
+   *
+   * @see String#lastIndexOf(int)
+   */
+  public static int lastIndexOfOrStart(String s, int c) {
+    return lastIndexOfOrStart(s, c, s.length());
+  }
+
+  /**
+   * Gets the index within the string of the last occurrence of the given character, searched from
+   * the given index; if not found, returns the start of the string.
+   *
+   * @see String#lastIndexOf(int, int)
+   */
+  public static int lastIndexOfOrStart(String s, int c, int fromIndex) {
+    int index = s.lastIndexOf(c, fromIndex);
+    return found(index) ? index : 0;
+  }
+
+  /**
    * Gets the end of the line at the position.
    */
   public static int lineEnd(String s, int index) {
@@ -397,6 +441,30 @@ public final class Strings {
    */
   public static int lineStart(String s, int index) {
     return lastIndexOf(s, Strings::isEOL, index) + 1;
+  }
+
+  /**
+   * Replaces the last occurrence of the given substring.
+   * <p>
+   * NOTE: Contrary to {@link String#replaceFirst(String, String)}, this method does NOT support
+   * regular expressions.
+   * </p>
+   *
+   * @return {@code s}, if {@code oldSub} was not found.
+   */
+  public static String replaceLast(String s, String oldSub, String newSub) {
+    int index = s.lastIndexOf(oldSub);
+    return found(index) ? s.substring(0, index) + newSub + s.substring(index + oldSub.length()) : s;
+  }
+
+  /**
+   * Replaces the last occurrence of the given character.
+   *
+   * @return {@code s}, if {@code oldChar} was not found.
+   */
+  public static String replaceLast(String s, int oldChar, int newChar) {
+    int index = s.lastIndexOf(oldChar);
+    return found(index) ? s.substring(0, index) + newChar + s.substring(index + 1) : s;
   }
 
   /**
