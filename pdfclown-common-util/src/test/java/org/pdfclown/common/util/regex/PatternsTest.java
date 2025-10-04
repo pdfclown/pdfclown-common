@@ -49,7 +49,7 @@ class PatternsTest extends BaseTest {
     List<String> mismatches;
 
     RegexArgument(String payload, List<String> matches, List<String> mismatches) {
-      super("", payload);
+      super("regex", payload);
 
       this.matches = matches;
       this.mismatches = mismatches;

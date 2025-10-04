@@ -53,33 +53,26 @@ class AssertionsTest extends BaseTest {
         java.util.Arrays.asList(
             // value[0]: null
             // [1] length[0]: 50
-            new Failure(
-                "java.lang.NullPointerException", "`value`"),
+            new Failure("NullPointerException", "`value`"),
             // [2] length[1]: 20
-            new Failure(
-                "java.lang.NullPointerException", "`value`"),
+            new Failure("NullPointerException", "`value`"),
             // [3] length[2]: 5
-            new Failure(
-                "java.lang.NullPointerException", "`value`"),
+            new Failure("NullPointerException", "`value`"),
             //
             // value[1]: ""
             // [4] length[0]: 50
-            new Failure(
-                "java.lang.IllegalArgumentException",
+            new Failure("IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 0)"),
             // [5] length[1]: 20
-            new Failure(
-                "java.lang.IllegalArgumentException",
+            new Failure("IllegalArgumentException",
                 "`length` (20): INVALID (should be less than 0)"),
             // [6] length[2]: 5
-            new Failure(
-                "java.lang.IllegalArgumentException",
+            new Failure("IllegalArgumentException",
                 "`length` (5): INVALID (should be less than 0)"),
             //
             // value[2]: "The quick brow. . ."
             // [7] length[0]: 50
-            new Failure(
-                "java.lang.IllegalArgumentException",
+            new Failure("IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 43)"),
             // [8] length[1]: 20
             "The quick brown fox ",
@@ -129,7 +122,7 @@ class AssertionsTest extends BaseTest {
         java.util.Arrays.asList(
             // [1] value[0]: "The quick brow. . ."; length[0]: 50
             new Failure(
-                "java.lang.IllegalArgumentException",
+                "IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 43)"),
             // [2] value[1]: "The lazy yello. . ."; length[1]: 20
             "The lazy yellow dog "),
@@ -218,7 +211,7 @@ class AssertionsTest extends BaseTest {
         + "  // value[0]: \"The quick brown fox jumps over the lazy dog\"\n"
         + "  // [1] length[0]: 50\n"
         + "  new org.pdfclown.common.build.test.assertion.Assertions.Failure("
-        + "\"java.lang.IllegalArgumentException\", "
+        + "\"IllegalArgumentException\", "
         + "\"`length` (50): INVALID (should be less than 43)\"),\n"
         + "  // [2] length[1]: 20\n"
         + "  \"The quick brown fox \",\n"
@@ -260,7 +253,7 @@ class AssertionsTest extends BaseTest {
         + "java.util.Arrays.asList(\n"
         + "  // [1] value[0]: \"The quick brown fox jumps over the lazy dog\"; length[0]: 50\n"
         + "  new org.pdfclown.common.build.test.assertion.Assertions.Failure("
-        + "\"java.lang.IllegalArgumentException\", "
+        + "\"IllegalArgumentException\", "
         + "\"`length` (50): INVALID (should be less than 43)\"),\n"
         + "  // [2] value[1]: \"The lazy yellow dog was caught by the slow r. . .\"; "
         + "length[1]: 20\n"

@@ -174,14 +174,14 @@ class UnitsTest extends BaseTest {
             // [3] unit[2]: ft (Foot); target[2]: km (Kilometre)
             3.048E-4,
             // [4] unit[3]: ft (Foot); target[3]: ft² (Square foot)
-            new Failure("javax.measure.UnconvertibleException",
+            new Failure("UnconvertibleException",
                 "javax.measure.IncommensurableException: ft is not compatible with ft²"),
             // [5] unit[4]: ac (Acre); target[4]: ha (Hectare)
             0.40468564224,
             // [6] unit[5]: ℃ (Celsius); target[5]: K (Kelvin)
             1.0,
             // [7] unit[6]: h (Hour); target[6]: K (Kelvin)
-            new Failure("javax.measure.UnconvertibleException",
+            new Failure("UnconvertibleException",
                 "javax.measure.IncommensurableException: h is not compatible with K")),
         // unit
         asList(

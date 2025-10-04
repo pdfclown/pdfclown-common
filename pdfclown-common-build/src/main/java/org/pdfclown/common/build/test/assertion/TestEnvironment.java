@@ -139,7 +139,7 @@ public interface TestEnvironment {
    */
   default @Nullable String resolveName(Path file) {
     return Streams.of(DirId.values())
-        .map($ -> ResourceNames.abs(file, dir($)))
+        .map($ -> ResourceNames.based(file, dir($), true))
         .filter(Objects::nonNull)
         .min(comparing(String::length) /* Keeps the most specific name */)
         .orElse(null);

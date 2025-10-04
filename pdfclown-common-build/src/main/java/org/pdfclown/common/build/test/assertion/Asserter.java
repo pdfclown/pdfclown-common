@@ -311,7 +311,7 @@ public abstract class Asserter {
                 .orElseThrow())
             .orElse(EMPTY));
     if (testName.isEmpty())
-      throw runtime("Failed test method NOT FOUND on stack trace (should be marked with any of "
+      throw runtime("Failed test method NOT FOUND on call stack (should be marked with any of "
           + "these annotations: " + ARG + ")",
           testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
@@ -350,8 +350,7 @@ public abstract class Asserter {
    * The {@linkplain Config#getTestId() configured identifier} has priority over the default one.
    * </p>
    */
-  @SuppressWarnings("null")
-  protected String getTestId(Supplier<String> defaultSupplier, Config config) {
+  protected String getTestId(Config config, Supplier<String> defaultSupplier) {
     return config.getTestId() != null ? config.getTestId() : defaultSupplier.get();
   }
 

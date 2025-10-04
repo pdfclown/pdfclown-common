@@ -12,46 +12,90 @@
  */
 package org.pdfclown.common.build.util.io;
 
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.build.internal.util_.Objects.asType;
 import static org.pdfclown.common.build.internal.util_.Strings.BACKSLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.DOT;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
-import static org.pdfclown.common.build.internal.util_.Strings.UNDERSCORE;
 import static org.pdfclown.common.build.internal.util_.io.Files.PATH_SUPER;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Resource utilities.
+ * Resource name utilities.
  * <p>
- * Names follow Java resource name syntax (slash-separated segments).
+ * Within this class, <b>resource names</b> follow the Java resource name syntax: they are
+ * <i>concatenations of slash-separated segments</i>. Trailing slash means directory (otherwise,
+ * file); leading slash means absolute name (otherwise, relative) — NOTE: the
+ * {@linkplain Class#getResource(String) official Java documentation} is misleading, as it states
+ * that an absolute resource name "is the portion of the name following the [leading slash]": such
+ * definition doesn't make sense, as the lack of leading slash causes the name to be prefixed by a
+ * package name (typical behavior of <i>relative</i> names, NOT absolute ones!). The documentation
+ * of {@code Class.resolveName(String)} itself falls in contradiction when it says "Add a package
+ * name prefix if the name is not absolute. Remove leading [slash] if name is absolute". What the
+ * original Java author was evidently intending with the expression "absolute resource name" is the
+ * <i>full resource name</i>, NOT the absolute one.
+ * </p>
+ * <p>
+ * All the methods within this class return normalized resource names.
  * </p>
  *
  * @author Stefano Chizzolini
  */
 public final class ResourceNames {
   /**
-   * Gets the absolute name of a resource, resolved according to the base directory.
+   * Ensures the resource name is absolute.
+   *
+   * @param name
+   *          Resource name.
+   * @see #isAbs(CharSequence)
+   */
+  public static String abs(String name) {
+    return isAbs(name = normal(name)) ? name : SLASH + name;
+  }
+
+  /**
+   * Gets the name of a resource, relative to the base directory.
    *
    * @param file
    *          Resource file.
    * @param baseDir
-   *          Root resource directory.
+   *          Resource base directory.
    * @return
    *         <ul>
-   *         <li>if {@code file} is absolute and under {@code baseDir}: relativized, converted to
-   *         name and prefixed with slash</li>
+   *         <li>if {@code file} is absolute and under {@code baseDir}: relativized and converted to
+   *         name</li>
    *         <li>if {@code file} is relative and under {@code baseDir} (that is, not prefixed with
-   *         {@code ..}): converted to name and prefixed with slash</li>
+   *         {@code ..}): converted to name</li>
    *         <li>if {@code file} is outside {@code baseDir}: {@code null}</li>
    *         </ul>
-   * @see #isAbs(String)
+   * @see #isAbs(CharSequence)
    */
-  public static @Nullable String abs(Path file, Path baseDir) {
+  public static @Nullable String based(Path file, Path baseDir) {
+    return based(file, baseDir, false);
+  }
+
+  /**
+   * Gets the name of a resource, resolved according to the base directory.
+   *
+   * @param file
+   *          Resource file.
+   * @param baseDir
+   *          Resource base directory.
+   * @param abs
+   *          Whether the resulting name is {@linkplain #isAbs(CharSequence) absolute}.
+   * @return
+   *         <ul>
+   *         <li>if {@code file} is absolute and under {@code baseDir}: relativized and converted to
+   *         name</li>
+   *         <li>if {@code file} is relative and under {@code baseDir} (that is, not prefixed with
+   *         {@code ..}): converted to name</li>
+   *         <li>if {@code file} is outside {@code baseDir}: {@code null}</li>
+   *         </ul>
+   */
+  public static @Nullable String based(Path file, Path baseDir, boolean abs) {
     file = file.normalize();
     if (file.isAbsolute()) {
       baseDir = baseDir.toAbsolutePath().normalize();
@@ -69,77 +113,96 @@ public final class ResourceNames {
     else if (file.getName(0).toString().equals(PATH_SUPER))
       return null;
 
-    return normal(SLASH + file.toString());
+    var ret = normal(file.toString());
+    if (abs) {
+      ret = abs(ret);
+    }
+    return ret;
   }
 
   /**
-   * Ensures the resource name is absolute.
+   * Gets the name of a resource qualified by the base.
    *
    * @param name
-   *          Resource name.
-   * @see #isAbs(String)
+   *          Resource name (either relative or absolute).
+   * @param base
+   *          Base object, whose package name is prepended in case of relative {@code name} (if
+   *          {@code String}, it must be a package name itself).
+   * @return
+   *         <ul>
+   *         <li>{@code name} — if {@code name} is absolute</li>
+   *         <li>{@code %BasePackageName%/name} — if {@code name} is relative, where
+   *         {@code %BasePackageName%} is the package of {@code base} whose dots are converted to
+   *         slashes</li>
+   *         </ul>
    */
-  public static String abs(String name) {
-    return isAbs(name) ? name : SLASH + name;
+  public static String based(String name, Object base) {
+    return based(name, base, false);
   }
 
   /**
-   * Gets the fully-qualified name of a resource, resolved according to the base type.
+   * Gets the name of a resource qualified by the base.
    *
    * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param baseType
-   *          Context type (to resolve relative {@code name}).
+   *          Resource name (either relative or absolute).
+   * @param base
+   *          Base object, whose package name is prepended in case of relative {@code name} (if
+   *          {@code String}, it must be a package name itself).
+   * @param abs
+   *          Whether the resulting name is absolute.
+   * @return
+   *         <ul>
+   *         <li>{@code name} — if {@code name} is absolute</li>
+   *         <li>{@code %BasePackageName%/name} — if {@code name} is relative, where
+   *         {@code %BasePackageName%} is the package of {@code base} whose dots are converted to
+   *         slashes</li>
+   *         </ul>
    */
-  public static String full(String name, @Nullable Class<?> baseType) {
-    return full(name, baseType != null ? baseType.getPackageName() : EMPTY);
+  public static String based(String name, Object base, boolean abs) {
+    if (!(isAbs(name = normal(name)))) {
+      //noinspection DataFlowIssue : @PolyNull
+      name = name((base instanceof String ? (String) base : asType(base).getPackageName())
+          .replace(DOT, SLASH), name);
+      if (abs) {
+        name = abs(name);
+      }
+    }
+    return name;
   }
 
   /**
-   * Gets the fully-qualified name of a resource, resolved according to the base package.
+   * Gets whether the name is absolute (that is, prefixed by slash).
    *
-   * @param name
-   *          Resource name (either relative or absolute; slash-separated).
-   * @param basePackage
-   *          Context package name (to resolve relative {@code name}).
+   * @implNote For the sake of consistency with the other utilities in this class, which enforce
+   *           name normalization, this method accepts also back-slash as separator.
+   * @see #isDir(CharSequence)
    */
-  public static String full(String name, String basePackage) {
-    name = normal(name);
-    return isAbs(name) || basePackage.isEmpty() ? name
-        : name(basePackage.replace(DOT, SLASH), name);
+  public static boolean isAbs(CharSequence name) {
+    char c = name.length() > 0 ? name.charAt(0) : 0;
+    return c == SLASH || c == BACKSLASH;
   }
 
   /**
-   * Gets whether the name is absolute (that is, prefixed by {@code /}).
+   * Gets whether the name is a directory (that is, suffixed by slash or empty (relative root)).
+   *
+   * @implNote For the sake of consistency with the other utilities in this class, which enforce
+   *           name normalization, this method accepts also back-slash as separator.
+   * @see #isAbs(CharSequence)
    */
-  public static boolean isAbs(String name) {
-    return name.startsWith(S + SLASH);
+  public static boolean isDir(CharSequence name) {
+    char c = name.length() > 0 ? name.charAt(name.length() - 1) : SLASH;
+    return c == SLASH || c == BACKSLASH;
   }
 
   /**
-   * Qualifies a simple resource name prepending the simple name of the base type.
+   * Gets the name corresponding to the concatenation of the parts.
    * <p>
-   * For example, if {@code simpleName} is {@code "MyResource"} and {@code baseType}'s FQN is
-   * {@code "io.mydomain.myproject.MyOuterClass$MyInnerClass"}, it returns
-   * {@code "MyOuterClass.MyInnerClass_MyResource"}.
+   * NOTE: The semantics of resource name concatenation are different from usual string
+   * concatenation, in that <i>the first part commands whether the whole name is absolute or not</i>
+   * (for example, if {@code parts} is {@code ["", "/"]}, then the result is {@code ""} (relative
+   * root), since {@code parts[0]} is itself relative root, whilst {@code parts[1]} is just a
+   * trailing slash, which is suppressed because of normalization).
    * </p>
-   *
-   * @param simpleName
-   *          Simple resource name.
-   * @param baseType
-   *          Context type (whose qualified simple name is to prepend).
-   * @throws IllegalArgumentException
-   *           if {@code simpleName} is not a simple resource name.
-   */
-  public static String local(String simpleName, Class<?> baseType) {
-    if (simpleName.indexOf(SLASH) >= 0)
-      throw wrongArg("simpleName", simpleName, "INVALID (cannot contain slashes)");
-
-    return sqnd(baseType) + UNDERSCORE + simpleName;
-  }
-
-  /**
-   * Gets the name corresponding to the concatenation of the parts, normalized.
    *
    * @return Empty (that is, relative root), if {@code parts} is empty.
    */
@@ -158,15 +221,31 @@ public final class ResourceNames {
           var part = normal(parts[i]);
           if (part.isEmpty()) {
             continue;
-          } else if (part.startsWith(S + SLASH) && i > 0) {
-            part = part.substring(1);
-            if (part.isEmpty()) {
-              continue;
-            }
           }
 
-          if (b.length() > 0 && b.charAt(b.length() - 1) != SLASH) {
-            b.append(SLASH);
+          if (i > 0) {
+            boolean partAbs = isAbs(part);
+            if (isDir(b) == partAbs) {
+              /*
+               * Merging contiguous separators, or collapsing leading intermediate separator on
+               * relative root?
+               *
+               * Example (merge case): {"part0/", "/part1"} --> "part0/part1"
+               *
+               * Example (collapse case): {"", "/part1"} --> "part1"
+               */
+              if (partAbs) {
+                part = rel(part);
+              }
+              /*
+               * Missing separator?
+               *
+               * Example: {"part0", "part1"} --> "part0/part1"
+               */
+              else {
+                b.append(SLASH);
+              }
+            }
           }
           b.append(part);
         }
@@ -188,22 +267,20 @@ public final class ResourceNames {
    */
   public static String normal(String name) {
     StringBuilder b = null;
-    int lastEnd = 0;
     /*
      * Whether current character is on separator boundary (that is, the previous character was a
      * slash, so no contiguous separator is acceptable).
      */
-    boolean separated = false;
-    for (int i = 0, limit = name.length() - 1; i <= limit; i++) {
+    var separated = false;
+    int lastEnd = 0;
+    for (int i = 0, l = name.length(); i < l; i++) {
       String replacement = null;
       char c = name.charAt(i);
       switch (c) {
         case BACKSLASH:
         case SLASH:
-          // Contiguous with previous separator, or trailing non-root?
-          if (i > 0
-              && (separated /* Contiguous */
-                  || i == limit) /* Trailing, non-root */) {
+          // Contiguous with previous separator?
+          if (separated) {
             // Suppress!
             replacement = EMPTY;
           } else if (c == BACKSLASH) {
@@ -227,11 +304,11 @@ public final class ResourceNames {
         lastEnd = i + 1;
       }
     }
-    return b != null ? b.append(name.substring(lastEnd)).toString() : name;
+    return b != null ? b.append(name, lastEnd, name.length()).toString() : name;
   }
 
   /**
-   * Gets the parent of a resource name, normalized.
+   * Gets the parent of a resource name.
    * <p>
    * For example:
    * </p>
@@ -247,7 +324,7 @@ public final class ResourceNames {
    * </ul>
    *
    * @param name
-   *          Resource name (either relative or absolute; slash-separated).
+   *          Resource name.
    * @return {@code null}, if {@code name} is root (either relative ({@code ""}) or absolute
    *         ({@code "/"})).
    */
@@ -255,9 +332,8 @@ public final class ResourceNames {
     /*
      * NOTE: After normalization, no trailing slash other than root is possible.
      */
-    name = normal(name);
-    int sepIndex = name.lastIndexOf(SLASH);
-    switch (sepIndex) {
+    int sepPos;
+    switch (sepPos = (name = normal(name)).lastIndexOf(SLASH)) {
       case -1:
         return !name.isEmpty()
             ? EMPTY /* Relative root */
@@ -267,35 +343,35 @@ public final class ResourceNames {
             ? S + SLASH /* Absolute root */
             : null /* Absolute root's parent */;
       default:
-        return name.substring(0, sepIndex) /* Intermediate level */;
+        return name.substring(0, sepPos) /* Intermediate level */;
     }
   }
 
   /**
-   * Gets the absolute path of a resource.
+   * Gets the path of a resource.
    * <p>
-   * {@code name} is resolved according to {@code baseDir}, no matter whether it is relative or
-   * absolute. For example, assuming {@code baseDir} is
-   * {@code "/home/myusr/Projects/myproj/src/main/resources"}:
+   * {@code name} is resolved according to {@code baseDir}; whether {@code name} is relative or
+   * absolute makes no difference.
    * </p>
-   * <ul>
-   * <li>in case of a <i>relative</i> {@code name} like {@code "subpath/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/subpath/obj.html"}</li>
-   * <li>in case of an <i>absolute</i> {@code name} like {@code "/html/obj.html"}, it returns
-   * {@code "/home/myusr/Projects/myproj/src/main/resources/html/obj.html"}</li>
-   * </ul>
    *
    * @param name
-   *          Resource name (either relative or absolute; slash-separated).
+   *          Resource name.
    * @param baseDir
-   *          Root resource directory.
+   *          Resource base directory.
    */
   public static Path path(String name, Path baseDir) {
-    //    return path(name, baseDir, EMPTY);
-    if ((name = normal(name)).startsWith(S + SLASH)) {
-      name = name.substring(1);
-    }
-    return baseDir.resolve(name);
+    return baseDir.resolve(rel(name));
+  }
+
+  /**
+   * Ensures the resource name is relative.
+   *
+   * @param name
+   *          Resource name.
+   * @see #isAbs(CharSequence)
+   */
+  public static String rel(String name) {
+    return isAbs(name = normal(name)) ? name.substring(1) : name;
   }
 
   private ResourceNames() {

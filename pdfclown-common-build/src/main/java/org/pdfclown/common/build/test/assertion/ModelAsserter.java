@@ -18,7 +18,6 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
-import static org.pdfclown.common.build.internal.util_.Objects.typeOf;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.io.Files.cognateFile;
 import static org.pdfclown.common.build.internal.util_.io.Files.extension;
@@ -207,11 +206,11 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
    */
   protected void assertEquals(final String expectedJsonResourceName,
       final JsonElement actualJsonElement, final Config config) {
-    final String expectedJsonResourceFqn = ResourceNames.abs(ResourceNames.full(
-        expectedJsonResourceName, typeOf(config.getTest())));
+    final String expectedJsonResourceFqn = ResourceNames.based(
+        expectedJsonResourceName, config.getTest(), true);
     final Path expectedJsonFile = config.getEnv().resourcePath(expectedJsonResourceFqn);
 
-    final String testId = getTestId(() -> expectedJsonResourceFqn, config);
+    final String testId = getTestId(config, () -> expectedJsonResourceFqn);
 
     try {
       boolean built = false;

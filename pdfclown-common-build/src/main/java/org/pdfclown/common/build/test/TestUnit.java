@@ -16,8 +16,8 @@ import static java.nio.file.Files.exists;
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
+import static org.pdfclown.common.build.internal.util_.Objects.asTopLevelType;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
-import static org.pdfclown.common.build.internal.util_.Objects.typeOf;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
@@ -25,7 +25,6 @@ import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__
 import static org.pdfclown.common.build.internal.util_.io.Files.normal;
 import static org.pdfclown.common.build.internal.util_.io.Files.resetDirectory;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,18 +115,6 @@ public abstract class TestUnit implements Test {
       return dirResolver.resolve(id);
     }
 
-    /**
-     * Qualifies a simple resource name prepending the simple name of this class.
-     * <p>
-     * Useful for referencing resources specific to this test unit.
-     * </p>
-     *
-     * @see ResourceNames#local(String, Class)
-     */
-    public String localName(String simpleName) {
-      return ResourceNames.local(simpleName, typeOf(TestUnit.this));
-    }
-
     @Override
     public synchronized Path outputPath(String name) {
       if (!outputDirInitialized) {
@@ -150,35 +137,31 @@ public abstract class TestUnit implements Test {
         }
       }
 
-      return ResourceNames.path(ResourceNames.full(
-          ResourceNames.isAbs(name) ? name : sqn(TestUnit.this) + SLASH + name,
-          typeOf(TestUnit.this)), dir(DirId.OUTPUT));
+      return ResourceNames.path(ResourceNames.isAbs(name) ? name
+          : ResourceNames.based(ResourceNames.name(sqn(TestUnit.this), name), TestUnit.this),
+          dir(DirId.OUTPUT));
     }
 
     @Override
     public Path resourcePath(String name) {
-      return ResourceNames.path(ResourceNames.full(name, typeOf(TestUnit.this)),
-          dir(DirId.TARGET));
+      return ResourceNames.path(ResourceNames.based(name, TestUnit.this), dir(DirId.TARGET));
     }
 
     @Override
     public Path resourceSrcPath(String name) {
-      return ResourceNames.path(ResourceNames.full(name, typeOf(TestUnit.this)),
+      return ResourceNames.path(ResourceNames.based(name, TestUnit.this),
           dir(DirId.RESOURCE_SOURCE));
     }
 
     @Override
     public Path typeSrcPath(Class<?> type) {
-      Class<?> topLevelType = requireNonNull(type, "`type`");
-      while (topLevelType.getEnclosingClass() != null) {
-        topLevelType = topLevelType.getEnclosingClass();
-      }
       Path ret;
-      var fullName = ResourceNames.full(topLevelType.getSimpleName() + FILE_EXTENSION__JAVA,
-          topLevelType);
-      if (exists(ret = ResourceNames.path(fullName, dir(DirId.TYPE_SOURCE))))
+      var name = ResourceNames.based(
+          requireNonNull(asTopLevelType(type), "`type`").getSimpleName() + FILE_EXTENSION__JAVA,
+          type);
+      if (exists(ret = ResourceNames.path(name, dir(DirId.TYPE_SOURCE))))
         return ret;
-      else if (exists(ret = ResourceNames.path(fullName, dir(DirId.MAIN_TYPE_SOURCE))))
+      else if (exists(ret = ResourceNames.path(name, dir(DirId.MAIN_TYPE_SOURCE))))
         return ret;
       else
         throw runtime("Source file corresponding to " + ARG + " NOT FOUND "

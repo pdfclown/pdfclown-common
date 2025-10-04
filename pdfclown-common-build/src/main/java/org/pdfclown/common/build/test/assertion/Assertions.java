@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianProduct;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireEqual;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
@@ -122,7 +122,7 @@ public final class Assertions {
    * <td>{@link Argument#qnamed(String, Object)}</td>
    * </tr>
    * <tr>
-   * <td>Display and pass (as-is to test)</td>
+   * <td>Display and execution (pass as-is to test)</td>
    * <td>Name and value</td>
    * <td>{@link Argument#arg(String, Object)}</td>
    * </tr>
@@ -133,16 +133,53 @@ public final class Assertions {
    * @author Stefano Chizzolini
    */
   public static class Argument<T> {
+    /**
+     * Alias of {@link #of(String, Object)}.
+     *
+     * @param label
+     *          Name.
+     * @param value
+     *          Payload.
+     * @throws IllegalArgumentException
+     *           if {@code label} is blank.
+     */
     public static <T> Argument<T> arg(String label, @Nullable T value) {
       return of(label, value);
     }
 
+    /**
+     * Creates an argument value wrapper.
+     * <p>
+     * See "Argument instantiation summary" in {@link Argument} for more information.
+     * </p>
+     *
+     * @param label
+     *          Name.
+     * @param value
+     *          Payload.
+     * @throws IllegalArgumentException
+     *           if {@code label} is blank.
+     */
     public static <T> Argument<T> of(String label, @Nullable T value) {
       return new Argument<>(label, value);
     }
 
+    /**
+     * Creates a named argument value with qualified string representation, showing both its payload
+     * and its label.
+     * <p>
+     * See "Argument instantiation summary" in {@link Argument} for more information.
+     * </p>
+     *
+     * @param label
+     *          Name.
+     * @param value
+     *          Payload.
+     * @throws IllegalArgumentException
+     *           if {@code label} is blank.
+     */
     public static <T> Named<T> qnamed(String label, @Nullable T value) {
-      return Named.of(toString(label, value), value);
+      return Named.of(toString(requireNotBlank(label, "label"), value), value);
     }
 
     private static String toString(String label, @Nullable Object value) {
@@ -154,7 +191,7 @@ public final class Assertions {
     private final @Nullable T value;
 
     protected Argument(String label, @Nullable T value) {
-      this.label = requireNonNull(label, "`label`");
+      this.label = requireNotBlank(label, "label");
       this.value = value;
     }
 
@@ -1570,7 +1607,7 @@ public final class Assertions {
       } else if (ex instanceof UndeclaredThrowableException) {
         ex = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
       }
-      return new Failure(fqn(ex), ex.getMessage());
+      return new Failure(sqnd(ex), ex.getMessage());
     }
   }
 
