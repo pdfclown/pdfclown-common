@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util.io;
 
+import static java.util.Arrays.asList;
 import static org.pdfclown.common.build.test.assertion.Assertions.Argument.qnamed;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
@@ -47,7 +48,7 @@ class FilesTest extends BaseTest {
       qnamed("Simple, alt-case",
           ".GZ"));
 
-  private static final List<Named<String>> PATHS = List.of(
+  private static final List<Named<String>> FILES = List.of(
       qnamed("Unix path, dot inside directory, multi-part file extension",
           "/home/me/my.sub/test/obj.TAR.GZ"),
       qnamed("URI path, dot inside directory, multi-part file extension",
@@ -59,30 +60,106 @@ class FilesTest extends BaseTest {
       qnamed("Dot inside base filename, multi-part file extension",
           "/home/me/my/test/obj-5.2.9.tar2.gz"));
 
-  static Stream<Arguments> extension() {
+  static Stream<Arguments> baseName_full() {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
-            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+        asList(
+            // [1] file[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            "obj",
+            // [2] file[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            "obj",
+            // [3] file[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            "obj",
+            // [4] file[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            "obj",
+            // [5] file[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            "obj-5.2.9"),
+        // file
+        FILES);
+  }
+
+  static Stream<Arguments> cognateFile_full() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] file[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            "/home/me/my.sub/test/obj_tmp",
+            // [2] file[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            "smb://myhost/my.sub/test/obj_tmp",
+            // [3] file[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            "C:\\my.sub\\test\\obj_tmp",
+            // [4] file[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            "\\\\myhost\\my.sub\\test\\obj_tmp",
+            // [5] file[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            "/home/me/my/test/obj-5.2.9_tmp"),
+        // file
+        FILES);
+  }
+
+  static Stream<Arguments> cognateFile_notFull() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] file[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            "/home/me/my.sub/test/obj.TAR_tmp",
+            // [2] file[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            "smb://myhost/my.sub/test/obj.TAR_tmp",
+            // [3] file[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            "C:\\my.sub\\test\\obj.tar_tmp",
+            // [4] file[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            "\\\\myhost\\my.sub\\test\\obj.tar_tmp",
+            // [5] file[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            "/home/me/my/test/obj-5.2.9.tar2_tmp"),
+        // file
+        FILES);
+  }
+
+  static Stream<Arguments> extension_full() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] file[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            ".TAR.GZ",
+            // [2] file[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            ".TAR.gz",
+            // [3] file[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            ".tar.GZ",
+            // [4] file[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            ".tar.gz",
+            // [5] file[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            ".tar2.gz"),
+        // file
+        FILES);
+  }
+
+  static Stream<Arguments> extension_notFull() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] file[0]: "/home/me/my.sub/test/obj.TAR.GZ"
             ".GZ",
-            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            // [2] file[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
             ".gz",
-            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            // [3] file[2]: "C:\\my.sub\\test\\obj.tar.GZ"
             ".GZ",
-            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            // [4] file[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
             ".gz",
-            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            // [5] file[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
             ".gz"),
-        // path
-        PATHS);
+        // file
+        FILES);
   }
 
   static Stream<Arguments> filename() {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
             "obj.TAR.GZ",
             // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
@@ -94,94 +171,15 @@ class FilesTest extends BaseTest {
             // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
             "obj-5.2.9.tar2.gz"),
         // path
-        PATHS);
+        FILES);
   }
 
-  static Stream<Arguments> fullExtension() {
+  static Stream<Arguments> isExtension_full() {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
-            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
-            ".TAR.GZ",
-            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
-            ".TAR.gz",
-            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
-            ".tar.GZ",
-            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
-            ".tar.gz",
-            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
-            ".tar2.gz"),
-        // path
-        PATHS);
-  }
-
-  static Stream<Arguments> isExtension() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        java.util.Arrays.asList(
-            // path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
-            // [1] extension[0]: ".tar.gz"
-            false,
-            // [2] extension[1]: ".tar.GZ"
-            false,
-            // [3] extension[2]: ".gz"
-            true,
-            // [4] extension[3]: ".GZ"
-            true,
-            //
-            // path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
-            // [5] extension[0]: ".tar.gz"
-            false,
-            // [6] extension[1]: ".tar.GZ"
-            false,
-            // [7] extension[2]: ".gz"
-            true,
-            // [8] extension[3]: ".GZ"
-            true,
-            //
-            // path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
-            // [9] extension[0]: ".tar.gz"
-            false,
-            // [10] extension[1]: ".tar.GZ"
-            false,
-            // [11] extension[2]: ".gz"
-            true,
-            // [12] extension[3]: ".GZ"
-            true,
-            //
-            // path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
-            // [13] extension[0]: ".tar.gz"
-            false,
-            // [14] extension[1]: ".tar.GZ"
-            false,
-            // [15] extension[2]: ".gz"
-            true,
-            // [16] extension[3]: ".GZ"
-            true,
-            //
-            // path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
-            // [17] extension[0]: ".tar.gz"
-            false,
-            // [18] extension[1]: ".tar.GZ"
-            false,
-            // [19] extension[2]: ".gz"
-            true,
-            // [20] extension[3]: ".GZ"
-            true),
-        // path
-        PATHS,
-        // extension
-        EXTENSIONS);
-  }
-
-  static Stream<Arguments> isFullExtension() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        java.util.Arrays.asList(
-            // path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+        asList(
+            // file[0]: "/home/me/my.sub/test/obj.TAR.GZ"
             // [1] extension[0]: ".tar.gz"
             true,
             // [2] extension[1]: ".tar.GZ"
@@ -191,7 +189,7 @@ class FilesTest extends BaseTest {
             // [4] extension[3]: ".GZ"
             false,
             //
-            // path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            // file[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
             // [5] extension[0]: ".tar.gz"
             true,
             // [6] extension[1]: ".tar.GZ"
@@ -201,7 +199,7 @@ class FilesTest extends BaseTest {
             // [8] extension[3]: ".GZ"
             false,
             //
-            // path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            // file[2]: "C:\\my.sub\\test\\obj.tar.GZ"
             // [9] extension[0]: ".tar.gz"
             true,
             // [10] extension[1]: ".tar.GZ"
@@ -211,7 +209,7 @@ class FilesTest extends BaseTest {
             // [12] extension[3]: ".GZ"
             false,
             //
-            // path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            // file[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
             // [13] extension[0]: ".tar.gz"
             true,
             // [14] extension[1]: ".tar.GZ"
@@ -221,7 +219,7 @@ class FilesTest extends BaseTest {
             // [16] extension[3]: ".GZ"
             false,
             //
-            // path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            // file[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
             // [17] extension[0]: ".tar.gz"
             false,
             // [18] extension[1]: ".tar.GZ"
@@ -230,8 +228,68 @@ class FilesTest extends BaseTest {
             false,
             // [20] extension[3]: ".GZ"
             false),
-        // path
-        PATHS,
+        // file
+        FILES,
+        // extension
+        EXTENSIONS);
+  }
+
+  static Stream<Arguments> isExtension_notFull() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // file[0]: "/home/me/my.sub/test/obj.TAR.GZ"
+            // [1] extension[0]: ".tar.gz"
+            false,
+            // [2] extension[1]: ".tar.GZ"
+            false,
+            // [3] extension[2]: ".gz"
+            true,
+            // [4] extension[3]: ".GZ"
+            true,
+            //
+            // file[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
+            // [5] extension[0]: ".tar.gz"
+            false,
+            // [6] extension[1]: ".tar.GZ"
+            false,
+            // [7] extension[2]: ".gz"
+            true,
+            // [8] extension[3]: ".GZ"
+            true,
+            //
+            // file[2]: "C:\\my.sub\\test\\obj.tar.GZ"
+            // [9] extension[0]: ".tar.gz"
+            false,
+            // [10] extension[1]: ".tar.GZ"
+            false,
+            // [11] extension[2]: ".gz"
+            true,
+            // [12] extension[3]: ".GZ"
+            true,
+            //
+            // file[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
+            // [13] extension[0]: ".tar.gz"
+            false,
+            // [14] extension[1]: ".tar.GZ"
+            false,
+            // [15] extension[2]: ".gz"
+            true,
+            // [16] extension[3]: ".GZ"
+            true,
+            //
+            // file[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
+            // [17] extension[0]: ".tar.gz"
+            false,
+            // [18] extension[1]: ".tar.GZ"
+            false,
+            // [19] extension[2]: ".gz"
+            true,
+            // [20] extension[3]: ".GZ"
+            true),
+        // file
+        FILES,
         // extension
         EXTENSIONS);
   }
@@ -243,7 +301,7 @@ class FilesTest extends BaseTest {
         cartesian()
             .<String>composeExpectedConverter(fs::getPath),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // uri[0]: "relative/uri.html"
             // [1] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
             "relative/uri.html",
@@ -276,7 +334,7 @@ class FilesTest extends BaseTest {
         cartesian()
             .<String>composeExpectedConverter(fs::getPath),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // uri[0]: "relative/uri.html"
             // [1] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
             "relative\\uri.html",
@@ -302,71 +360,54 @@ class FilesTest extends BaseTest {
         List.of(fs));
   }
 
-  static Stream<Arguments> simpleBaseName() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        java.util.Arrays.asList(
-            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
-            "obj",
-            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
-            "obj",
-            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
-            "obj",
-            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
-            "obj",
-            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
-            "obj-5.2.9"),
-        // path
-        PATHS);
-  }
-
-  static Stream<Arguments> stripExtension() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        java.util.Arrays.asList(
-            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
-            "/home/me/my.sub/test/obj.TAR",
-            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
-            "smb://myhost/my.sub/test/obj.TAR",
-            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
-            "C:\\my.sub\\test\\obj.tar",
-            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
-            "\\\\myhost\\my.sub\\test\\obj.tar",
-            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
-            "/home/me/my/test/obj-5.2.9.tar2"),
-        // path
-        PATHS);
-  }
-
-  static Stream<Arguments> stripFullExtension() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        java.util.Arrays.asList(
-            // [1] path[0]: "/home/me/my.sub/test/obj.TAR.GZ"
-            "/home/me/my.sub/test/obj",
-            // [2] path[1]: "smb://myhost/my.sub/test/obj.TAR.gz"
-            "smb://myhost/my.sub/test/obj",
-            // [3] path[2]: "C:\\my.sub\\test\\obj.tar.GZ"
-            "C:\\my.sub\\test\\obj",
-            // [4] path[3]: "\\\\myhost\\my.sub\\test\\obj.tar.gz"
-            "\\\\myhost\\my.sub\\test\\obj",
-            // [5] path[4]: "/home/me/my/test/obj-5.2.9.tar2.gz"
-            "/home/me/my/test/obj-5.2.9"),
-        // path
-        PATHS);
+  @ParameterizedTest
+  @MethodSource
+  void baseName_full(Expected<String> expected, String file) {
+    assertParameterizedOf(
+        () -> Files.baseName(file, true),
+        expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("file", file))));
   }
 
   @ParameterizedTest
   @MethodSource
-  void extension(Expected<String> expected, String path) {
+  void cognateFile_full(Expected<String> expected, String file) {
     assertParameterizedOf(
-        () -> Files.extension(path),
+        () -> Files.cognateFile(file, "_tmp", true),
         expected,
         () -> new ExpectedGeneration(List.of(
-            entry("path", path))));
+            entry("file", file))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void cognateFile_notFull(Expected<String> expected, String file) {
+    assertParameterizedOf(
+        () -> Files.cognateFile(file, "_tmp"),
+        expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("file", file))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void extension_full(Expected<String> expected, String file) {
+    assertParameterizedOf(
+        () -> Files.extension(file, true),
+        expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("file", file))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void extension_notFull(Expected<String> expected, String file) {
+    assertParameterizedOf(
+        () -> Files.extension(file),
+        expected,
+        () -> new ExpectedGeneration(List.of(
+            entry("file", file))));
   }
 
   @ParameterizedTest
@@ -381,33 +422,23 @@ class FilesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fullExtension(Expected<String> expected, String path) {
+  void isExtension_full(Expected<Boolean> expected, String file, String extension) {
     assertParameterizedOf(
-        () -> Files.fullExtension(path),
+        () -> Files.isExtension(file, extension, true),
         expected,
         () -> new ExpectedGeneration(List.of(
-            entry("path", path))));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void isExtension(Expected<Boolean> expected, String path, String extension) {
-    assertParameterizedOf(
-        () -> Files.isExtension(path, extension),
-        expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("path", path),
+            entry("file", file),
             entry("extension", extension))));
   }
 
   @ParameterizedTest
   @MethodSource
-  void isFullExtension(Expected<Boolean> expected, String path, String extension) {
+  void isExtension_notFull(Expected<Boolean> expected, String file, String extension) {
     assertParameterizedOf(
-        () -> Files.isFullExtension(path, extension),
+        () -> Files.isExtension(file, extension),
         expected,
         () -> new ExpectedGeneration(List.of(
-            entry("path", path),
+            entry("file", file),
             entry("extension", extension))));
   }
 
@@ -433,35 +464,5 @@ class FilesTest extends BaseTest {
             entry("uri", uri),
             entry("fs", fs)))
                 .setMaxArgCommentLength(50));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void simpleBaseName(Expected<String> expected, String path) {
-    assertParameterizedOf(
-        () -> Files.simpleBaseName(path),
-        expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("path", path))));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void stripExtension(Expected<String> expected, String path) {
-    assertParameterizedOf(
-        () -> Files.stripExtension(path),
-        expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("path", path))));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void stripFullExtension(Expected<String> expected, String path) {
-    assertParameterizedOf(
-        () -> Files.stripFullExtension(path),
-        expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("path", path))));
   }
 }

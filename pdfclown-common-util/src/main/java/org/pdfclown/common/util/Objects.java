@@ -468,11 +468,28 @@ public final class Objects {
   }
 
   /**
+   * Gets the top-level type corresponding to the object.
+   *
+   * @see #asType(Object)
+   */
+  public static @PolyNull @Nullable Class<?> asTopLevelType(@PolyNull @Nullable Object obj) {
+    Class<?> type = asType(obj);
+    if (type != null) {
+      while (type.getEnclosingClass() != null) {
+        type = type.getEnclosingClass();
+      }
+    }
+    return type;
+  }
+
+  /**
    * Gets the type corresponding to the object.
    * <p>
    * Same as {@link #typeOf(Object) typeOf(..)}, unless {@code obj} is {@link Class} (in such case,
    * returns itself).
    * </p>
+   *
+   * @see #asTopLevelType(Object)
    */
   public static @PolyNull @Nullable Class<?> asType(@PolyNull @Nullable Object obj) {
     return obj != null ? (obj instanceof Class ? (Class<?>) obj : obj.getClass()) : null;

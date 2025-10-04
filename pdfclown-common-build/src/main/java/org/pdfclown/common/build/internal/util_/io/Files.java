@@ -16,10 +16,12 @@ import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
+import static org.apache.commons.io.FilenameUtils.indexOfExtension;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Strings.BACKSLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.DOT;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.found;
@@ -67,6 +69,9 @@ public final class Files {
   public static final String FILE_EXTENSION__XSL = ".xsl";
   public static final String FILE_EXTENSION__ZIP = ".zip";
 
+  /**
+   * Parent directory symbol.
+   */
   public static final String PATH_SUPER = S + DOT + DOT;
 
   /**
@@ -77,23 +82,96 @@ public final class Files {
   }
 
   /**
-   * Gets the base name (that is, the filename without {@linkplain #extension(Path) extension}) of
-   * the path.
-   *
-   * @see #simpleBaseName(Path)
+   * Gets the base name (that is, the filename without {@linkplain #extension(Path) extension}) of a
+   * file.
    */
-  public static String baseName(Path path) {
-    return baseName(path.getFileName().toString());
+  public static String baseName(Path file) {
+    return baseName(file, false);
+  }
+
+  /**
+   * Gets the base name (that is, the filename without {@linkplain #extension(Path, boolean)
+   * extension}) of a file.
+   *
+   * @param simple
+   *          Whether to strip the filename of its full extension (obtaining its simple base name)
+   *          rather than its simple one (obtaining its full base name).
+   */
+  public static String baseName(Path file, boolean simple) {
+    return baseName(file.getFileName().toString(), simple);
   }
 
   /**
    * Gets the base name (that is, the filename without {@linkplain #extension(String) extension}) of
-   * the path.
-   *
-   * @see #simpleBaseName(String)
+   * a file.
    */
-  public static String baseName(String path) {
-    return FilenameUtils.getBaseName(path);
+  public static String baseName(String file) {
+    return baseName(file, false);
+  }
+
+  /**
+   * Gets the base name (that is, the filename without {@linkplain #extension(String, boolean)
+   * extension}) of a file.
+   *
+   * @param simple
+   *          Whether to strip the filename of its full extension (obtaining its simple base name)
+   *          rather than its simple one (obtaining its full base name).
+   */
+  public static String baseName(String file, boolean simple) {
+    String filename = filename(file);
+    int extensionPos = simple ? indexOfFullExtension(filename) : indexOfExtension(filename);
+    return (found(extensionPos) ? filename.substring(0, extensionPos) : filename);
+  }
+
+  /**
+   * Replaces the simple extension of a file with a suffix.
+   * <p>
+   * For example, if {@code baseFile} is {@code "mypath/myFile.html"} and {@code suffix} is
+   * {@code "_something.txt"}, the result is {@code "mypath/myFile_something.txt"}.
+   * </p>
+   */
+  public static Path cognateFile(Path baseFile, String suffix) {
+    return cognateFile(baseFile, suffix, false);
+  }
+
+  /**
+   * Replaces the extension of a file with a suffix.
+   * <p>
+   * For example, if {@code baseFile} is {@code "mypath/myFile.html"} and {@code suffix} is
+   * {@code "_something.txt"}, the result is {@code "mypath/myFile_something.txt"}.
+   * </p>
+   *
+   * @param full
+   *          Whether to replace the full extension rather than the simple one with the suffix.
+   */
+  public static Path cognateFile(Path baseFile, String suffix, boolean full) {
+    return baseFile.resolveSibling(baseName(baseFile, full) + suffix);
+  }
+
+  /**
+   * Replaces the simple extension of a file with a suffix.
+   * <p>
+   * For example, if {@code baseFile} is {@code "mypath/myFile.html"} and {@code suffix} is
+   * {@code "_something.txt"}, the result is {@code "mypath/myFile_something.txt"}.
+   * </p>
+   */
+  public static String cognateFile(String baseFile, String suffix) {
+    return cognateFile(baseFile, suffix, false);
+  }
+
+  /**
+   * Replaces the extension of a file with a suffix.
+   * <p>
+   * For example, if {@code baseFile} is {@code "mypath/myFile.html"} and {@code suffix} is
+   * {@code "_something.txt"}, the result is {@code "mypath/myFile_something.txt"}.
+   * </p>
+   *
+   * @param full
+   *          Whether to replace the full extension rather than the simple one with the suffix.
+   */
+  public static String cognateFile(String baseFile, String suffix, boolean full) {
+    int extensionPos = full ? indexOfFullExtension(baseFile) : indexOfExtension(baseFile);
+    return (found(extensionPos) ? baseFile.substring(0, extensionPos) : baseFile) + suffix;
   }
 
   /**
@@ -112,103 +190,112 @@ public final class Files {
   }
 
   /**
-   * Gets the simple extension of the path.
+   * Gets the simple extension of a file.
    * <p>
    * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot.
    * </p>
    *
    * @return Empty, if no extension.
-   * @see #fullExtension(Path)
    */
-  public static String extension(Path path) {
-    return extension(path.getFileName().toString());
+  public static String extension(Path file) {
+    return extension(file, false);
   }
 
   /**
-   * Gets the simple extension of the path.
+   * Gets the extension of a file.
+   * <p>
+   * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
+   * therefore, composite extensions (for example, {@code ".tar.gz"}) are recognized, whilst version
+   * codes are ignored (for example, {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
+   * {@code ".8.0.jar"}).
+   * </p>
+   *
+   * @param full
+   *          Whether to retrieve the full extension rather than the simple one.
+   * @return Empty, if no extension.
+   */
+  public static String extension(Path file, boolean full) {
+    return extension(file.getFileName().toString(), full);
+  }
+
+  /**
+   * Gets the simple extension of a file.
    * <p>
    * Contrary to {@link FilenameUtils#getExtension(String)}, the extension is prefixed by dot.
    * </p>
    *
    * @return Empty, if no extension.
-   * @see #fullExtension(String)
    */
-  public static String extension(String path) {
-    int extensionIndex = FilenameUtils.indexOfExtension(path);
-    return found(extensionIndex) ? path.substring(extensionIndex) : EMPTY;
+  public static String extension(String file) {
+    return extension(file, false);
   }
 
   /**
-   * Gets the last part of the path.
+   * Gets the extension of a file.
+   * <p>
+   * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
+   * therefore, composite extensions (for example, {@code ".tar.gz"}) are recognized, whilst version
+   * codes are ignored (for example, {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
+   * {@code ".8.0.jar"}).
+   * </p>
+   *
+   * @param full
+   *          Whether to retrieve the full extension rather than the simple one.
+   * @return Empty, if no extension.
+   */
+  public static String extension(String file, boolean full) {
+    int extensionPos = full ? indexOfFullExtension(file) : indexOfExtension(file);
+    return found(extensionPos) ? file.substring(extensionPos) : EMPTY;
+  }
+
+  /**
+   * Gets the last part of a path.
    */
   public static String filename(Path path) {
     return path.getFileName().toString();
   }
 
   /**
-   * Gets the last part of the path.
+   * Gets the last part of a path.
    */
   public static String filename(String path) {
     return FilenameUtils.getName(path);
   }
 
   /**
-   * Gets the full extension of the path.
-   * <p>
-   * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (for example, {@code ".tar.gz"}) are recognized, whilst version
-   * codes are ignored (for example, {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
-   * {@code ".8.0.jar"}).
-   * </p>
-   *
-   * @return Empty, if no extension.
-   * @see #extension(Path)
-   */
-  public static String fullExtension(Path path) {
-    return fullExtension(path.getFileName().toString());
-  }
-
-  /**
-   * Gets the full extension of the path.
-   * <p>
-   * Any dot-prefixed tailing part which doesn't begin with a digit is included in the extension;
-   * therefore, composite extensions (for example, {@code ".tar.gz"}) are recognized, whilst version
-   * codes are ignored (for example, {@code "commons-io-2.8.0.jar"} returns {@code ".jar"}, NOT
-   * {@code ".8.0.jar"}).
-   * </p>
-   *
-   * @return Empty, if no extension.
-   * @see #extension(String)
-   */
-  public static String fullExtension(String path) {
-    Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
-    return m.find() ? m.group() : EMPTY;
-  }
-
-  /**
-   * Gets whether the extension of the path corresponds to the given one (case-insensitive).
+   * Gets whether the simple extension of a file corresponds to the given one (case-insensitive).
    * <p>
    * NOTE: Contrary to {@link FilenameUtils#isExtension(String, String)}, the extension is prefixed
    * by dot and the match is case-insensitive.
    * </p>
-   *
-   * @see #isFullExtension(Path, String)
    */
-  public static boolean isExtension(final Path path, final String extension) {
-    return isExtension(path.getFileName().toString(), extension);
+  public static boolean isExtension(final Path file, final String extension) {
+    return isExtension(file, extension, false);
   }
 
   /**
-   * Gets whether the extension of the path corresponds to the given one (case-insensitive).
+   * Gets whether the extension of a file corresponds to the given one (case-insensitive).
+   */
+  public static boolean isExtension(final Path file, final String extension, boolean full) {
+    return isExtension(file.getFileName().toString(), extension, full);
+  }
+
+  /**
+   * Gets whether the simple extension of a file corresponds to the given one (case-insensitive).
    * <p>
    * NOTE: Contrary to {@link FilenameUtils#isExtension(String, String)}, the extension is prefixed
    * by dot and the match is case-insensitive.
    * </p>
-   *
-   * @see #isFullExtension(String, String)
    */
-  public static boolean isExtension(final String path, final String extension) {
-    return extension(path).equalsIgnoreCase(extension);
+  public static boolean isExtension(final String file, final String extension) {
+    return isExtension(file, extension, false);
+  }
+
+  /**
+   * Gets whether the extension of a file corresponds to the given one (case-insensitive).
+   */
+  public static boolean isExtension(final String file, final String extension, boolean full) {
+    return extension(file, full).equalsIgnoreCase(extension);
   }
 
   /**
@@ -222,24 +309,6 @@ public final class Files {
      * NOTE: Scheme is case-insensitive.
      */
     return uri.getScheme() == null || uri.getScheme().equalsIgnoreCase("file");
-  }
-
-  /**
-   * Gets whether the full extension of the path corresponds to the given one (case-insensitive).
-   *
-   * @see #isExtension(Path, String)
-   */
-  public static boolean isFullExtension(final Path path, final String extension) {
-    return isFullExtension(path.getFileName().toString(), extension);
-  }
-
-  /**
-   * Gets whether the full extension of the path corresponds to the given one (case-insensitive).
-   *
-   * @see #isExtension(String, String)
-   */
-  public static boolean isFullExtension(final String path, final String extension) {
-    return fullExtension(path).equalsIgnoreCase(extension);
   }
 
   /**
@@ -318,63 +387,12 @@ public final class Files {
   }
 
   /**
-   * Gets the simple base name (that is, the filename without {@linkplain #fullExtension(Path) full
-   * extension}) of the path.
-   *
-   * @see #baseName(Path)
-   */
-  public static String simpleBaseName(Path path) {
-    return simpleBaseName(path.getFileName().toString());
-  }
-
-  /**
-   * Gets the simple base name (that is, the filename without {@linkplain #fullExtension(String)
-   * full extension}) of the path.
-   *
-   * @see #baseName(String)
-   */
-  public static String simpleBaseName(String path) {
-    String filename = filename(path);
-    return filename.substring(0, filename.length() - fullExtension(filename).length());
-  }
-
-  /**
    * Gets the size of the file.
    *
    * @return The length (bytes) of the file, or {@code 0} if the file does not exist.
    */
   public static long size(Path path) {
     return path.toFile().length();
-  }
-
-  /**
-   * Strips the path of its {@linkplain #extension(Path) extension}.
-   */
-  public static String stripExtension(Path path) {
-    return stripExtension(path.toString());
-  }
-
-  /**
-   * Strips the path of its {@linkplain #extension(String) extension}.
-   */
-  public static String stripExtension(String path) {
-    int extensionPos = FilenameUtils.indexOfExtension(path);
-    return extensionPos >= 0 ? path.substring(0, extensionPos) : path;
-  }
-
-  /**
-   * Strips the path of its {@linkplain #fullExtension(Path) full extension}.
-   */
-  public static String stripFullExtension(Path path) {
-    return stripFullExtension(path.toString());
-  }
-
-  /**
-   * Strips the path of its {@linkplain #fullExtension(String) full extension}.
-   */
-  public static String stripFullExtension(String path) {
-    Matcher m = PATTERN__FULL_EXTENSION.matcher(path);
-    return m.find() ? path.substring(0, m.start()) : path;
   }
 
   /**
@@ -426,6 +444,11 @@ public final class Files {
     // Relative URI.
     else
       return fs.getPath(EMPTY, uri.toString());
+  }
+
+  private static int indexOfFullExtension(String file) {
+    Matcher m = PATTERN__FULL_EXTENSION.matcher(file);
+    return m.find() ? m.start() : INDEX__NOT_FOUND;
   }
 
   private Files() {

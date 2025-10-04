@@ -408,6 +408,37 @@ public final class Conditions {
   }
 
   /**
+   * Requires the value is not blank.
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws XtIllegalArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static String requireNotBlank(String value) {
+    return requireNotBlank(value, null);
+  }
+
+  /**
+   * Requires the value is not blank.
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws XtIllegalArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static String requireNotBlank(String value, @Nullable String name) {
+    if (!value.isBlank())
+      return value;
+
+    throw wrongArg(name, value, "MUST NOT be blank");
+  }
+
+  /**
    * Requires the value is within the range.
    *
    * @param value

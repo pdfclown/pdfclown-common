@@ -20,8 +20,8 @@ import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.typeOf;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.io.Files.fullExtension;
-import static org.pdfclown.common.build.internal.util_.io.Files.stripFullExtension;
+import static org.pdfclown.common.build.internal.util_.io.Files.cognateFile;
+import static org.pdfclown.common.build.internal.util_.io.Files.extension;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -230,8 +230,8 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
             Path actualJsonOutFile = null;
             if (exists(expectedJsonFile)) {
               actualJsonOutFile = config.getEnv().outputPath(
-                  stripFullExtension(expectedJsonResourceFqn) + "_UNEXPECTED"
-                      + fullExtension(expectedJsonResourceFqn));
+                  cognateFile(expectedJsonResourceFqn,
+                      "_UNEXPECTED" + extension(expectedJsonResourceFqn, true), true));
               try {
                 // Save unexpected actual object!
                 createDirectories(actualJsonOutFile.getParent());
