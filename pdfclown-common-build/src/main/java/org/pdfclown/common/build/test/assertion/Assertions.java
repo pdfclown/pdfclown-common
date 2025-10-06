@@ -21,7 +21,6 @@ import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -29,7 +28,6 @@ import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianPro
 import static org.pdfclown.common.build.internal.util_.Conditions.requireEqual;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
@@ -40,8 +38,6 @@ import static org.pdfclown.common.build.internal.util_.Strings.NULL;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
-import java.awt.Shape;
-import java.awt.geom.PathIterator;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
@@ -55,8 +51,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.DoubleConsumer;
@@ -81,7 +75,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig
 import org.pdfclown.common.build.util.system.Runtimes;
 
 /**
- * Assertion utilities.
+ * Common assertion utilities.
  * <p>
  * In particular, <b>parameterized tests</b> are provided a
  * {@linkplain #assertParameterized(Object, Expected, Supplier) convenient framework} to streamline
@@ -1532,72 +1526,6 @@ public final class Assertions {
       @Nullable Expected<T> expected,
       @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
     assertParameterized(evalParameterized(actualExpression), expected, generationSupplier);
-  }
-
-  /**
-   * Asserts that {@code expected} and {@code actual} paths are equal within a non-negative
-   * {@code delta}.
-   */
-  public static void assertPathEquals(PathIterator expected, PathIterator actual, double delta) {
-    class Segment {
-      final int kind;
-      final double[] coords;
-
-      public Segment(int kind, double[] coords) {
-        this.kind = kind;
-        this.coords = coords.clone();
-      }
-    }
-
-    var actualSegmentQueue = new SynchronousQueue<Segment>();
-    var segmentIndex = new int[1];
-    try {
-      Executions.failFast(
-          () -> PathEvaluator.eval(expected, ($segmentKind, $coords, $coordsCount) -> {
-            var assertMessagePrefix = "Segment " + segmentIndex[0]++;
-            try {
-              var actualSegment = actualSegmentQueue.take();
-              assertEquals($segmentKind, actualSegment.kind,
-                  assertMessagePrefix + ", segmentKind");
-
-              for (int i = 0; i < $coordsCount;) {
-                var coordAssertMessagePrefix =
-                    String.format("%s, point %s, ", assertMessagePrefix, i % 2);
-                assertEquals($coords[i], actualSegment.coords[i++], delta,
-                    coordAssertMessagePrefix + "x");
-                assertEquals($coords[i], actualSegment.coords[i++], delta,
-                    coordAssertMessagePrefix + "y");
-              }
-              return true;
-            } catch (InterruptedException ex) {
-              return false;
-            }
-          }),
-          () -> PathEvaluator.eval(actual, ($segmentKind, $coords, $coordsCount) -> {
-            try {
-              actualSegmentQueue.put(new Segment($segmentKind, $coords));
-              return true;
-            } catch (InterruptedException ex) {
-              return false;
-            }
-          }));
-      assertTrue(expected.isDone());
-      assertTrue(actual.isDone());
-    } catch (ExecutionException ex) {
-      if (ex.getCause() instanceof AssertionError) {
-        fail(ex.getCause());
-      } else
-        throw runtime(ex.getCause());
-    } catch (InterruptedException ex) {
-      throw runtime(ex);
-    }
-  }
-
-  /**
-   * Asserts that {@code expected} and {@code actual} are equal within a non-negative {@code delta}.
-   */
-  public static void assertShapeEquals(Shape expected, Shape actual, double delta) {
-    assertPathEquals(expected.getPathIterator(null), actual.getPathIterator(null), delta);
   }
 
   /**
