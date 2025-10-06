@@ -18,6 +18,8 @@ import static java.lang.Character.isUpperCase;
 import static java.lang.Character.isWhitespace;
 import static java.lang.Math.min;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
+import static org.pdfclown.common.util.Objects.found;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +35,6 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public final class Strings {
-  /**
-   * Flag value used by methods like {@link String#indexOf(String)} to represent absence of searched
-   * occurrence.
-   */
-  public static final int INDEX__NOT_FOUND = -1;
-
   public static final char ANGLE_BRACKET_CLOSE = '>';
   public static final char ANGLE_BRACKET_OPEN = '<';
   public static final char APOSTROPHE = '\'';
@@ -221,19 +217,9 @@ public final class Strings {
   }
 
   /**
-   * Gets whether the index represents a match.
-   *
-   * @see String#indexOf(String)
-   * @see String#lastIndexOf(String)
-   */
-  public static boolean found(int index) {
-    return index > INDEX__NOT_FOUND;
-  }
-
-  /**
    * Gets the index of the first matching character.
    *
-   * @return {@value INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
    */
   public static int indexOf(String s, IntPredicate condition) {
     return indexOf(s, condition, 0);
@@ -242,7 +228,7 @@ public final class Strings {
   /**
    * Gets the index of the first matching character.
    *
-   * @return {@value INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
    */
   public static int indexOf(String s, IntPredicate condition, int fromIndex) {
     for (int i = fromIndex, l = s.length(); i < l; i++) {
@@ -388,7 +374,7 @@ public final class Strings {
   /**
    * Gets the index of the last matching character, searched backwards.
    *
-   * @return {@value INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
    */
   public static int lastIndexOf(String s, IntPredicate condition) {
     return lastIndexOf(s, condition, s.length());
@@ -397,7 +383,7 @@ public final class Strings {
   /**
    * Gets the index of the last matching character, searched backwards.
    *
-   * @return {@value INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
    */
   public static int lastIndexOf(String s, IntPredicate condition, int fromIndex) {
     for (int i = min(fromIndex, s.length() - 1); i >= 0; i--) {

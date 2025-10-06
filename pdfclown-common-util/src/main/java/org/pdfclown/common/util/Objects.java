@@ -31,7 +31,6 @@ import static org.pdfclown.common.util.Strings.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.util.Strings.DOT;
 import static org.pdfclown.common.util.Strings.DQUOTE;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.NULL;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
@@ -293,6 +292,18 @@ public final class Objects {
    * Empty object array.
    */
   public static final Object[] OBJ_ARRAY__EMPTY = new Object[0];
+
+  /**
+   * Flag value used to represent the absence of occurrences searched across zero-based sequences.
+   * <p>
+   * Use {@link #found(int)} to check search results.
+   * </p>
+   *
+   * @see String#indexOf(int)
+   * @see String#lastIndexOf(int)
+   * @see List#indexOf(Object)
+   */
+  public static final int INDEX__NOT_FOUND = -1;
 
   /**
    * Literal string escape filter.
@@ -603,6 +614,18 @@ public final class Objects {
    */
   public static boolean equalsOrNull(@Nullable Object obj, @Nullable Object other) {
     return obj == null || java.util.Objects.equals(obj, other);
+  }
+
+  /**
+   * Gets whether the zero-based index represents a match.
+   *
+   * @see String#indexOf(String)
+   * @see String#lastIndexOf(String)
+   * @see List#indexOf(Object)
+   * @see java.util.Collections#binarySearch(List, Object)
+   */
+  public static boolean found(int index) {
+    return index >= 0;
   }
 
   /**

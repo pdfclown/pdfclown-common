@@ -25,14 +25,14 @@ import static org.apache.commons.io.file.PathUtils.fileContentEquals;
 import static org.pdfclown.common.build.internal.util_.Exceptions.missingPath;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Objects.INDEX__NOT_FOUND;
+import static org.pdfclown.common.build.internal.util_.Objects.found;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.BACKSLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.DOT;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.Strings.INDEX__NOT_FOUND;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
-import static org.pdfclown.common.build.internal.util_.Strings.found;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
