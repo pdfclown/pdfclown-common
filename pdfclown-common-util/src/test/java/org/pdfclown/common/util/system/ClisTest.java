@@ -79,7 +79,7 @@ class ClisTest {
             entry("argsString", argsString)))
                 .setExpectedSourceCodeGenerator(
                     $ -> String.format("asList(%s)", ((List<String>) $).stream()
-                        .map(Objects::toLiteralString)
+                        .map(Objects::toLiteral)
                         .collect(joining(S + COMMA)))));
   }
 }

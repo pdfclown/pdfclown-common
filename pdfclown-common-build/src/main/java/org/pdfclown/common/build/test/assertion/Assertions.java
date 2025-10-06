@@ -33,7 +33,7 @@ import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
+import static org.pdfclown.common.build.internal.util_.Objects.toLiteral;
 import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.NULL;
@@ -183,8 +183,8 @@ public final class Assertions {
     }
 
     private static String toString(String label, @Nullable Object value) {
-      return label.isEmpty() ? toLiteralString(value)
-          : String.format(Locale.ROOT, "%s (%s)", toLiteralString(value), label);
+      return label.isEmpty() ? toLiteral(value)
+          : String.format(Locale.ROOT, "%s (%s)", toLiteral(value), label);
     }
 
     private final String label;
@@ -710,7 +710,7 @@ public final class Assertions {
 
     @Override
     public String toString() {
-      return toLiteralString(returned != null ? returned : thrown);
+      return toLiteral(returned != null ? returned : thrown);
     }
 
     Matcher<? super T> getMatcher() {
@@ -736,7 +736,7 @@ public final class Assertions {
      */
     public static String expectedSourceCodeForConstructor(Class<?> type, @Nullable Object... args) {
       return String.format("new %s(%s)", fqnd(type),
-          Arrays.stream(args).map(Objects::toLiteralString).collect(Collectors.joining(",")));
+          Arrays.stream(args).map(Objects::toLiteral).collect(Collectors.joining(",")));
     }
 
     /**
@@ -747,13 +747,13 @@ public final class Assertions {
     public static String expectedSourceCodeForFactory(Class<?> type, String methodName,
         @Nullable Object... args) {
       return String.format("%s.%s(%s)", fqnd(type), methodName,
-          Arrays.stream(args).map(Objects::toLiteralString).collect(Collectors.joining(",")));
+          Arrays.stream(args).map(Objects::toLiteral).collect(Collectors.joining(",")));
     }
 
     String argCommentAbbreviationMarker = ELLIPSIS__CHICAGO;
-    Function<@Nullable Object, String> argCommentFormatter = Objects::toLiteralString;
+    Function<@Nullable Object, String> argCommentFormatter = Objects::toLiteral;
     final List<Entry<String, @Nullable Object>> args;
-    Function<Object, String> expectedSourceCodeGenerator = Objects::toLiteralString;
+    Function<Object, String> expectedSourceCodeGenerator = Objects::toLiteral;
     int maxArgCommentLength = MAX_ARG_COMMENT_LENGTH__DEFAULT;
     PrintStream out = System.err;
     boolean outOverridable = true;
@@ -1024,7 +1024,7 @@ public final class Assertions {
       } else if (expected instanceof Failure) {
         var failure = (Failure) expected;
         expectedSourceCode = String.format("new %s(\"%s\", %s)",
-            fqnd(Failure.class), failure.getName(), toLiteralString(failure.getMessage()));
+            fqnd(Failure.class), failure.getName(), toLiteral(failure.getMessage()));
       } else {
         //noinspection unchecked
         expectedSourceCode = generation.expectedSourceCodeGenerator.apply((T) expected);
@@ -1454,7 +1454,7 @@ public final class Assertions {
       if (actual instanceof Failure) {
         if (!expected.isFailure())
           fail(String.format("Failure UNEXPECTED (expected: %s (%s); actual: %s)",
-              toLiteralString(expected), sqnd(expected.getReturned()), actual));
+              toLiteral(expected), sqnd(expected.getReturned()), actual));
 
         var thrownActual = (Failure) actual;
         var thrownExpected = expected.getThrown();

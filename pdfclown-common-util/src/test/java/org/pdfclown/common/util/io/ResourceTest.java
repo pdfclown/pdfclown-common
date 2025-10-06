@@ -26,7 +26,7 @@ import static org.pdfclown.common.build.test.assertion.Assertions.assertParamete
 import static org.pdfclown.common.build.test.assertion.Matchers.has;
 import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Objects.sqn;
-import static org.pdfclown.common.util.Objects.toLiteralString;
+import static org.pdfclown.common.util.Objects.toLiteral;
 import static org.pdfclown.common.util.net.Uris.uri;
 
 import com.google.common.jimfs.Configuration;
@@ -240,8 +240,8 @@ class ResourceTest extends BaseTest {
                 .setExpectedSourceCodeGenerator($ -> {
                   var e = (Resource) $;
                   return String.format("new ResourceResult(%s, %s, requireNonNull(uri(%s)))",
-                      toLiteralString(sqn(e)), toLiteralString(e.getName()),
-                      toLiteralString(e.getUri(), true));
+                      toLiteral(sqn(e)), toLiteral(e.getName()),
+                      toLiteral(e.getUri(), true));
                 }));
   }
 

@@ -14,7 +14,7 @@ package org.pdfclown.common.build.internal.util_;
 
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
-import static org.pdfclown.common.build.internal.util_.Objects.toLiteralString;
+import static org.pdfclown.common.build.internal.util_.Objects.toLiteral;
 import static org.pdfclown.common.build.internal.util_.Strings.BACKTICK;
 import static org.pdfclown.common.build.internal.util_.Strings.COLON;
 import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
@@ -40,7 +40,7 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
     var b = new StringBuilder();
     b.append(BACKTICK).append(argName).append(BACKTICK);
     if (argValue != null) {
-      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(toLiteralString(argValue))
+      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(toLiteral(argValue))
           .append(ROUND_BRACKET_CLOSE);
     }
     if (b.length() > 0) {

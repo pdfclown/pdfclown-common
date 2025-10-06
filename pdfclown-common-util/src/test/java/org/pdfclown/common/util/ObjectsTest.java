@@ -194,7 +194,7 @@ class ObjectsTest extends BaseTest {
   }
 
   /**
-   * @implNote Generated as {@code expected} source code within {@link #toLiteralString ()}.
+   * @implNote Generated as {@code expected} source code within {@link #toLiteral()}.
    */
   private static final List<String> LITERAL_STRINGS = asList(
       // obj[0]: null
@@ -384,7 +384,7 @@ class ObjectsTest extends BaseTest {
         QN_TYPENAMES);
   }
 
-  static Stream<Arguments> fromLiteralString() {
+  static Stream<Arguments> fromLiteral() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -533,7 +533,7 @@ class ObjectsTest extends BaseTest {
         QN_TYPENAMES);
   }
 
-  static Stream<Arguments> toLiteralString() {
+  static Stream<Arguments> toLiteral() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -682,9 +682,9 @@ class ObjectsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void fromLiteralString(Expected<@Nullable Object> expected, @Nullable String s) {
+  void fromLiteral(Expected<@Nullable Object> expected, @Nullable String s) {
     assertParameterizedOf(
-        () -> Objects.fromLiteralString(s),
+        () -> Objects.fromLiteral(s),
         expected,
         () -> new ExpectedGeneration(of(
             entry("s", s))));
@@ -849,9 +849,9 @@ class ObjectsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void toLiteralString(Expected<Object> expected, @Nullable Object obj, boolean nonBasicForced) {
+  void toLiteral(Expected<Object> expected, @Nullable Object obj, boolean nonBasicForced) {
     assertParameterizedOf(
-        () -> Objects.toLiteralString(obj, nonBasicForced),
+        () -> Objects.toLiteral(obj, nonBasicForced),
         expected,
         () -> new ExpectedGeneration(of(
             entry("obj", obj),

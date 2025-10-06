@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.isBasic;
-import static org.pdfclown.common.util.Objects.toLiteralString;
+import static org.pdfclown.common.util.Objects.toLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.Objects;
@@ -88,7 +88,7 @@ public class ParamMessage {
         index = format.indexOf(ARG, oldIndex);
         if (index < 0) {
           warn("Placeholder " + ARG + " missing for argument " + ARG + " (format: " + ARG + ")",
-              toLiteralString(ARG), i, toLiteralString(format));
+              toLiteral(ARG), i, toLiteral(format));
           break;
         }
 
@@ -97,7 +97,7 @@ public class ParamMessage {
       }
       if (index >= 0 && format.indexOf(ARG, oldIndex) > 0) {
         warn("Argument " + ARG + " missing for placeholder " + ARG + " (format: " + ARG + ")",
-            argsCount, toLiteralString(ARG), toLiteralString(format));
+            argsCount, toLiteral(ARG), toLiteral(format));
       }
       return b.append(format.substring(oldIndex)).toString();
     }
@@ -123,7 +123,7 @@ public class ParamMessage {
       /*
        * NOTE: Basic types are standardly formatted, whilst other types are specially formatted.
        */
-      return arg == null || isBasic(arg) ? Objects.toString(arg) : toLiteralString(arg);
+      return isBasic(arg) ? Objects.toString(arg) : toLiteral(arg);
     }
 
     private void warn(String format, @Nullable Object... args) {

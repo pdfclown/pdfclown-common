@@ -227,7 +227,7 @@ public final class Strings {
    * @see String#lastIndexOf(String)
    */
   public static boolean found(int index) {
-    return index != INDEX__NOT_FOUND;
+    return index > INDEX__NOT_FOUND;
   }
 
   /**

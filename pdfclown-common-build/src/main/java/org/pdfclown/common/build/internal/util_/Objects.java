@@ -40,11 +40,13 @@ import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 import static org.pdfclown.common.build.internal.util_.Strings.SQUOTE;
 import static org.pdfclown.common.build.internal.util_.reflect.Reflects.stackFrame;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -650,7 +652,7 @@ public final class Objects {
   /**
    * Gets the object corresponding to the literal string.
    * <p>
-   * NOTE: This method is complementary to {@link #toLiteralString(Object)} only for primitive type
+   * NOTE: This method is complementary to {@link #toLiteral(Object)} only for primitive type
    * representations.
    * </p>
    *
@@ -667,9 +669,9 @@ public final class Objects {
    *         string</li>
    *         <li>{@link String} (as-is) — otherwise</li>
    *         </ul>
-   * @see #toLiteralString(Object)
+   * @see #toLiteral(Object)
    */
-  public static @Nullable Object fromLiteralString(@Nullable String s) {
+  public static @Nullable Object fromLiteral(@Nullable String s) {
     // Undefined, or null literal?
     if (s == null || (s = s.trim()).equals(NULL))
       return null;
@@ -779,7 +781,7 @@ public final class Objects {
    * </p>
    */
   public static boolean isBasic(@Nullable Class<?> type) {
-    return BASIC_TYPES.contains(type);
+    return BASIC_TYPES.contains(requireNonNullElse(type, Void.class));
   }
 
   /**
@@ -1131,22 +1133,26 @@ public final class Objects {
    *
    * @return
    *         <ul>
-   *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
-   *         <li>{@link Object#toString()}, suffixed with literal qualifier — if {@code obj} is
-   *         {@link Float} or {@link Long} (disambiguation against respective default literal types,
-   *         {@link Double} or {@link Integer})</li>
-   *         <li>{@link Object#toString()}, escaped and wrapped with single quotes — if {@code obj}
-   *         is {@link Character}</li>
-   *         <li>{@link Object#toString()}, escaped and wrapped with double quotes — if {@code obj}
-   *         is {@link String}</li>
-   *         <li>{@link Class#getName()} — if {@code obj} is {@link Class}
+   *         <li>if {@code obj} is undefined: {@value Strings#NULL}</li>
+   *         <li>if {@code obj} is {@link Float} or {@link Long}: {@link Object#toString()},
+   *         suffixed with literal qualifier (disambiguation against respective default literal
+   *         types, {@link Double} or {@link Integer})</li>
+   *         <li>if {@code obj} is {@link Character}: {@link Object#toString()}, escaped and wrapped
+   *         with single quotes</li>
+   *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
+   *         with double quotes</li>
+   *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}
    *         ({@link Class#getSimpleName()} for common types, under {@code java.lang} package)</li>
-   *         <li>{@link Object#toString()}, as-is — otherwise</li>
+   *         <li>otherwise: {@link Object#toString()}, as-is</li>
    *         </ul>
-   * @see #fromLiteralString(String)
+   *         <p>
+   *         NOTE: For convenience, the following common types are automatically treated as
+   *         {@code String}: {@link File}, {@link Path}.
+   *         </p>
+   * @see #fromLiteral(String)
    */
-  public static String toLiteralString(@Nullable Object obj) {
-    return toLiteralString(obj, false);
+  public static String toLiteral(@Nullable Object obj) {
+    return toLiteral(obj, false);
   }
 
   /**
@@ -1155,24 +1161,29 @@ public final class Objects {
    *
    * @param nonBasicForced
    *          Whether, in case {@code obj} is non-{@linkplain #isBasic(Object) basic}, the resulting
-   *          string is treated as {@link String} (that is, escaped and double-quoted).
+   *          string is treated as {@link String} (that is, escaped and double-quoted). Certain
+   *          types, as specified here below, are automatically treated as such.
    * @return
    *         <ul>
-   *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
-   *         <li>{@link Object#toString()}, suffixed with literal qualifier — if {@code obj} is
-   *         {@link Float} or {@link Long} (disambiguation against respective default literal types,
-   *         {@link Double} or {@link Integer})</li>
-   *         <li>{@link Object#toString()}, escaped and wrapped with single quotes — if {@code obj}
-   *         is {@link Character}</li>
-   *         <li>{@link Object#toString()}, escaped and wrapped with double quotes — if {@code obj}
-   *         is {@link String}</li>
-   *         <li>{@link Class#getName()} — if {@code obj} is {@link Class}
+   *         <li>if {@code obj} is undefined: {@value Strings#NULL}</li>
+   *         <li>if {@code obj} is {@link Float} or {@link Long}: {@link Object#toString()},
+   *         suffixed with literal qualifier (disambiguation against respective default literal
+   *         types, {@link Double} or {@link Integer})</li>
+   *         <li>if {@code obj} is {@link Character}: {@link Object#toString()}, escaped and wrapped
+   *         with single quotes</li>
+   *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
+   *         with double quotes</li>
+   *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}
    *         ({@link Class#getSimpleName()} for common types, under {@code java.lang} package)</li>
-   *         <li>{@link Object#toString()}, as-is — otherwise</li>
+   *         <li>otherwise: {@link Object#toString()}, as-is</li>
    *         </ul>
-   * @see #fromLiteralString(String)
+   *         <p>
+   *         NOTE: For convenience, the following common types are automatically treated as
+   *         {@code String}: {@link File}, {@link Path}.
+   *         </p>
+   * @see #fromLiteral(String)
    */
-  public static String toLiteralString(@Nullable Object obj, boolean nonBasicForced) {
+  public static String toLiteral(@Nullable Object obj, boolean nonBasicForced) {
     if (obj == null)
       return NULL;
     else if (obj instanceof Float)
@@ -1198,6 +1209,9 @@ public final class Objects {
             ? $.getSimpleName()
             : $.getName());
       } else {
+        if (obj instanceof File || obj instanceof Path) {
+          nonBasicForced = true;
+        }
         obj = obj.toString();
       }
       if (!nonBasicForced)
@@ -1480,10 +1494,13 @@ public final class Objects {
   }
 
   /**
-   * Cross-casts the object to the caller's {@linkplain ClassLoader class loader}.
+   * Cross-casts the object to the caller's {@linkplain ClassLoader class loader}. {@jada.reuseDoc}
    * <p>
-   * (see {@linkplain #xcast(Object, Object) main overload} for further information)
+   * Split types (that is, binary-incompatible types with same fully-qualified name and different
+   * class loaders) are transparently bridged through proxy, providing a convenient alternative to
+   * manual reflection.
    * </p>
+   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy"> {@jada.reuseDoc !end}
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
@@ -1497,13 +1514,13 @@ public final class Objects {
   }
 
   /**
-   * Cross-casts the object to the target {@linkplain ClassLoader class loader}.
+   * Cross-casts the object to the target {@linkplain ClassLoader class loader}. {@jada.doc}
    * <p>
    * Split types (that is, binary-incompatible types with same fully-qualified name and different
    * class loaders) are transparently bridged through proxy, providing a convenient alternative to
    * manual reflection.
    * </p>
-   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy">
+   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy"> {@jada.doc !end}
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
