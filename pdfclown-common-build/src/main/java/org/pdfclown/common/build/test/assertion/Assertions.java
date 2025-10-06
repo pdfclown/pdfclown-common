@@ -46,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1135,6 +1136,8 @@ public final class Assertions {
     }
   };
 
+  private static final FileTreeAsserter FILE_TREE_ASSERTER = new FileTreeAsserter();
+
   /**
    * Combines argument lists into a stream of corresponding {@linkplain Arguments parametric tuples}
    * to feed a {@linkplain ParameterizedTest parameterized test}.
@@ -1312,6 +1315,23 @@ public final class Assertions {
 
     // Combine the argument lists into the arguments stream!
     return config.argumentsStreamer.apply(expectedList, argsList);
+  }
+
+  /**
+   * Asserts that a file tree matches the expected one.
+   *
+   * @param expectedDirResourceName
+   *          Resource name of the expected file tree.
+   * @param actualDir
+   *          Actual file tree.
+   * @param test
+   *          Current test unit.
+   * @throws AssertionError
+   *           if {@code actualDir} doesn't match the one at {@code expectedDirResourceName}.
+   */
+  public static void assertFileTreeEquals(String expectedDirResourceName, Path actualDir,
+      Test test) {
+    FILE_TREE_ASSERTER.assertEquals(expectedDirResourceName, actualDir, new Asserter.Config(test));
   }
 
   /**

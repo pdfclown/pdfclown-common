@@ -16,8 +16,16 @@ import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.walkFileTree;
+import static java.util.Collections.binarySearch;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
 import static org.apache.commons.io.FilenameUtils.indexOfExtension;
+import static org.apache.commons.io.file.PathUtils.fileContentEquals;
+import static org.pdfclown.common.build.internal.util_.Exceptions.missingPath;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.BACKSLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.DOT;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
@@ -26,6 +34,7 @@ import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.found;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,10 +43,17 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.file.AccumulatorPathVisitor;
+import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
+import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
 
 /**
  * File utilities.
@@ -45,6 +61,229 @@ import org.apache.commons.io.FilenameUtils;
  * @author Stefano Chizzolini
  */
 public final class Files {
+  /**
+   * File tree comparison.
+   *
+   * @author Stefano Chizzolini
+   */
+  public static final class Diff {
+    /**
+     * File status.
+     *
+     * @author Stefano Chizzolini
+     */
+    public enum FileStatus {
+      /**
+       * Only in the first file tree.
+       */
+      DIR1_ONLY,
+      /**
+       * Same content in both the file trees.
+       */
+      SAME,
+      /**
+       * Different content in the file trees.
+       */
+      DIFFERENT,
+      /**
+       * Only in the second file tree.
+       */
+      DIR2_ONLY
+    }
+
+    private final Path dir1;
+    private final List<Path> dir1Files;
+    private final Path dir2;
+    private final List<Path> dir2Files;
+
+    private @LazyNonNull @Nullable List<Path> diffFiles;
+    private @LazyNonNull @Nullable List<Path> structureDiffFiles;
+    private @LazyNonNull @Nullable Boolean structureSame;
+
+    Diff(Path dir1, List<Path> dir1Files, Path dir2, List<Path> dir2Files) {
+      this.dir1 = dir1;
+      this.dir1Files = unmodifiableList(dir1Files);
+      this.dir2 = dir2;
+      this.dir2Files = unmodifiableList(dir2Files);
+    }
+
+    /**
+     * File content difference between {@linkplain #getDir1() first} and {@linkplain #getDir2()
+     * second} file tree.
+     * <p>
+     * Includes also the edge cases of files existing only on one side of the comparison.
+     * Consequently, the file content difference is a superset of the
+     * {@linkplain #getStructureDiffFiles() file structure difference}.
+     * </p>
+     * <p>
+     * Use {@link #status(Path)} to tell them apart.
+     * </p>
+     *
+     * @see #getStructureDiffFiles()
+     */
+    @Unmodifiable
+    public List<Path> getDiffFiles() {
+      if (diffFiles == null) {
+        final var diffFiles = new ArrayList<Path>();
+        {
+          // dir1-only or different files.
+          for (var file : dir1Files) {
+            try {
+              if (!fileContentEquals(dir1.resolve(file), dir2.resolve(file))) {
+                diffFiles.add(file);
+              }
+            } catch (IOException ex) {
+              throw runtime(ex);
+            }
+          }
+          // dir2-only.
+          final var dir2OnlyFiles = new ArrayList<>(dir2Files);
+          {
+            dir2OnlyFiles.removeAll(dir1Files);
+          }
+          diffFiles.addAll(dir2OnlyFiles);
+
+          Collections.sort(diffFiles);
+        }
+        this.diffFiles = unmodifiableList(diffFiles);
+      }
+      return diffFiles;
+    }
+
+    /**
+     * Base directory of the first file tree.
+     */
+    public Path getDir1() {
+      return dir1;
+    }
+
+    /**
+     * First tree files (relative paths).
+     */
+    @Unmodifiable
+    public List<Path> getDir1Files() {
+      return dir1Files;
+    }
+
+    /**
+     * Base directory of the second file tree.
+     */
+    public Path getDir2() {
+      return dir2;
+    }
+
+    /**
+     * Second tree files (relative paths).
+     */
+    @Unmodifiable
+    public List<Path> getDir2Files() {
+      return dir2Files;
+    }
+
+    /**
+     * File structure difference between {@linkplain #getDir1() first} and {@linkplain #getDir2()
+     * second} file trees.
+     * <p>
+     * Corresponds to the files existing only on one side of the comparison: use
+     * {@link #status(Path)} to tell them apart.
+     * </p>
+     *
+     * @see #getDiffFiles()
+     */
+    @Unmodifiable
+    public List<Path> getStructureDiffFiles() {
+      if (structureDiffFiles == null) {
+        if (isStructureSame()) {
+          structureDiffFiles = List.of();
+        } else {
+          final var structureDiffFiles = new ArrayList<>(dir2Files);
+          {
+            // Retain dir2-only files!
+            structureDiffFiles.removeAll(dir1Files);
+
+            // Retain dir1-only files!
+            final var dir1OnlyFiles = new ArrayList<>(dir1Files);
+            {
+              dir1OnlyFiles.removeAll(dir2Files);
+            }
+            structureDiffFiles.addAll(dir1OnlyFiles);
+
+            Collections.sort(structureDiffFiles);
+          }
+          this.structureDiffFiles = unmodifiableList(structureDiffFiles);
+        }
+      }
+      return structureDiffFiles;
+    }
+
+    /**
+     * Whether {@linkplain #getDir1() first} and {@linkplain #getDir2() second} file trees have the
+     * same content.
+     * <p>
+     * {@link #getDiffFiles() diffFiles} provide the full list of differences.
+     * </p>
+     *
+     * @see #isStructureSame()
+     */
+    public boolean isSame() {
+      if (!isStructureSame())
+        return false;
+      else
+        return getDiffFiles().isEmpty();
+    }
+
+    /**
+     * Whether {@linkplain #getDir1() first} and {@linkplain #getDir2() second} file trees have the
+     * same structure.
+     * <p>
+     * {@link #getStructureDiffFiles() structureDiffFiles} provides the full list of differences.
+     * </p>
+     *
+     * @see #isSame()
+     */
+    public boolean isStructureSame() {
+      if (structureSame == null) {
+        structureSame = dir1Files.size() == dir2Files.size()
+            && dir1Files.equals(dir2Files);
+      }
+      return structureSame;
+    }
+
+    /**
+     * Gets the status of a file within this comparison.
+     * <p>
+     * NOTE: Files created or removed afterward are ignored.
+     * </p>
+     *
+     * @param file
+     *          File inside the {@linkplain #getDir1() first} or {@linkplain #getDir2() second} file
+     *          tree.
+     * @throws IllegalArgumentException
+     *           if {@code file} is outside the file trees of this comparison.
+     */
+    public FileStatus status(Path file) {
+      if (file.isAbsolute()) {
+        if (file.startsWith(dir1)) {
+          file = dir1.relativize(file);
+        } else if (file.startsWith(dir2)) {
+          file = dir2.relativize(file);
+        } else
+          throw wrongArg("file", file, "MUST be inside " + ARG + " or " + ARG, dir1, dir2);
+      }
+
+      if (found(binarySearch(getDiffFiles(), file))) {
+        return found(binarySearch(dir1Files, file))
+            ? found(binarySearch(dir2Files, file))
+                ? FileStatus.DIFFERENT
+                : FileStatus.DIR1_ONLY
+            : FileStatus.DIR2_ONLY;
+      } else if (found(binarySearch(dir1Files, file)))
+        return FileStatus.SAME;
+      else
+        throw wrongArg("file", file, "MUST exist inside " + ARG + " or " + ARG, dir1, dir2);
+    }
+  }
+
   /**
    * Full file extension pattern.
    * <p>
@@ -179,7 +418,7 @@ public final class Files {
    * <p>
    * NOTE: This method differs from
    * {@link org.apache.commons.io.file.PathUtils#copyDirectory(Path, Path, java.nio.file.CopyOption...)}
-   * in its return value.
+   * in its return value: if you don't need path counters, use this one.
    * </p>
    *
    * @return {@code targetDir}
@@ -187,6 +426,35 @@ public final class Files {
   public static Path copyDirectory(Path sourceDir, Path targetDir) throws IOException {
     FileUtils.copyDirectory(sourceDir.toFile(), targetDir.toFile());
     return targetDir;
+  }
+
+  /**
+   * Compares file trees by structure and content.
+   * <p>
+   * <b>File structure</b> comprises all filesystem nodes (both directories and files); <b>file
+   * content</b> comprises all the data inside file nodes.
+   * </p>
+   *
+   * @param dir1
+   *          Base directory of the first file tree to compare.
+   * @param dir2
+   *          Base directory of the second file tree to compare.
+   * @throws FileNotFoundException
+   *           if {@code dir1} or {@code dir2} is not an existing directory.
+   * @throws IOException
+   *           if file access failed.
+   */
+  public static Diff diff(Path dir1, Path dir2) throws IOException {
+    if (!isDirectory(requireNonNull(dir1, "`dir1`")))
+      throw missingPath(dir1);
+    else if (!isDirectory(requireNonNull(dir2, "`dir2`")))
+      throw missingPath(dir2);
+
+    AccumulatorPathVisitor visit1 = collectFiles(dir1);
+    AccumulatorPathVisitor visit2 = collectFiles(dir2);
+    return new Diff(
+        dir1, visit1.relativizeFiles(dir1, true, null),
+        dir2, visit2.relativizeFiles(dir2, true, null));
   }
 
   /**
@@ -444,6 +712,12 @@ public final class Files {
     // Relative URI.
     else
       return fs.getPath(EMPTY, uri.toString());
+  }
+
+  private static AccumulatorPathVisitor collectFiles(Path dir) throws IOException {
+    var ret = AccumulatorPathVisitor.withLongCounters();
+    walkFileTree(dir, ret);
+    return ret;
   }
 
   private static int indexOfFullExtension(String file) {

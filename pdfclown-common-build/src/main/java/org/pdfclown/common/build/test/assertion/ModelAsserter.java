@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Automated model assertions for integration testing.
  * <p>
- * This class enables massive automated checks over a domain model (actual object) against a
- * reference rendition (expected object). Comparisons are performed through an
+ * This class enables massive checks over a domain model (actual object) against a resource
+ * (expected object) which can be automatically updated. Comparisons are performed through an
  * {@linkplain ModelMapper abstract model}.
  * </p>
  *

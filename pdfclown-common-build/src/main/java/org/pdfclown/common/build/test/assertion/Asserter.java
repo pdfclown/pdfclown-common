@@ -14,8 +14,10 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Objects.toLiteral;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
@@ -25,13 +27,14 @@ import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPE
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.Strings.abbreviateMultiline;
+import static org.pdfclown.common.build.internal.util_.io.Files.copyDirectory;
+import static org.pdfclown.common.build.internal.util_.io.Files.resetDirectory;
 import static org.pdfclown.common.build.internal.util_.regex.Patterns.globToRegex;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -42,6 +45,7 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.pdfclown.common.build.internal.util_.ParamMessage;
 import org.pdfclown.common.build.internal.util_.system.Systems;
 import org.pdfclown.common.build.util.system.Builds;
 import org.slf4j.Logger;
@@ -315,20 +319,21 @@ public abstract class Asserter {
           + "these annotations: " + ARG + ")",
           testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
-    message = String.format(Locale.ROOT, "Test '%s' FAILED:\n%s", testName, message);
+    message =
+        ParamMessage.format("Test " + ARG + " FAILED:\n" + ARG, toLiteral(testName), message);
     String projectArtifactId = Builds.projectArtifactId(expectedFile);
-    String hint = String.format(Locale.ROOT,
+    String hint = ParamMessage.format(
         "\nCompared files:\n"
-            + " * EXPECTED: %s\n"
-            + " * ACTUAL: %s\n"
+            + " * EXPECTED: " + ARG + "\n"
+            + " * ACTUAL: " + ARG + "\n"
             + "To retry, enter this CLI parameter into your command:\n"
-            + "  mvn verify -pl %s -Dtest=\"%s\"\n"
+            + "  mvn verify -pl " + ARG + " -Dtest=" + ARG + "\n"
             + "To confirm the actual changes as expected, enter these CLI parameters into your "
             + "command:\n"
-            + "  mvn verify -pl %s -D%s=\"%s\" -Dtest=\"%s\"\n",
-        expectedFile, requireNonNull(actualFile, "N/A"),
-        projectArtifactId, testName,
-        projectArtifactId, PARAM_NAME__UPDATE, testId, testName);
+            + "  mvn verify -pl " + ARG + " -D" + ARG + "=" + ARG + " -Dtest=" + ARG + "\n",
+        expectedFile, requireNonNullElse(actualFile, "N/A"),
+        projectArtifactId, toLiteral(testName),
+        projectArtifactId, PARAM_NAME__UPDATE, toLiteral(testId), toLiteral(testName));
 
     // Log (full message).
     getLog().error(LogMarker.VERBOSE, ARG + LF + ARG, message, hint);
@@ -363,6 +368,63 @@ public abstract class Asserter {
   }
 
   /**
+   * Writes the expected directory resource on both source and target sides.
+   *
+   * @param resourceName
+   *          Resource to write.
+   * @param writer
+   *          Resource generator.
+   * @param config
+   *          Assertion configuration.
+   */
+  protected void writeExpectedDirectory(String resourceName, Consumer<Path> writer, Config config)
+      throws IOException {
+    // Source directory.
+    Path sourceDir = config.getEnv().resourceSrcPath(resourceName);
+    try {
+      resetDirectory(sourceDir);
+      writer.accept(sourceDir);
+    } catch (RuntimeException ex) {
+      throw runtime("Expected resource build FAILED: " + ARG, sourceDir,
+          requireNonNullElse(ex.getCause(), ex));
+    }
+    getLog().info("Expected directory resource BUILT at " + ARG, toLiteral(sourceDir));
+
+    // Target file.
+    Path targetDir = config.getEnv().resourcePath(resourceName);
+    try {
+      resetDirectory(targetDir);
+      copyDirectory(sourceDir, targetDir);
+    } catch (RuntimeException ex) {
+      throw runtime("Expected resource copy to target FAILED "
+          + "(re-running tests should fix it): " + ARG, targetDir, ex);
+    }
+    getLog().info("Expected directory resource COPIED to target at " + ARG,
+        toLiteral(targetDir));
+  }
+
+  /**
+   * Writes the expected directory resource on both source and target sides.
+   *
+   * @param resourceName
+   *          Resource to write.
+   * @param actualDir
+   *          Actual directory to overwrite the expected resource.
+   * @param config
+   *          Assertion configuration.
+   */
+  protected void writeExpectedDirectory(String resourceName, Path actualDir, Config config)
+      throws IOException {
+    writeExpectedDirectory(resourceName, $ -> {
+      try {
+        copyDirectory(actualDir, $);
+      } catch (IOException ex) {
+        throw runtime(ex);
+      }
+    }, config);
+  }
+
+  /**
    * Writes the expected resource on both source and target sides.
    *
    * @param resourceName
@@ -380,10 +442,10 @@ public abstract class Asserter {
       Files.createDirectories(sourceFile.getParent());
       writer.accept(sourceFile);
     } catch (RuntimeException ex) {
-      throw runtime("Expected resource build FAILED: " + sourceFile,
-          ex.getCause() != null ? ex.getCause() : ex);
+      throw runtime("Expected resource build FAILED: " + ARG, sourceFile,
+          requireNonNullElse(ex.getCause(), ex));
     }
-    getLog().info("Expected resource BUILT at " + ARG, sourceFile);
+    getLog().info("Expected resource BUILT at " + ARG, toLiteral(sourceFile));
 
     // Target file.
     Path targetFile = config.getEnv().resourcePath(resourceName);
@@ -394,7 +456,7 @@ public abstract class Asserter {
       throw runtime("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + targetFile, ex);
     }
-    getLog().info("Expected resource COPIED to target (" + ARG + ")", targetFile);
+    getLog().info("Expected resource COPIED to target at " + ARG, toLiteral(targetFile));
   }
 
   /**

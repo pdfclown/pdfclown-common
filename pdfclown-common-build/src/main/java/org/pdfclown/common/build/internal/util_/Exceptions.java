@@ -22,6 +22,8 @@ import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPE
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import java.io.EOFException;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import org.jspecify.annotations.Nullable;
@@ -77,6 +79,14 @@ public final class Exceptions {
         valueLiteral == null ? message
             : message == null ? valueLiteral
             : String.format("%s (%s)", valueLiteral, message));
+  }
+
+  /**
+   * @param file
+   *          Missing file.
+   */
+  public static FileNotFoundException missingPath(Path file) {
+    return new FileNotFoundException(ParamMessage.format(ARG + " MISSING", file));
   }
 
   /**
