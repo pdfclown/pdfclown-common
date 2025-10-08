@@ -36,12 +36,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
 import org.pdfclown.common.build.internal.util_.Objects.HierarchicalTypeComparator;
 import org.pdfclown.common.build.internal.util_.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
 import org.pdfclown.common.build.internal.util_.RelatedMap;
+import org.pdfclown.common.build.internal.util_.annot.InitNonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -261,16 +263,53 @@ public class ModelMapper<T> {
    */
   @SuppressWarnings("rawtypes")
   protected static class ValueMapperMap extends RelatedMap<Class, ValueMapper> {
+    private static class RelatedKeysProvider extends RelatedMap.RelatedProvider<Class> {
+      /**
+       * Explicit type priorities.
+       */
+      private TypePriorityComparator priorities = HierarchicalTypeComparator.Priorities
+          .explicitPriority();
+
+      @SuppressWarnings("NotNullFieldNotInitialized")
+      private @InitNonNull Function<Class, Iterable<Class>> base;
+
+      @Override
+      public Iterable<Class> apply(Class type) {
+        return base.apply(type);
+      }
+
+      @Override
+      public RelatedKeysProvider clone() {
+        var ret = (RelatedKeysProvider) super.clone();
+        ret.priorities = ret.priorities.clone();
+        return ret;
+      }
+
+      void init(Set<Class> keys) {
+        base = $ -> ancestors($, HierarchicalTypeComparator.get()
+            .thenComparing(priorities)
+            .thenComparing(HierarchicalTypeComparator.Priorities.interfacePriority())
+            .thenComparing(($1, $2) -> {
+              int ret;
+              var name1 = $1.getName();
+              var name2 = $2.getName();
+
+              // Prioritize library-specific types!
+              if ((ret = libraryPriority(name1) - libraryPriority(name2)) != 0)
+                return ret;
+
+              // Compare arbitrarily (no more relevant aspects to evaluate)!
+              return name1.compareTo(name2);
+            }), keys, false);
+      }
+    }
+
     private static final long serialVersionUID = 1L;
 
     private static int libraryPriority(String name) {
       return name.startsWith("org.pdfclown.") ? -1 : 0;
     }
 
-    /**
-     * Explicit type priorities.
-     */
-    private final TypePriorityComparator priorities;
     /**
      * Explicitly mapped types.
      * <p>
@@ -280,29 +319,16 @@ public class ModelMapper<T> {
     private final Map<ValueMapper, Class> rootTypes = new HashMap<>();
 
     ValueMapperMap() {
-      var hierarchicalComparator = HierarchicalTypeComparator.get()
-          .thenComparing(priorities = HierarchicalTypeComparator.Priorities.explicitPriority())
-          .thenComparing(HierarchicalTypeComparator.Priorities.interfacePriority())
-          .thenComparing(($1, $2) -> {
-            int ret;
-            var name1 = $1.getName();
-            var name2 = $2.getName();
+      super(new RelatedKeysProvider());
 
-            // Prioritize library-specific types!
-            if ((ret = libraryPriority(name1) - libraryPriority(name2)) != 0)
-              return ret;
-
-            // Compare arbitrarily (no more relevant aspects to evaluate)!
-            return name1.compareTo(name2);
-          });
-      relatedKeysProvider = $ -> ancestors($, hierarchicalComparator, keySet(), false);
+      ((RelatedKeysProvider) getRelatedKeysProvider()).init(keySet());
     }
 
     /**
      * Type priorities.
      */
     public TypePriorityComparator getPriorities() {
-      return priorities;
+      return ((RelatedKeysProvider) getRelatedKeysProvider()).priorities;
     }
 
     @Override
@@ -315,13 +341,13 @@ public class ModelMapper<T> {
 
     public @Nullable ValueMapper put(Class key, ValueMapper value,
         int priority) {
-      priorities.set(priority, key);
+      getPriorities().set(priority, key);
       return put(key, value);
     }
 
     @Override
     protected void putRelated(Class relatedKey, Class key, ValueMapper value) {
-      put(key, value, priorities.get(relatedKey));
+      put(key, value, getPriorities().get(relatedKey));
 
       if (log.isDebugEnabled()) {
         log.debug("ValueMapper.putRelated: {} from {}", sqn(key), sqn(relatedKey));

@@ -136,12 +136,24 @@ public final class Objects {
        *
        * @author Stefano Chizzolini
        */
-      public static class TypePriorityComparator implements Comparator<Class> {
+      public static class TypePriorityComparator implements Comparator<Class>, Cloneable {
         private int minPriority;
         private int maxPriority;
-        private final Map<Class, Integer> priorities = new HashMap<>();
+        private HashMap<Class, Integer> priorities = new HashMap<>();
 
         private TypePriorityComparator() {
+        }
+
+        @Override
+        public TypePriorityComparator clone() {
+          try {
+            var ret = (TypePriorityComparator) super.clone();
+            //noinspection unchecked
+            ret.priorities = (HashMap<Class, Integer>) ret.priorities.clone();
+            return ret;
+          } catch (CloneNotSupportedException ex) {
+            throw runtime(ex);
+          }
         }
 
         @Override

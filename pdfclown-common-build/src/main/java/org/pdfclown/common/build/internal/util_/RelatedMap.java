@@ -12,8 +12,11 @@
  */
 package org.pdfclown.common.build.internal.util_;
 
+import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
 
+import java.lang.Cloneable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,8 +29,8 @@ import org.slf4j.LoggerFactory;
  * Map whose matches are dynamically expanded based on key correlations.
  * <p>
  * Implicit matches are discovered looking for keys related to missing ones, provided by
- * {@link #relatedKeysProvider}; once a related key is found, the missing key is mapped to its
- * value, ensuring a match on next requests.
+ * {@link #getRelatedKeysProvider() relatedKeysProvider}; once a related key is found, the missing
+ * key is mapped to its value, ensuring a match on next requests.
  * </p>
  * <p>
  * Useful, for example, in case of maps keyed hierarchically, like {@link Class}: adding an entry
@@ -35,6 +38,10 @@ import org.slf4j.LoggerFactory;
  * match only the class explicitly associated to the entry.
  * </p>
  *
+ * @param <K>
+ *          Key type.
+ * @param <V>
+ *          Value type.
  * @author Stefano Chizzolini
  * @implSpec Implementers should keep {@linkplain #putRelated(Object, Object, Object) implicit,
  *           automatically-derived mappings} distinct from {@linkplain #put(Object, Object)
@@ -42,34 +49,47 @@ import org.slf4j.LoggerFactory;
  *           respective root assignments.
  */
 public class RelatedMap<K, V> extends HashMap<K, V> {
+  /**
+   * Provides the elements related to the given one.
+   *
+   * @param <E>
+   *          Element type.
+   * @author Stefano Chizzolini
+   */
+  public abstract static class RelatedProvider<E>
+      implements Function<E, Iterable<E>>, Cloneable {
+    @Override
+    public RelatedProvider<E> clone() {
+      try {
+        //noinspection unchecked
+        return (RelatedProvider<E>) super.clone();
+      } catch (CloneNotSupportedException ex) {
+        throw runtime(ex);
+      }
+    }
+  }
+
   private static final long serialVersionUID = 1L;
 
   private static final Logger log = LoggerFactory.getLogger(RelatedMap.class);
 
-  /**
-   * Provides a sequence of keys related to the given one.
-   */
-  protected @Nullable Function<K, Iterable<K>> relatedKeysProvider;
+  private RelatedProvider<K> relatedKeysProvider;
 
-  public RelatedMap() {
+  public RelatedMap(RelatedProvider<K> relatedKeysProvider) {
+    this.relatedKeysProvider = requireNonNull(relatedKeysProvider, "`relatedKeysProvider`");
   }
 
-  public RelatedMap(@Nullable Function<K, Iterable<K>> relatedKeysProvider) {
-    this.relatedKeysProvider = relatedKeysProvider;
+  @Override
+  public RelatedMap<K, V> clone() {
+    @SuppressWarnings("unchecked")
+    var ret = (RelatedMap<K, V>) super.clone();
+    ret.relatedKeysProvider = ret.relatedKeysProvider.clone();
+    return ret;
   }
 
-  /**
-   * @param relatedKeysProvider
-   *          Related-keys provider (given a key, provides a sequence of alternatives to find a
-   *          match).
-   * @param m
-   *          Map whose mappings are to be copied to this map.
-   */
-  public RelatedMap(@Nullable Function<K, Iterable<K>> relatedKeysProvider,
-      Map<? extends K, ? extends V> m) {
-    this(relatedKeysProvider);
-
-    putAll(m);
+  @Override
+  public boolean containsKey(Object key) {
+    return get(key) != null;
   }
 
   /**
@@ -84,9 +104,6 @@ public class RelatedMap<K, V> extends HashMap<K, V> {
     // Query explicit mapping!
     var ret = super.get(key);
     if (ret == null && key != null) {
-      if (relatedKeysProvider == null)
-        throw new IllegalStateException("`relatedKeysProvider` undefined");
-
       @SuppressWarnings("unchecked")
       final var k = (K) key;
       Iterator<K> relatedKeysItr = relatedKeysProvider.apply(k).iterator();
@@ -129,6 +146,13 @@ public class RelatedMap<K, V> extends HashMap<K, V> {
     for (var entry : m.entrySet()) {
       put(entry.getKey(), entry.getValue());
     }
+  }
+
+  /**
+   * Provides a sequence of keys related to the given one.
+   */
+  protected RelatedProvider<K> getRelatedKeysProvider() {
+    return relatedKeysProvider;
   }
 
   /**
