@@ -29,12 +29,16 @@ import static org.pdfclown.common.build.internal.util_.Conditions.requireEqual;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Objects.basicLiteral;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
+import static org.pdfclown.common.build.internal.util_.Objects.literal;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.toLiteral;
+import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.NULL;
+import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
@@ -178,8 +182,8 @@ public final class Assertions {
     }
 
     private static String toString(String label, @Nullable Object value) {
-      return label.isEmpty() ? toLiteral(value)
-          : String.format(Locale.ROOT, "%s (%s)", toLiteral(value), label);
+      return label.isEmpty() ? textLiteral(value)
+          : String.format(Locale.ROOT, "%s (%s)", textLiteral(value), label);
     }
 
     private final String label;
@@ -705,7 +709,7 @@ public final class Assertions {
 
     @Override
     public String toString() {
-      return toLiteral(returned != null ? returned : thrown);
+      return basicLiteral(returned != null ? returned : thrown);
     }
 
     Matcher<? super T> getMatcher() {
@@ -731,7 +735,7 @@ public final class Assertions {
      */
     public static String expectedSourceCodeForConstructor(Class<?> type, @Nullable Object... args) {
       return String.format("new %s(%s)", fqnd(type),
-          Arrays.stream(args).map(Objects::toLiteral).collect(Collectors.joining(",")));
+          Arrays.stream(args).map(Objects::literal).collect(Collectors.joining(",")));
     }
 
     /**
@@ -742,13 +746,13 @@ public final class Assertions {
     public static String expectedSourceCodeForFactory(Class<?> type, String methodName,
         @Nullable Object... args) {
       return String.format("%s.%s(%s)", fqnd(type), methodName,
-          Arrays.stream(args).map(Objects::toLiteral).collect(Collectors.joining(",")));
+          Arrays.stream(args).map(Objects::literal).collect(Collectors.joining(",")));
     }
 
     String argCommentAbbreviationMarker = ELLIPSIS__CHICAGO;
-    Function<@Nullable Object, String> argCommentFormatter = Objects::toLiteral;
+    Function<@Nullable Object, String> argCommentFormatter = Objects::textLiteral;
     final List<Entry<String, @Nullable Object>> args;
-    Function<Object, String> expectedSourceCodeGenerator = Objects::toLiteral;
+    Function<Object, String> expectedSourceCodeGenerator = Objects::literal;
     int maxArgCommentLength = MAX_ARG_COMMENT_LENGTH__DEFAULT;
     PrintStream out = System.err;
     boolean outOverridable = true;
@@ -1018,8 +1022,8 @@ public final class Assertions {
         expectedSourceCode = NULL;
       } else if (expected instanceof Failure) {
         var failure = (Failure) expected;
-        expectedSourceCode = String.format("new %s(\"%s\", %s)",
-            fqnd(Failure.class), failure.getName(), toLiteral(failure.getMessage()));
+        expectedSourceCode = String.format("new %s(%s, %s)",
+            fqnd(Failure.class), literal(failure.getName()), literal(failure.getMessage()));
       } else {
         //noinspection unchecked
         expectedSourceCode = generation.expectedSourceCodeGenerator.apply((T) expected);
@@ -1103,17 +1107,23 @@ public final class Assertions {
       this.message = message;
     }
 
+    /**
+     * Message of the thrown exception.
+     */
     public @Nullable String getMessage() {
       return message;
     }
 
+    /**
+     * Simple type name of the thrown exception.
+     */
     public String getName() {
       return name;
     }
 
     @Override
     public String toString() {
-      return sqnd(name) + " (" + abbreviate(message, 30) + ")";
+      return name + SPACE + ROUND_BRACKET_OPEN + abbreviate(message, 30) + ROUND_BRACKET_CLOSE;
     }
   }
 
@@ -1468,7 +1478,7 @@ public final class Assertions {
       if (actual instanceof Failure) {
         if (!expected.isFailure())
           fail(String.format("Failure UNEXPECTED (expected: %s (%s); actual: %s)",
-              toLiteral(expected), sqnd(expected.getReturned()), actual));
+              textLiteral(expected), sqnd(expected.getReturned()), textLiteral(actual)));
 
         var thrownActual = (Failure) actual;
         var thrownExpected = expected.getThrown();

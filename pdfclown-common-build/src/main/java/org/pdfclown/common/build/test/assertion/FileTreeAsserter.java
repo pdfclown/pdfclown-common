@@ -13,7 +13,8 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.pdfclown.common.build.internal.util_.Objects.toLiteral;
+import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.Strings.LF;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 import static org.pdfclown.common.build.internal.util_.io.Files.diff;
@@ -84,8 +85,8 @@ public class FileTreeAsserter extends Asserter {
           if (built || !isUpdatable(testId)) {
             log.info("Test resource {}: unexpected actual file structure saved to {}"
                 + " (expected file structure is at {})",
-                toLiteral(expectedDirResourceFqn), toLiteral(actualDir),
-                toLiteral(expectedDir));
+                textLiteral(expectedDirResourceFqn), textLiteral(actualDir),
+                textLiteral(expectedDir));
 
             evalAssertionError(testId, ex.getMessage(), expectedDir, actualDir);
           }
@@ -100,7 +101,7 @@ public class FileTreeAsserter extends Asserter {
             built = true;
 
             log.info("REBUILDING assertion directory resource {} because of {}",
-                toLiteral(expectedDirResourceFqn), ex.getClass().getSimpleName());
+                textLiteral(expectedDirResourceFqn), sqnd(ex));
 
             writeExpectedDirectory(expectedDirResourceFqn, actualDir, config);
           }

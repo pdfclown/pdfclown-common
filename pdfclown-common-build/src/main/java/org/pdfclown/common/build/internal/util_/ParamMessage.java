@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.isBasic;
-import static org.pdfclown.common.build.internal.util_.Objects.toLiteral;
+import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
 import java.util.Objects;
@@ -88,7 +88,7 @@ public class ParamMessage {
         index = format.indexOf(ARG, oldIndex);
         if (index < 0) {
           warn("Placeholder " + ARG + " missing for argument " + ARG + " (format: " + ARG + ")",
-              toLiteral(ARG), i, toLiteral(format));
+              textLiteral(ARG), i, textLiteral(format));
           break;
         }
 
@@ -97,7 +97,7 @@ public class ParamMessage {
       }
       if (index >= 0 && format.indexOf(ARG, oldIndex) > 0) {
         warn("Argument " + ARG + " missing for placeholder " + ARG + " (format: " + ARG + ")",
-            argsCount, toLiteral(ARG), toLiteral(format));
+            argsCount, textLiteral(ARG), textLiteral(format));
       }
       return b.append(format.substring(oldIndex)).toString();
     }
@@ -120,10 +120,7 @@ public class ParamMessage {
      * Formats the argument.
      */
     protected String formatArg(@Nullable Object arg) {
-      /*
-       * NOTE: Basic types are standardly formatted, whilst other types are specially formatted.
-       */
-      return isBasic(arg) ? Objects.toString(arg) : toLiteral(arg);
+      return isBasic(arg) ? Objects.toString(arg) : textLiteral(arg);
     }
 
     private void warn(String format, @Nullable Object... args) {

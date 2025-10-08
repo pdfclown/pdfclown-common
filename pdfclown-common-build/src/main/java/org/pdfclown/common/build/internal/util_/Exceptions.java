@@ -73,7 +73,7 @@ public final class Exceptions {
    */
   public static NoSuchElementException missing(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
-    String valueLiteral = objTo(value, Objects::toLiteral);
+    String valueLiteral = objTo(value, Objects::textLiteral);
     String message = objTo(format, $ -> ParamMessage.of($, args).getDescription());
     return new NoSuchElementException(
         valueLiteral == null ? message

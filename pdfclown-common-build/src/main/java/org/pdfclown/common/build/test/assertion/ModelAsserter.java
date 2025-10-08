@@ -18,6 +18,8 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
+import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.io.Files.cognateFile;
 import static org.pdfclown.common.build.internal.util_.io.Files.extension;
@@ -236,12 +238,12 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
                 createDirectories(actualJsonOutFile.getParent());
                 Files.writeString(actualJsonOutFile, actualJsonElement.toString());
 
-                log.info("Model sample '{}': unexpected actual object saved to '{}' "
-                    + "(expected object is at '{}')", expectedJsonResourceFqn, actualJsonOutFile,
-                    expectedJsonFile);
+                log.info("Model sample {}: unexpected actual object saved to {} "
+                    + "(expected object is at {})", textLiteral(expectedJsonResourceFqn),
+                    textLiteral(actualJsonOutFile), textLiteral(expectedJsonFile));
               } catch (Exception ex1) {
-                log.warn("Model sample '{}': unexpected actual object save FAILED: '{}'",
-                    expectedJsonResourceFqn, actualJsonOutFile, ex1);
+                log.warn("Model sample {}: unexpected actual object save FAILED: {}",
+                    textLiteral(expectedJsonResourceFqn), textLiteral(actualJsonOutFile), ex1);
               }
             }
 
@@ -257,8 +259,8 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
              */
             built = true;
 
-            log.info("REBUILDING assertion model '{}' because of {}", expectedJsonResourceFqn,
-                ex.getClass().getSimpleName());
+            log.info("REBUILDING assertion model {} because of {}",
+                textLiteral(expectedJsonResourceFqn), sqnd(ex));
 
             writeExpectedFile(expectedJsonResourceFqn, $ -> {
               try {

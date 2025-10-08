@@ -509,6 +509,18 @@ public final class Objects {
   }
 
   /**
+   * Maps the object to its literal string representation within generic strings.
+   *
+   * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is
+   *         ({@link Object#toString()}).
+   * @see #literal(Object)
+   * @see #textLiteral(Object)
+   */
+  public static String basicLiteral(@Nullable Object obj) {
+    return literal(obj, Object::toString);
+  }
+
+  /**
    * Quietly closes the object.
    *
    * @return {@code obj}
@@ -673,72 +685,6 @@ public final class Objects {
   }
 
   /**
-   * Gets the object corresponding to the literal string.
-   * <p>
-   * NOTE: This method is complementary to {@link #toLiteral(Object)} only for primitive type
-   * representations.
-   * </p>
-   *
-   * @return
-   *         <ul>
-   *         <li>{@code null} — if {@code s} corresponds to {@value Strings#NULL} or is undefined
-   *         ({@code null})</li>
-   *         <li>{@link Boolean} — if {@code s} corresponds to a boolean literal ({@code "true"} or
-   *         {@code "false"}, case-insensitive)</li>
-   *         <li>{@link Number} — if {@code s} corresponds to a
-   *         {@linkplain NumberUtils#createNumber(String) numeric value}</li>
-   *         <li>{@link Character} — if {@code s} corresponds to a single-quoted character</li>
-   *         <li>{@link String} (unescaped) — if {@code s} corresponds to a single- or double-quoted
-   *         string</li>
-   *         <li>{@link String} (as-is) — otherwise</li>
-   *         </ul>
-   * @see #toLiteral(Object)
-   */
-  public static @Nullable Object fromLiteral(@Nullable String s) {
-    // Undefined, or null literal?
-    if (s == null || (s = s.trim()).equals(NULL))
-      return null;
-
-    if (s.length() >= 2) {
-      char c = s.charAt(0);
-      switch (c) {
-        case '"':
-        case '\'':
-          // Quoted literal?
-          if (s.charAt(s.length() - 1) == c) {
-            // Character literal without escape?
-            if (c == SQUOTE && s.length() == 3)
-              return s.charAt(1);
-            // Character literal with escape?
-            else if (c == SQUOTE && s.length() == 4 && s.charAt(1) == '\\')
-              return s.charAt(2);
-            // String literal.
-            else
-              return LITERAL_STRING_UNESCAPE.translate(s.substring(1, s.length() - 1));
-          }
-          break;
-        default:
-          // NOP
-      }
-    }
-
-    {
-      var bool = strToBool(s);
-      // Boolean literal?
-      if (bool != null)
-        return bool;
-    }
-
-    try {
-      // Numeric literal.
-      return NumberUtils.createNumber(s);
-    } catch (NumberFormatException ex) {
-      // Generic literal.
-      return s;
-    }
-  }
-
-  /**
    * Initializes the class.
    * <p>
    * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
@@ -798,20 +744,22 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the type is basic.
+   * Gets whether the type is basic.{@jada.doc}
    * <p>
-   * <b>Basic types</b> comprise primitive wrappers and {@link String}.
+   * <b>Basic types</b> comprise primitive wrappers, {@link String} and {@link Void} (null).
    * </p>
+   * {@jada.doc !end}
    */
   public static boolean isBasic(@Nullable Class<?> type) {
     return BASIC_TYPES.contains(requireNonNullElse(type, Void.class));
   }
 
   /**
-   * Gets whether the object belongs to a basic type.
+   * Gets whether the object belongs to a basic type.{@jada.reuseDoc}
    * <p>
-   * <b>Basic types</b> comprise primitive wrappers and {@link String}.
+   * <b>Basic types</b> comprise primitive wrappers, {@link String} and {@link Void} (null).
    * </p>
+   * {@jada.reuseDoc !end}
    */
   public static boolean isBasic(@Nullable Object obj) {
     return isBasic(typeOf(obj));
@@ -829,6 +777,95 @@ public final class Objects {
    */
   public static boolean isSameType(@Nullable Object o1, @Nullable Object o2) {
     return typeOf(o1) == typeOf(o2);
+  }
+
+  /**
+   * Maps the object to its literal string representation.
+   * <p>
+   * The result is syntactically compatible with Java language, so that it can be safely used in
+   * source code.
+   * </p>
+   *
+   * @return
+   *         <ul>
+   *         <li>if {@code obj} is undefined: {@value Strings#NULL}</li>
+   *         <li>if {@code obj} is {@link Float} or {@link Long}: {@link Object#toString()},
+   *         suffixed with literal qualifier (disambiguation against respective default literal
+   *         types, {@link Double} or {@link Integer})</li>
+   *         <li>if {@code obj} is other {@link Number} or {@link Boolean}:
+   *         {@link Object#toString()}</li>
+   *         <li>if {@code obj} is {@link Character}: {@link Object#toString()}, escaped and wrapped
+   *         with single quotes</li>
+   *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
+   *         with double quotes</li>
+   *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}, or
+   *         {@link Class#getSimpleName()} for common types under {@code java.lang} package</li>
+   *         <li>otherwise: like {@code String}</li>
+   *         </ul>
+   * @see #basicLiteral(Object)
+   * @see #textLiteral(Object)
+   * @see #parseLiteral(String)
+   */
+  public static String literal(@Nullable Object obj) {
+    return literal(obj, $ -> literal($.toString()));
+  }
+
+  /**
+   * Maps the object to its literal string representation.
+   * <p>
+   * The result is syntactically compatible with Java language, so that it can be safely used in
+   * source code.
+   * </p>
+   *
+   * @return
+   *         <ul>
+   *         <li>if {@code obj} is undefined: {@value Strings#NULL}</li>
+   *         <li>if {@code obj} is {@link Float} or {@link Long}: {@link Object#toString()},
+   *         suffixed with literal qualifier (disambiguation against respective default literal
+   *         types, {@link Double} or {@link Integer})</li>
+   *         <li>if {@code obj} is other {@link Number} or {@link Boolean}:
+   *         {@link Object#toString()}</li>
+   *         <li>if {@code obj} is {@link Character}: {@link Object#toString()}, escaped and wrapped
+   *         with single quotes</li>
+   *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
+   *         with double quotes</li>
+   *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}, or
+   *         {@link Class#getSimpleName()} for common types under {@code java.lang} package</li>
+   *         <li>otherwise: applies {@link Function#apply(Object) nonBasicConverter}</li>
+   *         </ul>
+   * @see #basicLiteral(Object)
+   * @see #textLiteral(Object)
+   * @see #parseLiteral(String)
+   */
+  public static String literal(@Nullable Object obj, Function<Object, String> nonBasicConverter) {
+    if (obj == null)
+      return NULL;
+    else if (obj instanceof Float)
+      /*
+       * NOTE: Literal float MUST be marked by suffix to override default double type.
+       */
+      return obj + "F";
+    else if (obj instanceof Long)
+      /*
+       * NOTE: Literal long MUST be marked by suffix to override default integer type.
+       */
+      return obj + "L";
+    else if (obj instanceof Number || obj instanceof Boolean)
+      return obj.toString();
+    else if (obj instanceof Character)
+      return S + SQUOTE + ((Character) obj == SQUOTE ? S + BACKSLASH : EMPTY) + obj + SQUOTE;
+    else if (obj instanceof String)
+      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate((String) obj) + DQUOTE;
+    else if (obj instanceof Class)
+      //noinspection DataFlowIssue : non-null
+      return objTo((Class<?>) obj, $ -> $.getPackageName().startsWith("java.lang")
+          ? $.getSimpleName() /*
+                               * NOTE: The names of classes belonging to common packages are
+                               * simplified to reduce noise
+                               */
+          : $.getName());
+    else
+      return nonBasicConverter.apply(obj);
   }
 
   /**
@@ -1010,6 +1047,72 @@ public final class Objects {
   }
 
   /**
+   * Gets the object corresponding to the literal string.
+   * <p>
+   * NOTE: This method is complementary to {@link #literal(Object)} only for
+   * {@linkplain #isBasic(Object) basic} type representations.
+   * </p>
+   *
+   * @return
+   *         <ul>
+   *         <li>{@code null} — if {@code s} corresponds to {@value Strings#NULL} or is undefined
+   *         ({@code null})</li>
+   *         <li>{@link Boolean} — if {@code s} corresponds to a boolean literal ({@code "true"} or
+   *         {@code "false"}, case-insensitive)</li>
+   *         <li>{@link Number} — if {@code s} corresponds to a
+   *         {@linkplain NumberUtils#createNumber(String) numeric value}</li>
+   *         <li>{@link Character} — if {@code s} corresponds to a single-quoted character</li>
+   *         <li>{@link String} (unescaped) — if {@code s} corresponds to a single- or double-quoted
+   *         string</li>
+   *         <li>{@link String} (as-is) — otherwise</li>
+   *         </ul>
+   * @see #literal(Object)
+   */
+  public static @Nullable Object parseLiteral(@Nullable String s) {
+    // Undefined, or null literal?
+    if (s == null || (s = s.trim()).equals(NULL))
+      return null;
+
+    if (s.length() >= 2) {
+      char c = s.charAt(0);
+      switch (c) {
+        case '"':
+        case '\'':
+          // Quoted literal?
+          if (s.charAt(s.length() - 1) == c) {
+            // Character literal without escape?
+            if (c == SQUOTE && s.length() == 3)
+              return s.charAt(1);
+            // Character literal with escape?
+            else if (c == SQUOTE && s.length() == 4 && s.charAt(1) == '\\')
+              return s.charAt(2);
+            // String literal.
+            else
+              return LITERAL_STRING_UNESCAPE.translate(s.substring(1, s.length() - 1));
+          }
+          break;
+        default:
+          // NOP
+      }
+    }
+
+    {
+      var bool = strToBool(s);
+      // Boolean literal?
+      if (bool != null)
+        return bool;
+    }
+
+    try {
+      // Numeric literal.
+      return NumberUtils.createNumber(s);
+    } catch (NumberFormatException ex) {
+      // Generic literal.
+      return s;
+    }
+  }
+
+  /**
    * Quietly applies an operation to the object.
    *
    * @return {@code obj}
@@ -1151,96 +1254,21 @@ public final class Objects {
   }
 
   /**
-   * Maps the object to its literal string representation (that is, inclusive of markers such as
-   * quotes).
+   * Maps the object to its literal string representation for text messages.
    *
-   * @return
-   *         <ul>
-   *         <li>if {@code obj} is undefined: {@value Strings#NULL}</li>
-   *         <li>if {@code obj} is {@link Float} or {@link Long}: {@link Object#toString()},
-   *         suffixed with literal qualifier (disambiguation against respective default literal
-   *         types, {@link Double} or {@link Integer})</li>
-   *         <li>if {@code obj} is {@link Character}: {@link Object#toString()}, escaped and wrapped
-   *         with single quotes</li>
-   *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
-   *         with double quotes</li>
-   *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}
-   *         ({@link Class#getSimpleName()} for common types, under {@code java.lang} package)</li>
-   *         <li>otherwise: {@link Object#toString()}, as-is</li>
-   *         </ul>
-   *         <p>
-   *         NOTE: For convenience, the following common types are automatically treated as
-   *         {@code String}: {@link File}, {@link Path}.
-   *         </p>
-   * @see #fromLiteral(String)
+   * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is
+   *         ({@link Object#toString()}) — for convenience, certain types ({@link File},
+   *         {@link Path}) are still represented as {@code String}, though.
+   * @see #literal(Object)
+   * @see #basicLiteral(Object)
    */
-  public static String toLiteral(@Nullable Object obj) {
-    return toLiteral(obj, false);
-  }
-
-  /**
-   * Maps the object to its literal string representation (that is, inclusive of markers such as
-   * quotes).
-   *
-   * @param nonBasicForced
-   *          Whether, in case {@code obj} is non-{@linkplain #isBasic(Object) basic}, the resulting
-   *          string is treated as {@link String} (that is, escaped and double-quoted). Certain
-   *          types, as specified here below, are automatically treated as such.
-   * @return
-   *         <ul>
-   *         <li>if {@code obj} is undefined: {@value Strings#NULL}</li>
-   *         <li>if {@code obj} is {@link Float} or {@link Long}: {@link Object#toString()},
-   *         suffixed with literal qualifier (disambiguation against respective default literal
-   *         types, {@link Double} or {@link Integer})</li>
-   *         <li>if {@code obj} is {@link Character}: {@link Object#toString()}, escaped and wrapped
-   *         with single quotes</li>
-   *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
-   *         with double quotes</li>
-   *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}
-   *         ({@link Class#getSimpleName()} for common types, under {@code java.lang} package)</li>
-   *         <li>otherwise: {@link Object#toString()}, as-is</li>
-   *         </ul>
-   *         <p>
-   *         NOTE: For convenience, the following common types are automatically treated as
-   *         {@code String}: {@link File}, {@link Path}.
-   *         </p>
-   * @see #fromLiteral(String)
-   */
-  public static String toLiteral(@Nullable Object obj, boolean nonBasicForced) {
-    if (obj == null)
-      return NULL;
-    else if (obj instanceof Float)
-      /*
-       * NOTE: Literal float MUST be marked by suffix to override default double type.
-       */
-      return obj + "F";
-    else if (obj instanceof Long)
-      /*
-       * NOTE: Literal long MUST be marked by suffix to override default integer type.
-       */
-      return obj + "L";
-    else if (obj instanceof Number || obj instanceof Boolean)
-      return obj.toString();
-    else if (obj instanceof Character)
-      return S + SQUOTE + ((Character) obj == SQUOTE ? S + BACKSLASH : EMPTY) + obj + SQUOTE;
-    else if (!(obj instanceof String)) {
-      if (obj instanceof Class) {
-        /*
-         * NOTE: The names of classes belonging to common packages are simplified to reduce noise.
-         */
-        obj = objTo((Class<?>) obj, $ -> $.getPackageName().startsWith("java.lang")
-            ? $.getSimpleName()
-            : $.getName());
-      } else {
-        if (obj instanceof File || obj instanceof Path) {
-          nonBasicForced = true;
-        }
-        obj = obj.toString();
-      }
-      if (!nonBasicForced)
-        return (String) obj;
-    }
-    return S + DQUOTE + LITERAL_STRING_ESCAPE.translate((String) obj) + DQUOTE;
+  public static String textLiteral(@Nullable Object obj) {
+    return literal(obj, $ -> {
+      if ($ instanceof File || $ instanceof Path)
+        return literal($.toString());
+      else
+        return $.toString();
+    });
   }
 
   /**

@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Objects.toLiteral;
+import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
@@ -319,28 +319,29 @@ public abstract class Asserter {
           + "these annotations: " + ARG + ")",
           testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
-    message =
-        ParamMessage.format("Test " + ARG + " FAILED:\n" + ARG, toLiteral(testName), message);
+    message = ParamMessage.format("Test " + ARG + " FAILED:" + LF
+        + ARG, textLiteral(testName), message);
     String projectArtifactId = Builds.projectArtifactId(expectedFile);
     String hint = ParamMessage.format(
-        "\nCompared files:\n"
-            + " * EXPECTED: " + ARG + "\n"
-            + " * ACTUAL: " + ARG + "\n"
-            + "To retry, enter this CLI parameter into your command:\n"
-            + "  mvn verify -pl " + ARG + " -Dtest=" + ARG + "\n"
+        LF
+            + "Compared files:" + LF
+            + " * EXPECTED: " + ARG + LF
+            + " * ACTUAL: " + ARG + LF
+            + "To retry, enter this CLI parameter into your command:" + LF
+            + "  mvn verify -pl " + ARG + " -Dtest=" + ARG + LF
             + "To confirm the actual changes as expected, enter these CLI parameters into your "
-            + "command:\n"
-            + "  mvn verify -pl " + ARG + " -D" + ARG + "=" + ARG + " -Dtest=" + ARG + "\n",
+            + "command:" + LF
+            + "  mvn verify -pl " + ARG + " -D" + ARG + "=" + ARG + " -Dtest=" + ARG + LF,
         expectedFile, requireNonNullElse(actualFile, "N/A"),
-        projectArtifactId, toLiteral(testName),
-        projectArtifactId, PARAM_NAME__UPDATE, toLiteral(testId), toLiteral(testName));
+        projectArtifactId, textLiteral(testName),
+        projectArtifactId, PARAM_NAME__UPDATE, textLiteral(testId), textLiteral(testName));
 
     // Log (full message).
     getLog().error(LogMarker.VERBOSE, ARG + LF + ARG, message, hint);
 
     // Exception (shortened message).
-    throw new AssertionError(String.format("%s\n"
-        + "(see pdfclown/assert.log for further information)\n"
+    throw new AssertionError(String.format("%s" + LF
+        + "(see pdfclown/assert.log for further information)" + LF
         + "%s", abbreviateMultiline(message, 5, 100), hint));
   }
 
@@ -388,7 +389,7 @@ public abstract class Asserter {
       throw runtime("Expected resource build FAILED: " + ARG, sourceDir,
           requireNonNullElse(ex.getCause(), ex));
     }
-    getLog().info("Expected directory resource BUILT at " + ARG, toLiteral(sourceDir));
+    getLog().info("Expected directory resource BUILT at " + ARG, textLiteral(sourceDir));
 
     // Target file.
     Path targetDir = config.getEnv().resourcePath(resourceName);
@@ -399,8 +400,7 @@ public abstract class Asserter {
       throw runtime("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + ARG, targetDir, ex);
     }
-    getLog().info("Expected directory resource COPIED to target at " + ARG,
-        toLiteral(targetDir));
+    getLog().info("Expected directory resource COPIED to target at " + ARG, textLiteral(targetDir));
   }
 
   /**
@@ -445,7 +445,7 @@ public abstract class Asserter {
       throw runtime("Expected resource build FAILED: " + ARG, sourceFile,
           requireNonNullElse(ex.getCause(), ex));
     }
-    getLog().info("Expected resource BUILT at " + ARG, toLiteral(sourceFile));
+    getLog().info("Expected resource BUILT at " + ARG, textLiteral(sourceFile));
 
     // Target file.
     Path targetFile = config.getEnv().resourcePath(resourceName);
@@ -456,7 +456,7 @@ public abstract class Asserter {
       throw runtime("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + targetFile, ex);
     }
-    getLog().info("Expected resource COPIED to target at " + ARG, toLiteral(targetFile));
+    getLog().info("Expected resource COPIED to target at " + ARG, textLiteral(targetFile));
   }
 
   /**
