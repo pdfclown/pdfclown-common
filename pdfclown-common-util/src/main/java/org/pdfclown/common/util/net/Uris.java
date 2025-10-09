@@ -32,7 +32,6 @@ import java.net.URLConnection;
 import java.nio.file.Path;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.stream.Streams;
-import org.jspecify.annotations.Nullable;
 
 /**
  * URI-related utilities.
@@ -56,21 +55,19 @@ public final class Uris {
   /**
    * Checks whether the resource exists.
    */
-  public static boolean exists(@Nullable URL url) {
-    if (url != null) {
-      try {
-        URLConnection c = url.openConnection();
-        if (c instanceof HttpURLConnection) {
-          var hc = (HttpURLConnection) c;
-          hc.setRequestMethod("HEAD") /* Avoids body transfer on response */;
-          return hc.getResponseCode() == HttpURLConnection.HTTP_OK;
-        } else {
-          c.connect();
-          return true;
-        }
-      } catch (IOException ex) {
-        // NOP
+  public static boolean exists(URL url) {
+    try {
+      URLConnection c = url.openConnection();
+      if (c instanceof HttpURLConnection) {
+        var hc = (HttpURLConnection) c;
+        hc.setRequestMethod("HEAD") /* Avoids body transfer on response */;
+        return hc.getResponseCode() == HttpURLConnection.HTTP_OK;
+      } else {
+        c.connect();
+        return true;
       }
+    } catch (IOException ex) {
+      // NOP
     }
     return false;
   }
@@ -96,7 +93,7 @@ public final class Uris {
    * <pre>
    * way/longer/to.html</pre>
    */
-  public static URI relativeUri(URI from, URI to) {
+  public static URI relativize(URI from, URI to) {
     if (from.isOpaque() || to.isOpaque()
         || !Strings.CI.equals(from.getScheme(), to.getScheme())
         || !Strings.CI.equals(from.getAuthority(), to.getAuthority()))
@@ -137,12 +134,12 @@ public final class Uris {
   }
 
   /**
-   * Gets the URI corresponding to the path.
+   * Gets the URI corresponding to a path.
    * <p>
-   * <i>Contrary to {@link Path#toUri()}, this function supports also <b>relative URIs</b></i>,
-   * remedying the limitation of the standard API which forcibly resolves relative paths as absolute
-   * URIs against the current user directory. On the other hand, absolute paths are normalized
-   * before being converted.
+   * Contrary to {@link Path#toUri()}, this method supports also <b>relative URIs</b>, remedying the
+   * limitation of the standard API which forcibly resolves relative paths as absolute URIs against
+   * the current user directory. On the other hand, absolute paths are normalized before being
+   * converted.
    * </p>
    */
   public static URI uri(Path path) {
@@ -157,35 +154,27 @@ public final class Uris {
   }
 
   /**
-   * Gets the URI corresponding to the string.
+   * Gets the URI corresponding to a string.
    *
-   * @return {@code null}, if {@code uri} is undefined or illegal.
+   * @throws IllegalArgumentException
+   *           if {@code uri} is invalid.
    */
-  public static @Nullable URI uri(@Nullable String uri) {
-    if (uri != null) {
-      try {
-        return new URI(uri);
-      } catch (URISyntaxException ex) {
-        // NOP
-      }
-    }
-    return null;
+  public static URI uri(String uri) {
+    return URI.create(uri);
   }
 
   /**
-   * Gets the URI corresponding to the URL.
+   * Gets the URI corresponding to a URL.
    *
-   * @return {@code null}, if {@code url} is undefined or illegal.
+   * @throws IllegalArgumentException
+   *           if {@code url} is invalid.
    */
-  public static @Nullable URI uri(@Nullable URL url) {
-    if (url != null) {
-      try {
-        return url.toURI();
-      } catch (URISyntaxException ex) {
-        // NOP
-      }
+  public static URI uri(URL url) {
+    try {
+      return url.toURI();
+    } catch (URISyntaxException ex) {
+      throw wrongArg("url", url, null, ex);
     }
-    return null;
   }
 
   /**
@@ -195,45 +184,31 @@ public final class Uris {
    *           if {@code path} is relative.
    */
   public static URL url(Path path) {
-    // TODO: support relative paths
+    return url(uri(path));
+  }
+
+  /**
+   * Gets the URL corresponding to a string.
+   *
+   * @throws IllegalArgumentException
+   *           if {@code url} is invalid.
+   */
+  public static URL url(String url) {
+    return url(uri(url));
+  }
+
+  /**
+   * Gets the URL corresponding to a URI.
+   *
+   * @throws IllegalArgumentException
+   *           if {@code uri} is invalid.
+   */
+  public static URL url(URI uri) {
     try {
-      return uri(path).toURL();
+      return uri.toURL();
     } catch (MalformedURLException ex) {
-      throw wrongArg("path", path, ex);
+      throw wrongArg("uri", uri, null, ex);
     }
-  }
-
-  /**
-   * Gets the URL corresponding to the string.
-   *
-   * @return {@code null}, if {@code url} is undefined or illegal.
-   */
-  public static @Nullable URL url(@Nullable String url) {
-    URI uri = uri(url);
-    if (uri != null) {
-      try {
-        return uri.toURL();
-      } catch (MalformedURLException ex) {
-        // NOP
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Gets the URL corresponding to the URI.
-   *
-   * @return {@code null}, if {@code uri} is undefined or illegal.
-   */
-  public static @Nullable URL url(@Nullable URI uri) {
-    if (uri != null) {
-      try {
-        return uri.toURL();
-      } catch (MalformedURLException ex) {
-        // NOP
-      }
-    }
-    return null;
   }
 
   private Uris() {

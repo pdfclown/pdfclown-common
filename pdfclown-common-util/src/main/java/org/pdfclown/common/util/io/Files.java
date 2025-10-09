@@ -621,12 +621,17 @@ public final class Files {
   }
 
   /**
-   * Gets the relative path from the file to the other one.
+   * Gets the relative path from a file to the other one.
+   * <p>
+   * Contrary to {@link Path#relativize(Path)}, this method relativizes {@code to} according to the
+   * directory of {@code from} (that is, if {@code from} is a file, its parent is picked instead).
+   * Consequently, {@code from} MUST exist.
+   * </p>
    *
    * @throws IllegalArgumentException
    *           if {@code from} does not exist.
    */
-  public static Path relativePath(Path from, Path to) {
+  public static Path relativize(Path from, Path to) {
     if (isRegularFile(from = normal(from))) {
       from = from.getParent();
     }

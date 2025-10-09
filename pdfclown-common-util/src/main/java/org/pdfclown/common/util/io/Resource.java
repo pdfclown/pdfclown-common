@@ -15,13 +15,13 @@ package org.pdfclown.common.util.io;
 import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
-import static org.pdfclown.common.util.net.Uris.uri;
 import static org.pdfclown.common.util.net.Uris.url;
 
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -108,16 +108,17 @@ public interface Resource {
    * @param fileResolver
    *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   * @throws IllegalArgumentException
+   *           if {@code name} is an invalid URL.
    * @implNote Name resolution algorithm:
    *           <ol>
-   *           <li>[<b>explicit classpath resource</b>] if {@code name} is prefixed by
+   *           <li><b>[explicit classpath resource]</b> if {@code name} is prefixed by
    *           {@code "classpath:"}, it is resolved through {@code cl} and returned</li>
-   *           <li>[<b>filesystem resource</b>] {@code name} is converted through
-   *           {@code fileResolver} to an absolute filesystem path; if it exists, it is
-   *           returned</li>
-   *           <li>[<b>generic URL resource</b>] if {@code name} is an absolute URL, it is
-   *           returned</li>
-   *           <li>[<b>implicit classpath resource</b>] otherwise, {@code name} is resolved through
+   *           <li><b>[filesystem resource]</b> if {@code name}, resolved through
+   *           {@code fileResolver} to an absolute filesystem path, exists, it is returned</li>
+   *           <li><b>[URL resource]</b> if {@code name} is an absolute URI, it is converted to URL
+   *           and returned</li>
+   *           <li><b>[implicit classpath resource]</b> otherwise, {@code name} is resolved through
    *           {@code cl} and returned</li>
    *           </ol>
    *           <p>
@@ -142,18 +143,16 @@ public interface Resource {
         // [filesystem resource]
         return new FileResource(name, file);
     } catch (InvalidPathException | IOError ex) {
-      /*
-       * NOP: `name` is not a file path, so we fall back to generic URL (or implicit classpath
-       * resource).
-       */
+      // FALLTHRU
     }
 
-    {
-      var uri = uri(name);
-      if (uri != null && uri.isAbsolute()) {
-        // [generic URL resource]
+    try {
+      URI uri = new URI(name);
+      if (uri.isAbsolute())
+        // [URL resource]
         return Uris.exists(url(uri)) ? new WebResource(name, uri) : null;
-      }
+    } catch (URISyntaxException ex) {
+      // FALLTHRU
     }
 
     // [implicit classpath resource]

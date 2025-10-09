@@ -13,7 +13,6 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Arrays.asList;
-import static java.util.Objects.requireNonNull;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -88,44 +87,39 @@ class ResourceTest extends BaseTest {
             // [2] name[1]: "classpath:org/pdfclown/common/build/conf/che. . ."
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
-                requireNonNull(uri(
-                    "jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"))),
+                uri(
+                    "jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml")),
             // [3] name[2]: "classpath:org/pdfclown/common/build/absent/c. . ."
             null,
             // [4] name[3]: "org/pdfclown/common/build/conf/checkstyle/ch. . ."
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
-                requireNonNull(uri(
-                    "jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"))),
+                uri(
+                    "jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml")),
             // [5] name[4]: "org/pdfclown/common/build/absent/conf/checks. . ."
             null,
             // [6] name[5]: "classpath:org/pdfclown/common/util/conf/chec. . ."
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml",
-                requireNonNull(
-                    uri("file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"))),
+                uri("file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml")),
             // [7] name[6]: "classpath:org/pdfclown/common/util/absent/co. . ."
             null,
             // [8] name[7]: "org/pdfclown/common/util/conf/checkstyle/che. . ."
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml",
-                requireNonNull(
-                    uri("file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"))),
+                uri("file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml")),
             // [9] name[8]: "org/pdfclown/common/util/absent/conf/checkst. . ."
             null,
             // [10] name[9]: "/home/myuser/conf/checkstyle/checkstyle-chec. . ."
             new ResourceResult("FileResource", "/home/myuser/conf/checkstyle/checkstyle-checks.xml",
-                requireNonNull(
-                    uri("jimfs://local/home/myuser/conf/checkstyle/checkstyle-checks.xml"))),
+                uri("jimfs://local/home/myuser/conf/checkstyle/checkstyle-checks.xml")),
             // [11] name[10]: "conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("FileResource", "conf/checkstyle/checkstyle-checks.xml",
-                requireNonNull(
-                    uri("jimfs://local/home/test/root/conf/checkstyle/checkstyle-checks.xml"))),
+                uri("jimfs://local/home/test/root/conf/checkstyle/checkstyle-checks.xml")),
             // [12] name[11]: "https://www.example.io/conf/checkstyle/check. . ."
             new ResourceResult("WebResource",
                 "https://www.example.io/conf/checkstyle/checkstyle-checks.xml",
-                requireNonNull(
-                    uri("https://www.example.io/conf/checkstyle/checkstyle-checks.xml"))),
+                uri("https://www.example.io/conf/checkstyle/checkstyle-checks.xml")),
             // [13] name[12]: "https://www.example.io/absent/conf/checkstyl. . ."
             null),
         // name
@@ -239,7 +233,7 @@ class ResourceTest extends BaseTest {
             entry("name", name)))
                 .setExpectedSourceCodeGenerator($ -> {
                   var e = (Resource) $;
-                  return String.format("new ResourceResult(%s, %s, requireNonNull(uri(%s)))",
+                  return String.format("new ResourceResult(%s, %s, uri(%s))",
                       literal(sqn(e)), literal(e.getName()), literal(e.getUri()));
                 }));
   }

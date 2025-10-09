@@ -13,6 +13,7 @@
 package org.pdfclown.common.util.net;
 
 import static java.util.Arrays.asList;
+import static java.util.List.of;
 import static java.util.Map.entry;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
@@ -21,7 +22,6 @@ import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +36,7 @@ import org.pdfclown.common.util.__test.BaseTest;
  */
 class UrisTest extends BaseTest {
   @SuppressWarnings("DataFlowIssue")
-  static Stream<Arguments> relativeUri() {
+  static Stream<Arguments> relativize() {
     var from = asList(
         URI.create("my/sub/same.html"),
         URI.create("my/another/sub/from.html"),
@@ -58,7 +58,7 @@ class UrisTest extends BaseTest {
         cartesian()
             .composeExpectedConverter(URI::create),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // from[0]: "my/sub/same.html"
             // [1] to[0]: "my/sub/same.html"
             "",
@@ -286,11 +286,11 @@ class UrisTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void relativeUri(Expected<URI> expected, URI from, URI to) {
+  void relativize(Expected<URI> expected, URI from, URI to) {
     assertParameterizedOf(
-        () -> Uris.relativeUri(from, to),
+        () -> Uris.relativize(from, to),
         expected,
-        () -> new ExpectedGeneration(List.of(
+        () -> new ExpectedGeneration(of(
             entry("from", from),
             entry("to", to)))
                 .setMaxArgCommentLength(50));
