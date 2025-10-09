@@ -35,7 +35,7 @@ RATIONALE: headings within Javadoc comments are a controversial topic: the [offi
 
     - **containing ancillary testing code**: `mainCodePackage '._' ancillarySubPackagePart ('.' subPackage)*`
 
-      Ancillary testing code is every piece of code (sample objects, mocks specific to a tested part, etc.) which is NOT intended for reuse within the current testing suite. SHALL be prefixed by single underscore (to avoid ambiguities with main-code packages).
+      Ancillary testing code is every piece of code (sample objects, mocks specific to a tested part, ...) which is NOT intended for reuse within the current testing suite. SHALL be prefixed by single underscore (to avoid ambiguities with main-code packages).
 
       Example:
       <pre>
@@ -44,7 +44,7 @@ RATIONALE: headings within Javadoc comments are a controversial topic: the [offi
 
     - **containing internal testing harness functionality**: `mainCodePackage '.__test' ('.' subPackage)*`
 
-      Internal testing harness functionality is every piece of code (utilities, models, shared mocks, etc.) which is intended for reuse within the current testing suite. SHALL be prefixed by double underscore (to avoid ambiguities with `*.test` packages containing public testing harness functionality — see next item).
+      Internal testing harness functionality is every piece of code (utilities, models, shared mocks, ...) which is intended for reuse within the current testing suite. SHALL be prefixed by double underscore (to avoid ambiguities with `*.test` packages containing public testing harness functionality — see next item).
 
       Example:
       <pre>
@@ -54,7 +54,7 @@ RATIONALE: headings within Javadoc comments are a controversial topic: the [offi
 
     - **containing public testing harness functionality**: `mainCodePackage '.test' ('.' subPackage)*`
 
-      Public testing harness functionality is every piece of code (utilities, models, shared mocks, etc.) which is intended for reuse outside the current testing suite, exported in a test-jar artifact.
+      Public testing harness functionality is every piece of code (utilities, models, shared mocks, ...) which is intended for reuse outside the current testing suite, exported in a test-jar artifact.
 
       Example:
       <pre>

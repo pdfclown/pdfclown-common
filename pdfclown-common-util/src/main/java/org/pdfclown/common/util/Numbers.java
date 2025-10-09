@@ -37,7 +37,7 @@ public final class Numbers {
   /**
    * Converts the number to latin-alphabet numeral.
    *
-   * @return (A to Z for the first 26 pages, AA to ZZ for the next 26, etc.)
+   * @return (A to Z for the first 26 pages, AA to ZZ for the next 26, ...)
    */
   public static String intToLatin(int val) {
     var b = new StringBuilder();
@@ -61,7 +61,7 @@ public final class Numbers {
   /**
    * Converts the number to roman numeral.
    *
-   * @return (I, II, III, IV, V, VI, ..., IX, X, etc.)
+   * @return (I, II, III, IV, V, VI, ..., IX, X, ...)
    */
   public static String intToRoman(int val) {
     var b = new StringBuilder();
