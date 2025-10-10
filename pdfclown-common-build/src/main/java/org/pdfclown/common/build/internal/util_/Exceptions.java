@@ -48,18 +48,34 @@ public final class Exceptions {
   }
 
   /**
-   * <p>
-   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
-   * </p>
+   * {@jada.reuseDoc ParamMessage.of(*):params}
+   *
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc !end}
    */
   public static NotImplementedException TODO(@Nullable String format, @Nullable Object... args) {
     return throwable(NotImplementedException::new, format, args);
   }
 
   /**
-   * <p>
-   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
-   * </p>
+   * {@jada.reuseDoc ParamMessage.of(*):params}
+   *
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc !end}
    */
   public static IOException failedIO(@Nullable String format, @Nullable Object... args) {
     return throwable(IOException::new, format, args);
@@ -74,12 +90,17 @@ public final class Exceptions {
   }
 
   /**
-   * <p>
-   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
-   * </p>
-   *
    * @param value
-   *          Mismatching value.
+   *          Mismatching value. {@jada.reuseDoc ParamMessage.of(*):params}
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc !end}
    */
   public static NoSuchElementException missing(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
@@ -100,9 +121,17 @@ public final class Exceptions {
   }
 
   /**
-   * <p>
-   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
-   * </p>
+   * {@jada.reuseDoc ParamMessage.of(*):params}
+   *
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc !end}
    */
   public static RuntimeException runtime(@Nullable String format, @Nullable Object... args) {
     return throwable(RuntimeException::new, format, args);
@@ -132,12 +161,17 @@ public final class Exceptions {
   }
 
   /**
-   * <p>
-   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
-   * </p>
-   *
    * @param value
-   *          Invalid value.
+   *          Invalid value. {@jada.reuseDoc ParamMessage.of(*):params}
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc !end}
    */
   public static UnexpectedCaseError unexpected(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
@@ -154,9 +188,17 @@ public final class Exceptions {
   }
 
   /**
-   * <p>
-   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
-   * </p>
+   * {@jada.reuseDoc ParamMessage.of(*):params}
+   *
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc !end}
    */
   public static UnsupportedOperationException unsupported(@Nullable String format,
       @Nullable Object... args) {
@@ -173,14 +215,19 @@ public final class Exceptions {
   }
 
   /**
-   * <p>
-   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
-   * </p>
-   *
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param value
-   *          Invalid value.
+   *          Invalid value. {@jada.reuseDoc ParamMessage.of(*):params}
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc !end}
    */
   public static XtIllegalArgumentException wrongArg(@Nullable String name,
       @Nullable Object value, @Nullable String format, @Nullable Object... args) {
@@ -241,9 +288,17 @@ public final class Exceptions {
   }
 
   /**
-   * <p>
-   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
-   * </p>
+   * {@jada.reuseDoc ParamMessage.of(*):params}
+   *
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc !end}
    */
   public static IllegalStateException wrongState(@Nullable String format,
       @Nullable Object... args) {

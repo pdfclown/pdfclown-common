@@ -173,8 +173,7 @@ public class ParamMessage {
    * @param formatter
    *          Applied formatter. {@jada.doc params}
    * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder). It is
-   *          assigned to {@link #getDescription() description}.
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link #getCause() cause} (if {@link UncheckedIOException},
@@ -205,8 +204,7 @@ public class ParamMessage {
    * {@jada.reuseDoc !end} {@jada.reuseDoc :params}
    *
    * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder). It is
-   *          assigned to {@link #getDescription() description}.
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link #getCause() cause} (if {@link UncheckedIOException},
