@@ -23,9 +23,13 @@ import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.function.BiFunction;
+import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -44,15 +48,21 @@ public final class Exceptions {
   }
 
   /**
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link Throwable#getCause() cause}.
+   * <p>
+   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
+   * </p>
    */
   public static NotImplementedException TODO(@Nullable String format, @Nullable Object... args) {
-    var message = ParamMessage.of(format, args);
-    return new NotImplementedException(message.getDescription(), message.getCause());
+    return throwable(NotImplementedException::new, format, args);
+  }
+
+  /**
+   * <p>
+   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
+   * </p>
+   */
+  public static IOException failedIO(@Nullable String format, @Nullable Object... args) {
+    return throwable(IOException::new, format, args);
   }
 
   public static NoSuchElementException missing() {
@@ -64,12 +74,12 @@ public final class Exceptions {
   }
 
   /**
+   * <p>
+   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
+   * </p>
+   *
    * @param value
    *          Mismatching value.
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-   * @param args
-   *          Message arguments.
    */
   public static NoSuchElementException missing(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
@@ -82,23 +92,20 @@ public final class Exceptions {
   }
 
   /**
-   * @param file
-   *          Missing file.
+   * @param path
+   *          Missing path.
    */
-  public static FileNotFoundException missingPath(Path file) {
-    return new FileNotFoundException(ParamMessage.format(ARG + " MISSING", file));
+  public static FileNotFoundException missingPath(Path path) {
+    return new FileNotFoundException(ParamMessage.format(ARG + " MISSING", path));
   }
 
   /**
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link Throwable#getCause() cause}.
+   * <p>
+   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
+   * </p>
    */
   public static RuntimeException runtime(@Nullable String format, @Nullable Object... args) {
-    var message = ParamMessage.of(format, args);
-    return new RuntimeException(message.getDescription(), message.getCause());
+    return throwable(RuntimeException::new, format, args);
   }
 
   /**
@@ -106,23 +113,17 @@ public final class Exceptions {
    *
    * @param cause
    *          Throwable to wrap.
-   * @return {@code cause}, if itself is an unchecked exception (pass-through).
+   * @return
+   *         <ul>
+   *         <li>{@code cause}, if it is an unchecked exception itself (pass-through)</li>
+   *         <li>{@link UncheckedIOException}, if {@code cause} is {@link IOException}</li>
+   *         <li>{@link UncheckedException}, if {@code cause} is any other {@linkplain Exception
+   *         checked exception}</li>
+   *         </ul>
    */
   public static RuntimeException runtime(Throwable cause) {
     return cause instanceof RuntimeException ? (RuntimeException) cause
-        : new RuntimeException(cause);
-  }
-
-  /**
-   * Wraps the throwable into a {@linkplain UncheckedException temporary unchecked exception}.
-   *
-   * @param cause
-   *          Throwable to wrap.
-   * @return {@code cause}, if itself is an unchecked exception (pass-through).
-   */
-  public static RuntimeException unchecked(Throwable cause) {
-    return cause instanceof RuntimeException
-        ? (RuntimeException) cause
+        : cause instanceof IOException ? new UncheckedIOException((IOException) cause)
         : new UncheckedException(cause);
   }
 
@@ -131,13 +132,12 @@ public final class Exceptions {
   }
 
   /**
+   * <p>
+   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
+   * </p>
+   *
    * @param value
    *          Invalid value.
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link Throwable#getCause() cause}.
    */
   public static UnexpectedCaseError unexpected(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
@@ -154,16 +154,13 @@ public final class Exceptions {
   }
 
   /**
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link Throwable#getCause() cause}.
+   * <p>
+   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
+   * </p>
    */
   public static UnsupportedOperationException unsupported(@Nullable String format,
       @Nullable Object... args) {
-    var message = ParamMessage.of(format, args);
-    return new UnsupportedOperationException(message.getDescription(), message.getCause());
+    return throwable(UnsupportedOperationException::new, format, args);
   }
 
   public static XtIllegalArgumentException wrongArg(@Nullable String name, @Nullable Object value) {
@@ -172,20 +169,18 @@ public final class Exceptions {
 
   public static IllegalArgumentException wrongArg(@Nullable String format,
       @Nullable Object... args) {
-    var message = ParamMessage.of(format, args);
-    return new IllegalArgumentException(message.getDescription(), message.getCause());
+    return throwable(IllegalArgumentException::new, format, args);
   }
 
   /**
+   * <p>
+   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
+   * </p>
+   *
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param value
    *          Invalid value.
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link Throwable#getCause() cause}.
    */
   public static XtIllegalArgumentException wrongArg(@Nullable String name,
       @Nullable Object value, @Nullable String format, @Nullable Object... args) {
@@ -246,21 +241,25 @@ public final class Exceptions {
   }
 
   /**
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link Throwable#getCause() cause}.
+   * <p>
+   * For more information about the parameters, see {@link ParamMessage#of(String, Object...)}.
+   * </p>
    */
   public static IllegalStateException wrongState(@Nullable String format,
       @Nullable Object... args) {
-    var message = ParamMessage.of(format, args);
-    return new IllegalStateException(message.getDescription(), message.getCause());
+    return throwable(IllegalStateException::new, format, args);
   }
 
   public static IllegalStateException wrongState(Throwable cause) {
     return cause instanceof IllegalStateException ? (IllegalStateException) cause
         : new IllegalStateException(cause);
+  }
+
+  private static <T extends Throwable> T throwable(
+      BiFunction<String, @Nullable Throwable, T> factory, @Nullable String format,
+      @Nullable Object... args) {
+    var message = ParamMessage.of(format, args);
+    return factory.apply(message.getDescription(), message.getCause());
   }
 
   private Exceptions() {

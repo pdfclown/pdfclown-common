@@ -20,7 +20,6 @@ import static org.pdfclown.common.build.internal.util_.Objects.asTopLevelType;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.Strings.SLASH;
 import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.build.internal.util_.io.Files.normal;
 import static org.pdfclown.common.build.internal.util_.io.Files.resetDirectory;
@@ -155,13 +154,12 @@ public abstract class TestUnit implements Test {
 
     @Override
     public Path typeSrcPath(Class<?> type) {
-      Path ret;
       var name = ResourceNames.based(
           requireNonNull(asTopLevelType(type), "`type`").getSimpleName() + FILE_EXTENSION__JAVA,
           type);
-      if (exists(ret = ResourceNames.path(name, dir(DirId.TYPE_SOURCE))))
-        return ret;
-      else if (exists(ret = ResourceNames.path(name, dir(DirId.MAIN_TYPE_SOURCE))))
+      Path ret;
+      if (exists(ret = ResourceNames.path(name, dir(DirId.TYPE_SOURCE)))
+          || exists(ret = ResourceNames.path(name, dir(DirId.MAIN_TYPE_SOURCE))))
         return ret;
       else
         throw runtime("Source file corresponding to " + ARG + " NOT FOUND "

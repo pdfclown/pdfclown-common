@@ -19,7 +19,10 @@ import static org.pdfclown.common.build.internal.util_.Objects.isBasic;
 import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
+import java.io.UncheckedIOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Objects;
+import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Parameterized message.
  * <p>
- * For convenience, emulates the behavior of slf4j-compliant logging libraries:
+ * Emulates the behavior of slf4j-compliant logging libraries:
  * </p>
  * <ul>
  * <li>looks for {@value ParamMessage#ARG} placeholders for argument replacement in message
@@ -160,39 +163,55 @@ public class ParamMessage {
   }
 
   /**
-   * Resolves the parameterized message with the formatter.
-   *
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder). It is
-   *          assigned to {@link #getDescription() description}.
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link #getCause() cause}.
-   * @param formatter
-   *          Applied formatter.
-   */
-  public static ParamMessage of(Formatter formatter, @Nullable String format,
-      @Nullable Object... args) {
-    int argsCount = args.length;
-    var cause = argsCount > 0 && args[argsCount - 1] instanceof Throwable
-        ? (Throwable) args[--argsCount]
-        : null;
-    return new ParamMessage(format(formatter, format, args, argsCount), cause);
-  }
-
-  /**
-   * Resolves the parameterized message with the default formatter.
+   * Resolves the parameterized message with the formatter. {@jada.doc}
    * <p>
    * NOTE: For leniency, cardinality mismatches between arguments and placeholders are ignored and
    * logged as warnings.
    * </p>
+   * {@jada.doc !end}
+   *
+   * @param formatter
+   *          Applied formatter. {@jada.doc params}
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder). It is
+   *          assigned to {@link #getDescription() description}.
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
+   *          {@link #getCause() cause} (if {@link UncheckedIOException},
+   *          {@link UncheckedException}, or {@link UndeclaredThrowableException}, it is unwrapped).
+   *          {@jada.doc !end}
+   */
+  public static ParamMessage of(Formatter formatter, @Nullable String format,
+      @Nullable Object... args) {
+    int argsCount = args.length;
+    Throwable cause = null;
+    if (argsCount > 0 && args[argsCount - 1] instanceof Throwable) {
+      cause = (Throwable) args[--argsCount];
+      if (cause instanceof UncheckedIOException || cause instanceof UncheckedException) {
+        cause = cause.getCause();
+      } else if (cause instanceof UndeclaredThrowableException) {
+        cause = ((UndeclaredThrowableException) cause).getUndeclaredThrowable();
+      }
+    }
+    return new ParamMessage(format(formatter, format, args, argsCount), cause);
+  }
+
+  /**
+   * Resolves the parameterized message with the default formatter. {@jada.reuseDoc}
+   * <p>
+   * NOTE: For leniency, cardinality mismatches between arguments and placeholders are ignored and
+   * logged as warnings.
+   * </p>
+   * {@jada.reuseDoc !end} {@jada.reuseDoc :params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder). It is
    *          assigned to {@link #getDescription() description}.
    * @param args
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
-   *          {@link #getCause() cause}.
+   *          {@link #getCause() cause} (if {@link UncheckedIOException},
+   *          {@link UncheckedException}, or {@link UndeclaredThrowableException}, it is unwrapped).
+   *          {@jada.reuseDoc !end}
    */
   public static ParamMessage of(@Nullable String format, @Nullable Object... args) {
     return of(FORMATTER, format, args);

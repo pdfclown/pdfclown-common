@@ -16,6 +16,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.pdfclown.common.build.internal.util_.Exceptions.failedIO;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
@@ -42,6 +44,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -290,7 +293,7 @@ public abstract class Asserter {
    */
   protected void evalAssertionError(String testId, @Nullable String message, Path expectedFile,
       @Nullable Path actualFile) throws AssertionError {
-    if (message == null || (message = message.strip()).isEmpty())
+    if (isBlank(message))
       return;
 
     var testAnnotationTypes = Set.of(Test.class, ParameterizedTest.class);
@@ -385,9 +388,8 @@ public abstract class Asserter {
     try {
       resetDirectory(sourceDir);
       writer.accept(sourceDir);
-    } catch (RuntimeException ex) {
-      throw runtime("Expected resource build FAILED: " + ARG, sourceDir,
-          requireNonNullElse(ex.getCause(), ex));
+    } catch (Exception ex) {
+      throw failedIO("Expected resource build FAILED: " + ARG, sourceDir, ex);
     }
     getLog().info("Expected directory resource BUILT at " + ARG, textLiteral(sourceDir));
 
@@ -396,8 +398,8 @@ public abstract class Asserter {
     try {
       resetDirectory(targetDir);
       copyDirectory(sourceDir, targetDir);
-    } catch (RuntimeException ex) {
-      throw runtime("Expected resource copy to target FAILED "
+    } catch (Exception ex) {
+      throw failedIO("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + ARG, targetDir, ex);
     }
     getLog().info("Expected directory resource COPIED to target at " + ARG, textLiteral(targetDir));
@@ -415,13 +417,8 @@ public abstract class Asserter {
    */
   protected void writeExpectedDirectory(String resourceName, Path actualDir, Config config)
       throws IOException {
-    writeExpectedDirectory(resourceName, $ -> {
-      try {
-        copyDirectory(actualDir, $);
-      } catch (IOException ex) {
-        throw runtime(ex);
-      }
-    }, config);
+    writeExpectedDirectory(resourceName, Failable.asConsumer($ -> copyDirectory(actualDir, $)),
+        config);
   }
 
   /**
@@ -441,9 +438,8 @@ public abstract class Asserter {
     try {
       Files.createDirectories(sourceFile.getParent());
       writer.accept(sourceFile);
-    } catch (RuntimeException ex) {
-      throw runtime("Expected resource build FAILED: " + ARG, sourceFile,
-          requireNonNullElse(ex.getCause(), ex));
+    } catch (Exception ex) {
+      throw failedIO("Expected resource build FAILED: " + ARG, sourceFile, ex);
     }
     getLog().info("Expected resource BUILT at " + ARG, textLiteral(sourceFile));
 
@@ -452,8 +448,8 @@ public abstract class Asserter {
     try {
       Files.createDirectories(targetFile.getParent());
       Files.copy(sourceFile, targetFile, REPLACE_EXISTING);
-    } catch (RuntimeException ex) {
-      throw runtime("Expected resource copy to target FAILED "
+    } catch (Exception ex) {
+      throw failedIO("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + targetFile, ex);
     }
     getLog().info("Expected resource COPIED to target at " + ARG, textLiteral(targetFile));
@@ -471,13 +467,7 @@ public abstract class Asserter {
    */
   protected void writeExpectedFile(String resourceName, Path actualFile, Config config)
       throws IOException {
-    writeExpectedFile(resourceName,
-        $ -> {
-          try {
-            Files.copy(actualFile, $, REPLACE_EXISTING);
-          } catch (IOException ex) {
-            throw runtime(ex);
-          }
-        }, config);
+    writeExpectedFile(resourceName, Failable.asConsumer(
+        $ -> Files.copy(actualFile, $, REPLACE_EXISTING)), config);
   }
 }
