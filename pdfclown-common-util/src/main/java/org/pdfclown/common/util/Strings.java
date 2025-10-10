@@ -241,6 +241,11 @@ public final class Strings {
   /**
    * Gets the index within the string of the first occurrence of the given character; if not found,
    * returns the end of the string.
+   * <p>
+   * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
+   * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
+   * it doesn't make sense to define a symmetrical {@code lastIndexOfOrBegin(..)} method.
+   * </p>
    *
    * @see String#indexOf(int)
    */
@@ -251,6 +256,11 @@ public final class Strings {
   /**
    * Gets the index within the string of the first occurrence of the given character, searched from
    * the given index; if not found, returns the end of the string.
+   * <p>
+   * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
+   * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
+   * it doesn't make sense to define a symmetrical {@code lastIndexOfOrBegin(..)} method.
+   * </p>
    *
    * @see String#indexOf(int, int)
    */
@@ -391,27 +401,6 @@ public final class Strings {
         return i;
     }
     return INDEX__NOT_FOUND;
-  }
-
-  /**
-   * Gets the index within the string of the last occurrence of the given character; if not found,
-   * returns the start of the string.
-   *
-   * @see String#lastIndexOf(int)
-   */
-  public static int lastIndexOfOrStart(String s, int c) {
-    return lastIndexOfOrStart(s, c, s.length());
-  }
-
-  /**
-   * Gets the index within the string of the last occurrence of the given character, searched from
-   * the given index; if not found, returns the start of the string.
-   *
-   * @see String#lastIndexOf(int, int)
-   */
-  public static int lastIndexOfOrStart(String s, int c, int fromIndex) {
-    int index = s.lastIndexOf(c, fromIndex);
-    return found(index) ? index : 0;
   }
 
   /**
