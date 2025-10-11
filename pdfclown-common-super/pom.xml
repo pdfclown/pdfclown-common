@@ -223,16 +223,7 @@ var buildTimestamp = ${git.dirty}
         .format(DateTimeFormatter.ISO_INSTANT)
     : "${git.commit.time}"
 
-project.properties.setProperty('buildTimestamp', buildTimestamp)
-/*
-  NOTE: Here the magic happens: documented examples (see, e.g.,
-  https://github.com/groovy/GMavenPlus/wiki/Examples#dynamic-properties) cite only
-  `project.properties` assignment but that doesn't work for dynamic reference substitution (i.e.,
-  "{..}" syntax); peering into the source code of git-commit-id-maven-plugin (whose dynamic
-  property references work perfectly), we can see that its property assignments are propagated also
-  to `session.userProperties` (see
-  https://github.com/git-commit-id/git-commit-id-maven-plugin/blob/34d009cc1c18dda05aeb843fa0983b4fbcff5222/src/main/java/pl/project13/maven/git/GitCommitIdMojo.java#L1415).
- */
+// Share the build timestamp as property for interpolation!
 session.userProperties.setProperty('buildTimestamp', buildTimestamp)
 
 log.info("buildTimestamp: " + buildTimestamp
