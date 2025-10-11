@@ -257,7 +257,7 @@ log.info("buildTimestamp: " + buildTimestamp
           <executions>
             <execution>
               <goals>
-                <goal>check</goal>
+                <goal>apply</goal>
               </goals>
               <phase>process-sources</phase>
             </execution>
@@ -1329,9 +1329,11 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
                   <sortMembersVisibilityOrder>B,R,D,V</sortMembersVisibilityOrder>
                 </eclipse>
 
+                <removeUnusedImports/>
                 <importOrder>
                   <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/java.importorder</file>
                 </importOrder>
+                <trimTrailingWhitespace/>
               </java>
             </configuration>
           </plugin>
