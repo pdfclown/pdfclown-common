@@ -14,7 +14,6 @@ package org.pdfclown.common.util;
 
 import static org.pdfclown.common.util.Exceptions.runtime;
 
-import java.lang.Cloneable;
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Set;

@@ -13,7 +13,6 @@
 package org.pdfclown.common.build.internal.util_;
 
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.annot.PolyNull;
 
 /**
  * Boolean utilities.

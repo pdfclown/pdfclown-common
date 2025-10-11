@@ -13,12 +13,8 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.Strings.COLON;
-import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
-import static org.pdfclown.common.util.net.Uris.SCHEME__FILE;
 
 import org.pdfclown.common.util.annot.Immutable;
-import org.pdfclown.common.util.net.Uris;
 
 /**
  * {@link Resource} base implementation.

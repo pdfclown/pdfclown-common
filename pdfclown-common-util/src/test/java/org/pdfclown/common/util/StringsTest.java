@@ -22,7 +22,6 @@ import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStrea
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Aggregations.entry;
 
-import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

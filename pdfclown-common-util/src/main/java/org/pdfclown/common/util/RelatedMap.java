@@ -16,7 +16,6 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.sqn;
 
-import java.lang.Cloneable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
