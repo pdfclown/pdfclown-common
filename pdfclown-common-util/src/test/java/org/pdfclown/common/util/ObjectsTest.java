@@ -17,6 +17,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.List.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -28,6 +29,7 @@ import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.io.Serializable;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -545,24 +547,6 @@ class ObjectsTest extends BaseTest {
         TO_STRINGS);
   }
 
-  @Test
-  void ancestors() {
-    var actual = Objects.ancestors(UnmodifiableList.class,
-        Objects.HierarchicalTypeComparator.get()
-            .thenComparing(Objects.HierarchicalTypeComparator.Priorities.explicitPriority()
-                .set(999, Serializable.class))
-            .thenComparing(Objects.HierarchicalTypeComparator.Priorities.interfacePriority()
-                .reversed()));
-
-    assertThat(actual, contains(
-        List.class,
-        UnmodifiableCollection.class,
-        Collection.class,
-        Iterable.class,
-        Serializable.class,
-        Object.class));
-  }
-
   @ParameterizedTest
   @MethodSource
   void fqn_Object(Expected<String> expected, @Nullable Object obj) {
@@ -768,6 +752,37 @@ class ObjectsTest extends BaseTest {
         expected,
         () -> new ExpectedGeneration(of(
             entry("typename", typename))));
+  }
+
+  @Test
+  @SuppressWarnings("rawtypes")
+  void subTypes() {
+    try (var types = Objects.types(Objects.class.getClassLoader())) {
+      Stream<Class<? extends List>> subTypesStream = Objects.subTypes(List.class, types);
+      List<Class<? extends List>> subTypes = subTypesStream.collect(Collectors.toList());
+
+      assertThat("SHOULD contain concrete classes", subTypes, hasItem(ArrayList.class));
+      assertThat("SHOULD contain abstract classes", subTypes, hasItem(AbstractList.class));
+      assertThat("SHOULD contain interfaces", subTypes, hasItem(XtList.class));
+    }
+  }
+
+  @Test
+  void superTypes() {
+    var actual = Objects.superTypes(UnmodifiableList.class,
+        Objects.HierarchicalTypeComparator.get()
+            .thenComparing(Objects.HierarchicalTypeComparator.Priorities.explicitPriority()
+                .set(999, Serializable.class))
+            .thenComparing(Objects.HierarchicalTypeComparator.Priorities.interfacePriority()
+                .reversed()));
+
+    assertThat(actual, contains(
+        List.class,
+        UnmodifiableCollection.class,
+        Collection.class,
+        Iterable.class,
+        Serializable.class,
+        Object.class));
   }
 
   @ParameterizedTest

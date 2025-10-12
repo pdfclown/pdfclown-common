@@ -39,6 +39,9 @@ import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 import static org.pdfclown.common.build.internal.util_.Strings.SQUOTE;
 import static org.pdfclown.common.build.internal.util_.reflect.Reflects.stackFrame;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -65,6 +68,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
@@ -369,52 +373,6 @@ public final class Objects {
       Void.class);
 
   private static final Map<ClassLoader, ProxySpace> proxySpaces = new WeakHashMap<>();
-
-  /**
-   * Gets the ancestors of the type, ordered by {@linkplain HierarchicalTypeComparator#get() default
-   * comparator}.
-   */
-  @SuppressWarnings("rawtypes")
-  public static @Unmodifiable Iterable<Class> ancestors(Class type) {
-    return ancestors(type, HierarchicalTypeComparator.get());
-  }
-
-  /**
-   * Gets the ancestors of the type, ordered by {@code comparator}.
-   */
-  @SuppressWarnings("rawtypes")
-  public static @Unmodifiable Iterable<Class> ancestors(Class type,
-      HierarchicalTypeComparator comparator) {
-    return ancestors(type, comparator, Set.of(), false);
-  }
-
-  /**
-   * Gets the ancestors of the type, ordered by {@code comparator}.
-   *
-   * @param stoppers
-   *          Types at which to stop ancestor hierarchy traversal.
-   * @param stopperExclusive
-   *          Whether stopped types are excluded from returned ancestors.
-   */
-  @SuppressWarnings("rawtypes")
-  public static @Unmodifiable Iterable<Class> ancestors(Class type,
-      HierarchicalTypeComparator comparator, Set<Class> stoppers, boolean stopperExclusive) {
-    var ret = new TreeSet<>(comparator);
-
-    // 1. Interfaces related to `type`.
-    for (var e : type.getInterfaces()) {
-      collectTypeAndAncestorInterfaces(e, ret, stoppers, stopperExclusive);
-    }
-
-    // 2. Ancestor concrete types and related interfaces.
-    Class superType = type;
-    //noinspection StatementWithEmptyBody
-    while ((superType = superType.getSuperclass()) != null
-        && collectTypeAndAncestorInterfaces(superType, ret, stoppers, stopperExclusive)) {
-      // NOP
-    }
-    return unmodifiableSet(ret);
-  }
 
   /**
    * Gets whether the object matches the other one according to the predicate.
@@ -1266,6 +1224,77 @@ public final class Objects {
   }
 
   /**
+   * Gets type descendants available on a classpath.
+   *
+   * @param type
+   *          Type (either class or interface) whose descendants are searched.
+   * @param context
+   *          Classpath context where to search the descendants (see {@link #types(ClassLoader)}).
+   * @see #superTypes(Class)
+   */
+  public static <T> Stream<Class<? extends T>> subTypes(Class<T> type, ScanResult context) {
+    return (type.isInterface()
+        ? context.getClassesImplementing(type)
+        : context.getSubclasses(type)).stream()
+            .map(ClassInfo::loadClass)
+            .map($ -> $.asSubclass(type));
+  }
+
+  /**
+   * Gets type ancestors, ordered by {@linkplain HierarchicalTypeComparator#get() default
+   * comparator}.
+   *
+   * @param type
+   *          Type (either class or interface) whose ancestors are searched.
+   */
+  @SuppressWarnings("rawtypes")
+  public static @Unmodifiable Iterable<Class> superTypes(Class type) {
+    return superTypes(type, HierarchicalTypeComparator.get());
+  }
+
+  /**
+   * Gets type ancestors, ordered by a comparator.
+   *
+   * @param type
+   *          Type (either class or interface) whose ancestors are searched.
+   */
+  @SuppressWarnings("rawtypes")
+  public static @Unmodifiable Iterable<Class> superTypes(Class type,
+      HierarchicalTypeComparator comparator) {
+    return superTypes(type, comparator, Set.of(), false);
+  }
+
+  /**
+   * Gets type ancestors, ordered by a comparator.
+   *
+   * @param type
+   *          Type (either class or interface) whose ancestors are searched.
+   * @param stoppers
+   *          Types at which to stop ancestor hierarchy traversal.
+   * @param stopperExclusive
+   *          Whether stopped types are excluded from returned ancestors.
+   */
+  @SuppressWarnings("rawtypes")
+  public static @Unmodifiable Iterable<Class> superTypes(Class type,
+      HierarchicalTypeComparator comparator, Set<Class> stoppers, boolean stopperExclusive) {
+    var ret = new TreeSet<>(comparator);
+
+    // 1. Interfaces related to `type`.
+    for (var e : type.getInterfaces()) {
+      collectTypeAndAncestorInterfaces(e, ret, stoppers, stopperExclusive);
+    }
+
+    // 2. Ancestor concrete types and related interfaces.
+    Class superType = type;
+    //noinspection StatementWithEmptyBody
+    while ((superType = superType.getSuperclass()) != null
+        && collectTypeAndAncestorInterfaces(superType, ret, stoppers, stopperExclusive)) {
+      // NOP
+    }
+    return unmodifiableSet(ret);
+  }
+
+  /**
    * Maps the object to its literal string representation for text messages.
    *
    * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is
@@ -1554,6 +1583,32 @@ public final class Objects {
    */
   public static @PolyNull @Nullable Class<?> typeOf(@PolyNull @Nullable Object obj) {
     return obj != null ? obj.getClass() : null;
+  }
+
+  /**
+   * Gets the types available on the classpath accessible from a class loader.
+   * <p>
+   * NOTE: For the principle of least surprise, the system libraries are included in the searched
+   * classpath, to ensure access to full class graphs. Depending on users' requirements, though,
+   * this may be overkill; in such case, users should build their own configuration, like so:
+   * </p>
+   * <pre class="lang-java"><code>
+   * import io.github.classgraph.ClassGraph;
+   * import io.github.classgraph.ScanResult;
+   *
+   * Class myClass = . . .;
+   * ScanResult context = new ClassGraph()
+   *     .enableClassInfo()
+   *     .addClassLoader(myClass.getClassLoader())
+   *     . . .
+   *     .scan();</code></pre>
+   */
+  public static ScanResult types(ClassLoader loader) {
+    return new ClassGraph()
+        .enableClassInfo()
+        .enableSystemJarsAndModules()
+        .addClassLoader(Objects.class.getClassLoader())
+        .scan();
   }
 
   /**

@@ -16,9 +16,9 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
-import static org.pdfclown.common.build.internal.util_.Objects.ancestors;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
+import static org.pdfclown.common.build.internal.util_.Objects.superTypes;
 import static org.pdfclown.common.build.internal.util_.Strings.COLON;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
@@ -286,7 +286,7 @@ public class ModelMapper<T> {
       }
 
       void init(Set<Class> keys) {
-        base = $ -> ancestors($, HierarchicalTypeComparator.get()
+        base = $ -> superTypes($, HierarchicalTypeComparator.get()
             .thenComparing(priorities)
             .thenComparing(HierarchicalTypeComparator.Priorities.interfacePriority())
             .thenComparing(($1, $2) -> {

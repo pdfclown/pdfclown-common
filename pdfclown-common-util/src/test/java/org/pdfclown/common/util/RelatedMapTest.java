@@ -15,7 +15,7 @@ package org.pdfclown.common.util;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.pdfclown.common.util.Objects.ancestors;
+import static org.pdfclown.common.util.Objects.superTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +63,7 @@ class RelatedMapTest extends BaseTest {
       }
 
       void init(Set<Class> keys) {
-        base = $ -> ancestors($, HierarchicalTypeComparator.get()
+        base = $ -> superTypes($, HierarchicalTypeComparator.get()
             .thenComparing(priorities)
             .thenComparing(HierarchicalTypeComparator.Priorities.interfacePriority())
             .thenComparing(($1, $2) -> {
