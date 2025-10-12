@@ -1607,7 +1607,7 @@ public final class Objects {
     return new ClassGraph()
         .enableClassInfo()
         .enableSystemJarsAndModules()
-        .addClassLoader(Objects.class.getClassLoader())
+        .addClassLoader(loader)
         .scan();
   }
 
