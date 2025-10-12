@@ -129,7 +129,7 @@ public final class Reflects {
   public static Optional<StackFrame> stackFrame(Predicate<StackFrame> selector) {
     return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk($ -> $
         // Skip incidental frames!
-        .dropWhile($$ -> $$.getClassName().equals(Reflects.class.getName()))
+        .dropWhile($$ -> $$.getDeclaringClass() == Reflects.class)
         // Skip current frame!
         .skip(1)
         .filter(selector)
