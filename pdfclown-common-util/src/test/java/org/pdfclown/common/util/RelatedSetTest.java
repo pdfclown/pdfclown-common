@@ -41,11 +41,11 @@ class RelatedSetTest extends BaseTest {
     classSet.add(Map.class);
     classSet.add(Collection.class);
 
-    assertThat("Subclass `TreeMap` resolved", classSet.contains(TreeMap.class),
+    assertThat("Subclass `TreeMap` SHOULD be resolved", classSet.contains(TreeMap.class),
         is(true));
-    assertThat("Subclass `ArrayList` resolved", classSet.contains(ArrayList.class),
+    assertThat("Subclass `ArrayList` SHOULD be resolved", classSet.contains(ArrayList.class),
         is(true));
-    assertThat("Subclass `String` not resolvable", classSet.contains(String.class),
+    assertThat("Subclass `String` SHOULD NOT be resolved", classSet.contains(String.class),
         is(false));
 
     var classSet2 = classSet.clone();
@@ -54,11 +54,13 @@ class RelatedSetTest extends BaseTest {
      * NOTE: Initially, the clone is supposed to have the same yet distinct mapping as the original
      * map.
      */
-    assertThat("Subclass `TreeMap` resolved on clone", classSet2.contains(TreeMap.class),
+    assertThat("Subclass `TreeMap` SHOULD be resolved on clone", classSet2.contains(TreeMap.class),
         is(true));
-    assertThat("Subclass `ArrayList` resolved on clone", classSet2.contains(ArrayList.class),
+    assertThat("Subclass `ArrayList` SHOULD be resolved on clone",
+        classSet2.contains(ArrayList.class),
         is(true));
-    assertThat("Subclass `String` not resolvable on clone", classSet2.contains(String.class),
+    assertThat("Subclass `String` SHOULD NOT be resolved on clone",
+        classSet2.contains(String.class),
         is(false));
 
     /*
@@ -66,9 +68,10 @@ class RelatedSetTest extends BaseTest {
      */
     classSet.add(Object.class);
 
-    assertThat("Subclass `String` resolved", classSet.contains(String.class),
+    assertThat("Subclass `String` SHOULD be resolved", classSet.contains(String.class),
         is(true));
-    assertThat("Subclass `String` not resolvable on clone", classSet2.contains(String.class),
+    assertThat("Subclass `String` SHOULD NOT be resolved on clone",
+        classSet2.contains(String.class),
         is(false));
 
     /*
@@ -76,9 +79,9 @@ class RelatedSetTest extends BaseTest {
      */
     classSet2.add(String.class);
 
-    assertThat("Subclass `String` resolved", classSet.contains(String.class),
+    assertThat("Subclass `String` SHOULD be resolved", classSet.contains(String.class),
         is(true));
-    assertThat("Subclass `String` resolved on clone", classSet2.contains(String.class),
+    assertThat("Subclass `String` SHOULD be resolved on clone", classSet2.contains(String.class),
         is(true));
   }
 }

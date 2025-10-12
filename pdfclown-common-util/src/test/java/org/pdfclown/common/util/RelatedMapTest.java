@@ -138,11 +138,11 @@ class RelatedMapTest extends BaseTest {
     String collectionClassValue = Collection.class.getName();
     classMap.put(Collection.class, collectionClassValue);
 
-    assertThat("Subclass `TreeMap` resolved", classMap.get(TreeMap.class),
+    assertThat("Subclass `TreeMap` SHOULD be resolved", classMap.get(TreeMap.class),
         is(mapClassValue));
-    assertThat("Subclass `ArrayList` resolved", classMap.get(ArrayList.class),
+    assertThat("Subclass `ArrayList` SHOULD be resolved", classMap.get(ArrayList.class),
         is(collectionClassValue));
-    assertThat("Subclass `String` not resolvable", classMap.get(String.class),
+    assertThat("Subclass `String` SHOULD NOT be resolvable", classMap.get(String.class),
         is(nullValue()));
 
     var classMap2 = classMap.clone();
@@ -151,11 +151,11 @@ class RelatedMapTest extends BaseTest {
      * NOTE: Initially, the clone is supposed to have the same yet distinct mapping as the original
      * map.
      */
-    assertThat("Subclass `TreeMap` resolved on clone", classMap2.get(TreeMap.class),
+    assertThat("Subclass `TreeMap` SHOULD be resolved on clone", classMap2.get(TreeMap.class),
         is(mapClassValue));
-    assertThat("Subclass `ArrayList` resolved on clone", classMap2.get(ArrayList.class),
+    assertThat("Subclass `ArrayList` SHOULD be resolved on clone", classMap2.get(ArrayList.class),
         is(collectionClassValue));
-    assertThat("Subclass `String` not resolvable on clone", classMap2.get(String.class),
+    assertThat("Subclass `String` SHOULD NOT be resolvable on clone", classMap2.get(String.class),
         is(nullValue()));
 
     /*
@@ -164,9 +164,9 @@ class RelatedMapTest extends BaseTest {
     String objectClassValue = Object.class.getName();
     classMap.put(Object.class, objectClassValue);
 
-    assertThat("Subclass `String` resolved", classMap.get(String.class),
+    assertThat("Subclass `String` SHOULD be resolved", classMap.get(String.class),
         is(objectClassValue));
-    assertThat("Subclass `String` not resolvable on clone", classMap2.get(String.class),
+    assertThat("Subclass `String` SHOULD NOT be resolvable on clone", classMap2.get(String.class),
         is(nullValue()));
 
     /*
@@ -175,9 +175,9 @@ class RelatedMapTest extends BaseTest {
     String stringClassValue = String.class.getName();
     classMap2.put(String.class, stringClassValue);
 
-    assertThat("Subclass `String` resolved", classMap.get(String.class),
+    assertThat("Subclass `String` SHOULD be resolved", classMap.get(String.class),
         is(objectClassValue));
-    assertThat("Subclass `String` resolved on clone", classMap2.get(String.class),
+    assertThat("Subclass `String` SHOULD be resolved on clone", classMap2.get(String.class),
         is(stringClassValue));
   }
 }
