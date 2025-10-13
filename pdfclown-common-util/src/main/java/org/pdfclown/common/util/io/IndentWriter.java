@@ -26,8 +26,8 @@ package org.pdfclown.common.util.io;
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
+import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Strings.SPACE;
 import static org.pdfclown.common.util.Strings.isEOL;
 
 import java.io.Flushable;

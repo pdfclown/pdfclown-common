@@ -13,15 +13,15 @@
 package org.pdfclown.common.build.internal.util_;
 
 import static java.lang.Math.signum;
+import static org.pdfclown.common.build.internal.util_.Chars.COMMA;
+import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.build.internal.util_.Chars.SQUARE_BRACKET_CLOSE;
+import static org.pdfclown.common.build.internal.util_.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireEqual;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
 import static org.pdfclown.common.build.internal.util_.Objects.isSameType;
-import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPEN;
-import static org.pdfclown.common.build.internal.util_.Strings.SQUARE_BRACKET_CLOSE;
-import static org.pdfclown.common.build.internal.util_.Strings.SQUARE_BRACKET_OPEN;
 
 import java.util.Comparator;
 import java.util.HashMap;

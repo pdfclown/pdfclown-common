@@ -22,9 +22,9 @@
 package org.pdfclown.common.util.io;
 
 import static java.lang.Math.max;
+import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Chars.TAB;
 import static org.pdfclown.common.util.Objects.isSameType;
-import static org.pdfclown.common.util.Strings.SPACE;
-import static org.pdfclown.common.util.Strings.TAB;
 
 import java.io.Serializable;
 import java.util.Arrays;

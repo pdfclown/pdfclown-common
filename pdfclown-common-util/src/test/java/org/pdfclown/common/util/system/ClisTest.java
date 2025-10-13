@@ -20,7 +20,7 @@ import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStrea
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Aggregations.entry;
-import static org.pdfclown.common.util.Strings.COMMA;
+import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Strings.S;
 
 import java.util.List;

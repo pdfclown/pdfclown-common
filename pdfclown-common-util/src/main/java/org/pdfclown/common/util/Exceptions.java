@@ -12,14 +12,14 @@
  */
 package org.pdfclown.common.util;
 
+import static org.pdfclown.common.util.Chars.COMMA;
+import static org.pdfclown.common.util.Chars.CURLY_BRACE_CLOSE;
+import static org.pdfclown.common.util.Chars.CURLY_BRACE_OPEN;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.ParamMessage.ARG;
-import static org.pdfclown.common.util.Strings.COMMA;
-import static org.pdfclown.common.util.Strings.CURLY_BRACE_CLOSE;
-import static org.pdfclown.common.util.Strings.CURLY_BRACE_OPEN;
-import static org.pdfclown.common.util.Strings.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.util.Strings.ROUND_BRACKET_OPEN;
-import static org.pdfclown.common.util.Strings.SPACE;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;

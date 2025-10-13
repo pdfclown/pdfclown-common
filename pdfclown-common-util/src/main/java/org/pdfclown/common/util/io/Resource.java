@@ -12,8 +12,8 @@
  */
 package org.pdfclown.common.util.io;
 
+import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Objects.objTo;
-import static org.pdfclown.common.util.Strings.COLON;
 import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
 import static org.pdfclown.common.util.net.Uris.url;
 

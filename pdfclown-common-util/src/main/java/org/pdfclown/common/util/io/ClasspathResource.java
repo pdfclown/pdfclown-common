@@ -13,12 +13,12 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.util.Chars.COLON;
+import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Objects.isSameType;
-import static org.pdfclown.common.util.Strings.COLON;
-import static org.pdfclown.common.util.Strings.SLASH;
 import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
 import static org.pdfclown.common.util.net.Uris.SCHEME__FILE;
 import static org.pdfclown.common.util.net.Uris.SCHEME__JAR;

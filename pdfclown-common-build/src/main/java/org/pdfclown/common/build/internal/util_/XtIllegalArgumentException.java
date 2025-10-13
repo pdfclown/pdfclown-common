@@ -14,12 +14,12 @@ package org.pdfclown.common.build.internal.util_;
 
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
+import static org.pdfclown.common.build.internal.util_.Chars.BACKTICK;
+import static org.pdfclown.common.build.internal.util_.Chars.COLON;
+import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
 import static org.pdfclown.common.build.internal.util_.Objects.basicLiteral;
-import static org.pdfclown.common.build.internal.util_.Strings.BACKTICK;
-import static org.pdfclown.common.build.internal.util_.Strings.COLON;
-import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.build.internal.util_.Strings.ROUND_BRACKET_OPEN;
-import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import org.jspecify.annotations.Nullable;
 

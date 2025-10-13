@@ -15,11 +15,11 @@ package org.pdfclown.common.util.net;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.apache.commons.lang3.StringUtils.indexOfDifference;
+import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
-import static org.pdfclown.common.util.Strings.SLASH;
 import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.io.IOException;

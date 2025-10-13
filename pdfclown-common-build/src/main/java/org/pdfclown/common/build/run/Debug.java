@@ -16,12 +16,12 @@ import static java.lang.System.out;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
+import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

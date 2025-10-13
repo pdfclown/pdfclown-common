@@ -13,15 +13,15 @@
 package org.pdfclown.common.build.test.model;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.util_.Chars.COLON;
+import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
 import static org.pdfclown.common.build.internal.util_.Objects.superTypes;
-import static org.pdfclown.common.build.internal.util_.Strings.COLON;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
-import static org.pdfclown.common.build.internal.util_.Strings.SPACE;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
