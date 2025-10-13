@@ -48,7 +48,7 @@ public final class Exceptions {
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage.of(*):params}
+   * {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -58,14 +58,14 @@ public final class Exceptions {
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc !end}
+   *          it is unwrapped). {@jada.reuseDoc END}
    */
   public static NotImplementedException TODO(@Nullable String format, @Nullable Object... args) {
     return throwable(NotImplementedException::new, format, args);
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage.of(*):params}
+   * {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -75,7 +75,7 @@ public final class Exceptions {
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc !end}
+   *          it is unwrapped). {@jada.reuseDoc END}
    */
   public static IOException failedIO(@Nullable String format, @Nullable Object... args) {
     return throwable(IOException::new, format, args);
@@ -91,7 +91,7 @@ public final class Exceptions {
 
   /**
    * @param value
-   *          Mismatching value. {@jada.reuseDoc ParamMessage.of(*):params}
+   *          Mismatching value. {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
@@ -100,7 +100,7 @@ public final class Exceptions {
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc !end}
+   *          it is unwrapped). {@jada.reuseDoc END}
    */
   public static NoSuchElementException missing(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
@@ -121,7 +121,7 @@ public final class Exceptions {
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage.of(*):params}
+   * {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -131,7 +131,7 @@ public final class Exceptions {
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc !end}
+   *          it is unwrapped). {@jada.reuseDoc END}
    */
   public static RuntimeException runtime(@Nullable String format, @Nullable Object... args) {
     return throwable(RuntimeException::new, format, args);
@@ -162,7 +162,7 @@ public final class Exceptions {
 
   /**
    * @param value
-   *          Invalid value. {@jada.reuseDoc ParamMessage.of(*):params}
+   *          Invalid value. {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
@@ -171,7 +171,7 @@ public final class Exceptions {
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc !end}
+   *          it is unwrapped). {@jada.reuseDoc END}
    */
   public static UnexpectedCaseError unexpected(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
@@ -188,7 +188,7 @@ public final class Exceptions {
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage.of(*):params}
+   * {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -198,7 +198,7 @@ public final class Exceptions {
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc !end}
+   *          it is unwrapped). {@jada.reuseDoc END}
    */
   public static UnsupportedOperationException unsupported(@Nullable String format,
       @Nullable Object... args) {
@@ -218,7 +218,7 @@ public final class Exceptions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param value
-   *          Invalid value. {@jada.reuseDoc ParamMessage.of(*):params}
+   *          Invalid value. {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
@@ -227,7 +227,7 @@ public final class Exceptions {
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc !end}
+   *          it is unwrapped). {@jada.reuseDoc END}
    */
   public static XtIllegalArgumentException wrongArg(@Nullable String name,
       @Nullable Object value, @Nullable String format, @Nullable Object... args) {
@@ -288,7 +288,7 @@ public final class Exceptions {
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage.of(*):params}
+   * {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -298,7 +298,7 @@ public final class Exceptions {
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc !end}
+   *          it is unwrapped). {@jada.reuseDoc END}
    */
   public static IllegalStateException wrongState(@Nullable String format,
       @Nullable Object... args) {

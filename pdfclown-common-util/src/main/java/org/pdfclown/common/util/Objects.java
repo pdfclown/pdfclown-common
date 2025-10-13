@@ -718,7 +718,7 @@ public final class Objects {
    * <p>
    * <b>Basic types</b> comprise primitive wrappers, {@link String} and {@link Void} (null).
    * </p>
-   * {@jada.doc !end}
+   * {@jada.doc END}
    */
   public static boolean isBasic(@Nullable Class<?> type) {
     return BASIC_TYPES.contains(requireNonNullElse(type, Void.class));
@@ -729,7 +729,7 @@ public final class Objects {
    * <p>
    * <b>Basic types</b> comprise primitive wrappers, {@link String} and {@link Void} (null).
    * </p>
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    */
   public static boolean isBasic(@Nullable Object obj) {
     return isBasic(typeOf(obj));
@@ -755,7 +755,7 @@ public final class Objects {
    * The result is syntactically compatible with Java language, so that it can be safely used in
    * source code.
    * </p>
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    *
    * @return
    *         <ul>
@@ -772,7 +772,7 @@ public final class Objects {
    *         with double quotes</li>
    *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}, or
    *         {@link Class#getSimpleName()} for common types under {@code java.lang}
-   *         package</li>{@jada.reuseDoc !end}
+   *         package</li>{@jada.reuseDoc END}
    *         <li>otherwise: like {@code String}</li>
    *         </ul>
    * @see #basicLiteral(Object)
@@ -789,7 +789,7 @@ public final class Objects {
    * The result is syntactically compatible with Java language, so that it can be safely used in
    * source code.
    * </p>
-   * {@jada.doc !end}
+   * {@jada.doc END}
    *
    * @return
    *         <ul>
@@ -806,7 +806,7 @@ public final class Objects {
    *         with double quotes</li>
    *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}, or
    *         {@link Class#getSimpleName()} for common types under {@code java.lang}
-   *         package</li>{@jada.doc !end}
+   *         package</li>{@jada.doc END}
    *         <li>otherwise: applies {@link Function#apply(Object) nonBasicConverter}</li>
    *         </ul>
    * @see #basicLiteral(Object)
@@ -1388,7 +1388,7 @@ public final class Objects {
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
-   * {@jada.doc !end}
+   * {@jada.doc END}
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object... features) {
     var b = new StringBuilder(sqnd(obj)).append(SPACE).append(ROUND_BRACKET_OPEN);
@@ -1412,7 +1412,7 @@ public final class Objects {
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object feature) {
     var b = new StringBuilder(sqnd(obj)).append(SPACE);
@@ -1433,7 +1433,7 @@ public final class Objects {
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object feature1,
       @Nullable Object feature2) {
@@ -1457,7 +1457,7 @@ public final class Objects {
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object feature1,
       @Nullable Object feature2, @Nullable Object feature3) {
@@ -1486,7 +1486,7 @@ public final class Objects {
 
   /**
    * {@jada.doc} Gets the string representation of an object, along with its properties.
-   * {@jada.doc !end}
+   * {@jada.doc END}
    *
    * @param properties
    *          Properties (key-value pairs; keys MUST be non-null).
@@ -1504,7 +1504,7 @@ public final class Objects {
 
   /**
    * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1) {
     return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
@@ -1514,7 +1514,7 @@ public final class Objects {
 
   /**
    * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
       @Nullable Object v2) {
@@ -1526,7 +1526,7 @@ public final class Objects {
 
   /**
    * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
       @Nullable Object v2, String k3, @Nullable Object v3) {
@@ -1639,7 +1639,7 @@ public final class Objects {
    * <span class="warning">WARNING: DO NOT call this method via method reference (that is,
    * {@code Objects::xcast}), as it disrupts call stack resolution.</span>
    * </p>
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
@@ -1666,7 +1666,7 @@ public final class Objects {
    * <span class="warning">WARNING: DO NOT call this method via method reference (that is,
    * {@code Objects::xcast}), as it disrupts call stack resolution.</span>
    * </p>
-   * {@jada.reuseDoc !end}
+   * {@jada.reuseDoc END}
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
@@ -1861,7 +1861,7 @@ public final class Objects {
    * <span class="warning">WARNING: DO NOT call this method via method reference (that is,
    * {@code Objects::xcast}), as it disrupts call stack resolution.</span>
    * </p>
-   * {@jada.doc !end}
+   * {@jada.doc END}
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).

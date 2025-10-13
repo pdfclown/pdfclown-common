@@ -168,7 +168,7 @@ public class ParamMessage {
    * NOTE: For leniency, cardinality mismatches between arguments and placeholders are ignored and
    * logged as warnings.
    * </p>
-   * {@jada.doc !end}
+   * {@jada.doc END}
    *
    * @param formatter
    *          Applied formatter. {@jada.doc params}
@@ -178,7 +178,7 @@ public class ParamMessage {
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link #getCause() cause} (if {@link UncheckedIOException},
    *          {@link UncheckedException}, or {@link UndeclaredThrowableException}, it is unwrapped).
-   *          {@jada.doc !end}
+   *          {@jada.doc END}
    */
   public static ParamMessage of(Formatter formatter, @Nullable String format,
       @Nullable Object... args) {
@@ -201,7 +201,7 @@ public class ParamMessage {
    * NOTE: For leniency, cardinality mismatches between arguments and placeholders are ignored and
    * logged as warnings.
    * </p>
-   * {@jada.reuseDoc !end} {@jada.reuseDoc :params}
+   * {@jada.reuseDoc END} {@jada.reuseDoc :params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -209,7 +209,7 @@ public class ParamMessage {
    *          Message arguments. In case last argument is {@link Throwable}, it is assigned to
    *          {@link #getCause() cause} (if {@link UncheckedIOException},
    *          {@link UncheckedException}, or {@link UndeclaredThrowableException}, it is unwrapped).
-   *          {@jada.reuseDoc !end}
+   *          {@jada.reuseDoc END}
    */
   public static ParamMessage of(@Nullable String format, @Nullable Object... args) {
     return of(FORMATTER, format, args);
