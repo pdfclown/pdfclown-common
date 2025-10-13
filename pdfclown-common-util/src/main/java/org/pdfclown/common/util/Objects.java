@@ -375,7 +375,7 @@ public final class Objects {
   private static final Map<ClassLoader, ProxySpace> proxySpaces = new WeakHashMap<>();
 
   /**
-   * Gets whether the object matches the other one according to the predicate.
+   * Gets whether an object matches the other one according to the predicate.
    * <p>
    * NOTE: This method is redundant; it's intended as a placeholder in case the implementer expects
    * further objects to be added later.
@@ -387,7 +387,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object matches any of the others according to the predicate.
+   * Gets whether an object matches any of the others according to the predicate.
    */
   public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
       @Nullable U other1, @Nullable U other2) {
@@ -396,7 +396,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object matches any of the others according to the predicate.
+   * Gets whether an object matches any of the others according to the predicate.
    *
    * @implNote Because of the limited expressiveness of varargs, in order to force the caller to
    *           specify at least two other objects we have to declare two corresponding parameters
@@ -417,7 +417,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object matches any of the others according to the predicate.
+   * Gets whether an object matches any of the others according to the predicate.
    */
   public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
       @Nullable U other1, @Nullable U other2, @Nullable U other3) {
@@ -427,7 +427,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object matches any of the others according to the predicate.
+   * Gets whether an object matches any of the others according to the predicate.
    */
   public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
       @Nullable U other1, @Nullable U other2, @Nullable U other3, @Nullable U other4) {
@@ -438,7 +438,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object matches any of the others according to the predicate.
+   * Gets whether an object matches any of the others according to the predicate.
    */
   public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
       @Nullable U other1, @Nullable U other2, @Nullable U other3, @Nullable U other4,
@@ -451,7 +451,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the top-level type corresponding to the object.
+   * Gets the top-level type corresponding to an object.
    *
    * @see #asType(Object)
    */
@@ -466,7 +466,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the type corresponding to the object.
+   * Gets the type corresponding to an object.
    * <p>
    * Same as {@link #typeOf(Object) typeOf(..)}, unless {@code obj} is {@link Class} (in such case,
    * returns itself).
@@ -479,7 +479,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the object to its literal string representation within generic strings.
+   * Maps an object to its literal string representation within generic strings.
    *
    * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is
    *         ({@link Object#toString()}).
@@ -491,7 +491,7 @@ public final class Objects {
   }
 
   /**
-   * Quietly closes the object.
+   * Quietly closes an object.
    *
    * @return {@code obj}
    * @see #quiet(FailableConsumer, Object)
@@ -579,7 +579,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object is equal to or contains the other one.
+   * Gets whether an object is equal to or contains the other one.
    * <p>
    * Containment is verified via {@link Collection#contains(Object)} and
    * {@link Map#containsValue(Object)}.
@@ -592,14 +592,14 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object is equal to the other one or undefined.
+   * Gets whether an object is equal to the other one or undefined.
    */
   public static boolean equalsOrNull(@Nullable Object obj, @Nullable Object other) {
     return obj == null || java.util.Objects.equals(obj, other);
   }
 
   /**
-   * Gets whether the zero-based index represents a match.
+   * Gets whether a zero-based index represents a match.
    *
    * @see String#indexOf(String)
    * @see String#lastIndexOf(String)
@@ -611,7 +611,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the fully-qualified class name of the object.
+   * Gets the fully-qualified class name of an object.
    * <p>
    * Corresponds to the {@linkplain Class#getName() class name}; the class is resolved from
    * {@code obj} through {@link #asType(Object)}.
@@ -626,7 +626,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the dotted fully-qualified class name of the object.
+   * Gets the dotted fully-qualified class name of an object.
    * <p>
    * Corresponds to the {@linkplain Class#getName() class name}, replacing inner-class separators
    * ({@code $}) with dots (for example, {@code my.package.MyTopLevel.MyOuterClass.MyInnerClass});
@@ -642,7 +642,7 @@ public final class Objects {
   }
 
   /**
-   * Ensures the class name has inner-class separators ({@code $}) replaced with dots.
+   * Ensures a class name has inner-class separators ({@code $}) replaced with dots.
    * <p>
    * No syntactic check is applied to {@code typeName}.
    * </p>
@@ -655,7 +655,7 @@ public final class Objects {
   }
 
   /**
-   * Initializes the class.
+   * Initializes a type.
    * <p>
    * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
    * </p>
@@ -667,7 +667,7 @@ public final class Objects {
   }
 
   /**
-   * Initializes the class.
+   * Initializes a type.
    * <p>
    * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
    * </p>
@@ -684,7 +684,7 @@ public final class Objects {
   }
 
   /**
-   * Initializes the class.
+   * Initializes a type.
    * <p>
    * This is the unchecked equivalent of {@link Class#forName(String)}.
    * </p>
@@ -697,7 +697,7 @@ public final class Objects {
   }
 
   /**
-   * Initializes the class.
+   * Initializes a type.
    * <p>
    * This is the unchecked equivalent of {@link Class#forName(String)}.
    * </p>
@@ -714,7 +714,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the type is basic.{@jada.doc}
+   * Gets whether a type is basic.{@jada.doc}
    * <p>
    * <b>Basic types</b> comprise primitive wrappers, {@link String} and {@link Void} (null).
    * </p>
@@ -725,7 +725,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object belongs to a basic type.{@jada.reuseDoc}
+   * Gets whether an object belongs to a basic type.{@jada.reuseDoc}
    * <p>
    * <b>Basic types</b> comprise primitive wrappers, {@link String} and {@link Void} (null).
    * </p>
@@ -736,28 +736,30 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the objects are the same instance, or both null.
+   * Gets whether objects are the same instance, or both null.
    */
   public static boolean isSame(@Nullable Object o1, @Nullable Object o2) {
     return o1 == o2;
   }
 
   /**
-   * Gets whether the objects belong to exactly the same type.
+   * Gets whether objects belong to exactly the same type.
    */
   public static boolean isSameType(@Nullable Object o1, @Nullable Object o2) {
     return typeOf(o1) == typeOf(o2);
   }
 
   /**
-   * Maps the object to its literal string representation.
+   * {@jada.reuseDoc} Maps an object to its literal string representation.
    * <p>
    * The result is syntactically compatible with Java language, so that it can be safely used in
    * source code.
    * </p>
+   * {@jada.reuseDoc !end}
    *
    * @return
    *         <ul>
+   *         {@jada.reuseDoc :return}
    *         <li>if {@code obj} is undefined: {@value Strings#NULL}</li>
    *         <li>if {@code obj} is {@link Float} or {@link Long}: {@link Object#toString()},
    *         suffixed with literal qualifier (disambiguation against respective default literal
@@ -769,7 +771,8 @@ public final class Objects {
    *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
    *         with double quotes</li>
    *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}, or
-   *         {@link Class#getSimpleName()} for common types under {@code java.lang} package</li>
+   *         {@link Class#getSimpleName()} for common types under {@code java.lang}
+   *         package</li>{@jada.reuseDoc !end}
    *         <li>otherwise: like {@code String}</li>
    *         </ul>
    * @see #basicLiteral(Object)
@@ -781,14 +784,16 @@ public final class Objects {
   }
 
   /**
-   * Maps the object to its literal string representation.
+   * {@jada.doc} Maps an object to its literal string representation.
    * <p>
    * The result is syntactically compatible with Java language, so that it can be safely used in
    * source code.
    * </p>
+   * {@jada.doc !end}
    *
    * @return
    *         <ul>
+   *         {@jada.doc return}
    *         <li>if {@code obj} is undefined: {@value Strings#NULL}</li>
    *         <li>if {@code obj} is {@link Float} or {@link Long}: {@link Object#toString()},
    *         suffixed with literal qualifier (disambiguation against respective default literal
@@ -800,7 +805,8 @@ public final class Objects {
    *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
    *         with double quotes</li>
    *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}, or
-   *         {@link Class#getSimpleName()} for common types under {@code java.lang} package</li>
+   *         {@link Class#getSimpleName()} for common types under {@code java.lang}
+   *         package</li>{@jada.doc !end}
    *         <li>otherwise: applies {@link Function#apply(Object) nonBasicConverter}</li>
    *         </ul>
    * @see #basicLiteral(Object)
@@ -839,7 +845,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the class loader of the object.
+   * Gets the class loader of an object.
    */
   public static @PolyNull @Nullable ClassLoader loaderOf(@PolyNull @Nullable Object obj) {
     //noinspection DataFlowIssue : @PolyNull
@@ -849,7 +855,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the locale corresponding to the language tag.
+   * Gets the locale corresponding to a language tag.
    *
    * @throws IllegalArgumentException
    *           if {@code languageTag} is non-conformant.
@@ -869,7 +875,7 @@ public final class Objects {
   }
 
   /**
-   * Normalizes the locale.
+   * Normalizes a locale.
    *
    * @return {@linkplain Locale#getDefault() Default} if {@code locale} is undefined.
    */
@@ -878,7 +884,7 @@ public final class Objects {
   }
 
   /**
-   * Asserts the object is non-null.
+   * Asserts an object is non-null.
    * <p>
    * This is a shorthand to explicit non-null assertion, useful to confirm expected state to
    * compiler when null check is redundant (contrary to
@@ -906,7 +912,7 @@ public final class Objects {
   }
 
   /**
-   * Casts the object to a target type.
+   * Casts an object to a target type.
    * <p>
    * Contrary to {@link Class#cast(Object)}, this method is safe without assignment compatibility.
    * </p>
@@ -919,14 +925,15 @@ public final class Objects {
   }
 
   /**
-   * Applies an operation to the object.
+   * Applies an operation to an object.
    *
    * @return {@code obj}
    * @see #quiet(FailableConsumer, Object)
    */
-  public static <T> @PolyNull @Nullable T objDo(@PolyNull @Nullable T obj, Consumer<? super T> op) {
+  public static <T> @PolyNull @Nullable T objDo(@PolyNull @Nullable T obj,
+      Consumer<? super T> operation) {
     if (obj != null) {
-      op.accept(obj);
+      operation.accept(obj);
     }
     return obj;
   }
@@ -954,7 +961,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the object.
+   * Maps an object.
    *
    * @param <T>
    *          Object type.
@@ -971,7 +978,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the object.
+   * Maps an object.
    *
    * @param <T>
    *          Object type.
@@ -990,7 +997,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the object.
+   * Maps an object.
    * <p>
    * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
    * doesn't enforce its result to be non-null.
@@ -1010,14 +1017,14 @@ public final class Objects {
   }
 
   /**
-   * Wraps the object in a null-aware container.
+   * Wraps an object in a null-aware container.
    */
   public static <T> Optional<T> opt(@Nullable T obj) {
     return Optional.ofNullable(obj);
   }
 
   /**
-   * Gets the object corresponding to the literal string.
+   * Gets the object corresponding to a literal string.
    * <p>
    * NOTE: This method is complementary to {@link #literal(Object)} only for
    * {@linkplain #isBasic(Object) basic} type representations.
@@ -1083,29 +1090,29 @@ public final class Objects {
   }
 
   /**
-   * Quietly applies an operation to the object.
+   * Quietly applies an operation to an object.
    *
    * @return {@code obj}
    * @see #objDo(Object, Consumer)
    */
-  public static <T> @PolyNull @Nullable T quiet(FailableConsumer<T, ?> op,
+  public static <T> @PolyNull @Nullable T quiet(FailableConsumer<T, ?> operation,
       @PolyNull @Nullable T obj) {
-    return quiet(op, obj, null);
+    return quiet(operation, obj, null);
   }
 
   /**
-   * Quietly applies the operation to the object.
+   * Quietly applies an operation to an object.
    *
    * @param exceptionHandler
    *          Handles the exceptions thrown by {@code op}.
    * @return {@code obj}
    * @see #objDo(Object, Consumer)
    */
-  public static <T> @PolyNull @Nullable T quiet(FailableConsumer<T, ?> op,
+  public static <T> @PolyNull @Nullable T quiet(FailableConsumer<T, ?> operation,
       @PolyNull @Nullable T obj, @Nullable Consumer<Throwable> exceptionHandler) {
     if (obj != null) {
       try {
-        op.accept(obj);
+        operation.accept(obj);
       } catch (Throwable ex) {
         if (exceptionHandler != null) {
           exceptionHandler.accept(ex);
@@ -1116,21 +1123,22 @@ public final class Objects {
   }
 
   /**
-   * Quietly runs the operation.
+   * Quietly runs an operation.
    */
-  public static void quiet(FailableRunnable<?> op) {
-    quiet(op, null);
+  public static void quiet(FailableRunnable<?> operation) {
+    quiet(operation, null);
   }
 
   /**
-   * Quietly runs the operation.
+   * Quietly runs an operation.
    *
    * @param exceptionHandler
    *          Handles the exceptions thrown by {@code op}.
    */
-  public static void quiet(FailableRunnable<?> op, @Nullable Consumer<Throwable> exceptionHandler) {
+  public static void quiet(FailableRunnable<?> operation,
+      @Nullable Consumer<Throwable> exceptionHandler) {
     try {
-      op.run();
+      operation.run();
     } catch (Throwable ex) {
       if (exceptionHandler != null) {
         exceptionHandler.accept(ex);
@@ -1139,7 +1147,7 @@ public final class Objects {
   }
 
   /**
-   * Splits the fully-qualified name into package and class name parts.
+   * Splits a fully-qualified name into package and class name parts.
    *
    * @return Two-part string array, where the first item is empty if {@code typeName} has no
    *         package.
@@ -1153,7 +1161,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the simply-qualified class name of the object.
+   * Gets the simply-qualified class name of an object.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
    * enclosing classes till the top level (for example,
@@ -1170,7 +1178,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the simply-qualified class name from the name.
+   * Gets the simply-qualified class name from a name.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
    * enclosing classes till the top level (for example,
@@ -1188,7 +1196,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the dotted simply-qualified class name of the object.
+   * Gets the dotted simply-qualified class name of an object.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
    * enclosing classes till the top level, replacing inner-class separators ({@code $}) with dots
@@ -1205,7 +1213,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the dotted simply-qualified class name from the name.
+   * Gets the dotted simply-qualified class name from a name.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
    * enclosing classes till the top level, replacing inner-class separators ({@code $}) with dots
@@ -1295,7 +1303,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the object to its literal string representation for text messages.
+   * Maps an object to its literal string representation for text messages.
    *
    * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is
    *         ({@link Object#toString()}) — for convenience, certain types ({@link File},
@@ -1313,7 +1321,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the object to its string representation, ensuring its qualification at least with its
+   * Maps an object to its string representation, ensuring its qualification at least with its
    * {@linkplain Class#getSimpleName() simple class name}.
    *
    * @return
@@ -1346,7 +1354,7 @@ public final class Objects {
   }
 
   /**
-   * Maps the object to its string representation, normalizing its qualification with the
+   * Maps an object to its string representation, normalizing its qualification with the
    * {@linkplain #sqnd(Object) dotted simply-qualified class name}.
    *
    * @return Considering the {@linkplain Matcher pattern match} of
@@ -1376,10 +1384,11 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the object, along with its features.
+   * {@jada.doc} Gets the string representation of an object, along with its features.
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
+   * {@jada.doc !end}
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object... features) {
     var b = new StringBuilder(sqnd(obj)).append(SPACE).append(ROUND_BRACKET_OPEN);
@@ -1399,10 +1408,11 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the object, along with its features.
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its features.
    * <p>
-   * NOTE: {@code null} feature is ignored.
+   * NOTE: {@code null} features are ignored.
    * </p>
+   * {@jada.reuseDoc !end}
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object feature) {
     var b = new StringBuilder(sqnd(obj)).append(SPACE);
@@ -1419,10 +1429,11 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the object, along with its features.
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its features.
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
+   * {@jada.reuseDoc !end}
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object feature1,
       @Nullable Object feature2) {
@@ -1442,10 +1453,11 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the object, along with its features.
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its features.
    * <p>
    * NOTE: {@code null} features are ignored.
    * </p>
+   * {@jada.reuseDoc !end}
    */
   public static String toStringWithFeatures(Object obj, @Nullable Object feature1,
       @Nullable Object feature2, @Nullable Object feature3) {
@@ -1473,7 +1485,8 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the object, along with its properties.
+   * {@jada.doc} Gets the string representation of an object, along with its properties.
+   * {@jada.doc !end}
    *
    * @param properties
    *          Properties (key-value pairs; keys MUST be non-null).
@@ -1490,7 +1503,8 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the object, along with its properties.
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
+   * {@jada.reuseDoc !end}
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1) {
     return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
@@ -1499,7 +1513,8 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the object, along with its properties.
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
+   * {@jada.reuseDoc !end}
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
       @Nullable Object v2) {
@@ -1510,7 +1525,8 @@ public final class Objects {
   }
 
   /**
-   * Gets the string representation of the object, along with its properties.
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
+   * {@jada.reuseDoc !end}
    */
   public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
       @Nullable Object v2, String k3, @Nullable Object v3) {
@@ -1522,7 +1538,7 @@ public final class Objects {
   }
 
   /**
-   * Tries the supplier.
+   * Tries a supplier.
    *
    * @return Result of {@code supplier}, or {@code null} if failed.
    */
@@ -1535,7 +1551,7 @@ public final class Objects {
   }
 
   /**
-   * Tries the supplier.
+   * Tries a supplier.
    *
    * @param defaultResult
    *          Result in case {@code supplier} fails or its result is undefined.
@@ -1547,7 +1563,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the type corresponding to the fully-qualified name, resolved in the loading context of the
+   * Gets the type corresponding to a fully-qualified name, resolved in the loading context of the
    * current class and initialized.
    *
    * @return {@code null}, if no type matched {@code name}.
@@ -1557,7 +1573,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the type corresponding to the fully-qualified name, resolved in the loading context and
+   * Gets the type corresponding to a fully-qualified name, resolved in the loading context and
    * initialized.
    *
    * @param loadingHint
@@ -1577,7 +1593,7 @@ public final class Objects {
   }
 
   /**
-   * Gets the type of the object.
+   * Gets the type of an object.
    *
    * @see #asType(Object)
    */
@@ -1612,13 +1628,18 @@ public final class Objects {
   }
 
   /**
-   * Cross-casts the object to the caller's {@linkplain ClassLoader class loader}. {@jada.reuseDoc}
+   * Cross-casts an object to the caller's {@linkplain ClassLoader class loader}. {@jada.reuseDoc}
    * <p>
    * Split types (that is, binary-incompatible types with same fully-qualified name and different
    * class loaders) are transparently bridged through proxy, providing a convenient alternative to
    * manual reflection.
    * </p>
-   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy"> {@jada.reuseDoc !end}
+   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy">
+   * <p>
+   * <span class="warning">WARNING: DO NOT call this method via method reference (that is,
+   * {@code Objects::xcast}), as it disrupts call stack resolution.</span>
+   * </p>
+   * {@jada.reuseDoc !end}
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
@@ -1626,19 +1647,26 @@ public final class Objects {
    *          Source object.
    * @throws ClassXCastException
    *           if {@code obj} has no corresponding type in target class loader context.
+   * @see #xflat(Object)
+   * @see #xinstanceof(Object, Class)
    */
   public static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj) {
     return xcast(obj, null);
   }
 
   /**
-   * Cross-casts the object to the target {@linkplain ClassLoader class loader}. {@jada.doc}
+   * Cross-casts an object to the target {@linkplain ClassLoader class loader}. {@jada.reuseDoc}
    * <p>
    * Split types (that is, binary-incompatible types with same fully-qualified name and different
    * class loaders) are transparently bridged through proxy, providing a convenient alternative to
    * manual reflection.
    * </p>
-   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy"> {@jada.doc !end}
+   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy">
+   * <p>
+   * <span class="warning">WARNING: DO NOT call this method via method reference (that is,
+   * {@code Objects::xcast}), as it disrupts call stack resolution.</span>
+   * </p>
+   * {@jada.reuseDoc !end}
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
@@ -1649,6 +1677,8 @@ public final class Objects {
    *          loader).
    * @throws ClassXCastException
    *           if {@code obj} has no corresponding type in target class loader context.
+   * @see #xflat(Object)
+   * @see #xinstanceof(Object, Class)
    */
   public static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj,
       @Nullable Object loadingHint) {
@@ -1656,7 +1686,7 @@ public final class Objects {
   }
 
   /**
-   * Flattens the object, extracting the source object (proxy base) in case of
+   * Flattens an object, extracting the source object (proxy base) in case of
    * {@linkplain #xcast(Object, Object) cross-cast proxy}.
    *
    * @see #xcast(Object, Object)
@@ -1678,7 +1708,7 @@ public final class Objects {
   }
 
   /**
-   * Gets whether the object is a cross-instance of the type.
+   * Gets whether an object is a cross-instance of the type.
    * <p>
    * A {@linkplain #xcast(Object, Object) cross-instance} is a superset of a regular instance: it
    * encompasses both its own class hierarchy and the class hierarchies of its split types (that is,
@@ -1711,7 +1741,7 @@ public final class Objects {
   }
 
   /**
-   * Recursively collects the type and its interfaces until stopped.
+   * Recursively collects a type and its interfaces until stopped.
    * <p>
    * If {@code type} is contained in {@code stoppers}, this operation stops; in such case,
    * {@code type} is collected only if not {@code stopperExclusive}, while its interfaces are
@@ -1820,10 +1850,18 @@ public final class Objects {
   }
 
   /**
-   * Cross-casts the object to the target {@linkplain ClassLoader class loader}.
+   * Cross-casts an object to the target {@linkplain ClassLoader class loader}. {@jada.doc}
    * <p>
-   * (see {@linkplain #xcast(Object, Object) main overload} for further information)
+   * Split types (that is, binary-incompatible types with same fully-qualified name and different
+   * class loaders) are transparently bridged through proxy, providing a convenient alternative to
+   * manual reflection.
    * </p>
+   * <img src="doc-files/proxy.svg" alt="UML diagram of object proxy">
+   * <p>
+   * <span class="warning">WARNING: DO NOT call this method via method reference (that is,
+   * {@code Objects::xcast}), as it disrupts call stack resolution.</span>
+   * </p>
+   * {@jada.doc !end}
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
@@ -2052,8 +2090,8 @@ public final class Objects {
   }
 
   /**
-   * {@linkplain #xcast(Object, Object) Cross-casts} the object to the target
-   * {@linkplain ClassLoader class loader}.
+   * {@linkplain #xcast(Object, Object) Cross-casts} an object to the target {@linkplain ClassLoader
+   * class loader}.
    *
    * @param <T>
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
