@@ -28,6 +28,7 @@ import static org.pdfclown.common.build.internal.util_.Strings.COLON;
 import static org.pdfclown.common.build.internal.util_.Strings.COMMA;
 import static org.pdfclown.common.build.internal.util_.Strings.CURLY_BRACE_CLOSE;
 import static org.pdfclown.common.build.internal.util_.Strings.CURLY_BRACE_OPEN;
+import static org.pdfclown.common.build.internal.util_.Strings.DOLLAR;
 import static org.pdfclown.common.build.internal.util_.Strings.DOT;
 import static org.pdfclown.common.build.internal.util_.Strings.DQUOTE;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
@@ -76,6 +77,7 @@ import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.InvocationHandlerAdapter;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.matcher.ElementMatchers;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableRunnable;
 import org.apache.commons.lang3.function.FailableSupplier;
@@ -613,45 +615,47 @@ public final class Objects {
   /**
    * Gets the fully-qualified class name of an object.
    * <p>
-   * Corresponds to the {@linkplain Class#getName() class name}; the class is resolved from
-   * {@code obj} through {@link #asType(Object)}.
+   * Corresponds to the {@linkplain Class#getName() class name}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
    * @see #fqnd(Object)
+   * @see #sfqn(Object)
    * @see #sqn(Object)
    */
   public static String fqn(@Nullable Object obj) {
-    return fqn(obj, false);
+    return fqn(obj, false, false);
   }
 
   /**
    * Gets the dotted fully-qualified class name of an object.
    * <p>
-   * Corresponds to the {@linkplain Class#getName() class name}, replacing inner-class separators
-   * ({@code $}) with dots (for example, {@code my.package.MyTopLevel.MyOuterClass.MyInnerClass});
-   * the class is resolved from {@code obj} through {@link #asType(Object)}.
+   * The {@linkplain Class#getName() class name} has its inner-class separators ($) replaced with
+   * dots (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
+   * {@code "org.pdfclown.common.util.Objects.ClassXCastException"}).
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
    * @see #fqn(Object)
+   * @see #sfqn(Object)
    * @see #sqnd(Object)
    */
   public static String fqnd(@Nullable Object obj) {
-    return fqn(obj, true);
+    return fqn(obj, false, true);
   }
 
   /**
-   * Ensures a class name has inner-class separators ({@code $}) replaced with dots.
+   * Ensures a class name has inner-class separators ($) replaced with dots.
    * <p>
    * No syntactic check is applied to {@code typeName}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code typeName} is undefined.
+   * @see #sfqn(String)
    * @see #sqnd(String)
    */
   public static String fqnd(@Nullable String typeName) {
-    return fqn(typeName, true);
+    return fqn(typeName, false, true);
   }
 
   /**
@@ -1147,6 +1151,87 @@ public final class Objects {
   }
 
   /**
+   * Gets the shortened fully-qualified class name of an object.
+   * <p>
+   * The {@linkplain Class#getName() class name} has each package segment reduced to its initial
+   * character (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
+   * {@code "o.p.c.u.Objects$ClassXCastException"}).
+   * </p>
+   * <p>
+   * Useful for repetitive messaging, like logs, where lengthy names become noisy.
+   * </p>
+   *
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @see #sfqnd(Object)
+   * @see #fqn(Object)
+   * @see #sqn(Object)
+   */
+  public static String sfqn(@Nullable Object obj) {
+    return fqn(obj, true, false);
+  }
+
+  /**
+   * Shortens a class name.
+   * <p>
+   * {@code typeName} has each package segment reduced to its initial character (for example,
+   * {@code "org.pdfclown.common.util.Objects$ClassXCastException"} returns
+   * {@code "o.p.c.u.Objects$ClassXCastException"}). No syntactic check is applied.
+   * </p>
+   * <p>
+   * Useful for repetitive messaging, like logs, where lengthy names become noisy.
+   * </p>
+   *
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @see #sfqnd(String)
+   * @see #sqn(String)
+   */
+  public static String sfqn(@Nullable String typeName) {
+    return fqn(typeName, true, false);
+  }
+
+  /**
+   * Gets the shortened dotted fully-qualified class name of an object.
+   * <p>
+   * The {@linkplain Class#getName() class name} has each package segment reduced to its initial
+   * character, then its inner-class separators ($) replaced with dots (for example,
+   * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
+   * {@code "o.p.c.u.Objects.ClassXCastException"}).
+   * </p>
+   * <p>
+   * Useful for repetitive messaging, like logs, where lengthy names become noisy.
+   * </p>
+   *
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @see #sfqn(Object)
+   * @see #fqnd(Object)
+   * @see #sqnd(Object)
+   */
+  public static String sfqnd(@Nullable Object obj) {
+    return fqn(obj, true, true);
+  }
+
+  /**
+   * Shortens a class name, ensuring its inner-class separators ($) are replaced with dots.
+   * <p>
+   * {@code typeName} has each package segment reduced to its initial character, then its
+   * inner-class separators ($) replaced with dots (for example,
+   * {@code "org.pdfclown.common.util.Objects$ClassXCastException"} returns
+   * {@code "o.p.c.u.Objects.ClassXCastException"}). No syntactic check is applied.
+   * </p>
+   * <p>
+   * Useful for repetitive messaging, like logs, where lengthy names become noisy.
+   * </p>
+   *
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @see #sfqn(String)
+   * @see #fqnd(String)
+   * @see #sqnd(String)
+   */
+  public static String sfqnd(@Nullable String typeName) {
+    return fqn(typeName, true, true);
+  }
+
+  /**
    * Splits a fully-qualified name into package and class name parts.
    *
    * @return Two-part string array, where the first item is empty if {@code typeName} has no
@@ -1163,33 +1248,33 @@ public final class Objects {
   /**
    * Gets the simply-qualified class name of an object.
    * <p>
-   * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
-   * enclosing classes till the top level (for example,
-   * {@code MyTopLevel$MyOuterClass$MyInnerClass}); the class is resolved from {@code obj} through
-   * {@link #asType(Object)}.
+   * The {@linkplain Class#getSimpleName() simple class name} is qualified with its enclosing
+   * classes till the top level (for example,
+   * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
+   * {@code "Objects$ClassXCastException"}).
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
    * @see #sqnd(Object)
    * @see #fqn(Object)
+   * @see #sfqn(Object)
    */
   public static String sqn(@Nullable Object obj) {
     return sqn(obj, false);
   }
 
   /**
-   * Gets the simply-qualified class name from a name.
+   * Gets the simply-qualified class name from a generic class name.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
    * enclosing classes till the top level (for example,
-   * {@code MyTopLevel$MyOuterClass$MyInnerClass}).
-   * </p>
-   * <p>
-   * No syntactic check is applied to {@code typeName}.
+   * {@code "org.pdfclown.common.util.Objects$ClassXCastException"} returns
+   * {@code "Objects$ClassXCastException"}). No syntactic check is applied.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code typeName} is undefined.
    * @see #sqnd(String)
+   * @see #sfqn(String)
    */
   public static String sqn(@Nullable String typeName) {
     return sqn(typeName, false);
@@ -1198,34 +1283,34 @@ public final class Objects {
   /**
    * Gets the dotted simply-qualified class name of an object.
    * <p>
-   * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
-   * enclosing classes till the top level, replacing inner-class separators ({@code $}) with dots
-   * (for example, {@code MyTopLevel.MyOuterClass.MyInnerClass}); the class is resolved from
-   * {@code obj} through {@link #asType(Object)}.
+   * The {@linkplain Class#getSimpleName() simple class name} is qualified with its enclosing
+   * classes till the top level, replacing inner-class separators ($) with dots (for example,
+   * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
+   * {@code "Objects.ClassXCastException"}).
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
    * @see #sqn(Object)
    * @see #fqnd(Object)
+   * @see #sfqnd(Object)
    */
   public static String sqnd(@Nullable Object obj) {
     return sqn(obj, true);
   }
 
   /**
-   * Gets the dotted simply-qualified class name from a name.
+   * Gets the dotted simply-qualified class name from a generic class name.
    * <p>
    * Corresponds to the {@linkplain Class#getSimpleName() simple class name} qualified with its
-   * enclosing classes till the top level, replacing inner-class separators ({@code $}) with dots
-   * (for example, {@code MyTopLevel.MyOuterClass.MyInnerClass}).
-   * </p>
-   * <p>
-   * No syntactic check is applied to {@code typeName}.
+   * enclosing classes till the top level, replacing inner-class separators ($) with dots (for
+   * example, {@code "org.pdfclown.common.util.Objects$ClassXCastException"} returns
+   * {@code "Objects.ClassXCastException"}). No syntactic check is applied.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code typeName} is undefined.
    * @see #sqn(String)
    * @see #fqnd(String)
+   * @see #sfqnd(String)
    */
   public static String sqnd(@Nullable String typeName) {
     return sqn(typeName, true);
@@ -1819,14 +1904,21 @@ public final class Objects {
     return true;
   }
 
-  private static String fqn(@Nullable Object obj, boolean dotted) {
-    return fqn(objTo(asType(obj), Class::getName), dotted);
+  private static String fqn(@Nullable Object obj, boolean shortened, boolean dotted) {
+    return fqn(objTo(asType(obj), Class::getName), shortened, dotted);
   }
 
-  private static String fqn(@Nullable String typeName, boolean dotted) {
-    return typeName != null
-        ? dotted ? typeName.replace('$', DOT) : typeName
-        : NULL;
+  private static String fqn(@Nullable String typeName, boolean shortened, boolean dotted) {
+    if (typeName == null)
+      return NULL;
+
+    if (shortened) {
+      typeName = ClassUtils.getAbbreviatedName(typeName, 1);
+    }
+    if (dotted) {
+      typeName = typeName.replace(DOLLAR, DOT);
+    }
+    return typeName;
   }
 
   private static boolean isAutoInstantiable(Class<?> type) {
@@ -1839,14 +1931,14 @@ public final class Objects {
   }
 
   private static String sqn(@Nullable Object obj, boolean dotted) {
-    return sqn(fqn(obj, false), dotted);
+    return sqn(fqn(obj, false, false), dotted);
   }
 
   private static String sqn(@Nullable String typeName, boolean dotted) {
     return fqn(objTo(typeName, $ -> {
       int index = $.lastIndexOf(DOT);
-      return index != INDEX__NOT_FOUND ? $.substring(index + 1) : $;
-    }), dotted);
+      return found(index) ? $.substring(index + 1) : $;
+    }), false, dotted);
   }
 
   /**
