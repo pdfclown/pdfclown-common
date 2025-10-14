@@ -236,12 +236,15 @@ log.info("buildTimestamp: " + buildTimestamp
         </plugin>
 
         <plugin>
+          <!--
+            [#CodeFormat] Spotless.
+
+            See <https://github.com/diffplug/spotless/tree/main/plugin-maven>
+          -->
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
           <version>${spotless-maven-plugin.version}</version>
           <configuration>
-            <!-- See <https://github.com/diffplug/spotless/tree/main/plugin-maven> -->
-
             <!--
               NOTE: Only POM formatter is enabled on all projects; any other source code formatter
               is activated by a dedicated profile ("full-format") which can be easily switched off.
@@ -267,7 +270,7 @@ log.info("buildTimestamp: " + buildTimestamp
           <!--
             [#CodeFormat] Checkstyle.
 
-            IMPORTANT: This plugin works along with formatter-maven-plugin: whenever check rules
+            IMPORTANT: This plugin works along with spotless-maven-plugin: whenever check rules
             change, code format MUST be updated accordingly.
 
             [Manual] To generate a report:
@@ -848,11 +851,19 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
 
       <!-- Testing -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
 
       <plugin>
@@ -882,20 +893,16 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
     <!-- MANUAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
     <profile>
-      <id>verify</id>
+      <id>fast</id>
       <!--
-        FULL VERIFICATION PROFILE
+        FAST EXECUTION PROFILE
 
-        For convenience, integration tests are disabled by default: this profile activates them.
+        Deactivates the following operations to speed up build execution:
+        - integration tests
       -->
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
+      <properties>
+        <skipITs>true</skipITs>
+      </properties>
     </profile>
 
     <profile>
@@ -932,15 +939,11 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <!--
         FULL INSTALLATION PROFILE
 
-        For convenience, the installation of ancillary artifacts (javadoc and source jars) on
-        local repository is disabled by default: this profile activates them.
+        Activates the following operations (disabled by default):
+        - javadoc jar
       -->
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -954,14 +957,13 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <!--
         DEPLOYMENT PROFILE
 
-        central-publishing-maven-plugin transparently manages both public releases and snapshots.
+        Activates the following operations (disabled by default):
+        - javadoc jar
+        - gpg signing
+        - maven central publishing
       -->
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -986,6 +988,8 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           </plugin>
 
           <plugin>
+            <!--
+              NOTE: Transparently manages both public releases and snapshots. -->
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
           </plugin>
