@@ -18,7 +18,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
-import static org.pdfclown.common.util.Booleans.strToBool;
+import static org.pdfclown.common.util.Booleans.parseBoolean;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.COMMA;
@@ -35,6 +35,7 @@ import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Numbers.parseNumber;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.NULL;
 import static org.pdfclown.common.util.Strings.S;
@@ -774,9 +775,9 @@ public final class Objects {
    *         with single quotes</li>
    *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
    *         with double quotes</li>
-   *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}, or
-   *         {@link Class#getSimpleName()} for common types under {@code java.lang}
-   *         package</li>{@jada.reuseDoc END}
+   *         <li>if {@code obj} is {@link Class}: {@linkplain #fqnd(Object) dotted fully-qualified
+   *         class name}, or {@linkplain Class#getSimpleName() simple name} for common types (under
+   *         {@code java.lang} package)</li>{@jada.reuseDoc END}
    *         <li>otherwise: like {@code String}</li>
    *         </ul>
    * @see #basicLiteral(Object)
@@ -808,9 +809,9 @@ public final class Objects {
    *         with single quotes</li>
    *         <li>if {@code obj} is {@link String}: {@link Object#toString()}, escaped and wrapped
    *         with double quotes</li>
-   *         <li>if {@code obj} is {@link Class}: {@link Class#getName()}, or
-   *         {@link Class#getSimpleName()} for common types under {@code java.lang}
-   *         package</li>{@jada.doc END}
+   *         <li>if {@code obj} is {@link Class}: {@linkplain #fqnd(Object) dotted fully-qualified
+   *         class name}, or {@linkplain Class#getSimpleName() simple name} for common types (under
+   *         {@code java.lang} package)</li>{@jada.doc END}
    *         <li>otherwise: applies {@link Function#apply(Object) nonBasicConverter}</li>
    *         </ul>
    * @see #basicLiteral(Object)
@@ -841,9 +842,9 @@ public final class Objects {
       return objTo((Class<?>) obj, $ -> $.getPackageName().startsWith("java.lang")
           ? $.getSimpleName() /*
                                * NOTE: The names of classes belonging to common packages are
-                               * simplified to reduce noise
+                               * simplified to avoid noise
                                */
-          : $.getName());
+          : fqnd($));
     else
       return nonBasicConverter.apply(obj);
   }
@@ -1078,7 +1079,7 @@ public final class Objects {
     }
 
     {
-      var bool = strToBool(s);
+      var bool = parseBoolean(s);
       // Boolean literal?
       if (bool != null)
         return bool;
@@ -1086,7 +1087,7 @@ public final class Objects {
 
     try {
       // Numeric literal.
-      return NumberUtils.createNumber(s);
+      return parseNumber(s);
     } catch (NumberFormatException ex) {
       // Generic literal.
       return s;

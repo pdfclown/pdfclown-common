@@ -31,15 +31,19 @@ public final class Booleans {
 
   /**
    * Converts the string to the corresponding boolean (case-insensitive).
+   * <p>
+   * This method is stricter than {@link Boolean#valueOf(String)}, since a boolean is returned only
+   * if {@code  s} corresponds to its name.
+   * </p>
    *
    * @return {@code null}, if no match is found.
    */
-  public static @Nullable Boolean strToBool(@Nullable String value) {
-    if (value != null) {
-      value = value.toLowerCase();
-      if (value.equals("true"))
+  public static @Nullable Boolean parseBoolean(@Nullable String s) {
+    if (s != null) {
+      s = s.toLowerCase();
+      if (s.equals("true"))
         return Boolean.TRUE;
-      else if (value.equals("false"))
+      else if (s.equals("false"))
         return Boolean.FALSE;
     }
     return null;

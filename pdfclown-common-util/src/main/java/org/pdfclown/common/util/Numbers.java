@@ -15,6 +15,7 @@ package org.pdfclown.common.util;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 
 import java.math.BigDecimal;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Number utilities.
@@ -76,6 +77,19 @@ public final class Numbers {
     return b.toString();
   }
   // SPDX-SnippetEnd
+
+  /**
+   * Converts the string to the corresponding number.
+   * <p>
+   * See {@link NumberUtils#createNumber(String)} for more information.
+   * </p>
+   *
+   * @throws NumberFormatException
+   *           if the value cannot be converted.
+   */
+  public static Number parseNumber(String s) {
+    return NumberUtils.createNumber(s);
+  }
 
   /**
    * Converts the value to the type.

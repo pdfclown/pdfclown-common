@@ -156,6 +156,34 @@ public final class Exceptions {
         : new UncheckedException(cause);
   }
 
+  /**
+   * Creates an exception via factory.
+   * <p>
+   * Useful to leverage {@link ParamMessage} instead of explicitly formatting the exception message.
+   * </p>
+   *
+   * @param factory
+   *          Instantiates the exception. Its input parameters are the standard ones supported by
+   *          the constructors of most {@link Throwable} implementations:
+   *          <code>(String message, Throwable cause)</code>
+   *          {@jada.reuseDoc ParamMessage#of(*):params}
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.build.internal.util_.ParamMessage#getCause()
+   *          cause} (if {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc END}
+   */
+  public static <T extends Throwable> T throwable(
+      BiFunction<String, @Nullable Throwable, T> factory, @Nullable String format,
+      @Nullable Object... args) {
+    var message = ParamMessage.of(format, args);
+    return factory.apply(message.getDescription(), message.getCause());
+  }
+
   public static UnexpectedCaseError unexpected(@Nullable Object value) {
     return new UnexpectedCaseError(value);
   }
@@ -308,13 +336,6 @@ public final class Exceptions {
   public static IllegalStateException wrongState(Throwable cause) {
     return cause instanceof IllegalStateException ? (IllegalStateException) cause
         : new IllegalStateException(cause);
-  }
-
-  private static <T extends Throwable> T throwable(
-      BiFunction<String, @Nullable Throwable, T> factory, @Nullable String format,
-      @Nullable Object... args) {
-    var message = ParamMessage.of(format, args);
-    return factory.apply(message.getDescription(), message.getCause());
   }
 
   private Exceptions() {
