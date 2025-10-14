@@ -7,11 +7,13 @@
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   USAGE
 
-  - Basic build (without integration tests, sources jar or javadoc jar):
+  - Basic build (without javadoc jar):
+
       mvn install
 
-  - Full build (with integration tests, sources jar and javadoc jar):
-      mvn install -Pverify,install
+  - Full build (with javadoc jar):
+
+      mvn install -Pinstall
 
   - Verify dependency vulnerabilities:
       mvn verify -Pverify-extra
@@ -20,7 +22,13 @@
       reuse lint
 
   - Publish on Maven Central:
-      mvn deploy -Pverify,release
+      mvn deploy -Prelease
+
+  Tips:
+
+  - to speed up execution (skipping integration tests), use `fast` profile, for example:
+
+      mvn install -Pfast
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <project
     xmlns="http://maven.apache.org/POM/4.0.0"

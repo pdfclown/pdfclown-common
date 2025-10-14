@@ -61,16 +61,16 @@ Common CLI operations:
 
 - local installation:
 
-    - basic build (without integration tests, sources jar nor javadoc jar):
+    - basic build (without javadoc jar):
 
             mvn install
 
-    - full build (with integration tests, sources jar and javadoc jar):
+    - full build (with javadoc jar):
 
-            mvn install -Pverify,install
+            mvn install -Pinstall
 
 - publishing on Maven Central:
 
-        mvn deploy -Pverify,release
+        mvn deploy -Prelease
 
 See [pdfclown-common-base](../pdfclown-common-base/pom.xml) for a basic cheatsheet.
