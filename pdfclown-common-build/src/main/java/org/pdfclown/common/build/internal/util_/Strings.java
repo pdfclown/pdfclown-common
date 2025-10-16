@@ -177,8 +177,39 @@ public final class Strings {
   }
 
   /**
-   * Gets the index within the string of the first occurrence of the given character; if not found,
-   * returns the end of the string.
+   * Gets the index within the string of the first occurrence of a substring; if not found, returns
+   * the end of the string.
+   * <p>
+   * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
+   * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
+   * it doesn't make sense to define a symmetrical {@code lastIndexOfOrBegin(..)} method.
+   * </p>
+   *
+   * @see String#indexOf(String)
+   */
+  public static int indexOfElseEnd(String s, String sub) {
+    return indexOfElseEnd(s, sub, 0);
+  }
+
+  /**
+   * Gets the index within the string of the first occurrence of a substring, searched from the
+   * index; if not found, returns the end of the string.
+   * <p>
+   * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
+   * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
+   * it doesn't make sense to define a symmetrical {@code lastIndexOfOrBegin(..)} method.
+   * </p>
+   *
+   * @see String#indexOf(String, int)
+   */
+  public static int indexOfElseEnd(String s, String sub, int fromIndex) {
+    int index = s.indexOf(sub, fromIndex);
+    return found(index) ? index : s.length();
+  }
+
+  /**
+   * Gets the index within the string of the first occurrence of a character; if not found, returns
+   * the end of the string.
    * <p>
    * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
    * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
@@ -187,13 +218,13 @@ public final class Strings {
    *
    * @see String#indexOf(int)
    */
-  public static int indexOfOrEnd(String s, int c) {
-    return indexOfOrEnd(s, c, 0);
+  public static int indexOfElseEnd(String s, int c) {
+    return indexOfElseEnd(s, c, 0);
   }
 
   /**
-   * Gets the index within the string of the first occurrence of the given character, searched from
-   * the given index; if not found, returns the end of the string.
+   * Gets the index within the string of the first occurrence of a character, searched from the
+   * index; if not found, returns the end of the string.
    * <p>
    * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
    * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
@@ -202,7 +233,7 @@ public final class Strings {
    *
    * @see String#indexOf(int, int)
    */
-  public static int indexOfOrEnd(String s, int c, int fromIndex) {
+  public static int indexOfElseEnd(String s, int c, int fromIndex) {
     int index = s.indexOf(c, fromIndex);
     return found(index) ? index : s.length();
   }
