@@ -227,7 +227,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends Asserter {
           break;
         } catch (AssertionError | FileNotFoundException ex) {
           // Unrecoverable?
-          if (built || !isUpdatable(testId)) {
+          if (built || !isUpdatable()) {
             Path actualJsonOutFile = null;
             if (exists(expectedJsonFile)) {
               actualJsonOutFile = config.getEnv().outputPath(

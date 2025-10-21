@@ -15,6 +15,7 @@ package org.pdfclown.common.util;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.List.of;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
@@ -25,7 +26,6 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.io.Serializable;
@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
@@ -195,39 +196,6 @@ class ObjectsTest extends BaseTest {
     }
   }
 
-  /**
-   * @implNote Generated as {@code expected} source code within {@link #literal()}.
-   */
-  private static final List<String> LITERAL_STRINGS = asList(
-      // [1] obj[0]: null
-      "null",
-      // [2] obj[1]: 1234
-      "1234",
-      // [3] obj[2]: 1.987
-      "1.987",
-      // [4] obj[3]: 1.5E-4
-      "1.5E-4",
-      // [5] obj[4]: true
-      "true",
-      // [6] obj[5]: '\''
-      "'\\''",
-      // [7] obj[6]: '"'
-      "'\"'",
-      // [8] obj[7]: ""
-      "\"\"",
-      // [9] obj[8]: "Text with:\n- \"quoted content\"\n- newlines"
-      "\"Text with:\\n- \\\"quoted content\\\"\\n- newlines\"",
-      // [10] obj[9]: "测试文本"
-      "\"测试文本\"",
-      // [11] obj[10]: String
-      "String",
-      // [12] obj[11]: java.util.stream.Stream
-      "java.util.stream.Stream",
-      // [13] obj[12]: org.pdfclown.common.util.Strings
-      "org.pdfclown.common.util.Strings",
-      // [14] obj[13]: [one, two]
-      "\"[one, two]\"");
-
   private static final List<String> TO_STRINGS = asList(
       null,
       // Simple type name (Class.getSimpleName()).
@@ -283,7 +251,7 @@ class ObjectsTest extends BaseTest {
             "java.lang.String",
             // [5] obj[4]: String
             "java.lang.String",
-            // [6] obj[5]: java.util.Map$Entry
+            // [6] obj[5]: java.util.Map.Entry
             "java.util.Map$Entry"),
         // obj
         QN_OBJS);
@@ -304,7 +272,7 @@ class ObjectsTest extends BaseTest {
             "java.lang.String",
             // [5] obj[4]: String
             "java.lang.String",
-            // [6] obj[5]: java.util.Map$Entry
+            // [6] obj[5]: java.util.Map.Entry
             "java.util.Map.Entry"),
         // obj
         QN_OBJS);
@@ -335,7 +303,37 @@ class ObjectsTest extends BaseTest {
     return argumentsStream(
         cartesian(),
         // expected
-        LITERAL_STRINGS,
+        asList(
+            // [1] obj[0]: null
+            "null",
+            // [2] obj[1]: 1234
+            "1234",
+            // [3] obj[2]: 1.987
+            "1.987",
+            // [4] obj[3]: 1.5E-4
+            "1.5E-4",
+            // [5] obj[4]: true
+            "true",
+            // [6] obj[5]: '\''
+            "'\\''",
+            // [7] obj[6]: '"'
+            "'\"'",
+            // [8] obj[7]: ""
+            "\"\"",
+            // [9] obj[8]: "Text with:\n- \"quoted content\"\n- newlines"
+            "\"Text with:\\n"
+                + "- \\\"quoted content\\\"\\n"
+                + "- newlines\"",
+            // [10] obj[9]: "测试文本"
+            "\"测试文本\"",
+            // [11] obj[10]: String
+            "String",
+            // [12] obj[11]: java.util.stream.Stream
+            "java.util.stream.Stream",
+            // [13] obj[12]: org.pdfclown.common.util.Strings
+            "org.pdfclown.common.util.Strings",
+            // [14] obj[13]: "[one, two]"
+            "\"[one, two]\""),
         // obj
         asList(
             null,
@@ -354,6 +352,14 @@ class ObjectsTest extends BaseTest {
             of("one", "two")));
   }
 
+  /**
+   * @implNote The {@code s} argument list corresponds to the {@code expected} list of
+   *           {@link #literal()}; because of the interaction of automated code generation (see also
+   *           {@link org.pdfclown.common.build.test.assertion.Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   *           argumentsStream(..)}), it cannot be dynamically extracted from the result of that
+   *           method; in case that {@code expected} list changes, it should be manually copied
+   *           here.
+   */
   static Stream<Arguments> parseLiteral() {
     return argumentsStream(
         cartesian(),
@@ -376,7 +382,9 @@ class ObjectsTest extends BaseTest {
             // [8] s[7]: "\"\""
             "",
             // [9] s[8]: "\"Text with:\\n- \\\"quoted content\\\"\\n- . . ."
-            "Text with:\n- \"quoted content\"\n- newlines",
+            "Text with:\n"
+                + "- \"quoted content\"\n"
+                + "- newlines",
             // [10] s[9]: "\"测试文本\""
             "测试文本",
             // [11] s[10]: "String"
@@ -387,8 +395,38 @@ class ObjectsTest extends BaseTest {
             "org.pdfclown.common.util.Strings",
             // [14] s[13]: "\"[one, two]\""
             "[one, two]"),
-        // s
-        LITERAL_STRINGS);
+        // s (see implementation note)
+        asList(
+            // [1] obj[0]: null
+            "null",
+            // [2] obj[1]: 1234
+            "1234",
+            // [3] obj[2]: 1.987
+            "1.987",
+            // [4] obj[3]: 1.5E-4
+            "1.5E-4",
+            // [5] obj[4]: true
+            "true",
+            // [6] obj[5]: '\''
+            "'\\''",
+            // [7] obj[6]: '"'
+            "'\"'",
+            // [8] obj[7]: ""
+            "\"\"",
+            // [9] obj[8]: "Text with:\n- \"quoted content\"\n- newlines"
+            "\"Text with:\\n"
+                + "- \\\"quoted content\\\"\\n"
+                + "- newlines\"",
+            // [10] obj[9]: "测试文本"
+            "\"测试文本\"",
+            // [11] obj[10]: String
+            "String",
+            // [12] obj[11]: java.util.stream.Stream
+            "java.util.stream.Stream",
+            // [13] obj[12]: org.pdfclown.common.util.Strings
+            "org.pdfclown.common.util.Strings",
+            // [14] obj[13]: "[one, two]"
+            "\"[one, two]\""));
   }
 
   static Stream<Arguments> sfqn_Object() {
@@ -406,7 +444,7 @@ class ObjectsTest extends BaseTest {
             "j.l.String",
             // [5] obj[4]: String
             "j.l.String",
-            // [6] obj[5]: java.util.Map$Entry
+            // [6] obj[5]: java.util.Map.Entry
             "j.u.Map$Entry"),
         // obj
         QN_OBJS);
@@ -416,7 +454,7 @@ class ObjectsTest extends BaseTest {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // [1] typename[0]: null
             "null",
             // [2] typename[1]: "java.lang.Double"
@@ -448,7 +486,7 @@ class ObjectsTest extends BaseTest {
             "j.l.String",
             // [5] obj[4]: String
             "j.l.String",
-            // [6] obj[5]: java.util.Map$Entry
+            // [6] obj[5]: java.util.Map.Entry
             "j.u.Map.Entry"),
         // obj
         QN_OBJS);
@@ -458,7 +496,7 @@ class ObjectsTest extends BaseTest {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // [1] typename[0]: null
             "null",
             // [2] typename[1]: "java.lang.Double"
@@ -490,7 +528,7 @@ class ObjectsTest extends BaseTest {
             "String",
             // [5] obj[4]: String
             "String",
-            // [6] obj[5]: java.util.Map$Entry
+            // [6] obj[5]: java.util.Map.Entry
             "Map$Entry"),
         // obj
         QN_OBJS);
@@ -532,7 +570,7 @@ class ObjectsTest extends BaseTest {
             "String",
             // [5] obj[4]: String
             "String",
-            // [6] obj[5]: java.util.Map$Entry
+            // [6] obj[5]: java.util.Map.Entry
             "Map.Entry"),
         // obj
         QN_OBJS);
@@ -637,8 +675,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.fqn(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
+        () -> new ExpectedGeneration(obj));
   }
 
   @ParameterizedTest
@@ -647,8 +684,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.fqnd(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
+        () -> new ExpectedGeneration(obj));
   }
 
   @ParameterizedTest
@@ -657,8 +693,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.fqnd(typename),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("typename", typename))));
+        () -> new ExpectedGeneration(typename));
   }
 
   @ParameterizedTest
@@ -667,8 +702,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.literal(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
+        () -> new ExpectedGeneration(obj));
   }
 
   @Test
@@ -724,8 +758,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.parseLiteral(s),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("s", s))));
+        () -> new ExpectedGeneration(s));
   }
 
   /**
@@ -804,8 +837,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sfqn(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
+        () -> new ExpectedGeneration(obj));
   }
 
   @ParameterizedTest
@@ -814,8 +846,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sfqn(typename),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("typename", typename))));
+        () -> new ExpectedGeneration(typename));
   }
 
   @ParameterizedTest
@@ -824,8 +855,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sfqnd(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
+        () -> new ExpectedGeneration(obj));
   }
 
   @ParameterizedTest
@@ -834,8 +864,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sfqnd(typename),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("typename", typename))));
+        () -> new ExpectedGeneration(typename));
   }
 
   @ParameterizedTest
@@ -844,8 +873,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sqn(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
+        () -> new ExpectedGeneration(obj));
   }
 
   @ParameterizedTest
@@ -854,8 +882,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sqn(typename),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("typename", typename))));
+        () -> new ExpectedGeneration(typename));
   }
 
   @ParameterizedTest
@@ -864,8 +891,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sqnd(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))));
+        () -> new ExpectedGeneration(obj));
   }
 
   @ParameterizedTest
@@ -874,8 +900,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sqnd(typename),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("typename", typename))));
+        () -> new ExpectedGeneration(typename));
   }
 
   @Test
@@ -883,7 +908,7 @@ class ObjectsTest extends BaseTest {
   void subTypes() {
     try (var types = Objects.types(Objects.class.getClassLoader())) {
       Stream<Class<? extends List>> subTypesStream = Objects.subTypes(List.class, types);
-      List<Class<? extends List>> subTypes = subTypesStream.collect(Collectors.toList());
+      List<Class<? extends List>> subTypes = subTypesStream.collect(toList());
 
       assertThat("SHOULD contain concrete classes", subTypes, hasItem(ArrayList.class));
       assertThat("SHOULD contain abstract classes", subTypes, hasItem(AbstractList.class));
@@ -915,8 +940,8 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.toQualifiedString(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))).setMaxArgCommentLength(100));
+        () -> new ExpectedGeneration(obj)
+            .setMaxArgCommentLength(100));
   }
 
   @ParameterizedTest
@@ -925,8 +950,8 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.toSqnQualifiedString(obj),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("obj", obj))).setMaxArgCommentLength(100));
+        () -> new ExpectedGeneration(obj)
+            .setMaxArgCommentLength(100));
   }
 
   @Test

@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.util.system;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * System utilities.
  *
@@ -19,17 +21,35 @@ package org.pdfclown.common.util.system;
  */
 public final class Systems {
   /**
-   * Gets the boolean {@linkplain System#getProperty(String) system property} indicated by the key.
+   * Gets the boolean corresponding to a {@linkplain System#getProperty(String) system property}.
    * <p>
    * Contrary to {@link Boolean#getBoolean(String)}, this method takes into account also the
    * behavior of CLI flags (for example, {@code -Dmyflag}), whose empty string represents
    * {@code true}.
    * </p>
    *
+   * @param key
+   *          System property name.
+   * @return {@code true}, if the property value is empty or equals {@code "true"}
+   *         (case-insensitive).
+   */
+  public static boolean getBooleanProperty(String key) {
+    return parsePropertyBoolean(System.getProperty(key));
+  }
+
+  /**
+   * Gets the boolean corresponding to a system property value.
+   * <p>
+   * Contrary to {@link Boolean#parseBoolean(String)}, this method takes into account also the
+   * behavior of CLI flags (for example, {@code -Dmyflag}), whose empty string represents
+   * {@code true}.
+   * </p>
+   *
+   * @param value
+   *          System property value.
    * @return {@code true}, if {@code value} is empty or equals {@code "true"} (case-insensitive).
    */
-  public static boolean getBoolProperty(String key) {
-    var value = System.getProperty(key);
+  public static boolean parsePropertyBoolean(@Nullable String value) {
     return value != null && (value.isEmpty() || value.equalsIgnoreCase("true"));
   }
 

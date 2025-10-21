@@ -82,7 +82,7 @@ public class FileTreeAsserter extends Asserter {
           fail(b.toString());
         } catch (AssertionError | FileNotFoundException ex) {
           // Unrecoverable?
-          if (built || !isUpdatable(testId)) {
+          if (built || !isUpdatable()) {
             log.info("Test resource {}: unexpected actual file structure saved to {}"
                 + " (expected file structure is at {})",
                 textLiteral(expectedDirResourceFqn), textLiteral(actualDir),

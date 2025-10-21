@@ -18,7 +18,6 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Arrays.asList;
-import static java.util.List.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
@@ -28,7 +27,6 @@ import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Exceptions.runtime;
 
 import java.io.ByteArrayInputStream;
@@ -213,9 +211,7 @@ public class IndentTest extends BaseTest {
     assertParameterizedOf(
         () -> Indent.spaces(width, level).toString(),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("width", width),
-            entry("level", level))));
+        () -> new ExpectedGeneration(width, level));
   }
 
   // SourceName: testDefaultSpaces

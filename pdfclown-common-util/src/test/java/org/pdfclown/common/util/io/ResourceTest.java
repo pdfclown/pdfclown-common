@@ -19,11 +19,11 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
+import static org.pdfclown.common.build.test.assertion.Assertions.Argument.qnamed;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.build.test.assertion.Matchers.has;
-import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Objects.literal;
 import static org.pdfclown.common.util.Objects.sqn;
 import static org.pdfclown.common.util.net.Uris.uri;
@@ -37,9 +37,9 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Stream;
 import org.hamcrest.Matchers;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -84,71 +84,69 @@ class ResourceTest extends BaseTest {
         asList(
             // [1] name[0]: null
             null,
-            // [2] name[1]: "classpath:org/pdfclown/common/build/conf/che. . ."
+            // [2] name[1]: "classpath:org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
-                uri(
-                    "jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml")),
-            // [3] name[2]: "classpath:org/pdfclown/common/build/absent/c. . ."
+                uri("jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml")),
+            // [3] name[2]: "classpath:org/pdfclown/common/build/absent/conf/checkstyle/checkstyle-checks.xml"
             null,
-            // [4] name[3]: "org/pdfclown/common/build/conf/checkstyle/ch. . ."
+            // [4] name[3]: "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
-                uri(
-                    "jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml")),
-            // [5] name[4]: "org/pdfclown/common/build/absent/conf/checks. . ."
+                uri("jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml")),
+            // [5] name[4]: "org/pdfclown/common/build/absent/conf/checkstyle/checkstyle-checks.xml"
             null,
-            // [6] name[5]: "classpath:org/pdfclown/common/util/conf/chec. . ."
+            // [6] name[5]: "classpath:org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml",
                 uri("file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml")),
-            // [7] name[6]: "classpath:org/pdfclown/common/util/absent/co. . ."
+            // [7] name[6]: "classpath:org/pdfclown/common/util/absent/conf/checkstyle/checkstyle-checks.xml"
             null,
-            // [8] name[7]: "org/pdfclown/common/util/conf/checkstyle/che. . ."
+            // [8] name[7]: "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("ClasspathResource",
                 "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml",
                 uri("file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml")),
-            // [9] name[8]: "org/pdfclown/common/util/absent/conf/checkst. . ."
+            // [9] name[8]: "org/pdfclown/common/util/absent/conf/checkstyle/checkstyle-checks.xml"
             null,
-            // [10] name[9]: "/home/myuser/conf/checkstyle/checkstyle-chec. . ."
+            // [10] name[9]: "/home/myuser/conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("FileResource", "/home/myuser/conf/checkstyle/checkstyle-checks.xml",
                 uri("jimfs://local/home/myuser/conf/checkstyle/checkstyle-checks.xml")),
             // [11] name[10]: "conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("FileResource", "conf/checkstyle/checkstyle-checks.xml",
                 uri("jimfs://local/home/test/root/conf/checkstyle/checkstyle-checks.xml")),
-            // [12] name[11]: "https://www.example.io/conf/checkstyle/check. . ."
+            // [12] name[11]: "https://www.example.io/conf/checkstyle/checkstyle-checks.xml"
             new ResourceResult("WebResource",
                 "https://www.example.io/conf/checkstyle/checkstyle-checks.xml",
                 uri("https://www.example.io/conf/checkstyle/checkstyle-checks.xml")),
-            // [13] name[12]: "https://www.example.io/absent/conf/checkstyl. . ."
+            // [13] name[12]: "https://www.example.io/absent/conf/checkstyle/checkstyle-checks.xml"
             null),
         // name
         asList(
             null,
-            // explicit classpath resource, mocked to resolve to JAR URL
-            "classpath:org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
-            // explicit classpath resource, mocked to resolve to JAR URL, inexistent
-            "classpath:org/pdfclown/common/build/absent/conf/checkstyle/checkstyle-checks.xml",
-            // implicit classpath resource, mocked to resolve to JAR URL
-            "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml",
-            // implicit classpath resource, mocked to resolve to JAR URL, inexistent
-            "org/pdfclown/common/build/absent/conf/checkstyle/checkstyle-checks.xml",
-            // explicit classpath resource, mocked to resolve to FILE URL
-            "classpath:org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml",
-            // explicit classpath resource, mocked to resolve to FILE URL, inexistent
-            "classpath:org/pdfclown/common/util/absent/conf/checkstyle/checkstyle-checks.xml",
-            // implicit classpath resource, mocked to resolve to FILE URL
-            "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml",
-            // implicit classpath resource, mocked to resolve to FILE URL, inexistent
-            "org/pdfclown/common/util/absent/conf/checkstyle/checkstyle-checks.xml",
-            // filesystem resource, absolute
-            "/home/myuser/conf/checkstyle/checkstyle-checks.xml",
-            // filesystem resource, relative
-            "conf/checkstyle/checkstyle-checks.xml",
-            // generic URL resource
-            "https://www.example.io/conf/checkstyle/checkstyle-checks.xml",
-            // generic URL resource, inexistent
-            "https://www.example.io/absent/conf/checkstyle/checkstyle-checks.xml"));
+            qnamed("explicit classpath resource, mocked to resolve to JAR URL",
+                "classpath:org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("explicit classpath resource, mocked to resolve to JAR URL, inexistent",
+                "classpath:org/pdfclown/common/build/absent/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("implicit classpath resource, mocked to resolve to JAR URL",
+                "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("implicit classpath resource, mocked to resolve to JAR URL, inexistent",
+                "org/pdfclown/common/build/absent/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("explicit classpath resource, mocked to resolve to FILE URL",
+                "classpath:org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("explicit classpath resource, mocked to resolve to FILE URL, inexistent",
+                "classpath:org/pdfclown/common/util/absent/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("implicit classpath resource, mocked to resolve to FILE URL",
+                "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("implicit classpath resource, mocked to resolve to FILE URL, inexistent",
+                "org/pdfclown/common/util/absent/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("filesystem resource, absolute",
+                "/home/myuser/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("filesystem resource, relative",
+                "conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("generic URL resource",
+                "https://www.example.io/conf/checkstyle/checkstyle-checks.xml"),
+            qnamed("generic URL resource, inexistent",
+                "https://www.example.io/absent/conf/checkstyle/checkstyle-checks.xml")));
   }
 
   final MockedStatic<FileSystems> fileSystemsMock;
@@ -219,7 +217,7 @@ class ResourceTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void of(Expected<Resource> expected, String name) {
+  void of(Expected<Resource> expected, @Nullable String name) {
     assertParameterizedOf(
         () -> Resource.of(name, ofClassLoaderMock, $ -> Path.of("/home/test/root").resolve($)),
         expected.match($ -> {
@@ -229,13 +227,19 @@ class ResourceTest extends BaseTest {
               has("name", Resource::getName, is(e.name)),
               has("uri", Resource::getUri, is(e.uri)));
         }),
-        () -> new ExpectedGeneration(List.of(
-            entry("name", name)))
-                .setExpectedSourceCodeGenerator($ -> {
-                  var e = (Resource) $;
-                  return String.format("new ResourceResult(%s, %s, uri(%s))",
-                      literal(sqn(e)), literal(e.getName()), literal(e.getUri()));
-                }));
+        () -> new ExpectedGeneration(name)
+            .setParamNames("name")
+            .setExpectedSourceCodeGenerator($ -> {
+              var e = (Resource) $;
+              return String.format("new ResourceResult(%s, %s, uri(%s))",
+                  literal(sqn(e)), literal(e.getName()), literal(e.getUri()));
+            })
+            .setMaxArgCommentLength(100)
+            .setOut(System.err) /*
+                                 * IMPORTANT: DO NOT remove `out` redirection, otherwise the
+                                 * interaction of the test harness with the filesystem will cause
+                                 * malfunctions (mind the filesystem is mocked in this test unit!).
+                                 */);
   }
 
   @AfterAll

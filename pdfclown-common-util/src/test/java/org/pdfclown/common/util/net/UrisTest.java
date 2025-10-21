@@ -13,8 +13,6 @@
 package org.pdfclown.common.util.net;
 
 import static java.util.Arrays.asList;
-import static java.util.List.of;
-import static java.util.Map.entry;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
@@ -290,9 +288,7 @@ class UrisTest extends BaseTest {
     assertParameterizedOf(
         () -> Uris.relativize(from, to),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("from", from),
-            entry("to", to)))
-                .setMaxArgCommentLength(50));
+        () -> new ExpectedGeneration(from, to)
+            .setMaxArgCommentLength(50));
   }
 }

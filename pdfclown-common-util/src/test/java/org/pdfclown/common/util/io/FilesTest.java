@@ -17,7 +17,6 @@ import static org.pdfclown.common.build.test.assertion.Assertions.Argument.qname
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.util.Aggregations.entry;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -303,19 +302,19 @@ class FilesTest extends BaseTest {
         // expected
         asList(
             // uri[0]: "relative/uri.html"
-            // [1] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
+            // [1] fs[0]: "com.google.common.jimfs.JimfsFileSystem@512abf25"
             "relative/uri.html",
             //
             // uri[1]: "../relative/uri.html"
-            // [2] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
+            // [2] fs[0]: "com.google.common.jimfs.JimfsFileSystem@512abf25"
             "../relative/uri.html",
             //
             // uri[2]: "file:/absolute/local/uri.html"
-            // [3] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
+            // [3] fs[0]: "com.google.common.jimfs.JimfsFileSystem@512abf25"
             "/absolute/local/uri.html",
             //
             // uri[3]: "file://host/absolute/local/uri.html"
-            // [4] fs[0]: "com.google.common.jimfs.JimfsFileSystem@3a1d593e"
+            // [4] fs[0]: "com.google.common.jimfs.JimfsFileSystem@512abf25"
             "/host/absolute/local/uri.html"),
         // uri
         List.of(
@@ -336,19 +335,19 @@ class FilesTest extends BaseTest {
         // expected
         asList(
             // uri[0]: "relative/uri.html"
-            // [1] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
+            // [1] fs[0]: "com.google.common.jimfs.JimfsFileSystem@281b2dfd"
             "relative\\uri.html",
             //
             // uri[1]: "../relative/uri.html"
-            // [2] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
+            // [2] fs[0]: "com.google.common.jimfs.JimfsFileSystem@281b2dfd"
             "..\\relative\\uri.html",
             //
             // uri[2]: "file:///c:/absolute/local/uri.html"
-            // [3] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
+            // [3] fs[0]: "com.google.common.jimfs.JimfsFileSystem@281b2dfd"
             "c:\\absolute\\local\\uri.html",
             //
             // uri[3]: "file://host/absolute/uri.html"
-            // [4] fs[0]: "com.google.common.jimfs.JimfsFileSystem@54361a9"
+            // [4] fs[0]: "com.google.common.jimfs.JimfsFileSystem@281b2dfd"
             "\\\\host\\absolute\\uri.html"),
         // uri
         List.of(
@@ -366,8 +365,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.baseName(file, true),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("file", file))));
+        () -> new ExpectedGeneration(file));
   }
 
   @ParameterizedTest
@@ -376,8 +374,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.cognateFile(file, "_tmp", true),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("file", file))));
+        () -> new ExpectedGeneration(file));
   }
 
   @ParameterizedTest
@@ -386,8 +383,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.cognateFile(file, "_tmp"),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("file", file))));
+        () -> new ExpectedGeneration(file));
   }
 
   @ParameterizedTest
@@ -396,8 +392,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.extension(file, true),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("file", file))));
+        () -> new ExpectedGeneration(file));
   }
 
   @ParameterizedTest
@@ -406,8 +401,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.extension(file),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("file", file))));
+        () -> new ExpectedGeneration(file));
   }
 
   @ParameterizedTest
@@ -416,8 +410,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.filename(path),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("path", path))));
+        () -> new ExpectedGeneration(path));
   }
 
   @ParameterizedTest
@@ -426,9 +419,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.isExtension(file, extension, true),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("file", file),
-            entry("extension", extension))));
+        () -> new ExpectedGeneration(file, extension));
   }
 
   @ParameterizedTest
@@ -437,9 +428,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.isExtension(file, extension),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("file", file),
-            entry("extension", extension))));
+        () -> new ExpectedGeneration(file, extension));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -448,10 +437,8 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.path(uri, fs),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("uri", uri),
-            entry("fs", fs)))
-                .setMaxArgCommentLength(50));
+        () -> new ExpectedGeneration(uri, fs)
+            .setMaxArgCommentLength(50));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -460,9 +447,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.path(uri, fs),
         expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("uri", uri),
-            entry("fs", fs)))
-                .setMaxArgCommentLength(50));
+        () -> new ExpectedGeneration(uri, fs)
+            .setMaxArgCommentLength(50));
   }
 }

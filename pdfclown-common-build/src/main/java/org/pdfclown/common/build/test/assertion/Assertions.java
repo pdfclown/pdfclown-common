@@ -13,11 +13,16 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.lang.Math.max;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.readString;
+import static java.nio.file.Files.writeString;
 import static java.util.Arrays.asList;
+import static java.util.Collections.binarySearch;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Map.entry;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
+import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -25,25 +30,51 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianProduct;
+import static org.pdfclown.common.build.internal.util_.Chars.COMMA;
+import static org.pdfclown.common.build.internal.util_.Chars.DOT;
+import static org.pdfclown.common.build.internal.util_.Chars.HYPHEN;
+import static org.pdfclown.common.build.internal.util_.Chars.LF;
 import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.build.internal.util_.Chars.SLASH;
 import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireEqual;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
+import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.build.internal.util_.Objects.basicLiteral;
+import static org.pdfclown.common.build.internal.util_.Objects.found;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.literal;
+import static org.pdfclown.common.build.internal.util_.Objects.objToElseGet;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
+import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS;
 import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.NULL;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
+import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__JAVA;
+import static org.pdfclown.common.build.internal.util_.reflect.Reflects.methodFqn;
+import static org.pdfclown.common.build.internal.util_.system.Systems.getBooleanProperty;
+import static org.pdfclown.common.build.test.Tests.testFrame;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import com.github.javaparser.Position;
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.LiteralStringValueExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.nio.file.Path;
@@ -51,19 +82,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.function.Failable;
 import org.apache.commons.lang3.function.FailableSupplier;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -71,12 +106,14 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.pdfclown.common.build.internal.util.system.Desktops;
 import org.pdfclown.common.build.internal.util_.Objects;
 import org.pdfclown.common.build.internal.util_.annot.Immutable;
+import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
 import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
+import org.pdfclown.common.build.internal.util_.io.IndentPrintWriter;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.Converter;
-import org.pdfclown.common.build.util.system.Runtimes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Common assertion utilities.
@@ -343,21 +380,20 @@ public final class Assertions {
           for (int i = 0, last = mods.length - 1; i <= last; i++) {
             if (getIndex() % mods[i] == 0) {
               // Main level separator.
-              if (i == 0 && generation.args.size() > 1 && getIndex() > 0) {
-                out().append(INDENT).println("//");
+              if (i == 0 && generation.args.length > 1 && getIndex() > 0) {
+                out().println("//");
               }
 
               // Level title.
-              var arg = generation.args.get(i);
               var indexLabel = i == last ? "[" + (getIndex() + 1) + "] " : EMPTY;
               var argIndent = max(0, 2 * i - indexLabel.length());
-              out().append(INDENT).printf("// %s%s%s%s[%s]: %s\n",
+              out().printf("// %s%s%s%s[%s]: %s\n",
                   indexLabel,
-                  repeat('-', argIndent),
+                  repeat(HYPHEN, argIndent),
                   argIndent == 0 ? EMPTY : SPACE,
-                  arg.getKey(),
+                  getParamName(i),
                   (i == 0 ? getIndex() : getIndex() % mods[i - 1]) / mods[i],
-                  formatArgComment(arg, generation));
+                  formatArgComment(generation.args[i], generation));
             }
           }
         }
@@ -419,14 +455,14 @@ public final class Assertions {
 
         @Override
         protected void generateExpectedComment(ExpectedGeneration generation) {
-          out().append(INDENT).printf("// [%s] ", getIndex() + 1);
-          for (int i = 0; i < generation.args.size(); i++) {
+          out().printf("// [%s] ", getIndex() + 1);
+          for (int i = 0; i < generation.args.length; i++) {
             if (i > 0) {
               out().append("; ");
             }
 
-            var arg = generation.args.get(i);
-            out().printf("%s[%s]: %s", arg.getKey(), getIndex(), formatArgComment(arg, generation));
+            out().printf("%s[%s]: %s", getParamName(i), getIndex(),
+                formatArgComment(generation.args[i], generation));
           }
           out().append("\n");
         }
@@ -543,11 +579,7 @@ public final class Assertions {
      *   assertParameterizedOf(
      *       () -&gt; myMethodToTest(arg0, arg1, . . ., argN),
      *       expected,
-     *       () -&gt; new ExpectedGeneration(List.of(
-     *           entry("arg0", arg0),
-     *           entry("arg1", arg1),
-     *           . . .
-     *           entry("argN", argN))));
+     *       () -&gt; new ExpectedGeneration(arg0, arg1, . . ., argN));
      * }</code></pre>
      * <p>
      * then {@code argIndex} = 0 will define the converter to {@code ArgType0} of the input values
@@ -735,7 +767,7 @@ public final class Assertions {
      */
     public static String expectedSourceCodeForConstructor(Class<?> type, @Nullable Object... args) {
       return String.format("new %s(%s)", fqnd(type),
-          Arrays.stream(args).map(Objects::literal).collect(Collectors.joining(",")));
+          Arrays.stream(args).map(Objects::literal).collect(joining(",")));
     }
 
     /**
@@ -746,20 +778,23 @@ public final class Assertions {
     public static String expectedSourceCodeForFactory(Class<?> type, String methodName,
         @Nullable Object... args) {
       return String.format("%s.%s(%s)", fqnd(type), methodName,
-          Arrays.stream(args).map(Objects::literal).collect(Collectors.joining(",")));
+          Arrays.stream(args).map(Objects::literal).collect(joining(",")));
     }
 
     String argCommentAbbreviationMarker = ELLIPSIS__CHICAGO;
-    Function<@Nullable Object, String> argCommentFormatter = Objects::textLiteral;
-    final List<Entry<String, @Nullable Object>> args;
+    Function<@Nullable Object, String> argCommentFormatter = Objects::literal;
+    final @Nullable Object[] args;
+    @Nullable
+    TestEnvironment environment;
     Function<Object, String> expectedSourceCodeGenerator = Objects::literal;
     int maxArgCommentLength = MAX_ARG_COMMENT_LENGTH__DEFAULT;
-    PrintStream out = System.err;
-    boolean outOverridable = true;
+    @Nullable
+    Appendable out;
+    String @Nullable [] paramNames;
 
     /**
      */
-    public ExpectedGeneration(List<Entry<String, @Nullable Object>> args) {
+    public ExpectedGeneration(@Nullable Object... args) {
       this.args = requireNonNull(args);
     }
 
@@ -793,11 +828,22 @@ public final class Assertions {
     }
 
     /**
-     * Arguments (pairs of parameter name and corresponding argument value) consumed by the current
-     * test invocation.
+     * Arguments consumed by the current test invocation.
      */
-    public List<Entry<String, @Nullable Object>> getArgs() {
+    public @Nullable Object[] getArgs() {
       return args;
+    }
+
+    /**
+     * Test environment.
+     * <p>
+     * Useful in case the tested project is not organized according to <a href=
+     * "https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html">Maven's
+     * Standard Directory Layout</a>
+     * </p>
+     */
+    public @Nullable TestEnvironment getEnvironment() {
+      return environment;
     }
 
     /**
@@ -821,25 +867,29 @@ public final class Assertions {
     }
 
     /**
-     * Stream where the generated expected results source code will be output.
+     * Stream where the generated expected results' source code will be output.
      * <p>
-     * DEFAULT: {@linkplain System#err stderr}
+     * If undefined, the source code file of the test is automatically updated.
      * </p>
      */
-    public PrintStream getOut() {
+    public @Nullable Appendable getOut() {
       return out;
     }
 
     /**
-     * Whether {@link #getOut() out} can be replaced by the generator (for example, to divert the
-     * output to the clipboard — see debug mode in "Expected Results Generation" section within
-     * {@link #argumentsStream(ArgumentsStreamConfig, List, List[]) argumentsStream(..)}).
+     * Parameter names corresponding to the {@linkplain #getArgs() arguments}.
      * <p>
-     * DEFAULT: {@code true}
+     * Normally there is no need to specify them, as they are automatically retrieved during
+     * expected results generation; sometimes, however, they could be inaccessible (for example,
+     * while the filesystem is mocked).
+     * </p>
+     * <p>
+     * <span class="important">IMPORTANT: NEVER use this collection during expected results
+     * generation; use {@link ExpectedGenerator#getParamName(int)} instead.</span>
      * </p>
      */
-    public boolean isOutOverridable() {
-      return outOverridable;
+    public String @Nullable [] getParamNames() {
+      return paramNames;
     }
 
     /**
@@ -855,6 +905,14 @@ public final class Assertions {
      */
     public ExpectedGeneration setArgCommentFormatter(Function<@Nullable Object, String> value) {
       argCommentFormatter = requireNonNull(value);
+      return this;
+    }
+
+    /**
+     * Sets {@link #getEnvironment() environment}.
+     */
+    public ExpectedGeneration setEnvironment(@Nullable TestEnvironment value) {
+      environment = value;
       return this;
     }
 
@@ -878,16 +936,16 @@ public final class Assertions {
     /**
      * Sets {@link #getOut() out}.
      */
-    public ExpectedGeneration setOut(PrintStream value) {
+    public ExpectedGeneration setOut(Appendable value) {
       out = requireNonNull(value);
       return this;
     }
 
     /**
-     * Sets {@link #isOutOverridable() outOverridable}.
+     * Sets {@link #getParamNames() paramNames}.
      */
-    public ExpectedGeneration setOutOverridable(boolean value) {
-      outOverridable = value;
+    public ExpectedGeneration setParamNames(String @Nullable... value) {
+      paramNames = value;
       return this;
     }
   }
@@ -909,30 +967,35 @@ public final class Assertions {
    *     expected_n),</code></pre>
    *
    * @author Stefano Chizzolini
+   * @see Assertions#assertParameterized(Object, Expected, Supplier)
    */
   public abstract static class ExpectedGenerator {
-    protected static final String INDENT = S + SPACE + SPACE;
+    private static final String METHOD_NAME__AS_LIST = "asList";
 
+    private @Nullable MethodCallExpr argumentsStreamCall;
     /**
      * Arguments tuples count.
      */
     private final int count;
+    private @Nullable CompilationUnitEditor editor;
+    /**
+     * Internal buffer for updating the test source code file.
+     *
+     * @see #out
+     */
+    private @Nullable StringWriter editorBuffer;
     /**
      * Current arguments tuple index.
      */
     private int index = -1;
     /**
-     * Target stream (either internal (for output redirection to clipboard, in case of debug mode)
-     * or {@linkplain #generateExpected(Object, ExpectedGeneration) provided}) the generated
-     * representation is written to.
+     * Target stream (either {@linkplain #editorBuffer internal} or
+     * {@linkplain ExpectedGeneration#getOut() external}) the generated expected results are written
+     * to.
      */
-    private @Nullable PrintStream out;
-    /**
-     * Internal target stream buffer.
-     *
-     * @see #out
-     */
-    private @Nullable ByteArrayOutputStream outBuffer;
+    private @Nullable IndentPrintWriter out;
+    private String @Nullable [] paramNames;
+    private @Nullable String testMethodFqn;
 
     protected ExpectedGenerator(int count) {
       this.count = count;
@@ -950,7 +1013,8 @@ public final class Assertions {
      * <li>regular result — via
      * {@code generation.}{@link ExpectedGeneration#getExpectedSourceCodeGenerator()
      * expectedSourceCodeGenerator}</li>
-     * <li>{@code null} — to literal null ({@code "null"})</li>
+     * <li>{@code null} — to literal
+     * ({@value org.pdfclown.common.build.internal.util_.Strings#NULL})</li>
      * </ul>
      *
      * @param expected
@@ -983,16 +1047,17 @@ public final class Assertions {
       return index;
     }
 
+    /**
+     * Whether all the argument iterations have already been processed.
+     */
     public boolean isComplete() {
       return out == null && index >= 0;
     }
 
-    protected String formatArgComment(Entry<String, @Nullable Object> arg,
-        ExpectedGeneration generation) {
+    protected String formatArgComment(@Nullable Object arg, ExpectedGeneration generation) {
       String comment;
       var ret = abbreviate(
-          comment = generation.argCommentFormatter.apply(arg.getValue()).lines().findFirst()
-              .orElse(EMPTY),
+          comment = generation.argCommentFormatter.apply(arg).lines().findFirst().orElse(EMPTY),
           generation.argCommentAbbreviationMarker,
           generation.maxArgCommentLength);
       /*
@@ -1015,37 +1080,122 @@ public final class Assertions {
 
     protected abstract void generateExpectedComment(ExpectedGeneration generation);
 
-    protected <T> void generateExpectedSourceCode(@Nullable Object expected,
+    protected void generateExpectedSourceCode(@Nullable Object expected,
         ExpectedGeneration generation) {
+      // Generate the source code corresponding to `expected`!
       String expectedSourceCode;
       if (expected == null) {
         expectedSourceCode = NULL;
       } else if (expected instanceof Failure) {
         var failure = (Failure) expected;
+        var failureRef = fqnd(Failure.class);
+        if (editor != null) {
+          if (editor.tryImport(failureRef, false)) {
+            failureRef = Failure.class.getSimpleName();
+          }
+        }
         expectedSourceCode = String.format("new %s(%s, %s)",
-            fqnd(Failure.class), literal(failure.getName()), literal(failure.getMessage()));
+            failureRef, literal(failure.getName()), literal(failure.getMessage()));
       } else {
-        //noinspection unchecked
-        expectedSourceCode = generation.expectedSourceCodeGenerator.apply((T) expected);
+        expectedSourceCode = generation.expectedSourceCodeGenerator.apply(expected);
       }
-      out().append(INDENT).append(expectedSourceCode);
+
+      // Check the generated source code is valid!
+      try {
+        Expression expression = StaticJavaParser.parseExpression(expectedSourceCode);
+        if (expression instanceof LiteralStringValueExpr) {
+          // Split multiline string literal at newlines to improve readability!
+          expectedSourceCode = expectedSourceCode.replaceAll(
+              "\\\\n(?!\"\\z)"/*
+                               * NOTE: `(?!\"\\z)` expression ensures trailing newline doesn't split
+                               * to empty tail
+                               */,
+              "\\\\n\"\n+\"");
+        }
+      } catch (RuntimeException ex) {
+        throw runtime("Generated expected source code INVALID", ex);
+      }
+
+      // Add the generated source code to output!
+      out().append(expectedSourceCode);
     }
 
-    protected PrintStream out() {
+    /**
+     * Gets the parameter name at the given position.
+     */
+    protected String getParamName(int index) {
+      assert paramNames != null;
+
+      return paramNames[index];
+    }
+
+    /**
+     * Output stream for generated expected results.
+     */
+    protected IndentPrintWriter out() {
       assert out != null;
+
       return out;
     }
 
     private void begin(ExpectedGeneration generation) {
-      // Output redirect to clipboard?
-      if (generation.outOverridable && Runtimes.isDebugging() && Desktops.isGUI()) {
-        out = new PrintStream(outBuffer = new ByteArrayOutputStream(), true, UTF_8);
+      if (generation.paramNames != null) {
+        paramNames = generation.paramNames;
       }
-      // No output redirect.
-      else {
-        out = generation.out;
 
-        printInfo("Expected results source code generation underway...");
+      out = IndentPrintWriter.of(generation.out != null
+          // Output redirection to arbitrary stream.
+          ? generation.out
+          // Output to update test unit's source code file.
+          : (editorBuffer = new StringWriter()), null);
+
+      var testFrame = testFrame().orElseThrow();
+      testMethodFqn = methodFqn(testFrame);
+
+      printInfo("Expected results source code generation underway for `" + testMethodFqn
+          + "()`" + ELLIPSIS);
+
+      if (editorBuffer != null /* Output to update the source code file */
+          || paramNames == null /* Output redirection requiring test metadata retrieval */) {
+        try {
+          editor = getCompilationUnitEditor(testFrame.getDeclaringClass(), generation.environment);
+        } catch (IOException ex) {
+          throw runtime("Compilation unit `{}` loading FAILED (TIP: {})", testFrame.getClassName(),
+              editorBuffer != null
+                  ? "if filesystem is mocked, specify `ExpectedGeneration.out` and "
+                      + "`ExpectedGeneration.paramNames` to avoid source code access; "
+                      + "otherwise, if your project doesn't adhere to Maven's standard directory "
+                      + "layout, provide a `TestEnvironment` to resolve project files accordingly"
+                  : "specify `ExpectedGeneration.paramNames` to avoid source code access",
+              ex);
+        }
+        for (MethodDeclaration method : editor.source.getPrimaryType()
+            .orElseThrow().getMethodsByName(testFrame.getMethodName())) {
+          if (method.getParameters().isEmpty()) {
+            MethodDeclaration argumentsSourceMethod = editor.source.getPrimaryType()
+                .orElseThrow().getMethodsBySignature(testFrame.getMethodName()).get(0);
+            argumentsStreamCall = argumentsSourceMethod.getBody().orElseThrow()
+                .findFirst(MethodCallExpr.class, $ -> $.getNameAsString().equals("argumentsStream"))
+                .orElseThrow();
+          } else if (method.isAnnotationPresent(ParameterizedTest.class)) {
+            paramNames = method.getParameters().stream()
+                .skip(1) // Skips `expected`
+                .map(Parameter::getNameAsString)
+                .toArray(String[]::new);
+          }
+        }
+        requireNonNullElseThrow(paramNames,
+            () -> runtime("{} for {}() NOT FOUND", ParameterizedTest.class, testMethodFqn));
+        requireNonNullElseThrow(argumentsStreamCall,
+            () -> runtime("{}() NOT FOUND", testMethodFqn));
+
+        if (editorBuffer == null) {
+          /*
+           * NOTE: In case of output redirection the editor must be suppressed, as it is only used
+           * temporarily for test metadata retrieval via compilation unit inspection.
+           */
+          editor = null;
+        }
       }
     }
 
@@ -1053,36 +1203,56 @@ public final class Assertions {
       if (++index == 0) {
         begin(generation);
 
-        out().println("// expected\n"
-            + "java.util.Arrays.asList(");
+        var asListMethodRef = "java.util.Arrays" + DOT + METHOD_NAME__AS_LIST;
+        if (editor != null && editor.tryImport(asListMethodRef, true)) {
+          asListMethodRef = METHOD_NAME__AS_LIST;
+        }
+        out()
+            .append("," + LF)
+            .setLevel(argumentsStreamCall != null
+                ? (argumentsStreamCall.getArguments().get(0).getBegin().orElseThrow().column - 1)
+                    / out().getIndent().getWidth()
+                : 0)
+            .append("// expected" + LF)
+            .append(asListMethodRef).append("(" + LF)
+            .indent();
       }
     }
 
     private void end() {
       assert out != null;
 
-      var message = new StringBuilder("Expected results source code GENERATED");
-      if (outBuffer != null) {
-        // Transfer output to clipboard!
-        Desktops.copyToClipboard(outBuffer.toString(UTF_8));
+      String target;
+      if (editor != null) {
+        assert editorBuffer != null;
+        assert argumentsStreamCall != null;
 
-        message.append(", and COPIED to clipboard (IMPORTANT: in order to work, a clipboard "
-            + "manager must be active on the system)");
+        target = textLiteral(editor.file);
+
+        // Replace the old expected results' expression with the generated one!
+        editor.replace(
+            argumentsStreamCall.getArguments().get(0).getEnd().orElseThrow().right(1),
+            argumentsStreamCall.getArguments().get(1).getEnd().orElseThrow().right(1),
+            editorBuffer.toString());
 
         out.close();
+      } else {
+        target = "stream";
       }
-      printInfo(message);
+
+      printInfo("Expected results source code GENERATED for `" + testMethodFqn + "()` to "
+          + target);
 
       out = null;
     }
 
     private void endExpected() {
       if (index == getCount() - 1) {
-        out().println("),");
+        out().print(S + ROUND_BRACKET_CLOSE);
 
         end();
       } else {
-        out().println(",");
+        out().println(S + COMMA);
       }
     }
 
@@ -1127,6 +1297,239 @@ public final class Assertions {
     }
   }
 
+  /**
+   * Compilation unit editor.
+   * <p>
+   * Because of technical limitations in the parsed {@linkplain #source compilation unit}, it is
+   * used as a read-only model (source), whilst the modifications are applied to a
+   * {@linkplain #targetBuilder buffer} (target).
+   * </p>
+   *
+   * @implNote Despite javaparser's rich API, its awkwardness in dealing with comments and
+   *           replacement positioning severely impairs source code editing, forcing us to bake this
+   *           custom editor for easy and precise source code replacement, leveraging javaparser for
+   *           model reading only.
+   *           <p>
+   *           Here are javaparser's editing issues preventing it from being used (let us know if
+   *           you can solve them):
+   *           </p>
+   *           <ul>
+   *           <li>out-of-sequence {@linkplain Node#getOrphanComments() orphan comments} make
+   *           painful if not practically impossible to place multiple line comments before a
+   *           newly-inserted expression, like this: <pre class="lang-java" data-line="3-4"><code>
+  // expected
+  asList(
+  <span style="background-color:yellow;color:black;">// from[0]: "my/sub/same.html"
+  // [1] to[0]: "my/sub/same.html"</span>
+  "",
+  // [2] to[1]: "my/another/sub/to.html"
+  "../another/sub/to.html",
+  . . .
+  //
+  // from[1]: "my/another/sub/from.html"
+  // [11] to[0]: "my/sub/same.html"
+  "../../sub/same.html",
+  . . .</code></pre></li>
+   *           <li>on argument addition, non-orphan comments are stuck to the line preceding their
+   *           owner node's insertion point, thus disrupting their formatting, as trailing comments
+   *           are left in place by formatters — for example:
+   *           <pre class="lang-java" data-line="2-5"><code>
+  // expected
+  asList(<span style="background-color:yellow;color:black;">// [1] unit[0]: a (Are)</span>
+  100.0, <span style="background-color:yellow;color:black;">// [2] unit[1]: ac (Acre)</span>
+  4046.8564224, <span style=
+  "background-color:yellow;color:black;">// [3] unit[2]: cm (Centimetre)</span>
+  0.01, <span style=
+  "background-color:yellow;color:black;">// [4] unit[3]: cm² (Square centimetre)</span>
+  . . .</code></pre></li>
+   *           <li>on argument replacement of an expression preceded by a comment, the insertion
+   *           point of the new comment+expression is at the old expression's position rather than
+   *           the old comment's, leaving a blank line — for example, if the original code is:
+   *           <pre class="lang-java" data-line="3-4"><code>
+  return argumentsStream(
+  cartesian(),
+  <span style="background-color:yellow;color:black;">    // expected
+  asList(</span>
+  . . .</code></pre>
+   *           <p>
+   *           then its replacement is:
+   *           </p>
+   *           <pre class="lang-java" data-line="3-5"><code>
+  return argumentsStream(
+  cartesian(),
+  <span style="background-color:yellow;color:black;">
+
+  // expected
+  asList(</span>
+  . . .</code></pre></li>
+   *           </ul>
+   *           <p>
+   *           NOTE: javaparser editing here assumes {@linkplain LexicalPreservingPrinter preserving
+   *           existing formatting}.
+   *           </p>
+   * @author Stefano Chizzolini
+   */
+  private static class CompilationUnitEditor {
+    /**
+     * Compilation unit.
+     */
+    final CompilationUnit source;
+    /**
+     * {@linkplain #source Compilation unit} file.
+     */
+    final Path file;
+
+    private boolean changed;
+    /**
+     * Modified {@linkplain #source compilation unit} content.
+     */
+    private final StringBuilder targetBuilder;
+    private final Set<String> targetImports = new HashSet<>();
+    /**
+     * Sequence of line differences between {@linkplain #targetBuilder target} and
+     * {@linkplain #source source}, keyed by source line.
+     */
+    private final List<Entry<Integer, Integer>> targetLineOffsets = new ArrayList<>();
+
+    CompilationUnitEditor(Path file) throws IOException {
+      this.file = file;
+
+      source = StaticJavaParser.parse(file);
+      targetBuilder = new StringBuilder(readString(file));
+    }
+
+    /**
+     * Inserts content at the given position.
+     *
+     * @param position
+     *          {@link #source} position where to insert the content.
+     * @param newContent
+     *          Content to insert.
+     */
+    public void insert(Position position, String newContent) {
+      int targetPosition = indexOf(position);
+
+      targetBuilder.insert(targetPosition, newContent);
+
+      onChange(position, EMPTY, newContent);
+    }
+
+    /**
+     * Whether the {@linkplain #source compilation unit} has changed.
+     */
+    public boolean isChanged() {
+      return changed;
+    }
+
+    /**
+     * Replaces content within the given range.
+     *
+     * @param start
+     *          Starting {@link #source} position to replace.
+     * @param end
+     *          Ending {@link #source} position to replace.
+     * @param newContent
+     *          Replacement content.
+     */
+    public void replace(Position start, Position end, String newContent) {
+      int targetStart = indexOf(start);
+      int targetEnd = indexOf(end);
+
+      String oldContent = targetBuilder.substring(targetStart, targetEnd);
+
+      targetBuilder.replace(targetStart, targetEnd, newContent);
+
+      onChange(start, oldContent, newContent);
+    }
+
+    /**
+     * Tries to declare the import of an element.
+     *
+     * @param name
+     *          Fully-qualified name to import.
+     * @param static_
+     *          Whether the import must be static (in case {@code name} is a method, rather than a
+     *          type).
+     * @return {@code true}, if {@code name} is imported; otherwise, a collision with existing
+     *         imports occurred.
+     */
+    public boolean tryImport(String name, boolean static_) {
+      if (targetImports.contains(name))
+        return true;
+
+      var simpleName = name.substring(name.lastIndexOf(DOT) + 1);
+      boolean found = false;
+      for (var import_ : source.getImports()) {
+        if (import_.getNameAsString().equals(name)) {
+          found = true;
+          break;
+        } else if (import_.getName().getIdentifier().equals(simpleName))
+          return false;
+      }
+      if (!found) {
+        Position start = requireNonNull(objToElseGet(
+            source.getImports().getFirst().orElse(null),
+            $ -> $.getBegin().orElseThrow(),
+            () -> source.getPackageDeclaration().orElseThrow().getEnd().orElseThrow().right(1)),
+            "Import statements location NOT FOUND");
+        insert(start, String.format("import %s%s;\n", static_ ? "static" + SPACE : EMPTY, name));
+      }
+      targetImports.add(name);
+      return true;
+    }
+
+    /**
+     * Gets the target index corresponding to a source position.
+     *
+     * @param position
+     *          {@link #source} position.
+     */
+    private int indexOf(Position position) {
+      // Convert source line to target!
+      int targetLine = position.line;
+      for (var lineOffset : targetLineOffsets) {
+        if (lineOffset.getKey().compareTo(position.line) < 0) {
+          targetLine += lineOffset.getValue();
+        } else {
+          break;
+        }
+      }
+
+      int index = 0;
+      int line = 1;
+      while (line < targetLine) {
+        index = targetBuilder.indexOf(S + LF, index);
+        if (!found(index))
+          return INDEX__NOT_FOUND;
+
+        line++;
+        index++;
+      }
+      return index + position.column - 1;
+    }
+
+    private void onChange(Position start, String oldContent, String newContent) {
+      changed = true;
+
+      @SuppressWarnings("unchecked")
+      int targetLineOffsetsIndex = binarySearch(targetLineOffsets, start.line,
+          Comparator.comparingInt(
+              $ -> $ instanceof Entry ? ((Entry<Integer, Integer>) $).getKey() : (Integer) $));
+      if (found(targetLineOffsetsIndex))
+        throw unexpected(targetLineOffsetsIndex,
+            "Target line offset already exists (replacing already changed content NOT ALLOWED)");
+
+      int sourceLineCount = countMatches(oldContent, LF);
+      int targetLineCount = countMatches(newContent, LF);
+
+      targetLineOffsetsIndex = -(targetLineOffsetsIndex + 1);
+      targetLineOffsets.add(targetLineOffsetsIndex,
+          entry(start.line, targetLineCount - sourceLineCount));
+    }
+  }
+
+  private static @LazyNonNull @Nullable Map<Path, CompilationUnitEditor> compilationUnitEditors;
+
   private static final ThreadLocal<@Nullable ExpectedGenerator> expectedGenerator =
       new ThreadLocal<>();
 
@@ -1141,6 +1544,56 @@ public final class Assertions {
   };
 
   private static final FileTreeAsserter FILE_TREE_ASSERTER = new FileTreeAsserter();
+
+  private static final Logger log = LoggerFactory.getLogger(Assertions.class);
+
+  /**
+   * CLI parameter specifying whether
+   * {@linkplain #argumentsStream(ArgumentsStreamConfig, List, List[]) expected results generation}
+   * is enabled for executed {@linkplain ParameterizedTest parameterized tests}.
+   * <p>
+   * <b>Expected results</b> represent the state against which the corresponding actual state
+   * generated by the tested project code is
+   * {@linkplain #assertParameterized(Object, Expected, Supplier) validated}. If the expected
+   * results are undefined or their validation is false negative because the tested project code
+   * innovated the expected state, the {@linkplain #assertParameterized(Object, Expected, Supplier)
+   * validator} can regenerate them through this CLI parameter.
+   * </p>
+   * <p>
+   * The value of this CLI parameter is a boolean which can be omitted (default: {@code true}).
+   * </p>
+   *
+   * @apiNote Common usage examples (Maven build system):
+   *          <ul>
+   *          <li>to regenerate all the results, no matter the tests they belong to:
+   *          <pre class="lang-shell"><code>
+   * mvn test ... -Dassert.params.update</code></pre></li>
+   *          <li>to regenerate the results belonging to specific test classes (for example,
+   *          {@code MyObjectTest}): <pre class="lang-shell"><code>
+   * mvn test ... -Dassert.params.update -Dtest=MyObjectTest</code></pre></li>
+   *          <li>to regenerate the results belonging to specific test cases (for example,
+   *          {@code MyObjectTest.myTest}): <pre class="lang-shell"><code>
+   * mvn test ... -Dassert.params.update -Dtest=MyObjectTest#myTest</code></pre></li>
+   *          <li>to regenerate the results belonging to multiple test classes (for example,
+   *          {@code MyObjectTest} and {@code MyOtherObjectTest}), they can be specified as a
+   *          comma-separated list: <pre class="lang-shell"><code>
+   * mvn test ... -Dassert.params.update -Dtest=MyObjectTest,MyOtherObjectTest</code></pre></li>
+   *          </ul>
+   *          <p>
+   *          NOTE: {@code test} CLI parameter is typically mapped by Maven plugins (such as
+   *          <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/">Failsafe</a>) to
+   *          the corresponding JUnit system property which allows fine-grained test selection (see
+   *          the relevant documentation); if your build system doesn't support it, adjust your
+   *          commands accordingly. Furthermore, if the names of your test cases are overridden
+   *          (that is, their names are different from the corresponding test methods), it's up to
+   *          you to use their actual names, as they are internally resolved by JUnit.
+   *          </p>
+   */
+  public static final String PARAM_NAME__PARAMS_UPDATE = "assert.params.update";
+  static {
+    log.info("`{}` CLI parameter: {}", PARAM_NAME__PARAMS_UPDATE,
+        getBooleanProperty(PARAM_NAME__PARAMS_UPDATE));
+  }
 
   /**
    * Combines argument lists into a stream of corresponding {@linkplain Arguments parametric tuples}
@@ -1160,11 +1613,7 @@ public final class Assertions {
    *   assertParameterizedOf(
    *       () -&gt; myMethodToTest(arg0, arg1, . . ., argN),
    *       expected,
-   *       () -&gt; new ExpectedGeneration(List.of(
-   *           entry("arg0", arg0),
-   *           entry("arg1", arg1),
-   *           . . .
-   *           entry("argN", argN))));
+   *       () -&gt; new ExpectedGeneration(arg0, arg1, . . ., argN));
    * }</code></pre>
    * <p>
    * See {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} for more
@@ -1177,46 +1626,40 @@ public final class Assertions {
    * way failed results (that is, thrown exceptions) are handled along with regular ones.
    * </p>
    * <p>
-   * Here, the steps to generate {@code expected} (based on the example in
-   * {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)}):
+   * There are two ways to trigger the automatic source code generation (code snippets herein are
+   * based on the example in {@link #assertParameterized(Object, Expected, Supplier)
+   * assertParameterized(..)}):
    * </p>
-   * <ol>
-   * <li>pass {@code null} as {@code expected} argument to this
-   * method:<pre class="lang-java" data-line="5"><code>
-   * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
-   *   return argumentsStream(
-   *       ArgumentsStreamConfig.cartesian(),
-   *       // expected
-   *       <span style="background-color:yellow;color:black;">null</span>,
-   *       // value
-   *       asList(
-   *           "Capitalized",
-   *           "uncapitalized",
-   *           . . .
-   *           "UNDERSCORE_TEST"));
+   * <ul>
+   * <li>either execute the test passing {@code null} as {@code expected} argument to this method —
+   * for example:<pre class="lang-java" data-line="6"><code>
+   * class StringsTest {
+   *   private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
+   *     return argumentsStream(
+   *         ArgumentsStreamConfig.cartesian(),
+   *         // expected
+   *         <span style="background-color:yellow;color:black;">null</span>,
+   *         // value
+   *         asList(
+   *             "Capitalized",
+   *             "uncapitalized",
+   *             . . .
+   *             "UNDERSCORE_TEST"));
+   *   }
    * }</code></pre></li>
-   * <li>in your IDE, <i>run the test in debug mode — this will cause the generated source code to
-   * be copied directly into your clipboard</i>, ready to get pasted as {@code expected} argument
-   * (see next step).
+   * <li>or launch the test specifying the {@value #PARAM_NAME__PARAMS_UPDATE} CLI parameter — for
+   * example (Maven build system):<pre class="lang-shell"><code>
+  mvn test ... -Dassert.params.update -Dtest=StringsTest#uncapitalizeGreedy</code></pre>
    * <p>
-   * Conversely, if run in normal mode, the generated source code will be output to
-   * {@link ExpectedGeneration#out}, as specified in the
-   * {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} call (by
-   * default, {@linkplain System#err stderr}):
+   * NOTE: The same parameter can obviously be passed to a run configuration within an IDE.
    * </p>
-   * <pre class="lang-java" data-line="8"><code>
-   * &#64;ParameterizedTest
-   * &#64;MethodSource
-   * public void uncapitalizeGreedy(Expected&lt;String&gt; expected, String value) {
-   *   assertParameterizedOf(
-   *       () -&gt; Strings.uncapitalizeGreedy(value),
-   *       expected,
-   *       () -&gt; new ExpectedGeneration(List.of(
-   *           entry("value", value)))); // <span style=
-   * "background-color:yellow;color:black;">&lt;- No `out` stream specified here, so it defaults to stderr</span>
-   * }</code></pre></li>
-   * <li>replace {@code null} (step 1) with the generated source code (step 2) as {@code expected}
-   * argument:<pre class="lang-java" data-line="5-12"><code>
+   * </li>
+   * </ul>
+   * <p>
+   * The ensuing test execution will automatically update the source code of {@code expected}
+   * argument with the generated expected results:
+   * </p>
+   * <pre class="lang-java" data-line="5-12"><code>
    * private static Stream&lt;Arguments&gt; uncapitalizeGreedy() {
    *   return argumentsStream(
    *       ArgumentsStreamConfig.cartesian(),
@@ -1235,8 +1678,15 @@ public final class Assertions {
    *           "uncapitalized",
    *           . . .
    *           "UNDERSCORE_TEST"));
-   * }</code></pre></li>
-   * </ol>
+   * }</code></pre>
+   * <p>
+   * To regenerate all the results, no matter the tests they belong to:
+   * </p>
+   * <pre class="lang-shell"><code>
+  mvn test ... -Dassert.params.update</code></pre>
+   * <p>
+   * See {@value #PARAM_NAME__PARAMS_UPDATE} CLI parameter for further information.
+   * </p>
    * <h4>Arguments Conversion</h4>
    * <p>
    * JUnit 5 allows to customize the representation of input values for parameterized test arguments
@@ -1274,6 +1724,11 @@ public final class Assertions {
    */
   public static Stream<Arguments> argumentsStream(ArgumentsStreamConfig config,
       @Nullable List<?> expected, List<?>... args) {
+    if (getBooleanProperty(PARAM_NAME__PARAMS_UPDATE)) {
+      // Force generation mode!
+      expected = null;
+    }
+
     // Argument lists transformation.
     List<Expected<?>> expectedList;
     List<List<?>> argsList;
@@ -1456,8 +1911,7 @@ public final class Assertions {
    *     assertParameterizedOf(
    *         () -&gt; Strings.uncapitalizeGreedy(value)),
    *         expected,
-   *         () -&gt; new ExpectedGeneration(List.of(
-   *             entry("value", value))));
+   *         () -&gt; new ExpectedGeneration(value));
    *   }
    * }</code></pre>
    */
@@ -1512,12 +1966,11 @@ public final class Assertions {
         generator.generateExpected(actual, generation);
         complete = generator.isComplete();
       } finally {
-        /*
-         * Ensures the generator is properly discarded, either on normal completion or on
-         * malfunction.
-         */
         if (complete) {
-          expectedGenerator.remove();
+          expectedGenerator.remove() /*
+                                      * Ensures the generator is properly discarded, either on
+                                      * normal completion or on malfunction
+                                      */;
         }
       }
     }
@@ -1618,6 +2071,40 @@ public final class Assertions {
       } catch (AssertionError ex) {
         delta *= 10 /* Inflates delta to the next order of magnitude */;
       }
+    }
+  }
+
+  /**
+   * Gets the editor for the compilation unit corresponding to a type.
+   *
+   * @param environment
+   *          Test environment, used to resolve the source code file corresponding to {@code type}
+   *          (if undefined, the file is assumed to be inside a project organized according to
+   *          <a href=
+   *          "https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html">Maven's
+   *          Standard Directory Layout</a>).
+   */
+  private static synchronized CompilationUnitEditor getCompilationUnitEditor(Class<?> type,
+      @Nullable TestEnvironment environment) throws IOException {
+    if (compilationUnitEditors == null) {
+      compilationUnitEditors = new HashMap<>();
+
+      // Schedule modified compilation units saving on session end!
+      Runtime.getRuntime().addShutdownHook(
+          new Thread(() -> compilationUnitEditors.values().stream()
+              .filter(CompilationUnitEditor::isChanged)
+              .forEach(Failable.asConsumer($ -> writeString($.file, $.targetBuilder)))));
+    }
+
+    var compilationUnitFile = environment != null
+        ? environment.typeSrcPath(type)
+        : Path.of(EMPTY).toAbsolutePath()
+            .resolve("src/test/java/" + type.getName().replace(DOT, SLASH) + FILE_EXTENSION__JAVA);
+    try {
+      return compilationUnitEditors.computeIfAbsent(compilationUnitFile,
+          Failable.asFunction(CompilationUnitEditor::new));
+    } catch (UncheckedIOException ex) {
+      throw ex.getCause();
     }
   }
 

@@ -13,11 +13,9 @@
 package org.pdfclown.common.util.system;
 
 import static java.util.Arrays.asList;
-import static java.util.List.of;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.util.Aggregations.entry;
 
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
@@ -31,11 +29,11 @@ import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
  * @author Stefano Chizzolini
  */
 class SystemsTest {
-  static Stream<Arguments> getBoolProperty() {
+  static Stream<Arguments> getBooleanProperty() {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // [1] value[0]: null
             false,
             // [2] value[1]: "false"
@@ -60,7 +58,7 @@ class SystemsTest {
 
   @ParameterizedTest
   @MethodSource
-  void getBoolProperty(Expected<String> expected, @Nullable String value) {
+  void getBooleanProperty(Expected<String> expected, @Nullable String value) {
     final var key = "myProperty";
 
     assertParameterizedOf(
@@ -70,10 +68,9 @@ class SystemsTest {
           } else {
             System.clearProperty(key);
           }
-          return Systems.getBoolProperty(key);
+          return Systems.getBooleanProperty(key);
         },
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("value", value))));
+        () -> new ExpectedGeneration(value));
   }
 }

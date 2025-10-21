@@ -13,8 +13,6 @@
 package org.pdfclown.common.build.util.io;
 
 import static java.util.Arrays.asList;
-import static java.util.List.of;
-import static org.pdfclown.common.build.internal.util_.Aggregations.entry;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.test.assertion.Assertions.Argument.qnamed;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
@@ -199,36 +197,36 @@ public class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         asList(
-            // filePath[0]: relative/index1.html
-            // [1] baseDir[0]: local
+            // filePath[0]: "relative/index1.html"
+            // [1] baseDir[0]: "local"
             "/relative/index1.html",
-            // [2] baseDir[1]: ../local
+            // [2] baseDir[1]: "../local"
             "/relative/index1.html",
-            // [3] baseDir[2]: /host/absolute
+            // [3] baseDir[2]: "/host/absolute"
             "/relative/index1.html",
             //
-            // filePath[1]: ../relative/index2.html
-            // [4] baseDir[0]: local
+            // filePath[1]: "../relative/index2.html"
+            // [4] baseDir[0]: "local"
             null,
-            // [5] baseDir[1]: ../local
+            // [5] baseDir[1]: "../local"
             null,
-            // [6] baseDir[2]: /host/absolute
+            // [6] baseDir[2]: "/host/absolute"
             null,
             //
-            // filePath[2]: /host/cwd/local/index3.html
-            // [7] baseDir[0]: local
+            // filePath[2]: "/host/cwd/local/index3.html"
+            // [7] baseDir[0]: "local"
             "/index3.html",
-            // [8] baseDir[1]: ../local
+            // [8] baseDir[1]: "../local"
             null,
-            // [9] baseDir[2]: /host/absolute
+            // [9] baseDir[2]: "/host/absolute"
             null,
             //
-            // filePath[3]: /host/absolute/another/index4.html
-            // [10] baseDir[0]: local
+            // filePath[3]: "/host/absolute/another/index4.html"
+            // [10] baseDir[0]: "local"
             null,
-            // [11] baseDir[1]: ../local
+            // [11] baseDir[1]: "../local"
             null,
-            // [12] baseDir[2]: /host/absolute
+            // [12] baseDir[2]: "/host/absolute"
             "/another/index4.html"),
         // filePath
         asList(
@@ -250,36 +248,36 @@ public class ResourceNamesTest extends BaseTest {
         cartesian(),
         // expected
         asList(
-            // filePath[0]: relative\index1.html
-            // [1] baseDir[0]: local
+            // filePath[0]: "relative\\index1.html"
+            // [1] baseDir[0]: "local"
             "/relative/index1.html",
-            // [2] baseDir[1]: ..\local
+            // [2] baseDir[1]: "..\\local"
             "/relative/index1.html",
-            // [3] baseDir[2]: c:\absolute
+            // [3] baseDir[2]: "c:\\absolute"
             "/relative/index1.html",
             //
-            // filePath[1]: ..\relative\index2.html
-            // [4] baseDir[0]: local
+            // filePath[1]: "..\\relative\\index2.html"
+            // [4] baseDir[0]: "local"
             null,
-            // [5] baseDir[1]: ..\local
+            // [5] baseDir[1]: "..\\local"
             null,
-            // [6] baseDir[2]: c:\absolute
+            // [6] baseDir[2]: "c:\\absolute"
             null,
             //
-            // filePath[2]: c:\cwd\local\index3.html
-            // [7] baseDir[0]: local
+            // filePath[2]: "c:\\cwd\\local\\index3.html"
+            // [7] baseDir[0]: "local"
             "/index3.html",
-            // [8] baseDir[1]: ..\local
+            // [8] baseDir[1]: "..\\local"
             null,
-            // [9] baseDir[2]: c:\absolute
+            // [9] baseDir[2]: "c:\\absolute"
             null,
             //
-            // filePath[3]: c:\absolute\another\index4.html
-            // [10] baseDir[0]: local
+            // filePath[3]: "c:\\absolute\\another\\index4.html"
+            // [10] baseDir[0]: "local"
             null,
-            // [11] baseDir[1]: ..\local
+            // [11] baseDir[1]: "..\\local"
             null,
-            // [12] baseDir[2]: c:\absolute
+            // [12] baseDir[2]: "c:\\absolute"
             "/another/index4.html"),
         // filePath
         asList(
@@ -652,20 +650,18 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.abs(name),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name", name))));
+        () -> new ExpectedGeneration(name));
   }
 
   @ParameterizedTest
   @MethodSource
   void based_Object(Expected<String> expected, String name,
       @Nullable Object base) {
+    //noinspection DataFlowIssue : null deliberated.
     assertParameterizedOf(
         () -> ResourceNames.based(name, base),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name", name),
-            entry("base", base))));
+        () -> new ExpectedGeneration(name, base));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -674,9 +670,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.based(filePath, baseDir, true),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("filePath", filePath),
-            entry("baseDir", baseDir))));
+        () -> new ExpectedGeneration(filePath, baseDir));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -685,9 +679,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.based(filePath, baseDir, true),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("filePath", filePath),
-            entry("baseDir", baseDir))));
+        () -> new ExpectedGeneration(filePath, baseDir));
   }
 
   @ParameterizedTest
@@ -696,8 +688,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.isAbs(name),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name", name))));
+        () -> new ExpectedGeneration(name));
   }
 
   @ParameterizedTest
@@ -706,8 +697,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.isDir(name),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name", name))));
+        () -> new ExpectedGeneration(name));
   }
 
   void name_0() {
@@ -720,8 +710,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.name(name0),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name0", name0))));
+        () -> new ExpectedGeneration(name0));
   }
 
   @ParameterizedTest
@@ -730,9 +719,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.name(name0, name1),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name0", name0),
-            entry("name1", name1))));
+        () -> new ExpectedGeneration(name0, name1));
   }
 
   @ParameterizedTest
@@ -741,8 +728,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.normal(name),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name", name))));
+        () -> new ExpectedGeneration(name));
   }
 
   @ParameterizedTest
@@ -751,8 +737,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.parent(name),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name", name))));
+        () -> new ExpectedGeneration(name));
   }
 
   @ParameterizedTest
@@ -761,7 +746,6 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.rel(name),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name", name))));
+        () -> new ExpectedGeneration(name));
   }
 }

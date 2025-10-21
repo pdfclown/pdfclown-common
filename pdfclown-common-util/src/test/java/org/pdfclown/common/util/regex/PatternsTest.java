@@ -13,13 +13,13 @@
 package org.pdfclown.common.util.regex;
 
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
 import static org.pdfclown.common.build.test.assertion.Assertions.evalParameterized;
-import static org.pdfclown.common.util.Aggregations.entry;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -60,10 +60,10 @@ class PatternsTest extends BaseTest {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
-            // [1] glob[0]: "/**/my*.*"
+        asList(
+            // [1] glob[0]: "\"/**/my*.*\" (regex)"
             "/.*/my[^/]*\\.[^/]*",
-            // [2] glob[1]: "/home/*User/**/foo?a?/*.md"
+            // [2] glob[1]: "\"/home/*User/**/foo?a?/*.md\" (regex)"
             "/home/[^/]*User/.*/foo.a./[^/]*\\.md"),
         // pattern
         asList(
@@ -90,8 +90,8 @@ class PatternsTest extends BaseTest {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
-            // [1] pattern[0]: "Som? content. * more (*)\\?"
+        asList(
+            // [1] pattern[0]: "\"Som? content. * more (*)\\\\?\" (regex)"
             "Som. content\\. .* more \\(.*\\)\\?"),
         // pattern
         asList(
@@ -103,12 +103,11 @@ class PatternsTest extends BaseTest {
   @ParameterizedTest
   @MethodSource
   void globToRegex(Expected<String> expected, RegexArgument glob) {
-    var actual = (String) evalParameterized(
-        () -> Patterns.globToRegex(glob.getValue()));
+    var actual = requireNonNull((String) evalParameterized(
+        () -> Patterns.globToRegex(glob.getValue())));
 
     assertParameterized(actual, expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("glob", glob))));
+        () -> new ExpectedGeneration(glob));
     assertRegexMatches(actual, glob.matches, true);
     assertRegexMatches(actual, glob.mismatches, false);
   }
@@ -116,12 +115,11 @@ class PatternsTest extends BaseTest {
   @ParameterizedTest
   @MethodSource
   void wildcardToRegex(Expected<String> expected, RegexArgument pattern) {
-    var actual = (String) evalParameterized(
-        () -> Patterns.wildcardToRegex(pattern.getValue()));
+    var actual = requireNonNull((String) evalParameterized(
+        () -> Patterns.wildcardToRegex(pattern.getValue())));
 
     assertParameterized(actual, expected,
-        () -> new ExpectedGeneration(List.of(
-            entry("pattern", pattern))));
+        () -> new ExpectedGeneration(pattern));
     assertRegexMatches(actual, pattern.matches, true);
     assertRegexMatches(actual, pattern.mismatches, false);
   }

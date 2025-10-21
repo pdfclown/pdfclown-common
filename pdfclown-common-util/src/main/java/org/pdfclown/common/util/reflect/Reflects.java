@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util.reflect;
 
+import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Exceptions.runtime;
 
 import java.lang.StackWalker.StackFrame;
@@ -102,6 +103,13 @@ public final class Reflects {
     } catch (NoSuchMethodException ex) {
       throw runtime(ex);
     }
+  }
+
+  /**
+   * Gets the fully-qualified method name corresponding to the stack frame.
+   */
+  public static String methodFqn(StackFrame frame) {
+    return frame.getClassName() + DOT + frame.getMethodName();
   }
 
   /**

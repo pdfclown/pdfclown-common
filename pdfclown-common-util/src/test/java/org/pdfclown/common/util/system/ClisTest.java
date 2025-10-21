@@ -13,13 +13,11 @@
 package org.pdfclown.common.util.system;
 
 import static java.util.Arrays.asList;
-import static java.util.List.of;
 import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.contains;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.util.Aggregations.entry;
 import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Strings.S;
 
@@ -40,7 +38,7 @@ class ClisTest {
     return argumentsStream(
         cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // [1] argsString[0]: "val1 val2 \"val3 (dquote)\" 'val4 (squote)'"
             asList("val1", "val2", "val3 (dquote)", "val4 (squote)"),
             // [2] argsString[1]: "val1 \"val2 (\\\"dquote\\\")\" 'val3 (\\'squ. . ."
@@ -71,15 +69,15 @@ class ClisTest {
 
   @ParameterizedTest
   @MethodSource
+  @SuppressWarnings("unchecked")
   void parseArgs(Expected<List<String>> expected, String argsString) {
     assertParameterizedOf(
         () -> Clis.parseArgs(argsString),
         expected.match($ -> contains($.toArray(String[]::new))),
-        () -> new ExpectedGeneration(of(
-            entry("argsString", argsString)))
-                .setExpectedSourceCodeGenerator(
-                    $ -> String.format("asList(%s)", ((List<String>) $).stream()
-                        .map(Objects::literal)
-                        .collect(joining(S + COMMA)))));
+        () -> new ExpectedGeneration(argsString)
+            .setExpectedSourceCodeGenerator(
+                $ -> String.format("asList(%s)", ((List<String>) $).stream()
+                    .map(Objects::literal)
+                    .collect(joining(S + COMMA)))));
   }
 }

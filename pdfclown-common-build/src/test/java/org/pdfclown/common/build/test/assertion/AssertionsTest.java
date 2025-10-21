@@ -17,7 +17,6 @@ import static java.util.Objects.requireNonNull;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.pdfclown.common.build.internal.util_.Aggregations.entry;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -43,7 +42,7 @@ class AssertionsTest extends BaseTest {
     return Assertions.argumentsStream(
         ArgumentsStreamConfig.cartesian(),
         // expected
-        java.util.Arrays.asList(
+        asList(
             // value[0]: null
             // [1] length[0]: 50
             new Failure("NullPointerException", "`value`"),
@@ -63,7 +62,7 @@ class AssertionsTest extends BaseTest {
             new Failure("IllegalArgumentException",
                 "`length` (5): INVALID (should be less than 0)"),
             //
-            // value[2]: "The quick brow. . ."
+            // value[2]: "The quick brown fox jumps over the lazy dog"
             // [7] length[0]: 50
             new Failure("IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 43)"),
@@ -72,7 +71,7 @@ class AssertionsTest extends BaseTest {
             // [9] length[2]: 5
             "The q",
             //
-            // value[3]: "The lazy yello. . ."
+            // value[3]: "The lazy yellow dog was caught by the slow r. . ."
             // [10] length[0]: 50
             "The lazy yellow dog was caught by the slow red fox",
             // [11] length[1]: 20
@@ -112,12 +111,11 @@ class AssertionsTest extends BaseTest {
     return Assertions.argumentsStream(
         ArgumentsStreamConfig.simple(),
         // expected
-        java.util.Arrays.asList(
-            // [1] value[0]: "The quick brow. . ."; length[0]: 50
-            new Failure(
-                "IllegalArgumentException",
+        asList(
+            // [1] value[0]: "The quick brown fox jumps over the lazy dog"; length[0]: 50
+            new Failure("IllegalArgumentException",
                 "`length` (50): INVALID (should be less than 43)"),
-            // [2] value[1]: "The lazy yello. . ."; length[1]: 20
+            // [2] value[1]: "The lazy yellow dog was caught by the slow r. . ."; length[1]: 20
             "The lazy yellow dog "),
         // value
         asList(
@@ -174,7 +172,8 @@ class AssertionsTest extends BaseTest {
    */
   @ParameterizedTest
   @MethodSource
-  void assertParameterized__cartesian(Expected<String> expected, String value, int length) {
+  void assertParameterized__cartesian(Expected<String> expected, @Nullable String value,
+      int length) {
     doAssertParameterized(expected, value, length);
   }
 
@@ -189,25 +188,24 @@ class AssertionsTest extends BaseTest {
   void assertParameterized__cartesian_generation(Expected<String> expected, String value,
       int length) {
     doAssertParameterized_generation(expected, value, length, ""
-        + "// expected\n"
-        + "java.util.Arrays.asList(\n"
-        + "  // value[0]: \"The quick brown fox jumps over the lazy dog\"\n"
-        + "  // [1] length[0]: 50\n"
-        + "  new org.pdfclown.common.build.test.assertion.Assertions.Failure("
-        + "\"IllegalArgumentException\", "
-        + "\"`length` (50): INVALID (should be less than 43)\"),\n"
-        + "  // [2] length[1]: 20\n"
-        + "  \"The quick brown fox \",\n"
-        + "  // [3] length[2]: 5\n"
-        + "  \"The q\",\n"
-        + "  //\n"
-        + "  // value[1]: \"The lazy yellow dog was caught by the slow r. . .\"\n"
-        + "  // [4] length[0]: 50\n"
-        + "  \"The lazy yellow dog was caught by the slow red fox\",\n"
-        + "  // [5] length[1]: 20\n"
-        + "  \"The lazy yellow dog \",\n"
-        + "  // [6] length[2]: 5\n"
-        + "  \"The l\"),\n");
+        + ",\n"
+        + "        // expected\n"
+        + "        java.util.Arrays.asList(\n"
+        + "            // value[0]: \"The quick brown fox jumps over the lazy dog\"\n"
+        + "            // [1] length[0]: 50\n"
+        + "            new org.pdfclown.common.build.test.assertion.Assertions.Failure(\"IllegalArgumentException\", \"`length` (50): INVALID (should be less than 43)\"),\n"
+        + "            // [2] length[1]: 20\n"
+        + "            \"The quick brown fox \",\n"
+        + "            // [3] length[2]: 5\n"
+        + "            \"The q\",\n"
+        + "            //\n"
+        + "            // value[1]: \"The lazy yellow dog was caught by the slow r. . .\"\n"
+        + "            // [4] length[0]: 50\n"
+        + "            \"The lazy yellow dog was caught by the slow red fox\",\n"
+        + "            // [5] length[1]: 20\n"
+        + "            \"The lazy yellow dog \",\n"
+        + "            // [6] length[2]: 5\n"
+        + "            \"The l\")");
   }
 
   /**
@@ -232,15 +230,13 @@ class AssertionsTest extends BaseTest {
   @MethodSource
   void assertParameterized__simple_generation(Expected<String> expected, String value, int length) {
     doAssertParameterized_generation(expected, value, length, ""
-        + "// expected\n"
-        + "java.util.Arrays.asList(\n"
-        + "  // [1] value[0]: \"The quick brown fox jumps over the lazy dog\"; length[0]: 50\n"
-        + "  new org.pdfclown.common.build.test.assertion.Assertions.Failure("
-        + "\"IllegalArgumentException\", "
-        + "\"`length` (50): INVALID (should be less than 43)\"),\n"
-        + "  // [2] value[1]: \"The lazy yellow dog was caught by the slow r. . .\"; "
-        + "length[1]: 20\n"
-        + "  \"The lazy yellow dog \"),\n");
+        + ",\n"
+        + "        // expected\n"
+        + "        java.util.Arrays.asList(\n"
+        + "            // [1] value[0]: \"The quick brown fox jumps over the lazy dog\"; length[0]: 50\n"
+        + "            new org.pdfclown.common.build.test.assertion.Assertions.Failure(\"IllegalArgumentException\", \"`length` (50): INVALID (should be less than 43)\"),\n"
+        + "            // [2] value[1]: \"The lazy yellow dog was caught by the slow r. . .\"; length[1]: 20\n"
+        + "            \"The lazy yellow dog \")");
   }
 
   /**
@@ -276,14 +272,13 @@ class AssertionsTest extends BaseTest {
     out = new PrintStream(outBuffer = new ByteArrayOutputStream());
   }
 
-  private void doAssertParameterized(Expected<String> expected, String value, int length) {
+  private void doAssertParameterized(Expected<String> expected, @Nullable String value,
+      int length) {
+    //noinspection DataFlowIssue : null deliberated.
     Assertions.assertParameterizedOf(
         () -> assertParameterizedTestMethod(value, length),
         expected,
-        () -> new Assertions.ExpectedGeneration(
-            List.of(
-                entry("value", value),
-                entry("length", length))));
+        () -> new Assertions.ExpectedGeneration(value, length));
   }
 
   private void doAssertParameterized_generation(Expected<String> expected, String value, int length,
@@ -296,12 +291,8 @@ class AssertionsTest extends BaseTest {
       Assertions.assertParameterizedOf(
           () -> assertParameterizedTestMethod(value, length),
           expected,
-          () -> new Assertions.ExpectedGeneration(
-              List.of(
-                  entry("value", value),
-                  entry("length", length)))
-                      .setOut(out)
-                      .setOutOverridable(false));
+          () -> new Assertions.ExpectedGeneration(value, length)
+              .setOut(out));
     } finally {
       if (!Assertions.isExpectedGenerationMode()) {
         String actualOutput = endOut();

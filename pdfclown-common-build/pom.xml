@@ -88,6 +88,10 @@
       <artifactId>reflections</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.github.javaparser</groupId>
+      <artifactId>javaparser-core</artifactId>
+    </dependency>
+    <dependency>
       <!--
         TODO: see [shading] tag here above.
       -->

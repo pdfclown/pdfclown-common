@@ -13,8 +13,6 @@
 package org.pdfclown.common.build.test;
 
 import static java.util.Arrays.asList;
-import static java.util.List.of;
-import static org.pdfclown.common.build.internal.util_.Aggregations.entry;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
@@ -44,11 +42,9 @@ class TestTest extends BaseTest {
         // expected
         asList(
             // [1] name[0]: "/"
-            new Failure(
-                "XtIllegalArgumentException", "`name` (\"/\"): MUST NOT be root"),
+            new Failure("XtIllegalArgumentException", "`name` (\"/\"): MUST NOT be root"),
             // [2] name[1]: "\\"
-            new Failure(
-                "XtIllegalArgumentException", "`name` (\"\\\\\"): MUST NOT be root"),
+            new Failure("XtIllegalArgumentException", "`name` (\"\\\\\"): MUST NOT be root"),
             // [3] name[2]: "/my/absolute/resource"
             "/my/absolute/TestTest$SampleTest_resource",
             // [4] name[3]: "/my/absolute/resource/"
@@ -56,8 +52,7 @@ class TestTest extends BaseTest {
             // [5] name[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
             "/my/other/deep/absolute/resource/TestTest$SampleTest_",
             // [6] name[5]: ""
-            new Failure(
-                "XtIllegalArgumentException", "`name` (\"\"): MUST NOT be root"),
+            new Failure("XtIllegalArgumentException", "`name` (\"\"): MUST NOT be root"),
             // [7] name[6]: "my/relative/resource"
             "my/relative/TestTest$SampleTest_resource",
             // [8] name[7]: "my/relative/resource/"
@@ -74,7 +69,6 @@ class TestTest extends BaseTest {
     assertParameterizedOf(
         () -> sampleTest.subName(name),
         expected,
-        () -> new ExpectedGeneration(of(
-            entry("name", name))));
+        () -> new ExpectedGeneration(name));
   }
 }
