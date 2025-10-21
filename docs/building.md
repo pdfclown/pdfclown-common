@@ -55,8 +55,6 @@ This document describes how to set up your development environment to build and 
 
 ## Building
 
-In order to speed up frequent building operations, heavier goals are skipped by default and can be activated via profiles.
-
 Common CLI operations:
 
 - local installation:
@@ -73,7 +71,7 @@ Common CLI operations:
 
             mvn install -Pfast
 
-    - fastest build (without javadoc, unit tests and integration tests):
+    - fastest build (without javadoc, integration tests and unit tests):
 
             mvn install -Pfast+
 

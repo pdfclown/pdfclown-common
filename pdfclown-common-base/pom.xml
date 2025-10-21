@@ -19,7 +19,7 @@
 
       mvn install -Pfast
 
-  - fastest build (without javadoc, unit tests and integration tests):
+  - fastest build (without javadoc, integration tests and unit tests):
 
       mvn install -Pfast+
 
