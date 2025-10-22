@@ -7,21 +7,33 @@
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
   USAGE
 
-  - basic build (without javadoc):
+  - install:
+
+    - basic (without javadoc):
 
       mvn install
 
-  - full build (with javadoc):
+    - full (with javadoc):
 
       mvn install -Pfull
 
-  - fast build (without javadoc and integration tests):
+    - fast (without javadoc and integration tests):
 
       mvn install -Pfast
 
-  - fastest build (without javadoc, integration tests and unit tests):
+    - fastest (without javadoc, integration tests and unit tests):
 
       mvn install -Pfast+
+
+  - test:
+
+    - basic (unit tests only):
+
+      mvn test
+
+    - full (unit tests and integration tests):
+
+      mvn verify
 
   - verify dependency vulnerabilities:
       mvn verify -Pverify-extra

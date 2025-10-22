@@ -55,24 +55,93 @@ This document describes how to set up your development environment to build and 
 
 ## Building
 
-Common CLI operations:
+Common build operations via CLI (see also the comparison table here below):
 
-- local installation:
+- installation:
 
-    - basic build (without javadoc):
+    - basic (without javadoc):
 
             mvn install
 
-    - full build (with javadoc):
+    - full (with javadoc):
 
             mvn install -Pfull
 
-    - fast build (without javadoc and integration tests):
+    - fast (without javadoc and integration tests):
 
             mvn install -Pfast
 
-    - fastest build (without javadoc, integration tests and unit tests):
+    - fastest (without javadoc, integration tests and unit tests):
 
             mvn install -Pfast+
+
+- testing:
+
+    - basic (unit tests only):
+
+            mvn test
+
+    - full (unit tests and integration tests):
+
+            mvn verify
+
+<table>
+<caption>Build operation features</caption>
+<tr>
+<th></th>
+<th>Code processing (transformation and validation)</th>
+<th>Unit testing</th>
+<th>Integration testing</th>
+<th>Javadoc</th>
+</tr>
+<tr>
+<th colspan="5">installation</th>
+</tr>
+<tr>
+<th>Full</th>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+</tr>
+<tr>
+<th>Basic</th>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+<td></td>
+</tr>
+<tr>
+<th>Fast</th>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th>Fastest</th>
+<td>:white_check_mark:</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<th colspan="5">Testing</th>
+</tr>
+<tr>
+<th>Full</th>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+<td></td>
+</tr>
+<tr>
+<th>Basic</th>
+<td>:white_check_mark:</td>
+<td>:white_check_mark:</td>
+<td></td>
+<td></td>
+</tr>
+</table>
 
 See [pdfclown-common-base](../pdfclown-common-base/pom.xml) for a basic cheatsheet.
