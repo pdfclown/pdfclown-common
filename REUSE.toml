@@ -8,17 +8,20 @@ path = ".gitignore"
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
 SPDX-License-Identifier = "LGPL-3.0-only OR GPL-3.0-only"
 
+# Source code.
 [[annotations]]
-path = ["NOTICE.txt", "conf/**", "**/src/**"]
+path = ["conf/**", "**/src/**"]
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
 SPDX-License-Identifier = "LGPL-3.0-only"
 
+# Configuration.
 [[annotations]]
 path = [".tool-versions", "**/*.config", "**/*.toml", "**/*.yaml"]
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
 SPDX-License-Identifier = "MIT-0"
 
+# Documentation and media resources.
 [[annotations]]
-path = ["**/*.md", "**/*.svg", "**/*.png"]
+path = ["NOTICE.txt", "**/*.md", "**/*.svg", "**/*.png"]
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
