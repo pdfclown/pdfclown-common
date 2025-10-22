@@ -1,10 +1,4 @@
-<!--
-  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
-
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
-[Project Conventions](conventions.md) >
+[Documentation](README.md) > [Project Conventions](conventions.md) >
 
 # Third-Party Code Reuse
 

@@ -1,8 +1,4 @@
-<!--
-  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
-
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
+[Documentation](README.md) >
 
 # Building and Testing
 
