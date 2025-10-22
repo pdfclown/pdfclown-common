@@ -86,13 +86,12 @@ Common build operations via CLI (see also the comparison table here below):
             mvn verify
 
 <table>
-<caption>Build operation features</caption>
 <tr>
 <th></th>
-<th>Code processing (transformation and validation)</th>
-<th>Unit testing</th>
-<th>Integration testing</th>
-<th>Javadoc</th>
+<th width="20%">Code processing (transformation and validation)</th>
+<th width="20%">Unit testing</th>
+<th width="20%">Integration testing</th>
+<th width="20%">Javadoc</th>
 </tr>
 <tr>
 <th colspan="5">installation</th>
