@@ -10,8 +10,8 @@ Copyright 2001-2025 Apache Software Foundation (ASF)
 Licensed under Apache License 2.0 <https://www.apache.org/licenses/LICENSE-2.0>
 
 JSON-java (org.json) <https://github.com/stleary/JSON-java>
-Copyright NONE
-Licensed under generic Public Domain license <https://creativecommons.org/publicdomain/zero/1.0/>
+Copyright N/A
+Licensed under MIT No Attribution license <https://spdx.org/licenses/MIT-0.html>
 
 Open HTML to PDF <https://github.com/danfickle/openhtmltopdf>
 Copyright 2015-2022 Daniel Fickling, 2015 Patrick Wright
