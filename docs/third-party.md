@@ -2,6 +2,8 @@
 
 # Third-Party Code Reuse
 
+<!-- REUSE-IgnoreStart -->
+
 Source code from third-party projects is incorporated according to [REUSE 3.3](https://reuse.software/spec-3.3/) specification.
 
 It may be incorporated either keeping track of its original repository (fork), or not (detached).
@@ -63,3 +65,5 @@ Whenever any source code from third-party projects is incorporated, it must be d
    - `Changes`: specifies *relevant differences between the local file and its source*.
 
      NOTE: If the original code has been incorporated as-is (no change other than trivial adaptation), then the `Changes` tag SHALL be omitted.
+
+<!-- REUSE-IgnoreEnd -->
