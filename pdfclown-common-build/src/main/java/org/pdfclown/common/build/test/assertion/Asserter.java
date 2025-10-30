@@ -21,7 +21,6 @@ import static org.pdfclown.common.build.internal.util_.Chars.LF;
 import static org.pdfclown.common.build.internal.util_.Exceptions.failedIO;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
-import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.abbreviateMultiline;
 import static org.pdfclown.common.build.internal.util_.io.Files.copyDirectory;
@@ -35,7 +34,6 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
@@ -68,8 +66,6 @@ public abstract class Asserter {
    */
   public static class Config implements Cloneable {
     final org.pdfclown.common.build.test.assertion.Test test;
-    @Nullable
-    String testId;
 
     public Config(org.pdfclown.common.build.test.assertion.Test test) {
       this.test = requireNonNull(test, "`test`");
@@ -90,15 +86,6 @@ public abstract class Asserter {
 
     public org.pdfclown.common.build.test.assertion.Test getTest() {
       return test;
-    }
-
-    public @Nullable String getTestId() {
-      return testId;
-    }
-
-    public Config setTestId(String value) {
-      testId = value;
-      return this;
     }
   }
 
@@ -217,11 +204,6 @@ public abstract class Asserter {
    * {@link AssertionError}</li>
    * </ul>
    *
-   * @param testId
-   *          Test identifier (either simple or fully-qualified). Typically corresponds to the
-   *          test-unit-specific resource name of the expected file (for example,
-   *          "LayoutIT_testPdfAConformance.pdf", or fully-qualified
-   *          "/org/pdfclown/layout/LayoutIT_testPdfAConformance.pdf").
    * @param message
    *          Assertion error message (if empty, no error is thrown).
    * @param expectedFile
@@ -231,7 +213,7 @@ public abstract class Asserter {
    * @throws AssertionError
    *           If {@code message} is not empty.
    */
-  protected void evalAssertionError(String testId, @Nullable String message, Path expectedFile,
+  protected void evalAssertionError(@Nullable String message, Path expectedFile,
       @Nullable Path actualFile) throws AssertionError {
     if (isBlank(message))
       return;
@@ -259,28 +241,28 @@ public abstract class Asserter {
             .orElse(EMPTY));
     if (testName.isEmpty())
       throw runtime("Failed test method NOT FOUND on call stack (should be marked with any of "
-          + "these annotations: " + ARG + ")",
+          + "these annotations: {})",
           testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
-    message = ParamMessage.format("Test " + ARG + " FAILED:" + LF
-        + ARG, textLiteral(testName), message);
+    message = ParamMessage.format("Test {} FAILED:" + LF
+        + "{}", textLiteral(testName), message);
     String projectArtifactId = Builds.projectArtifactId(expectedFile);
     String hint = ParamMessage.format(
         LF
             + "Compared files:" + LF
-            + " * EXPECTED: " + ARG + LF
-            + " * ACTUAL: " + ARG + LF
+            + " * EXPECTED: {}" + LF
+            + " * ACTUAL: {}" + LF
             + "To retry, enter this CLI parameter into your command:" + LF
-            + "  mvn verify -pl " + ARG + " -Dtest=" + ARG + LF
+            + "  mvn verify -pl {} -Dtest={}" + LF
             + "To confirm the actual changes as expected, enter these CLI parameters into your "
             + "command:" + LF
-            + "  mvn verify -pl " + ARG + " -D" + ARG + "=" + ARG + " -Dtest=" + ARG + LF,
+            + "  mvn verify -pl {} -D{} -Dtest={}" + LF,
         expectedFile, requireNonNullElse(actualFile, "N/A"),
         projectArtifactId, textLiteral(testName),
-        projectArtifactId, PARAM_NAME__UPDATE, textLiteral(testId), textLiteral(testName));
+        projectArtifactId, PARAM_NAME__UPDATE, textLiteral(testName));
 
     // Log (full message).
-    getLog().error(LogMarker.VERBOSE, ARG + LF + ARG, message, hint);
+    getLog().error(LogMarker.VERBOSE, "{}" + LF + "{}", message, hint);
 
     // Exception (shortened message).
     throw new AssertionError(String.format("%s" + LF
@@ -292,16 +274,6 @@ public abstract class Asserter {
    * Implementation-specific logger.
    */
   protected abstract Logger getLog();
-
-  /**
-   * Resolves the test identifier.
-   * <p>
-   * The {@linkplain Config#getTestId() configured identifier} has priority over the default one.
-   * </p>
-   */
-  protected String getTestId(Config config, Supplier<String> defaultSupplier) {
-    return config.getTestId() != null ? config.getTestId() : defaultSupplier.get();
-  }
 
   /**
    * Gets whether the expected resources can be overwritten in case of mismatch with their actual
@@ -329,9 +301,9 @@ public abstract class Asserter {
       resetDirectory(sourceDir);
       writer.accept(sourceDir);
     } catch (Exception ex) {
-      throw failedIO("Expected resource build FAILED: " + ARG, sourceDir, ex);
+      throw failedIO("Expected resource build FAILED: {}", sourceDir, ex);
     }
-    getLog().info("Expected directory resource BUILT at " + ARG, textLiteral(sourceDir));
+    getLog().info("Expected directory resource BUILT at {}", textLiteral(sourceDir));
 
     // Target file.
     Path targetDir = config.getEnv().resourcePath(resourceName);
@@ -340,9 +312,9 @@ public abstract class Asserter {
       copyDirectory(sourceDir, targetDir);
     } catch (Exception ex) {
       throw failedIO("Expected resource copy to target FAILED "
-          + "(re-running tests should fix it): " + ARG, targetDir, ex);
+          + "(re-running tests should fix it): {}", targetDir, ex);
     }
-    getLog().info("Expected directory resource COPIED to target at " + ARG, textLiteral(targetDir));
+    getLog().info("Expected directory resource COPIED to target at {}", textLiteral(targetDir));
   }
 
   /**
@@ -379,9 +351,9 @@ public abstract class Asserter {
       Files.createDirectories(sourceFile.getParent());
       writer.accept(sourceFile);
     } catch (Exception ex) {
-      throw failedIO("Expected resource build FAILED: " + ARG, sourceFile, ex);
+      throw failedIO("Expected resource build FAILED: {}", sourceFile, ex);
     }
-    getLog().info("Expected resource BUILT at " + ARG, textLiteral(sourceFile));
+    getLog().info("Expected resource BUILT at {}", textLiteral(sourceFile));
 
     // Target file.
     Path targetFile = config.getEnv().resourcePath(resourceName);
@@ -392,7 +364,7 @@ public abstract class Asserter {
       throw failedIO("Expected resource copy to target FAILED "
           + "(re-running tests should fix it): " + targetFile, ex);
     }
-    getLog().info("Expected resource COPIED to target at " + ARG, textLiteral(targetFile));
+    getLog().info("Expected resource COPIED to target at {}", textLiteral(targetFile));
   }
 
   /**

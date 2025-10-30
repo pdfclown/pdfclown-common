@@ -21,6 +21,7 @@ import static org.pdfclown.common.build.internal.util_.io.Files.diff;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import org.pdfclown.common.build.internal.util_.io.Files.Diff;
 import org.pdfclown.common.build.internal.util_.io.Files.Diff.FileStatus;
@@ -32,7 +33,8 @@ import org.slf4j.LoggerFactory;
  * Automated file tree assertions for integration testing.
  * <p>
  * This class enables massive checks over a directory of arbitrary depth (actual file tree) against
- * a resource (expected file tree) which can be automatically updated.
+ * a resource (expected file tree) which can be {@linkplain Asserter#PARAM_NAME__UPDATE
+ * automatically updated}.
  * </p>
  *
  * @author Stefano Chizzolini
@@ -58,9 +60,6 @@ public class FileTreeAsserter extends Asserter {
     final String expectedDirResourceFqn = ResourceNames.based(
         expectedDirResourceName, config.getTest(), true);
     final Path expectedDir = config.getEnv().resourcePath(expectedDirResourceFqn);
-
-    final String testId = getTestId(config, () -> expectedDirResourceFqn);
-
     try {
       var built = false;
       while (true) {
@@ -80,24 +79,25 @@ public class FileTreeAsserter extends Asserter {
                 .append(SPACE).append(file);
           }
           fail(b.toString());
-        } catch (AssertionError | FileNotFoundException ex) {
+        } catch (AssertionError | FileNotFoundException | NoSuchFileException ex) {
           // Unrecoverable?
           if (built || !isUpdatable()) {
-            log.info("Test resource {}: unexpected actual file structure saved to {}"
-                + " (expected file structure is at {})",
+            log.info("Test resource {}: unexpected actual file tree saved to {}"
+                + " (expected file tree is at {})",
                 textLiteral(expectedDirResourceFqn), textLiteral(actualDir),
                 textLiteral(expectedDir));
 
-            evalAssertionError(testId, ex.getMessage(), expectedDir, actualDir);
+            evalAssertionError(ex.getMessage(), expectedDir, actualDir);
           }
 
-          // Assertion resource rebuilding.
+          /*
+           * Assertion resource rebuilding.
+           *
+           * NOTE: In case of explicit resource build request, the actual directory is saved into
+           * the (either mismatching or missing) expected directory resource (at both source and
+           * target locations).
+           */
           {
-            /*
-             * NOTE: In case of explicit resource build request, the actual directory is saved into
-             * the (either mismatching or missing) expected directory resource (at both source and
-             * target locations).
-             */
             built = true;
 
             log.info("REBUILDING assertion directory resource {} because of {}",

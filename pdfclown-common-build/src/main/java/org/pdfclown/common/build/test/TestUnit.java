@@ -28,8 +28,11 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.pdfclown.common.build.internal.util_.annot.InitNonNull;
 import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
 import org.pdfclown.common.build.test.assertion.Test;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
@@ -207,6 +210,8 @@ public abstract class TestUnit implements Test {
   }
 
   private @LazyNonNull @Nullable Environment env;
+  @SuppressWarnings("NotNullFieldNotInitialized")
+  private @InitNonNull TestInfo testInfo;
 
   protected TestUnit() {
   }
@@ -219,7 +224,29 @@ public abstract class TestUnit implements Test {
     return this.env;
   }
 
+  /**
+   * Name of the current test method.
+   */
+  public String getTestMethodName() {
+    return testInfo.getTestMethod().orElseThrow().getName();
+  }
+
+  /**
+   * Name of the current test.
+   * <p>
+   * Corresponds to JUnit's display name.
+   * </p>
+   */
+  public String getTestName() {
+    return testInfo.getDisplayName();
+  }
+
   protected Environment __createEnv() {
     return new Environment();
+  }
+
+  @BeforeEach
+  void onEachBefore(TestInfo testInfo) {
+    this.testInfo = testInfo;
   }
 }

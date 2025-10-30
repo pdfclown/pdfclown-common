@@ -1543,7 +1543,8 @@ public final class Assertions {
     }
   };
 
-  private static final FileTreeAsserter FILE_TREE_ASSERTER = new FileTreeAsserter();
+  private static final FileTreeAsserter ASSERTER__FILE_TREE = new FileTreeAsserter();
+  private static final TextAsserter ASSERTER__TEXT = new TextAsserter();
 
   private static final Logger log = LoggerFactory.getLogger(Assertions.class);
 
@@ -1787,10 +1788,11 @@ public final class Assertions {
    *          Current test unit.
    * @throws AssertionError
    *           if {@code actualDir} doesn't match the one at {@code expectedDirResourceName}.
+   * @see Asserter#PARAM_NAME__UPDATE
    */
   public static void assertFileTreeEquals(String expectedDirResourceName, Path actualDir,
       Test test) {
-    FILE_TREE_ASSERTER.assertEquals(expectedDirResourceName, actualDir, new Asserter.Config(test));
+    ASSERTER__FILE_TREE.assertEquals(expectedDirResourceName, actualDir, new Asserter.Config(test));
   }
 
   /**
@@ -1989,6 +1991,41 @@ public final class Assertions {
       @Nullable Expected<T> expected,
       @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
     assertParameterized(evalParameterized(actualExpression), expected, generationSupplier);
+  }
+
+  /**
+   * Asserts that a file matches the expected one.
+   *
+   * @param expectedResourceName
+   *          Resource name of the expected file.
+   * @param actualFile
+   *          Actual file.
+   * @param test
+   *          Current test unit.
+   * @throws AssertionError
+   *           if {@code actualFile} doesn't match the content of {@code expectedResourceName}.
+   * @see Asserter#PARAM_NAME__UPDATE
+   */
+  public static void assertTextEquals(String expectedResourceName, Path actualFile, Test test) {
+    ASSERTER__TEXT.assertEquals(expectedResourceName, actualFile, new Asserter.Config(test));
+  }
+
+  /**
+   * Asserts that a content matches the expected one.
+   *
+   * @param expectedResourceName
+   *          Resource name of the expected content.
+   * @param actualContent
+   *          Actual content.
+   * @param test
+   *          Current test unit.
+   * @throws AssertionError
+   *           if {@code actualContent} doesn't match the content of {@code expectedResourceName}.
+   * @see Asserter#PARAM_NAME__UPDATE
+   */
+  public static void assertTextEquals(String expectedResourceName, String actualContent,
+      Test test) {
+    ASSERTER__TEXT.assertEquals(expectedResourceName, actualContent, new Asserter.Config(test));
   }
 
   /**
