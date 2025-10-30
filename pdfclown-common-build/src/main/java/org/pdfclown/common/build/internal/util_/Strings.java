@@ -59,6 +59,8 @@ public final class Strings {
    * </p>
    * <pre>
    * String str = S + HYPHEN;</pre>
+   *
+   * @see Chars
    */
   public static final String S = EMPTY;
 
