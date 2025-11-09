@@ -1,13 +1,16 @@
 repos:
   - repo: https://github.com/commit-check/commit-check
-    rev: v0.9.5
+    rev: v2.1.2
     hooks:
       - id: check-branch
+        stages: [pre-commit]
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.7.2
+    rev: v4.9.1
     hooks:
       - id: commitizen
+        stages: [commit-msg]
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v5.0.2
+    rev: v6.2.0
     hooks:
       - id: reuse
+        stages: [pre-commit]

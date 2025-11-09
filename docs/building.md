@@ -35,9 +35,10 @@ This document describes how to set up your development environment to build and 
 
 ## Setup
 
-1. install **commit validation hooks**:
+1. check the **prerequisites** here above are satisfied
+2. install **commit validation hooks**:
 
-        pre-commit install
+        pre-commit install -t pre-commit -t commit-msg
 
     Installed hooks (activated whenever a commit is submitted):
 
@@ -48,6 +49,8 @@ This document describes how to set up your development environment to build and 
     To update the hooks to latest version:
 
         pre-commit autoupdate
+
+3. that's all! :tada: Now you are ready to build (see next section) — happy development!
 
 ## Building
 
