@@ -15,28 +15,29 @@ package org.pdfclown.common.build.util.system;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
 import static org.pdfclown.common.build.internal.util_.Chars.LF;
 import static org.pdfclown.common.build.internal.util_.Chars.SQUARE_BRACKET_OPEN;
-import static org.pdfclown.common.build.internal.util_.Conditions.require;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireDirectory;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireFile;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
 import static org.pdfclown.common.build.internal.util_.Objects.objDo;
-import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.system.Processes.execute;
+import static org.pdfclown.common.build.internal.util_.system.Processes.osCommand;
+import static org.pdfclown.common.build.internal.util_.system.Processes.unixCommand;
 import static org.pdfclown.common.build.internal.util_.xml.Xmls.xml;
 import static org.pdfclown.common.build.internal.util_.xml.Xmls.xpath;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,8 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.Ref;
 import org.pdfclown.common.build.internal.util_.xml.Xmls.XPath;
+import org.pdfclown.common.build.system.ProjectDirId;
+import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -92,11 +95,11 @@ public final class Builds {
   /**
    * Gets the build classpath associated to a project.
    * <p>
-   * Useful for debugging purposes, to run a project through its bare compiled classes, without
-   * packaging nor installation.
+   * The first element is the build directory containing the compiled classes of the project.
    * </p>
    * <p>
-   * The first element is the build directory containing the compiled classes of the project.
+   * Useful for debugging purposes, to run a project through its bare compiled classes, without
+   * packaging nor installation.
    * </p>
    *
    * @param projectDir
@@ -112,35 +115,31 @@ public final class Builds {
    *          <li>provided — just provided dependencies</li>
    *          <li>system — just system dependencies</li>
    *          </ul>
-   * @throws IllegalArgumentException
-   *           if {@code projectDir} has no build directory.
    * @throws RuntimeException
    *           if the execution failed.
    */
   public static List<Path> classpath(Path projectDir, @Nullable String scope) {
     /*
-     * NOTE: This is a quick and dirty way to generate a classpath from a POM -- parsing interactive
-     * output ain't no good, but for now it seems the most straightforward, sparing us the
-     * intricacies of the Maven API.
+     * NOTE: Parsing Maven Invoker's interactive output is a sloppy way to collect the classpath
+     * from a POM, but for now it seems the most straightforward, sparing us the intricacies of
+     * Maven API.
      */
+    var pathResolver = ProjectPathResolver.of(projectDir);
     try {
       var ret = new ArrayList<Path>();
 
+      Path pomFile = requireFile(pathResolver.resolve(ProjectDirId.BASE, "pom.xml"));
+
       // 1. Build directory.
-      //noinspection DataFlowIssue : cannot be null
-      ret.add(require(projectDir.resolve("target/classes"), Files::isDirectory,
-          $ -> wrongArg("projectDir", projectDir, "build directory (" + ARG + ") MISSING", $)));
+      ret.add(requireDirectory(pathResolver.resolve(ProjectDirId.MAIN_TARGET)));
 
       // 2. Dependencies.
       var error = new StringBuilder();
       var invoker = new DefaultInvoker();
       invoker.execute(objDo(new DefaultInvocationRequest(), $ -> {
-        $.setMavenHome(requireState(mavenHome(),
-            () -> "Maven home NOT FOUND: "
-                + "specify it through system property `maven.home` "
-                + "or environment variable `MAVEN_HOME`").toFile());
-        $.setPomFile(projectDir.resolve("pom.xml").toFile());
-        $.setGoals(Collections.singletonList("dependency:build-classpath"));
+        $.setMavenHome(mavenHome().toFile());
+        $.setPomFile(pomFile.toFile());
+        $.setGoals(List.of("dependency:build-classpath"));
         if (scope != null) {
           $.addArg("-DincludeScope=" + scope);
         }
@@ -172,23 +171,27 @@ public final class Builds {
             new ByteArrayInputStream(new byte[0]) /* Just to avoid interactive mode complaining */);
       }));
       if (error.length() > 0)
-        throw runtime("Classpath retrieval from '" + ARG + "' FAILED:" + ARG, projectDir, error);
+        throw runtime("Classpath retrieval from {} FAILED: {}",
+            pathResolver.resolve(ProjectDirId.BASE), error);
 
       return ret;
-    } catch (MavenInvocationException ex) {
-      throw runtime("Classpath retrieval from '" + ARG + "' FAILED", projectDir, ex);
+    } catch (MavenInvocationException | FileNotFoundException ex) {
+      throw runtime("Classpath retrieval from {} FAILED", pathResolver.resolve(ProjectDirId.BASE),
+          ex);
     }
   }
 
   /**
    * Path of the Maven command (mvn).
    *
-   * @return {@code null}, if not found.
+   * @throws IllegalStateException
+   *           if not found.
    */
-  public static synchronized @Nullable Path mavenExecutable() {
+  public static synchronized Path mavenExecutable() {
     if (mavenExecutable == null) {
       /*
-       * NOTE: `mavenHome()` is responsible to set `mavenExecutable` along with itself.
+       * NOTE: `mavenHome()` is responsible to set `mavenExecutable` along with itself; if missing,
+       * it throws a nice exception suggesting how to fix the configuration.
        */
       mavenHome();
     }
@@ -204,12 +207,13 @@ public final class Builds {
    * <li>check system property <code>maven.home</code></li>
    * <li>check environment variable <code>MAVEN_HOME</code></li>
    * <li>check Maven executable version information (<code>mvn -v</code>)</li>
-   * <li>check Maven executable location (Bash shell: <code>whereis mvn</code>)</li>
+   * <li>check Maven executable location (Unix only. Bash shell: <code>whereis mvn</code>)</li>
    * </ol>
    *
-   * @return {@code null}, if not found.
+   * @throws IllegalStateException
+   *           if not found.
    */
-  public static synchronized @Nullable Path mavenHome() {
+  public static synchronized Path mavenHome() {
     if (mavenHome != null)
       return mavenHome;
 
@@ -237,41 +241,30 @@ public final class Builds {
        *
        * NOTE: `mvn -v` command returns, among its version information, its home path.
        */
-      //noinspection DataFlowIssue : objDo is @PolyNull
-      if (detectMavenHome(shellPath(
-          objDo(new ArrayList<>(3), $ -> {
-            if (IS_OS_WINDOWS) {
-              $.add("cmd.exe");
-              $.add("/C");
-            } else {
-              $.add("bash");
-              $.add("-c");
-            }
-            $.add("mvn -v");
-          }),
+      if (detectMavenHome(shellPath(osCommand("mvn -v"),
           $line -> $line.startsWith("Maven home:")
               ? $line.substring("Maven home:".length()).trim()
               : null)))
         return mavenHome;
 
-      if (!IS_OS_WINDOWS) {
+      if (IS_OS_UNIX) {
         /*
-         * Query the Bash shell for `mvn` location!
+         * Query the shell for `mvn` location!
          *
          * NOTE: Interactive shell mode ensures `PATH` environment variable comprises additional
          * execution locations configured in user-specific files like ".bashrc".
          */
-        Path mavenCommad = shellPath(List.of("bash", "-ic", "whereis mvn"),
+        Path mavenCommad = shellPath(unixCommand("whereis mvn", /* interactive: */true),
             $line -> $line.startsWith("mvn:")
                 ? $line.substring("mvn:".length()).trim()
                 : null);
         if (mavenCommad != null
+            /*
+             * NOTE: Maven command is at "%mavenHome%/bin/mvn", so we have to climb 2 ancestors to
+             * reach home; since the command may be linked, we have to resolve it before walking the
+             * filesystem hierarchy.
+             */
             && detectMavenHome(mavenCommad.toRealPath().getParent().getParent()))
-          /*
-           * NOTE: Maven command is at "%mavenHome%/bin/mvn", so we have to climb 2 ancestors to
-           * reach home; since the command may be linked, we have to resolve it before walking the
-           * filesystem hierarchy.
-           */
           return mavenHome;
       }
     } catch (IOException ex) {
@@ -279,7 +272,10 @@ public final class Builds {
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
     }
-    return mavenHome;
+
+    throw wrongState("Maven home NOT FOUND: "
+        + "specify it through system property `maven.home` "
+        + "or environment variable `MAVEN_HOME`");
   }
 
   /**
@@ -329,13 +325,14 @@ public final class Builds {
     }
 
     Path executablePath;
-    if (exists(executablePath = path.resolve("bin/mvn"))) {
+    if (exists(executablePath = path.resolve("bin/mvn"))
+        || exists(executablePath = path.resolve("bin/mvn.cmd"))) {
       mavenHome = path;
       mavenExecutable = executablePath;
 
       return true;
     } else {
-      log.warn("Maven command ({}) NOT FOUND", executablePath);
+      log.warn("Maven command (mvn) NOT FOUND");
 
       return false;
     }

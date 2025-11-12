@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SPDX-FileCopyrightText: 2025 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-only
+-->
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    NOTE: This POM (copied from pdfclown-common-util/pom.xml) links to real project configuration in
+    order to leverage existing dependencies for a complex test case.
+  -->
+  <parent>
+    <groupId>org.pdfclown</groupId>
+    <artifactId>pdfclown-common-parent</artifactId>
+    <version>${revision}</version>
+    <relativePath>../../../../../../../../../../pdfclown-common-parent/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>pdfclown-common-test1</artifactId>
+  <packaging>jar</packaging>
+
+  <name>${project.artifactId}</name>
+  <description>Sample project</description>
+  <url>${projectRootUrl}</url>
+
+  <properties>
+    <projectJpmsName>org.pdfclown.common.test1</projectJpmsName>
+    <rootdir>${project.basedir}/../../../../../../../../../..</rootdir>
+  </properties>
+
+  <dependencies>
+    <!-- Language -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>tech.units</groupId>
+      <artifactId>indriya</artifactId>
+    </dependency>
+
+    <!-- I/O -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <!-- Code manipulation (reflection and generation) -->
+    <dependency>
+      <groupId>io.github.classgraph</groupId>
+      <artifactId>classgraph</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+    </dependency>
+
+    <!--
+      TESTING
+    -->
+    <dependency>
+      <groupId>org.pdfclown</groupId>
+      <artifactId>pdfclown-common-build</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.pdfclown</groupId>
+          <artifactId>pdfclown-common-util</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+</project>

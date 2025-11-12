@@ -349,6 +349,11 @@ log.info("buildTimestamp: " + buildTimestamp
           <configuration>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
             <reportsDirectory>${project.build.directory}/test-logs/surefire</reportsDirectory>
+            <systemPropertyVariables>
+              <!-- Required by Maven Invoker (see
+                <https://maven.apache.org/shared/maven-invoker/usage.html>) -->
+              <maven.home>${maven.home}</maven.home>
+            </systemPropertyVariables>
           </configuration>
         </plugin>
         <plugin>
@@ -357,6 +362,11 @@ log.info("buildTimestamp: " + buildTimestamp
           <configuration>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
             <reportsDirectory>${project.build.directory}/test-logs/failsafe</reportsDirectory>
+            <systemPropertyVariables>
+              <!-- Required by Maven Invoker (see
+                <https://maven.apache.org/shared/maven-invoker/usage.html>) -->
+              <maven.home>${maven.home}</maven.home>
+            </systemPropertyVariables>
           </configuration>
           <executions>
             <execution>
