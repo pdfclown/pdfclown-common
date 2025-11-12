@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 import org.apache.commons.lang3.stream.Streams;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.util.io.ResourceNames;
 
 /**
@@ -35,8 +36,8 @@ import org.pdfclown.common.build.util.io.ResourceNames;
  * Within the test environment, filesystem objects are addressed by <b>names</b> similar to
  * {@linkplain Class#getResource(String) Java resource names} (see
  * {@link ResourceNames#path(String, Path)}) and are rooted in their respective
- * {@linkplain #dir(DirId) base directories}; <b>relative names</b> are based on the subdirectory
- * local to the current test environment.
+ * {@linkplain #dir(ProjectDirId) base directories}; <b>relative names</b> are based on the
+ * subdirectory local to the current test environment.
  * </p>
  * <table border="1">
  * <caption>Name case summary</caption>
@@ -84,45 +85,9 @@ import org.pdfclown.common.build.util.io.ResourceNames;
  */
 public interface TestEnvironment {
   /**
-   * Identifier of a base directory within the test environment.
-   *
-   * @author Stefano Chizzolini
-   */
-  enum DirId {
-    /**
-     * Base directory of the project.
-     */
-    BASE,
-    /**
-     * Base directory of test output (typically, {@code "target/test-output"}).
-     */
-    OUTPUT,
-    /**
-     * Test build directory (typically, {@code "target/test-classes"}).
-     */
-    TARGET,
-    /**
-     * Source directory of test resources (typically, {@code "src/test/resources"}).
-     */
-    RESOURCE_SOURCE,
-    /**
-     * Source directory of test types (typically, {@code "src/test/java"}).
-     */
-    TYPE_SOURCE,
-    /**
-     * Main build directory (typically, {@code "target/classes"}).
-     */
-    MAIN_TARGET,
-    /**
-     * Source directory of main types (typically, {@code "src/main/java"}).
-     */
-    MAIN_TYPE_SOURCE
-  }
-
-  /**
    * Gets the base directory corresponding to an ID.
    */
-  Path dir(DirId id);
+  Path dir(ProjectDirId id);
 
   /**
    * Gets the absolute path of an output file (no matter whether it exists).
@@ -138,7 +103,7 @@ public interface TestEnvironment {
    * @return {@code null}, if {@code file} is outside the test space.
    */
   default @Nullable String resolveName(Path file) {
-    return Streams.of(DirId.values())
+    return Streams.of(ProjectDirId.values())
         .map($ -> ResourceNames.based(file, dir($), true))
         .filter(Objects::nonNull)
         .min(comparing(String::length) /* Keeps the most specific name */)

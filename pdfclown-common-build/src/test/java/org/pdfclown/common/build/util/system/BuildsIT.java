@@ -24,7 +24,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.__test.BaseIT;
 import org.pdfclown.common.build.internal.util_.ArgumentException;
-import org.pdfclown.common.build.test.assertion.TestEnvironment.DirId;
+import org.pdfclown.common.build.system.ProjectDirId;
+import org.pdfclown.common.build.system.ProjectPathResolver;
 
 /**
  * @author Stefano Chizzolini
@@ -36,20 +37,21 @@ class BuildsIT extends BaseIT {
      * NOTE: Sibling project used because pdfclown-common-build is unsuitable for this test, since
      * all its dependencies belong both to the test and to the runtime scopes.
      */
-    var projectDirs = new MavenDirResolver(Path.of("../pdfclown-common-util"));
+    var projectDirs = ProjectPathResolver.of(Path.of("../pdfclown-common-util"));
 
     // Default (test) scope.
-    List<Path> testClasspath = Builds.classpath(projectDirs.resolve(DirId.BASE), null);
+    List<Path> testClasspath = Builds.classpath(projectDirs.resolve(ProjectDirId.BASE), null);
 
     assertThat(testClasspath.size(), is(not(0)));
-    assertThat(testClasspath.get(0), is(projectDirs.resolve(DirId.MAIN_TARGET)));
+    assertThat(testClasspath.get(0), is(projectDirs.resolve(ProjectDirId.MAIN_TARGET)));
     assertThat("In test classpath, test dependency 'junit' SHOULD exist",
         testClasspath.stream().anyMatch($ -> $.toString().contains("junit")), is(true));
     assertThat("In test classpath, runtime dependency 'classgraph' SHOULD exist",
         testClasspath.stream().anyMatch($ -> $.toString().contains("classgraph")), is(true));
 
     // Runtime scope.
-    List<Path> runtimeClasspath = Builds.classpath(projectDirs.resolve(DirId.BASE), "runtime");
+    List<Path> runtimeClasspath =
+        Builds.classpath(projectDirs.resolve(ProjectDirId.BASE), "runtime");
 
     assertThat(runtimeClasspath.size(), is(not(0)));
     assertThat("Runtime dependencies SHOULD be less than test ones",
@@ -71,7 +73,7 @@ class BuildsIT extends BaseIT {
     }
     {
       var throwable = assertThrows(RuntimeException.class, () -> Builds.classpath(
-          getEnv().dir(DirId.BASE), "gibberish"));
+          getEnv().dir(ProjectDirId.BASE), "gibberish"));
       assertThat(throwable.getMessage(), containsStringIgnoringCase("invalid scope"));
     }
   }
@@ -91,7 +93,7 @@ class BuildsIT extends BaseIT {
   @Test
   void projectArtifactId() {
     //noinspection DataFlowIssue : assertThat(..) supports nullable actual.
-    assertThat(Builds.projectArtifactId(getEnv().dir(DirId.MAIN_TYPE_SOURCE)),
+    assertThat(Builds.projectArtifactId(getEnv().dir(ProjectDirId.MAIN_TYPE_SOURCE)),
         is("pdfclown-common-build"));
   }
 }
