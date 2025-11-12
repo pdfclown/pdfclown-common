@@ -157,6 +157,16 @@ public final class Strings {
   }
 
   /**
+   * Applies the given indentation to a string.
+   * <p>
+   * For Java 11 or older.
+   * </p>
+   */
+  public static String indent(String s, String indent) {
+    return indent + s.replace(S + LF, S + LF + indent);
+  }
+
+  /**
    * Gets the index of the first matching character.
    *
    * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.

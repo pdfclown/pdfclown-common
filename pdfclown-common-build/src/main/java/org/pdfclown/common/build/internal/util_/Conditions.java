@@ -13,11 +13,15 @@
 package org.pdfclown.common.build.internal.util_;
 
 import static java.util.Collections.singletonList;
+import static org.pdfclown.common.build.internal.util_.Exceptions.missingPath;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -133,7 +137,7 @@ public final class Conditions {
    * @param options
    *          Valid values.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T requireAmong(@PolyNull @Nullable T value,
@@ -151,7 +155,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T requireAmong(@PolyNull @Nullable T value,
@@ -168,7 +172,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireAtLeast(T value, T otherValue) {
@@ -183,7 +187,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireAtLeast(T value, T otherValue,
@@ -200,7 +204,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireAtMost(T value, T otherValue) {
@@ -215,7 +219,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireAtMost(T value, T otherValue,
@@ -232,7 +236,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static int requireByteRange(int value) {
@@ -247,11 +251,23 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static int requireByteRange(int value, @Nullable String name) {
     return requireRange(value, 0, 255, name);
+  }
+
+  /**
+   * Requires the directory exists.
+   *
+   * @return {@code dir}
+   */
+  public static Path requireDirectory(Path dir) throws FileNotFoundException {
+    if (Files.isDirectory(dir))
+      return dir;
+
+    throw missingPath(dir);
   }
 
   /**
@@ -262,7 +278,7 @@ public final class Conditions {
    * @param otherValue
    *          Valid value.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T requireEqual(@PolyNull @Nullable T value,
@@ -280,7 +296,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T requireEqual(@PolyNull @Nullable T value,
@@ -289,12 +305,24 @@ public final class Conditions {
   }
 
   /**
+   * Requires the file exists.
+   *
+   * @return {@code file}
+   */
+  public static Path requireFile(Path file) throws FileNotFoundException {
+    if (Files.isRegularFile(file))
+      return file;
+
+    throw missingPath(file);
+  }
+
+  /**
    * Requires the value is greater than the other one.
    *
    * @param value
    *          Value to validate.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireGreaterThan(T value, T otherValue) {
@@ -309,7 +337,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireGreaterThan(T value, T otherValue,
@@ -326,7 +354,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireLessThan(T value, T otherValue) {
@@ -341,7 +369,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireLessThan(T value, T otherValue,
@@ -383,7 +411,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireNormalRange(T value) {
@@ -400,7 +428,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireNormalRange(T value, @Nullable String name) {
@@ -413,7 +441,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static String requireNotBlank(String value) {
@@ -428,7 +456,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static String requireNotBlank(String value, @Nullable String name) {
@@ -446,7 +474,7 @@ public final class Conditions {
    * @param range
    *          Range.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireRange(T value, Range<T> range) {
@@ -463,7 +491,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireRange(T value, Range<T> range, @Nullable String name) {
@@ -486,7 +514,7 @@ public final class Conditions {
    * @param max
    *          Higher bound.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireRange(T value, int min, int max) {
@@ -508,7 +536,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    */
   public static <T extends Number> T requireRange(T value, int min, int max,
@@ -586,7 +614,7 @@ public final class Conditions {
    * @param type
    *          Type which {@code value} is expected to match as an instance.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    * @implNote Undefined {@code value} is allowed in accordance with the {@code instanceof}
    *           operator.
@@ -614,7 +642,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    * @implNote Undefined {@code value} is allowed in accordance with the {@code instanceof}
    *           operator.
@@ -633,7 +661,7 @@ public final class Conditions {
    * @param types
    *          Valid types.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    * @implNote Undefined {@code value} is allowed in accordance with the {@code instanceof}
    *           operator.
@@ -653,7 +681,7 @@ public final class Conditions {
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if {@code value} is invalid.
    * @implNote Undefined {@code value} is allowed in accordance with the {@code instanceof}
    *           operator.

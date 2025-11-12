@@ -19,10 +19,12 @@ import static org.hamcrest.Matchers.is;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
+import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.build.test.assertion.Assertions.evalParameterized;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,7 +40,7 @@ import org.pdfclown.common.util.__test.BaseTest;
  */
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 class PatternsTest extends BaseTest {
-  static class RegexArgument extends Argument<String> {
+  static class PatternArgument extends Argument<String> {
     /**
      * Samples matching {@linkplain #getValue() regex}.
      */
@@ -48,13 +50,27 @@ class PatternsTest extends BaseTest {
      */
     List<String> mismatches;
 
-    RegexArgument(String payload, List<String> matches, List<String> mismatches) {
-      super("regex", payload);
+    PatternArgument(String payload, List<String> matches, List<String> mismatches) {
+      super("pattern", payload);
 
       this.matches = matches;
       this.mismatches = mismatches;
     }
   }
+
+  /**
+   * <a href=
+   * "https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string">Official
+   * Semantic Versioning 2.0.0 regular expression</a>.
+   */
+  private static final Pattern PATTERN__SEM_VER = Pattern.compile("^"
+      + "(?<major>0|[1-9]\\d*)\\."
+      + "(?<minor>0|[1-9]\\d*)\\."
+      + "(?<patch>0|[1-9]\\d*)"
+      + "(?:-(?<prerelease>(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)"
+      + "(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
+      + "(?:\\+(?<build>[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?"
+      + "$");
 
   static Stream<Arguments> globToRegex() {
     return argumentsStream(
@@ -67,7 +83,7 @@ class PatternsTest extends BaseTest {
             "/home/[^/]*User/.*/foo.a./[^/]*\\.md"),
         // pattern
         asList(
-            new RegexArgument("/**/my*.*",
+            new PatternArgument("/**/my*.*",
                 asList(
                     "/home/usr/Pictures/myRainbow.jpg",
                     "/home/usr/Documents/myFile.html",
@@ -75,7 +91,7 @@ class PatternsTest extends BaseTest {
                 asList(
                     "myRainbow.jpg",
                     "/home/usr/Documents/file.html")),
-            new RegexArgument("/home/*User/**/foo?a?/*.md",
+            new PatternArgument("/home/*User/**/foo?a?/*.md",
                 asList(
                     "/home/User/MyDocs/foobar/readme.md",
                     "/home/BlueUser/MyDocs/foocat/readme.md",
@@ -86,6 +102,41 @@ class PatternsTest extends BaseTest {
                     "/home/SuperUser/a/random/subdir/foocat/NOTEmd"))));
   }
 
+  static Stream<Arguments> indexOfMatchFailure() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] input[0]: "1.0.0"
+            5,
+            // [2] input[1]: "1.0.0-alpha"
+            11,
+            // [3] input[2]: "1.11.0.99"
+            6,
+            // [4] input[3]: "1.-11.0"
+            2,
+            // [5] input[4]: "1.01.0"
+            3,
+            // [6] input[5]: "1.0.0-00.3.7"
+            8,
+            // [7] input[6]: "1.0.0_alpha"
+            5,
+            // [8] input[7]: "1.0.0.5-alpha"
+            5),
+        // input
+        List.of(
+            // VALID
+            "1.0.0",
+            "1.0.0-alpha",
+            // INVALID
+            "1.11.0.99",
+            "1.-11.0",
+            "1.01.0",
+            "1.0.0-00.3.7",
+            "1.0.0_alpha",
+            "1.0.0.5-alpha"));
+  }
+
   static Stream<Arguments> wildcardToRegex() {
     return argumentsStream(
         cartesian(),
@@ -93,16 +144,16 @@ class PatternsTest extends BaseTest {
         asList(
             // [1] pattern[0]: "\"Som? content. * more (*)\\\\?\" (regex)"
             "Som. content\\. .* more \\(.*\\)\\?"),
-        // pattern
+        // wildcard
         asList(
-            new RegexArgument("Som? content. * more (*)\\?",
+            new PatternArgument("Som? content. * more (*)\\?",
                 asList("Some content. Whatever more (don't know)?"),
                 asList("Som content. Whatever more (don't know)?"))));
   }
 
   @ParameterizedTest
   @MethodSource
-  void globToRegex(Expected<String> expected, RegexArgument glob) {
+  void globToRegex(Expected<String> expected, PatternArgument glob) {
     var actual = requireNonNull((String) evalParameterized(
         () -> Patterns.globToRegex(glob.getValue())));
 
@@ -114,14 +165,27 @@ class PatternsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void wildcardToRegex(Expected<String> expected, RegexArgument pattern) {
+  void indexOfMatchFailure(Expected<Integer> expected, String input) {
+    assertParameterizedOf(
+        () -> {
+          Matcher matcher = PATTERN__SEM_VER.matcher(input);
+          matcher.find();
+          return Patterns.indexOfMatchFailure(matcher);
+        },
+        expected,
+        () -> new ExpectedGeneration(input));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void wildcardToRegex(Expected<String> expected, PatternArgument wildcard) {
     var actual = requireNonNull((String) evalParameterized(
-        () -> Patterns.wildcardToRegex(pattern.getValue())));
+        () -> Patterns.wildcardToRegex(wildcard.getValue())));
 
     assertParameterized(actual, expected,
-        () -> new ExpectedGeneration(pattern));
-    assertRegexMatches(actual, pattern.matches, true);
-    assertRegexMatches(actual, pattern.mismatches, false);
+        () -> new ExpectedGeneration(wildcard));
+    assertRegexMatches(actual, wildcard.matches, true);
+    assertRegexMatches(actual, wildcard.mismatches, false);
   }
 
   /**

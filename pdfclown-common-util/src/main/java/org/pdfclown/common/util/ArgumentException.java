@@ -3,8 +3,8 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (XtIllegalArgumentException.java) is part of pdfclown-common-util module in pdfClown
-  Common project <https://github.com/pdfclown/pdfclown-common>
+  This file (ArgumentException.java) is part of pdfclown-common-util module in pdfClown Common
+  project <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
@@ -24,7 +24,7 @@ import static org.pdfclown.common.util.Objects.basicLiteral;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Extended {@link IllegalArgumentException}.
+ * Enhanced {@link IllegalArgumentException}.
  * <p>
  * NOTE: {@code null} {@link #getArgValue() argValue} means the argument was defined on caller side,
  * but wasn't passed to this exception, for any reason (such as to avoid leaking of sensitive
@@ -34,7 +34,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @author Stefano Chizzolini
  */
-public class XtIllegalArgumentException extends IllegalArgumentException {
+public class ArgumentException extends IllegalArgumentException {
   private static String buildMessage(String argName,
       @Nullable Object argValue, @Nullable String message) {
     var b = new StringBuilder();
@@ -53,18 +53,18 @@ public class XtIllegalArgumentException extends IllegalArgumentException {
 
   private final @Nullable Object argValue;
 
-  public XtIllegalArgumentException(@Nullable String argName, @Nullable Object argValue) {
+  public ArgumentException(@Nullable String argName, @Nullable Object argValue) {
     this(argName, argValue, null);
   }
 
-  public XtIllegalArgumentException(@Nullable String argName, @Nullable Object argValue,
+  public ArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message) {
     this(argName, argValue, message, null);
   }
 
   /**
   */
-  public XtIllegalArgumentException(@Nullable String argName, @Nullable Object argValue,
+  public ArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message, @Nullable Throwable cause) {
     super(buildMessage(argName = requireNonNullElse(stripToNull(argName), "value"), argValue,
         message), cause);

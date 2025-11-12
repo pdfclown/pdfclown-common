@@ -24,17 +24,20 @@ import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.AbstractList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.XMLConstants;
@@ -89,6 +92,47 @@ import org.xml.sax.SAXParseException;
  */
 @SuppressWarnings("SameParameterValue")
 public final class Xmls {
+  /**
+   * Document factory profile.
+   * <p>
+   * Useful for common parsing configurations.
+   * </p>
+   *
+   * @author Stefano Chizzolini
+   */
+  public enum DocumentFactoryProfile implements UnaryOperator<DocumentBuilderFactory> {
+    /**
+     * Compact document.
+     * <p>
+     * Operations applied to parsed documents:
+     * </p>
+     * <ul>
+     * <li>{@linkplain DocumentBuilderFactory#setIgnoringElementContentWhitespace(boolean) strip
+     * ignorable whitespace}</li>
+     * <li>{@linkplain DocumentBuilderFactory#setIgnoringComments(boolean) strip comment nodes}</li>
+     * <li>{@linkplain DocumentBuilderFactory#setCoalescing(boolean) merge CDATA nodes into adjacent
+     * text nodes}</li>
+     * </ul>
+     */
+    COMPACT($ -> {
+      $.setIgnoringElementContentWhitespace(true);
+      $.setCoalescing(true);
+      $.setIgnoringComments(true);
+    });
+
+    private final Consumer<DocumentBuilderFactory> operation;
+
+    DocumentFactoryProfile(Consumer<DocumentBuilderFactory> operation) {
+      this.operation = operation;
+    }
+
+    @Override
+    public DocumentBuilderFactory apply(DocumentBuilderFactory factory) {
+      operation.accept(factory);
+      return factory;
+    }
+  }
+
   /**
    * XML feature setter.
    *
@@ -857,6 +901,24 @@ public final class Xmls {
   }
 
   /**
+   * Saves an XML document to stream.
+   */
+  public static void save(Document xml, OutputStream out) throws TransformerException {
+    var output = new StreamResult(out);
+    var input = new DOMSource(xml);
+    transformerFactory().newTransformer().transform(input, output);
+  }
+
+  /**
+   * Saves an XML document to file.
+   */
+  public static void save(Document xml, Path file) throws TransformerException, IOException {
+    try (var out = Files.newOutputStream(file)) {
+      save(xml, out);
+    }
+  }
+
+  /**
    * Creates a hardened SAX parser factory.
    * <p>
    * Applies {@link Security#secure(SAXParserFactory)}.
@@ -1040,7 +1102,7 @@ public final class Xmls {
    * </p>
    */
   public static Document xml(InputStream in) throws IOException, SAXException {
-    return xml(in, (Source) null);
+    return xml(in, documentFactory());
   }
 
   /**
@@ -1052,6 +1114,9 @@ public final class Xmls {
    */
   public static Document xml(InputStream in, DocumentBuilderFactory factory)
       throws IOException, SAXException {
+    requireNonNull(in, "`in`");
+    requireNonNull(factory, "`factory`");
+
     try {
       var builder = factory.newDocumentBuilder();
       builder.setErrorHandler(new ErrorHandler() {
@@ -1082,28 +1147,8 @@ public final class Xmls {
    * Applies {@link Security#secure(DocumentBuilderFactory)}.
    * </p>
    */
-  public static Document xml(InputStream in, @Nullable Source xsd)
-      throws IOException, SAXException {
-    var factory = documentFactory();
-    {
-      factory.setIgnoringElementContentWhitespace(true);
-      factory.setCoalescing(true);
-      factory.setIgnoringComments(true);
-      if (xsd != null) {
-        factory.setSchema(schemaFactory().newSchema(xsd));
-      }
-    }
-    return xml(in, factory);
-  }
-
-  /**
-   * Loads a hardened XML document.
-   * <p>
-   * Applies {@link Security#secure(DocumentBuilderFactory)}.
-   * </p>
-   */
   public static Document xml(Path file) throws IOException, SAXException {
-    return xml(file, (Source) null);
+    return xml(file, documentFactory());
   }
 
   /**
@@ -1115,20 +1160,11 @@ public final class Xmls {
    */
   public static Document xml(Path file, DocumentBuilderFactory factory)
       throws IOException, SAXException {
-    try (var in = new FileInputStream(file.toFile())) {
-      return xml(in, factory);
-    }
-  }
+    requireNonNull(file, "`file`");
+    requireNonNull(factory, "`factory`");
 
-  /**
-   * Loads a hardened XML document.
-   * <p>
-   * Applies {@link Security#secure(DocumentBuilderFactory)}.
-   * </p>
-   */
-  public static Document xml(Path file, @Nullable Source xsd) throws IOException, SAXException {
-    try (var in = new FileInputStream(file.toFile())) {
-      return xml(in, xsd);
+    try (var in = Files.newInputStream(file)) {
+      return xml(in, factory);
     }
   }
 

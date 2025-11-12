@@ -36,7 +36,7 @@ class RangeTest extends BaseTest {
 
   @Test
   void _differentNumberTypes() {
-    var ex = assertThrows(XtIllegalArgumentException.class, () -> {
+    var ex = assertThrows(ArgumentException.class, () -> {
       Range.closed(0, 5.5);
     });
     assertThat(ex.getMessage(), is("`upper.class` (Double): MUST be Integer"));

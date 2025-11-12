@@ -182,7 +182,7 @@ public class Range<T> {
    *          ({@code null}, for unbounded endpoint)
    * @param upper
    *          ({@code null}, for unbounded endpoint)
-   * @throws XtIllegalArgumentException
+   * @throws ArgumentException
    *           if arguments are numbers of different types (allowing them would cause ambiguities on
    *           value comparison — see also the observations in {@link #numeric(Range)}).
    */

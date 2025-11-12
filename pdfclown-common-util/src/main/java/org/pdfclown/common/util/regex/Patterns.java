@@ -38,6 +38,32 @@ public final class Patterns {
   }
 
   /**
+   * Gets the position where the match failed.
+   * <p>
+   * Useful to identify the failing point of single-match, format-constrained text.
+   * </p>
+   *
+   * @param matcher
+   *          Matcher whose {@link Matcher#find() find()} failed.
+   */
+  public static int indexOfMatchFailure(Matcher matcher) {
+    int ret = 0;
+    int low = 0;
+    int high = matcher.regionEnd();
+    while (low <= high) {
+      int mid = (low + high) / 2;
+      matcher.region(0, mid);
+      if (matcher.matches() || matcher.hitEnd()) {
+        ret = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    return ret;
+  }
+
+  /**
    * Tries to match the pattern.
    */
   public static Optional<Matcher> match(Pattern pattern, CharSequence input) {
@@ -55,7 +81,7 @@ public final class Patterns {
   /**
    * Converts the wildcard pattern to regex.
    *
-   * @param pattern
+   * @param wildcard
    *          Wildcard pattern supporting
    *          <a href="https://en.wikipedia.org/wiki/Glob_(programming)">globbing</a> metacharacters
    *          ({@code ?}, {@code *}).<br>
@@ -63,8 +89,8 @@ public final class Patterns {
    * @implNote This method was spurred by the current lack of native support (see
    *           <a href="https://bugs.openjdk.org/browse/JDK-8241641">JDK-8241641</a>).
    */
-  public static String wildcardToRegex(String pattern) {
-    return globToRegex(pattern, false);
+  public static String wildcardToRegex(String wildcard) {
+    return globToRegex(wildcard, false);
   }
 
   /**

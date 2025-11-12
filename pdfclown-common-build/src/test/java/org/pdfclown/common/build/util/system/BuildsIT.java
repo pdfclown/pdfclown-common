@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.__test.BaseIT;
-import org.pdfclown.common.build.internal.util_.XtIllegalArgumentException;
+import org.pdfclown.common.build.internal.util_.ArgumentException;
 import org.pdfclown.common.build.test.assertion.TestEnvironment.DirId;
 
 /**
@@ -65,7 +65,7 @@ class BuildsIT extends BaseIT {
   @Test
   void classpath__failure() {
     {
-      var throwable = assertThrows(XtIllegalArgumentException.class,
+      var throwable = assertThrows(ArgumentException.class,
           () -> Builds.classpath(Path.of("gibberish"), null));
       assertThat(throwable.getArgName(), is("projectDir"));
     }

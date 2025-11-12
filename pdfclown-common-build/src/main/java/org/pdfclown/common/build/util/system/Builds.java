@@ -350,7 +350,7 @@ public final class Builds {
       Function<String, @Nullable String> consumer)
       throws IOException, InterruptedException {
     var retRef = new Ref<@Nullable Path>();
-    execute(args, $line -> {
+    execute(args, null, $line -> {
       if (retRef.isEmpty()) {
         var result = consumer.apply($line);
         if (result != null) {

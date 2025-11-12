@@ -12,11 +12,24 @@
  */
 package org.pdfclown.common.build.internal.util_.system;
 
+import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.apache.commons.lang3.SystemUtils.OS_NAME;
+import static org.pdfclown.common.build.internal.util_.Chars.LF;
+import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
+import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
+import static org.pdfclown.common.build.internal.util_.Objects.objTo;
+import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.util_.Strings.S;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
+import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.util_.Ref;
 
 /**
  * Process utilities.
@@ -25,7 +38,31 @@ import java.util.function.Consumer;
  */
 public final class Processes {
   /**
-   * Executes a command, consuming its output.
+   * Synchronously executes a command.
+   *
+   * @param command
+   *          Command along with its arguments.
+   * @return Exit code.
+   */
+  public static int execute(List<String> command, @Nullable Path directory)
+      throws IOException, InterruptedException {
+    /*
+     * TODO: To date, there is an open bug affecting IntelliJ IDEA
+     * <https://youtrack.jetbrains.com/issue/IDEA-258730> as, apparently,
+     * `ProcessBuilder.inheritIO()` causes the execution to hang.
+     *
+     * Furthermore, remotely debugging maven (`mvnDebug`) causes the execution in IntelliJ IDEA to
+     * hang if a maven command (`mvn`) is run via `ProcessBuilder`.
+     */
+    var builder = new ProcessBuilder(command)
+        .directory(objTo(directory, Path::toFile))
+        .inheritIO();
+    Process process = builder.start();
+    return process.waitFor();
+  }
+
+  /**
+   * Synchronously executes a command, consuming its output.
    *
    * @param command
    *          Command along with its arguments.
@@ -33,10 +70,11 @@ public final class Processes {
    *          Consumes the process output line by line.
    * @return Exit code.
    */
-  public static int execute(List<String> command, Consumer<String> consumer)
-      throws IOException, InterruptedException {
-    var processBuilder = new ProcessBuilder(command);
-    Process process = processBuilder.start();
+  public static int execute(List<String> command, @Nullable Path directory,
+      Consumer<String> consumer) throws IOException, InterruptedException {
+    var builder = new ProcessBuilder(command)
+        .directory(objTo(directory, Path::toFile));
+    Process process = builder.start();
     try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
       String line;
       while ((line = reader.readLine()) != null) {
@@ -44,6 +82,117 @@ public final class Processes {
       }
     }
     return process.waitFor();
+  }
+
+  /**
+   * Synchronously executes a command.
+   *
+   * @param command
+   *          Command along with its arguments.
+   * @param outputRef
+   *          Process output.
+   * @return Exit code.
+   */
+  public static int execute(List<String> command, @Nullable Path directory, Ref<String> outputRef)
+      throws IOException, InterruptedException {
+    var b = new StringBuilder();
+    var ret = execute(command, directory, $ -> b.append($).append(LF));
+    outputRef.set(b.toString());
+    return ret;
+  }
+
+  /**
+   * Synchronously executes a command.
+   *
+   * @param command
+   *          Command along with its arguments.
+   * @throws ProcessException
+   *           if the process returns a non-zero exit code.
+   */
+  public static void executeElseThrow(List<String> command, @Nullable Path directory)
+      throws IOException, InterruptedException, ProcessException {
+    int exitCode = execute(command, directory);
+    if (exitCode != 0)
+      throw new ProcessException(exitCode, String.join(S + SPACE, command), EMPTY);
+  }
+
+  /**
+   * Synchronously executes a command, consuming its output.
+   *
+   * @param command
+   *          Command along with its arguments.
+   * @param consumer
+   *          Consumes the process output line by line.
+   * @throws ProcessException
+   *           if the process returns a non-zero exit code.
+   */
+  public static void executeElseThrow(List<String> command, @Nullable Path directory,
+      Consumer<String> consumer) throws IOException, InterruptedException {
+    int exitCode = execute(command, directory, consumer);
+    if (exitCode != 0)
+      throw new ProcessException(exitCode, String.join(S + SPACE, command), EMPTY);
+  }
+
+  /**
+   * Synchronously executes a command.
+   *
+   * @param command
+   *          Command along with its arguments.
+   * @param outputRef
+   *          Process output.
+   * @throws ProcessException
+   *           if the process returns a non-zero exit code.
+   */
+  public static void executeElseThrow(List<String> command, @Nullable Path directory,
+      Ref<String> outputRef) throws IOException, InterruptedException {
+    int exitCode = execute(command, directory, outputRef);
+    if (exitCode != 0)
+      throw new ProcessException(exitCode, String.join(S + SPACE, command), EMPTY);
+  }
+
+  /**
+   * Prepares a command for the current OS.
+   * <p>
+   * Spares users from breaking commands into parts.
+   * </p>
+   */
+  public static List<String> osCommand(String command) {
+    if (IS_OS_UNIX)
+      return unixCommand(command);
+    else if (IS_OS_WINDOWS)
+      return winCommand(command);
+    else
+      throw unexpected(OS_NAME);
+  }
+
+  /**
+   * Prepares a Unix command.
+   * <p>
+   * Spares users from breaking commands into parts.
+   * </p>
+   */
+  public static List<String> unixCommand(String command) {
+    return unixCommand(command, false);
+  }
+
+  /**
+   * Prepares a Unix command (Bash shell).
+   * <p>
+   * Spares users from breaking commands into parts.
+   * </p>
+   */
+  public static List<String> unixCommand(String command, boolean interactive) {
+    return List.of("bash", interactive ? "-ci" : "-c", command);
+  }
+
+  /**
+   * Prepares a Windows command.
+   * <p>
+   * Spares users from breaking commands into parts.
+   * </p>
+   */
+  public static List<String> winCommand(String command) {
+    return List.of("cmd", "/C", command);
   }
 
   private Processes() {

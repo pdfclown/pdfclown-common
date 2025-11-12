@@ -233,7 +233,7 @@ public final class Exceptions {
     return throwable(UnsupportedOperationException::new, format, args);
   }
 
-  public static XtIllegalArgumentException wrongArg(@Nullable String name, @Nullable Object value) {
+  public static ArgumentException wrongArg(@Nullable String name, @Nullable Object value) {
     return wrongArg(name, value, null);
   }
 
@@ -257,14 +257,14 @@ public final class Exceptions {
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
    *          it is unwrapped). {@jada.reuseDoc END}
    */
-  public static XtIllegalArgumentException wrongArg(@Nullable String name,
+  public static ArgumentException wrongArg(@Nullable String name,
       @Nullable Object value, @Nullable String format, @Nullable Object... args) {
     var message = ParamMessage.of(format, args);
-    return new XtIllegalArgumentException(name, value, message.getDescription(),
+    return new ArgumentException(name, value, message.getDescription(),
         message.getCause());
   }
 
-  public static <T> XtIllegalArgumentException wrongArgOpt(Collection<T> options) {
+  public static <T> ArgumentException wrongArgOpt(Collection<T> options) {
     return wrongArgOpt(null, null, null, options);
   }
 
@@ -280,7 +280,7 @@ public final class Exceptions {
    * @param options
    *          Any expected value which {@code value} may have matched.
    */
-  public static <T> XtIllegalArgumentException wrongArgOpt(@Nullable String name,
+  public static <T> ArgumentException wrongArgOpt(@Nullable String name,
       @Nullable Object value, @Nullable String description, Collection<T> options) {
     var b = new StringBuilder();
     if (description != null) {
