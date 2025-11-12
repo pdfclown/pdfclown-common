@@ -64,6 +64,9 @@ pdfclown-common-base instead)</description>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!--
+      Force surefire and failsafe to show the full stack on test failure. -->
+    <trimStackTrace>false</trimStackTrace>
 
     <!--
       CUSTOM PROPERTIES

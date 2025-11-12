@@ -12,9 +12,13 @@
  */
 package org.pdfclown.common.build.system;
 
+import static java.nio.file.Files.isRegularFile;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireDirectory;
+import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.io.Files.normal;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +35,16 @@ public abstract class ProjectPathResolver {
    * @param baseDir
    *          Project base directory.
    */
-  public static ProjectPathResolver of(Path baseDir) {
+  public static ProjectPathResolver of(Path baseDir) throws FileNotFoundException {
+    requireDirectory(baseDir);
     /*
      * TODO: implement `org.pdfclown.common.util.spi.ServiceProvider` to support additional project
      * types
      */
-    return new MavenPathResolver(baseDir);
+    if (isRegularFile(baseDir.resolve("pom.xml")))
+      return new MavenPathResolver(baseDir);
+    else
+      throw wrongArg("baseDir", baseDir, "Project type UNKNOWN");
   }
 
   private final Map<ProjectDirId, Path> base = new HashMap<>();

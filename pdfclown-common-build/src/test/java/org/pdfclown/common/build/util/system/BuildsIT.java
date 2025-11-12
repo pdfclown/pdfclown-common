@@ -12,11 +12,10 @@
  */
 package org.pdfclown.common.build.util.system;
 
+import static java.nio.file.Files.isDirectory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
-import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isA;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,16 +42,11 @@ import org.pdfclown.common.build.system.ProjectPathResolver;
 class BuildsIT extends BaseIT {
   @Test
   void classpath() throws IOException, InterruptedException {
-    var projectPaths = ProjectPathResolver.of(getEnv().resourcePath(UNDERSCORE + sqn(this)));
-    var projectBaseDir = projectPaths.resolve(ProjectDirId.BASE);
+    var projectBaseDir = getEnv().resourcePath(UNDERSCORE + sqn(this));
 
-    // Compile the sample project, in order to make its classes available on classpath!
-    {
-      var out = new Ref<String>();
-      if (execute(osCommand(Builds.mavenExecutable()
-          + " compile -q -Dspotless.apply.skip"), projectBaseDir, out) != 0)
-        throw runtime("Compilation of " + projectBaseDir + " FAILED" + LF + out.get());
-    }
+    compileProject(projectBaseDir);
+
+    var projectPaths = ProjectPathResolver.of(projectBaseDir);
 
     // Default (test) scope.
     List<Path> testClasspath = Builds.classpath(projectBaseDir, null);
@@ -79,18 +73,21 @@ class BuildsIT extends BaseIT {
   }
 
   @Test
-  void classpath__failure() {
-    {
-      var throwable = assertThrows(RuntimeException.class,
-          () -> Builds.classpath(Path.of("gibberish"), null));
-      assertThat(throwable.getCause(), isA(FileNotFoundException.class));
-      assertThat(throwable.getCause().getMessage(), endsWith("gibberish/pom.xml\" MISSING"));
-    }
-    {
-      var throwable = assertThrows(RuntimeException.class, () -> Builds.classpath(
-          getEnv().dir(ProjectDirId.BASE), "gibberish"));
-      assertThat(throwable.getMessage(), containsStringIgnoringCase("invalid scope"));
-    }
+  void classpath__failure_baseDir() {
+    var throwable = assertThrows(FileNotFoundException.class,
+        () -> Builds.classpath(Path.of("gibberish"), null));
+    assertThat(throwable.getMessage(), is("\"gibberish\" MISSING"));
+  }
+
+  @Test
+  void classpath__failure_scope() throws IOException, InterruptedException {
+    var projectBaseDir = getEnv().resourcePath(UNDERSCORE + sqn(this));
+
+    compileProject(projectBaseDir);
+
+    var throwable = assertThrows(RuntimeException.class, () -> Builds.classpath(
+        projectBaseDir, "gibberish"));
+    assertThat(throwable.getMessage(), containsStringIgnoringCase("invalid scope"));
   }
 
   @Test
@@ -108,5 +105,18 @@ class BuildsIT extends BaseIT {
   void projectArtifactId() {
     assertThat(Builds.projectArtifactId(getEnv().dir(ProjectDirId.MAIN_TYPE_SOURCE)),
         is("pdfclown-common-build"));
+  }
+
+  /**
+   * Compiles the given project in order to make its classes available on classpath.
+   */
+  private void compileProject(Path baseDir) throws IOException, InterruptedException {
+    var paths = ProjectPathResolver.of(baseDir);
+    if (!isDirectory(paths.resolve(ProjectDirId.MAIN_TARGET))) {
+      var out = new Ref<String>();
+      if (execute(osCommand(Builds.mavenExecutable()
+          + " compile -q -Dspotless.apply.skip"), baseDir, out) != 0)
+        throw runtime("Compilation of " + baseDir + " FAILED" + LF + out.get());
+    }
   }
 }

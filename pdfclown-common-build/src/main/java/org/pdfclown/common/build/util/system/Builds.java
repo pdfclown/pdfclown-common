@@ -22,8 +22,10 @@ import static org.pdfclown.common.build.internal.util_.Conditions.requireDirecto
 import static org.pdfclown.common.build.internal.util_.Conditions.requireFile;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.util_.Exceptions.unsupported;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
 import static org.pdfclown.common.build.internal.util_.Objects.objDo;
+import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.system.Processes.execute;
 import static org.pdfclown.common.build.internal.util_.system.Processes.osCommand;
@@ -52,6 +54,7 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util_.Ref;
 import org.pdfclown.common.build.internal.util_.xml.Xmls.XPath;
+import org.pdfclown.common.build.system.MavenPathResolver;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.slf4j.Logger;
@@ -118,67 +121,72 @@ public final class Builds {
    * @throws RuntimeException
    *           if the execution failed.
    */
-  public static List<Path> classpath(Path projectDir, @Nullable String scope) {
-    /*
-     * NOTE: Parsing Maven Invoker's interactive output is a sloppy way to collect the classpath
-     * from a POM, but for now it seems the most straightforward, sparing us the intricacies of
-     * Maven API.
-     */
+  public static List<Path> classpath(Path projectDir, @Nullable String scope)
+      throws FileNotFoundException {
     var pathResolver = ProjectPathResolver.of(projectDir);
-    try {
-      var ret = new ArrayList<Path>();
+    if (pathResolver instanceof MavenPathResolver) {
+      try {
+        /*
+         * NOTE: Parsing Maven Invoker's interactive output is a sloppy way to collect the classpath
+         * from a POM, but for now it seems the most straightforward, sparing us the intricacies of
+         * Maven API.
+         */
+        var ret = new ArrayList<Path>();
 
-      Path pomFile = requireFile(pathResolver.resolve(ProjectDirId.BASE, "pom.xml"));
+        Path pomFile = requireFile(pathResolver.resolve(ProjectDirId.BASE, "pom.xml"));
 
-      // 1. Build directory.
-      ret.add(requireDirectory(pathResolver.resolve(ProjectDirId.MAIN_TARGET)));
+        // 1. Build directory.
+        ret.add(requireDirectory(pathResolver.resolve(ProjectDirId.MAIN_TARGET)));
 
-      // 2. Dependencies.
-      var error = new StringBuilder();
-      var invoker = new DefaultInvoker();
-      invoker.execute(objDo(new DefaultInvocationRequest(), $ -> {
-        $.setMavenHome(mavenHome().toFile());
-        $.setPomFile(pomFile.toFile());
-        $.setGoals(List.of("dependency:build-classpath"));
-        if (scope != null) {
-          $.addArg("-DincludeScope=" + scope);
-        }
-        $.setOutputHandler($line -> {
-          /*
-           * NOTE: The interactive output is preceded by level tags (for example "[INFO]") on each
-           * log line except the classpath. Apparently, Maven error log lines ("[ERROR]" tag) are
-           * sent to stdout, so `setErrorHandler(..)` is useless.
-           */
-          Matcher logMatcher = PATTERN__MAVEN_LOG_LINE.matcher($line);
-          if (logMatcher.find()) {
-            if (logMatcher.group(1).equals(Level.ERROR.toString())) {
-              error.append(LF).append(logMatcher.group(2));
-            }
-          } else if (!$line.startsWith(S + SQUARE_BRACKET_OPEN)) {
-            Streams.of($line.split(File.pathSeparator))
-                .map($$ -> {
-                  try {
-                    return Path.of($$);
-                  } catch (InvalidPathException ex) {
-                    return null;
-                  }
-                })
-                .filter($$ -> $$ != null && exists($$))
-                .forEachOrdered(ret::add);
+        // 2. Dependencies.
+        var error = new StringBuilder();
+        var invoker = new DefaultInvoker();
+        invoker.execute(objDo(new DefaultInvocationRequest(), $ -> {
+          $.setMavenHome(mavenHome().toFile());
+          $.setPomFile(pomFile.toFile());
+          $.setGoals(List.of("dependency:build-classpath"));
+          if (scope != null) {
+            $.addArg("-DincludeScope=" + scope);
           }
-        });
-        $.setInputStream(
-            new ByteArrayInputStream(new byte[0]) /* Just to avoid interactive mode complaining */);
-      }));
-      if (error.length() > 0)
-        throw runtime("Classpath retrieval from {} FAILED: {}",
-            pathResolver.resolve(ProjectDirId.BASE), error);
+          $.setOutputHandler($line -> {
+            /*
+             * NOTE: The interactive output is preceded by level tags (for example "[INFO]") on each
+             * log line except the classpath. Apparently, Maven error log lines ("[ERROR]" tag) are
+             * sent to stdout, so `setErrorHandler(..)` is useless.
+             */
+            Matcher logMatcher = PATTERN__MAVEN_LOG_LINE.matcher($line);
+            if (logMatcher.find()) {
+              if (logMatcher.group(1).equals(Level.ERROR.toString())) {
+                error.append(LF).append(logMatcher.group(2));
+              }
+            } else if (!$line.startsWith(S + SQUARE_BRACKET_OPEN)) {
+              Streams.of($line.split(File.pathSeparator))
+                  .map($$ -> {
+                    try {
+                      return Path.of($$);
+                    } catch (InvalidPathException ex) {
+                      return null;
+                    }
+                  })
+                  .filter($$ -> $$ != null && exists($$))
+                  .forEachOrdered(ret::add);
+            }
+          });
+          $.setInputStream(
+              new ByteArrayInputStream(
+                  new byte[0]) /* Just to avoid interactive mode complaining */);
+        }));
+        if (error.length() > 0)
+          throw runtime("Classpath retrieval from {} FAILED: {}",
+              pathResolver.resolve(ProjectDirId.BASE), error);
 
-      return ret;
-    } catch (MavenInvocationException | FileNotFoundException ex) {
-      throw runtime("Classpath retrieval from {} FAILED", pathResolver.resolve(ProjectDirId.BASE),
-          ex);
-    }
+        return ret;
+      } catch (MavenInvocationException ex) {
+        throw runtime("Classpath retrieval from {} FAILED", pathResolver.resolve(ProjectDirId.BASE),
+            ex);
+      }
+    } else
+      throw unsupported("Project type NOT SUPPORTED: {}", sqnd(pathResolver));
   }
 
   /**
