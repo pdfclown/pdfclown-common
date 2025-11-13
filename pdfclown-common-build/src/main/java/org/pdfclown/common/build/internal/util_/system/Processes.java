@@ -166,7 +166,7 @@ public final class Processes {
   }
 
   /**
-   * Prepares a Unix command.
+   * Prepares a Unix command (Bash shell).
    * <p>
    * Spares users from breaking commands into parts.
    * </p>
