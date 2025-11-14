@@ -15,7 +15,7 @@ package org.pdfclown.common.util.system;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.contains;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Chars.COMMA;

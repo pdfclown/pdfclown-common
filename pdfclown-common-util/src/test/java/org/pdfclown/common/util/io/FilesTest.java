@@ -14,7 +14,7 @@ package org.pdfclown.common.util.io;
 
 import static java.util.Arrays.asList;
 import static org.pdfclown.common.build.test.assertion.Assertions.Argument.qnamed;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 

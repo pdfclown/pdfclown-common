@@ -63,7 +63,7 @@ class UnitsTest extends BaseTest {
 
   static Stream<Arguments> getFactor_Unit() {
     return argumentsStream(
-        simpleArgumentsStreamConfig(),
+        cartesianArgumentsStreamStrategy(),
         // expected
         asList(
             // [1] unit[0]: "a (Are)"
@@ -163,7 +163,7 @@ class UnitsTest extends BaseTest {
 
   static Stream<Arguments> getFactor_Unit_Unit() {
     return argumentsStream(
-        simpleArgumentsStreamConfig(),
+        simpleArgumentsStreamStrategy(),
         // expected
         asList(
             // [1] unit[0]: "m (Metre)"; target[0]: "m (Metre)"
@@ -182,29 +182,19 @@ class UnitsTest extends BaseTest {
             // [7] unit[6]: "h (Hour)"; target[6]: "K (Kelvin)"
             new Failure("UnconvertibleException",
                 "javax.measure.IncommensurableException: h is not compatible with K")),
-        // unit
-        asList(
-            Units.METRE,
-            Units.METRE,
-            Units.FOOT,
-            Units.FOOT,
-            Units.ACRE,
-            Units.CELSIUS,
-            Units.HOUR),
-        // target
-        asList(
-            Units.METRE,
-            Units.CENTIMETRE,
-            Units.KILOMETRE,
-            Units.SQUARE_FOOT,
-            Units.HECTARE,
-            Units.KELVIN,
-            Units.KELVIN));
+        // unit, target
+        List.of(Units.METRE, Units.METRE),
+        List.of(Units.METRE, Units.CENTIMETRE),
+        List.of(Units.FOOT, Units.KILOMETRE),
+        List.of(Units.FOOT, Units.SQUARE_FOOT),
+        List.of(Units.ACRE, Units.HECTARE),
+        List.of(Units.CELSIUS, Units.KELVIN),
+        List.of(Units.HOUR, Units.KELVIN));
   }
 
   static Stream<Arguments> getOffset_Unit() {
     return argumentsStream(
-        simpleArgumentsStreamConfig(),
+        cartesianArgumentsStreamStrategy(),
         // expected
         asList(
             // [1] unit[0]: "a (Are)"
@@ -295,9 +285,10 @@ class UnitsTest extends BaseTest {
         UNITS);
   }
 
+  @SuppressWarnings("DataFlowIssue")
   static Stream<Arguments> getQuantityType() {
     return argumentsStream(
-        simpleArgumentsStreamConfig()
+        cartesianArgumentsStreamStrategy()
             .<String>composeExpectedConverter(Objects::type),
         // expected
         asList(
@@ -389,9 +380,10 @@ class UnitsTest extends BaseTest {
         UNITS);
   }
 
+  @SuppressWarnings("DataFlowIssue")
   static Stream<Arguments> getQuantityType__external() {
     return argumentsStream(
-        simpleArgumentsStreamConfig()
+        cartesianArgumentsStreamStrategy()
             .<String>composeExpectedConverter(Objects::type),
         // expected
         asList(

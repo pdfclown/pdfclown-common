@@ -15,8 +15,6 @@ package org.pdfclown.common.build.test.assertion;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -29,7 +27,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.__test.BaseTest;
-import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
+import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 
@@ -40,7 +38,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 class AssertionsTest extends BaseTest {
   static Stream<Arguments> assertParameterized__cartesian() {
     return Assertions.argumentsStream(
-        ArgumentsStreamConfig.cartesian(),
+        ArgumentsStreamStrategy.cartesian(),
         // expected
         asList(
             // value[0]: null
@@ -93,7 +91,7 @@ class AssertionsTest extends BaseTest {
 
   static Stream<Arguments> assertParameterized__cartesian_generation() {
     return Assertions.argumentsStream(
-        ArgumentsStreamConfig.cartesian(),
+        ArgumentsStreamStrategy.cartesian(),
         // expected
         null /* GENERATION MODE */,
         // value
@@ -109,7 +107,7 @@ class AssertionsTest extends BaseTest {
 
   static Stream<Arguments> assertParameterized__simple() {
     return Assertions.argumentsStream(
-        ArgumentsStreamConfig.simple(),
+        ArgumentsStreamStrategy.simple(),
         // expected
         asList(
             // [1] value[0]: "The quick brown fox jumps over the lazy dog"; length[0]: 50
@@ -117,48 +115,23 @@ class AssertionsTest extends BaseTest {
                 "`length` (50): INVALID (should be less than 43)"),
             // [2] value[1]: "The lazy yellow dog was caught by the slow r. . ."; length[1]: 20
             "The lazy yellow dog "),
-        // value
-        asList(
-            "The quick brown fox jumps over the lazy dog",
-            "The lazy yellow dog was caught by the slow red fox as he lay sleeping in the sun"),
-        // length
-        asList(
-            50,
+        // value, length
+        List.of("The quick brown fox jumps over the lazy dog", 50),
+        List.of(
+            "The lazy yellow dog was caught by the slow red fox as he lay sleeping in the sun",
             20));
   }
 
   static Stream<Arguments> assertParameterized__simple_generation() {
     return Assertions.argumentsStream(
-        ArgumentsStreamConfig.simple(),
+        ArgumentsStreamStrategy.simple(),
         // expected
         null /* GENERATION MODE */,
-        // value
-        asList(
-            "The quick brown fox jumps over the lazy dog",
-            "The lazy yellow dog was caught by the slow red fox as he lay sleeping in the sun"),
-        // length
-        asList(
-            50,
+        // value, length
+        List.of("The quick brown fox jumps over the lazy dog", 50),
+        List.of(
+            "The lazy yellow dog was caught by the slow red fox as he lay sleeping in the sun",
             20));
-  }
-
-  static Stream<Arguments> assertParameterized__simple_generation_invalidCardinality() {
-    var exception = assertThrows(IllegalArgumentException.class, () -> Assertions.argumentsStream(
-        ArgumentsStreamConfig.simple(),
-        // expected
-        null /* GENERATION MODE */,
-        // value
-        asList(
-            "The quick brown fox jumps over the lazy dog",
-            "The lazy yellow dog was caught by the slow red fox as he lay sleeping in the sun"),
-        // length
-        asList(
-            50,
-            20,
-            5)));
-    assertEquals("`args[1].size` (3): INVALID (should be 2)", exception.getMessage());
-
-    return Stream.of(Arguments.of(null, "", 0));
   }
 
   private @Nullable PrintStream out;
@@ -167,7 +140,7 @@ class AssertionsTest extends BaseTest {
   /**
    * Tests the regular execution of
    * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}
-   * along with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * along with {@link Assertions#argumentsStream(ArgumentsStreamStrategy, List, List[])
    * argumentsStream(..)}.
    */
   @ParameterizedTest
@@ -180,7 +153,7 @@ class AssertionsTest extends BaseTest {
   /**
    * Tests the expected results generation of
    * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}
-   * along with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * along with {@link Assertions#argumentsStream(ArgumentsStreamStrategy, List, List[])
    * argumentsStream(..)}.
    */
   @ParameterizedTest
@@ -211,7 +184,7 @@ class AssertionsTest extends BaseTest {
   /**
    * Tests the regular execution of
    * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}
-   * along with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * along with {@link Assertions#argumentsStream(ArgumentsStreamStrategy, List, List[])
    * argumentsStream(..)}.
    */
   @ParameterizedTest
@@ -223,7 +196,7 @@ class AssertionsTest extends BaseTest {
   /**
    * Tests the expected results generation of
    * {@link Assertions#assertParameterized(Object, Expected, Supplier) assertParameterized(..)}
-   * along with {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   * along with {@link Assertions#argumentsStream(ArgumentsStreamStrategy, List, List[])
    * argumentsStream(..)}.
    */
   @ParameterizedTest
@@ -237,20 +210,6 @@ class AssertionsTest extends BaseTest {
         + "            new org.pdfclown.common.build.test.assertion.Assertions.Failure(\"IllegalArgumentException\", \"`length` (50): INVALID (should be less than 43)\"),\n"
         + "            // [2] value[1]: \"The lazy yellow dog was caught by the slow r. . .\"; length[1]: 20\n"
         + "            \"The lazy yellow dog \")");
-  }
-
-  /**
-   * Tests {@link Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
-   * argumentsStream(..)} failure on expected results generation (arguments cardinality should be
-   * the same, but it's not the case...).
-   *
-   * @see #assertParameterized__simple_generation_invalidCardinality()
-   */
-  @ParameterizedTest
-  @MethodSource
-  @SuppressWarnings("unused")
-  void assertParameterized__simple_generation_invalidCardinality(Object expected,
-      String value, int length) {
   }
 
   /**

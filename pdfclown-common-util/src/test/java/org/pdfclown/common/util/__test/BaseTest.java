@@ -17,7 +17,7 @@ import static org.pdfclown.common.util.Objects.objTo;
 
 import javax.measure.Unit;
 import org.pdfclown.common.build.test.Test;
-import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
+import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy;
 
 /**
  * Module-specific unit test.
@@ -25,20 +25,20 @@ import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig
  * @author Stefano Chizzolini
  */
 public abstract class BaseTest extends Test {
-  private static final ArgumentsStreamConfig.Converter ARGUMENTS_CONVERTER = ($index, $obj) -> {
+  private static final ArgumentsStreamStrategy.Converter ARGUMENTS_CONVERTER = ($index, $obj) -> {
     if ($obj instanceof Unit) {
       return objTo((Unit<?>) $obj, $ -> arg($.getName(), $));
     } else
       return $obj;
   };
 
-  protected static ArgumentsStreamConfig cartesianArgumentsStreamConfig() {
-    return ArgumentsStreamConfig.cartesian()
+  protected static ArgumentsStreamStrategy cartesianArgumentsStreamStrategy() {
+    return ArgumentsStreamStrategy.cartesian()
         .setConverter(ARGUMENTS_CONVERTER);
   }
 
-  protected static ArgumentsStreamConfig simpleArgumentsStreamConfig() {
-    return ArgumentsStreamConfig.simple()
+  protected static ArgumentsStreamStrategy simpleArgumentsStreamStrategy() {
+    return ArgumentsStreamStrategy.simple()
         .setConverter(ARGUMENTS_CONVERTER);
   }
 }

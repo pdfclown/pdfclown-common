@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Strings.EMPTY;
@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamConfig;
+import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
@@ -355,7 +355,7 @@ class ObjectsTest extends BaseTest {
   /**
    * @implNote The {@code s} argument list corresponds to the {@code expected} list of
    *           {@link #literal()}; because of the interaction of automated code generation (see also
-   *           {@link org.pdfclown.common.build.test.assertion.Assertions#argumentsStream(ArgumentsStreamConfig, List, List[])
+   *           {@link org.pdfclown.common.build.test.assertion.Assertions#argumentsStream(ArgumentsStreamStrategy, List, List[])
    *           argumentsStream(..)}), it cannot be dynamically extracted from the result of that
    *           method; in case that {@code expected} list changes, it should be manually copied
    *           here.
