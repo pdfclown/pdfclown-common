@@ -19,7 +19,7 @@ SPDX-License-Identifier = "LGPL-3.0-only OR GPL-3.0-only"
 
 # Configuration.
 [[annotations]]
-path = [".tool-versions", "**/conf/**", "**/*.config", "**/*.toml", "**/*.yaml"]
+path = [".tool-versions", "**/conf/**", "**/*.config", "**/*.toml", "**/*.yaml", "**/*.yml"]
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
 SPDX-License-Identifier = "MIT-0"
 
