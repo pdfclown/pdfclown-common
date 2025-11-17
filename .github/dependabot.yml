@@ -1,0 +1,19 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  commit-message:
+    prefix: fix
+    prefix-development: build
+    include: scope
+  schedule:
+    interval: weekly
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  commit-message:
+    prefix: fix
+    prefix-development: build
+    include: scope
+  schedule:
+    interval: weekly
