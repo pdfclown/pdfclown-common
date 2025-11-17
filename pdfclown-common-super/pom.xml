@@ -667,6 +667,13 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <nohelp>true</nohelp>
             <noindex>false</noindex>
 
+            <!--
+              NOTE: Workaround to `-no-fonts` flag automatically added because of toolchain handling
+              issue (the plugin wrongly evaluates the tool JDK version instead of the build JDK
+              version, despite it's the latter to generate the javadoc - see also
+              <https://github.com/apache/maven-javadoc-plugin/issues/1244>). -->
+            <disableNoFonts>true</disableNoFonts>
+
             <archive>
               <addMavenDescriptor>true</addMavenDescriptor>
             </archive>
