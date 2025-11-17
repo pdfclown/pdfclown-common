@@ -128,7 +128,7 @@ pdfclown-common-base instead)</description>
     <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
     <maven-invoker-plugin.version>3.9.1</maven-invoker-plugin.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
-    <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <maven-plugin-plugin.version>3.15.1</maven-plugin-plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
     <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
@@ -666,6 +666,13 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
 
             <nohelp>true</nohelp>
             <noindex>false</noindex>
+
+            <!--
+              NOTE: Workaround to `-no-fonts` flag automatically added because of toolchain handling
+              issue (the plugin wrongly evaluates the tool JDK version instead of the build JDK
+              version, despite it's the latter to generate the javadoc - see also
+              <https://github.com/apache/maven-javadoc-plugin/issues/1244>). -->
+            <disableNoFonts>true</disableNoFonts>
 
             <archive>
               <addMavenDescriptor>true</addMavenDescriptor>
