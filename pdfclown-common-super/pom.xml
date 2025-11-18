@@ -93,7 +93,7 @@ pdfclown-common-base instead)</description>
     <hamcrest.version>3.0</hamcrest.version>
     <indriya.version>2.2.3</indriya.version>
     <javaparser.version>3.26.2</javaparser.version>
-    <jimfs.version>1.3.0</jimfs.version>
+    <jimfs.version>1.3.1</jimfs.version>
     <json.version>20240303</json.version>
     <!--
       TODO: Whenever this version is updated, `json.version` MUST be aligned to its transitive
