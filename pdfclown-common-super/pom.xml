@@ -129,7 +129,7 @@ pdfclown-common-base instead)</description>
     <maven-invoker-plugin.version>3.9.1</maven-invoker-plugin.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
-    <maven-plugin-plugin.version>3.15.1</maven-plugin-plugin.version>
+    <maven-plugin-plugin.version>3.15.2</maven-plugin-plugin.version>
     <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
     <maven-shade-plugin.version>3.6.0</maven-shade-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
