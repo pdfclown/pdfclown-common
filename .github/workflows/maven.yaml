@@ -8,13 +8,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up build JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
     - name: Set up tool JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version-file: '.tool-versions'
         distribution: 'temurin'
