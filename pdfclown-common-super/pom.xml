@@ -130,7 +130,6 @@ pdfclown-common-base instead)</description>
     <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
     <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <maven-plugin-plugin.version>3.15.2</maven-plugin-plugin.version>
-    <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
     <maven-shade-plugin.version>3.6.1</maven-shade-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
@@ -160,6 +159,28 @@ pdfclown-common-base instead)</description>
 
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${maven-enforcer-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>enforce-maven</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <phase>initialize</phase>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>3.9.9</version>
+                  </requireMavenVersion>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <groupId>io.github.git-commit-id</groupId>
           <artifactId>git-commit-id-maven-plugin</artifactId>
@@ -737,26 +758,13 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
         </plugin>
 
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>${maven-release-plugin.version}</version>
-          <configuration>
-            <!--  
-            <goals>deploy</goals>
-            <arguments>-Prelease</arguments>
-            -->
-            <autoVersionSubmodules>true</autoVersionSubmodules>
-            <tagNameFormat>@{project.version}</tagNameFormat>
-          </configuration>
-        </plugin>
-
-        <plugin>
           <groupId>org.sonatype.central</groupId>
           <artifactId>central-publishing-maven-plugin</artifactId>
           <version>${central-publishing-maven-plugin.version}</version>
           <extensions>true</extensions>
           <configuration>
             <publishingServerId>central</publishingServerId>
+            <autoPublish>false</autoPublish>
           </configuration>
         </plugin>
 
@@ -889,20 +897,9 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>${maven-enforcer-plugin.version}</version>
         <executions>
           <execution>
             <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>3.9.9</version>
-                </requireMavenVersion>
-              </rules>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -917,7 +914,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <!--
         FULL EXECUTION PROFILE
 
-        Activates the following operations (disabled by default):
+        Activates the following operations:
         - javadoc jar
       -->
       <build>
@@ -991,10 +988,76 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <!--
         DEPLOYMENT PROFILE
 
-        Activates the following operations (disabled by default):
+        Activates the following operations:
+        - release execution via ReleaseManager
+
+        Usage (IMPORTANT: run at project root):
+          mvn initialize -N -Prelease -Drelease.version=<semver2> \
+              [-Drelease.startpoint=<release branch start-point ref>] \
+              [-DdryRun]
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.gmavenplus</groupId>
+            <artifactId>gmavenplus-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>org.pdfclown</groupId>
+                <artifactId>pdfclown-common-build</artifactId>
+                <version>${revision}</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>execute-release</id>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <phase>initialize</phase>
+                <configuration>
+                  <scripts>
+                    <script><![CDATA[
+import org.pdfclown.common.build.release.ReleaseManager
+
+final var USER_PROPERTY_NAME__DRYRUN = "dryRun"
+final var USER_PROPERTY_NAME__RELEASE_STARTPOINT = "release.startpoint"
+final var USER_PROPERTY_NAME__RELEASE_VERSION = "release.version"
+
+final var releaseVersion = session.userProperties[USER_PROPERTY_NAME__RELEASE_VERSION]
+if (releaseVersion == null)
+  throw new IllegalStateException("\"" + USER_PROPERTY_NAME__RELEASE_VERSION + "\" user property MISSING")
+
+new ReleaseManager(project.basedir.toPath(), releaseVersion)
+    .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY_NAME__RELEASE_STARTPOINT])
+    .setDeploymentProfiles("do-publish")
+    .setInstallationProfiles("full")
+    /* NOTE: Activates remote push only if GPG signing is configured. */
+    .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
+    .setDryRun(session.userProperties[USER_PROPERTY_NAME__DRYRUN] != null)
+    .execute()
+]]></script>
+                  </scripts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>do-publish</id>
+      <!--
+        (internal use only) DEPLOYMENT EXECUTION PROFILE
+
+        Activates the following operations:
         - javadoc jar
         - gpg signing
         - maven central publishing
+
+        IMPORTANT: It is caller's responsibiity to prepare the working tree for the deployment, in
+        particular to check out the corresponding release tag.
       -->
       <build>
         <plugins>
@@ -1009,6 +1072,11 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             <version>${maven-gpg-plugin.version}</version>
             <configuration>
               <bestPractices>true</bestPractices>
+              <gpgArguments>
+                <!-- Unattended (non-interactive) execution -->
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
             </configuration>
             <executions>
               <execution>
