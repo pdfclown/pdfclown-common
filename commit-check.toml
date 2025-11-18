@@ -1,0 +1,10 @@
+#
+# pre-commit check-branch configuration
+# https://github.com/commit-check/commit-check
+#
+[branch]
+# https://conventional-branch.github.io/
+#
+# Adds "dependabot" branch type to accommodate commits on automated PR branches.
+conventional_branch = true
+allow_branch_types = ["feature", "bugfix", "hotfix", "release", "chore", "feat", "fix", "dependabot"]
