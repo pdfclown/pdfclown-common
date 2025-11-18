@@ -1,0 +1,82 @@
+name: Release CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: 'Version to release (semver2)'
+        type: string
+        required: true
+      scm_startpoint:
+        description: 'Release branch start point (by default, main HEAD)'
+        type: string
+        required: false
+
+env:
+  JAVA_VERSION: '11'
+  JAVA_DISTRO: 'temurin'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout (full history)
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.13'
+        cache: 'pip'
+
+    - name: Install Python dependencies
+      run: pip install commitizen
+
+    - name: Set up build JDK
+      uses: actions/setup-java@v5
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRO }}
+        cache: maven
+
+    - name: Set up tool JDK
+      uses: actions/setup-java@v5
+      with:
+        java-version-file: '.tool-versions'
+        distribution: ${{ env.JAVA_DISTRO }}
+        cache: maven
+        server-id: central
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+        gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }}
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+    - name: Checks
+      id: checks
+      run: |
+        echo "deps_local=$([ -d pdfclown-common-build ] && echo true || echo false)" >> $GITHUB_OUTPUT
+
+    - name: Install local dependencies
+      # NOTE: The release executor requires pdfclown-common-build; if such dependency is local, it
+      #       has to be explicitly installed before executing the release (it cannot be included in
+      #       the automated release process because of circular reference issues).
+      if: steps.checks.outputs.deps_local == 'true'
+      run: mvn install --batch-mode -pl pdfclown-common-build -amd -Pfast+
+
+    - name: Configure SCM
+      run: |
+        git config user.name "pdfClown.org CI"
+        git config user.email "stechio@users.noreply.github.com"
+
+    - name: Execute release
+      env:
+        MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
+      run: |
+        mvn initialize --batch-mode -N -Prelease \
+            -Drelease.version=${{ inputs.revision }} \
+            -Drelease.startpoint=${{ inputs.scm_startpoint }}

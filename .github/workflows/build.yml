@@ -1,26 +1,37 @@
-name: Java CI with Maven
+name: Build CI
 
 on: [push, pull_request]
+
+env:
+  JAVA_VERSION: '11'
+  JAVA_DISTRO: 'temurin'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v5
+    - name: Checkout
+      uses: actions/checkout@v5
+
     - name: Set up build JDK
       uses: actions/setup-java@v5
       with:
-        java-version: '11'
-        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: ${{ env.JAVA_DISTRO }}
         cache: maven
+
     - name: Set up tool JDK
       uses: actions/setup-java@v5
       with:
         java-version-file: '.tool-versions'
-        distribution: 'temurin'
+        distribution: ${{ env.JAVA_DISTRO }}
         cache: maven
+
     - name: Build with Maven
-      run: mvn --batch-mode verify
+      run: mvn verify --batch-mode
+
     - name: Submit Dependency Snapshot
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: advanced-security/maven-dependency-submission-action@v5
+
