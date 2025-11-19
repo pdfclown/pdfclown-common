@@ -25,18 +25,6 @@
   <url>${projectRootUrl}</url>
   <inceptionYear>2025</inceptionYear>
 
-  <organization>
-    <name>pdfClown.org</name>
-    <url>https://pdfclown.org</url>
-  </organization>
-
-  <licenses>
-    <license>
-      <name>GNU Lesser General Public License (LGPL), version 3</name>
-      <url>https://www.gnu.org/licenses/lgpl-3.0.html</url>
-    </license>
-  </licenses>
-
   <developers>
     <developer>
       <id>stechio</id>

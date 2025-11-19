@@ -24,6 +24,18 @@ pdfclown-common-base instead)</description>
     to override the default mechanism. -->
   <url>${projectRootUrl}</url>
 
+  <organization>
+    <name>pdfClown.org</name>
+    <url>https://pdfclown.org</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>LGPL-3.0-only</name>
+      <url>https://spdx.org/licenses/LGPL-3.0-only.html</url>
+    </license>
+  </licenses>
+
   <properties>
     <!--
       ROOT-PROJECT-SPECIFIC PROPERTIES
