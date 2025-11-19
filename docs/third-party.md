@@ -4,6 +4,9 @@
 
 <!-- REUSE-IgnoreStart -->
 
+> [!IMPORTANT]
+> To enforce the conventions described herein, committers have to set up the [**commit validation hooks**](building.md#setup).
+
 Source code from third-party projects is incorporated according to [REUSE 3.3](https://reuse.software/spec-3.3/) specification.
 
 It may be incorporated either keeping track of its original repository (fork), or not (detached).
