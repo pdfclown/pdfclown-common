@@ -34,14 +34,10 @@ This project adheres to the following best practices:
 - [Open Source Guides](https://opensource.guide/)
 - [Reproducible Builds](https://reproducible-builds.org/)
 
-## Project Structure
+## [Project Structure](structure.md)
 
-[see [here](structure.md)]
+## [Project Maintenance](maintenance.md)
 
-## Coding Conventions
+## [Coding Conventions](coding.md)
 
-[see [here](coding.md)]
-
-## Third-Party Code Reuse
-
-[see [here](third-party.md)]
+## [Third-Party Code Reuse](third-party.md)
