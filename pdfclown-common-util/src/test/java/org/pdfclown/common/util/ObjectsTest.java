@@ -17,7 +17,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.List.of;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -925,7 +925,11 @@ class ObjectsTest extends BaseTest {
             .thenComparing(Objects.HierarchicalTypeComparator.Priorities.interfacePriority()
                 .reversed()));
 
-    assertThat(actual, contains(
+    /*
+     * NOTE: `containsInRelativeOrder(..)` is needed as newer Java versions may introduce further
+     * super types than Java 11.
+     */
+    assertThat(actual, containsInRelativeOrder(
         List.class,
         UnmodifiableCollection.class,
         Collection.class,

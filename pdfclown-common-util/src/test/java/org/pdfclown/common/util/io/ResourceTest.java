@@ -15,6 +15,7 @@ package org.pdfclown.common.util.io;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -26,6 +27,7 @@ import static org.pdfclown.common.build.test.assertion.Assertions.assertParamete
 import static org.pdfclown.common.build.test.assertion.Matchers.has;
 import static org.pdfclown.common.util.Objects.literal;
 import static org.pdfclown.common.util.Objects.sqn;
+import static org.pdfclown.common.util.Objects.toStringWithFeatures;
 import static org.pdfclown.common.util.net.Uris.uri;
 
 import com.google.common.jimfs.Configuration;
@@ -74,6 +76,11 @@ class ResourceTest extends BaseTest {
     @Override
     public URI getUri() {
       return uri;
+    }
+
+    @Override
+    public String toString() {
+      return toStringWithFeatures(this, sqn, name, uri);
     }
   }
 
@@ -165,7 +172,8 @@ class ResourceTest extends BaseTest {
       when(fileSystemMock.getPath(any())).then($ -> Path.of($.<String>getArgument(0)));
     }
     //noinspection resource
-    fileSystemsMock.when(() -> FileSystems.newFileSystem(any(Path.class), any()))
+    fileSystemsMock
+        .when(() -> FileSystems.newFileSystem(any(Path.class), isNull(ClassLoader.class)))
         .thenReturn(fileSystemMock);
     fileSystemsMock.when(FileSystems::getDefault).thenReturn(defaultFsMock);
   }

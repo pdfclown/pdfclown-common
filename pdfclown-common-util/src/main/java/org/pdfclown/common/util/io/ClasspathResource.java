@@ -89,9 +89,13 @@ public class ClasspathResource extends AbstractResource implements PathResource 
     return url != null ? new ClasspathResource(name, url) : null;
   }
 
+  @SuppressWarnings("RedundantCast" /*
+                                     * NOTE: Since Java 13, `ClassLoader` cast is mandatory because
+                                     * of overload ambiguity
+                                     */)
   private static FileSystem asFileSystem(Path path) {
     return fileSystems.computeIfAbsent(path.toString(),
-        Failable.asFunction($k -> FileSystems.newFileSystem(path, null)));
+        Failable.asFunction($k -> FileSystems.newFileSystem(path, (ClassLoader) null)));
   }
 
   private static String jarEntryName(String path) {

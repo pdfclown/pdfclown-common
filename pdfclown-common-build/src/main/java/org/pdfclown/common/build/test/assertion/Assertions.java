@@ -20,10 +20,12 @@ import static java.util.Collections.binarySearch;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Map.entry;
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -94,6 +96,7 @@ import java.util.function.BiFunction;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -517,6 +520,16 @@ public final class Assertions {
       }
     }
 
+    private static final Map<String,
+        UnaryOperator<String>> THROWN_MESSAGE_NORMALIZERS__BUILTIN = Map.of(
+            /*
+             * NOTE: Since Java 14 (see <https://openjdk.java.net/jeps/358>), NPE's message has
+             * changed (it describes which variable is null, whilst previously it didn't provide
+             * such information). To avoid false negatives switching between pre- and post-Java 14
+             * JDKs, all messages are suppressed.
+             */
+            sqnd(NullPointerException.class), $ -> EMPTY);
+
     /**
      * Creates a strategy for Cartesian-product
      * {@linkplain #argumentsStream(ArgumentsStreamStrategy, List, List[]) arguments stream}.
@@ -577,8 +590,30 @@ public final class Assertions {
 
     @Nullable
     Converter converter;
+    Map<String, UnaryOperator<String>> thrownMessageNormalizers =
+        THROWN_MESSAGE_NORMALIZERS__BUILTIN;
 
     protected ArgumentsStreamStrategy() {
+    }
+
+    /**
+     * Adds the message normalizer for a throwable type.
+     * <p>
+     * Useful to extract from the message of specific throwable types the contents which are
+     * invariant across JDKs and third-party components. For example, since Java 14
+     * {@link NullPointerException}'s message <a href="https://openjdk.java.net/jeps/358">has
+     * changed</a> (it describes which variable is null, whilst previously it didn't provide such
+     * information); to avoid false negatives switching between pre- and post-Java 14 JDKs, all
+     * messages are suppressed by a built-in normalizer.
+     * </p>
+     */
+    public ArgumentsStreamStrategy addThrownMessageNormalizer(Class<? extends Throwable> type,
+        UnaryOperator<String> normalizer) {
+      if (thrownMessageNormalizers == THROWN_MESSAGE_NORMALIZERS__BUILTIN) {
+        thrownMessageNormalizers = new HashMap<>(THROWN_MESSAGE_NORMALIZERS__BUILTIN);
+      }
+      thrownMessageNormalizers.put(sqnd(type), normalizer);
+      return this;
     }
 
     /**
@@ -701,7 +736,26 @@ public final class Assertions {
      *          Thrown exception.
      */
     public static <T> Expected<T> failure(Failure thrown) {
-      return new Expected<>(null, requireNonNull(thrown));
+      return failure(thrown, null);
+    }
+
+    /**
+     * New failed result.
+     *
+     * @param thrown
+     *          Thrown exception.
+     * @param thrownMessageNormalizer
+     *          Maps the thrown message to its normal form. Useful to prevent variations across JDKs
+     *          and third-party components from disrupting test assertions against expected messages
+     *          (see also
+     *          {@link ArgumentsStreamStrategy#addThrownMessageNormalizer(Class, UnaryOperator)}).
+     */
+    public static <T> Expected<T> failure(Failure thrown,
+        @Nullable UnaryOperator<String> thrownMessageNormalizer) {
+      var ret = new Expected<T>(null, requireNonNull(thrown));
+      ret.thrownMessageNormalizer = requireNonNullElse(thrownMessageNormalizer,
+          UnaryOperator.identity());
+      return ret;
     }
 
     /**
@@ -720,6 +774,8 @@ public final class Assertions {
     final T returned;
     @Nullable
     final Failure thrown;
+    @Nullable
+    UnaryOperator<String> thrownMessageNormalizer;
 
     private Expected(@Nullable T returned, @Nullable Failure thrown) {
       this.thrown = thrown;
@@ -771,6 +827,12 @@ public final class Assertions {
       return matcherProvider != null && returned != null
           ? matcherProvider.apply(returned)
           : is(returned);
+    }
+
+    String normalizeThrownMessage(Failure failure) {
+      assert thrownMessageNormalizer != null;
+
+      return thrownMessageNormalizer.apply(failure.getMessage());
     }
   }
 
@@ -1292,18 +1354,23 @@ public final class Assertions {
    */
   @Immutable
   public static class Failure {
-    private final @Nullable String message;
+    private final String message;
     private final String name;
 
+    /**
+     * @param message
+     *          NOTE: Normalized converting {@code null} (which is a valid
+     *          {@link Throwable#getMessage()}) to empty.
+     */
     public Failure(String name, @Nullable String message) {
       this.name = requireNonNull(name, "`name`");
-      this.message = message;
+      this.message = stripToEmpty(message);
     }
 
     /**
      * Message of the thrown exception.
      */
-    public @Nullable String getMessage() {
+    public String getMessage() {
       return message;
     }
 
@@ -1316,7 +1383,7 @@ public final class Assertions {
 
     @Override
     public String toString() {
-      return name + SPACE + ROUND_BRACKET_OPEN + abbreviate(message, 30) + ROUND_BRACKET_CLOSE;
+      return name + SPACE + ROUND_BRACKET_OPEN + message + ROUND_BRACKET_CLOSE;
     }
   }
 
@@ -1764,7 +1831,8 @@ public final class Assertions {
         expectedList = new ArrayList<>(expected.size());
         for (var e : expected) {
           expectedList.add(e instanceof Failure
-              ? Expected.failure((Failure) e)
+              ? Expected.failure((Failure) e,
+                  strategy.thrownMessageNormalizers.get(((Failure) e).getName()))
               : Expected.success(strategy.converter != null
                   ? strategy.converter.apply(0, e)
                   : e));
@@ -1923,8 +1991,7 @@ public final class Assertions {
    * }</code></pre>
    */
   public static <T> void assertParameterized(@Nullable Object actual,
-      @Nullable Expected<T> expected,
-      @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
+      Expected<T> expected, @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
     ExpectedGenerator generator = expectedGenerator.get();
     /*
      * Assertion enabled?
@@ -1933,8 +2000,6 @@ public final class Assertions {
      * they would fail fast since their state is incomplete).
      */
     if (generator == null) {
-      assert expected != null;
-
       // Failed result?
       if (actual instanceof Failure) {
         if (!expected.isFailure())
@@ -1944,13 +2009,10 @@ public final class Assertions {
         var thrownActual = (Failure) actual;
         var thrownExpected = expected.getThrown();
         assert thrownExpected != null;
+
         assertThat("Throwable.class.name", thrownActual.getName(), is(thrownExpected.getName()));
-        /*
-         * NOTE: DataFlowIssue is false positive: `actual` arg of `assertThat(..)` and `value` arg
-         * of `is(..)` can be null, no NPE is possible.
-         */
-        //noinspection DataFlowIssue -- see NOTE above
-        assertThat("Throwable.message", thrownActual.getMessage(), is(thrownExpected.getMessage()));
+        assertThat("Throwable.message", expected.normalizeThrownMessage(thrownActual),
+            is(expected.normalizeThrownMessage(thrownExpected)));
       }
       // Regular result.
       else {
@@ -1993,8 +2055,7 @@ public final class Assertions {
    */
   public static <T> void assertParameterizedOf(
       FailableSupplier<@Nullable Object, Exception> actualExpression,
-      @Nullable Expected<T> expected,
-      @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
+      Expected<T> expected, @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
     assertParameterized(evalParameterized(actualExpression), expected, generationSupplier);
   }
 
