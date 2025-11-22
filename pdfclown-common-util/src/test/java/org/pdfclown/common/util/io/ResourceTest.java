@@ -27,7 +27,7 @@ import static org.pdfclown.common.build.test.assertion.Assertions.assertParamete
 import static org.pdfclown.common.build.test.assertion.Matchers.has;
 import static org.pdfclown.common.util.Objects.literal;
 import static org.pdfclown.common.util.Objects.sqn;
-import static org.pdfclown.common.util.Objects.toStringWithFeatures;
+import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.net.Uris.uri;
 
 import com.google.common.jimfs.Configuration;
@@ -80,7 +80,7 @@ class ResourceTest extends BaseTest {
 
     @Override
     public String toString() {
-      return toStringWithFeatures(this, sqn, name, uri);
+      return toStringWithValues(this, sqn, name, uri);
     }
   }
 

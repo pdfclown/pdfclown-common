@@ -20,15 +20,10 @@ import static java.util.Objects.requireNonNullElseGet;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.build.internal.util_.Booleans.parseBoolean;
 import static org.pdfclown.common.build.internal.util_.Chars.BACKSLASH;
-import static org.pdfclown.common.build.internal.util_.Chars.COLON;
 import static org.pdfclown.common.build.internal.util_.Chars.COMMA;
-import static org.pdfclown.common.build.internal.util_.Chars.CURLY_BRACE_CLOSE;
-import static org.pdfclown.common.build.internal.util_.Chars.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.build.internal.util_.Chars.DOLLAR;
 import static org.pdfclown.common.build.internal.util_.Chars.DOT;
 import static org.pdfclown.common.build.internal.util_.Chars.DQUOTE;
-import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
 import static org.pdfclown.common.build.internal.util_.Chars.SQUOTE;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireNonNullElseThrow;
@@ -376,6 +371,11 @@ public final class Objects {
       Void.class);
 
   private static final Map<ClassLoader, ProxySpace> proxySpaces = new WeakHashMap<>();
+
+  private static final String TO_STRING_CLOSE = "]";
+  private static final String TO_STRING_ITEM_SEPARATOR = S + COMMA + SPACE;
+  private static final String TO_STRING_OPEN = "[";
+  private static final String TO_STRING_PROPERTY_SEPARATOR = "=";
 
   /**
    * Gets whether an object matches the other one according to the predicate.
@@ -1436,7 +1436,7 @@ public final class Objects {
           return norm.equals(sqnd) || norm.equals(fqnd(obj));
         }).isPresent()
             ? objString
-            : sqnd + SPACE + CURLY_BRACE_OPEN + objString + CURLY_BRACE_CLOSE;
+            : sqnd + SPACE + TO_STRING_OPEN + objString + TO_STRING_CLOSE;
   }
 
   /**
@@ -1465,109 +1465,8 @@ public final class Objects {
         .map($ -> $.group(1).equals(sqnd) ? $.group()
             : sqnd + ($.group(1).endsWith(obj.getClass().getSimpleName())
                 ? objToElse(stripToNull($.group(2)), $$ -> S + SPACE + $$, EMPTY)
-                : S + SPACE + CURLY_BRACE_OPEN + $.group() + CURLY_BRACE_CLOSE))
+                : S + SPACE + TO_STRING_OPEN + $.group() + TO_STRING_CLOSE))
         .orElseThrow();
-  }
-
-  /**
-   * {@jada.doc} Gets the string representation of an object, along with its features.
-   * <p>
-   * NOTE: {@code null} features are ignored.
-   * </p>
-   * {@jada.doc END}
-   */
-  public static String toStringWithFeatures(Object obj, @Nullable Object... features) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(ROUND_BRACKET_OPEN);
-    var filled = false;
-    for (var feature : features) {
-      if (feature == null) {
-        continue;
-      }
-
-      if (filled) {
-        b.append(SPACE);
-      }
-      b.append(feature);
-      filled = true;
-    }
-    return b.append(ROUND_BRACKET_CLOSE).toString();
-  }
-
-  /**
-   * {@jada.reuseDoc} Gets the string representation of an object, along with its features.
-   * <p>
-   * NOTE: {@code null} features are ignored.
-   * </p>
-   * {@jada.reuseDoc END}
-   */
-  public static String toStringWithFeatures(Object obj, @Nullable Object feature) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE);
-    if (feature instanceof Collection || feature instanceof Map) {
-      b.append(feature);
-    } else {
-      b.append(ROUND_BRACKET_OPEN);
-      if (feature != null) {
-        b.append(feature);
-      }
-      b.append(ROUND_BRACKET_CLOSE);
-    }
-    return b.toString();
-  }
-
-  /**
-   * {@jada.reuseDoc} Gets the string representation of an object, along with its features.
-   * <p>
-   * NOTE: {@code null} features are ignored.
-   * </p>
-   * {@jada.reuseDoc END}
-   */
-  public static String toStringWithFeatures(Object obj, @Nullable Object feature1,
-      @Nullable Object feature2) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(ROUND_BRACKET_OPEN);
-    var filled = false;
-    if (feature1 != null) {
-      filled = true;
-      b.append(feature1);
-    }
-    if (feature2 != null) {
-      if (filled) {
-        b.append(SPACE);
-      }
-      b.append(feature2);
-    }
-    return b.append(ROUND_BRACKET_CLOSE).toString();
-  }
-
-  /**
-   * {@jada.reuseDoc} Gets the string representation of an object, along with its features.
-   * <p>
-   * NOTE: {@code null} features are ignored.
-   * </p>
-   * {@jada.reuseDoc END}
-   */
-  public static String toStringWithFeatures(Object obj, @Nullable Object feature1,
-      @Nullable Object feature2, @Nullable Object feature3) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(ROUND_BRACKET_OPEN);
-    var filled = false;
-    if (feature1 != null) {
-      filled = true;
-      b.append(feature1);
-    }
-    if (feature2 != null) {
-      if (filled) {
-        b.append(SPACE);
-      } else {
-        filled = true;
-      }
-      b.append(feature2);
-    }
-    if (feature3 != null) {
-      if (filled) {
-        b.append(SPACE);
-      }
-      b.append(feature3);
-    }
-    return b.append(ROUND_BRACKET_CLOSE).toString();
   }
 
   /**
@@ -1575,52 +1474,158 @@ public final class Objects {
    * {@jada.doc END}
    *
    * @param properties
-   *          Properties (key-value pairs; keys MUST be non-null).
+   *          Properties (key-value pairs; keys MUST be non-null {@link String}).
+   * @throws ClassCastException
+   *           if keys are not {@link String}.
    */
   public static String toStringWithProperties(Object obj, @Nullable Object... properties) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(CURLY_BRACE_OPEN);
+    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(TO_STRING_OPEN);
     for (int i = 0; i < properties.length;) {
       if (i > 0) {
-        b.append(COMMA).append(SPACE);
+        b.append(TO_STRING_ITEM_SEPARATOR);
       }
-      b.append(requireNonNull(properties[i++])).append(COLON).append(SPACE).append(properties[i++]);
+      b.append((String) properties[i++]).append(TO_STRING_PROPERTY_SEPARATOR)
+          .append(properties[i++]);
     }
-    return b.append(CURLY_BRACE_CLOSE).toString();
+    return b.append(TO_STRING_CLOSE).toString();
   }
 
   /**
    * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
    * {@jada.reuseDoc END}
    */
-  public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1) {
-    return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
-        + requireNonNull(k1) + COLON + SPACE + v1
-        + CURLY_BRACE_CLOSE;
+  public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1) {
+    return sqnd(obj) + SPACE + TO_STRING_OPEN
+        + key1 + TO_STRING_PROPERTY_SEPARATOR + value1
+        + TO_STRING_CLOSE;
   }
 
   /**
    * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
    * {@jada.reuseDoc END}
    */
-  public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
-      @Nullable Object v2) {
-    return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
-        + requireNonNull(k1) + COLON + SPACE + v1 + COMMA + SPACE
-        + requireNonNull(k2) + COLON + SPACE + v2
-        + CURLY_BRACE_CLOSE;
+  public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1,
+      String key2,
+      @Nullable Object value2) {
+    return sqnd(obj) + SPACE + TO_STRING_OPEN
+        + key1 + TO_STRING_PROPERTY_SEPARATOR + value1 + TO_STRING_ITEM_SEPARATOR
+        + key2 + TO_STRING_PROPERTY_SEPARATOR + value2
+        + TO_STRING_CLOSE;
   }
 
   /**
    * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
    * {@jada.reuseDoc END}
    */
-  public static String toStringWithProperties(Object obj, String k1, @Nullable Object v1, String k2,
-      @Nullable Object v2, String k3, @Nullable Object v3) {
-    return sqnd(obj) + SPACE + CURLY_BRACE_OPEN
-        + requireNonNull(k1) + COLON + SPACE + v1 + COMMA + SPACE
-        + requireNonNull(k2) + COLON + SPACE + v2 + COMMA + SPACE
-        + requireNonNull(k3) + COLON + SPACE + v3
-        + CURLY_BRACE_CLOSE;
+  public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1,
+      String key2,
+      @Nullable Object value2, String key3, @Nullable Object value3) {
+    return sqnd(obj) + SPACE + TO_STRING_OPEN
+        + key1 + TO_STRING_PROPERTY_SEPARATOR + value1 + TO_STRING_ITEM_SEPARATOR
+        + key2 + TO_STRING_PROPERTY_SEPARATOR + value2 + TO_STRING_ITEM_SEPARATOR
+        + key3 + TO_STRING_PROPERTY_SEPARATOR + value3
+        + TO_STRING_CLOSE;
+  }
+
+  /**
+   * {@jada.doc} Gets the string representation of an object, along with its values.
+   * <p>
+   * NOTE: {@code null} values are ignored.
+   * </p>
+   * {@jada.doc END}
+   */
+  public static String toStringWithValues(Object obj, @Nullable Object... values) {
+    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(TO_STRING_OPEN);
+    var filled = false;
+    for (var value : values) {
+      if (value == null) {
+        continue;
+      }
+
+      if (filled) {
+        b.append(TO_STRING_ITEM_SEPARATOR);
+      }
+      b.append(value);
+      filled = true;
+    }
+    return b.append(TO_STRING_CLOSE).toString();
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its values.
+   * <p>
+   * NOTE: {@code null} values are ignored.
+   * </p>
+   * {@jada.reuseDoc END}
+   */
+  public static String toStringWithValues(Object obj, @Nullable Object value) {
+    var b = new StringBuilder(sqnd(obj)).append(SPACE);
+    if (value instanceof Collection || value instanceof Map) {
+      b.append(value);
+    } else {
+      b.append(TO_STRING_OPEN);
+      if (value != null) {
+        b.append(value);
+      }
+      b.append(TO_STRING_CLOSE);
+    }
+    return b.toString();
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its values.
+   * <p>
+   * NOTE: {@code null} values are ignored.
+   * </p>
+   * {@jada.reuseDoc END}
+   */
+  public static String toStringWithValues(Object obj, @Nullable Object value1,
+      @Nullable Object value2) {
+    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(TO_STRING_OPEN);
+    var filled = false;
+    if (value1 != null) {
+      filled = true;
+      b.append(value1);
+    }
+    if (value2 != null) {
+      if (filled) {
+        b.append(TO_STRING_ITEM_SEPARATOR);
+      }
+      b.append(value2);
+    }
+    return b.append(TO_STRING_CLOSE).toString();
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its values.
+   * <p>
+   * NOTE: {@code null} values are ignored.
+   * </p>
+   * {@jada.reuseDoc END}
+   */
+  public static String toStringWithValues(Object obj, @Nullable Object value1,
+      @Nullable Object value2, @Nullable Object value3) {
+    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(TO_STRING_OPEN);
+    var filled = false;
+    if (value1 != null) {
+      filled = true;
+      b.append(value1);
+    }
+    if (value2 != null) {
+      if (filled) {
+        b.append(TO_STRING_ITEM_SEPARATOR);
+      } else {
+        filled = true;
+      }
+      b.append(value2);
+    }
+    if (value3 != null) {
+      if (filled) {
+        b.append(TO_STRING_ITEM_SEPARATOR);
+      }
+      b.append(value3);
+    }
+    return b.append(TO_STRING_CLOSE).toString();
   }
 
   /**

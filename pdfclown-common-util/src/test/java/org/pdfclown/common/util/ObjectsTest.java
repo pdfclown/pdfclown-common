@@ -24,11 +24,13 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
+import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.simple;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,10 +50,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.pdfclown.common.build.internal.util_.xml.Xmls;
+import org.pdfclown.common.build.internal.util_.xml.Xmls.DocumentFactoryProfile;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
+import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.__test.BaseTest;
+import org.pdfclown.common.util.system.Clis;
 
 /**
  * @author Stefano Chizzolini
@@ -620,15 +626,15 @@ class ObjectsTest extends BaseTest {
             // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
             "org.pdfclown.common.util.ObjectsTest.ToStringObject something",
             // [9] obj[8]: "ToStringObjects"
-            "ObjectsTest.ToStringObject {ToStringObjects}",
+            "ObjectsTest.ToStringObject [ToStringObjects]",
             // [10] obj[9]: "org.something.ToStringObject"
-            "ObjectsTest.ToStringObject {org.something.ToStringObject}",
+            "ObjectsTest.ToStringObject [org.something.ToStringObject]",
             // [11] obj[10]: "ToStringObject{myprop:AAA}"
             "ToStringObject{myprop:AAA}",
             // [12] obj[11]: "myprop:List<ToStringObject>"
-            "ObjectsTest.ToStringObject {myprop:List<ToStringObject>}",
+            "ObjectsTest.ToStringObject [myprop:List<ToStringObject>]",
             // [13] obj[12]: "myprop:ToStringObject"
-            "ObjectsTest.ToStringObject {myprop:ToStringObject}"),
+            "ObjectsTest.ToStringObject [myprop:ToStringObject]"),
         // obj
         TO_STRINGS);
   }
@@ -656,17 +662,53 @@ class ObjectsTest extends BaseTest {
             // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
             "ObjectsTest.ToStringObject something",
             // [9] obj[8]: "ToStringObjects"
-            "ObjectsTest.ToStringObject {ToStringObjects}",
+            "ObjectsTest.ToStringObject [ToStringObjects]",
             // [10] obj[9]: "org.something.ToStringObject"
             "ObjectsTest.ToStringObject",
             // [11] obj[10]: "ToStringObject{myprop:AAA}"
             "ObjectsTest.ToStringObject {myprop:AAA}",
             // [12] obj[11]: "myprop:List<ToStringObject>"
-            "ObjectsTest.ToStringObject {myprop:List<ToStringObject>}",
+            "ObjectsTest.ToStringObject [myprop:List<ToStringObject>]",
             // [13] obj[12]: "myprop:ToStringObject"
-            "ObjectsTest.ToStringObject {myprop:ToStringObject}"),
+            "ObjectsTest.ToStringObject [myprop:ToStringObject]"),
         // obj
         TO_STRINGS);
+  }
+
+  static Stream<Arguments> toStringWithProperties() {
+    return argumentsStream(
+        simple(),
+        // expected
+        asList(
+            // [1] obj[0]: Object; properties[0]: "[Ljava.lang.Object;@40ee0a22"
+            new Failure("ClassCastException",
+                "class java.net.URI cannot be cast to class java.lang.String (java.net.URI and java.lang.String are in module java.base of loader 'bootstrap')"),
+            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; properties[1]: "[Ljava.lang.Object;@629f066f"
+            "Clis.Args [adapter=class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
+            // [3] obj[2]: org.pdfclown.common.build.internal.util_.xml.. . .; properties[2]: "[Ljava.lang.Object;@ecfbe91"
+            "Xmls.XPath [profile=COMPACT, level=11]"),
+        // obj, properties
+        of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
+        of(Clis.Args.class, new Object[] { "adapter", Clis.ListIncrementalAdapter.class }),
+        of(Xmls.XPath.class,
+            new Object[] { "profile", DocumentFactoryProfile.COMPACT, "level", 11 }));
+  }
+
+  static Stream<Arguments> toStringWithValues() {
+    return argumentsStream(
+        simple(),
+        // expected
+        asList(
+            // [1] obj[0]: Object; features[0]: "[Ljava.lang.Object;@562c877a"
+            "Object [https://www.example.io, Blue]",
+            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; features[1]: "[Ljava.lang.Object;@4d23015c"
+            "Clis.Args [class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
+            // [3] obj[2]: org.pdfclown.common.build.internal.util_.xml.. . .; features[2]: "[Ljava.lang.Object;@441cc260"
+            "Xmls.XPath [true, Yellow, COMPACT]"),
+        // obj, features
+        of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
+        of(Clis.Args.class, new Object[] { Clis.ListIncrementalAdapter.class }),
+        of(Xmls.XPath.class, new Object[] { true, "Yellow", DocumentFactoryProfile.COMPACT }));
   }
 
   @ParameterizedTest
@@ -956,6 +998,25 @@ class ObjectsTest extends BaseTest {
         expected,
         () -> new ExpectedGeneration(obj)
             .setMaxArgCommentLength(100));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void toStringWithProperties(Expected<String> expected, Object obj,
+      @Nullable Object[] properties) {
+    assertParameterizedOf(
+        () -> Objects.toStringWithProperties(obj, properties),
+        expected,
+        () -> new ExpectedGeneration(obj, properties));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void toStringWithValues(Expected<String> expected, Object obj, @Nullable Object[] features) {
+    assertParameterizedOf(
+        () -> Objects.toStringWithValues(obj, features),
+        expected,
+        () -> new ExpectedGeneration(obj, features));
   }
 
   @Test
