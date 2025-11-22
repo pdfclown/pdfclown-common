@@ -61,6 +61,10 @@ pdfclown-common-base instead)</description>
       THIRD-PARTY PROPERTIES
     -->
     <!--
+      [mockito] DO NOT REMOVE `argLine` empty declaration (required for later @ reference
+      resolution). -->
+    <argLine/>
+    <!--
       Enable javac `source` and `target` options (see
       <https://maven.apache.org/plugins/maven-compiler-plugin/examples/set-compiler-source-and-target.html>)
 
@@ -135,6 +139,7 @@ pdfclown-common-base instead)</description>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-checkstyle-plugin.puppycrawl.version>12.1.2</maven-checkstyle-plugin.puppycrawl.version>
     <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+    <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
     <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
     <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
     <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
@@ -372,9 +377,28 @@ log.info("buildTimestamp: " + buildTimestamp
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <!--
+                  [mockito] Required by mockito to register its agent in maven-surefire-plugin
+                  execution. -->
+                <goal>properties</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
           <configuration>
+            <!--
+              [mockito] Required by mockito to register its agent (see
+              <https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3>) -->
+            <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
             <reportsDirectory>${project.build.directory}/test-logs/surefire</reportsDirectory>
             <systemPropertyVariables>
@@ -462,7 +486,8 @@ log.info("buildTimestamp: " + buildTimestamp
 
                 <!--
                   TODO: Remove `Release-Jdk-Spec` entry when natively supported by
-                        maven-jar-plugin (see <https://issues.apache.org/jira/browse/MJAR-323>).
+                        maven-jar-plugin (see <https://issues.apache.org/jira/browse/MJAR-323>,
+                        <https://github.com/apache/maven-jar-plugin/issues/194>).
 
                   NOTE: This entry should be named `Target-Jdk-Spec` but, due to a bug in
                   maven-bundle-plugin, `Build-Jdk-Spec` entry is wrongly valued with the JDK
@@ -889,6 +914,10 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       </plugin>
 
       <!-- Testing -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
