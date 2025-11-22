@@ -4,10 +4,14 @@ on: [push, pull_request]
 
 jobs:
   build:
+    name: Java ${{ matrix.Java }} build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '17', '21', '25' ]
+      fail-fast: false
     env:
       JAVA_DISTRO: 'temurin'
-      JAVA_VERSION: '11'
 
     steps:
     - name: Checkout
@@ -16,7 +20,7 @@ jobs:
     - name: Set up build JDK
       uses: actions/setup-java@v5
       with:
-        java-version: ${{ env.JAVA_VERSION }}
+        java-version: ${{ matrix.java }}
         distribution: ${{ env.JAVA_DISTRO }}
         cache: maven
 
@@ -28,9 +32,13 @@ jobs:
         cache: maven
 
     - name: Build with Maven
-      run: mvn verify --batch-mode
+      run: mvn verify --batch-mode --errors -Djava.version=${{ matrix.java }}
 
     - name: Submit Dependency Snapshot
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      # NOTE: Automatic dependency submission (see
+      #       <https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/configuring-automatic-dependency-submission-for-your-repository>)
+      #       didn't work, so manual submission (aka user submission) was integrated here, running
+      #       on push events affecting the main branch only.
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.java == '17'
       uses: advanced-security/maven-dependency-submission-action@v5
 
