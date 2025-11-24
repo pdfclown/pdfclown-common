@@ -25,12 +25,14 @@ import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.util_.annot.PolyNull;
 
 /**
  * Exception utilities.
@@ -62,6 +64,29 @@ public final class Exceptions {
    */
   public static NotImplementedException TODO(@Nullable String format, @Nullable Object... args) {
     return throwable(NotImplementedException::new, format, args);
+  }
+
+  /**
+   * Gets the actual exception, unwrapping the associated checked exception if any.
+   *
+   * @return
+   *         <ul>
+   *         <li>{@link Throwable#getCause() throwable.getCause()}, if {@code throwable} is
+   *         {@link UncheckedIOException} or {@link UncheckedException}</li>
+   *         <li>{@link UndeclaredThrowableException#getUndeclaredThrowable()
+   *         throwable.getUndeclaredThrowable()}, if {@code throwable} is
+   *         {@link UndeclaredThrowableException}</li>
+   *         <li>{@code throwable}, otherwise</li>
+   *         </ul>
+   * @see #runtime(Throwable)
+   */
+  public static @PolyNull @Nullable Throwable actual(@PolyNull @Nullable Throwable throwable) {
+    if (throwable instanceof UncheckedIOException || throwable instanceof UncheckedException) {
+      return throwable.getCause();
+    } else if (throwable instanceof UndeclaredThrowableException undeclared) {
+      return undeclared.getUndeclaredThrowable();
+    } else
+      return throwable;
   }
 
   /**
@@ -109,7 +134,7 @@ public final class Exceptions {
     return new NoSuchElementException(
         valueLiteral == null ? message
             : message == null ? valueLiteral
-            : String.format("%s (%s)", valueLiteral, message));
+            : "%s (%s)".formatted(valueLiteral, message));
   }
 
   /**
@@ -149,10 +174,11 @@ public final class Exceptions {
    *         <li>{@link UncheckedException}, if {@code cause} is any other {@linkplain Exception
    *         checked exception}</li>
    *         </ul>
+   * @see #actual(Throwable)
    */
   public static RuntimeException runtime(Throwable cause) {
-    return cause instanceof RuntimeException ? (RuntimeException) cause
-        : cause instanceof IOException ? new UncheckedIOException((IOException) cause)
+    return cause instanceof RuntimeException ex ? ex
+        : cause instanceof IOException ex ? new UncheckedIOException(ex)
         : new UncheckedException(cause);
   }
 
@@ -334,8 +360,7 @@ public final class Exceptions {
   }
 
   public static IllegalStateException wrongState(Throwable cause) {
-    return cause instanceof IllegalStateException ? (IllegalStateException) cause
-        : new IllegalStateException(cause);
+    return cause instanceof IllegalStateException ex ? ex : new IllegalStateException(cause);
   }
 
   private Exceptions() {

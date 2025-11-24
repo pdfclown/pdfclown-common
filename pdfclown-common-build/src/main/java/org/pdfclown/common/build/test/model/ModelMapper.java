@@ -21,6 +21,7 @@ import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
 import static org.pdfclown.common.build.internal.util_.Objects.superTypes;
+import static org.pdfclown.common.build.internal.util_.Objects.toStringWithProperties;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 
 import java.beans.IntrospectionException;
@@ -33,7 +34,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -239,8 +239,8 @@ public class ModelMapper<T> {
 
     @Override
     public String toString() {
-      return String.format(Locale.ROOT, "%s {type: %s; exclusive: %s; %s}", sqn(this), fqn(type),
-          exclusive, rules);
+      return toStringWithProperties(this, "type", fqn(type), "exclusive", exclusive, "rules",
+          rules);
     }
   }
 
@@ -531,19 +531,19 @@ public class ModelMapper<T> {
     mapCustomProperties(obj, objSelector, ret, level);
 
     // Aggregation properties.
-    if (obj instanceof Map) {
+    if (obj instanceof Map<?, ?> map) {
       if (objSelector == null || objSelector.isSelected("entries", level)) {
         var jsonEntries = new JsonObject(keyComparator);
-        for (var entry : ((Map<?, ?>) obj).entrySet()) {
+        for (var entry : map.entrySet()) {
           jsonEntries.put(entry.getKey().toString(),
               mapValue(entry.getValue(), selectors, visitedObjs, innerLevel));
         }
         ret.put("entries", jsonEntries);
       }
-    } else if (obj instanceof Iterable) {
+    } else if (obj instanceof Iterable<?> iterable) {
       if (objSelector == null || objSelector.isSelected("items", level)) {
         var jsonItems = new JsonArray();
-        for (var e : (Iterable<?>) obj) {
+        for (var e : iterable) {
           jsonItems.put(mapValue(e, selectors, visitedObjs, innerLevel));
         }
         ret.put("items", jsonItems);
@@ -625,7 +625,7 @@ public class ModelMapper<T> {
    */
   protected @Nullable Object mapValue(@Nullable Object value, List<PropertySelector> selectors,
       Set<Object> visitedObjs, int level) {
-    if (value == null || (value instanceof CharSequence && ((CharSequence) value).length() == 0))
+    if (value == null || (value instanceof CharSequence seq && seq.isEmpty()))
       return null;
 
     if (log.isDebugEnabled()) {

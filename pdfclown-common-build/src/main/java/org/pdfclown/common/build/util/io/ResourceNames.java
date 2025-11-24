@@ -161,7 +161,7 @@ public final class ResourceNames {
   public static String based(String name, Object base, boolean abs) {
     if (!(isAbs(name = normal(name)))) {
       //noinspection DataFlowIssue : @PolyNull
-      name = name((base instanceof String ? (String) base : asType(base).getPackageName())
+      name = name((base instanceof String s ? s : asType(base).getPackageName())
           .replace(DOT, SLASH), name);
       if (abs) {
         name = abs(name);
@@ -276,9 +276,8 @@ public final class ResourceNames {
     for (int i = 0, l = name.length(); i < l; i++) {
       String replacement = null;
       char c = name.charAt(i);
-      switch (c) {
-        case BACKSLASH:
-        case SLASH:
+      separated = switch (c) {
+        case BACKSLASH, SLASH -> {
           // Contiguous with previous separator?
           if (separated) {
             // Suppress!
@@ -287,12 +286,10 @@ public final class ResourceNames {
             // Normalize!
             replacement = S + SLASH;
           }
-          separated = true;
-          break;
-        default:
-          separated = false;
-          break;
-      }
+          yield true;
+        }
+        default -> false;
+      };
       if (replacement != null) {
         if (b == null) {
           b = new StringBuilder();
@@ -333,18 +330,15 @@ public final class ResourceNames {
      * NOTE: After normalization, no trailing slash other than root is possible.
      */
     int sepPos;
-    switch (sepPos = (name = normal(name)).lastIndexOf(SLASH)) {
-      case -1:
-        return !name.isEmpty()
-            ? EMPTY /* Relative root */
-            : null /* Relative root's parent */;
-      case 0:
-        return name.length() > 1
-            ? S + SLASH /* Absolute root */
-            : null /* Absolute root's parent */;
-      default:
-        return name.substring(0, sepPos) /* Intermediate level */;
-    }
+    return switch (sepPos = (name = normal(name)).lastIndexOf(SLASH)) {
+      case -1 -> !name.isEmpty()
+          ? EMPTY /* Relative root */
+          : null; /* Relative root's parent */
+      case 0 -> name.length() > 1
+          ? S + SLASH /* Absolute root */
+          : null; /* Absolute root's parent */
+      default -> name.substring(0, sepPos) /* Intermediate level */;
+    };
   }
 
   /**

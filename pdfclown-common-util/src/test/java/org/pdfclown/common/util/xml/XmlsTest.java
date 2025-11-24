@@ -32,10 +32,10 @@ class XmlsTest extends BaseTest {
     var pi = mock(ProcessingInstruction.class);
     {
       when(pi.getTarget()).thenReturn("xml-stylesheet");
-      when(pi.getData()).thenReturn(
-          "href='single-col.css'"
-              + " media = \"all and (max-width: 30em)\""
-              + " title =\"Ada's default style\"");
+      when(pi.getData()).thenReturn("""
+          href='single-col.css' \
+          media = "all and (max-width: 30em)" \
+          title ="Ada's default style\"""");
     }
     Map<String, String> attrs = Xmls.getPseudoAttributes(pi);
 

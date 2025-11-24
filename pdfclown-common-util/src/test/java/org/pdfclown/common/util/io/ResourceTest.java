@@ -239,7 +239,7 @@ class ResourceTest extends BaseTest {
             .setParamNames("name")
             .setExpectedSourceCodeGenerator($ -> {
               var e = (Resource) $;
-              return String.format("new ResourceResult(%s, %s, uri(%s))",
+              return "new ResourceResult(%s, %s, uri(%s))".formatted(
                   literal(sqn(e)), literal(e.getName()), literal(e.getUri()));
             })
             .setMaxArgCommentLength(100)

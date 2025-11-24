@@ -26,8 +26,8 @@ import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrate
  */
 public abstract class BaseTest extends Test {
   private static final ArgumentsStreamStrategy.Converter ARGUMENTS_CONVERTER = ($index, $obj) -> {
-    if ($obj instanceof Unit) {
-      return objTo((Unit<?>) $obj, $ -> arg($.getName(), $));
+    if ($obj instanceof Unit<?> unit) {
+      return objTo(unit, $ -> arg($.getName(), $));
     } else
       return $obj;
   };

@@ -478,7 +478,7 @@ public final class Objects {
    * @see #asTopLevelType(Object)
    */
   public static @PolyNull @Nullable Class<?> asType(@PolyNull @Nullable Object obj) {
-    return obj != null ? (obj instanceof Class ? (Class<?>) obj : obj.getClass()) : null;
+    return obj != null ? (obj instanceof Class<?> c ? c : obj.getClass()) : null;
   }
 
   /**
@@ -590,8 +590,8 @@ public final class Objects {
    */
   public static boolean equalsOrContains(@Nullable Object obj, @Nullable Object other) {
     return java.util.Objects.equals(obj, other)
-        || (obj instanceof Collection<?> && ((Collection<?>) obj).contains(other))
-        || (obj instanceof Map<?, ?> && ((Map<?, ?>) obj).containsValue(other));
+        || (obj instanceof Collection<?> collection && collection.contains(other))
+        || (obj instanceof Map<?, ?> map && map.containsValue(other));
   }
 
   /**
@@ -833,13 +833,13 @@ public final class Objects {
       return obj + "L";
     else if (obj instanceof Number || obj instanceof Boolean)
       return obj.toString();
-    else if (obj instanceof Character)
-      return S + SQUOTE + ((Character) obj == SQUOTE ? S + BACKSLASH : EMPTY) + obj + SQUOTE;
-    else if (obj instanceof String)
-      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate((String) obj) + DQUOTE;
-    else if (obj instanceof Class)
+    else if (obj instanceof Character c)
+      return S + SQUOTE + (c == SQUOTE ? S + BACKSLASH : EMPTY) + obj + SQUOTE;
+    else if (obj instanceof String s)
+      return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(s) + DQUOTE;
+    else if (obj instanceof Class<?> c)
       //noinspection DataFlowIssue : non-null
-      return objTo((Class<?>) obj, $ -> $.getPackageName().startsWith("java.lang")
+      return objTo(c, $ -> $.getPackageName().startsWith("java.lang")
           ? $.getSimpleName() /*
                                * NOTE: The names of classes belonging to common packages are
                                * simplified to avoid noise
@@ -855,7 +855,7 @@ public final class Objects {
   public static @PolyNull @Nullable ClassLoader loaderOf(@PolyNull @Nullable Object obj) {
     //noinspection DataFlowIssue : @PolyNull
     return obj == null ? null
-        : obj instanceof ClassLoader ? (ClassLoader) obj
+        : obj instanceof ClassLoader c ? c
         : asType(obj).getClassLoader();
   }
 
@@ -1990,8 +1990,7 @@ public final class Objects {
             .getDeclaringClass());
     assert targetLoader != null;
 
-    if (obj instanceof Class) {
-      var type = (Class<?>) obj;
+    if (obj instanceof Class<?> type) {
       if (type.isPrimitive())
         return (T) type;
       else if (type.isArray()) {
@@ -1999,10 +1998,10 @@ public final class Objects {
         return (T) (targetComponentType == type.getComponentType() ? type
             : Array.newInstance(targetComponentType, 0).getClass());
       } else {
-        String fqn = ((Class<?>) obj).getName();
+        String fqn = type.getName();
         return (T) requireNonNullElseThrow(type(fqn, targetLoader),
-            () -> new ClassXCastException(String.format(
-                "`%s` has no corresponding type in target class loader", fqn)));
+            () -> new ClassXCastException("`%s` has no corresponding type in target class loader"
+                .formatted(fqn)));
       }
     }
 
@@ -2066,9 +2065,9 @@ public final class Objects {
             t = t.getSuperclass();
           }
           if (altType == null)
-            throw new ClassXCastException(String.format("`%s` cannot be proxied "
-                + "(no-argument constructor missing and `targetTypeHint` undefined)",
-                objType.getName()));
+            throw new ClassXCastException("""
+                `%s` cannot be proxied (no-argument constructor missing and `targetTypeHint` \
+                undefined)""".formatted(objType.getName()));
 
           fqn = altType.getName();
         }

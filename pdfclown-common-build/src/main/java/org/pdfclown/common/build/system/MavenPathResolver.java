@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.system;
 
-import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
 import java.nio.file.Path;
@@ -34,25 +33,15 @@ public class MavenPathResolver extends ProjectPathResolver {
 
   @Override
   protected String relativePath(ProjectDirId id) {
-    switch (id) {
-      case BASE:
-        return EMPTY;
-      case MAIN_TARGET:
-        return "target/classes";
-      case MAIN_TYPE_SOURCE:
-        return "src/main/java";
-      case MAIN_RESOURCE_SOURCE:
-        return "src/main/resources";
-      case TEST_OUTPUT:
-        return "target/test-output";
-      case TEST_TARGET:
-        return "target/test-classes";
-      case TEST_TYPE_SOURCE:
-        return "src/test/java";
-      case TEST_RESOURCE_SOURCE:
-        return "src/test/resources";
-      default:
-        throw unexpected(id);
-    }
+    return switch (id) {
+      case BASE -> EMPTY;
+      case MAIN_TARGET -> "target/classes";
+      case MAIN_TYPE_SOURCE -> "src/main/java";
+      case MAIN_RESOURCE_SOURCE -> "src/main/resources";
+      case TEST_OUTPUT -> "target/test-output";
+      case TEST_TARGET -> "target/test-classes";
+      case TEST_TYPE_SOURCE -> "src/test/java";
+      case TEST_RESOURCE_SOURCE -> "src/test/resources";
+    };
   }
 }

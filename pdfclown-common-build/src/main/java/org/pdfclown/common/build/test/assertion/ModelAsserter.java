@@ -190,11 +190,11 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
 
   @Override
   protected void doAssertEquals(Object expectedContent, Object actualContent) {
-    if (expectedContent instanceof JSONObject) {
-      JSONAssert.assertEquals((JSONObject) expectedContent,
+    if (expectedContent instanceof JSONObject expectedObject) {
+      JSONAssert.assertEquals(expectedObject,
           requireType(actualContent, JSONObject.class, "actualContent"), true);
-    } else if (expectedContent instanceof JSONArray) {
-      JSONAssert.assertEquals((JSONArray) expectedContent,
+    } else if (expectedContent instanceof JSONArray expectedArray) {
+      JSONAssert.assertEquals(expectedArray,
           requireType(actualContent, JSONArray.class, "actualContent"), true);
     } else
       throw wrongArgOpt("expectedContent", typeOf(expectedContent), null,

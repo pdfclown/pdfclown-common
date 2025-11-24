@@ -627,10 +627,11 @@ public final class Xmls {
   /**
    * Processing instruction's pseudo-attribute pattern {@biblio.spec XML-SS 3}.
    */
-  private static final Pattern PATTERN__PSEUDO_ATTR = Pattern.compile(
-      "(?<" + PATTERN_GROUP__PSEUDO_ATTR__NAME + ">[^\\s=]+)"
-          + "\\s?=\\s?"
-          + "([\"'])(?<" + PATTERN_GROUP__PSEUDO_ATTR__VALUE + ">(?:(?!\\2).)*)\\2");
+  private static final Pattern PATTERN__PSEUDO_ATTR = Pattern.compile("""
+      (?<%s>[^\\s=]+)\\s?=\\s?(["'])\
+      (?<%s>(?:(?!\\2).)*)\\2""".formatted(
+      PATTERN_GROUP__PSEUDO_ATTR__NAME,
+      PATTERN_GROUP__PSEUDO_ATTR__VALUE));
 
   /**
    * <a href="https://www.w3.org/1999/xhtml/">XHTML namespace</a>.

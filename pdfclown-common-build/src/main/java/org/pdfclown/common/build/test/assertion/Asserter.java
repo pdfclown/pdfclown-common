@@ -244,20 +244,23 @@ public abstract class Asserter {
           + "these annotations: {})",
           testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
-    message = ParamMessage.format("Test {} FAILED:" + LF
-        + "{}", textLiteral(testName), message);
+    message = """
+        Test %s FAILED:
+        %s""".formatted(textLiteral(testName), message);
     String projectArtifactId = Builds.projectArtifactId(expectedFile);
     String hint = ParamMessage.format(
-        LF
-            + "Compared files:" + LF
-            + " * EXPECTED: {}" + LF
-            + " * ACTUAL: {}" + LF
-            + "To retry, enter this CLI parameter into your command:" + LF
-            + "  mvn verify -pl {} -Dtest={}" + LF
-            + "To confirm the actual changes as expected, enter these CLI parameters into your "
-            + "command:" + LF
-            + "  mvn verify -pl {} -D{} -Dtest={}" + LF,
-        expectedFile, requireNonNullElse(actualFile, "N/A"),
+        """
+
+            Compared files:
+             * EXPECTED: {}
+             * ACTUAL: {}
+            To retry, enter this CLI parameter into your command:
+              mvn verify -pl {} -Dtest={}
+            To confirm the actual changes as expected, enter these CLI parameters into your command:
+              mvn verify -pl {} -D{} -Dtest={}
+            """,
+        expectedFile,
+        requireNonNullElse(actualFile, "N/A"),
         projectArtifactId, textLiteral(testName),
         projectArtifactId, PARAM_NAME__UPDATE, textLiteral(testName));
 
@@ -265,9 +268,11 @@ public abstract class Asserter {
     getLog().error(LogMarker.VERBOSE, "{}" + LF + "{}", message, hint);
 
     // Exception (shortened message).
-    throw new AssertionError(String.format("%s" + LF
-        + "(see pdfclown/assert.log for further information)" + LF
-        + "%s", abbreviateMultiline(message, 5, 100), hint));
+    throw new AssertionError(
+        """
+            %s
+            (see pdfclown/assert.log for further information)
+            %s""".formatted(abbreviateMultiline(message, 5, 100), hint));
   }
 
   /**
@@ -362,7 +367,7 @@ public abstract class Asserter {
       Files.copy(sourceFile, targetFile, REPLACE_EXISTING);
     } catch (Exception ex) {
       throw failedIO("Expected resource copy to target FAILED "
-          + "(re-running tests should fix it): " + targetFile, ex);
+          + "(re-running tests should fix it): {}", targetFile, ex);
     }
     getLog().info("Expected resource COPIED to target at {}", textLiteral(targetFile));
   }

@@ -58,8 +58,7 @@ public final class Uris {
   public static boolean exists(URL url) {
     try {
       URLConnection c = url.openConnection();
-      if (c instanceof HttpURLConnection) {
-        var hc = (HttpURLConnection) c;
+      if (c instanceof HttpURLConnection hc) {
         hc.setRequestMethod("HEAD") /* Avoids body transfer on response */;
         return hc.getResponseCode() == HttpURLConnection.HTTP_OK;
       } else {

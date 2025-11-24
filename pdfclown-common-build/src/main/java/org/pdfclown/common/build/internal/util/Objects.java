@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.internal.util;
 
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -36,8 +35,7 @@ public final class Objects {
    * </p>
    */
   public static final Pattern PATTERN__TO_STRING__DEFAULT = Pattern.compile(
-      String.format(Locale.ROOT, "(?<%s>%s)@%s", PATTERN_GROUP__CLASS_FQN, REGEX__CLASS_FQN,
-          REGEX__HEX));
+      "(?<%s>%s)@%s".formatted(PATTERN_GROUP__CLASS_FQN, REGEX__CLASS_FQN, REGEX__HEX));
 
   private Objects() {
   }

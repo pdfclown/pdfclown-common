@@ -51,6 +51,7 @@ import static org.pdfclown.common.build.internal.util_.Objects.basicLiteral;
 import static org.pdfclown.common.build.internal.util_.Objects.found;
 import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.literal;
+import static org.pdfclown.common.build.internal.util_.Objects.objTo;
 import static org.pdfclown.common.build.internal.util_.Objects.objToElseGet;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
@@ -65,7 +66,6 @@ import static org.pdfclown.common.build.internal.util_.system.Systems.getBoolean
 import static org.pdfclown.common.build.test.Tests.testFrame;
 
 import com.github.javaparser.Position;
-import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -87,7 +87,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -108,6 +107,8 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.pdfclown.common.build.internal.util.lang.Javas;
+import org.pdfclown.common.build.internal.util_.Exceptions;
 import org.pdfclown.common.build.internal.util_.Objects;
 import org.pdfclown.common.build.internal.util_.annot.Immutable;
 import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
@@ -221,7 +222,7 @@ public final class Assertions {
 
     private static String toString(String label, @Nullable Object value) {
       return label.isEmpty() ? textLiteral(value)
-          : String.format(Locale.ROOT, "%s (%s)", textLiteral(value), label);
+          : "%s (%s)".formatted(textLiteral(value), label);
     }
 
     private final String label;
@@ -851,7 +852,7 @@ public final class Assertions {
      * @see #expectedSourceCodeForFactory(Class, String, Object...)
      */
     public static String expectedSourceCodeForConstructor(Class<?> type, @Nullable Object... args) {
-      return String.format("new %s(%s)", fqnd(type),
+      return "new %s(%s)".formatted(fqnd(type),
           Arrays.stream(args).map(Objects::literal).collect(joining(",")));
     }
 
@@ -862,7 +863,7 @@ public final class Assertions {
      */
     public static String expectedSourceCodeForFactory(Class<?> type, String methodName,
         @Nullable Object... args) {
-      return String.format("%s.%s(%s)", fqnd(type), methodName,
+      return "%s.%s(%s)".formatted(fqnd(type), methodName,
           Arrays.stream(args).map(Objects::literal).collect(joining(",")));
     }
 
@@ -1171,23 +1172,22 @@ public final class Assertions {
       String expectedSourceCode;
       if (expected == null) {
         expectedSourceCode = NULL;
-      } else if (expected instanceof Failure) {
-        var failure = (Failure) expected;
+      } else if (expected instanceof Failure failure) {
         var failureRef = fqnd(Failure.class);
         if (editor != null) {
           if (editor.tryImport(failureRef, false)) {
             failureRef = Failure.class.getSimpleName();
           }
         }
-        expectedSourceCode = String.format("new %s(%s, %s)",
-            failureRef, literal(failure.getName()), literal(failure.getMessage()));
+        expectedSourceCode = "new %s(%s, %s)".formatted(failureRef, literal(failure.getName()),
+            literal(failure.getMessage()));
       } else {
         expectedSourceCode = generation.expectedSourceCodeGenerator.apply(expected);
       }
 
       // Check the generated source code is valid!
       try {
-        Expression expression = StaticJavaParser.parseExpression(expectedSourceCode);
+        Expression expression = Javas.PARSER.parseExpression(expectedSourceCode);
         if (expression instanceof LiteralStringValueExpr) {
           // Split multiline string literal at newlines to improve readability!
           expectedSourceCode = expectedSourceCode.replaceAll(
@@ -1247,10 +1247,11 @@ public final class Assertions {
         } catch (IOException ex) {
           throw runtime("Compilation unit `{}` loading FAILED (TIP: {})", testFrame.getClassName(),
               editorBuffer != null
-                  ? "if filesystem is mocked, specify `ExpectedGeneration.out` and "
-                      + "`ExpectedGeneration.paramNames` to avoid source code access; "
-                      + "otherwise, if your project doesn't adhere to Maven's standard directory "
-                      + "layout, provide a `TestEnvironment` to resolve project files accordingly"
+                  ? """
+                      if filesystem is mocked, specify `ExpectedGeneration.out` and \
+                      `ExpectedGeneration.paramNames` to avoid source code access; \
+                      otherwise, if your project doesn't adhere to Maven's standard directory \
+                      layout, provide a `TestEnvironment` to resolve project files accordingly"""
                   : "specify `ExpectedGeneration.paramNames` to avoid source code access",
               ex);
         }
@@ -1325,8 +1326,8 @@ public final class Assertions {
         target = "stream";
       }
 
-      printInfo("Expected results source code GENERATED for `" + testMethodFqn + "()` to "
-          + target);
+      printInfo("Expected results source code GENERATED for `%s()` to %s"
+          .formatted(testMethodFqn, target));
 
       out = null;
     }
@@ -1484,7 +1485,7 @@ public final class Assertions {
     CompilationUnitEditor(Path file) throws IOException {
       this.file = file;
 
-      source = StaticJavaParser.parse(file);
+      source = Javas.PARSER.parse(file);
       targetBuilder = new StringBuilder(readString(file));
     }
 
@@ -1562,7 +1563,7 @@ public final class Assertions {
             $ -> $.getBegin().orElseThrow(),
             () -> source.getPackageDeclaration().orElseThrow().getEnd().orElseThrow().right(1)),
             "Import statements location NOT FOUND");
-        insert(start, String.format("import %s%s;\n", static_ ? "static" + SPACE : EMPTY, name));
+        insert(start, "import %s%s;\n".formatted(static_ ? "static" + SPACE : EMPTY, name));
       }
       targetImports.add(name);
       return true;
@@ -1830,9 +1831,9 @@ public final class Assertions {
 
         expectedList = new ArrayList<>(expected.size());
         for (var e : expected) {
-          expectedList.add(e instanceof Failure
-              ? Expected.failure((Failure) e,
-                  strategy.thrownMessageNormalizers.get(((Failure) e).getName()))
+          expectedList.add(e instanceof Failure failure
+              ? Expected.failure(failure,
+                  strategy.thrownMessageNormalizers.get(failure.getName()))
               : Expected.success(strategy.converter != null
                   ? strategy.converter.apply(0, e)
                   : e));
@@ -2001,23 +2002,22 @@ public final class Assertions {
      */
     if (generator == null) {
       // Failed result?
-      if (actual instanceof Failure) {
+      if (actual instanceof Failure actualFailure) {
         if (!expected.isFailure())
-          fail(String.format("Failure UNEXPECTED (expected: %s (%s); actual: %s)",
+          fail("Failure UNEXPECTED (expected: %s (%s); actual: %s)".formatted(
               textLiteral(expected), sqnd(expected.getReturned()), textLiteral(actual)));
 
-        var thrownActual = (Failure) actual;
-        var thrownExpected = expected.getThrown();
-        assert thrownExpected != null;
+        var expectedFailure = expected.getThrown();
+        assert expectedFailure != null;
 
-        assertThat("Throwable.class.name", thrownActual.getName(), is(thrownExpected.getName()));
-        assertThat("Throwable.message", expected.normalizeThrownMessage(thrownActual),
-            is(expected.normalizeThrownMessage(thrownExpected)));
+        assertThat("Throwable.class.name", actualFailure.getName(), is(expectedFailure.getName()));
+        assertThat("Throwable.message", expected.normalizeThrownMessage(actualFailure),
+            is(expected.normalizeThrownMessage(expectedFailure)));
       }
       // Regular result.
       else {
         if (!expected.isSuccess())
-          fail(String.format("Success UNEXPECTED (expected: %s)", expected));
+          fail("Success UNEXPECTED (expected: %s)".formatted(expected));
 
         //noinspection unchecked
         assertThat((T) actual, expected.getMatcher());
@@ -2110,18 +2110,12 @@ public final class Assertions {
    *         <li>regular result — if {@code expression} succeeded</li>
    *         </ul>
    */
-  @SuppressWarnings("AssignmentToCatchBlockParameter")
   public static @Nullable Object evalParameterized(
       FailableSupplier<@Nullable Object, Exception> expression) {
     try {
       return expression.get();
     } catch (Throwable ex) {
-      if (ex instanceof UncheckedIOException) {
-        ex = ex.getCause();
-      } else if (ex instanceof UndeclaredThrowableException) {
-        ex = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
-      }
-      return new Failure(sqnd(ex), ex.getMessage());
+      return objTo(Exceptions.actual(ex), $ -> new Failure(sqnd($), $.getMessage()));
     }
   }
 

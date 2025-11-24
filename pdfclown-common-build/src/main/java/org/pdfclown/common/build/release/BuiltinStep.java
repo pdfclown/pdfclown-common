@@ -207,17 +207,11 @@ public enum BuiltinStep implements Step {
    *          Version bump kind (either {@code "release"} or {@code "dev"}).
    */
   private static void executeScmVersionCommit(ReleaseManager manager, String kind) {
-    String version;
-    switch (kind) {
-      case "release":
-        version = manager.getReleaseVersion();
-        break;
-      case "dev":
-        version = manager.getDevVersion();
-        break;
-      default:
-        throw wrongArgOpt("kind", kind, null, List.of("release", "dev"));
-    }
+    String version = switch (kind) {
+      case "release" -> manager.getReleaseVersion();
+      case "dev" -> manager.getDevVersion();
+      default -> throw wrongArgOpt("kind", kind, null, List.of("release", "dev"));
+    };
     try {
       executeElseThrow(unixCommand(format("git add . "
           + "&& git commit -m \"bump: %s version %s\"", kind, version)), manager.getBaseDir());

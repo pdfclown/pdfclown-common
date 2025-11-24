@@ -57,8 +57,8 @@ public class IndentWriter extends Writer {
    */
   public static IndentWriter of(Appendable base /* SourceName: delegate */,
       @Nullable Indent indent /* SourceName: indentation */) {
-    return base instanceof IndentWriter
-        ? ((IndentWriter) base).withIndent(indent)
+    return base instanceof IndentWriter writer
+        ? writer.withIndent(indent)
         : new IndentWriter(base, indent);
   }
 
@@ -86,9 +86,9 @@ public class IndentWriter extends Writer {
 
   @Override
   public void close() throws IOException {
-    if (base instanceof AutoCloseable) {
+    if (base instanceof AutoCloseable closeable) {
       try {
-        ((AutoCloseable) base).close();
+        closeable.close();
       } catch (IOException ex) {
         throw ex;
       } catch (Exception ex) {
@@ -99,8 +99,8 @@ public class IndentWriter extends Writer {
 
   @Override
   public void flush() throws IOException {
-    if (base instanceof Flushable) {
-      ((Flushable) base).flush();
+    if (base instanceof Flushable flushable) {
+      flushable.flush();
     }
   }
 

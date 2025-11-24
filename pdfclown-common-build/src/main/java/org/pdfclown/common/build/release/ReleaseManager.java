@@ -17,7 +17,6 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
-import static org.pdfclown.common.build.internal.util_.Chars.LF;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
@@ -159,17 +158,18 @@ public class ReleaseManager {
    *           whilst the other ones are simulated.
    */
   public void execute() {
-    log.info("Execution details:" + LF
-        + "- release branch start point: {}" + LF
-        + "- release version (tag): {} ({})" + LF
-        + "- next development version: {}" + LF
-        + "- deployment profiles: {}" + LF
-        + "- installation profiles: {}" + LF
-        + "- remote push: {}" + LF
-        + "- dry run: {}",
+    log.info(
+        """
+            Execution details:
+            - release branch start point: {}
+            - release version (tag): {} ({})
+            - next development version: {}
+            - deployment profiles: {}
+            - installation profiles: {}
+            - remote push: {}
+            - dry run: {}""",
         getReleaseBranchStartPoint().isEmpty() ? "HEAD" : getReleaseBranchStartPoint(),
-        getReleaseVersion(),
-        getReleaseTag(),
+        getReleaseVersion(), getReleaseTag(),
         getDevVersion(),
         getDeploymentProfiles(),
         getInstallationProfiles(),

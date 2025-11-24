@@ -185,12 +185,7 @@ public class ParamMessage {
     int argsCount = args.length;
     Throwable cause = null;
     if (argsCount > 0 && args[argsCount - 1] instanceof Throwable) {
-      cause = (Throwable) args[--argsCount];
-      if (cause instanceof UncheckedIOException || cause instanceof UncheckedException) {
-        cause = cause.getCause();
-      } else if (cause instanceof UndeclaredThrowableException) {
-        cause = ((UndeclaredThrowableException) cause).getUndeclaredThrowable();
-      }
+      cause = Exceptions.actual((Throwable) args[--argsCount]);
     }
     return new ParamMessage(format(formatter, format, args, argsCount), cause);
   }

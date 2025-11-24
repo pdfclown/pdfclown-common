@@ -70,8 +70,8 @@ public final class Clis {
        * IMPORTANT: DO NOT generalize to `Iterable`, as certain classes (like `Path`) get
        * inappropriately split.
        */
-      if (o instanceof Collection)
-        return arg(listArg((Collection<?>) o));
+      if (o instanceof Collection<?> c)
+        return arg(listArg(c));
       else
         return arg(o.toString());
     }

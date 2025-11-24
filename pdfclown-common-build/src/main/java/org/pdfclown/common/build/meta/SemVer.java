@@ -58,19 +58,31 @@ public class SemVer implements Comparable<SemVer> {
     METADATA
   }
 
+  private static final String PATTERN_GROUP__MAJOR = "major";
+  private static final String PATTERN_GROUP__METADATA = "metadata";
+  private static final String PATTERN_GROUP__MINOR = "minor";
+  private static final String PATTERN_GROUP__PATCH = "patch";
+  private static final String PATTERN_GROUP__PRERELEASE = "prerelease";
+
   /**
    * <a href=
    * "https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string">Official
    * Semantic Versioning 2.0.0 regular expression</a>.
    */
-  private static final Pattern PATTERN__SEM_VER = Pattern.compile("^"
-      + "(?<major>0|[1-9]\\d*)\\."
-      + "(?<minor>0|[1-9]\\d*)\\."
-      + "(?<patch>0|[1-9]\\d*)"
-      + "(?:-(?<prerelease>(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)"
-      + "(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
-      + "(?:\\+(?<metadata>[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?"
-      + "$");
+  private static final Pattern PATTERN__SEM_VER = Pattern.compile("""
+      ^\
+      (?<%s>0|[1-9]\\d*)\\.\
+      (?<%s>0|[1-9]\\d*)\\.\
+      (?<%s>0|[1-9]\\d*)\
+      (?:-(?<%s>(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)\
+      (?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?\
+      (?:\\+(?<%s>[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?\
+      $""".formatted(
+      PATTERN_GROUP__MAJOR,
+      PATTERN_GROUP__MINOR,
+      PATTERN_GROUP__PATCH,
+      PATTERN_GROUP__PRERELEASE,
+      PATTERN_GROUP__METADATA));
 
   /**
    * Checks whether the version conforms to <a href="https://semver.org/spec/v2.0.0.html">Semantic
@@ -97,8 +109,12 @@ public class SemVer implements Comparable<SemVer> {
     if (!m.find())
       throw new ArgumentFormatException(null, value, indexOfMatchFailure(m));
 
-    return new SemVer(parseInt(m.group("major")), parseInt(m.group("minor")),
-        parseInt(m.group("patch")), m.group("prerelease"), m.group("metadata"));
+    return new SemVer(
+        parseInt(m.group(PATTERN_GROUP__MAJOR)),
+        parseInt(m.group(PATTERN_GROUP__MINOR)),
+        parseInt(m.group(PATTERN_GROUP__PATCH)),
+        m.group(PATTERN_GROUP__PRERELEASE),
+        m.group(PATTERN_GROUP__METADATA));
   }
 
   /**
@@ -205,20 +221,13 @@ public class SemVer implements Comparable<SemVer> {
    * Gets the value corresponding to an identifier.
    */
   public Comparable get(Id id) {
-    switch (id) {
-      case MAJOR:
-        return major;
-      case MINOR:
-        return minor;
-      case PATCH:
-        return patch;
-      case PRERELEASE:
-        return prerelease;
-      case METADATA:
-        return metadata;
-      default:
-        throw unexpected(id);
-    }
+    return switch (id) {
+      case MAJOR -> major;
+      case MINOR -> minor;
+      case PATCH -> patch;
+      case PRERELEASE -> prerelease;
+      case METADATA -> metadata;
+    };
   }
 
   /**
@@ -342,8 +351,8 @@ public class SemVer implements Comparable<SemVer> {
 
         int fieldCount = getPrereleaseFields().size();
         var lastField = getPrereleaseFields().get(fieldCount - 1);
-        if (lastField instanceof Integer) {
-          lastField = ((Integer) lastField) + 1;
+        if (lastField instanceof Integer i) {
+          lastField = i + 1;
         } else {
           lastField = 1;
           fieldCount++;
@@ -463,19 +472,12 @@ public class SemVer implements Comparable<SemVer> {
    * @see #next(Id)
    */
   public SemVer with(Id id, Comparable value) {
-    switch (id) {
-      case MAJOR:
-        return new SemVer((Integer) value, 0, 0, EMPTY, EMPTY);
-      case MINOR:
-        return new SemVer(major, (Integer) value, 0, EMPTY, EMPTY);
-      case PATCH:
-        return new SemVer(major, minor, (Integer) value, EMPTY, EMPTY);
-      case PRERELEASE:
-        return new SemVer(major, minor, patch, (String) value, EMPTY);
-      case METADATA:
-        return new SemVer(major, minor, patch, prerelease, (String) value);
-      default:
-        throw unexpected(id);
-    }
+    return switch (id) {
+      case MAJOR -> new SemVer((Integer) value, 0, 0, EMPTY, EMPTY);
+      case MINOR -> new SemVer(major, (Integer) value, 0, EMPTY, EMPTY);
+      case PATCH -> new SemVer(major, minor, (Integer) value, EMPTY, EMPTY);
+      case PRERELEASE -> new SemVer(major, minor, patch, (String) value, EMPTY);
+      case METADATA -> new SemVer(major, minor, patch, prerelease, (String) value);
+    };
   }
 }

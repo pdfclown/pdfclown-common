@@ -160,25 +160,26 @@ class AssertionsTest extends BaseTest {
   @MethodSource
   void assertParameterized__cartesian_generation(Expected<String> expected, String value,
       int length) {
-    doAssertParameterized_generation(expected, value, length, ""
-        + ",\n"
-        + "        // expected\n"
-        + "        java.util.Arrays.asList(\n"
-        + "            // value[0]: \"The quick brown fox jumps over the lazy dog\"\n"
-        + "            // [1] length[0]: 50\n"
-        + "            new org.pdfclown.common.build.test.assertion.Assertions.Failure(\"IllegalArgumentException\", \"`length` (50): INVALID (should be less than 43)\"),\n"
-        + "            // [2] length[1]: 20\n"
-        + "            \"The quick brown fox \",\n"
-        + "            // [3] length[2]: 5\n"
-        + "            \"The q\",\n"
-        + "            //\n"
-        + "            // value[1]: \"The lazy yellow dog was caught by the slow r. . .\"\n"
-        + "            // [4] length[0]: 50\n"
-        + "            \"The lazy yellow dog was caught by the slow red fox\",\n"
-        + "            // [5] length[1]: 20\n"
-        + "            \"The lazy yellow dog \",\n"
-        + "            // [6] length[2]: 5\n"
-        + "            \"The l\")");
+    doAssertParameterized_generation(expected, value, length,
+        """
+            ,
+                    // expected
+                    java.util.Arrays.asList(
+                        // value[0]: "The quick brown fox jumps over the lazy dog"
+                        // [1] length[0]: 50
+                        new org.pdfclown.common.build.test.assertion.Assertions.Failure("IllegalArgumentException", "`length` (50): INVALID (should be less than 43)"),
+                        // [2] length[1]: 20
+                        "The quick brown fox ",
+                        // [3] length[2]: 5
+                        "The q",
+                        //
+                        // value[1]: "The lazy yellow dog was caught by the slow r. . ."
+                        // [4] length[0]: 50
+                        "The lazy yellow dog was caught by the slow red fox",
+                        // [5] length[1]: 20
+                        "The lazy yellow dog ",
+                        // [6] length[2]: 5
+                        "The l")""");
   }
 
   /**
@@ -202,14 +203,15 @@ class AssertionsTest extends BaseTest {
   @ParameterizedTest
   @MethodSource
   void assertParameterized__simple_generation(Expected<String> expected, String value, int length) {
-    doAssertParameterized_generation(expected, value, length, ""
-        + ",\n"
-        + "        // expected\n"
-        + "        java.util.Arrays.asList(\n"
-        + "            // [1] value[0]: \"The quick brown fox jumps over the lazy dog\"; length[0]: 50\n"
-        + "            new org.pdfclown.common.build.test.assertion.Assertions.Failure(\"IllegalArgumentException\", \"`length` (50): INVALID (should be less than 43)\"),\n"
-        + "            // [2] value[1]: \"The lazy yellow dog was caught by the slow r. . .\"; length[1]: 20\n"
-        + "            \"The lazy yellow dog \")");
+    doAssertParameterized_generation(expected, value, length,
+        """
+            ,
+                    // expected
+                    java.util.Arrays.asList(
+                        // [1] value[0]: "The quick brown fox jumps over the lazy dog"; length[0]: 50
+                        new org.pdfclown.common.build.test.assertion.Assertions.Failure("IllegalArgumentException", "`length` (50): INVALID (should be less than 43)"),
+                        // [2] value[1]: "The lazy yellow dog was caught by the slow r. . ."; length[1]: 20
+                        "The lazy yellow dog ")""");
   }
 
   /**
@@ -221,8 +223,8 @@ class AssertionsTest extends BaseTest {
    */
   private String assertParameterizedTestMethod(String value, int length) {
     if (length > requireNonNull(value, "`value`").length())
-      throw new IllegalArgumentException(String.format(
-          "`length` (%s): INVALID (should be less than %s)", length, value.length()));
+      throw new IllegalArgumentException("`length` (%s): INVALID (should be less than %s)"
+          .formatted(length, value.length()));
 
     return value.substring(0, length);
   }

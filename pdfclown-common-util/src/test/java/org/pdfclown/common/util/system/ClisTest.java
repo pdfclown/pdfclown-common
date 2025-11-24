@@ -76,7 +76,7 @@ class ClisTest {
         expected.match($ -> contains($.toArray(String[]::new))),
         () -> new ExpectedGeneration(argsString)
             .setExpectedSourceCodeGenerator(
-                $ -> String.format("asList(%s)", ((List<String>) $).stream()
+                $ -> "asList(%s)".formatted(((List<String>) $).stream()
                     .map(Objects::literal)
                     .collect(joining(S + COMMA)))));
   }

@@ -46,26 +46,17 @@ public final class GraphicsAssertions {
       var coords = new double[3 * 2];
       for (; !itr.isDone(); itr.next()) {
         final int segmentKind = itr.currentSegment(coords);
-        final int coordsCount;
-        switch (segmentKind) {
-          case PathIterator.SEG_LINETO:
-          case PathIterator.SEG_MOVETO:
-            //noinspection PointlessArithmeticExpression -- informational purposes
-            coordsCount = 1 * 2;
-            break;
-          case PathIterator.SEG_QUADTO:
-            coordsCount = 2 * 2;
-            break;
-          case PathIterator.SEG_CUBICTO:
-            coordsCount = 3 * 2;
-            break;
-          case PathIterator.SEG_CLOSE:
-            //noinspection PointlessArithmeticExpression -- informational purposes
-            coordsCount = 0 * 2;
-            break;
-          default:
-            throw unexpected("segmentKind", segmentKind);
-        }
+        final int coordsCount = switch (segmentKind) {
+          case PathIterator.SEG_LINETO, PathIterator.SEG_MOVETO ->
+              //noinspection PointlessArithmeticExpression -- informational purposes
+              1 * 2;
+          case PathIterator.SEG_QUADTO -> 2 * 2;
+          case PathIterator.SEG_CUBICTO -> 3 * 2;
+          case PathIterator.SEG_CLOSE ->
+              //noinspection PointlessArithmeticExpression -- informational purposes
+              0 * 2;
+          default -> throw unexpected("segmentKind", segmentKind);
+        };
         if (!evaluator.eval(segmentKind, coords, coordsCount)) {
           break;
         }
@@ -121,8 +112,8 @@ public final class GraphicsAssertions {
                   assertMessagePrefix + ", segmentKind");
 
               for (int i = 0; i < $coordsCount;) {
-                var coordAssertMessagePrefix =
-                    String.format("%s, point %s, ", assertMessagePrefix, i % 2);
+                var coordAssertMessagePrefix = "%s, point %s, ".formatted(assertMessagePrefix,
+                    i % 2);
                 assertEquals($coords[i], actualSegment.coords[i++], delta,
                     coordAssertMessagePrefix + "x");
                 assertEquals($coords[i], actualSegment.coords[i++], delta,

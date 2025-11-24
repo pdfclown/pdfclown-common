@@ -433,14 +433,13 @@ public class Units extends AbstractSystemOfUnits {
     UnitConverter converter = unit.getConverterTo(target);
     if (converter == AbstractConverter.IDENTITY || converter instanceof AddConverter)
       return 1;
-    else if (converter instanceof MultiplyConverter)
-      return ((MultiplyConverter) converter).getFactor().doubleValue();
-    else if (converter instanceof AbstractConverter.Pair) {
+    else if (converter instanceof MultiplyConverter multiplyConverter)
+      return multiplyConverter.getFactor().doubleValue();
+    else if (converter instanceof AbstractConverter.Pair pair) {
       /*
        * NOTE: The assumption is that non-linear units within the same quantity are related by a
        * simple function combining factor and offset.
        */
-      var pair = (AbstractConverter.Pair) converter;
       return pair.getLeft() instanceof MultiplyConverter
           ? ((MultiplyConverter) pair.getLeft()).getFactor().doubleValue()
           : ((MultiplyConverter) pair.getRight()).getFactor().doubleValue();
@@ -459,16 +458,15 @@ public class Units extends AbstractSystemOfUnits {
    */
   public static <Q extends Quantity<Q>> double getOffset(Unit<Q> unit) {
     UnitConverter converter = unit.getConverterTo(unit.getSystemUnit());
-    if (converter instanceof AddConverter)
-      return ((AddConverter) converter).getOffset().doubleValue();
+    if (converter instanceof AddConverter addConverter)
+      return addConverter.getOffset().doubleValue();
     else if (converter == AbstractConverter.IDENTITY || converter instanceof MultiplyConverter)
       return 0;
-    else if (converter instanceof AbstractConverter.Pair) {
+    else if (converter instanceof AbstractConverter.Pair pair) {
       /*
        * NOTE: The assumption is that non-linear units within the same quantity are related by a
        * simple function combining factor and offset.
        */
-      var pair = (AbstractConverter.Pair) converter;
       return pair.getLeft() instanceof AddConverter
           ? ((AddConverter) pair.getLeft()).getOffset().doubleValue()
           : ((AddConverter) pair.getRight()).getOffset().doubleValue();
@@ -607,7 +605,7 @@ public class Units extends AbstractSystemOfUnits {
    * @see #wrap(Unit)
    */
   protected static <Q extends Quantity<Q>> Unit<Q> unwrap(Unit<Q> unit) {
-    return unit instanceof XtUnit ? ((XtUnit<Q>) unit).base : unit;
+    return unit instanceof XtUnit<Q> xtUnit ? xtUnit.base : unit;
   }
 
   /**
@@ -619,7 +617,7 @@ public class Units extends AbstractSystemOfUnits {
    * @see #unwrap(Unit)
    */
   protected static <Q extends Quantity<Q>> XtUnit<Q> wrap(Unit<Q> unit) {
-    return unit instanceof XtUnit ? (XtUnit<Q>) unit : new XtUnit<>((AbstractUnit<Q>) unit);
+    return unit instanceof XtUnit<Q> xtUnit ? xtUnit : new XtUnit<>((AbstractUnit<Q>) unit);
   }
 
   /**

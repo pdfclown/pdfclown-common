@@ -239,7 +239,7 @@ class ObjectsTest extends BaseTest {
 
   private static final List<@Nullable String> QN_TYPENAMES = unmodifiableList(
       (List<@Nullable String>) QN_OBJS.stream()
-          .map($ -> $ != null ? ($ instanceof Class ? (Class<?>) $ : $.getClass()).getName() : null)
+          .map($ -> $ != null ? ($ instanceof Class<?> c ? c : $.getClass()).getName() : null)
           .collect(Collectors.toCollection(ArrayList::new)));
 
   static Stream<Arguments> fqn_Object() {

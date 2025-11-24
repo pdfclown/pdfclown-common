@@ -47,8 +47,8 @@ public class IndentPrintWriter extends PrintWriter {
    */
   public static IndentPrintWriter of(Appendable base /* SourceName: delegate */,
       @Nullable Indent indent /* SourceName: indentation */) {
-    return base instanceof IndentPrintWriter
-        ? ((IndentPrintWriter) base).withIndent(indent)
+    return base instanceof IndentPrintWriter writer
+        ? writer.withIndent(indent)
         : new IndentPrintWriter(base, indent);
   }
 
