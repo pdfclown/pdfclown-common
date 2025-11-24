@@ -17,7 +17,6 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.asTopLevelType;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
-import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.build.internal.util_.io.Files.resetDirectory;
@@ -126,9 +125,8 @@ public abstract class TestUnit implements Test {
           || exists(ret = ResourceNames.path(name, dir(ProjectDirId.MAIN_TYPE_SOURCE))))
         return ret;
       else
-        throw runtime("Source file corresponding to " + ARG + " NOT FOUND "
-            + "(search paths: " + ARG + ", " + ARG + ")", type, dir(ProjectDirId.TEST_TYPE_SOURCE),
-            dir(ProjectDirId.MAIN_TYPE_SOURCE));
+        throw runtime("Source file corresponding to {} NOT FOUND (search paths: {}, {})", type,
+            dir(ProjectDirId.TEST_TYPE_SOURCE), dir(ProjectDirId.MAIN_TYPE_SOURCE));
     }
   }
 

@@ -90,8 +90,8 @@ public class ParamMessage {
       for (int i = 0; i < argsCount; i++) {
         index = format.indexOf(ARG, oldIndex);
         if (index < 0) {
-          warn("Placeholder " + ARG + " missing for argument " + ARG + " (format: " + ARG + ")",
-              textLiteral(ARG), i, textLiteral(format));
+          warn("Placeholder {} missing for argument {} (format: {})", textLiteral(ARG), i,
+              textLiteral(format));
           break;
         }
 
@@ -99,8 +99,8 @@ public class ParamMessage {
         oldIndex = index + ARG.length();
       }
       if (index >= 0 && format.indexOf(ARG, oldIndex) > 0) {
-        warn("Argument " + ARG + " missing for placeholder " + ARG + " (format: " + ARG + ")",
-            argsCount, textLiteral(ARG), textLiteral(format));
+        warn("Argument {} missing for placeholder {} (format: {})", argsCount, textLiteral(ARG),
+            textLiteral(format));
       }
       return b.append(format.substring(oldIndex)).toString();
     }

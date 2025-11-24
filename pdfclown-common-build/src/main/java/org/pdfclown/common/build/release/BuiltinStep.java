@@ -96,13 +96,15 @@ public enum BuiltinStep implements Step {
    * interfere with this check.</span>
    * </p>
    */
-  DEPENDENCY_SNAPSHOTS_CHECK($ -> executeElseThrow(unixCommand("mvn enforcer:enforce "
-      + "-Denforcer.rules=requireReleaseDeps -Denforcer.failFast=true"), $.getBaseDir()), true),
+  DEPENDENCY_SNAPSHOTS_CHECK($ -> executeElseThrow(unixCommand(
+      "mvn enforcer:enforce -Denforcer.rules=requireReleaseDeps -Denforcer.failFast=true"),
+      $.getBaseDir()), true),
   /**
    * Updates the changelog file with release version changes.
    */
-  RELEASE_CHANGELOG_UPDATE($ -> executeElseThrow(unixCommand(format("cz changelog "
-      + "--unreleased-version %s --incremental", $.getReleaseVersion())), $.getBaseDir()), false),
+  RELEASE_CHANGELOG_UPDATE($ -> executeElseThrow(unixCommand(
+      "cz changelog --unreleased-version %s --incremental".formatted($.getReleaseVersion())),
+      $.getBaseDir()), false),
   /**
    * Publishes the project artifacts to the central repository.
    * <p>
@@ -213,8 +215,9 @@ public enum BuiltinStep implements Step {
       default -> throw wrongArgOpt("kind", kind, null, List.of("release", "dev"));
     };
     try {
-      executeElseThrow(unixCommand(format("git add . "
-          + "&& git commit -m \"bump: %s version %s\"", kind, version)), manager.getBaseDir());
+      executeElseThrow(unixCommand("""
+          git add . && git commit -m "bump: %s version %s\"""".formatted(kind, version)),
+          manager.getBaseDir());
     } catch (Exception ex) {
       throw runtime("SCM commit FAILED", ex);
     }

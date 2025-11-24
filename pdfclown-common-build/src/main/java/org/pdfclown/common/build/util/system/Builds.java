@@ -281,9 +281,9 @@ public final class Builds {
       Thread.currentThread().interrupt();
     }
 
-    throw wrongState("Maven home NOT FOUND: "
-        + "specify it through system property `maven.home` "
-        + "or environment variable `MAVEN_HOME`");
+    throw wrongState("""
+        Maven home NOT FOUND: specify it through system property `maven.home` or environment \
+        variable `MAVEN_HOME`""");
   }
 
   /**

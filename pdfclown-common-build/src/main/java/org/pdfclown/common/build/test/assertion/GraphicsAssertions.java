@@ -108,8 +108,7 @@ public final class GraphicsAssertions {
             var assertMessagePrefix = "Segment " + segmentIndex[0]++;
             try {
               var actualSegment = actualSegmentQueue.take();
-              assertEquals($segmentKind, actualSegment.kind,
-                  assertMessagePrefix + ", segmentKind");
+              assertEquals($segmentKind, actualSegment.kind, assertMessagePrefix + ", segmentKind");
 
               for (int i = 0; i < $coordsCount;) {
                 var coordAssertMessagePrefix = "%s, point %s, ".formatted(assertMessagePrefix,

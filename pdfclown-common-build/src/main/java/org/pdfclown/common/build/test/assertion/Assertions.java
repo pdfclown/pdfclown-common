@@ -55,7 +55,6 @@ import static org.pdfclown.common.build.internal.util_.Objects.objTo;
 import static org.pdfclown.common.build.internal.util_.Objects.objToElseGet;
 import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
 import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
-import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS;
 import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.NULL;
@@ -1237,8 +1236,8 @@ public final class Assertions {
       var testFrame = testFrame().orElseThrow();
       testMethodFqn = methodFqn(testFrame);
 
-      printInfo("Expected results source code generation underway for `" + testMethodFqn
-          + "()`" + ELLIPSIS);
+      printInfo("Expected results source code generation underway for `%s()`..."
+          .formatted(testMethodFqn));
 
       if (editorBuffer != null /* Output to update the source code file */
           || paramNames == null /* Output redirection requiring test metadata retrieval */) {

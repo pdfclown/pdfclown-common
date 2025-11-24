@@ -21,7 +21,6 @@ import static org.pdfclown.common.build.internal.util_.Exceptions.unsupported;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
-import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 
 import java.io.IOException;
@@ -516,7 +515,7 @@ public final class Xmls {
        */
       public Namespaces register(String prefix, String namespaceUri) {
         if (base.containsKey(prefix))
-          throw wrongArg("prefix", prefix, "Already used for " + ARG + " namespace",
+          throw wrongArg("prefix", prefix, "Already used for {} namespace",
               textLiteral(base.get(prefix)));
 
         base.put(prefix, namespaceUri);

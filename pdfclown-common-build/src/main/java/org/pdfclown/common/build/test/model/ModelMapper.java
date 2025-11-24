@@ -87,7 +87,7 @@ public class ModelMapper<T> {
 
       @Override
       public String toString() {
-        return sqn(this) + " {level: " + level + "; properties: " + properties + "}";
+        return toStringWithProperties(this, "level", level, "properties", properties);
       }
     }
 

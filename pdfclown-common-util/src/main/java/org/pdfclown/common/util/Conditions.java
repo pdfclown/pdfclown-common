@@ -17,7 +17,6 @@ import static org.pdfclown.common.util.Exceptions.missingPath;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.util.Exceptions.wrongState;
-import static org.pdfclown.common.util.ParamMessage.ARG;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
@@ -195,7 +194,7 @@ public final class Conditions {
     if (value.floatValue() >= otherValue.floatValue())
       return value;
 
-    throw wrongArg(name, value, "MUST be at least " + ARG, otherValue);
+    throw wrongArg(name, value, "MUST be at least {}", otherValue);
   }
 
   /**
@@ -227,7 +226,7 @@ public final class Conditions {
     if (value.floatValue() <= otherValue.floatValue())
       return value;
 
-    throw wrongArg(name, value, "MUST be at most " + ARG, otherValue);
+    throw wrongArg(name, value, "MUST be at most {}", otherValue);
   }
 
   /**
@@ -345,7 +344,7 @@ public final class Conditions {
     if (value.floatValue() > otherValue.floatValue())
       return value;
 
-    throw wrongArg(name, value, "MUST be greater than " + ARG, otherValue);
+    throw wrongArg(name, value, "MUST be greater than {}", otherValue);
   }
 
   /**
@@ -377,7 +376,7 @@ public final class Conditions {
     if (value.floatValue() < otherValue.floatValue())
       return value;
 
-    throw wrongArg(name, value, "MUST be less than " + ARG, otherValue);
+    throw wrongArg(name, value, "MUST be less than {}", otherValue);
   }
 
   /**
@@ -498,7 +497,7 @@ public final class Conditions {
     if (range.contains(value))
       return value;
 
-    throw wrongArg(name, value, "MUST be within " + ARG + " range", range);
+    throw wrongArg(name, value, "MUST be within {} range", range);
   }
 
   /**
@@ -543,7 +542,7 @@ public final class Conditions {
       @Nullable String name) {
     if (value.floatValue() < min
         || value.floatValue() > max)
-      throw wrongArg(name, value, "MUST be between " + ARG + " and " + ARG, min, max);
+      throw wrongArg(name, value, "MUST be between {} and {}", min, max);
 
     return value;
   }

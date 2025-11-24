@@ -142,7 +142,7 @@ public final class Exceptions {
    *          Missing path.
    */
   public static FileNotFoundException missingPath(Path path) {
-    return new FileNotFoundException(ParamMessage.format(ARG + " MISSING", path));
+    return new FileNotFoundException(ParamMessage.format("{} MISSING", path));
   }
 
   /**

@@ -240,9 +240,9 @@ public abstract class Asserter {
                 .orElseThrow())
             .orElse(EMPTY));
     if (testName.isEmpty())
-      throw runtime("Failed test method NOT FOUND on call stack (should be marked with any of "
-          + "these annotations: {})",
-          testAnnotationTypes.stream().map(Class::getName).collect(toList()));
+      throw runtime("""
+          Failed test method NOT FOUND on call stack (should be marked with any of these \
+          annotations: {})""", testAnnotationTypes.stream().map(Class::getName).collect(toList()));
 
     message = """
         Test %s FAILED:
@@ -316,8 +316,9 @@ public abstract class Asserter {
       resetDirectory(targetDir);
       copyDirectory(sourceDir, targetDir);
     } catch (Exception ex) {
-      throw failedIO("Expected resource copy to target FAILED "
-          + "(re-running tests should fix it): {}", targetDir, ex);
+      throw failedIO("""
+          Expected resource copy to target FAILED (re-running tests should fix it): {}""",
+          targetDir, ex);
     }
     getLog().info("Expected directory resource COPIED to target at {}", textLiteral(targetDir));
   }
@@ -366,8 +367,9 @@ public abstract class Asserter {
       Files.createDirectories(targetFile.getParent());
       Files.copy(sourceFile, targetFile, REPLACE_EXISTING);
     } catch (Exception ex) {
-      throw failedIO("Expected resource copy to target FAILED "
-          + "(re-running tests should fix it): {}", targetFile, ex);
+      throw failedIO("""
+          Expected resource copy to target FAILED (re-running tests should fix it): {}""",
+          targetFile, ex);
     }
     getLog().info("Expected resource COPIED to target at {}", textLiteral(targetFile));
   }

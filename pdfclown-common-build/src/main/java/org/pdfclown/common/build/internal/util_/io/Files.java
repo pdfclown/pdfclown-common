@@ -32,7 +32,6 @@ import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.build.internal.util_.Objects.found;
-import static org.pdfclown.common.build.internal.util_.ParamMessage.ARG;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.util_.Strings.S;
 
@@ -270,7 +269,7 @@ public final class Files {
         } else if (file.startsWith(dir2)) {
           file = dir2.relativize(file);
         } else
-          throw wrongArg("file", file, "MUST be inside " + ARG + " or " + ARG, dir1, dir2);
+          throw wrongArg("file", file, "MUST be inside {} or {}", dir1, dir2);
       }
 
       if (found(binarySearch(getDiffFiles(), file))) {
@@ -282,7 +281,7 @@ public final class Files {
       } else if (found(binarySearch(dir1Files, file)))
         return FileStatus.SAME;
       else
-        throw wrongArg("file", file, "MUST exist inside " + ARG + " or " + ARG, dir1, dir2);
+        throw wrongArg("file", file, "MUST exist inside {} or {}", dir1, dir2);
     }
   }
 

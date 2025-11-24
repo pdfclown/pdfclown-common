@@ -19,7 +19,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.pdfclown.common.build.internal.util_.Chars.LF;
 import static org.pdfclown.common.build.internal.util_.Chars.UNDERSCORE;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Objects.sqn;
@@ -116,7 +115,9 @@ class BuildsIT extends BaseIT {
       var out = new Ref<String>();
       if (execute(osCommand(Builds.mavenExecutable()
           + " compile -q -Dspotless.apply.skip"), baseDir, out) != 0)
-        throw runtime("Compilation of " + baseDir + " FAILED" + LF + out.get());
+        throw runtime("""
+            Compilation of {} FAILED:
+            {}""", baseDir, out.get());
     }
   }
 }
