@@ -4,6 +4,7 @@
 </picture><br>pdfClown Common
 </h1>
 
+[![build](https://img.shields.io/github/actions/workflow/status/pdfclown/pdfclown-common/build.yml)](https://github.com/pdfclown/pdfclown-common/actions/workflows/build.yml)
 [![REUSE status](https://api.reuse.software/badge/github.com/pdfclown/pdfclown-common)](https://api.reuse.software/info/github.com/pdfclown/pdfclown-common)
 
 Common functionalities for pdfClown.org projects.
