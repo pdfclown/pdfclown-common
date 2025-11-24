@@ -15,7 +15,6 @@ package org.pdfclown.common.build.internal.util_;
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isLowerCase;
 import static java.lang.Character.isUpperCase;
-import static java.lang.Character.isWhitespace;
 import static java.lang.Math.min;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.pdfclown.common.build.internal.util_.Chars.CR;
@@ -25,11 +24,7 @@ import static org.pdfclown.common.build.internal.util_.Chars.NBSP;
 import static org.pdfclown.common.build.internal.util_.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.build.internal.util_.Objects.found;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.IntPredicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -154,16 +149,6 @@ public final class Strings {
       ret++;
     }
     return ret;
-  }
-
-  /**
-   * Applies the given indentation to a string.
-   * <p>
-   * For Java 11 or older.
-   * </p>
-   */
-  public static String indent(String s, String indent) {
-    return indent + s.replace(S + LF, S + LF + indent);
   }
 
   /**
@@ -450,68 +435,6 @@ public final class Strings {
 
     int end = lastIndexOf(s, $ -> !isEOL($)) + 1;
     return begin > 0 || end < s.length() ? s.substring(begin, end) : s;
-  }
-
-  /**
-   * Strips incidental leading and trailing whitespace from each line in the string.
-   * <p>
-   * <b>Incidental whitespace</b> is any other than internal indentation; the latter is what remains
-   * after removing the same amount of leading whitespace from all the lines, until at least one
-   * line has no more left.
-   * </p>
-   * <p>
-   * This method mimics Java 15's <code><a href=
-   * "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html#stripIndent()">String.stripIndent()</a></code>.
-   * </p>
-   */
-  public static String stripIndent(String s) {
-    if (s.isEmpty())
-      return s;
-
-    List<String> lines = s.lines().collect(Collectors.toCollection(ArrayList::new));
-
-    // Detect incidental leading whitespace!
-    int minLeadSpaceCount = Integer.MAX_VALUE;
-    var changed = false;
-    for (var it = lines.listIterator(); it.hasNext();) {
-      var line = it.next();
-      if (line.isEmpty()) {
-        continue;
-      }
-
-      /*
-       * Strip trailing whitespace!
-       *
-       * NOTE: This also prevents blank lines from interfering with the detection.
-       */
-      {
-        var strippedLine = line.stripTrailing();
-        if (!strippedLine.equals(line)) {
-          it.set(line = strippedLine);
-          changed = true;
-          if (line.isEmpty()) {
-            continue;
-          }
-        }
-      }
-
-      if (minLeadSpaceCount > 0) {
-        minLeadSpaceCount = min(minLeadSpaceCount, indexOf(line, $ -> !isWhitespace($)));
-      }
-    }
-    if (!changed && minLeadSpaceCount == 0)
-      return s;
-
-    // Strip incidental leading whitespace!
-    Stream<String> stream = lines.stream();
-    if (minLeadSpaceCount > 0) {
-      int indexOfNonIncidental = minLeadSpaceCount;
-      stream = stream
-          .map($ -> $.isEmpty() ? $
-              : $.substring(min(indexOf($, $$ -> !isWhitespace($$)), indexOfNonIncidental)));
-    }
-    return stream.collect(Collectors.joining(S + LF, EMPTY,
-        isEOL(s.charAt(s.length() - 1)) ? S + LF /* Preserves EOL on last line */ : EMPTY));
   }
 
   /**

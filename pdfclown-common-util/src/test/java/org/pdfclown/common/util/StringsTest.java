@@ -290,43 +290,6 @@ class StringsTest extends BaseTest {
                 + "Third line\n\n"));
   }
 
-  static Stream<Arguments> stripIndent() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] s[0]: "       \nSimple, without incidental whitespa. . ."
-            "\n"
-                + "Simple, without incidental whitespace\n"
-                + "  among its non-blank lines,\n"
-                + "\n"
-                + "\n"
-                + "  just internal indentation.",
-            // [2] s[1]: "       \n    Jagged, with incidental whitesp. . ."
-            "\n"
-                + "  Jagged, with incidental whitespace\n"
-                + "        among its non-blank lines,\n"
-                + "\n"
-                + "\n"
-                + "trailing whitespace, and ending newline.\n"),
-        // s
-        asList(
-            ""
-                + "       \n"
-                + "Simple, without incidental whitespace\n"
-                + "  among its non-blank lines,\n"
-                + "   \n"
-                + "\n"
-                + "  just internal indentation.",
-            ""
-                + "       \n"
-                + "    Jagged, with incidental whitespace  \n"
-                + "          among its non-blank lines,     \n"
-                + "   \n"
-                + "\n"
-                + "  trailing whitespace, and ending newline.\n"));
-  }
-
   static Stream<Arguments> uncapitalizeGreedy() {
     return argumentsStream(
         cartesian(),
@@ -383,15 +346,6 @@ class StringsTest extends BaseTest {
   void stripEmptyLines(Expected<String> expected, String s) {
     assertParameterizedOf(
         () -> Strings.stripEmptyLines(s),
-        expected,
-        () -> new ExpectedGeneration(s));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void stripIndent(Expected<String> expected, String s) {
-    assertParameterizedOf(
-        () -> Strings.stripIndent(s),
         expected,
         () -> new ExpectedGeneration(s));
   }
