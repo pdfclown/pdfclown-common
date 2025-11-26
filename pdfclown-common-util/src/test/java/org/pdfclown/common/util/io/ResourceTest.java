@@ -235,13 +235,10 @@ class ResourceTest extends BaseTest {
               has("name", Resource::getName, is(e.name)),
               has("uri", Resource::getUri, is(e.uri)));
         }),
-        () -> new ExpectedGeneration(name)
+        () -> new ExpectedGeneration<Resource>(name)
             .setParamNames("name")
-            .setExpectedSourceCodeGenerator($ -> {
-              var e = (Resource) $;
-              return "new ResourceResult(%s, %s, uri(%s))".formatted(
-                  literal(sqn(e)), literal(e.getName()), literal(e.getUri()));
-            })
+            .setExpectedSourceCodeGenerator($ -> "new ResourceResult(%s, %s, uri(%s))".formatted(
+                literal(sqn($)), literal($.getName()), literal($.getUri())))
             .setMaxArgCommentLength(100)
             .setOut(System.err) /*
                                  * IMPORTANT: DO NOT remove `out` redirection, otherwise the

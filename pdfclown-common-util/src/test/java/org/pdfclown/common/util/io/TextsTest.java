@@ -75,11 +75,8 @@ class TextsTest extends BaseTest {
     assertParameterizedOf(
         () -> Texts.textCoords(new StringReader(text), text.indexOf(subtext)).orElseThrow(),
         expected,
-        () -> new ExpectedGeneration(text, subtext)
-            .setExpectedSourceCodeGenerator($ -> {
-              var textCoords = (TextCoords) $;
-              return "new %s(%s, %s)".formatted(simpleName(textCoords), textCoords.line(),
-                  textCoords.column());
-            }));
+        () -> new ExpectedGeneration<TextCoords>(text, subtext)
+            .setExpectedSourceCodeGenerator($ -> "new %s(%s, %s)".formatted(simpleName($), $.line(),
+                $.column())));
   }
 }

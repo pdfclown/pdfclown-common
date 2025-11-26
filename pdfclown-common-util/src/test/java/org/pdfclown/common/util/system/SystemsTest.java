@@ -58,7 +58,7 @@ class SystemsTest {
 
   @ParameterizedTest
   @MethodSource
-  void getBooleanProperty(Expected<String> expected, @Nullable String value) {
+  void getBooleanProperty(Expected<Boolean> expected, @Nullable String value) {
     final var key = "myProperty";
 
     assertParameterizedOf(
@@ -71,6 +71,6 @@ class SystemsTest {
           return Systems.getBooleanProperty(key);
         },
         expected,
-        () -> new ExpectedGeneration(value));
+        () -> new ExpectedGeneration<>(value));
   }
 }

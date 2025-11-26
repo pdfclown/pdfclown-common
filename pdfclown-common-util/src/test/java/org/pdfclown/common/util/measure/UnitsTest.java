@@ -20,6 +20,8 @@ import static org.hamcrest.Matchers.isA;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Aggregations.list;
+import static org.pdfclown.common.util.Objects.fqn;
+import static org.pdfclown.common.util.Objects.literal;
 import static org.pdfclown.common.util.Objects.nonNull;
 
 import java.util.Comparator;
@@ -59,7 +61,7 @@ class UnitsTest extends BaseTest {
       .peek($ -> assertThat($, isA(XtUnit.class)))
       .map(XtUnit.class::cast)
       .sorted(COMPARATOR__UNIT)
-      .collect(Collectors.toUnmodifiableList());
+      .toList();
 
   static Stream<Arguments> getFactor_Unit() {
     return argumentsStream(
@@ -548,8 +550,8 @@ class UnitsTest extends BaseTest {
     assertParameterizedOf(
         () -> unit.getValue().getQuantityType(),
         expected,
-        () -> new ExpectedGeneration(unit)
-            .composeExpectedSourceCodeGenerator(Objects::fqn));
+        () -> new ExpectedGeneration<Class<?>>(unit)
+            .setExpectedSourceCodeGenerator($ -> literal(fqn($))));
   }
 
   @ParameterizedTest
@@ -558,8 +560,8 @@ class UnitsTest extends BaseTest {
     assertParameterizedOf(
         () -> Units.getQuantityType(unit.getValue()),
         expected,
-        () -> new ExpectedGeneration(unit)
-            .composeExpectedSourceCodeGenerator(Objects::fqn));
+        () -> new ExpectedGeneration<Class<?>>(unit)
+            .setExpectedSourceCodeGenerator($ -> literal(fqn($))));
   }
 
   private Matcher<Double> isCloseTo(double value) {

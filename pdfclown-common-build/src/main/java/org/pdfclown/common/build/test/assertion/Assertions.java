@@ -109,6 +109,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.lang.Javas;
 import org.pdfclown.common.build.internal.util_.Exceptions;
 import org.pdfclown.common.build.internal.util_.Objects;
+import org.pdfclown.common.build.internal.util_.Strings;
 import org.pdfclown.common.build.internal.util_.annot.Immutable;
 import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
 import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
@@ -371,7 +372,7 @@ public final class Assertions {
         }
 
         @Override
-        protected void generateExpectedComment(ExpectedGeneration generation) {
+        protected void generateExpectedComment(ExpectedGeneration<?> generation) {
           for (int i = 0, last = mods.length - 1; i <= last; i++) {
             if (getIndex() % mods[i] == 0) {
               // Main level separator.
@@ -464,7 +465,7 @@ public final class Assertions {
         }
 
         @Override
-        protected void generateExpectedComment(ExpectedGeneration generation) {
+        protected void generateExpectedComment(ExpectedGeneration<?> generation) {
           out().printf("// [%s] ", getIndex() + 1);
           for (int i = 0; i < generation.args.length; i++) {
             if (i > 0) {
@@ -839,10 +840,12 @@ public final class Assertions {
   /**
    * Generation feed for the expected results of a parameterized test.
    *
+   * @param <E>
+   *          Expected type.
    * @author Stefano Chizzolini
    * @see Assertions#assertParameterized(Object, Expected, Supplier)
    */
-  public static class ExpectedGeneration {
+  public static class ExpectedGeneration<E> {
     private static final int MAX_ARG_COMMENT_LENGTH__DEFAULT = 50;
 
     /**
@@ -871,7 +874,7 @@ public final class Assertions {
     final @Nullable Object[] args;
     @Nullable
     TestEnvironment environment;
-    Function<Object, String> expectedSourceCodeGenerator = Objects::literal;
+    Function<E, String> expectedSourceCodeGenerator = Objects::literal;
     int maxArgCommentLength = MAX_ARG_COMMENT_LENGTH__DEFAULT;
     @Nullable
     Appendable out;
@@ -884,18 +887,10 @@ public final class Assertions {
     }
 
     /**
-     * Prepends to {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator} a function.
-     */
-    public ExpectedGeneration composeExpectedSourceCodeGenerator(Function<Object, String> before) {
-      expectedSourceCodeGenerator = expectedSourceCodeGenerator.compose(before);
-      return this;
-    }
-
-    /**
      * Abbreviation marker to append to argument values exceeding {@link #getMaxArgCommentLength()
      * maxArgCommentLength} in comments accompanying expected results source code.
      * <p>
-     * DEFAULT: <code>".&nbsp;.&nbsp;."</code>
+     * DEFAULT: {@value Strings#ELLIPSIS__CHICAGO}
      * </p>
      */
     public String getArgCommentAbbreviationMarker() {
@@ -905,7 +900,7 @@ public final class Assertions {
     /**
      * Formatter of the argument values in comments accompanying expected results source code.
      * <p>
-     * DEFAULT: literal representation.
+     * DEFAULT: {@linkplain Objects#literal(Object) literal} representation.
      * </p>
      */
     public Function<@Nullable Object, String> getArgCommentFormatter() {
@@ -934,10 +929,10 @@ public final class Assertions {
     /**
      * Source code generator of the expected results.
      * <p>
-     * DEFAULT: literal representation.
+     * DEFAULT: {@linkplain Objects#literal(Object) literal} representation.
      * </p>
      */
-    public Function<Object, String> getExpectedSourceCodeGenerator() {
+    public Function<E, String> getExpectedSourceCodeGenerator() {
       return expectedSourceCodeGenerator;
     }
 
@@ -980,7 +975,7 @@ public final class Assertions {
     /**
      * Sets {@link #getArgCommentAbbreviationMarker() argCommentAbbreviationMarker}.
      */
-    public ExpectedGeneration setArgCommentAbbreviationMarker(String value) {
+    public ExpectedGeneration<E> setArgCommentAbbreviationMarker(String value) {
       argCommentAbbreviationMarker = requireNonNull(value);
       return this;
     }
@@ -988,7 +983,7 @@ public final class Assertions {
     /**
      * Sets {@link #getArgCommentFormatter() argCommentFormatter}.
      */
-    public ExpectedGeneration setArgCommentFormatter(Function<@Nullable Object, String> value) {
+    public ExpectedGeneration<E> setArgCommentFormatter(Function<@Nullable Object, String> value) {
       argCommentFormatter = requireNonNull(value);
       return this;
     }
@@ -996,7 +991,7 @@ public final class Assertions {
     /**
      * Sets {@link #getEnvironment() environment}.
      */
-    public ExpectedGeneration setEnvironment(@Nullable TestEnvironment value) {
+    public ExpectedGeneration<E> setEnvironment(@Nullable TestEnvironment value) {
       environment = value;
       return this;
     }
@@ -1004,8 +999,8 @@ public final class Assertions {
     /**
      * Sets {@link #getExpectedSourceCodeGenerator() expectedSourceCodeGenerator}.
      */
-    public ExpectedGeneration setExpectedSourceCodeGenerator(
-        Function<Object, String> value) {
+    public ExpectedGeneration<E> setExpectedSourceCodeGenerator(
+        Function<E, String> value) {
       expectedSourceCodeGenerator = requireNonNull(value);
       return this;
     }
@@ -1013,7 +1008,7 @@ public final class Assertions {
     /**
      * Sets {@link #getMaxArgCommentLength() maxArgCommentLength}.
      */
-    public ExpectedGeneration setMaxArgCommentLength(int value) {
+    public ExpectedGeneration<E> setMaxArgCommentLength(int value) {
       maxArgCommentLength = value;
       return this;
     }
@@ -1021,7 +1016,7 @@ public final class Assertions {
     /**
      * Sets {@link #getOut() out}.
      */
-    public ExpectedGeneration setOut(Appendable value) {
+    public ExpectedGeneration<E> setOut(Appendable value) {
       out = requireNonNull(value);
       return this;
     }
@@ -1029,7 +1024,7 @@ public final class Assertions {
     /**
      * Sets {@link #getParamNames() paramNames}.
      */
-    public ExpectedGeneration setParamNames(String @Nullable... value) {
+    public ExpectedGeneration<E> setParamNames(String @Nullable... value) {
       paramNames = value;
       return this;
     }
@@ -1109,7 +1104,7 @@ public final class Assertions {
      * @implNote {@link Failure} replaces the actual {@link Throwable} type in order to disambiguate
      *           between thrown exceptions and exceptions returned as regular results.
      */
-    public <T> void generateExpected(@Nullable Object expected, ExpectedGeneration generation) {
+    public <E> void generateExpected(@Nullable E expected, ExpectedGeneration<E> generation) {
       beginExpected(generation);
 
       generateExpectedComment(generation);
@@ -1139,7 +1134,7 @@ public final class Assertions {
       return out == null && index >= 0;
     }
 
-    protected String formatArgComment(@Nullable Object arg, ExpectedGeneration generation) {
+    protected String formatArgComment(@Nullable Object arg, ExpectedGeneration<?> generation) {
       String comment;
       var ret = abbreviate(
           comment = generation.argCommentFormatter.apply(arg).lines().findFirst().orElse(EMPTY),
@@ -1163,10 +1158,10 @@ public final class Assertions {
       return ret;
     }
 
-    protected abstract void generateExpectedComment(ExpectedGeneration generation);
+    protected abstract void generateExpectedComment(ExpectedGeneration<?> generation);
 
-    protected void generateExpectedSourceCode(@Nullable Object expected,
-        ExpectedGeneration generation) {
+    protected <E> void generateExpectedSourceCode(@Nullable E expected,
+        ExpectedGeneration<E> generation) {
       // Generate the source code corresponding to `expected`!
       String expectedSourceCode;
       if (expected == null) {
@@ -1222,7 +1217,7 @@ public final class Assertions {
       return out;
     }
 
-    private void begin(ExpectedGeneration generation) {
+    private void begin(ExpectedGeneration<?> generation) {
       if (generation.paramNames != null) {
         paramNames = generation.paramNames;
       }
@@ -1284,7 +1279,7 @@ public final class Assertions {
       }
     }
 
-    private void beginExpected(ExpectedGeneration generation) {
+    private void beginExpected(ExpectedGeneration<?> generation) {
       if (++index == 0) {
         begin(generation);
 
@@ -1990,8 +1985,10 @@ public final class Assertions {
    *   }
    * }</code></pre>
    */
+  @SuppressWarnings("unchecked")
   public static <T> void assertParameterized(@Nullable Object actual,
-      Expected<T> expected, @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
+      Expected<T> expected,
+      @Nullable Supplier<? extends ExpectedGeneration<T>> generationSupplier) {
     ExpectedGenerator generator = expectedGenerator.get();
     /*
      * Assertion enabled?
@@ -2031,7 +2028,7 @@ public final class Assertions {
       var complete = true;
       try {
         var generation = generationSupplier.get();
-        generator.generateExpected(actual, generation);
+        generator.generateExpected((T) actual, generation);
         complete = generator.isComplete();
       } finally {
         if (complete) {
@@ -2053,8 +2050,9 @@ public final class Assertions {
    * @see #assertParameterized(Object, Expected, Supplier)
    */
   public static <T> void assertParameterizedOf(
-      FailableSupplier<@Nullable Object, Exception> actualExpression,
-      Expected<T> expected, @Nullable Supplier<? extends ExpectedGeneration> generationSupplier) {
+      FailableSupplier<@Nullable T, Exception> actualExpression,
+      Expected<T> expected,
+      @Nullable Supplier<? extends ExpectedGeneration<T>> generationSupplier) {
     assertParameterized(evalParameterized(actualExpression), expected, generationSupplier);
   }
 
@@ -2109,8 +2107,8 @@ public final class Assertions {
    *         <li>regular result — if {@code expression} succeeded</li>
    *         </ul>
    */
-  public static @Nullable Object evalParameterized(
-      FailableSupplier<@Nullable Object, Exception> expression) {
+  public static <T> @Nullable Object evalParameterized(
+      FailableSupplier<@Nullable T, Exception> expression) {
     try {
       return expression.get();
     } catch (Throwable ex) {

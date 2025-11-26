@@ -69,14 +69,13 @@ class ClisTest {
 
   @ParameterizedTest
   @MethodSource
-  @SuppressWarnings("unchecked")
   void parseArgs(Expected<List<String>> expected, String argsString) {
     assertParameterizedOf(
         () -> Clis.parseArgs(argsString),
         expected.match($ -> contains($.toArray(String[]::new))),
-        () -> new ExpectedGeneration(argsString)
+        () -> new ExpectedGeneration<List<String>>(argsString)
             .setExpectedSourceCodeGenerator(
-                $ -> "asList(%s)".formatted(((List<String>) $).stream()
+                $ -> "asList(%s)".formatted($.stream()
                     .map(Objects::literal)
                     .collect(joining(S + COMMA)))));
   }
