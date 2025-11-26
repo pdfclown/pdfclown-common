@@ -370,6 +370,65 @@ public final class Strings {
   }
 
   /**
+   * Gets the index within the string of the last occurrence of any character in the searched set.
+   * <p>
+   * Examples ({@code |} indicates {@code fromIndex}, {@code ^} indicates result):
+   * </p>
+   * <pre>
+   * Strings.lastIndexOfAny(null, 0, *)                                 = -1
+   * Strings.lastIndexOfAny("", 0, *)                                   = -1
+   * Strings.lastIndexOfAny(*, 0, new int[0])                           = -1
+   * Strings.lastIndexOfAny("Search Test", 100, new int[] { 'e', 't' }) = 10
+   *                                   ^|
+   * Strings.lastIndexOfAny("Search Test", 9, new int[] { 'e', 't' })   = 8
+   *                                 ^|
+   * Strings.lastIndexOfAny("Search Test", 7, new int[] { 'e', 't' })   = 1
+   *                          ^     |
+   * </pre>
+   *
+   * @param fromIndex
+   *          (see {@link String#lastIndexOf(int, int)})
+   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
+   * @see StringUtils#indexOfAny(CharSequence, int, char...)
+   */
+  public static int lastIndexOfAny(final @Nullable String s, final int fromIndex, final int[] cc) {
+    int ret = INDEX__NOT_FOUND;
+    if (!isEmpty(s)) {
+      for (var c : cc) {
+        int pos = s.lastIndexOf(c, fromIndex);
+        if (pos > ret) {
+          ret = pos;
+        }
+      }
+    }
+    return ret;
+  }
+
+  /**
+   * Gets the index within the string of the last occurrence of any character in the searched set.
+   * <p>
+   * Examples ({@code ^} indicates result):
+   * </p>
+   * <pre>
+   * Strings.lastIndexOfAny(null, *)                               = -1
+   * Strings.lastIndexOfAny("", *)                                 = -1
+   * Strings.lastIndexOfAny(*, new int[0])                         = -1
+   * Strings.lastIndexOfAny("Search Test", new int[] { 'e', 't' }) = 10
+   *                                   ^
+   * Strings.lastIndexOfAny("Search Test", new int[] { 'e', 'a' }) = 8
+   *                                 ^
+   * Strings.lastIndexOfAny("Search Test", new int[] { 'S', 'a' }) = 2
+   *                           ^
+   * </pre>
+   *
+   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
+   * @see StringUtils#indexOfAny(CharSequence, char...)
+   */
+  public static int lastIndexOfAny(final @Nullable String s, final int[] cc) {
+    return lastIndexOfAny(s, Integer.MAX_VALUE, cc);
+  }
+
+  /**
    * Gets the end of the line at the position.
    */
   public static int lineEnd(String s, int index) {

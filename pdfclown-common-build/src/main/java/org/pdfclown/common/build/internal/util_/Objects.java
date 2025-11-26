@@ -616,7 +616,8 @@ public final class Objects {
   /**
    * Gets the fully-qualified class name of an object.
    * <p>
-   * Corresponds to the {@linkplain Class#getName() class name}.
+   * Corresponds to the {@linkplain Class#getName() class name}. The class is resolved via
+   * {@link #asType(Object)}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -633,7 +634,8 @@ public final class Objects {
    * <p>
    * The {@linkplain Class#getName() class name} has its inner-class separators ($) replaced with
    * dots (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "org.pdfclown.common.util.Objects.ClassXCastException"}).
+   * {@code "org.pdfclown.common.util.Objects.ClassXCastException"}). The class is resolved via
+   * {@link #asType(Object)}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -1156,7 +1158,8 @@ public final class Objects {
    * <p>
    * The {@linkplain Class#getName() class name} has each package segment reduced to its initial
    * character (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "o.p.c.u.Objects$ClassXCastException"}).
+   * {@code "o.p.c.u.Objects$ClassXCastException"}). The class is resolved via
+   * {@link #asType(Object)}.
    * </p>
    * <p>
    * Useful for repetitive messaging, like logs, where lengthy names become noisy.
@@ -1196,7 +1199,8 @@ public final class Objects {
    * The {@linkplain Class#getName() class name} has each package segment reduced to its initial
    * character, then its inner-class separators ($) replaced with dots (for example,
    * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "o.p.c.u.Objects.ClassXCastException"}).
+   * {@code "o.p.c.u.Objects.ClassXCastException"}). The class is resolved via
+   * {@link #asType(Object)}.
    * </p>
    * <p>
    * Useful for repetitive messaging, like logs, where lengthy names become noisy.
@@ -1233,6 +1237,40 @@ public final class Objects {
   }
 
   /**
+   * Gets the simple class name of an object.
+   * <p>
+   * Corresponds to the {@linkplain Class#getSimpleName() simple class name}. The class is resolved
+   * via {@link #asType(Object)}.
+   * </p>
+   *
+   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @see #sqn(Object)
+   * @see #sqnd(Object)
+   * @see #fqn(Object)
+   * @see #sfqn(Object)
+   */
+  public static String simpleName(@Nullable Object obj) {
+    return objToElse(asType(obj), Class::getSimpleName, NULL);
+  }
+
+  /**
+   * Gets the simple class name from a generic class name.
+   * <p>
+   * Corresponds to the {@linkplain Class#getSimpleName() simple class name}. No syntactic check is
+   * applied.
+   * </p>
+   *
+   * @return {@value Strings#NULL}, if {@code typeName} is undefined.
+   * @see #sqn(String)
+   * @see #sqnd(String)
+   * @see #sfqn(String)
+   */
+  public static String simpleName(@Nullable String typeName) {
+    return objToElse(typeName,
+        $ -> $.substring(Strings.lastIndexOfAny($, new int[] { DOT, DOLLAR }) + 1), NULL);
+  }
+
+  /**
    * Splits a fully-qualified name into package and class name parts.
    *
    * @return Two-part string array, where the first item is empty if {@code typeName} has no
@@ -1252,7 +1290,7 @@ public final class Objects {
    * The {@linkplain Class#getSimpleName() simple class name} is qualified with its enclosing
    * classes till the top level (for example,
    * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "Objects$ClassXCastException"}).
+   * {@code "Objects$ClassXCastException"}). The class is resolved via {@link #asType(Object)}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -1287,7 +1325,7 @@ public final class Objects {
    * The {@linkplain Class#getSimpleName() simple class name} is qualified with its enclosing
    * classes till the top level, replacing inner-class separators ($) with dots (for example,
    * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "Objects.ClassXCastException"}).
+   * {@code "Objects.ClassXCastException"}). The class is resolved via {@link #asType(Object)}.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -1391,9 +1429,8 @@ public final class Objects {
   /**
    * Maps an object to its literal string representation for text messages.
    *
-   * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is
-   *         ({@link Object#toString()}) — for convenience, certain types ({@link File},
-   *         {@link Path}) are still represented as {@code String}, though.
+   * @return Same as {@link #basicLiteral(Object)}}, except certain non-basic types ({@link File},
+   *         {@link Path}) are still represented as {@code String} for convenience.
    * @see #literal(Object)
    * @see #basicLiteral(Object)
    */
@@ -1941,10 +1978,7 @@ public final class Objects {
   }
 
   private static String sqn(@Nullable String typeName, boolean dotted) {
-    return fqn(objTo(typeName, $ -> {
-      int index = $.lastIndexOf(DOT);
-      return found(index) ? $.substring(index + 1) : $;
-    }), false, dotted);
+    return fqn(objTo(typeName, $ -> $.substring($.lastIndexOf(DOT) + 1)), false, dotted);
   }
 
   /**

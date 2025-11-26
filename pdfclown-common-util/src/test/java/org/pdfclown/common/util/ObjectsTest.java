@@ -301,7 +301,7 @@ class ObjectsTest extends BaseTest {
             "java.lang.String",
             // [6] typename[5]: "java.util.Map$Entry"
             "java.util.Map.Entry"),
-        // obj
+        // typename
         QN_TYPENAMES);
   }
 
@@ -519,6 +519,48 @@ class ObjectsTest extends BaseTest {
         QN_TYPENAMES);
   }
 
+  static Stream<Arguments> simpleName_Object() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] obj[0]: null
+            "null",
+            // [2] obj[1]: 0.5
+            "Double",
+            // [3] obj[2]: 'a'
+            "Character",
+            // [4] obj[3]: "a string"
+            "String",
+            // [5] obj[4]: String
+            "String",
+            // [6] obj[5]: java.util.Map.Entry
+            "Entry"),
+        // obj
+        QN_OBJS);
+  }
+
+  static Stream<Arguments> simpleName_String() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] typename[0]: null
+            "null",
+            // [2] typename[1]: "java.lang.Double"
+            "Double",
+            // [3] typename[2]: "java.lang.Character"
+            "Character",
+            // [4] typename[3]: "java.lang.String"
+            "String",
+            // [5] typename[4]: "java.lang.String"
+            "String",
+            // [6] typename[5]: "java.util.Map$Entry"
+            "Entry"),
+        // typename
+        QN_TYPENAMES);
+  }
+
   static Stream<Arguments> sqn_Object() {
     return argumentsStream(
         cartesian(),
@@ -557,7 +599,7 @@ class ObjectsTest extends BaseTest {
             "String",
             // [6] typename[5]: "java.util.Map$Entry"
             "Map$Entry"),
-        // obj
+        // typename
         QN_TYPENAMES);
   }
 
@@ -599,7 +641,7 @@ class ObjectsTest extends BaseTest {
             "String",
             // [6] typename[5]: "java.util.Map$Entry"
             "Map.Entry"),
-        // obj
+        // typename
         QN_TYPENAMES);
   }
 
@@ -905,6 +947,24 @@ class ObjectsTest extends BaseTest {
   void sfqnd_String(Expected<String> expected, @Nullable String typename) {
     assertParameterizedOf(
         () -> Objects.sfqnd(typename),
+        expected,
+        () -> new ExpectedGeneration(typename));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void simpleName_Object(Expected<String> expected, @Nullable Object obj) {
+    assertParameterizedOf(
+        () -> Objects.simpleName(obj),
+        expected,
+        () -> new ExpectedGeneration(obj));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void simpleName_String(Expected<String> expected, @Nullable String typename) {
+    assertParameterizedOf(
+        () -> Objects.simpleName(typename),
         expected,
         () -> new ExpectedGeneration(typename));
   }
