@@ -18,7 +18,7 @@ import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.build.internal.util_.Objects.objTo;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.io.Files.replaceText;
+import static org.pdfclown.common.build.internal.util_.io.Texts.replaceText;
 import static org.pdfclown.common.build.internal.util_.system.Processes.executeElseThrow;
 import static org.pdfclown.common.build.internal.util_.system.Processes.unixCommand;
 

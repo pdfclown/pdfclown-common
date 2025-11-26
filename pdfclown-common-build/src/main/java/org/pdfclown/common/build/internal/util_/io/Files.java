@@ -16,9 +16,7 @@ import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.Files.readString;
 import static java.nio.file.Files.walkFileTree;
-import static java.nio.file.Files.writeString;
 import static java.util.Collections.binarySearch;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
@@ -640,26 +638,6 @@ public final class Files {
       throw wrongArg("from", from, "MUST be a directory");
 
     return from.relativize(normal(to));
-  }
-
-  /**
-   * Replaces each substring in a text file that matches the given {@linkplain Pattern regular
-   * expression} with the replacement.
-   *
-   * @return Whether matches were found.
-   */
-  public static boolean replaceText(Path file, String regex, String replacement)
-      throws IOException {
-    String oldText = readString(file);
-    Matcher m = Pattern.compile(regex).matcher(oldText);
-    if (!m.find())
-      return false;
-
-    String newText = m.replaceAll(replacement);
-    if (!newText.equals(oldText)) {
-      writeString(file, newText);
-    }
-    return true;
   }
 
   /**

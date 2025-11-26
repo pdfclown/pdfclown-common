@@ -23,10 +23,16 @@ import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.NBSP;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Objects.found;
+import static org.pdfclown.common.util.Objects.opt;
 
+import java.io.IOException;
+import java.util.Optional;
 import java.util.function.IntPredicate;
+import org.apache.commons.io.input.CharSequenceReader;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.io.Texts;
+import org.pdfclown.common.util.io.Texts.TextCoords;
 
 /**
  * String utilities.
@@ -133,6 +139,20 @@ public final class Strings {
       ret += marker;
     }
     return ret;
+  }
+
+  /**
+   * Gets the 1-based coordinates corresponding to a position in the string.
+   *
+   * @param index
+   *          Position.
+   */
+  public static Optional<TextCoords> coords(CharSequence s, int index) {
+    try {
+      return Texts.textCoords(new CharSequenceReader(s), index);
+    } catch (IOException ex) {
+      return opt(null);
+    }
   }
 
   /**
