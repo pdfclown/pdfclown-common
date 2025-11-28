@@ -1,0 +1,46 @@
+#
+# See </docs/maintenance.md#pull-requests>.
+#
+name: 'Semantic Pull Request'
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - edited
+
+jobs:
+  main:
+    name: Check Pull Request Title
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Correspond to commit types as defined in </docs/maintenance.md#commit-types>.
+          types: |
+            build
+            bump
+            chore
+            ci
+            docs
+            feat
+            fix
+            perf
+            refactor
+            revert
+            style
+            test
+          # Correspond to commit scopes as defined in </docs/maintenance.md#commit-scopes>.
+          scopes: |
+            base
+            build
+            deps
+            deps-dev
+            parent
+            super
+            util
