@@ -42,8 +42,8 @@ This document describes how to set up your development environment to build and 
 
     Installed hooks (activated whenever a commit is submitted):
 
-    - [commit-check](https://github.com/commit-check/commit-check) — triggers `check-branch`, aborting the new commit if [branch validation](https://conventional-branch.github.io/) failed
-    - [commitizen](https://commitizen-tools.github.io/commitizen/getting_started/#integration-with-pre-commit) — triggers `cz check`, aborting the new commit if [message validation](https://www.conventionalcommits.org/en/v1.0.0/) failed
+    - [commit-check](https://github.com/commit-check/commit-check) — triggers `check-branch`, aborting the new commit if [branch validation](maintenance.md#branches) failed
+    - [commitizen](https://commitizen-tools.github.io/commitizen/getting_started/#integration-with-pre-commit) — triggers `cz check`, aborting the new commit if [message validation](maintenance.md#commits) failed
     - [REUSE](https://reuse.software/dev/#pre-commit-hook) — triggers `reuse lint`, aborting the new commit if [REUSE validation](https://reuse.software/spec-3.3/) failed
 
     To update the hooks to latest version:
