@@ -73,7 +73,7 @@ public class ReleaseManager {
    */
   public enum VersionScheme {
     /**
-     * <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0.0</a>.
+     * <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0</a>.
      */
     SEMVER2
   }

@@ -2015,7 +2015,6 @@ public final class Assertions {
         if (!expected.isSuccess())
           fail("Success UNEXPECTED (expected: %s)".formatted(expected));
 
-        //noinspection unchecked
         assertThat((T) actual, expected.getMatcher());
       }
     }

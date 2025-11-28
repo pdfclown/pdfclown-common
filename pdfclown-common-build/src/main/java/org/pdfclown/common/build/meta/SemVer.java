@@ -38,7 +38,7 @@ import org.pdfclown.common.build.internal.util_.annot.Immutable;
 import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
 
 /**
- * <a href="https://semver.org/spec/v2.0.0.html">Semantic Version (2.0.0)</a>.
+ * <a href="https://semver.org/spec/v2.0.0.html">Semantic Version (2.0)</a>.
  *
  * @author Stefano Chizzolini
  */
@@ -67,7 +67,7 @@ public class SemVer implements Comparable<SemVer> {
   /**
    * <a href=
    * "https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string">Official
-   * Semantic Versioning 2.0.0 regular expression</a>.
+   * Semantic Versioning 2.0 regular expression</a>.
    */
   private static final Pattern PATTERN__SEM_VER = Pattern.compile("""
       ^\
@@ -86,7 +86,7 @@ public class SemVer implements Comparable<SemVer> {
 
   /**
    * Checks whether the version conforms to <a href="https://semver.org/spec/v2.0.0.html">Semantic
-   * Versioning 2.0.0</a>.
+   * Versioning 2.0</a>.
    *
    * @return {@code version}.
    * @throws IllegalArgumentException
@@ -375,7 +375,7 @@ public class SemVer implements Comparable<SemVer> {
 
   /**
    * Compares this object with the given one for
-   * <a href="https://semver.org/spec/v2.0.0.html#spec-item-11">Semantic Versioning 2.0.0
+   * <a href="https://semver.org/spec/v2.0.0.html#spec-item-11">Semantic Versioning 2.0
    * precedence</a>.
    *
    * @see #compareTo(SemVer)

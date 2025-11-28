@@ -61,7 +61,7 @@ class PatternsTest extends BaseTest {
   /**
    * <a href=
    * "https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string">Official
-   * Semantic Versioning 2.0.0 regular expression</a>.
+   * Semantic Versioning 2.0 regular expression</a>.
    */
   private static final Pattern PATTERN__SEM_VER = Pattern.compile("""
       ^\
