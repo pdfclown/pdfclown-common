@@ -11,7 +11,7 @@ version = 1
 
 # Configuration.
 [[annotations]]
-path = ["**/conf/**", "**/.gitignore", ".tool-versions", "**/*.config", "**/*.toml", "**/*.yaml", "**/*.yml"]
+path = [".github/**", "**/conf/**", "**/.gitignore", ".tool-versions", "**/*.config", "**/*.toml", "**/*.yaml", "**/*.yml"]
 SPDX-FileCopyrightText = "2025 Stefano Chizzolini and contributors"
 SPDX-License-Identifier = "MIT-0"
 
