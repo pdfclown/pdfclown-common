@@ -134,7 +134,6 @@ pdfclown-common-base instead)</description>
     <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
     <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
     <java.version>17</java.version>
-    <m2e.lifecycle-mapping.version>1.0.0</m2e.lifecycle-mapping.version>
     <maven.version>3.9.11</maven.version>
     <maven-bundle-plugin.version>6.0.0</maven-bundle-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
@@ -817,51 +816,6 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
           <configuration>
             <publishingServerId>central</publishingServerId>
             <autoPublish>false</autoPublish>
-          </configuration>
-        </plugin>
-
-        <!--
-          IDE-specific configuration (I know, this is NOT the place for IDE configuration, but we
-          have to pragmatically cope with common idiosyncrasies).
-        -->
-        <plugin>
-          <!-- See https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html -->
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>${m2e.lifecycle-mapping.version}</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-help-plugin</artifactId>
-                    <versionRange>*</versionRange>
-                    <goals>
-                      <goal>effective-pom</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <execute>
-                      <runOnIncremental>true</runOnIncremental>
-                    </execute>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <versionRange>*</versionRange>
-                    <goals>
-                      <goal>check</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
           </configuration>
         </plugin>
       </plugins>
