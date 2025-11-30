@@ -638,37 +638,37 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               <dependencyLink>
                 <groupId>com.github.javaparser</groupId>
                 <artifactId>javaparser-core</artifactId>
-                <url>https://www.javadoc.io/static/com.github.javaparser/javaparser-core/${javaparser.version}</url>
+                <url>https://javadoc.io/doc/com.github.javaparser/javaparser-core/${javaparser.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>com.google.jimfs</groupId>
                 <artifactId>jimfs</artifactId>
-                <url>https://www.javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</url>
+                <url>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
-                <url>https://www.javadoc.io/static/io.github.classgraph/classgraph/${classgraph.version}</url>
+                <url>https://javadoc.io/doc/io.github.classgraph/classgraph/${classgraph.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <url>https://www.javadoc.io/doc/net.bytebuddy/byte-buddy/${bytebuddy.version}</url>
+                <url>https://javadoc.io/doc/net.bytebuddy/byte-buddy/${bytebuddy.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
-                <url>https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-api/${log4j.version}</url>
+                <url>https://javadoc.io/doc/org.apache.logging.log4j/log4j-api/${log4j.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
-                <url>https://www.javadoc.io/doc/org.apache.logging.log4j/log4j-core/${log4j.version}</url>
+                <url>https://javadoc.io/doc/org.apache.logging.log4j/log4j-core/${log4j.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.greenrobot</groupId>
                 <artifactId>eventbus-java</artifactId>
-                <url>https://www.javadoc.io/doc/org.greenrobot/eventbus-java/${eventbus.version}</url>
+                <url>https://javadoc.io/doc/org.greenrobot/eventbus-java/${eventbus.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.hamcrest</groupId>
@@ -683,12 +683,12 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               <dependencyLink>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <url>https://www.javadoc.io/static/org.jsoup/jsoup/${jsoup.version}</url>
+                <url>https://javadoc.io/doc/org.jsoup/jsoup/${jsoup.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.jspecify</groupId>
                 <artifactId>jspecify</artifactId>
-                <url>https://www.javadoc.io/static/org.jspecify/jspecify/${jspecify.version}</url>
+                <url>https://javadoc.io/doc/org.jspecify/jspecify/${jspecify.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.junit.jupiter</groupId>
@@ -708,7 +708,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               <dependencyLink>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>pdfclown-common-util</artifactId>
-                <url>https://www.javadoc.io/static/org.pdfclown/pdfclown-common-util/${revision}</url>
+                <url>https://javadoc.io/doc/org.pdfclown/pdfclown-common-util/${revision}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.reflections</groupId>
@@ -723,12 +723,12 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               <dependencyLink>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <url>https://www.javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</url>
+                <url>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>tech.units</groupId>
                 <artifactId>indriya</artifactId>
-                <url>https://www.javadoc.io/static/tech.units/indriya/${indriya.version}</url>
+                <url>https://javadoc.io/doc/tech.units/indriya/${indriya.version}</url>
               </dependencyLink>
             </dependencyLinks>
             <!--
