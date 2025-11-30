@@ -50,6 +50,10 @@
       <groupId>tech.units</groupId>
       <artifactId>indriya</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.measure</groupId>
+      <artifactId>unit-api</artifactId>
+    </dependency>
 
     <!-- I/O -->
     <dependency>

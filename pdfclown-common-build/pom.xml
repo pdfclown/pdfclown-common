@@ -172,6 +172,17 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <!--
+            NOTE: Dependencies are declared for use by consuming artifacts, no matter whether they
+            are locally unused. -->
+          <ignoredUnusedDeclaredDependencies>*</ignoredUnusedDeclaredDependencies>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <executions>

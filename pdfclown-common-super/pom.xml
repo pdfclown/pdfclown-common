@@ -109,6 +109,7 @@ pdfclown-common-base instead)</description>
     <hamcrest.version>3.0</hamcrest.version>
     <indriya.version>2.2.3</indriya.version>
     <javaparser.version>3.27.1</javaparser.version>
+    <javax.measure.version>2.2</javax.measure.version>
     <jimfs.version>1.3.1</jimfs.version>
     <json.version>20250517</json.version>
     <!--
@@ -387,6 +388,28 @@ log.info("buildTimestamp: " + buildTimestamp
                   execution. -->
                 <goal>properties</goal>
               </goals>
+            </execution>
+            <execution>
+              <id>check-deps-usage</id>
+              <goals>
+                <goal>analyze-only</goal>
+              </goals>
+              <configuration>
+                <failOnWarning>true</failOnWarning>
+                <ignoreAllNonTestScoped>true</ignoreAllNonTestScoped>
+                <!--
+                  NOTE: Omitting runtime dependencies to avoid false positives. -->
+                <ignoreNonCompile>true</ignoreNonCompile>
+                <ignoredUsedUndeclaredDependencies>
+                  <!--
+                    NOTE: Omitting transitive test dependencies. -->
+                  <item>com.google.jimfs</item>
+                  <item>org.hamcrest</item>
+                  <item>org.mockito</item>
+                  <item>org.opentest4j:opentest4j</item>
+                  <item>*junit*</item>
+                </ignoredUsedUndeclaredDependencies>
+              </configuration>
             </execution>
           </executions>
         </plugin>
@@ -992,7 +1015,8 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
       <!--
         EXTRA VERIFICATION PROFILE
 
-        Slow and seldom operations, such as dependency vulnerability check.
+        Maintenance checks to run periodically:
+        - dependency vulnerability check (check-deps-vulnerability)
       -->
       <build>
         <plugins>
@@ -1006,6 +1030,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
             </configuration>
             <executions>
               <execution>
+                <id>check-deps-vulnerability</id>
                 <goals>
                   <goal>aggregate</goal>
                 </goals>

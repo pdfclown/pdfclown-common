@@ -79,6 +79,11 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>javax.measure</groupId>
+        <artifactId>unit-api</artifactId>
+        <version>${javax.measure.version}</version>
+      </dependency>
 
       <!-- I/O -->
       <dependency>
