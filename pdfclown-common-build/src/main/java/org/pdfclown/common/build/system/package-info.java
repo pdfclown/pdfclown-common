@@ -11,7 +11,7 @@
   header, listing the main changes you applied to the original source.
  */
 /**
- * Common system utilities.
+ * Build system functionalities.
  *
  * @author Stefano Chizzolini
  */

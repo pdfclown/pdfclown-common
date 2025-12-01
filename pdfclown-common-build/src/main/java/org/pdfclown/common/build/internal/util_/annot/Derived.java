@@ -34,7 +34,7 @@ import org.jspecify.annotations.Nullable;
  * </p>
  * <p>
  * <span class="important">IMPORTANT: Because of its dependence on primary state, <i>the annotated
- * field should NEVER be accessed directly until its accessor method is called</i>.</span>
+ * field should NEVER be accessed directly</i>.</span>
  * </p>
  * <p>
  * For example [*]:
@@ -52,7 +52,7 @@ import org.jspecify.annotations.Nullable;
  *
  *   public Object getObject() {
  *     if (object == null) {
- *       object = primaryData.toString();
+ *       object = . . .; &#47;&#47; some complex computation involving `primaryData`
  *     }
  *     return object;
  *   }

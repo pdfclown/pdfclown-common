@@ -118,7 +118,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Common assertion utilities.
+ * Assertion utilities.
  * <p>
  * In particular, <b>parameterized tests</b> are provided a
  * {@linkplain #assertParameterized(Object, Expected, Supplier) convenient framework} to streamline

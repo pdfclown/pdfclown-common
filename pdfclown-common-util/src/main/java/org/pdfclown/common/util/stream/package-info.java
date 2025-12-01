@@ -11,6 +11,8 @@
   header, listing the main changes you applied to the original source.
  */
 /**
+ * {@linkplain java.util.stream.Stream Stream} utilities.
+ *
  * @author Stefano Chizzolini
  */
 @NullMarked

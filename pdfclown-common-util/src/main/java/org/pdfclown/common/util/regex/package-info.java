@@ -11,6 +11,8 @@
   header, listing the main changes you applied to the original source.
  */
 /**
+ * {@linkplain java.util.regex.Pattern Regular expression} utilities.
+ *
  * @author Stefano Chizzolini
  */
 @NullMarked

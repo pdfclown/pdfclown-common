@@ -11,7 +11,7 @@
   header, listing the main changes you applied to the original source.
  */
 /**
- * Model definitions for domain model testing.
+ * Model definitions for domain testing.
  *
  * @author Stefano Chizzolini
  * @see org.pdfclown.common.build.test.assertion.ModelAsserter
