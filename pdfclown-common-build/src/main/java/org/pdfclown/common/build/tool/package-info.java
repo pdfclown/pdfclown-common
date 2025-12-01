@@ -11,11 +11,11 @@
   header, listing the main changes you applied to the original source.
  */
 /**
- * Executable utilities for development purposes.
+ * Tools for development purposes.
  *
  * @author Stefano Chizzolini
  */
 @NullMarked
-package org.pdfclown.common.build.run;
+package org.pdfclown.common.build.tool;
 
 import org.jspecify.annotations.NullMarked;

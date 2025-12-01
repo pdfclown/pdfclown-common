@@ -92,49 +92,6 @@ public @interface DependsOn {
     private static final Map<String, String> detectFqns = new HashMap<>();
 
     /**
-     * Gets whether the dependency is available.
-     *
-     * @param dependency
-     *          Dependency ({@code groupId:artifactId}).
-     */
-    public static boolean isDependable(String dependency) {
-      return dependables.computeIfAbsent(requireNonNull(dependency), $ -> {
-        String detectFqn = detectFqns.get($);
-        if (detectFqn == null)
-          throw wrongArg("dependency", dependency, "UNKNOWN (registration required)");
-
-        var ret = init(detectFqn);
-        if (!ret) {
-          log.warn("Dependency UNAVAILABLE: {}", dependency);
-        }
-        return ret;
-      });
-    }
-
-    /**
-     * Gets whether all the non-essential dependencies of the object are available.
-     *
-     * @param obj
-     *          Either an instance or a class.
-     */
-    public static boolean isUsable(Object obj) {
-      Class<?> dependentType = requireNonNull(asType(obj), "`obj`");
-      var annot = dependentType.getDeclaredAnnotation(DependsOn.class);
-      if (annot != null) {
-        for (String dependency : annot.value()) {
-          boolean dependable = isDependable(dependency);
-          if (!dependable) {
-            if (log.isDebugEnabled()) {
-              log.debug("{}: '{}' dependency MISSING", fqn(dependentType), dependency);
-            }
-            return false;
-          }
-        }
-      }
-      return true;
-    }
-
-    /**
      * Registers a non-essential dependency.
      *
      * @param dependency
@@ -169,6 +126,49 @@ public @interface DependsOn {
         }
       }
       throw runtime("No viable type");
+    }
+
+    /**
+     * Gets whether the dependency is available.
+     *
+     * @param dependency
+     *          Dependency ({@code groupId:artifactId}).
+     */
+    private static boolean isDependable(String dependency) {
+      return dependables.computeIfAbsent(requireNonNull(dependency), $ -> {
+        String detectFqn = detectFqns.get($);
+        if (detectFqn == null)
+          throw wrongArg("dependency", dependency, "UNKNOWN (registration required)");
+
+        var ret = init(detectFqn);
+        if (!ret) {
+          log.warn("Dependency UNAVAILABLE: {}", dependency);
+        }
+        return ret;
+      });
+    }
+
+    /**
+     * Gets whether all the non-essential dependencies of the object are available.
+     *
+     * @param obj
+     *          Either an instance or a class.
+     */
+    private static boolean isUsable(Object obj) {
+      Class<?> dependentType = requireNonNull(asType(obj), "`obj`");
+      var annot = dependentType.getDeclaredAnnotation(DependsOn.class);
+      if (annot != null) {
+        for (String dependency : annot.value()) {
+          boolean dependable = isDependable(dependency);
+          if (!dependable) {
+            if (log.isDebugEnabled()) {
+              log.debug("{}: '{}' dependency MISSING", fqn(dependentType), dependency);
+            }
+            return false;
+          }
+        }
+      }
+      return true;
     }
   }
 
