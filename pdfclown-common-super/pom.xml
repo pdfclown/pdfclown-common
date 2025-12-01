@@ -657,12 +657,12 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
               <dependencyLink>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
-                <url>https://javadoc.io/doc/org.apache.logging.log4j/log4j-api/${log4j.version}</url>
+                <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-api/</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
-                <url>https://javadoc.io/doc/org.apache.logging.log4j/log4j-core/${log4j.version}</url>
+                <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-core/</url>
               </dependencyLink>
               <dependencyLink>
                 <groupId>org.greenrobot</groupId>
