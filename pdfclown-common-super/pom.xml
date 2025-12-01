@@ -102,7 +102,7 @@ pdfclown-common-base instead)</description>
       NOTE: Brought here because of plugin-level references (otherwise, their natural place would
       be pdfclown-common-deps).
     -->
-    <bytebuddy.version>1.18.1</bytebuddy.version>
+    <bytebuddy.version>1.18.2</bytebuddy.version>
     <classgraph.version>4.8.184</classgraph.version>
     <eventbus.version>3.3.1</eventbus.version>
     <groovy.version>5.0.2</groovy.version>
