@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.internal.util_;
 
+import static org.apache.commons.lang3.exception.ExceptionUtils.asRuntimeException;
 import static org.pdfclown.common.build.internal.util_.Chars.COMMA;
 import static org.pdfclown.common.build.internal.util_.Chars.CURLY_BRACE_CLOSE;
 import static org.pdfclown.common.build.internal.util_.Chars.CURLY_BRACE_OPEN;
@@ -32,6 +33,7 @@ import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.util_.annot.DependsOn.Dependency;
 import org.pdfclown.common.build.internal.util_.annot.PolyNull;
 
 /**
@@ -135,6 +137,40 @@ public final class Exceptions {
         valueLiteral == null ? message
             : message == null ? valueLiteral
             : "%s (%s)".formatted(valueLiteral, message));
+  }
+
+  /**
+   * Verifies whether any dependency caused the given missing class exception.
+   * <p>
+   * Useful to gracefully notify the lack of optional dependencies, as specified by
+   * {@link org.pdfclown.common.build.internal.util_.annot.DependsOn @DependsOn} annotation.
+   * </p>
+   *
+   * @return {@link IllegalStateException}, if something in {@code dependencies} is missing;
+   *         otherwise, {@code ex}.
+   */
+  public static RuntimeException missingClass(Collection<Dependency> dependencies,
+      NoClassDefFoundError ex) {
+    for (var dependency : dependencies) {
+      Throwable ret = missingClass(dependency, ex);
+      if (ret != ex)
+        return asRuntimeException(ret);
+    }
+    return asRuntimeException(ex);
+  }
+
+  /**
+   * Verifies whether the dependency caused the given missing class exception.
+   * <p>
+   * Useful to gracefully notify the lack of optional dependencies, as specified by
+   * {@link org.pdfclown.common.build.internal.util_.annot.DependsOn @DependsOn} annotation.
+   * </p>
+   *
+   * @return {@link IllegalStateException}, if {@code dependency} is missing; otherwise, {@code ex}.
+   */
+  public static RuntimeException missingClass(Dependency dependency, NoClassDefFoundError ex) {
+    return asRuntimeException(dependency.isAvailable() ? ex
+        : wrongState("`{}` dependency REQUIRED", dependency.getCode(), ex));
   }
 
   /**

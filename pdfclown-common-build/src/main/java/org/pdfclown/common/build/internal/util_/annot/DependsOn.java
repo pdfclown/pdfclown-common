@@ -17,10 +17,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Objects.asType;
-import static org.pdfclown.common.build.internal.util_.Objects.fqn;
 import static org.pdfclown.common.build.internal.util_.Objects.init;
 
 import java.lang.annotation.Documented;
@@ -29,51 +26,115 @@ import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 import org.jspecify.annotations.NonNull;
+import org.pdfclown.common.build.internal.util_.XtEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Indicates that the element relies on non-essential dependencies and must therefore be decoupled
- * from main code in case those dependencies may be excluded at runtime.
+ * Indicates that the annotated element depends on optional dependencies (that is, required at
+ * compile time only, not runtime — same as JPMS {@code requires static}).
+ * <p>
+ * IMPORTANT: This annotation has documentation purposes only; if the declared dependencies aren't
+ * available, the associated element will still brutally fail upon call, throwing an obscure
+ * exception. <span class="important">In order to gracefully fail, the annotated element is expected
+ * to declare the {@link NoClassDefFoundError} among its thrown exceptions in Javadoc, so its
+ * consumers can catch and process that error through
+ * {@link org.pdfclown.common.build.internal.util_.Exceptions#missingClass(Dependency, NoClassDefFoundError)}.</span>
+ * </p>
  *
  * @author Stefano Chizzolini
- * @apiNote To decouple code relying on non-essential dependencies:
+ * @apiNote Usage example:
  *          <ol>
- *          <li>declare the <b>non-essential dependencies</b>:<pre class="lang-java"><code>
- * public class Config {
- *   public static final String DEPENDENCY__JAVACV = "org.bytedeco:javacv-platform";
- *   static {
- *     DependsOn.Registry.register(DEPENDENCY__JAVACV, "org.bytedeco.javacv.Frame");
+ *          <li>define an enum declaring the optional dependencies:<pre class="lang-java"><code>
+ * public enum Dependency implements DependsOn.Dependency {
+ *   JAVACV("org.bytedeco:javacv-platform", "org.bytedeco.javacv.Frame");
+ *
+ *   public static final String CODE__JAVACV = "org.bytedeco:javacv-platform";
+ *
+ *   private final String code;
+ *
+ *   Dependency(String code, String fqn) {
+ *     DependsOn.Registry.register(this.code = code, fqn);
  *   }
  *
- *   public static &lt;T&gt; T resolve(
- *       Class&lt;? extends T&gt; dependentType,
- *       Class&lt;? extends T&gt; fallbackType) {
- *     return DependsOn.Registry.resolve(dependentType, fallbackType);
- *   }
- * }</code></pre></li>
- *          <li>define a <b>fall-back implementation</b> of the functionality, which doesn't rely on
- *          non-essential dependencies:<pre class="lang-java"><code>
- * public class MyType {
- *   public String myMethod(. . .) {
- *     . . .
- *   }
- * }</code></pre></li>
- *          <li>define one or more <b>full implementations</b> of the functionality, which rely on
- *          non-essential dependencies:<pre class="lang-java"><code>
- * &#64;DependsOn(DEPENDENCY_JAVACV)
- * public class MyFullType extends MyType {
  *   &#64;Override
- *   public String myMethod(. . .) {
+ *   public String getCode() {
+ *     return code;
+ *   }
+ * }</code></pre>
+ *          <p>
+ *          NOTE: The dependency code ({@code "org.bytedeco:javacv-platform"}) has to be declared
+ *          twice because annotations allow only compile-time field types; at the same time,
+ *          {@link org.pdfclown.common.build.internal.util_.Exceptions#missingClass(Dependency, NoClassDefFoundError)}
+ *          needs a runtime type in order to trigger dependency registration upon reference (no
+ *          assumption on application- or framework-level bootstrap mechanisms can be made here, so
+ *          this is the simplest common solution possible).
+ *          </p>
+ *          </li>
+ *          <li>associate the optional dependencies to dependent elements:
+ *          <ul>
+ *          <li>at method level (if the functionality depending on optional dependencies is specific
+ *          to a method): <pre class="lang-java" data-line="4"><code>
+ * public final Videos {
+ *   . . .
+ *
+ *   <span style=
+"background-color:yellow;color:black;">&#64;DependsOn(Dependency.CODE__JAVACV)</span>
+ *   public static BufferedImage frameImage(InputStream videoStream, double frameTime) {
  *     . . .
  *   }
  * }</code></pre></li>
- *          <li>resolve at runtime the <b>best implementation</b>
- *          available:<pre class="lang-java"><code>
- * public class MyType {
- *   public static final MyType INSTANCE = Config.resolve(MyFullType.class, MyType.class);
+ *          <li>at class level (if the functionality of the class as a whole depends on optional
+ *          dependencies): <pre class="lang-java" data-line="1"><code>
+ * <span style="background-color:yellow;color:black;">&#64;DependsOn(Dependency.CODE__JAVACV)</span>
+ * public final Videos {
  *   . . .
+ *
+ *   public static BufferedImage frameImage(InputStream videoStream, double frameTime) {
+ *     . . .
+ *   }
  * }</code></pre></li>
+ *          </ul>
+ *          </li>
+ *          <li>manage thrown {@link NoClassDefFoundError}:
+ *          <ul>
+ *          <li>if the associated method contains references to types belonging to optional
+ *          dependencies, <b>declare the error among its thrown exceptions</b> in
+ *          Javadoc:<pre class="lang-java" data-line="5-6"><code>
+* public final Videos {
+*   . . .
+*
+*   &#47;**
+*    <span style="background-color:yellow;color:black;">* &#64;throws NoClassDefFoundError
+*    *           if {&#64;value Dependency#CODE__JAVACV} dependency is missing.</span>
+*    *&#47;
+*   &#64;DependsOn(Dependency.CODE__JAVACV)
+*   public static BufferedImage frameImage(InputStream videoStream, double frameTime) {
+*     var grabber = new FFmpegFrameGrabber(videoStream);
+*     . . .
+*   }
+* }</code></pre></li>
+ *          <li>if the associated method doesn't contain references to types belonging to optional
+ *          dependencies, <b>catch the error if declared among the exceptions thrown by called
+ *          methods</b>:<pre class="lang-java" data-line="12"><code>
+ * import static org.pdfclown.common.util.Exceptions.missingClass;
+ *
+* public Appearances {
+*   . . .
+*
+*   &#64;DependsOn(Dependency.CODE__JAVACV)
+*   public static Image playbackAltImage(InputStream videoStream, double frameTime, Size size) {
+*     . . .
+*     try {
+*       frameImage = Image.of(Videos.frameImage(videoStream, frameTime));
+*     } catch (NoClassDefFoundError ex) {
+*       <span style=
+"background-color:yellow;color:black;">throw missingClass(Dependency.JAVACV, ex);</span>
+*     }
+*   }
+* }</code></pre></li>
+ *          </ul>
+ *          </li>
  *          </ol>
  */
 @Documented
@@ -81,7 +142,18 @@ import org.slf4j.LoggerFactory;
 @Target({ TYPE, CONSTRUCTOR, METHOD })
 public @interface DependsOn {
   /**
-   * Non-essential dependency registry.
+   * Optional dependency.
+   *
+   * @author Stefano Chizzolini
+   */
+  interface Dependency extends XtEnum<String> {
+    default boolean isAvailable() {
+      return Registry.isDependable(getCode());
+    }
+  }
+
+  /**
+   * Optional dependencies registry.
    *
    * @author Stefano Chizzolini
    */
@@ -89,91 +161,50 @@ public @interface DependsOn {
     private static final Logger log = LoggerFactory.getLogger(Registry.class);
 
     private static final Map<String, Boolean> dependables = new HashMap<>();
-    private static final Map<String, String> detectFqns = new HashMap<>();
 
     /**
-     * Registers a non-essential dependency.
+     * Gets whether the optional dependency is available.
      *
-     * @param dependency
-     *          Dependency ({@code groupId:artifactId}).
-     * @param detectFqn
-     *          Fully-qualified name of the class to use for the detection of {@code dependency}
-     *          artifact availability at runtime (a highly-stable class within the dependency
-     *          artifact which is available across the artifact versions).
+     * @param dependencyId
+     *          (see {@link #register(String, String)})
+     * @throws IllegalArgumentException
+     *           if {@code dependencyId} is unknown (that is, not among the
+     *           {@linkplain #register(String, String) registered} ones).
      */
-    public static void register(String dependency, String detectFqn) {
-      detectFqns.put(dependency, detectFqn);
+    public static boolean isDependable(String dependencyId) {
+      var ret = dependables.get(dependencyId);
+      if (ret == null)
+        throw wrongArg("dependencyId", requireNonNull(dependencyId, "`dependencyId`"),
+            "UNKNOWN (registration required)");
+
+      return ret;
     }
 
     /**
-     * Instantiates the best viable implementation among the types.
+     * Registers an optional dependency.
      *
-     * @param <T>
-     *          Interface.
-     * @param dependentTypes
-     *          Implementation types, ordered by priority; the last type should be a fall-back
-     *          implementation without non-essential dependencies.
+     * @param dependencyId
+     *          (typically represented as {@code "groupId:artifactId"})
+     * @param fqn
+     *          Fully-qualified name of the class used at runtime to detect whether the dependency
+     *          is available; for the purpose, it should be present across all the supported
+     *          versions.
      */
-    @SafeVarargs
-    public static <T> T resolve(Class<? extends T>... dependentTypes) {
-      for (var dependentType : dependentTypes) {
-        if (isUsable(dependentType)) {
-          try {
-            return dependentType.getConstructor().newInstance();
-          } catch (Exception ex) {
-            throw runtime(ex);
-          }
-        }
+    public static void register(String dependencyId, String fqn) {
+      requireNonNull(dependencyId, "`dependencyId`");
+
+      var dependable = init(fqn);
+      if (dependable) {
+        log.debug("Optional dependency FOUND: {}", dependencyId);
+      } else {
+        log.debug("Optional dependency MISSING: {} ({})", dependencyId, fqn);
       }
-      throw runtime("No viable type");
-    }
-
-    /**
-     * Gets whether the dependency is available.
-     *
-     * @param dependency
-     *          Dependency ({@code groupId:artifactId}).
-     */
-    private static boolean isDependable(String dependency) {
-      return dependables.computeIfAbsent(requireNonNull(dependency), $ -> {
-        String detectFqn = detectFqns.get($);
-        if (detectFqn == null)
-          throw wrongArg("dependency", dependency, "UNKNOWN (registration required)");
-
-        var ret = init(detectFqn);
-        if (!ret) {
-          log.warn("Dependency UNAVAILABLE: {}", dependency);
-        }
-        return ret;
-      });
-    }
-
-    /**
-     * Gets whether all the non-essential dependencies of the object are available.
-     *
-     * @param obj
-     *          Either an instance or a class.
-     */
-    private static boolean isUsable(Object obj) {
-      Class<?> dependentType = requireNonNull(asType(obj), "`obj`");
-      var annot = dependentType.getDeclaredAnnotation(DependsOn.class);
-      if (annot != null) {
-        for (String dependency : annot.value()) {
-          boolean dependable = isDependable(dependency);
-          if (!dependable) {
-            if (log.isDebugEnabled()) {
-              log.debug("{}: '{}' dependency MISSING", fqn(dependentType), dependency);
-            }
-            return false;
-          }
-        }
-      }
-      return true;
+      dependables.put(dependencyId, dependable);
     }
   }
 
   /**
-   * Dependencies (each represented as {@code "%groupId%:%artifactId%"}).
+   * Optional dependencies (each represented as {@code "groupId:artifactId"}).
    */
   @NonNull
   String[] value();
