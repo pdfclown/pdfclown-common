@@ -64,6 +64,14 @@
     <!--
       OVERRIDDEN PROPERTIES
     -->
+
+    <!--
+      VERSIONS
+    -->
+    <!--
+      NOTE: Self-version to provide inheriting projects a handle to import corresponding
+      dependencies. -->
+    <pdfclown-common.version>${revision}</pdfclown-common.version>
   </properties>
 
   <build>
