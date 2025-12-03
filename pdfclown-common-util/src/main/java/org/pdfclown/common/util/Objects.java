@@ -27,6 +27,7 @@ import static org.pdfclown.common.util.Chars.DQUOTE;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUOTE;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.util.Conditions.requireNotBlank;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
@@ -680,10 +681,17 @@ public final class Objects {
    * </p>
    *
    * @return Whether the initialization succeeded.
+   * @throws ArgumentException
+   *           if {@code typeName} is blank.
    */
   public static boolean init(String typeName) {
     try {
-      Class.forName(typeName);
+      /*
+       * IMPORTANT: `typeName` MUST be explicitly validated, otherwise it would be wrongly swallowed
+       * by regular loading failures; this is not the case for `initElseThrow(..)`, where the
+       * exception is rethrown.
+       */
+      Class.forName(requireNotBlank(typeName, "typeName"));
       return true;
     } catch (ClassNotFoundException ex) {
       return false;

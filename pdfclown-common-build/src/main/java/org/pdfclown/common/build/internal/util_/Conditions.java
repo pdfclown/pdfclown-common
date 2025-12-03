@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.internal.util_;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.pdfclown.common.build.internal.util_.Exceptions.missingPath;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
@@ -459,7 +460,10 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static String requireNotBlank(String value, @Nullable String name) {
-    if (!value.isBlank())
+    /*
+     * IMPORTANT: DO NOT use `String::isBlank`, it may cause NPE, disrupting the logic path.
+     */
+    if (!isBlank(value))
       return value;
 
     throw wrongArg(name, value, "MUST NOT be blank");
