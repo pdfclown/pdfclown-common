@@ -112,6 +112,8 @@ public class ReleaseManager {
 
   private static final Logger log = LoggerFactory.getLogger(ReleaseManager.class);
 
+  static final String SCM_REF__HEAD = "HEAD";
+
   private static String checkProfiles(String value) {
     if (containsWhitespace(requireNonNull(value)))
       throw wrongArg(null, value, "MUST NOT contain whitespace");
@@ -168,7 +170,7 @@ public class ReleaseManager {
             - installation profiles: {}
             - remote push: {}
             - dry run: {}""",
-        getReleaseBranchStartPoint().isEmpty() ? "HEAD" : getReleaseBranchStartPoint(),
+        getReleaseBranchStartPoint().isEmpty() ? SCM_REF__HEAD : getReleaseBranchStartPoint(),
         getReleaseVersion(), getReleaseTag(),
         getDevVersion(),
         getDeploymentProfiles(),

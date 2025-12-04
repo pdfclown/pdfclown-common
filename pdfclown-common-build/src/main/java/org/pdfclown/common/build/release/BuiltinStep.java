@@ -13,17 +13,24 @@
 package org.pdfclown.common.build.release;
 
 import static java.lang.String.format;
+import static java.nio.file.Files.readString;
+import static java.nio.file.Files.writeString;
+import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.util_.Chars.DOLLAR;
 import static org.pdfclown.common.build.internal.util_.Exceptions.missing;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.build.internal.util_.Objects.objTo;
 import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.io.Texts.replaceText;
+import static org.pdfclown.common.build.internal.util_.Strings.S;
 import static org.pdfclown.common.build.internal.util_.system.Processes.executeElseThrow;
 import static org.pdfclown.common.build.internal.util_.system.Processes.unixCommand;
+import static org.pdfclown.common.build.release.ReleaseManager.SCM_REF__HEAD;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.pdfclown.common.build.internal.util_.Ref;
 
@@ -76,13 +83,17 @@ public enum BuiltinStep implements Step {
   /**
    * Prepares the project configuration for release.
    * <p>
-   * In particular, updates the <b>project version</b> (via CI-friendly {@code revision} declaration
-   * in {@code .mvn/maven.config}) to the release version, similarly to <a href=
+   * Similarly to <a href=
    * "https://maven.apache.org/components/maven-release-archives/maven-release-3.1.1/maven-release-manager/apidocs/org/apache/maven/shared/release/phase/RewritePomsForReleasePhase.html"><code>rewrite-poms-for-release</code>
-   * phase</a> of Maven Release Manager.
+   * phase</a> of Maven Release Manager, updates the following CI-friendly parameters in
+   * {@code .mvn/maven.config}:
    * </p>
+   * <ul>
+   * <li>{@code revision} (<b>project version</b>) to the release version</li>
+   * <li>{@code scmTag} (<b>current SCM tag</b>) to the release tag</li>
+   * </ul>
    */
-  RELEASE_POM_UPDATE($ -> executePomUpdate($, $.getReleaseVersion()), false),
+  RELEASE_POM_UPDATE($ -> executePomUpdate($, $.getReleaseVersion(), $.getReleaseTag()), false),
   /**
    * Ensures no unreleased snapshot is among the dependencies of the projects being released.
    * <p>
@@ -134,13 +145,17 @@ public enum BuiltinStep implements Step {
   /**
    * Prepares the project configuration for the next development iteration.
    * <p>
-   * In particular, updates the <b>project version</b> (via CI-friendly {@code revision} declaration
-   * in {@code .mvn/maven.config}) to the next development version, similarly to <a href=
+   * Similarly to <a href=
    * "https://maven.apache.org/components/maven-release-archives/maven-release-3.1.1/maven-release-manager/apidocs/org/apache/maven/shared/release/phase/RewritePomsForDevelopmentPhase.html"><code>rewrite-poms-for-development</code>
-   * phase</a> of Maven Release Manager.
+   * phase</a> of Maven Release Manager, updates the following CI-friendly parameters in
+   * {@code .mvn/maven.config}:
    * </p>
+   * <ul>
+   * <li>{@code revision} (<b>project version</b>) to the next development version</li>
+   * <li>{@code scmTag} (<b>current SCM tag</b>) to {@code HEAD}</li>
+   * </ul>
    */
-  DEV_POM_UPDATE($ -> executePomUpdate($, $.getDevVersion()), false),
+  DEV_POM_UPDATE($ -> executePomUpdate($, $.getDevVersion(), SCM_REF__HEAD), false),
   /**
    * Commits to the SCM repository the changes done to prepare the next development iteration.
    * <p>
@@ -157,14 +172,51 @@ public enum BuiltinStep implements Step {
 
   private static final String PATHNAME__MAVEN_CONFIG = ".mvn/maven.config";
 
+  private static final int PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN = 1;
+  private static final int PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__NAME = 2;
+
+  private static final String MAVEN_CONFIG_PARAM__REVISION = "revision";
+  private static final String MAVEN_CONFIG_PARAM__SCM_TAG = "scmTag";
+
+  private static final Pattern PATTERN__MAVEN_CONFIG_PARAM = Pattern.compile("(-D(\\S+)=)\\S+");
+
   /**
    * Updates the project version as defined in .mvn/maven.config file.
    */
-  private static void executePomUpdate(ReleaseManager manager, String version) {
+  private static void executePomUpdate(ReleaseManager manager, String version, String scmTag) {
+    requireNonNull(version, "`version`");
+    requireNonNull(scmTag, "`scmTag`");
+
+    var b = new StringBuilder();
     final var mavenConfigFile = manager.getBaseDir().resolve(PATHNAME__MAVEN_CONFIG);
     try {
-      if (!replaceText(mavenConfigFile, "(-Drevision=)\\S+", "$1" + version))
-        throw missing("revision", "parameter NOT FOUND in {}", mavenConfigFile);
+      String mavenConfig = readString(mavenConfigFile);
+
+      Matcher m = PATTERN__MAVEN_CONFIG_PARAM.matcher(mavenConfig);
+      while (m.find()) {
+        switch (m.group(PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__NAME)) {
+          case MAVEN_CONFIG_PARAM__REVISION:
+            m.appendReplacement(b, S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN
+                + version);
+            version = null;
+            break;
+          case MAVEN_CONFIG_PARAM__SCM_TAG:
+            m.appendReplacement(b, S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN
+                + scmTag);
+            scmTag = null;
+            break;
+          default:
+            // NOP
+        }
+      }
+      if (version != null)
+        throw missing(MAVEN_CONFIG_PARAM__REVISION, "parameter NOT FOUND in {}", mavenConfigFile);
+      else if (scmTag != null)
+        throw missing(MAVEN_CONFIG_PARAM__SCM_TAG, "parameter NOT FOUND in {}", mavenConfigFile);
+
+      m.appendTail(b);
+
+      writeString(mavenConfigFile, b.toString());
     } catch (IOException ex) {
       throw runtime("{} update FAILED", mavenConfigFile, ex);
     }
