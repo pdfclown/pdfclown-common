@@ -1,0 +1,6 @@
+/*
+ * DEFAULT-STYLESHEET CUSTOMIZATION
+ */
+
+@import url("custom-common.css");
+@import url("custom-specific.css");

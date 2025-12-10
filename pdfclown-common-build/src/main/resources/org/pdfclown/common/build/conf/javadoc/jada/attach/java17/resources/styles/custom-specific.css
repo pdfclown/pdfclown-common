@@ -1,15 +1,18 @@
+/*
+ * DEFAULT-STYLESHEET CUSTOMIZATION - JAVA 17-SPECIFIC
+ */
+
 html {
   scroll-padding-top: 100px;
-}
-
-body {
-  color: inherit;
-  font-family: sans-serif;
 }
 
 :not(h1, h2, h3, h4, h5, h6) > code,
 :not(h1, h2, h3, h4, h5, h6) > tt {
   line-height: inherit;
+}
+
+p {
+  margin: 10px 0;
 }
 
 .legal-copy {
@@ -71,6 +74,8 @@ body.class-declaration-page .summary .inherited-list h2 {
   background-color: #869ab2;
   border: 0;
   color: white;
+  font-size: 13px;
+  margin: 10px 0 10px -8px;
   padding: 7px 10px;
   color: white;
 }
@@ -99,9 +104,12 @@ ul.summary-list > li {
 
 ul.block-list,
 ul.details-list,
-ul.member-list,
-ul.summary-list {
+ul.member-list {
   margin: 0;
+}
+
+ul.summary-list {
+  margin: 2em 0 0 0;
 }
 
 /*
@@ -113,6 +121,11 @@ ul.summary-list {
   margin-bottom: 10px;
 }
 
+.caption {
+  font-variant-caps: small-caps;
+  padding: 0;
+}
+
 .caption span {
   padding: 5px 20px;
 }
@@ -122,12 +135,13 @@ div.table-tabs {
 }
 
 div.table-tabs > button {
+  font-variant-caps: small-caps;
   padding: 5px 20px;
 }
 
 .summary-table > div,
 .details-table > div {
-  padding: 5px;
+  padding: 5px 10px;
 }
 
 .table-header {
@@ -154,11 +168,18 @@ div.block {
   font-family: inherit;
 }
 
+div.block td,
+div.block th {
+  border: 1px solid grey;
+  padding: 1em;
+}
+
 .module-signature,
 .package-signature,
 .type-signature,
 .member-signature {
-  font-size: 16px;
+  font-size: 15px;
+  margin: 1em;
 }
 
 .block {
@@ -205,10 +226,6 @@ div.inherited-list h3 {
 #reset-button {
   right: 20px;
   top: 8px;
-}
-
-ul.ui-autocomplete {
-  background-color: revert;
 }
 
 .ui-autocomplete-category {

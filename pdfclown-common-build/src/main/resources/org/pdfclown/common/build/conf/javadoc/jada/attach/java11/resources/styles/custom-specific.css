@@ -1,11 +1,13 @@
+/*
+ * DEFAULT-STYLESHEET CUSTOMIZATION - JAVA 11-SPECIFIC
+ */
+
 html {
   scroll-padding-top: 85px;
 }
 
 body {
   background-color: initial;
-  color: inherit;
-  font-family: sans-serif;
 }
 
 dd {
@@ -179,7 +181,7 @@ div.details ul.blockList ul.blockList ul.blockListLast li.blockList h4 {
 ul.blockList ul.blockList ul.blockList li.blockList > h3 {
   background-color: #869ab2;
   color: white;
-  font-size: 16px;
+  font-size: 13px;
   margin: 0 0 6px -8px;
   padding: 7px 10px;
   text-align: left !important;
@@ -189,7 +191,7 @@ div.details ul.blockList ul.blockList ul.blockListLast li.blockList > h4 {
   background-color: #869ab2;
   border: 0;
   color: white;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 0 6px -8px;
   padding: 7px 10px;
 }
@@ -296,7 +298,7 @@ td.colLast,
 
 td.colFirst,
 th.colFirst {
-  padding: 3px 5px !important;
+  padding: 3px 10px !important;
 }
 
 .overviewSummary td,

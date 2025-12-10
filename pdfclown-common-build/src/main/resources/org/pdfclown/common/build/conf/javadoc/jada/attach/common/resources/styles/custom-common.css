@@ -1,15 +1,11 @@
-h1.title:not([title]):only-child {
-  background-image: url("../images/logo.png");
-  background-repeat: no-repeat;
-  background-size: 80px;
-  font-size: 32px;
-}
-h1.title:not([title]):only-child:before {
-  content: "";
-  display: inline-block;
-  height: 80px;
-  vertical-align: middle;
-  width: 90px;
+/*
+ * DEFAULT-STYLESHEET CUSTOMIZATION - CROSS-VERSION
+ */
+
+body {
+  color: inherit;
+  font-family: sans-serif;
+  line-height: 1.3;
 }
 
 caption {
@@ -28,6 +24,21 @@ dt {
 
 h1 {
   font-size: 24px;
+}
+
+h1.title:not([title]):only-child {
+  background-image: url("../images/logo.png");
+  background-repeat: no-repeat;
+  background-size: 80px;
+  font-size: 32px;
+}
+
+h1.title:not([title]):only-child:before {
+  content: "";
+  display: inline-block;
+  height: 80px;
+  vertical-align: middle;
+  width: 90px;
 }
 
 h2 {
@@ -70,22 +81,6 @@ th {
   text-align: center;
 }
 
-.biblio-author {
-  font-variant: small-caps;
-}
-
-.biblio-resources-extra {
-  font-size: smaller;
-}
-
-.uml {
-  margin: 1em 0;
-}
-
-.uml-class {
-  margin-left: 1em;
-}
-
 .header-top {
   padding: 3px 10px;
 }
@@ -117,4 +112,24 @@ pre[data-line] {
 }
 .line-highlight {
   background-color: #ffff0020 !important;
+}
+
+/*
+ * Bibliography (JadaBiblio)
+ */
+.biblio-author {
+  font-variant: small-caps;
+}
+.biblio-resources-extra {
+  font-size: smaller;
+}
+
+/*
+ * UML diagrams (JadaUML)
+ */
+.uml {
+  margin: 1em 0;
+}
+.uml-class {
+  margin-left: 1em;
 }
