@@ -61,10 +61,17 @@
     </version>
   </spec>
   <spec
-    id="JAVA"
+    id="JLS"
     title="Java Language Specification"
     publisher="Oracle America Inc"
     url="https://docs.oracle.com/javase/specs/">
+    <version
+      id="25"
+      name="Java SE 25 (JSR-400)"
+      year="2025"
+      edition="2025-07-29"
+      author="Gosling, Joy, Steele, Bracha, Buckley, Smith, Bierman"
+      src="https://docs.oracle.com/javase/specs/jls/se25/jls25.pdf"/>
     <version
       id="21"
       name="Java SE 21 (JSR-396)"
