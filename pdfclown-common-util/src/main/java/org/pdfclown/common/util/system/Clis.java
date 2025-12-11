@@ -412,27 +412,7 @@ public final class Clis {
   }
 
   /**
-   * Parses the resource corresponding to the name.
-   * <p>
-   * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options).
-   * </p>
-   * <p>
-   * For more information, see {@linkplain #parseResource(String, ClassLoader, Function) main
-   * overload}.
-   * </p>
-   *
-   * @param name
-   *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
-   *          {@code "classpath:"} prefix)).
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
-   */
-  public static @Nullable Resource parseResource(String name) {
-    return Resource.of(name);
-  }
-
-  /**
-   * Parses the resource corresponding to the name.
+   * {@jada.reuseDoc} Parses the resource corresponding to the name.
    * <p>
    * Useful to convert textual references to resources (such as those coming from configuration
    * files or command-line options).
@@ -446,6 +426,33 @@ public final class Clis {
    * <li>filesystem</li>
    * <li>generic URL</li>
    * </ul>
+   * {@jada.reuseDoc END}
+   *
+   * @param name
+   *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
+   *          {@code "classpath:"} prefix)).
+   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   */
+  public static @Nullable Resource parseResource(String name) {
+    return Resource.of(name);
+  }
+
+  /**
+   * {@jada.doc} Parses the resource corresponding to the name.
+   * <p>
+   * Useful to convert textual references to resources (such as those coming from configuration
+   * files or command-line options).
+   * </p>
+   * <p>
+   * Supported sources:
+   * </p>
+   * <ul>
+   * <li>classpath (either explicitly qualified via URI scheme ({@code "classpath:"}), or
+   * automatically detected)</li>
+   * <li>filesystem</li>
+   * <li>generic URL</li>
+   * </ul>
+   * {@jada.doc END}
    *
    * @param name
    *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
@@ -462,15 +469,21 @@ public final class Clis {
   }
 
   /**
-   * Parses the resource corresponding to the name.
+   * {@jada.reuseDoc} Parses the resource corresponding to the name.
    * <p>
    * Useful to convert textual references to resources (such as those coming from configuration
    * files or command-line options).
    * </p>
    * <p>
-   * For more information, see {@linkplain #parseResource(String, ClassLoader, Function) main
-   * overload}.
+   * Supported sources:
    * </p>
+   * <ul>
+   * <li>classpath (either explicitly qualified via URI scheme ({@code "classpath:"}), or
+   * automatically detected)</li>
+   * <li>filesystem</li>
+   * <li>generic URL</li>
+   * </ul>
+   * {@jada.reuseDoc END}
    *
    * @param name
    *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
