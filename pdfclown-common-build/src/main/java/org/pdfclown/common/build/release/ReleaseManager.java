@@ -17,6 +17,7 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
@@ -144,7 +145,7 @@ public class ReleaseManager {
       throw wrongState("MUST run under a Unix system");
 
     this.baseDir = requireNonNull(baseDir, "`baseDir`");
-    this.releaseVersion = requireNonNull(releaseVersion, "`releaseVersion`");
+    this.releaseVersion = requireNotBlank(releaseVersion, "`releaseVersion`");
 
     this.devVersion = VersionResolver.of(versionScheme).getNextDevVersion(releaseVersion);
     this.releaseTag = scmTag(releaseVersion);
@@ -237,7 +238,13 @@ public class ReleaseManager {
   }
 
   /**
-   * Commit the release branch is created from.
+   * SCM reference to the commit the release branch is created from.
+   * <p>
+   * Typically a branch, either default (current version line) or specific to an older version line
+   * (for example, "2.x").
+   * </p>
+   *
+   * @return Empty, if HEAD on default branch.
    */
   public String getReleaseBranchStartPoint() {
     return releaseBranchStartPoint;

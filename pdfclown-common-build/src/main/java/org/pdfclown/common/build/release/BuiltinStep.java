@@ -15,8 +15,8 @@ package org.pdfclown.common.build.release;
 import static java.lang.String.format;
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
-import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.util_.Chars.DOLLAR;
+import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
 import static org.pdfclown.common.build.internal.util_.Exceptions.missing;
 import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
@@ -27,7 +27,6 @@ import static org.pdfclown.common.build.internal.util_.system.Processes.executeE
 import static org.pdfclown.common.build.internal.util_.system.Processes.unixCommand;
 import static org.pdfclown.common.build.release.ReleaseManager.SCM_REF__HEAD;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -170,22 +169,22 @@ public enum BuiltinStep implements Step {
    */
   SCM_PUSH(BuiltinStep::executeScmPush, false);
 
-  private static final String PATHNAME__MAVEN_CONFIG = ".mvn/maven.config";
-
-  private static final int PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN = 1;
-  private static final int PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__NAME = 2;
-
   private static final String MAVEN_CONFIG_PARAM__REVISION = "revision";
   private static final String MAVEN_CONFIG_PARAM__SCM_TAG = "scmTag";
 
+  private static final String PATHNAME__MAVEN_CONFIG = ".mvn/maven.config";
+
   private static final Pattern PATTERN__MAVEN_CONFIG_PARAM = Pattern.compile("(-D(\\S+)=)\\S+");
+
+  private static final int PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN = 1;
+  private static final int PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__NAME = 2;
 
   /**
    * Updates the project version as defined in .mvn/maven.config file.
    */
   private static void executePomUpdate(ReleaseManager manager, String version, String scmTag) {
-    requireNonNull(version, "`version`");
-    requireNonNull(scmTag, "`scmTag`");
+    requireNotBlank(version, "`version`");
+    requireNotBlank(scmTag, "`scmTag`");
 
     var b = new StringBuilder();
     final var mavenConfigFile = manager.getBaseDir().resolve(PATHNAME__MAVEN_CONFIG);
@@ -194,20 +193,21 @@ public enum BuiltinStep implements Step {
 
       Matcher m = PATTERN__MAVEN_CONFIG_PARAM.matcher(mavenConfig);
       while (m.find()) {
+        String newParamValue;
         switch (m.group(PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__NAME)) {
           case MAVEN_CONFIG_PARAM__REVISION:
-            m.appendReplacement(b, S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN
-                + version);
+            newParamValue = version;
             version = null;
             break;
           case MAVEN_CONFIG_PARAM__SCM_TAG:
-            m.appendReplacement(b, S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN
-                + scmTag);
+            newParamValue = scmTag;
             scmTag = null;
             break;
           default:
-            // NOP
+            continue;
         }
+        m.appendReplacement(b, S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN
+            + newParamValue);
       }
       if (version != null)
         throw missing(MAVEN_CONFIG_PARAM__REVISION, "parameter NOT FOUND in {}", mavenConfigFile);
@@ -217,7 +217,7 @@ public enum BuiltinStep implements Step {
       m.appendTail(b);
 
       writeString(mavenConfigFile, b.toString());
-    } catch (IOException ex) {
+    } catch (Exception ex) {
       throw runtime("{} update FAILED", mavenConfigFile, ex);
     }
   }
