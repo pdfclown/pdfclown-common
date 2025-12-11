@@ -142,35 +142,36 @@ public final class Exceptions {
   /**
    * Verifies whether any dependency caused the given missing class exception.
    * <p>
-   * Useful to gracefully notify the lack of optional dependencies, as specified by
-   * {@link org.pdfclown.common.build.internal.util_.annot.DependsOn @DependsOn} annotation.
+   * Useful to gracefully notify the lack of optional dependencies the called element
+   * {@linkplain org.pdfclown.common.build.internal.util_.annot.DependsOn depends on}.
    * </p>
    *
-   * @return {@link IllegalStateException}, if something in {@code dependencies} is missing;
+   * @return {@link IllegalStateException}, if any item in {@code dependencies} is missing;
    *         otherwise, {@code ex}.
    */
   public static RuntimeException missingClass(Collection<Dependency> dependencies,
       NoClassDefFoundError ex) {
+    Throwable ret = ex;
     for (var dependency : dependencies) {
-      Throwable ret = missingClass(dependency, ex);
-      if (ret != ex)
-        return asRuntimeException(ret);
+      if ((ret = missingClass(dependency, ex)) != ex) {
+        break;
+      }
     }
-    return asRuntimeException(ex);
+    return asRuntimeException(ret);
   }
 
   /**
    * Verifies whether the dependency caused the given missing class exception.
    * <p>
-   * Useful to gracefully notify the lack of optional dependencies, as specified by
-   * {@link org.pdfclown.common.build.internal.util_.annot.DependsOn @DependsOn} annotation.
+   * Useful to gracefully notify the lack of optional dependencies the called element
+   * {@linkplain org.pdfclown.common.build.internal.util_.annot.DependsOn depends on}.
    * </p>
    *
    * @return {@link IllegalStateException}, if {@code dependency} is missing; otherwise, {@code ex}.
    */
   public static RuntimeException missingClass(Dependency dependency, NoClassDefFoundError ex) {
     return asRuntimeException(dependency.isAvailable() ? ex
-        : wrongState("`{}` dependency REQUIRED", dependency.getCode(), ex));
+        : wrongState("`{}` dependency REQUIRED", dependency.getId(), ex));
   }
 
   /**
