@@ -6,23 +6,25 @@ This document describes how to set up your development environment to build and 
 
 ## Prerequisites
 
-- **JDK 11** (for source code compilation)
+- **JDK 17+** (Maven execution)
 
-- **JDK 17+** (for Maven execution)
+- **JDK 17** (source code compilation)
 
-- **[Maven toolchains configuration](https://maven.apache.org/guides/mini/guide-using-toolchains.html)** for JDK 11
+- **[Maven toolchains configuration](https://maven.apache.org/guides/mini/guide-using-toolchains.html)** for JDK 17 (source code compilation)
 
     If the file `${user.home}/.m2/toolchains.xml` is missing, generate it via CLI:
 
-      mvn toolchains:generate-jdk-toolchains-xml
+    ```shell
+    ./mvnw toolchains:generate-jdk-toolchains-xml
+    ```
 
-    It should contain a `toolchain` entry for JDK 11, like this:
+    It should contain a `toolchain` entry for JDK 17, like this:
 
     ```xml
     <toolchain>
       <type>jdk</type>
       <provides>
-        <version>11</version>
+        <version>17</version>
         . . .
     ```
 
@@ -38,7 +40,9 @@ This document describes how to set up your development environment to build and 
 1. check the **prerequisites** here above are satisfied
 2. install **commit validation hooks**:
 
-        pre-commit install -t pre-commit -t commit-msg
+    ```shell
+    pre-commit install -t pre-commit -t commit-msg
+    ```
 
     Installed hooks (activated whenever a commit is submitted):
 
@@ -48,11 +52,16 @@ This document describes how to set up your development environment to build and 
 
     To update the hooks to latest version:
 
-        pre-commit autoupdate
+    ```shell
+    pre-commit autoupdate
+    ```
 
 3. that's all! :tada: Now you are ready to build (see next section) — happy development!
 
 ## Building
+
+> [!NOTE]
+> The projects are based on the [Maven build system](https://maven.apache.org/index.html); since they include [Maven Wrapper](https://maven.apache.org/tools/wrapper/) (`mvnw` (Unix)/`mvnw.cmd` (Windows) command), builds work out of the box (no setup needed).
 
 Common build operations via CLI (see also the comparison table here below):
 
@@ -60,29 +69,41 @@ Common build operations via CLI (see also the comparison table here below):
 
     - basic (without javadoc):
 
-            mvn install
+        ```shell
+        ./mvnw install
+        ```
 
     - full (with javadoc):
 
-            mvn install -Pfull
+        ```shell
+        ./mvnw install -Pfull
+        ```
 
     - fast (without javadoc and integration tests):
 
-            mvn install -Pfast
+        ```shell
+        ./mvnw install -Pfast
+        ```
 
     - fastest (without javadoc, integration tests and unit tests):
 
-            mvn install -Pfast+
+        ```shell
+        ./mvnw install -Pfast+
+        ```
 
 - testing:
 
     - basic (unit tests only):
 
-            mvn test
+        ```shell
+        ./mvnw test
+        ```
 
     - full (unit tests and integration tests):
 
-            mvn verify
+        ```shell
+        ./mvnw verify
+        ```
 
 <table>
 <tr>

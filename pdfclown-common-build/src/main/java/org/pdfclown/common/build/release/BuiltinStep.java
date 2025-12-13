@@ -107,7 +107,7 @@ public enum BuiltinStep implements Step {
    * </p>
    */
   DEPENDENCY_SNAPSHOTS_CHECK($ -> executeElseThrow(unixCommand(
-      "mvn enforcer:enforce -Denforcer.rules=requireReleaseDeps -Denforcer.failFast=true"),
+      "./mvnw enforcer:enforce -Denforcer.rules=requireReleaseDeps -Denforcer.failFast=true"),
       $.getBaseDir()), true),
   /**
    * Updates the changelog file with release version changes.
@@ -122,7 +122,7 @@ public enum BuiltinStep implements Step {
    * artifacts are installed locally instead.
    * </p>
    */
-  DEPLOY($ -> executeElseThrow(unixCommand(format("mvn clean %s %s",
+  DEPLOY($ -> executeElseThrow(unixCommand(format("./mvnw clean %s %s",
       $.isRemotePushEnabled() ? "deploy" : "install", objTo(
           $.isRemotePushEnabled() ? $.getDeploymentProfiles() : $.getInstallationProfiles(),
           $$ -> $$.isEmpty() ? EMPTY : "-P" + $$))),

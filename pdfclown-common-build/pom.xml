@@ -191,7 +191,7 @@
               [#EclipseConfigNorm] Normalizes Eclipse profiles.
 
               [Manual] Execute every time Eclipse profiles are updated:
-                mvn xml:transform@normalize-eclipse-styles
+                ./mvnw xml:transform@normalize-eclipse-styles
             -->
             <id>normalize-eclipse-styles</id>
             <configuration>

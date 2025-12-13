@@ -307,7 +307,7 @@ log.info("buildTimestamp: " + buildTimestamp
             change, code format MUST be updated accordingly.
 
             [Manual] To generate a report:
-              mvn checkstyle:checkstyle
+              ./mvnw checkstyle:checkstyle
           -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
@@ -1004,7 +1004,7 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
         - release execution via ReleaseManager
 
         Usage (IMPORTANT: run at project root):
-          mvn initialize -N -Prelease -Drelease.version=<semver2> \
+          ./mvnw initialize -N -Prelease -Drelease.version=<semver2> \
               [-Drelease.startpoint=<release branch start-point ref>] \
               [-DdryRun]
       -->

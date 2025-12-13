@@ -63,7 +63,7 @@ jobs:
       #       has to be explicitly installed before executing the release (it cannot be included in
       #       the automated release process because of circular reference issues).
       if: steps.checks.outputs.deps_local == 'true'
-      run: mvn install --batch-mode -pl pdfclown-common-build -amd -Pfast+
+      run: ./mvnw install --batch-mode -pl pdfclown-common-build -amd -Pfast+
 
     - name: Configure SCM
       run: |
@@ -76,6 +76,6 @@ jobs:
         MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
       run: |
-        mvn initialize --batch-mode -N -Prelease \
+        ./mvnw initialize --batch-mode -N -Prelease \
             -Drelease.version=${{ inputs.revision }} \
             -Drelease.startpoint=${{ inputs.scm_startpoint }}

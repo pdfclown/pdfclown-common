@@ -1,5 +1,5 @@
 #
-# Nightly build preconditions:
+# Preconditions:
 # - project version is SNAPSHOT
 # - latest built commit is different from current one
 #
@@ -26,7 +26,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           readonly last_sha=$(gh api repos/${{ github.repository }}/actions/workflows/build.yml/runs --jq '.workflow_runs[0].head_sha' -F per_page=1)
-          echo "Latest built commit: $last_sha"
+          echo "Latest built commit: $last_sha" >&2
           echo "result=$last_sha" >> $GITHUB_OUTPUT
 
   publish:
@@ -67,11 +67,10 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
         run: |
-          readonly project_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          readonly project_version=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
           if [[ $project_version = *-SNAPSHOT ]]; then
-            echo "Project version: $project_version"
-
-            mvn clean deploy -Ppublish
+            echo "Project version: $project_version" >&2
+            ./mvnw clean deploy -Ppublish
           else
             echo "Project version $project_version NOT APPLICABLE for nightly build (MUST be a SNAPSHOT)" >&2
           fi

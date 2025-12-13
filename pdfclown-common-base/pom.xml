@@ -11,32 +11,32 @@
 
     - basic (without javadoc):
 
-      mvn install
+      ./mvnw install
 
     - full (with javadoc):
 
-      mvn install -Pfull
+      ./mvnw install -Pfull
 
     - fast (without javadoc and integration tests):
 
-      mvn install -Pfast
+      ./mvnw install -Pfast
 
     - fastest (without javadoc, integration tests and unit tests):
 
-      mvn install -Pfast+
+      ./mvnw install -Pfast+
 
   - test:
 
     - basic (unit tests only):
 
-      mvn test
+      ./mvnw test
 
     - full (unit tests and integration tests):
 
-      mvn verify
+      ./mvnw verify
 
   - verify dependency vulnerabilities:
-      mvn verify -Pverify-extra
+      ./mvnw verify -Pverify-extra
 
   - verify copyright and licensing declarations compliance <https://reuse.software>:
       reuse lint

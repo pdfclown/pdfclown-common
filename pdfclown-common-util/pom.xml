@@ -81,7 +81,7 @@
         <exclusion>
           <!--
             NOTE: Despite the dependency graph resolved by maven (as shown via
-            `mvn dependency:tree`) correctly excludes the shaded dependency (pdfclown-common-util),
+            `./mvnw dependency:tree`) correctly excludes the shaded dependency (pdfclown-common-util),
             nonetheless the build fails:
 
               [ERROR] Failed to execute goal on project pdfclown-common-util: Could not resolve
