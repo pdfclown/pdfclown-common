@@ -1042,7 +1042,7 @@ if (releaseVersion == null)
 
 new ReleaseManager(project.basedir.toPath(), releaseVersion)
     .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY_NAME__RELEASE_STARTPOINT])
-    .setDeploymentProfiles("do-publish")
+    .setDeploymentProfiles("publish")
     .setInstallationProfiles("full")
     /* NOTE: Activates remote push only if GPG signing is configured. */
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
@@ -1059,7 +1059,7 @@ new ReleaseManager(project.basedir.toPath(), releaseVersion)
     </profile>
 
     <profile>
-      <id>do-publish</id>
+      <id>publish</id>
       <!--
         (internal use only) DEPLOYMENT EXECUTION PROFILE
 

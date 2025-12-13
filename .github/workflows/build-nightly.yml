@@ -1,0 +1,75 @@
+#
+# Nightly build preconditions:
+# - project version is SNAPSHOT
+# - latest built commit is different from current one
+#
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # Once a day, at 4:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  initialize:
+    name: Prepare workflow
+    runs-on: ubuntu-latest
+    outputs:
+      last_sha: ${{ steps.retrieve_last_sha.outputs.result }}
+    steps:
+      - name: Retrieve last built commit
+        id: retrieve_last_sha
+        run: |
+          readonly last_sha=$(gh api repos/${{ github.repository }}/actions/workflows/build.yml/runs --jq '.workflow_runs[0].head_sha' -F per_page=1)
+          echo "Latest built commit: $last_sha"
+          echo "result=$last_sha" >> $GITHUB_OUTPUT
+
+  publish:
+    name: Publish snapshot
+    needs: initialize
+    if: github.sha != needs.initialize.outputs.last_sha
+    runs-on: ubuntu-latest
+    env:
+      JAVA_DISTRO: 'temurin'
+      JAVA_VERSION: '17'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up build JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: maven
+
+      - name: Set up tool JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version-file: '.tool-versions'
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: maven
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Execute publishing
+        env:
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
+        run: |
+          readonly project_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [[ $project_version = *-SNAPSHOT ]]; then
+            echo "Project version: $project_version"
+
+            mvn clean deploy -Ppublish
+          else
+            echo "Project version $project_version NOT APPLICABLE for nightly build (MUST be a SNAPSHOT)" >&2
+          fi
