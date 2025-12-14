@@ -1,6 +1,6 @@
 name: Build
 permissions:
-  contents: read
+  contents: write
   security-events: write
 on: [push, pull_request]
 
