@@ -46,7 +46,6 @@ jobs:
       with:
         java-version-file: '.tool-versions'
         distribution: ${{ env.JAVA_DISTRO }}
-        cache: maven
         server-id: central
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD

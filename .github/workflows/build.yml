@@ -29,7 +29,6 @@ jobs:
       with:
         java-version-file: '.tool-versions'
         distribution: ${{ env.JAVA_DISTRO }}
-        cache: maven
 
     - name: Build with Maven
       run: ./mvnw verify --batch-mode --errors -Djava.version=${{ matrix.java }}
