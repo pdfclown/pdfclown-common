@@ -4,14 +4,12 @@
 # - latest built commit is different from current one
 #
 name: Nightly Build
-
+permissions:
+  contents: read
 on:
   schedule:
     - cron: '0 4 * * *'  # Once a day, at 4:00 UTC
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   initialize:
