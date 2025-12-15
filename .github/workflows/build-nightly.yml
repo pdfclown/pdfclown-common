@@ -64,10 +64,10 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
         run: |
-          readonly project_version=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          readonly project_version=$(./mvnw help:evaluate -q -DforceStdout -Dexpression=project.version)
           if [[ $project_version = *-SNAPSHOT ]]; then
             echo "Project version: $project_version" >&2
-            ./mvnw clean deploy -Ppublish
+            ./mvnw deploy --batch-mode --errors -Ppublish
           else
             echo "Project version $project_version NOT APPLICABLE for nightly build (MUST be a SNAPSHOT)" >&2
           fi
