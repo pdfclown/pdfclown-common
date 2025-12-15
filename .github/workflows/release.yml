@@ -15,67 +15,68 @@ on:
 
 jobs:
   release:
+    name: Publish release
     runs-on: ubuntu-latest
     env:
       JAVA_DISTRO: 'temurin'
       JAVA_VERSION: '17'
 
     steps:
-    - name: Checkout (full history)
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
+      - name: Checkout (full history)
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: '3.13'
-        cache: 'pip'
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: 'pip'
 
-    - name: Install Python dependencies
-      run: pip install commitizen
+      - name: Install Python dependencies
+        run: pip install commitizen
 
-    - name: Set up build JDK
-      uses: actions/setup-java@v5
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
-        distribution: ${{ env.JAVA_DISTRO }}
-        cache: maven
+      - name: Set up build JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: maven
 
-    - name: Set up tool JDK
-      uses: actions/setup-java@v5
-      with:
-        java-version-file: '.tool-versions'
-        distribution: ${{ env.JAVA_DISTRO }}
-        server-id: central
-        server-username: MAVEN_USERNAME
-        server-password: MAVEN_PASSWORD
-        gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }}
-        gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - name: Set up tool JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version-file: '.tool-versions'
+          distribution: ${{ env.JAVA_DISTRO }}
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-    - name: Checks
-      id: checks
-      run: |
-        echo "deps_local=$([ -d pdfclown-common-build ] && echo true || echo false)" >> $GITHUB_OUTPUT
+      - name: Check state
+        id: check_state
+        run: |
+          echo "build_deps_local=$([ -d pdfclown-common-build ] && echo true || echo false)" >> $GITHUB_OUTPUT
 
-    - name: Install local dependencies
-      # NOTE: The release executor requires pdfclown-common-build; if such dependency is local, it
-      #       has to be explicitly installed before executing the release (it cannot be included in
-      #       the automated release process because of circular reference issues).
-      if: steps.checks.outputs.deps_local == 'true'
-      run: ./mvnw install --batch-mode --errors -pl pdfclown-common-build -am -Pfast+
+      - name: Install local dependencies
+        # NOTE: The release executor requires pdfclown-common-build; if such dependency is local, it
+        #       has to be explicitly installed before executing the release (it cannot be included
+        #       in the automated release process because of circular reference issues).
+        if: steps.check_state.outputs.build_deps_local == 'true'
+        run: ./mvnw install --batch-mode --errors -pl pdfclown-common-build -am -Pfast+
 
-    - name: Configure SCM
-      run: |
-        git config user.name "pdfClown.org CI"
-        git config user.email "stechio@users.noreply.github.com"
+      - name: Configure SCM
+        run: |
+          git config user.name "pdfClown.org CI"
+          git config user.email "stechio@users.noreply.github.com"
 
-    - name: Execute release
-      env:
-        MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
-        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
-      run: |
-        ./mvnw initialize --batch-mode --errors -N -Prelease \
-            -Drelease.version=${{ inputs.revision }} \
-            -Drelease.startpoint=${{ inputs.scm_startpoint }}
+      - name: Publish with Maven
+        env:
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
+        run: |
+          ./mvnw initialize --batch-mode --errors -N -Prelease \
+              -Drelease.version=${{ inputs.revision }} \
+              -Drelease.startpoint=${{ inputs.scm_startpoint }}
