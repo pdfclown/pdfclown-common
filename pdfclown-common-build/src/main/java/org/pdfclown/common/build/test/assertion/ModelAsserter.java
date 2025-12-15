@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static org.pdfclown.common.build.internal.util_.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.build.internal.util_.Conditions.requireType;
 import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.build.internal.util_.Objects.fqn;
@@ -27,8 +26,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.pdfclown.common.build.internal.util.io.Files;
-import org.pdfclown.common.build.internal.util_.Exceptions;
 import org.pdfclown.common.build.test.model.JsonArray;
 import org.pdfclown.common.build.test.model.ModelComparator;
 import org.pdfclown.common.build.test.model.ModelMapper;
@@ -211,8 +208,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    */
   @Override
   protected Object readContent(Path file) throws IOException {
-    return JSONParser.parseJSON(requireNonNullElseThrow(Files.readString(file),
-        Exceptions::missing));
+    return JSONParser.parseJSON(doReadStringContent(file));
   }
 
   /**
@@ -221,7 +217,6 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    */
   @Override
   protected void writeContent(Path file, Object content) throws IOException {
-    Files.writeString(file, content.toString());
-
+    doWriteStringContent(file, content.toString());
   }
 }

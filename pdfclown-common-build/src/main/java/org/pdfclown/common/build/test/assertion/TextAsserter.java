@@ -13,12 +13,9 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireNonNullElseThrow;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import org.pdfclown.common.build.internal.util.io.Files;
-import org.pdfclown.common.build.internal.util_.Exceptions;
 
 /**
  * Automated text assertions for integration testing.
@@ -71,11 +68,11 @@ public class TextAsserter extends ContentAsserter<String> {
 
   @Override
   protected String readContent(Path file) throws IOException {
-    return requireNonNullElseThrow(Files.readString(file), Exceptions::missing);
+    return doReadStringContent(file);
   }
 
   @Override
   protected void writeContent(Path file, String content) throws IOException {
-    Files.writeString(file, content);
+    doWriteStringContent(file, content);
   }
 }
