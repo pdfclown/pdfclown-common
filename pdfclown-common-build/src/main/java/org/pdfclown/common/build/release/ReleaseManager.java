@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.release;
 
+import static java.nio.file.Files.exists;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
@@ -115,6 +116,9 @@ public class ReleaseManager {
 
   static final String SCM_REF__HEAD = "HEAD";
 
+  private static final String MAVEN_EXEC__GLOBAL = "mvn";
+  private static final String MAVEN_EXEC__WRAPPER = "./mvnw";
+
   private static String checkProfiles(String value) {
     if (containsWhitespace(requireNonNull(value)))
       throw wrongArg(null, value, "MUST NOT contain whitespace");
@@ -131,6 +135,7 @@ public class ReleaseManager {
   private final String devVersion;
   private boolean dryRun;
   private String installationProfiles = EMPTY;
+  private final String mavenExec;
   private String releaseBranchStartPoint = EMPTY;
   private final String releaseTag;
   private final String releaseVersion;
@@ -149,6 +154,8 @@ public class ReleaseManager {
 
     this.devVersion = VersionResolver.of(versionScheme).getNextDevVersion(releaseVersion);
     this.releaseTag = scmTag(releaseVersion);
+    this.mavenExec = exists(Path.of(MAVEN_EXEC__WRAPPER)) ? MAVEN_EXEC__WRAPPER
+        : MAVEN_EXEC__GLOBAL;
   }
 
   /**
@@ -235,6 +242,16 @@ public class ReleaseManager {
    */
   public String getInstallationProfiles() {
     return installationProfiles;
+  }
+
+  /**
+   * Maven executable.
+   *
+   * @implNote Local Maven Wrapper ({@code ./mvnw}) has priority over global counterpart
+   *           ({@code mvn}).
+   */
+  public String getMavenExec() {
+    return mavenExec;
   }
 
   /**

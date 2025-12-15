@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.release;
 
-import static java.lang.String.format;
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
 import static org.pdfclown.common.build.internal.util_.Chars.DOLLAR;
@@ -53,8 +52,10 @@ public enum BuiltinStep implements Step {
    */
   SCM_CHECK($ -> {
     var outputRef = new Ref<String>();
-    executeElseThrow(unixCommand(format("git tag -l %s", $.getReleaseTag())), $.getBaseDir(),
-        outputRef);
+    executeElseThrow(unixCommand(
+        "git tag -l %s"
+            .formatted($.getReleaseTag())),
+        $.getBaseDir(), outputRef);
     if (!outputRef.get().isEmpty())
       throw runtime("Cannot prepare the release because its tag ({}) already exists",
           $.getReleaseTag());
@@ -107,13 +108,15 @@ public enum BuiltinStep implements Step {
    * </p>
    */
   DEPENDENCY_SNAPSHOTS_CHECK($ -> executeElseThrow(unixCommand(
-      "./mvnw enforcer:enforce -Denforcer.rules=requireReleaseDeps -Denforcer.failFast=true"),
+      "%s enforcer:enforce -Denforcer.rules=requireReleaseDeps -Denforcer.failFast=true"
+          .formatted($.getMavenExec())),
       $.getBaseDir()), true),
   /**
    * Updates the changelog file with release version changes.
    */
   RELEASE_CHANGELOG_UPDATE($ -> executeElseThrow(unixCommand(
-      "cz changelog --unreleased-version %s --incremental".formatted($.getReleaseVersion())),
+      "cz changelog --unreleased-version %s --incremental"
+          .formatted($.getReleaseVersion())),
       $.getBaseDir()), false),
   /**
    * Publishes the project artifacts to the central repository.
@@ -122,10 +125,11 @@ public enum BuiltinStep implements Step {
    * artifacts are installed locally instead.
    * </p>
    */
-  DEPLOY($ -> executeElseThrow(unixCommand(format("./mvnw clean %s %s",
-      $.isRemotePushEnabled() ? "deploy" : "install", objTo(
-          $.isRemotePushEnabled() ? $.getDeploymentProfiles() : $.getInstallationProfiles(),
-          $$ -> $$.isEmpty() ? EMPTY : "-P" + $$))),
+  DEPLOY($ -> executeElseThrow(unixCommand(
+      "%s clean %s %s"
+          .formatted($.getMavenExec(), $.isRemotePushEnabled() ? "deploy" : "install", objTo(
+              $.isRemotePushEnabled() ? $.getDeploymentProfiles() : $.getInstallationProfiles(),
+              $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY))),
       $.getBaseDir()), false),
   /**
    * Commits to the local SCM repository the changes done to prepare the release, and tags them.
@@ -225,7 +229,9 @@ public enum BuiltinStep implements Step {
   private static void executeScmPush(ReleaseManager manager) {
     if (manager.isRemotePushEnabled()) {
       try {
-        executeElseThrow(unixCommand("git push && git push --tags"), manager.getBaseDir());
+        executeElseThrow(unixCommand(
+            "git push && git push --tags"),
+            manager.getBaseDir());
       } catch (Exception ex) {
         throw runtime("SCM push FAILED", ex);
       }
@@ -235,8 +241,10 @@ public enum BuiltinStep implements Step {
   private static void executeScmReleaseBranch(ReleaseManager manager) {
     var releaseBranchName = "release/" + manager.getReleaseVersion();
     try {
-      executeElseThrow(unixCommand(format("git checkout -b %s %s", releaseBranchName,
-          manager.getReleaseBranchStartPoint())), manager.getBaseDir());
+      executeElseThrow(unixCommand(
+          "git checkout -b %s %s"
+              .formatted(releaseBranchName, manager.getReleaseBranchStartPoint())),
+          manager.getBaseDir());
     } catch (Exception ex) {
       throw runtime("SCM branch {} creation FAILED", releaseBranchName, ex);
     }
@@ -247,8 +255,10 @@ public enum BuiltinStep implements Step {
    */
   private static void executeScmReleaseTag(ReleaseManager manager) {
     try {
-      executeElseThrow(unixCommand(format("git tag -a %s -m \"Release %s\"",
-          manager.getReleaseTag(), manager.getReleaseVersion())), manager.getBaseDir());
+      executeElseThrow(unixCommand(
+          "git tag -a %s -m \"Release %s\""
+              .formatted(manager.getReleaseTag(), manager.getReleaseVersion())),
+          manager.getBaseDir());
     } catch (Exception ex) {
       throw runtime("SCM tagging FAILED", ex);
     }
@@ -267,8 +277,9 @@ public enum BuiltinStep implements Step {
       default -> throw wrongArgOpt("kind", kind, null, List.of("release", "dev"));
     };
     try {
-      executeElseThrow(unixCommand("""
-          git add . && git commit -m "bump: %s version %s\"""".formatted(kind, version)),
+      executeElseThrow(unixCommand(
+          "git add . && git commit -m \"bump: %s version %s\""
+              .formatted(kind, version)),
           manager.getBaseDir());
     } catch (Exception ex) {
       throw runtime("SCM commit FAILED", ex);
