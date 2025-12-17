@@ -1,4 +1,4 @@
-name: Bug Report
+name: Bug report
 description: Report an issue you encountered using pdfclown-common.
 labels: ["Type: Bug", "Status: Triage"]
 assignees:
@@ -9,7 +9,7 @@ body:
     attributes:
       label: Checklist
       options:
-        - label: I have [searched](https://github.com/pdfclown/pdfclown-common/issues?utf8=%E2%9C%93&q=is%3Aissue) for duplicate or closed issues
+        - label: I have [searched](https://github.com/pdfclown/pdfclown-common/issues?q=is%3Aissue) for duplicate or closed issues
           required: true
         - label: I have read the [Contributing Guidelines](https://github.com/pdfclown/pdfclown-common/blob/main/docs/CONTRIBUTING.md)
           required: true

@@ -1,4 +1,4 @@
-name: Feature Request
+name: Feature request
 description: Suggest new or updated features to include in pdfclown-common.
 labels: ["Type: Enhancement", "Status: Triage"]
 assignees:
@@ -9,12 +9,23 @@ body:
     attributes:
       label: Checklist
       options:
-        - label: I have [searched](https://github.com/pdfclown/pdfclown-common/issues?utf8=%E2%9C%93&q=is%3Aissue) for duplicate or closed feature requests
+        - label: I have [searched](https://github.com/pdfclown/pdfclown-common/issues?q=is%3Aissue) for duplicate or closed feature requests
           required: true
         - label: I have read the [Contributing Guidelines](https://github.com/pdfclown/pdfclown-common/blob/main/docs/CONTRIBUTING.md)
           required: true
         - label: I agree to follow the [Code of Conduct](https://github.com/pdfclown/.github/blob/main/.github/CODE_OF_CONDUCT.md)
           required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: pdfclown-common module(s) involved
+      multiple: true
+      options:
+        - pdfclown-common-build
+        - pdfclown-common-util
+        - (other)
+    validations:
+      required: true
   - type: textarea
     id: proposal
     attributes:
