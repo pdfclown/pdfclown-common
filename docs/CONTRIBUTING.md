@@ -46,7 +46,7 @@ In case you want to contribute improvements to the code in the repository, pleas
    ```shell
    ./mvnw install -Pfull
    ```
-7. **submit your pull request**
+7. **submit your pull request** — the title of your pull request MUST follow the corresponding [project convention](https://github.com/pdfclown/pdfclown-common/blob/main/docs/maintenance.md#pull-requests)
 
 > [!IMPORTANT]
 > Before embarking on any significant pull request (e.g., implementing features, refactoring code, etc.), *please ask first* submitting a feature request with your proposal (otherwise you risk spending a lot of time working on something that the project’s developers might not want to merge into the project...).

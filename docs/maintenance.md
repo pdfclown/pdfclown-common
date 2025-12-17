@@ -68,7 +68,7 @@ Branch names MUST be defined according to [Conventional Commits 1.0](https://www
 
 ### Pull Requests
 
-Pull request titles MUST be defined according to [Conventional Commits 1.0](https://www.conventionalcommits.org/en/v1.0.0/), as specified in "[Commits](#commits)" section.
+Pull request titles MUST be defined according to Conventional Commits 1.0, as specified in "[Commits](#commits)" section.
 
 > [!NOTE]
 > Pull request titles are configured for CI check via [pull-request.yml](../.github/workflows/pull-request.yml).
