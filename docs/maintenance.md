@@ -55,10 +55,13 @@ Within pdfClown.org projects, scopes are informally distinguished between regula
 
 ### Branches
 
+pdfClown.org projects adhere to [trunk-based branching model](https://www.atlassian.com/continuous-delivery/continuous-integration/trunk-based-development).
+
 Branch names MUST be defined according to [Conventional Commits 1.0](https://www.conventionalcommits.org/en/v1.0.0/), as specified in "[Commit Types](#commit-types)" section, with the addition of the following custom names:
 
-- `dependabot` — for pull-request branches automatically created by dependabot
-- `release` — for preparing releases
+- `dependabot` (ephemeral) — for pull-request branches automatically created by dependabot
+- `r` (long-lived) — for release maintenance (e.g., `r/1.3` for maintaining updates of version 1.3.*)
+- `release` (ephemeral) — for release preparation (e.g. `release/1.3.0`), branched out from `main` (current development line) or `r/*` (release maintenance line) branches
 
 > [!NOTE]
 > Branch names are configured for pre-commit check via [commit-check.toml](../commit-check.toml).

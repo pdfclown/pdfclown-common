@@ -11,7 +11,7 @@ allow_branch_types = [
     "dependabot", "docs",
     "feat", "fix",
     "perf",
-    "refactor", "release", "revert",
+    "r", "refactor", "release", "revert",
     "style",
     "test"
     ]
