@@ -8,7 +8,7 @@ In case the code in the repository doesn't seem to work as expected, please foll
 
 1. **check if the issue has already been reported** — use the [GitHub Issues](https://github.com/pdfclown/pdfclown-common/issues) search
 
-2. **check if the issue has already been fixed** — try to reproduce it using the HEAD of the relevant branch (`main` for current development, or `r/`-prefixed (e.g., `r/1.5`) for release maintenance) in the repository (see [Building and Testing](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md) for step-by-step instructions)
+2. **check if the issue has already been fixed** — try to reproduce it using the HEAD of the relevant branch (`main` for current development, or `r/`-prefixed (e.g., `r/1.5`) for release maintenance) in the repository (see [Building and Testing](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#setup) for step-by-step instructions)
 
 3. **isolate the problem** — reduce your case to the bare minimum which still demonstrates the problem (ideally, create a test case)
 
@@ -25,7 +25,7 @@ In case the code in the repository lacks a functionality, please follow these gu
 
 In case you want to contribute improvements to the code in the repository, please follow these guidelines:
 
-1. **set up your development environment** — see [Building and Testing](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md) for step-by-step instructions
+1. **set up your development environment** — see [Building and Testing](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#setup) for step-by-step instructions
 2. **remain focused in scope** — avoid that your pull request contains unrelated commits
 3. **adhere to the [coding conventions](https://github.com/pdfclown/pdfclown-common/blob/main/docs/coding.md)** used throughout the project
 
