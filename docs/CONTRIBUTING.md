@@ -8,7 +8,7 @@ In case the code in the repository doesn't seem to work as expected, please foll
 
 1. **check if the issue has already been reported** — use the [GitHub Issues](https://github.com/pdfclown/pdfclown-common/issues) search
 
-2. **check if the issue has already been fixed** — try to reproduce it using the HEAD of the relevant branch (`main` for current development, or `r/`-prefixed (e.g., `r/1.5`) for release maintenance) in the repository (see [Building and Testing](building.md) for step-by-step instructions)
+2. **check if the issue has already been fixed** — try to reproduce it using the HEAD of the relevant branch (`main` for current development, or `r/`-prefixed (e.g., `r/1.5`) for release maintenance) in the repository (see [Building and Testing](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md) for step-by-step instructions)
 
 3. **isolate the problem** — reduce your case to the bare minimum which still demonstrates the problem (ideally, create a test case)
 
@@ -25,9 +25,9 @@ In case the code in the repository lacks a functionality, please follow these gu
 
 In case you want to contribute improvements to the code in the repository, please follow these guidelines:
 
-1. **set up your development environment** — see [Building and Testing](building.md) for step-by-step instructions
+1. **set up your development environment** — see [Building and Testing](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md) for step-by-step instructions
 2. **remain focused in scope** — avoid that your pull request contains unrelated commits
-3. **adhere to the [coding conventions](#code-guidelines)** used throughout the project
+3. **adhere to the [coding conventions](https://github.com/pdfclown/pdfclown-common/blob/main/docs/coding.md)** used throughout the project
 
    > [!TIP]
    > Code is automatically formatted via Maven build, so it's best you disable your IDE formatting in order to avoid conflicts. If you want just to refresh the code format without recompiling:
@@ -53,9 +53,9 @@ In case you want to contribute improvements to the code in the repository, pleas
 
 ## License
 
-By contributing your code, you agree to license your contribution under the [GNU Lesser General Public License (LGPL) version 3.0](../LICENSE.txt) (`LGPL-3.0-only`).
+By contributing your code, you agree to license your contribution under the [GNU Lesser General Public License (LGPL) version 3.0](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSE.txt) (`LGPL-3.0-only`).
 
-By contributing to the documentation, you agree to license your contribution under the [Creative Commons Attribution-ShareAlike 4.0 License](../LICENSES/CC-BY-SA-4.0.txt) (`CC-BY-SA-4.0`).
+By contributing to the documentation, you agree to license your contribution under the [Creative Commons Attribution-ShareAlike 4.0 License](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSES/CC-BY-SA-4.0.txt) (`CC-BY-SA-4.0`).
 
 ## Attribution
 
