@@ -37,8 +37,27 @@ This document describes how to set up your development environment to build and 
 
 ## Setup
 
-1. check the **prerequisites** here above are satisfied
-2. install **commit validation hooks**:
+1. [fork](https://help.github.com/articles/fork-a-repo/) the project, then clone your fork and configure its upstream:
+
+    ```shell
+    # Clone your fork into the current directory!
+    git clone https://github.com/%YOUR_USERNAME%/pdfclown-common.git
+    # Enter into the cloned directory!
+    cd pdfclown-common
+    # Add the original repository as "upstream" remote!
+    git remote add upstream https://github.com/pdfclown/pdfclown-common.git
+    ```
+
+    To get the latest changes from upstream:
+
+    ```shell
+    git checkout main
+    git pull upstream main
+    ```
+
+2. check the **[prerequisites](#prerequisites)** are satisfied
+
+3. install **commit validation hooks**:
 
     ```shell
     pre-commit install -t pre-commit -t commit-msg
@@ -56,7 +75,7 @@ This document describes how to set up your development environment to build and 
     pre-commit autoupdate
     ```
 
-3. that's all! :tada: Now you are ready to build (see next section) — happy development!
+4. that's all! :tada: Now you are ready to build (see next section) — happy development!
 
 ## Building
 

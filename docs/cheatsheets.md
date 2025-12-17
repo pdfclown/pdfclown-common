@@ -55,3 +55,7 @@ This document provides a concise reference to useful commands for pdfClown.org p
     ```shell
     ./mvnw wrapper:wrapper -Dmaven=x.x.x
     ```
+
+## Humor
+
+- [MonkeyUser](https://www.monkeyuser.com/)
