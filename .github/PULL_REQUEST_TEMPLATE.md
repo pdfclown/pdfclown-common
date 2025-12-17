@@ -1,10 +1,10 @@
-### Description
+## Description
 
 <!--
   Please, provide detailed information about the proposed changes.
 -->
 
-### Rationale
+## Rationale
 
 <!--
   Please, explain the benefits the proposed changes bring to the project.
@@ -13,7 +13,7 @@
   in the corresponding section here below.
 -->
 
-### BREAKING CHANGE
+## BREAKING CHANGE
 
 <!--
   Please, indicate WHETHER and HOW the proposed changes break backward compatibility (in case there
@@ -29,7 +29,7 @@
   - ...
 -->
 
-### Checklist
+## Checklist
 
 <!--
   Please, verify your compliance with the points here below, and put an `x` in each box
@@ -50,7 +50,7 @@ Legal stuff:
 
 - [ ] I hereby declare this contribution to be licensed under the [GNU Lesser General Public License (LGPL) version 3.0](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSE.txt) (`LGPL-3.0-only`) for the code, and [Creative Commons Attribution-ShareAlike 4.0 License](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSES/CC-BY-SA-4.0.txt) (`CC-BY-SA-4.0`) for the documentation
 
-### Solved issues
+## Solved issues
 
 <!--
   Please, link any solved issue here, via hash-prefixed issue number (e.g., `#26`) (if no issue is
