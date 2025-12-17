@@ -46,6 +46,10 @@ I dutifully honored all these points:
 - [ ] I have successfully executed a **FULL BUILD** (all new and existing tests passed)
 - [ ] I agree to follow the [Code of Conduct](https://github.com/pdfclown/.github/blob/main/.github/CODE_OF_CONDUCT.md)
 
+Legal stuff:
+
+- [ ] I hereby declare this contribution to be licensed under the [GNU Lesser General Public License (LGPL) version 3.0](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSE.txt) (`LGPL-3.0-only`) for the code, and [Creative Commons Attribution-ShareAlike 4.0 License](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSES/CC-BY-SA-4.0.txt) (`CC-BY-SA-4.0`) for the documentation
+
 ### Solved issues
 
 <!--
