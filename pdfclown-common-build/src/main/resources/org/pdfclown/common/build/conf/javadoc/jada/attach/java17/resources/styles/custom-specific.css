@@ -16,9 +16,8 @@ p {
 }
 
 .legal-copy {
-  float: left;
   margin: 0;
-  padding: 10px;
+  padding: 5px 10px 10px;
 }
 
 /*
@@ -221,11 +220,6 @@ div.inherited-list h3 {
 
 .sub-nav .nav-list-search {
   padding: 3px 15px 0;
-}
-
-#reset-button {
-  right: 20px;
-  top: 8px;
 }
 
 .ui-autocomplete-category {

@@ -369,9 +369,8 @@ ul.navListSearch li {
 }
 
 .legalCopy {
-  float: left;
   margin: 0;
-  padding: 10px;
+  padding: 5px 10px 10px;
 }
 
 .ui-autocomplete-category {

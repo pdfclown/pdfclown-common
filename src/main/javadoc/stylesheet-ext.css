@@ -1,1 +1,29 @@
-@import url("resources/styles/custom.css");
+/*
+ * TODO: temporary workaround.
+ */
+
+/* @import url("resources/styles/custom.css"); */
+
+caption {
+  font-variant-caps: small-caps;
+  margin: 1em;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+div.block td,
+div.block th {
+  border: 1px solid grey;
+  padding: 1em;
+}
+
+.footer-right {
+   float: right;
+}
+
+.legal-copy {
+  margin: 0;
+  padding: 5px 10px 10px;
+}

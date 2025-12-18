@@ -603,10 +603,9 @@ log.info("buildTimestamp: " + buildTimestamp
               <additionalOption>-tag "implNote:a:Implementation Note:"</additionalOption>
               <additionalOption>-tag "apiNote:a:API Note:"</additionalOption>
               <!--
-                NOTE: Idiotic maven-javadoc-plugin doesn't accept absolute paths in `addStylesheets`
+                NOTE: maven-javadoc-plugin doesn't accept absolute paths in `addStylesheets`
                 property, so we have to feed it directly. -->
-              <?ignore <additionalOption>--add-stylesheet "${rootdir}/src/main/javadoc/stylesheet-ext.css"</additionalOption>
-              ?>
+              <additionalOption>--add-stylesheet "${rootdir}/src/main/javadoc/stylesheet-ext.css"</additionalOption>
             </additionalOptions>
 
             <!--
@@ -628,8 +627,9 @@ log.info("buildTimestamp: " + buildTimestamp
 </div>
 ]]></top>
             <bottom><![CDATA[
-Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br>
-<a href="${project.url}">Project Home</a> | <a href="${projectScmUrl}">Source Repository</a> | <a href="${projectIssuesUrl}">Report a bug or suggest an enhancement</a><p class="footer-right">${buildTimestamp} (${git.commit.id.describe})</p>
+<span class="footer-right">${buildTimestamp} (${git.commit.id.describe})</span>
+<span>Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br>
+<a href="${project.url}">Project Home</a> | <a href="${projectScmUrl}">Source Repository</a> | <a href="${projectIssuesUrl}">Report a bug or suggest an enhancement</a></span>
 ]]></bottom>
 
             <detectLinks>true</detectLinks>
@@ -738,6 +738,8 @@ Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All ri
 
             <nohelp>true</nohelp>
             <noindex>false</noindex>
+            <!-- Suppress hidden timestamp for reproducible build. -->
+            <notimestamp>true</notimestamp>
 
             <!--
               NOTE: Workaround to `-no-fonts` flag automatically added because of toolchain handling
