@@ -1,6 +1,6 @@
-[Documentation](README.md) > [Project Conventions](conventions.md) >
+[[pdfClown.org] Documentation](README.md) > [Project Conventions](conventions.md) >
 
-# Project Maintenance
+# [pdfClown.org] Project Maintenance
 
 ## Source Code Management
 
@@ -64,13 +64,13 @@ Branch names MUST be defined according to [Conventional Commits 1.0](https://www
 - `release` (ephemeral) — for release preparation (e.g. `release/1.3.0`), branched out from `main` (current development line) or `r/*` (release maintenance line) branches
 
 > [!NOTE]
-> Branch names are configured for pre-commit check via [commit-check.toml](../commit-check.toml).
+> Branch names are configured for pre-commit check via `commit-check.toml` in the project.
 
 ### Pull Requests
 
 Pull request titles MUST be defined according to Conventional Commits 1.0, as specified in "[Commits](#commits)" section.
 
 > [!NOTE]
-> Pull request titles are configured for CI check via [pull-request.yml](../.github/workflows/pull-request.yml).
+> Pull request titles are configured for CI check via `.github/workflows/pull-request.yml` in the project.
 
 In order to leave a clear and linear commit history, PR branches MUST be merged into their base branch via squash, retaining the relevant commit messages of the squashed commits.

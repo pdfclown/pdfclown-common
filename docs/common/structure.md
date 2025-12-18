@@ -1,10 +1,12 @@
-[Documentation](README.md) > [Project Conventions](conventions.md) >
+[[pdfClown.org] Documentation](README.md) > [Project Conventions](conventions.md) >
 
-# Project Structure
+# [pdfClown.org] Project Structure
+
+This document describes how the pdfClown.org projects are structured.
 
 ## Filesystem structure
 
-The filesystem structure of pdfClown.org projects SHALL follow [Maven's Standard Directory Layout](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html).
+The filesystem structure of pdfClown.org projects MUST follow [Maven's Standard Directory Layout](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html).
 
 For clarity, [subproject directory names MUST match the `project/artifactID` element](https://www.sonatype.com/blog/2011/01/maven-tip-project-directories-and-artifact-ids) in their respective pom.xml; the same applies to the `project/name` element:
 
@@ -12,7 +14,7 @@ For clarity, [subproject directory names MUST match the `project/artifactID` ele
 
 ## Project Hierarchy
 
-A pdfClown.org project SHALL be defined according to this hierarchy:
+A pdfClown.org project MUST be defined according to this hierarchy:
 
 ![Image](res/images/project-hierarchy.svg)
 

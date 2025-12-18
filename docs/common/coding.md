@@ -1,6 +1,6 @@
-[Documentation](README.md) > [Project Conventions](conventions.md) >
+[[pdfClown.org] Documentation](README.md) > [Project Conventions](conventions.md) >
 
-# Coding Conventions
+# [pdfClown.org] Coding Conventions
 
 ## Comments
 

@@ -1,4 +1,4 @@
-# Contributing to pdfclown-common
+# Contributing to pdfClown Common
 
 These guidelines are meant to help you contribute to the project in the most pleasant, hassle-free way: if you have any doubt or suggestion about this documentation, don't hesitate to open an issue.
 
@@ -8,7 +8,10 @@ In case the code in the repository doesn't seem to work as expected, please foll
 
 1. **check if the issue has already been reported** — use the [GitHub Issues](https://github.com/pdfclown/pdfclown-common/issues) search
 
-2. **check if the issue has already been fixed** — try to reproduce it using the HEAD of the relevant branch (`main` for current development, or `r/`-prefixed (e.g., `r/1.5`) for release maintenance) in the repository (see [Building and Testing](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#setup) for step-by-step instructions)
+2. **check if the issue has already been fixed** — try to reproduce it using the latest unreleased codebase, in any of the following alternatives:
+
+   - [snapshot artifacts](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/usage.md#snapshot-artifacts) (pre-built)
+   - [source code](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/building.md#setup) (to build): check out the relevant branch (`main` for current development, or `r/`-prefixed (e.g., `r/1.5`) for release maintenance) in the repository and [build it](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#building) by yourself
 
 3. **isolate the problem** — reduce your case to the bare minimum which still demonstrates the problem (ideally, create a test case)
 
@@ -25,9 +28,11 @@ In case the code in the repository lacks a functionality, please follow these gu
 
 In case you want to contribute improvements to the code in the repository, please follow these guidelines:
 
-1. **set up your development environment** — see [Building and Testing](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#setup) for step-by-step instructions
-2. **remain focused in scope** — avoid that your pull request contains unrelated commits
-3. **adhere to the [coding conventions](https://github.com/pdfclown/pdfclown-common/blob/main/docs/coding.md)** used throughout the project
+1. **set up your fork** — see ["Building and Testing"](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/building.md#setup) for step-by-step instructions
+2. in your fork, **create the PR branch** where to commit your changes
+   -  the branch name MUST follow the corresponding [convention](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/maintenance.md#branches)
+3. **remain focused in scope** — avoid that your pull request contains unrelated commits
+4. **adhere to the [coding conventions](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/coding.md)** used throughout the project
 
    > [!TIP]
    > Code is automatically formatted via Maven build, so it's best you disable your IDE formatting in order to avoid conflicts. If you want just to refresh the code format without recompiling:
@@ -36,17 +41,18 @@ In case you want to contribute improvements to the code in the repository, pleas
    > ./mvnw spotless:apply
    > ```
 
-4. **write tests** — *the tests ensure that each method, class, etc. does what it is expected to do according to its specification*. This is critically important when other changes are made to ensure that existing code is not broken (no regression). Just as important, whenever someone is new to a section of code, they should be able to read the tests to get a thorough understanding of what it does and why.
+5. **write tests** — *the tests ensure that each method, class, etc. does what it is expected to do according to its specification*. This is critically important when other changes are made to ensure that existing code is not broken (no regression). Just as important, whenever someone is new to a section of code, they should be able to read the tests to get a thorough understanding of what it does and why.
 
    - if you are **fixing a bug**, you should add tests to ensure that your code has actually fixed the bug, to specify/describe what the code is doing, and to ensure the bug doesn't happen again (you may need to change existing tests if they were inaccurate)
    - if you are **adding a feature**, you should add tests to specify/describe what the code is doing, and to ensure future changes won't alter its behavior
 
-5. **update the documentation** — the documentation has to be updated for users to know that things have been changed
-6. **execute a full build** — run a full installation before submitting your pull request, to ensure your changes build successfully:
+6. **update the documentation** — the documentation has to be updated for users to know that things have been changed
+7. **execute a full build** — run a full installation before submitting your pull request, to ensure your changes build successfully:
    ```shell
    ./mvnw install -Pfull
    ```
-7. **submit your pull request** — the title of your pull request MUST follow the corresponding [project convention](https://github.com/pdfclown/pdfclown-common/blob/main/docs/maintenance.md#pull-requests)
+8. **submit your pull request** — see ["Creating a pull request from a fork"](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
+   - the title of your pull request MUST follow the corresponding [convention](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/maintenance.md#pull-requests)
 
 > [!IMPORTANT]
 > Before embarking on any significant pull request (e.g., implementing features, refactoring code, etc.), *please ask first* submitting a feature request with your proposal (otherwise you risk spending a lot of time working on something that the project’s developers might not want to merge into the project...).

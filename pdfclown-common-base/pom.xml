@@ -4,43 +4,6 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 -->
-<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  USAGE
-
-  - install:
-
-    - basic (without javadoc):
-
-      ./mvnw install
-
-    - full (with javadoc):
-
-      ./mvnw install -Pfull
-
-    - fast (without javadoc and integration tests):
-
-      ./mvnw install -Pfast
-
-    - fastest (without javadoc, integration tests and unit tests):
-
-      ./mvnw install -Pfast+
-
-  - test:
-
-    - basic (unit tests only):
-
-      ./mvnw test
-
-    - full (unit tests and integration tests):
-
-      ./mvnw verify
-
-  - verify dependency vulnerabilities:
-      ./mvnw verify -Pverify-extra
-
-  - verify copyright and licensing declarations compliance <https://reuse.software>:
-      reuse lint
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <project
     xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

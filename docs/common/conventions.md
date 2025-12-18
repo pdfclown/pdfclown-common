@@ -1,8 +1,8 @@
-[Documentation](README.md) >
+[[pdfClown.org] Documentation](README.md) >
 
-# Project Conventions
+# [pdfClown.org] Project Conventions
 
-This is a collection of conventions adopted by pdfClown.org projects for their design, implementation and maintenance; although lots of them conform to well-established industry standards, they are herein documented to ensure any contributor is on our same page.
+This is a collection of conventions adopted by the pdfClown.org projects for their design, implementation and maintenance; although lots of them conform to well-established industry standards, they are herein documented to ensure any contributor is on our same page.
 
 ## Documentation
 

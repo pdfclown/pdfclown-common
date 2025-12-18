@@ -1,14 +1,14 @@
-# Documentation
+# [[pdfClown Common]](../README.md) Documentation
 
-This is a collection of documents about the pdfClown Common project and pdfClown.org projects at large.
+This is a collection of documents about the pdfClown Common project.
 
 
-## [Usage](using.md)
+## [[pdfClown.org] Usage](common/usage.md)
 
-## [Project Conventions](conventions.md)
+## [[pdfClown.org] Project Conventions](common/conventions.md)
 
 ## [Building and Testing](building.md)
 
 ## [Contributing](CONTRIBUTING.md)
 
-## [Cheatsheets](cheatsheets.md)
+## [[pdfClown.org] Cheatsheets](common/cheatsheets.md)

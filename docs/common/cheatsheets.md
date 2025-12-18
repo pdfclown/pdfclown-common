@@ -1,6 +1,6 @@
-[Documentation](README.md) >
+[[pdfClown.org] Documentation](README.md) >
 
-# Cheatsheets
+# [pdfClown.org] Cheatsheets
 
 This document provides a concise reference to useful commands for pdfClown.org projects.
 
@@ -55,7 +55,3 @@ This document provides a concise reference to useful commands for pdfClown.org p
     ```shell
     ./mvnw wrapper:wrapper -Dmaven=x.x.x
     ```
-
-## Humor
-
-- [MonkeyUser](https://www.monkeyuser.com/)

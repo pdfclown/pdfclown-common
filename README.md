@@ -9,15 +9,13 @@
 
 Common functionalities for pdfClown.org projects.
 
-## Conventions
+## Usage
 
-This project adheres to the following specifications:
+See [Usage](docs/common/usage.md) for complete details.
 
-- [Conventional Commits 1.0](https://www.conventionalcommits.org/en/v1.0.0/)
-- [REUSE 3.3](https://reuse.software/spec-3.3/)
-- [Semantic Versioning 2.0](https://semver.org/spec/v2.0.0.html)
+## Documentation
 
-See [Project Conventions](docs/conventions.md) for further information.
+See [Documentation](docs/README.md) for complete details.
 
 ## License
 

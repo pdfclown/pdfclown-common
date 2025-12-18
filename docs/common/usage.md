@@ -1,8 +1,8 @@
-[Documentation](README.md) >
+[[pdfClown.org] Documentation](README.md) >
 
-# Usage
+# [pdfClown.org] Usage
 
-This document describes how to use pdfclown-common in your own projects.
+This document describes how to use pdfClown.org projects in your own projects.
 
 All the examples are based on the Maven build system.
 
@@ -13,9 +13,9 @@ According to your needs, you can choose among these alternatives:
 
 ## Release artifacts
 
-Normally, third-party projects are expected to consume the release versions of this project as dependencies via Maven Central repository.
+Normally, user projects are expected to consume the release versions of pdfClown.org projects as dependencies via Maven Central repository.
 
-For the purpose, put the following declaration in the `dependencies` section of your `pom.xml` (replace `%ARTIFACT_ID%` with the identifier of the intended module (for example, `pdfclown-common-util`), and `%VERSION%` with the release version of your choice (see [Releases](https://github.com/pdfclown/pdfclown-common/releases))):
+For the purpose, put the following declaration in the `dependencies` section of your `pom.xml` (replace `%ARTIFACT_ID%` with the identifier of the intended module (for example, `pdfclown-common-util`), and `%VERSION%` with the release version of your choice (see the "Releases" section of the project on GitHub)):
 
 ```xml
 <dependency>
@@ -27,7 +27,7 @@ For the purpose, put the following declaration in the `dependencies` section of 
 
 ## Snapshot artifacts
 
-In case you want to give a try to the latest, unreleased implementation of this project, you can consume SNAPSHOT dependencies (updated on a daily basis) via Maven Central Portal Snapshots repository.
+In case you want to give a try to the latest, unreleased implementation of pdfClown.org projects, you can consume SNAPSHOT dependencies (updated on a daily basis) via Maven Central Portal Snapshots repository.
 
 For the purpose:
 
@@ -63,7 +63,7 @@ For the purpose:
     </settings>
     ```
 
-2. put the following declaration in the `dependencies` section of your `pom.xml` (replace `%ARTIFACT_ID%` with the identifier of the intended module (for example, `pdfclown-common-util`), and `%VERSION%` with the current SNAPSHOT version (see `revision` parameter in [maven.config](../.mvn/maven.config))):
+2. put the following declaration in the `dependencies` section of your `pom.xml` (replace `%ARTIFACT_ID%` with the identifier of the intended module (for example, `pdfclown-common-util`), and `%VERSION%` with the current SNAPSHOT version (in the project, see `revision` parameter at `.mvn/maven.config`))):
 
    ```xml
    <dependency>
@@ -73,4 +73,4 @@ For the purpose:
    </dependency>
    ```
 
-Alternatively, you can build the SNAPSHOT artifacts by yourself: see [Building and Testing](building.md) (in such case, you obviously don't need the Maven Central Portal Snapshots repository).
+Alternatively, you can build the SNAPSHOT artifacts by yourself: see ["Building and Testing"](building.md) (in such case, you obviously don't need the Maven Central Portal Snapshots repository).
