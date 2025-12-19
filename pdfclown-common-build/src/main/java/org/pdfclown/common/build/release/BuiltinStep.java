@@ -116,7 +116,7 @@ public enum BuiltinStep implements Step {
    */
   RELEASE_CHANGELOG_UPDATE($ -> executeElseThrow(unixCommand(
       "cz changelog --unreleased-version %s --incremental"
-          .formatted($.getReleaseVersion())),
+          .formatted($.getReleaseTag())),
       $.getBaseDir()), false),
   /**
    * Publishes the project artifacts to the central repository.
