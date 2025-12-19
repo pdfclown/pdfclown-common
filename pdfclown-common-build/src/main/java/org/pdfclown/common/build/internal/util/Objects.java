@@ -31,7 +31,7 @@ public final class Objects {
   /**
    * Pattern of the default implementation of {@link Object#toString()}.
    * <p>
-   * Use {@link #PATTERN_GROUP__CLASS_FQN} to catch the associated FQCN on match.
+   * Use {@link #PATTERN_GROUP__CLASS_FQN} to get the fully-qualified class name matched.
    * </p>
    */
   public static final Pattern PATTERN__TO_STRING__DEFAULT = Pattern.compile(
