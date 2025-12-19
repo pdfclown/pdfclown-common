@@ -1,5 +1,5 @@
 #
-# See </docs/maintenance.md#pull-requests>.
+# On pull request events, verifies the PR conforms to project conventions.
 #
 name: Pull Request
 
@@ -12,7 +12,8 @@ on:
 
 jobs:
   main:
-    name: Check Pull Request Title
+    name: Check Pull Request Title (semantic)
+    # See `docs/common/maintenance.md#pull-requests`.
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
@@ -21,7 +22,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          # Correspond to commit types as defined in </docs/maintenance.md#commit-types>.
+          # Semantic PR type MUST correspond to a commit type defined in
+          # `docs/common/maintenance.md#commit-types`.
           types: |
             build
             bump
@@ -35,7 +37,8 @@ jobs:
             revert
             style
             test
-          # Correspond to commit scopes as defined in </docs/maintenance.md#commit-scopes>.
+          # Semantic PR scope MUST correspond to a commit scope defined in
+          # `docs/common/maintenance.md#commit-scopes`.
           scopes: |
             base
             build

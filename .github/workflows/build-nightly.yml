@@ -1,15 +1,19 @@
 #
+# On a daily basis, publishes SNAPSHOT artifacts to Maven Central Portal Snapshots repository.
+#
 # Preconditions:
 # - project version is SNAPSHOT
 # - latest built commit is different from current one
 #
 name: Nightly Build
-permissions:
-  contents: read
+
 on:
   schedule:
     - cron: '0 4 * * *'  # Once a day, at 4:00 UTC
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   initialize:
@@ -69,5 +73,5 @@ jobs:
             echo "Project version: $project_version" >&2
             ./mvnw deploy --batch-mode --errors -Ppublish
           else
-            echo "Project version $project_version NOT APPLICABLE for nightly build (MUST be a SNAPSHOT)" >&2
+            echo "NOP: Project version $project_version NOT APPLICABLE for nightly build (SNAPSHOT required)" >&2
           fi

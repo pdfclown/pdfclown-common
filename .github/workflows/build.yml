@@ -1,8 +1,14 @@
+#
+# On commit push or pull request events, verifies that the project builds successfully on JDK 17,
+# 21, 25. On success, its Dependency Snapshot is submitted.
+#
 name: Build
+
+on: [push, pull_request]
+
 permissions:
   contents: write
   security-events: write
-on: [push, pull_request]
 
 jobs:
   build:
