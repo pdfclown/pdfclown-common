@@ -49,7 +49,7 @@ In case you want to contribute improvements to the code in the repository, pleas
 6. **update the documentation** — the documentation has to be updated for users to know that things have been changed
 7. **execute a full build** — run a full installation before submitting your pull request, to ensure your changes build successfully:
    ```shell
-   ./mvnw install -Pfull
+   ./mvnw clean install -Pfull
    ```
 8. **submit your pull request** — see ["Creating a pull request from a fork"](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
    - the title of your pull request MUST follow the corresponding [convention](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/maintenance.md#pull-requests)

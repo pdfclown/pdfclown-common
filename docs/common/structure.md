@@ -101,8 +101,8 @@ A pdfClown.org project MUST be defined according to this hierarchy:
   <td>Root projects <i>outside</i> the project hierarchy (that is, external projects consuming the published <code>base</code> subproject).</td>
   <td>N/A</td>
 </tr>
+<tfoot><tr><td colspan="4">NOTE<br>&dagger; Currently, because of technical limitations in Maven toolset, it is transitively inherited outside the project (ideally, it should be flattened inside <code>base</code> and not published).</td></tr></tfoot>
 </table>
-&dagger; Currently, because of technical limitations in Maven toolset, it is transitively inherited outside the project (ideally, it should be flattened inside <code>base</code> and not published).
 
 The notorious verbosity of Maven configuration is prone to quickly degenerate into a cluttered mess of plugin and dependency declarations and references. The following guidelines are meant to define a healthy structure, and are at the basis of the hierarchy here-above illustrated:
 
