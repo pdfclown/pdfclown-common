@@ -1,6 +1,6 @@
-[[pdfClown.org] Documentation](README.md) > [Project Conventions](conventions.md) >
+[pdfClown.org :: Documentation](README.md) > [Project Conventions](conventions.md) >
 
-# [pdfClown.org] Project Maintenance
+# pdfClown.org :: Project Maintenance
 
 ## Source Code Management
 

@@ -13,13 +13,17 @@ Common functionalities for pdfClown.org projects.
 
 See [Usage](docs/common/usage.md) for complete details.
 
+## Building
+
+See [Building](docs/building.md) for complete details.
+
 ## Documentation
 
-See [Documentation](docs/README.md) for complete details.
+See [Documentation](docs/README.md) for further information about this project.
 
 ## License
 
-pdfClown Common is Open Source software released under the **[GNU Lesser General Public License (LGPL), version 3.0](LICENSE.txt)**.
+This project is licensed under **[GNU Lesser General Public License (LGPL), version 3.0](LICENSE.txt)**.
 
 See [NOTICE](NOTICE.txt) for attributions.
 

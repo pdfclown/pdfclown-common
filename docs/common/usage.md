@@ -1,6 +1,6 @@
-[[pdfClown.org] Documentation](README.md) >
+[pdfClown.org :: Documentation](README.md) >
 
-# [pdfClown.org] Usage
+# pdfClown.org :: Usage
 
 This document describes how to use pdfClown.org projects in your own projects.
 
@@ -73,4 +73,4 @@ For the purpose:
    </dependency>
    ```
 
-Alternatively, you can build the SNAPSHOT artifacts by yourself: see ["Building and Testing"](building.md) (in such case, you obviously don't need the Maven Central Portal Snapshots repository).
+Alternatively, you can build the SNAPSHOT artifacts by yourself: see ["Building"](building.md) (in such case, you obviously don't need the Maven Central Portal Snapshots repository).

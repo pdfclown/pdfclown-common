@@ -1,6 +1,6 @@
-[[pdfClown.org] Documentation](README.md) > [Project Conventions](conventions.md) >
+[pdfClown.org :: Documentation](README.md) > [Project Conventions](conventions.md) >
 
-# [pdfClown.org] Project Structure
+# pdfClown.org :: Project Structure
 
 This document describes how the pdfClown.org projects are structured.
 

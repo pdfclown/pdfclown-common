@@ -1,4 +1,4 @@
-# [pdfClown.org] Documentation
+# pdfClown.org :: Documentation
 
 This is a collection of documents common to all the pdfClown.org projects.
 
@@ -6,6 +6,6 @@ This is a collection of documents common to all the pdfClown.org projects.
 
 ## [Project Conventions](conventions.md)
 
-## [Building and Testing](building.md)
+## [Building](building.md)
 
 ## [Cheatsheets](cheatsheets.md)
