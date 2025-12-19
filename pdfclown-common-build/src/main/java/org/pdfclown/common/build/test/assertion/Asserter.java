@@ -26,6 +26,7 @@ import static org.pdfclown.common.build.internal.util_.Strings.abbreviateMultili
 import static org.pdfclown.common.build.internal.util_.io.Files.copyDirectory;
 import static org.pdfclown.common.build.internal.util_.io.Files.resetDirectory;
 import static org.pdfclown.common.build.internal.util_.system.Systems.getBooleanProperty;
+import static org.pdfclown.common.build.system.LogManager.MARKER__VERBOSE;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -265,7 +266,7 @@ public abstract class Asserter {
         projectArtifactId, PARAM_NAME__UPDATE, textLiteral(testName));
 
     // Log (full message).
-    getLog().error(LogMarker.VERBOSE, "{}" + LF + "{}", message, hint);
+    getLog().error(MARKER__VERBOSE, "{}" + LF + "{}", message, hint);
 
     // Exception (shortened message).
     throw new AssertionError(

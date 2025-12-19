@@ -20,6 +20,7 @@ import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.MarkerFactory;
 import org.slf4j.event.Level;
 
 /**
@@ -45,6 +46,11 @@ public final class LogManager {
    * Appender for assertion-related logs.
    */
   public static final String APPENDER_NAME__ASSERT = "Assert";
+
+  /**
+   * Marker for log entries excluded from console.
+   */
+  public static final org.slf4j.Marker MARKER__VERBOSE = MarkerFactory.getMarker("VERBOSE");
 
   private static @Nullable Level defaultLevel;
 
