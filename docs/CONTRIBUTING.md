@@ -22,9 +22,12 @@ In case the code in the repository doesn't seem to work as expected, please foll
 In case the code in the repository lacks a functionality, please follow these guidelines:
 
 1. **provide as much detail and context as possible** — this way, the project's developers can fully evaluate whether your request fits with the scope and aims of the project
-2. (optional) **include your solution proposal** — discussing it before you embark in a pull request avoids you waste your time (see next section for further information).
+2. (optional) **include your solution proposal** — discussing it before you embark in a pull request avoids you waste your time (see next section for further information about pull requests submitted to this project).
 
 ## Pull requests
+
+> [!IMPORTANT]
+> Before embarking on any significant pull request (e.g., implementing features, refactoring code, etc.), *please ask first* submitting a feature request with your proposal (otherwise you risk spending a lot of time working on something that the project’s developers might not want to merge into the project...).
 
 In case you want to contribute improvements to the code in the repository, please follow these guidelines:
 
@@ -53,9 +56,6 @@ In case you want to contribute improvements to the code in the repository, pleas
    ```
 8. **submit your pull request** — see ["Creating a pull request from a fork"](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
    - the title of your pull request MUST follow the corresponding [convention](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/maintenance.md#pull-requests)
-
-> [!IMPORTANT]
-> Before embarking on any significant pull request (e.g., implementing features, refactoring code, etc.), *please ask first* submitting a feature request with your proposal (otherwise you risk spending a lot of time working on something that the project’s developers might not want to merge into the project...).
 
 ## License
 
