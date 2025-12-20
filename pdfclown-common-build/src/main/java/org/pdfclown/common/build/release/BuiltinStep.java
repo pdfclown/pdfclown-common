@@ -230,7 +230,7 @@ public enum BuiltinStep implements Step {
     if (manager.isRemotePushEnabled()) {
       try {
         executeElseThrow(unixCommand(
-            "git push && git push --tags"),
+            "git push -u origin HEAD && git push --tags"),
             manager.getBaseDir());
       } catch (Exception ex) {
         throw runtime("SCM push FAILED", ex);
