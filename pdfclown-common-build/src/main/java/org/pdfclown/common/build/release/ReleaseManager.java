@@ -245,6 +245,17 @@ public class ReleaseManager {
   }
 
   /**
+   * Prepares a Maven CI command.
+   *
+   * @param params
+   *          Maven parameters (phases, goals, options).
+   */
+  public String getMavenCommand(String params) {
+    return "%s %s %s"
+        .formatted(getMavenExec(), requireNotBlank(params, "params"), "--batch-mode --errors");
+  }
+
+  /**
    * Maven executable.
    *
    * @implNote Local Maven Wrapper ({@code ./mvnw}) has priority over global counterpart

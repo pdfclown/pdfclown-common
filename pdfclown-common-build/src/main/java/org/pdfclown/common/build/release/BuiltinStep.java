@@ -108,8 +108,8 @@ public enum BuiltinStep implements Step {
    * </p>
    */
   DEPENDENCY_SNAPSHOTS_CHECK($ -> executeElseThrow(unixCommand(
-      "%s enforcer:enforce -Denforcer.rules=requireReleaseDeps -Denforcer.failFast=true"
-          .formatted($.getMavenExec())),
+      $.getMavenCommand("enforcer:enforce -Denforcer.rules=requireReleaseDeps "
+          + "-Denforcer.failFast=true")),
       $.getBaseDir()), true),
   /**
    * Updates the changelog file with release version changes.
@@ -126,10 +126,10 @@ public enum BuiltinStep implements Step {
    * </p>
    */
   DEPLOY($ -> executeElseThrow(unixCommand(
-      "%s clean %s %s"
-          .formatted($.getMavenExec(), $.isRemotePushEnabled() ? "deploy" : "install", objTo(
+      $.getMavenCommand("clean %s %s"
+          .formatted($.isRemotePushEnabled() ? "deploy" : "install", objTo(
               $.isRemotePushEnabled() ? $.getDeploymentProfiles() : $.getInstallationProfiles(),
-              $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY))),
+              $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY)))),
       $.getBaseDir()), false),
   /**
    * Commits to the local SCM repository the changes done to prepare the release, and tags them.
