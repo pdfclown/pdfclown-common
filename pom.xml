@@ -23,19 +23,6 @@
   <name>${project.artifactId}</name>
   <description>Bill of Materials (complete set of pdfClown common components)</description>
   <url>${projectRootUrl}</url>
-  <inceptionYear>2025</inceptionYear>
-
-  <developers>
-    <developer>
-      <id>stechio</id>
-      <name>Stefano Chizzolini</name>
-      <url>https://stefanochizzolini.it</url>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-    </developer>
-  </developers>
 
   <modules>
     <module>pdfclown-common-base</module>
@@ -46,32 +33,15 @@
     <module>pdfclown-common-util</module>
   </modules>
 
-  <scm
-      child.scm.connection.inherit.append.path="false"
-      child.scm.developerConnection.inherit.append.path="false"
-      child.scm.url.inherit.append.path="false">
-    <connection>scm:git:https://${projectUrlBasePath}.git</connection>
-    <developerConnection>scm:git:https://${projectUrlBasePath}.git</developerConnection>
-    <tag>${scmTag}</tag>
-    <url>${projectScmUrl}</url>
-  </scm>
-
-  <issueManagement>
-    <system>GitHub Issues</system>
-    <url>${projectIssuesUrl}</url>
-  </issueManagement>
-
   <properties>
     <!--
       OVERRIDDEN PROPERTIES
     -->
-    <projectRootUrl>https://${projectUrlBasePath}</projectRootUrl>
     <rootdir>${project.basedir}</rootdir>
 
     <!--
       CUSTOM PROPERTIES
     -->
-    <projectUrlBasePath>github.com/pdfclown/pdfclown-common</projectUrlBasePath>
   </properties>
 
   <dependencyManagement>

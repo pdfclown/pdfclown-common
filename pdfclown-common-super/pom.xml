@@ -18,11 +18,11 @@
   <name>${project.artifactId}</name>
   <description>Super build configuration for pdfClown.org projects (DO NOT use directly: use
 pdfclown-common-base instead)</description>
-
   <!--
     NOTE: `url` is project-specific, MUST be explicitly declared in each inheriting project in order
     to override the default mechanism. -->
   <url>${projectRootUrl}</url>
+  <inceptionYear>2025</inceptionYear>
 
   <organization>
     <name>pdfClown.org</name>
@@ -36,15 +36,40 @@ pdfclown-common-base instead)</description>
     </license>
   </licenses>
 
+  <developers>
+    <developer>
+      <id>stechio</id>
+      <name>Stefano Chizzolini</name>
+      <url>https://stefanochizzolini.it</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <scm
+      child.scm.connection.inherit.append.path="false"
+      child.scm.developerConnection.inherit.append.path="false"
+      child.scm.url.inherit.append.path="false">
+    <connection>scm:git:https://${projectUrlBasePath}.git</connection>
+    <developerConnection>scm:git:https://${projectUrlBasePath}.git</developerConnection>
+    <tag>${scmTag}</tag>
+    <url>${projectScmUrl}</url>
+  </scm>
+
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>${projectIssuesUrl}</url>
+  </issueManagement>
+
   <properties>
     <!--
       ROOT-PROJECT-SPECIFIC PROPERTIES
 
       These properties MUST be specified in every root POM inheriting from this one.
     -->
-    <projectIssuesUrl>${projectRootUrl}/issues</projectIssuesUrl>
-    <projectRootUrl/>
-    <projectScmUrl>${projectRootUrl}/tree/${project.scm.tag}</projectScmUrl>
+    <projectUrlBasePath>github.com/pdfclown/pdfclown-common</projectUrlBasePath>
 
     <!--
       PROJECT-SPECIFIC PROPERTIES
@@ -95,6 +120,9 @@ pdfclown-common-base instead)</description>
       that's not a standard practice, so we have to stick to common heuristics). -->
     <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
     <checkstyleSkip>false</checkstyleSkip>
+    <projectIssuesUrl>${projectRootUrl}/issues</projectIssuesUrl>
+    <projectRootUrl>https://${projectUrlBasePath}</projectRootUrl>
+    <projectScmUrl>${projectRootUrl}/tree/${project.scm.tag}</projectScmUrl>
 
     <!--
       DEPENDENCY VERSIONS
@@ -1154,6 +1182,8 @@ new ReleaseManager(project.basedir.toPath(), releaseVersion)
               <flattenMode>ossrh</flattenMode>
               <pomElements>
                 <build>remove</build>
+                <inceptionYear>resolve</inceptionYear>
+                <organization>resolve</organization>
               </pomElements>
             </configuration>
           </plugin>
@@ -1192,6 +1222,8 @@ new ReleaseManager(project.basedir.toPath(), releaseVersion)
               <flattenMode>ossrh</flattenMode>
               <pomElements>
                 <build>remove</build>
+                <inceptionYear>resolve</inceptionYear>
+                <organization>resolve</organization>
               </pomElements>
             </configuration>
           </plugin>
@@ -1339,6 +1371,8 @@ new ReleaseManager(project.basedir.toPath(), releaseVersion)
                 <properties>remove</properties>
                 <dependencyManagement>extended_interpolate</dependencyManagement>
                 <build>remove</build>
+                <inceptionYear>resolve</inceptionYear>
+                <organization>resolve</organization>
               </pomElements>
             </configuration>
           </plugin>
