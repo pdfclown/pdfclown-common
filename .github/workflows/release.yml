@@ -1,6 +1,12 @@
 #
 # On demand, publishes the provided release version to Maven Central repository.
 #
+# Maintainers' post-activities:
+# 1. the RELEASE COMPONENTS are uploaded to Maven Central for validation: verify and publish them.
+# 2. the RELEASE BRANCH is automatically created to include release preparation commits: verify and
+#    merge it to `main`, and finally discard it.
+# 3. the GITHUB RELEASE is created as draft: verify and publish it.
+#
 name: Release
 
 on:
@@ -20,6 +26,9 @@ permissions:
 
 env:
   COMMITIZEN_VERSION: '4.10.0'
+  RELEASE_TAG: v${{ inputs.revision }}
+  RELEASE_VERSION: ${{ inputs.revision }}
+  REPO_TITLE: 'pdfClown Common'
 
 jobs:
   release:
@@ -87,5 +96,17 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
         run: |
           ./mvnw initialize --batch-mode --errors -N -Prelease \
-              -Drelease.version=${{ inputs.revision }} \
+              -Drelease.version=$RELEASE_VERSION \
               -Drelease.startpoint=${{ inputs.scm_startpoint }}
+
+      - name: Create GitHub Release (draft)
+        # NOTE: Generated notes are configured via `.github/release.yml`.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="$REPO_TITLE $RELEASE_VERSION" \
+              --generate-notes \
+              --fail-on-no-commits \
+              --draft
