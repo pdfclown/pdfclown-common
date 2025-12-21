@@ -1,10 +1,6 @@
 #
 # On a daily basis, publishes SNAPSHOT artifacts to Maven Central Portal Snapshots repository.
 #
-# Preconditions:
-# - project version is SNAPSHOT
-# - latest built commit is different from current one
-#
 name: Nightly Build
 
 on:
@@ -12,66 +8,9 @@ on:
     - cron: '0 4 * * *'  # Once a day, at 4:00 UTC
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
-  initialize:
-    name: Prepare workflow
-    runs-on: ubuntu-latest
-    outputs:
-      last_sha: ${{ steps.retrieve_last_sha.outputs.result }}
-    steps:
-      - name: Retrieve last built commit
-        id: retrieve_last_sha
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          readonly last_sha=$(gh api repos/${{ github.repository }}/actions/workflows/build-nightly.yml/runs --method GET -F status=completed -F per_page=1 --jq '.workflow_runs[0].head_sha')
-          echo "Latest built commit: $last_sha" >&2
-          echo "result=$last_sha" >> $GITHUB_OUTPUT
-
-  publish:
-    name: Publish snapshot
-    needs: initialize
-    if: github.sha != needs.initialize.outputs.last_sha
-    runs-on: ubuntu-latest
-    env:
-      JAVA_DISTRO: 'temurin'
-      JAVA_VERSION: '17'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Set up build JDK
-        uses: actions/setup-java@v5
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRO }}
-          cache: maven
-
-      - name: Set up tool JDK
-        uses: actions/setup-java@v5
-        with:
-          java-version-file: '.tool-versions'
-          distribution: ${{ env.JAVA_DISTRO }}
-          server-id: central
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
-
-      - name: Publish with Maven
-        env:
-          MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSPHRASE }}
-        run: |
-          readonly project_version=$(./mvnw help:evaluate -q -DforceStdout -Dexpression=project.version)
-          if [[ $project_version = *-SNAPSHOT ]]; then
-            echo "Project version: $project_version" >&2
-            ./mvnw deploy --batch-mode --errors -Ppublish
-          else
-            echo "NOP: Project version $project_version NOT APPLICABLE for nightly build (SNAPSHOT required)" >&2
-          fi
+  build:
+    uses: pdfclown/.github/.github/workflows/build-nightly.yml@main
+    permissions:
+      contents: read
+    secrets: inherit

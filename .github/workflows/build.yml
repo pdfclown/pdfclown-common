@@ -1,6 +1,6 @@
 #
-# On commit push or pull request events, verifies that the project builds successfully on JDK 17,
-# 21, 25. On success, its Dependency Snapshot is submitted.
+# On commit push or pull request events, verifies the project builds successfully on JDK 17, 21, 25.
+# If so, its Dependency Snapshot is submitted.
 #
 name: Build
 
@@ -12,54 +12,10 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  security-events: write
-
 jobs:
   build:
-    name: Java ${{ matrix.java }} build
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '17', '21', '25' ]
-      fail-fast: false
-    env:
-      JAVA_DISTRO: 'temurin'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Set up build JDK
-        uses: actions/setup-java@v5
-        with:
-          java-version: ${{ matrix.java }}
-          distribution: ${{ env.JAVA_DISTRO }}
-          cache: maven
-
-      - name: Set up tool JDK
-        uses: actions/setup-java@v5
-        with:
-          java-version-file: '.tool-versions'
-          distribution: ${{ env.JAVA_DISTRO }}
-
-      - name: Build with Maven
-        run: ./mvnw verify --batch-mode --errors -Djava.version=${{ matrix.java }}
-
-  submit-dependency-snapshot:
-    name: Submit Dependency Snapshot
-    runs-on: ubuntu-latest
-    needs: build
-    # Run only on pushes to main after the entire matrix build succeeded.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.result == 'success'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Submit Dependency Snapshot
-        # NOTE: Automatic dependency submission (see
-        #       <https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/configuring-automatic-dependency-submission-for-your-repository>)
-        #       didn't work, so manual submission (aka user submission) was integrated here, running
-        #       on push events affecting the main branch only.
-        uses: advanced-security/maven-dependency-submission-action@v5
+    uses: pdfclown/.github/.github/workflows/build.yml@main
+    permissions:
+      contents: write
+      security-events: write
+    secrets: inherit
