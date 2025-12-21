@@ -119,19 +119,6 @@ public enum BuiltinStep implements Step {
           .formatted($.getReleaseTag())),
       $.getBaseDir()), false),
   /**
-   * Publishes the project artifacts to the central repository.
-   * <p>
-   * If {@link ReleaseManager#isRemotePushEnabled() ReleaseManager.remotePushEnabled} is false, the
-   * artifacts are installed locally instead.
-   * </p>
-   */
-  DEPLOY($ -> executeElseThrow(unixCommand(
-      $.getMavenCommand("clean %s %s"
-          .formatted($.isRemotePushEnabled() ? "deploy" : "install", objTo(
-              $.isRemotePushEnabled() ? $.getDeploymentProfiles() : $.getInstallationProfiles(),
-              $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY)))),
-      $.getBaseDir()), false),
-  /**
    * Commits to the local SCM repository the changes done to prepare the release, and tags them.
    * <p>
    * Mimics both <a href=
@@ -171,7 +158,20 @@ public enum BuiltinStep implements Step {
   /**
    * Pushes commits and tags to remote SCM repository.
    */
-  SCM_PUSH(BuiltinStep::executeScmPush, false);
+  SCM_PUSH(BuiltinStep::executeScmPush, false),
+  /**
+   * Publishes the project artifacts to the central repository.
+   * <p>
+   * If {@link ReleaseManager#isRemotePushEnabled() ReleaseManager.remotePushEnabled} is false, the
+   * artifacts are installed locally instead.
+   * </p>
+   */
+  DEPLOY($ -> executeElseThrow(unixCommand(
+      $.getMavenCommand("clean %s %s"
+          .formatted($.isRemotePushEnabled() ? "deploy" : "install", objTo(
+              $.isRemotePushEnabled() ? $.getDeploymentProfiles() : $.getInstallationProfiles(),
+              $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY)))),
+      $.getBaseDir()), false);
 
   private static final String MAVEN_CONFIG_PARAM__REVISION = "revision";
   private static final String MAVEN_CONFIG_PARAM__SCM_TAG = "scmTag";
