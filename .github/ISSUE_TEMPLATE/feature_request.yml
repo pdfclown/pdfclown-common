@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest new or updated features to include in pdfclown-common.
+description: Suggest new or updated features to include in pdfClown Common.
 labels: ["Type: Enhancement", "Status: Triage"]
 assignees:
   - stechio
@@ -18,7 +18,7 @@ body:
   - type: dropdown
     id: module
     attributes:
-      label: pdfclown-common module(s) involved
+      label: pdfClown Common module(s) involved
       multiple: true
       options:
         - pdfclown-common-build
@@ -37,6 +37,6 @@ body:
     id: rationale
     attributes:
       label: Rationale
-      description: Explain the benefits the new feature would bring to the use of pdfclown-common.
+      description: Explain the benefits the new feature would bring to the use of pdfClown Common.
     validations:
       required: true

@@ -1,5 +1,5 @@
 name: Bug report
-description: Report an issue you encountered using pdfclown-common.
+description: Report an issue you encountered using pdfClown Common.
 labels: ["Type: Bug", "Status: Triage"]
 assignees:
   - stechio
@@ -18,7 +18,7 @@ body:
   - type: dropdown
     id: module
     attributes:
-      label: pdfclown-common module(s) affected
+      label: pdfClown Common module(s) affected
       multiple: true
       options:
         - pdfclown-common-build
@@ -29,7 +29,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: pdfclown-common version affected
+      label: pdfClown Common version affected
       placeholder: "e.g., 1.3.0"
     validations:
       required: true
@@ -55,6 +55,6 @@ body:
     id: expected-behavior
     attributes:
       label: Expected behavior
-      description: Describe how pdfclown-common should behave.
+      description: Describe how pdfClown Common should behave.
     validations:
       required: true
