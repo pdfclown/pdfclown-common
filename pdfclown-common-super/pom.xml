@@ -161,6 +161,7 @@ pdfclown-common-base instead)</description>
     <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
     <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
     <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
+    <jada.version>0.1.0</jada.version>
     <java.version>17</java.version>
     <maven.version>3.9.11</maven.version>
     <maven-bundle-plugin.version>6.0.0</maven-bundle-plugin.version>
@@ -299,6 +300,22 @@ log.info("buildTimestamp: " + buildTimestamp
     + " (" + (${git.dirty} ? "DIRTY" : "REPRODUCIBLE") + ")")
 ]]></script>
                 </scripts>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.pdfclown</groupId>
+          <artifactId>jada-maven-plugin</artifactId>
+          <version>${jada.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>processSource</goal>
+              </goals>
+              <configuration>
+                <processors>org.pdfclown.jada.ext.proc.DocReuseTagletProcessor</processors>
               </configuration>
             </execution>
           </executions>
@@ -625,16 +642,100 @@ log.info("buildTimestamp: " + buildTimestamp
             -->
             <sourcepath>${project.build.sourceDirectory}</sourcepath>
 
+            <!--
+              DOCLET
+            -->
+            <doclet>org.pdfclown.jada.core.Jada</doclet>
+            <docletArtifacts>
+              <!-- Bibliographic extension -->
+              <docletArtifact>
+                <groupId>org.pdfclown</groupId>
+                <artifactId>jada-biblio</artifactId>
+                <version>${jada.version}</version>
+              </docletArtifact>
+              <!-- UML diagram extension -->
+              <docletArtifact>
+                <groupId>org.pdfclown</groupId>
+                <artifactId>jada-uml</artifactId>
+                <version>${jada.version}</version>
+              </docletArtifact>
+            </docletArtifacts>
+            <additionalJOptions>
+              <additionalJOption>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</additionalJOption>
+              <additionalJOption>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</additionalJOption>
+              <additionalJOption>-J--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED</additionalJOption>
+            </additionalJOptions>
             <additionalOptions>
-              <additionalOption>--allow-script-in-comments</additionalOption>
-              <additionalOption>-tag "implSpec:a:Implementation Requirements:"</additionalOption>
-              <additionalOption>-tag "implNote:a:Implementation Note:"</additionalOption>
-              <additionalOption>-tag "apiNote:a:API Note:"</additionalOption>
+              <additionalOption>--jada-dir
+                "${buildResourcesRootPath}/org/pdfclown/common/build/conf/javadoc/jada"</additionalOption>
+              <additionalOption>--jada-dir "${rootdir}/src/main/javadoc/jada"</additionalOption>
+              <additionalOption>--jada-exts JadaBiblio,JadaUML</additionalOption>
+              <additionalOption>--biblio-used-only</additionalOption>
+              <additionalOption>--uml-package-deps-exclude
+                +*internal*,org.apache.logging.log4j.core.*</additionalOption>
+              <additionalOption>--uml-package-deps-max-count 0</additionalOption>
               <!--
                 NOTE: maven-javadoc-plugin doesn't accept absolute paths in `addStylesheets`
                 property, so we have to feed it directly. -->
               <additionalOption>--add-stylesheet "${rootdir}/src/main/javadoc/stylesheet-ext.css"</additionalOption>
+              <additionalOption>--allow-script-in-comments</additionalOption>
+              <additionalOption>-tag "implSpec:a:Implementation Requirements:"</additionalOption>
+              <additionalOption>-tag "implNote:a:Implementation Note:"</additionalOption>
+              <additionalOption>-tag "apiNote:a:API Note:"</additionalOption>
             </additionalOptions>
+
+            <!--
+              TAGLETS
+
+              NOTE: Unfortunately, current maven-javadoc-plugin implementation (3.10.1)
+              doesn't support taglet auto-detection when taglet hierarchies span multiple
+              artifacts (see <https://issues.apache.org/jira/browse/MJAVADOC-745>), so we are
+              forced to explicitly list each and every taglet class.
+              TODO: When this limitation is fixed, replace explicit definitions with this:
+                <tagletArtifacts>
+                  <tagletArtifact>
+                    <groupId>org.pdfclown</groupId>
+                    <artifactId>jada-biblio</artifactId>
+                    <version>${jada.version}</version>
+                  </tagletArtifact>
+                </tagletArtifacts>
+            -->
+            <taglets>
+              <!-- Jada doclet -->
+              <taglet>
+                <tagletClass>org.pdfclown.jada.core.taglet.IncludeTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.pdfclown.jada.core.taglet.RenderTaglet</tagletClass>
+              </taglet>
+              <!-- Jada supplemental functionalities -->
+              <taglet>
+                <tagletClass>org.pdfclown.jada.ext.taglet.DocTaglet</tagletClass>
+                <tagletArtifact>
+                  <groupId>org.pdfclown</groupId>
+                  <artifactId>jada-ext</artifactId>
+                  <version>${jada.version}</version>
+                </tagletArtifact>
+              </taglet>
+              <taglet>
+                <tagletClass>org.pdfclown.jada.ext.taglet.ReuseDocTaglet</tagletClass>
+              </taglet>
+              <!-- Bibliographic extension -->
+              <taglet>
+                <tagletClass>org.pdfclown.jada.biblio.taglet.DocTaglet</tagletClass>
+                <tagletArtifact>
+                  <groupId>org.pdfclown</groupId>
+                  <artifactId>jada-biblio</artifactId>
+                  <version>${jada.version}</version>
+                </tagletArtifact>
+              </taglet>
+              <taglet>
+                <tagletClass>org.pdfclown.jada.biblio.taglet.RefTaglet</tagletClass>
+              </taglet>
+              <taglet>
+                <tagletClass>org.pdfclown.jada.biblio.taglet.SpecTaglet</tagletClass>
+              </taglet>
+            </taglets>
 
             <!--
               CONTENTS (layout and resources)
@@ -792,11 +893,7 @@ log.info("buildTimestamp: " + buildTimestamp
                 like heading tags (<h*>); in particular, after java 11, <h3> is
                 forbidden <https://bugs.openjdk.org/browse/JDK-8223552>
             -->
-            <!--
-              TODO: enable after jada configured
             <doclint>all,-missing,-html,-accessibility</doclint>
-            -->
-            <doclint>none</doclint>
             <quiet>true</quiet>
           </configuration>
           <executions>
@@ -897,6 +994,10 @@ log.info("buildTimestamp: " + buildTimestamp
       </plugin>
 
       <!-- Code formatting -->
+      <plugin>
+        <groupId>org.pdfclown</groupId>
+        <artifactId>jada-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
