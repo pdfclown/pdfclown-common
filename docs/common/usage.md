@@ -1,6 +1,6 @@
-[pdfClown.org :: Documentation](README.md) >
+pdfClown.org > [Documentation](README.md) >
 
-# pdfClown.org :: Usage
+# Usage
 
 This document describes how to use pdfClown.org projects in your own projects.
 

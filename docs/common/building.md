@@ -1,6 +1,6 @@
-[pdfClown.org :: Documentation](README.md) >
+pdfClown.org > [Documentation](README.md) >
 
-# pdfClown.org :: Building
+# Building
 
 This document describes how to set up your development environment to build and test pdfClown.org projects.
 

@@ -1,6 +1,6 @@
-[pdfClown.org :: Documentation](README.md) >
+pdfClown.org > [Documentation](README.md) >
 
-# pdfClown.org :: Cheatsheets
+# Cheatsheets
 
 This document provides a concise reference to useful commands for pdfClown.org projects.
 

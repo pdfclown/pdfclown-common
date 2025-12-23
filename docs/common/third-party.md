@@ -1,6 +1,6 @@
-[pdfClown.org :: Documentation](README.md) > [Project Conventions](conventions.md) >
+pdfClown.org > [Documentation](README.md) > [Project Conventions](conventions.md) >
 
-# pdfClown.org :: Third-Party Code Reuse
+# Third-Party Code Reuse
 
 <!-- REUSE-IgnoreStart -->
 
