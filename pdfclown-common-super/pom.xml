@@ -1400,7 +1400,7 @@ new ReleaseManager(project.basedir.toPath(), releaseVersion)
       <!--
         INTERNAL POM PROFILE
 
-        Internal POMs are NOT published (as a consequence, their processed contents are not packed
+        Internal POMs are NOT published (as a consequence, their processed contents are not packaged
         either). Within a reactor, they are ancestors of other internal POMs or jar artifacts only;
         since jar artifacts' POMs are flattened (see 'jar' profile), they are redundant outside the
         project.
@@ -1417,6 +1417,26 @@ new ReleaseManager(project.basedir.toPath(), releaseVersion)
       </properties>
       <build>
         <plugins>
+          <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sources-attach</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>javadoc-jar-generate</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+
           <plugin>
             <artifactId>maven-jar-plugin</artifactId>
             <executions>
