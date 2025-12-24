@@ -1,3 +1,9 @@
+## v0.2.2 (2025-12-24)
+
+### Fix
+
+- improve `internal-pom` profile
+
 ## v0.2.1 (2025-12-22)
 
 ### Fix
