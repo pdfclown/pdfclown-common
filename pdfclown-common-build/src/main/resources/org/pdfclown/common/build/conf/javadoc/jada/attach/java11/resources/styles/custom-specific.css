@@ -318,22 +318,6 @@ li.blockList > pre {
   font-size: 15px;
 }
 
-.altColor,
-.altColor td,
-.altColor th {
-  background-color: inherit;
-  color: inherit;
-  border-top: 1px #b0b0b0 solid;
-}
-
-.rowColor,
-.rowColor td,
-.rowColor th {
-  background-color: inherit;
-  color: inherit;
-  border-top: 1px #b0b0b0 solid;
-}
-
 .overviewSummary,
 .memberSummary,
 .typeSummary,

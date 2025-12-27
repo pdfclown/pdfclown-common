@@ -152,14 +152,6 @@ div.table-tabs > button {
   background-color: inherit;
 }
 
-.even-row-color,
-.even-row-color .table-header,
-.odd-row-color,
-.odd-row-color .table-header {
-  background-color: inherit;
-  border-top: 1px #b0b0b0 solid;
-}
-
 /*
  * Contents
  */
