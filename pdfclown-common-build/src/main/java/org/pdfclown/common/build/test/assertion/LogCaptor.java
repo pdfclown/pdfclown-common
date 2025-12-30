@@ -13,13 +13,15 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.Exceptions.unsupported;
+import static org.pdfclown.common.util.Exceptions.missing;
 import static org.pdfclown.common.util.Objects.OBJ_ARRAY__EMPTY;
 import static org.pdfclown.common.util.Objects.fqn;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
@@ -27,6 +29,8 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.pdfclown.common.build.spi.LogCaptorProvider;
+import org.pdfclown.common.util.spi.ServiceProvider;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.event.KeyValuePair;
@@ -110,6 +114,16 @@ public abstract class LogCaptor
     }
   }
 
+  private static final Function<String, LogCaptor> logCaptorFactory;
+  static {
+    String implName = fqn(LoggerFactory.getILoggerFactory()).toLowerCase();
+    logCaptorFactory = ServiceProvider.discover(LogCaptorProvider.class).stream()
+        .map($ -> $.getFactory(implName))
+        .filter(Objects::nonNull)
+        .findFirst().orElseThrow(() -> missing(implName,
+            "{} for the given logging implementation NOT FOUND", LogCaptorProvider.class));
+  }
+
   /**
    * New instance capturing root logger events.
    */
@@ -128,18 +142,7 @@ public abstract class LogCaptor
    * New instance capturing events of a logger.
    */
   public static LogCaptor of(String loggerName) {
-    String implName = fqn(LoggerFactory.getILoggerFactory()).toLowerCase();
-    // Log4J?
-    if (implName.contains("log4j"))
-      return new Log4jCaptor(loggerName);
-    /*
-     * TODO: after the initial release, when `org.pdfclown.common.util.spi.ServiceProvider` is
-     * available, define a service (in `org.pdfclown.common.build.spi`) to discover other logging
-     * adapters.
-     */
-    // Unknown.
-    else
-      throw unsupported("Logging implementation NOT supported: {}", implName);
+    return logCaptorFactory.apply(loggerName);
   }
 
   private @Nullable Level level;
