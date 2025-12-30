@@ -14,12 +14,12 @@ package org.pdfclown.common.build.test;
 
 import static java.nio.file.Files.exists;
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Objects.asTopLevelType;
-import static org.pdfclown.common.build.internal.util_.Objects.sqn;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__JAVA;
-import static org.pdfclown.common.build.internal.util_.io.Files.resetDirectory;
+import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Objects.asTopLevelType;
+import static org.pdfclown.common.util.Objects.sqn;
+import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
+import static org.pdfclown.common.util.io.Files.resetDirectory;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
@@ -27,14 +27,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.pdfclown.common.build.internal.util_.annot.InitNonNull;
-import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
 import org.pdfclown.common.build.system.MavenPathResolver;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.pdfclown.common.build.test.assertion.Test;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
 import org.pdfclown.common.build.util.io.ResourceNames;
+import org.pdfclown.common.util.annot.InitNonNull;
+import org.pdfclown.common.util.annot.LazyNonNull;
 
 /**
  * Automated testing unit.

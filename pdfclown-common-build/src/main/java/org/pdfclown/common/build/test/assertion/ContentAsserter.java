@@ -18,14 +18,14 @@ import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
-import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__ZIP;
-import static org.pdfclown.common.build.internal.util_.io.Files.baseName;
-import static org.pdfclown.common.build.internal.util_.io.Files.cognateFile;
-import static org.pdfclown.common.build.internal.util_.io.Files.extension;
-import static org.pdfclown.common.build.internal.util_.io.Files.isExtension;
+import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.util.Objects.sqnd;
+import static org.pdfclown.common.util.Objects.textLiteral;
+import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__ZIP;
+import static org.pdfclown.common.util.io.Files.baseName;
+import static org.pdfclown.common.util.io.Files.cognateFile;
+import static org.pdfclown.common.util.io.Files.extension;
+import static org.pdfclown.common.util.io.Files.isExtension;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -40,8 +40,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.Exceptions;
 import org.pdfclown.common.build.util.io.ResourceNames;
+import org.pdfclown.common.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,9 +218,8 @@ public abstract class ContentAsserter<T> extends Asserter {
    * Writes string content to file.
    *
    * @param file
-   *          Target file
-   *          ({@value org.pdfclown.common.build.internal.util_.io.Files#FILE_EXTENSION__ZIP}
-   *          extension causes data to compress).
+   *          Target file ({@value org.pdfclown.common.util.io.Files#FILE_EXTENSION__ZIP} extension
+   *          causes data to compress).
    */
   protected void doWriteStringContent(Path file, String content) throws IOException {
     String filename = file.getFileName().toString();

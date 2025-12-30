@@ -14,23 +14,23 @@ package org.pdfclown.common.build.release;
 
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
-import static org.pdfclown.common.build.internal.util_.Chars.DOLLAR;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
-import static org.pdfclown.common.build.internal.util_.Exceptions.missing;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
-import static org.pdfclown.common.build.internal.util_.Objects.objTo;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.Strings.S;
-import static org.pdfclown.common.build.internal.util_.system.Processes.executeElseThrow;
-import static org.pdfclown.common.build.internal.util_.system.Processes.unixCommand;
 import static org.pdfclown.common.build.release.ReleaseManager.SCM_REF__HEAD;
+import static org.pdfclown.common.util.Chars.DOLLAR;
+import static org.pdfclown.common.util.Conditions.requireNotBlank;
+import static org.pdfclown.common.util.Exceptions.missing;
+import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
+import static org.pdfclown.common.util.Objects.objTo;
+import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.system.Processes.executeElseThrow;
+import static org.pdfclown.common.util.system.Processes.unixCommand;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.function.FailableConsumer;
-import org.pdfclown.common.build.internal.util_.Ref;
+import org.pdfclown.common.util.Ref;
 
 /**
  * Built-in release step.

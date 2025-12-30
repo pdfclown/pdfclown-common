@@ -13,10 +13,10 @@
 package org.pdfclown.common.build.system;
 
 import static java.nio.file.Files.isRegularFile;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireDirectory;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.io.Files.normal;
+import static org.pdfclown.common.util.Conditions.requireDirectory;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.io.Files.normal;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;

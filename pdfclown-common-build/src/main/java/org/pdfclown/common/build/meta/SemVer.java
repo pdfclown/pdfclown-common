@@ -17,15 +17,15 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.pdfclown.common.build.internal.util_.Chars.DOT;
-import static org.pdfclown.common.build.internal.util_.Chars.HYPHEN;
-import static org.pdfclown.common.build.internal.util_.Chars.PLUS;
-import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.Strings.S;
-import static org.pdfclown.common.build.internal.util_.Strings.isUInteger;
-import static org.pdfclown.common.build.internal.util_.regex.Patterns.indexOfMatchFailure;
+import static org.pdfclown.common.util.Chars.DOT;
+import static org.pdfclown.common.util.Chars.HYPHEN;
+import static org.pdfclown.common.util.Chars.PLUS;
+import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.Strings.isUInteger;
+import static org.pdfclown.common.util.regex.Patterns.indexOfMatchFailure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +33,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.ArgumentFormatException;
-import org.pdfclown.common.build.internal.util_.annot.Immutable;
-import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
+import org.pdfclown.common.util.ArgumentFormatException;
+import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.annot.LazyNonNull;
 
 /**
  * <a href="https://semver.org/spec/v2.0.0.html">Semantic Version (2.0)</a>.

@@ -39,28 +39,19 @@
       VERSIONS
     -->
     <maven-invoker.version>3.3.0</maven-invoker.version>
+    <!--
+      NOTE: Because of cyclic dependency between pdfclown-common-build and pdfclown-common-util, the
+      latter cannot be referenced by the former within the project build; consequently, the latest
+      already published version MUST be used instead. -->
+    <pdfclown-common-util.version>0.2.2</pdfclown-common-util.version>
   </properties>
 
   <dependencies>
-    <!--
-      TODO: [shading] After the initial release:
-            1. activate the dependency on pdfclown-common-util (until then it is illegal because of
-               cyclic dependency between pdfclown-common-build and pdfclown-common-util)
-            2. activate the corresponding maven-shade-plugin configuration (see [shading] here below)
-            3. delete ALL the source code packages under `org.pdfclown.common.build.internal.util_`
-               (they are just temporary copies of pdfclown-common-util classes) and rename the
-               resulting broken imports to the package (`org.pdfclown.common.util`) of the new
-               dependency
-            4. delete the dependencies marked with [shading] tag here below
-            5. define SPI for logging capture adapters (see `LogCaptor`)
-    -->
-    <!--
     <dependency>
       <groupId>org.pdfclown</groupId>
       <artifactId>pdfclown-common-util</artifactId>
-      <version>RELEASED VERSION HERE</version>
+      <version>${pdfclown-common-util.version}</version>
     </dependency>
-    -->
 
     <!-- Language -->
     <dependency>
@@ -90,20 +81,6 @@
     <dependency>
       <groupId>com.github.javaparser</groupId>
       <artifactId>javaparser-core</artifactId>
-    </dependency>
-    <dependency>
-      <!--
-        TODO: see [shading] tag here above.
-      -->
-      <groupId>io.github.classgraph</groupId>
-      <artifactId>classgraph</artifactId>
-    </dependency>
-    <dependency>
-      <!--
-        TODO: see [shading] tag here above.
-      -->
-      <groupId>net.bytebuddy</groupId>
-      <artifactId>byte-buddy</artifactId>
     </dependency>
 
     <!-- Build -->
@@ -170,6 +147,21 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <configuration>
+            <additionalOptions
+                combine.children="append">
+              <option>--jada-dir "${basedir}/src/main/javadoc/jada"</option>
+              <option>--jada-exts +ScriptExtension</option>
+            </additionalOptions>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -188,7 +180,7 @@
         <executions>
           <execution>
             <!--
-              [#EclipseConfigNorm] Normalizes Eclipse profiles.
+              Normalizes Eclipse profiles.
 
               [Manual] Execute every time Eclipse profiles are updated:
                 ./mvnw xml:transform@normalize-eclipse-styles
@@ -211,10 +203,6 @@
         </executions>
       </plugin>
 
-      <!--
-        TODO: see [shading] tag here above.
-      -->
-      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -229,13 +217,50 @@
               <artifact>*:*</artifact>
               <excludes>
                 <exclude>META-INF/MANIFEST.MF</exclude>
+                <exclude>META-INF/LICENSE.txt</exclude>
+                <exclude>META-INF/NOTICE.txt</exclude>
+                <exclude>META-INF/maven/org.pdfclown/pdfclown-common-util/*</exclude>
+                <exclude>**/package-info.class</exclude>
               </excludes>
             </filter>
           </filters>
           <relocations>
             <relocation>
+              <!--
+                INTERNAL
+
+                All used pdfclown-common-util types except those exposed by the API of
+                pdfclown-common-build (see PUBLIC API here below).
+              -->
               <pattern>org.pdfclown.common.util</pattern>
-              <shadedPattern>org.pdfclown.common.build.internal.util_</shadedPattern>
+              <shadedPattern>org.pdfclown.common.build.internal._util</shadedPattern>
+              <excludes>
+                <exclude>org.pdfclown.common.util.ArgumentFormatException*</exclude>
+                <exclude>org.pdfclown.common.util.Objects*</exclude>
+                <exclude>org.pdfclown.common.util.RelatedMap*</exclude>
+                <exclude>org.pdfclown.common.util.annot.*</exclude>
+                <exclude>org.pdfclown.common.util.io.IndentPrintWriter*</exclude>
+                <exclude>org.pdfclown.common.util.xml.Xmls*</exclude>
+              </excludes>
+            </relocation>
+            <relocation>
+              <!--
+                PUBLIC API
+
+                pdfclown-common-util types exposed by the API of pdfclown-common-build (they
+                correspond to the types visible in Javadoc; see [shading] in ScriptExtension.groovy
+                for their mapping).
+              -->
+              <pattern>org.pdfclown.common.util</pattern>
+              <shadedPattern>org.pdfclown.common.build.util</shadedPattern>
+              <includes>
+                <include>org.pdfclown.common.util.ArgumentFormatException*</include>
+                <include>org.pdfclown.common.util.Objects*</include>
+                <include>org.pdfclown.common.util.RelatedMap*</include>
+                <include>org.pdfclown.common.util.annot.*</include>
+                <include>org.pdfclown.common.util.io.IndentPrintWriter*</include>
+                <include>org.pdfclown.common.util.xml.Xmls*</include>
+              </includes>
             </relocation>
           </relocations>
           <minimizeJar>true</minimizeJar>
@@ -250,7 +275,6 @@
           </execution>
         </executions>
       </plugin>
-      -->
     </plugins>
   </build>
 </project>

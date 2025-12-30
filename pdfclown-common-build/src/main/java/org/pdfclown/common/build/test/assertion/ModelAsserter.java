@@ -12,10 +12,10 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static org.pdfclown.common.build.internal.util_.Conditions.requireType;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArgOpt;
-import static org.pdfclown.common.build.internal.util_.Objects.fqn;
-import static org.pdfclown.common.build.internal.util_.Objects.typeOf;
+import static org.pdfclown.common.util.Conditions.requireType;
+import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
+import static org.pdfclown.common.util.Objects.fqn;
+import static org.pdfclown.common.util.Objects.typeOf;
 
 import java.io.IOException;
 import java.nio.file.Path;

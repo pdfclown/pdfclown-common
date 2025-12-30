@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.build.system;
 
-import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
+import static org.pdfclown.common.util.Exceptions.unexpected;
 
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;

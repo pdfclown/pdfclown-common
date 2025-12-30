@@ -13,7 +13,7 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -76,7 +76,7 @@ public final class Executions {
   public static synchronized String interceptSystemErr(Runnable task) {
     var errRef = new MutableObject<String>();
     interceptSystemStreams(task, null, errRef, false);
-    return errRef.getValue();
+    return errRef.get();
   }
 
   /**
@@ -98,7 +98,7 @@ public final class Executions {
   public static synchronized String interceptSystemOut(Runnable task) {
     var outRef = new MutableObject<String>();
     interceptSystemStreams(task, outRef, null, false);
-    return outRef.getValue();
+    return outRef.get();
   }
 
   /**
@@ -121,7 +121,7 @@ public final class Executions {
   public static synchronized String interceptSystemStreams(Runnable task) {
     var outRef = new MutableObject<String>();
     interceptSystemStreams(task, outRef, null, true);
-    return outRef.getValue();
+    return outRef.get();
   }
 
   // SPDX-SnippetBegin
@@ -192,7 +192,7 @@ public final class Executions {
           if (errRef != null) {
             assert errStream != null;
             //noinspection ConstantValue
-            errRef.setValue(merged ? outRef.getValue() : errStream.toString(charset));
+            errRef.setValue(merged ? outRef.get() : errStream.toString(charset));
           }
         } finally {
           System.setErr(oldErr);

@@ -12,13 +12,13 @@
  */
 package org.pdfclown.common.build.util.io;
 
-import static org.pdfclown.common.build.internal.util_.Chars.BACKSLASH;
-import static org.pdfclown.common.build.internal.util_.Chars.DOT;
-import static org.pdfclown.common.build.internal.util_.Chars.SLASH;
-import static org.pdfclown.common.build.internal.util_.Objects.asType;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.Strings.S;
-import static org.pdfclown.common.build.internal.util_.io.Files.PATH_SUPER;
+import static org.pdfclown.common.util.Chars.BACKSLASH;
+import static org.pdfclown.common.util.Chars.DOT;
+import static org.pdfclown.common.util.Chars.SLASH;
+import static org.pdfclown.common.util.Objects.asType;
+import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;

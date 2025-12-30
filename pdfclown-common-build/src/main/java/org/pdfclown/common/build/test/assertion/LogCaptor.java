@@ -13,10 +13,10 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.build.internal.util_.Exceptions.unsupported;
-import static org.pdfclown.common.build.internal.util_.Objects.OBJ_ARRAY__EMPTY;
-import static org.pdfclown.common.build.internal.util_.Objects.fqn;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.util.Exceptions.unsupported;
+import static org.pdfclown.common.util.Objects.OBJ_ARRAY__EMPTY;
+import static org.pdfclown.common.util.Objects.fqn;
+import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
 import java.util.Optional;

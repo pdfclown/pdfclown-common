@@ -13,16 +13,16 @@
 package org.pdfclown.common.build.test.model;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.build.internal.util_.Chars.COLON;
-import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
-import static org.pdfclown.common.build.internal.util_.Objects.fqn;
-import static org.pdfclown.common.build.internal.util_.Objects.sqn;
-import static org.pdfclown.common.build.internal.util_.Objects.superTypes;
-import static org.pdfclown.common.build.internal.util_.Objects.toStringWithProperties;
-import static org.pdfclown.common.build.internal.util_.Strings.S;
+import static org.pdfclown.common.util.Chars.COLON;
+import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Exceptions.wrongState;
+import static org.pdfclown.common.util.Objects.fqn;
+import static org.pdfclown.common.util.Objects.sqn;
+import static org.pdfclown.common.util.Objects.superTypes;
+import static org.pdfclown.common.util.Objects.toStringWithProperties;
+import static org.pdfclown.common.util.Strings.S;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -40,10 +40,10 @@ import java.util.function.Function;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
-import org.pdfclown.common.build.internal.util_.Objects.HierarchicalTypeComparator;
-import org.pdfclown.common.build.internal.util_.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
-import org.pdfclown.common.build.internal.util_.RelatedMap;
-import org.pdfclown.common.build.internal.util_.annot.InitNonNull;
+import org.pdfclown.common.util.Objects.HierarchicalTypeComparator;
+import org.pdfclown.common.util.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
+import org.pdfclown.common.util.RelatedMap;
+import org.pdfclown.common.util.annot.InitNonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

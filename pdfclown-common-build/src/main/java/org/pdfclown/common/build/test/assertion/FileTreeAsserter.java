@@ -13,19 +13,19 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.pdfclown.common.build.internal.util_.Chars.LF;
-import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
-import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
-import static org.pdfclown.common.build.internal.util_.io.Files.diff;
+import static org.pdfclown.common.util.Chars.LF;
+import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Objects.sqnd;
+import static org.pdfclown.common.util.Objects.textLiteral;
+import static org.pdfclown.common.util.io.Files.diff;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import org.pdfclown.common.build.internal.util_.io.Files.Diff;
-import org.pdfclown.common.build.internal.util_.io.Files.Diff.FileStatus;
 import org.pdfclown.common.build.util.io.ResourceNames;
+import org.pdfclown.common.util.io.Files.Diff;
+import org.pdfclown.common.util.io.Files.Diff.FileStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

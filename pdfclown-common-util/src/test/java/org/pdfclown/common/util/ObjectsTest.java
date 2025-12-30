@@ -50,14 +50,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.internal.util_.xml.Xmls;
-import org.pdfclown.common.build.internal.util_.xml.Xmls.DocumentFactoryProfile;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.pdfclown.common.util.system.Clis;
+import org.pdfclown.common.util.xml.Xmls;
+import org.pdfclown.common.util.xml.Xmls.DocumentFactoryProfile;
 
 /**
  * @author Stefano Chizzolini
@@ -727,7 +727,7 @@ class ObjectsTest extends BaseTest {
                 "class java.net.URI cannot be cast to class java.lang.String (java.net.URI and java.lang.String are in module java.base of loader 'bootstrap')"),
             // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; properties[1]: "[Ljava.lang.Object;@629f066f"
             "Clis.Args [adapter=class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
-            // [3] obj[2]: org.pdfclown.common.build.internal.util_.xml.. . .; properties[2]: "[Ljava.lang.Object;@ecfbe91"
+            // [3] obj[2]: org.pdfclown.common.util.xml.. . .; properties[2]: "[Ljava.lang.Object;@ecfbe91"
             "Xmls.XPath [profile=COMPACT, level=11]"),
         // obj, properties
         of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
@@ -745,7 +745,7 @@ class ObjectsTest extends BaseTest {
             "Object [https://www.example.io, Blue]",
             // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; features[1]: "[Ljava.lang.Object;@4d23015c"
             "Clis.Args [class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
-            // [3] obj[2]: org.pdfclown.common.build.internal.util_.xml.. . .; features[2]: "[Ljava.lang.Object;@441cc260"
+            // [3] obj[2]: org.pdfclown.common.util.xml.. . .; features[2]: "[Ljava.lang.Object;@441cc260"
             "Xmls.XPath [true, Yellow, COMPACT]"),
         // obj, features
         of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
@@ -794,7 +794,7 @@ class ObjectsTest extends BaseTest {
     var obj = new MutableObject<>();
     Objects.objDo(obj, $ -> $.setValue("RESULT"));
 
-    assertThat(obj.getValue(), is("RESULT"));
+    assertThat(obj.get(), is("RESULT"));
   }
 
   @Test
@@ -862,7 +862,7 @@ class ObjectsTest extends BaseTest {
     var ret = Objects.quiet(AutoCloseable::close, obj);
 
     assertThat(ret, sameInstance(obj));
-    assertThat(ref.getValue(), is("DONE"));
+    assertThat(ref.get(), is("DONE"));
   }
 
   /**
@@ -881,8 +881,8 @@ class ObjectsTest extends BaseTest {
     var ret = Objects.quiet(AutoCloseable::close, obj, exceptionRef::setValue);
 
     assertThat(ret, sameInstance(obj));
-    assertThat(exceptionRef.getValue(), instanceOf(IllegalStateException.class));
-    assertThat(exceptionRef.getValue().getMessage(), is("FAILED"));
+    assertThat(exceptionRef.get(), instanceOf(IllegalStateException.class));
+    assertThat(exceptionRef.get().getMessage(), is("FAILED"));
   }
 
   /**
@@ -897,7 +897,7 @@ class ObjectsTest extends BaseTest {
       throw new IllegalStateException("FAILED");
     });
 
-    assertThat(ref.getValue(), is("DONE"));
+    assertThat(ref.get(), is("DONE"));
   }
 
   /**
@@ -911,8 +911,8 @@ class ObjectsTest extends BaseTest {
       throw new IllegalStateException("FAILED");
     }, exceptionRef::setValue);
 
-    assertThat(exceptionRef.getValue(), instanceOf(IllegalStateException.class));
-    assertThat(exceptionRef.getValue().getMessage(), is("FAILED"));
+    assertThat(exceptionRef.get(), instanceOf(IllegalStateException.class));
+    assertThat(exceptionRef.get().getMessage(), is("FAILED"));
   }
 
   @ParameterizedTest

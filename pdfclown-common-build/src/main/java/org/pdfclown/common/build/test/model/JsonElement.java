@@ -14,7 +14,7 @@ package org.pdfclown.common.build.test.model;
 
 import static org.pdfclown.common.build.internal.util.Objects.PATTERN_GROUP__CLASS_FQN;
 import static org.pdfclown.common.build.internal.util.Objects.PATTERN__TO_STRING__DEFAULT;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
 
 import java.util.regex.Matcher;
 import org.json.JSONArray;

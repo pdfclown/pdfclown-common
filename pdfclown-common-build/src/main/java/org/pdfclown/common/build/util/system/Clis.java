@@ -12,22 +12,22 @@
  */
 package org.pdfclown.common.build.util.system;
 
-import static org.pdfclown.common.build.internal.util_.Chars.COMMA;
-import static org.pdfclown.common.build.internal.util_.Chars.DOT;
-import static org.pdfclown.common.build.internal.util_.Chars.PIPE;
-import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_OPEN;
-import static org.pdfclown.common.build.internal.util_.Chars.SLASH;
-import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
-import static org.pdfclown.common.build.internal.util_.Strings.S;
-import static org.pdfclown.common.build.internal.util_.regex.Patterns.globToRegex;
-import static org.pdfclown.common.build.internal.util_.system.Systems.parsePropertyBoolean;
+import static org.pdfclown.common.util.Chars.COMMA;
+import static org.pdfclown.common.util.Chars.DOT;
+import static org.pdfclown.common.util.Chars.PIPE;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.util.Chars.SLASH;
+import static org.pdfclown.common.util.Objects.textLiteral;
+import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.regex.Patterns.globToRegex;
+import static org.pdfclown.common.util.system.Systems.parsePropertyBoolean;
 
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.util_.system.Systems;
+import org.pdfclown.common.util.system.Systems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +47,8 @@ public final class Clis {
    * </p>
    *
    * @param filter
-   *          ({@linkplain org.pdfclown.common.build.internal.util_.regex.Patterns#globToRegex(String)
-   *          GLOB}) Comma-separated resource names.
+   *          ({@linkplain org.pdfclown.common.util.regex.Patterns#globToRegex(String) GLOB})
+   *          Comma-separated resource names.
    * @return Ever-true if {@code filter} is true to {@link Systems#parsePropertyBoolean(String)};
    *         ever-false if {@code filter} is {@code null}.
    */
@@ -64,8 +64,8 @@ public final class Clis {
    * </p>
    *
    * @param filter
-   *          ({@linkplain org.pdfclown.common.build.internal.util_.regex.Patterns#globToRegex(String)
-   *          GLOB}) Comma-separated type names.
+   *          ({@linkplain org.pdfclown.common.util.regex.Patterns#globToRegex(String) GLOB})
+   *          Comma-separated type names.
    * @return Ever-true if {@code filter} is true to {@link Systems#parsePropertyBoolean(String)};
    *         ever-false if {@code filter} is {@code null}.
    */
@@ -80,8 +80,8 @@ public final class Clis {
    * </p>
    *
    * @param filter
-   *          ({@linkplain org.pdfclown.common.build.internal.util_.regex.Patterns#globToRegex(String)
-   *          GLOB}) Comma-separated names.
+   *          ({@linkplain org.pdfclown.common.util.regex.Patterns#globToRegex(String) GLOB})
+   *          Comma-separated names.
    * @return Ever-true if {@code filter} is true to {@link Systems#parsePropertyBoolean(String)};
    *         ever-false if {@code filter} is {@code null}.
    */

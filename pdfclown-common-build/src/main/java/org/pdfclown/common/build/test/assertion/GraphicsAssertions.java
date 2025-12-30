@@ -15,8 +15,8 @@ package org.pdfclown.common.build.test.assertion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
+import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Exceptions.unexpected;
 
 import java.awt.Shape;
 import java.awt.geom.PathIterator;

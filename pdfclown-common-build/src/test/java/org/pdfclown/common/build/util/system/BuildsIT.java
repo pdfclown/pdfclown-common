@@ -19,11 +19,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.pdfclown.common.build.internal.util_.Chars.UNDERSCORE;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Objects.sqn;
-import static org.pdfclown.common.build.internal.util_.system.Processes.execute;
-import static org.pdfclown.common.build.internal.util_.system.Processes.osCommand;
+import static org.pdfclown.common.util.Chars.UNDERSCORE;
+import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Objects.sqn;
+import static org.pdfclown.common.util.system.Processes.execute;
+import static org.pdfclown.common.util.system.Processes.osCommand;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,9 +31,9 @@ import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.__test.BaseIT;
-import org.pdfclown.common.build.internal.util_.Ref;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
+import org.pdfclown.common.util.Ref;
 
 /**
  * @author Stefano Chizzolini

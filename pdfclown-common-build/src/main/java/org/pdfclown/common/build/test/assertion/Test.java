@@ -12,11 +12,11 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static org.pdfclown.common.build.internal.util_.Chars.UNDERSCORE;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Objects.sqn;
-import static org.pdfclown.common.build.internal.util_.io.Files.filename;
+import static org.pdfclown.common.util.Chars.UNDERSCORE;
+import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Objects.sqn;
+import static org.pdfclown.common.util.io.Files.filename;
 
 import org.pdfclown.common.build.util.io.ResourceNames;
 

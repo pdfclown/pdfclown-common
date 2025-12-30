@@ -18,11 +18,11 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongArg;
-import static org.pdfclown.common.build.internal.util_.Exceptions.wrongState;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
+import static org.pdfclown.common.util.Conditions.requireNotBlank;
+import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
+import static org.pdfclown.common.util.Exceptions.wrongState;
+import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

@@ -31,38 +31,38 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.pdfclown.common.build.internal.util_.Aggregations.cartesianProduct;
-import static org.pdfclown.common.build.internal.util_.Chars.COMMA;
-import static org.pdfclown.common.build.internal.util_.Chars.DOT;
-import static org.pdfclown.common.build.internal.util_.Chars.HYPHEN;
-import static org.pdfclown.common.build.internal.util_.Chars.LF;
-import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.build.internal.util_.Chars.ROUND_BRACKET_OPEN;
-import static org.pdfclown.common.build.internal.util_.Chars.SLASH;
-import static org.pdfclown.common.build.internal.util_.Chars.SPACE;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireEqual;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireNotBlank;
-import static org.pdfclown.common.build.internal.util_.Conditions.requireState;
-import static org.pdfclown.common.build.internal.util_.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.util_.Exceptions.unexpected;
-import static org.pdfclown.common.build.internal.util_.Objects.INDEX__NOT_FOUND;
-import static org.pdfclown.common.build.internal.util_.Objects.basicLiteral;
-import static org.pdfclown.common.build.internal.util_.Objects.found;
-import static org.pdfclown.common.build.internal.util_.Objects.fqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.literal;
-import static org.pdfclown.common.build.internal.util_.Objects.objTo;
-import static org.pdfclown.common.build.internal.util_.Objects.objToElseGet;
-import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
-import static org.pdfclown.common.build.internal.util_.Objects.textLiteral;
-import static org.pdfclown.common.build.internal.util_.Strings.ELLIPSIS__CHICAGO;
-import static org.pdfclown.common.build.internal.util_.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.util_.Strings.NULL;
-import static org.pdfclown.common.build.internal.util_.Strings.S;
-import static org.pdfclown.common.build.internal.util_.io.Files.FILE_EXTENSION__JAVA;
-import static org.pdfclown.common.build.internal.util_.reflect.Reflects.methodFqn;
-import static org.pdfclown.common.build.internal.util_.system.Systems.getBooleanProperty;
 import static org.pdfclown.common.build.test.Tests.testFrame;
+import static org.pdfclown.common.util.Aggregations.cartesianProduct;
+import static org.pdfclown.common.util.Chars.COMMA;
+import static org.pdfclown.common.util.Chars.DOT;
+import static org.pdfclown.common.util.Chars.HYPHEN;
+import static org.pdfclown.common.util.Chars.LF;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.util.Chars.SLASH;
+import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Conditions.requireEqual;
+import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.util.Conditions.requireNotBlank;
+import static org.pdfclown.common.util.Conditions.requireState;
+import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
+import static org.pdfclown.common.util.Objects.basicLiteral;
+import static org.pdfclown.common.util.Objects.found;
+import static org.pdfclown.common.util.Objects.fqnd;
+import static org.pdfclown.common.util.Objects.literal;
+import static org.pdfclown.common.util.Objects.objTo;
+import static org.pdfclown.common.util.Objects.objToElseGet;
+import static org.pdfclown.common.util.Objects.sqnd;
+import static org.pdfclown.common.util.Objects.textLiteral;
+import static org.pdfclown.common.util.Strings.ELLIPSIS__CHICAGO;
+import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.NULL;
+import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
+import static org.pdfclown.common.util.reflect.Reflects.methodFqn;
+import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
 
 import com.github.javaparser.Position;
 import com.github.javaparser.ast.CompilationUnit;
@@ -107,13 +107,13 @@ import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.lang.Javas;
-import org.pdfclown.common.build.internal.util_.Exceptions;
-import org.pdfclown.common.build.internal.util_.Objects;
-import org.pdfclown.common.build.internal.util_.Strings;
-import org.pdfclown.common.build.internal.util_.annot.Immutable;
-import org.pdfclown.common.build.internal.util_.annot.LazyNonNull;
-import org.pdfclown.common.build.internal.util_.annot.Unmodifiable;
-import org.pdfclown.common.build.internal.util_.io.IndentPrintWriter;
+import org.pdfclown.common.util.Exceptions;
+import org.pdfclown.common.util.Objects;
+import org.pdfclown.common.util.Strings;
+import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.annot.LazyNonNull;
+import org.pdfclown.common.util.annot.Unmodifiable;
+import org.pdfclown.common.util.io.IndentPrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1093,8 +1093,7 @@ public final class Assertions {
      * <li>regular result — via
      * {@code generation.}{@link ExpectedGeneration#getExpectedSourceCodeGenerator()
      * expectedSourceCodeGenerator}</li>
-     * <li>{@code null} — to literal
-     * ({@value org.pdfclown.common.build.internal.util_.Strings#NULL})</li>
+     * <li>{@code null} — to literal ({@value org.pdfclown.common.util.Strings#NULL})</li>
      * </ul>
      *
      * @param expected

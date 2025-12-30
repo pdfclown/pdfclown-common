@@ -12,8 +12,8 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static org.pdfclown.common.build.internal.util_.Objects.objTo;
-import static org.pdfclown.common.build.internal.util_.Objects.sqnd;
+import static org.pdfclown.common.util.Objects.objTo;
+import static org.pdfclown.common.util.Objects.sqnd;
 
 import java.util.ArrayList;
 import java.util.List;
