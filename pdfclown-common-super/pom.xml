@@ -651,40 +651,40 @@ log.info("buildTimestamp: " + buildTimestamp
             <doclet>org.pdfclown.jada.core.Jada</doclet>
             <docletArtifacts>
               <!-- Bibliographic extension -->
-              <docletArtifact>
+              <artifact>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>jada-biblio</artifactId>
                 <version>${jada.version}</version>
-              </docletArtifact>
+              </artifact>
               <!-- UML diagram extension -->
-              <docletArtifact>
+              <artifact>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>jada-uml</artifactId>
                 <version>${jada.version}</version>
-              </docletArtifact>
+              </artifact>
             </docletArtifacts>
             <additionalJOptions>
-              <additionalJOption>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</additionalJOption>
-              <additionalJOption>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</additionalJOption>
-              <additionalJOption>-J--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED</additionalJOption>
+              <option>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</option>
+              <option>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</option>
+              <option>-J--add-exports=jdk.javadoc/jdk.javadoc.internal.tool=ALL-UNNAMED</option>
             </additionalJOptions>
             <additionalOptions>
-              <additionalOption>--jada-dir
-                "${buildResourcesRootPath}/org/pdfclown/common/build/conf/javadoc/jada"</additionalOption>
-              <additionalOption>--jada-dir "${rootdir}/src/main/javadoc/jada"</additionalOption>
-              <additionalOption>--jada-exts JadaBiblio,JadaUML</additionalOption>
-              <additionalOption>--biblio-used-only</additionalOption>
-              <additionalOption>--uml-package-deps-exclude
-                +*internal*,org.apache.logging.log4j.core.*</additionalOption>
-              <additionalOption>--uml-package-deps-max-count 0</additionalOption>
+              <option>--jada-dir
+                "${buildResourcesRootPath}/org/pdfclown/common/build/conf/javadoc/jada"</option>
+              <option>--jada-dir "${rootdir}/src/main/javadoc/jada"</option>
+              <option>--jada-exts JadaBiblio,JadaUML</option>
+              <option>--biblio-used-only</option>
+              <option>--uml-package-deps-exclude
+                +*internal*,org.apache.logging.log4j.core.*</option>
+              <option>--uml-package-deps-max-count 0</option>
               <!--
                 NOTE: maven-javadoc-plugin doesn't accept absolute paths in `addStylesheets`
                 property, so we have to feed it directly. -->
-              <additionalOption>--add-stylesheet "${rootdir}/src/main/javadoc/stylesheet-ext.css"</additionalOption>
-              <additionalOption>--allow-script-in-comments</additionalOption>
-              <additionalOption>-tag "implSpec:a:Implementation Requirements:"</additionalOption>
-              <additionalOption>-tag "implNote:a:Implementation Note:"</additionalOption>
-              <additionalOption>-tag "apiNote:a:API Note:"</additionalOption>
+              <option>--add-stylesheet "${rootdir}/src/main/javadoc/stylesheet-ext.css"</option>
+              <option>--allow-script-in-comments</option>
+              <option>-tag "implSpec:a:Implementation Requirements:"</option>
+              <option>-tag "implNote:a:Implementation Note:"</option>
+              <option>-tag "apiNote:a:API Note:"</option>
             </additionalOptions>
 
             <!--
@@ -766,101 +766,101 @@ log.info("buildTimestamp: " + buildTimestamp
 
             <detectLinks>true</detectLinks>
             <dependencyLinks>
-              <dependencyLink>
+              <link>
                 <groupId>com.github.javaparser</groupId>
                 <artifactId>javaparser-core</artifactId>
                 <url>https://javadoc.io/doc/com.github.javaparser/javaparser-core/${javaparser.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>com.google.jimfs</groupId>
                 <artifactId>jimfs</artifactId>
                 <url>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
                 <url>https://javadoc.io/doc/io.github.classgraph/classgraph/${classgraph.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
                 <url>https://javadoc.io/doc/net.bytebuddy/byte-buddy/${bytebuddy.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
                 <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-api/</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-core/</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.greenrobot</groupId>
                 <artifactId>eventbus-java</artifactId>
                 <url>https://javadoc.io/doc/org.greenrobot/eventbus-java/${eventbus.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest</artifactId>
                 <url>https://javadoc.io/doc/org.hamcrest/hamcrest/${hamcrest.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
                 <url>https://javadoc.io/doc/org.json/json/${json.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
                 <url>https://javadoc.io/doc/org.jsoup/jsoup/${jsoup.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.jspecify</groupId>
                 <artifactId>jspecify</artifactId>
                 <url>https://javadoc.io/doc/org.jspecify/jspecify/${jspecify.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <url>https://junit.org/junit5/docs/${junit.version}/api/</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
                 <url>https://javadoc.io/doc/org.junit.vintage/junit-vintage-engine/${junit.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <url>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>pdfclown-common-util</artifactId>
                 <url>https://javadoc.io/doc/org.pdfclown/pdfclown-common-util/${pdfclown-common-util.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
                 <url>https://javadoc.io/doc/org.reflections/reflections/${reflections.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
                 <url>https://javadoc.io/doc/org.skyscreamer/jsonassert/${jsonassert.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <url>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</url>
-              </dependencyLink>
-              <dependencyLink>
+              </link>
+              <link>
                 <groupId>tech.units</groupId>
                 <artifactId>indriya</artifactId>
                 <url>https://javadoc.io/doc/tech.units/indriya/${indriya.version}</url>
-              </dependencyLink>
+              </link>
             </dependencyLinks>
             <!--
               NOTE: Disabling offline-links detection prevents their automatic synthesis (which is

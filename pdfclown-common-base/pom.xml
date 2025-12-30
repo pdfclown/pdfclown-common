@@ -73,11 +73,11 @@
             <docletArtifacts
                 combine.children="append">
               <!-- Common resources (stylesheets, etc) -->
-              <docletArtifact>
+              <artifact>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>pdfclown-common-build</artifactId>
                 <version>${revision}</version>
-              </docletArtifact>
+              </artifact>
             </docletArtifacts>
           </configuration>
         </plugin>
