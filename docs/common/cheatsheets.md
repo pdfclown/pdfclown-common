@@ -6,6 +6,16 @@ This document provides a concise reference to useful commands for pdfClown.org p
 
 ## Maven
 
+### Dependencies
+
+- spot dependency in graph:
+
+    ```shell
+    ./mvnw dependency:tree -Dverbose -Dincludes=%GROUP_ID%:%ARTIFACT_ID%
+    ```
+
+    where `%GROUP_ID%` is the group ID the searched artifact belongs to, and `%ARTIFACT_ID%` is the searched artifact ID.
+
 ### Output
 
 - print output without log noise (`-q -DforceStdout`) — for example:
@@ -47,11 +57,13 @@ This document provides a concise reference to useful commands for pdfClown.org p
 - initialization (new projects only; regular Maven installation required):
 
     ```shell
-    mvn wrapper:wrapper -Dtype=only-script -Dmaven=3.9.11 -DincludeDebug
+    mvn wrapper:wrapper -Dtype=only-script -Dmaven=%MAVEN_VERSION% -DincludeDebug
     ```
+
+    where `%MAVEN_VERSION%` is the latest version available (e.g., `3.9.12`).
 
 - update:
 
     ```shell
-    ./mvnw wrapper:wrapper -Dmaven=x.x.x
+    ./mvnw wrapper:wrapper -Dmaven=%MAVEN_VERSION%
     ```
