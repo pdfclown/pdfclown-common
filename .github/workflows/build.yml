@@ -18,4 +18,8 @@ jobs:
     permissions:
       contents: write
       security-events: write
+    with:
+      # FIXME: temporarily disables Java 25 until maven-shade-plugin supports it, to avoid polluting
+      #        logs with noisy errors (our release target is Java 17).
+      java_matrix: "[ '17', '21' ]"
     secrets: inherit
