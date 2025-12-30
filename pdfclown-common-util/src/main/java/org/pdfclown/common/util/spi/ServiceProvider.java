@@ -12,47 +12,46 @@
  */
 package org.pdfclown.common.util.spi;
 
-import static java.util.stream.Collectors.toUnmodifiableList;
+import static org.pdfclown.common.util.Objects.fqn;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.stream.Stream;
 import org.pdfclown.common.util.annot.Immutable;
 
 /**
- * Pluggable extension based on the {@link ServiceLoader} mechanism.
- * <p>
- * Services consumed by pdfClown are expected to comply with this protocol.
- * </p>
+ * Pluggable extension based on the {@linkplain ServiceLoader SPI} mechanism.
  *
  * @author Stefano Chizzolini
  */
 @Immutable
 public interface ServiceProvider {
   /**
-   * Retrieves available providers of the type, sorted by priority.
+   * Retrieves available providers of the type, sorted by {@link #getPriority() priority}.
    *
    * @param <T>
    *          Provider type.
-   * @return Immutable list, sorted by ascending priority (the lower the priority, the better).
+   * @return Stream sorted by ascending priority (the lower the priority, the better).
    */
-  static <T extends ServiceProvider> List<T> discover(Class<T> providerType) {
-    return collect(providerType, doDiscover(providerType).filter(ServiceProvider::isAvailable));
+  static <T extends ServiceProvider> Stream<T> discover(Class<T> providerType) {
+    return doDiscover(providerType).filter(ServiceProvider::isAvailable);
   }
 
   /**
-   * Retrieves all the providers of the type, whatever their status, sorted by priority.
+   * Retrieves all the providers of the type, whatever their {@link #isAvailable() availability},
+   * sorted by {@link #getPriority() priority}.
    * <p>
    * Useful to reveal unavailable providers for diagnostic purposes.
    * </p>
    *
    * @param <T>
    *          Provider type.
-   * @return Immutable list, sorted by ascending priority (the lower the priority, the better).
+   * @return Stream sorted by ascending priority (the lower the priority, the better).
    */
-  static <T extends ServiceProvider> List<T> discoverAll(Class<T> providerType) {
-    return collect(providerType, doDiscover(providerType));
+  static <T extends ServiceProvider> Stream<T> discoverAll(Class<T> providerType) {
+    return doDiscover(providerType);
   }
 
   /**
@@ -61,36 +60,33 @@ public interface ServiceProvider {
    * @param <T>
    *          Provider type.
    */
-  static <T extends ServiceProvider> T discoverBest(Class<T> providerType) {
-    List<T> providers = discover(providerType);
-    return !providers.isEmpty() ? providers.get(0) : null;
-  }
-
-  private static <T extends ServiceProvider> List<T> collect(Class<T> providerType,
-      Stream<T> providerStream) {
-    var ret = providerStream.collect(toUnmodifiableList());
-
-    if (Util.serviceProviderLog.isInfoEnabled()) {
-      var b = new StringBuilder("DISCOVERED ").append(providerType.getName())
-          .append(" implementations:");
-      if (ret.isEmpty()) {
-        b.append(" NONE");
-      } else {
-        for (T provider : ret) {
-          b.append("\n  - ").append(provider.getClass().getName()).append(" (status: ")
-              .append(provider.isAvailable() ? "OK" : "N/A").append("; priority: ")
-              .append(provider.getPriority()).append(")");
-        }
-      }
-      Util.serviceProviderLog.info(b.toString());
-    }
-
-    return ret;
+  static <T extends ServiceProvider> Optional<T> discoverBest(Class<T> providerType) {
+    return discover(providerType).findFirst();
   }
 
   private static <T extends ServiceProvider> Stream<T> doDiscover(Class<T> providerType) {
-    return ServiceLoader.load(providerType).stream().map(ServiceLoader.Provider::get)
+    var ret = ServiceLoader.load(providerType).stream().map(ServiceLoader.Provider::get)
         .sorted(Comparator.comparingInt(ServiceProvider::getPriority));
+
+    if (Util.serviceProviderLog.isInfoEnabled()) {
+      List<T> providers = ret.toList();
+      {
+        var b = new StringBuilder("DISCOVERED ").append(providerType.getName())
+            .append(" implementations:");
+        if (providers.isEmpty()) {
+          b.append(" NONE");
+        } else {
+          for (T provider : providers) {
+            b.append("\n  - %s (available: %s; priority: %s)".formatted(
+                fqn(provider), provider.isAvailable() ? "YES" : "NO", provider.getPriority()));
+          }
+        }
+        Util.serviceProviderLog.info(b.toString());
+      }
+      ret = providers.stream();
+    }
+
+    return ret;
   }
 
   /**

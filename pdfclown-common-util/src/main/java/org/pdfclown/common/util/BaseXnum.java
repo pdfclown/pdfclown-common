@@ -246,7 +246,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   private static final Map<Class, BaseXnum.XnumType> types = new HashMap<>();
 
   private static final List<@NonNull XnumProvider> providers =
-      ServiceProvider.discover(XnumProvider.class);
+      ServiceProvider.discover(XnumProvider.class).toList();
 
   /**
    * Gets whether the constant corresponding to the code exists.
