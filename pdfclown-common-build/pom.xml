@@ -214,12 +214,9 @@
           </artifactSet>
           <filters>
             <filter>
-              <artifact>*:*</artifact>
+              <artifact>org.pdfclown:pdfclown-common-util</artifact>
               <excludes>
-                <exclude>META-INF/MANIFEST.MF</exclude>
-                <exclude>META-INF/LICENSE.txt</exclude>
-                <exclude>META-INF/NOTICE.txt</exclude>
-                <exclude>META-INF/maven/org.pdfclown/pdfclown-common-util/*</exclude>
+                <exclude>META-INF/**</exclude>
                 <exclude>**/package-info.class</exclude>
               </excludes>
             </filter>
