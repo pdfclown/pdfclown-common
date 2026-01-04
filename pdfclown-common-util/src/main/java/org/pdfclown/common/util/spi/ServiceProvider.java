@@ -12,9 +12,9 @@
  */
 package org.pdfclown.common.util.spi;
 
+import static java.util.Comparator.comparingInt;
 import static org.pdfclown.common.util.Objects.fqn;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -65,8 +65,9 @@ public interface ServiceProvider {
   }
 
   private static <T extends ServiceProvider> Stream<T> doDiscover(Class<T> providerType) {
-    var ret = ServiceLoader.load(providerType).stream().map(ServiceLoader.Provider::get)
-        .sorted(Comparator.comparingInt(ServiceProvider::getPriority));
+    var ret = ServiceLoader.load(providerType).stream()
+        .map(ServiceLoader.Provider::get)
+        .sorted(comparingInt(ServiceProvider::getPriority));
 
     if (Util.serviceProviderLog.isInfoEnabled()) {
       List<T> providers = ret.toList();
