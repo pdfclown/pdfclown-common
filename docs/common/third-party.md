@@ -29,7 +29,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
          . . . file header . . .
 
          /*
-           SPDX-FileCopyrightText: © 2012-2022 Skyscreamer
+           SPDX-FileCopyrightText: 2012-2022 Skyscreamer
 
            SPDX-License-Identifier: Apache-2.0
 
@@ -49,7 +49,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
 
          ```java
          // SPDX-SnippetBegin
-         // SPDX-SnippetCopyrightText: © 2016 Foo Ltd
+         // SPDX-SnippetCopyrightText: 2016 Foo Ltd
          // SPDX-License-Identifier: LGPL-3.0-only
          //
          // Source: https://github.com/foo/bar/blob/e9e7ce933f564da9a0dbbca476bd74a25d6f0663/src/main/java/org/foo/bar/graphics/AnotherClass.java

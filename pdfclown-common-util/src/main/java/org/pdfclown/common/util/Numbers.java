@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: © 2025 Stefano Chizzolini and contributors
+  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
   SPDX-License-Identifier: LGPL-3.0-only
 
@@ -29,7 +29,7 @@ public final class Numbers {
       1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
 
   // SPDX-SnippetBegin
-  // SPDX-SnippetCopyrightText: © 2015-2022 Daniel Fickling, 2015 Patrick Wright
+  // SPDX-SnippetCopyrightText: 2015-2022 Daniel Fickling, 2015 Patrick Wright
   // SPDX-License-Identifier: LGPL-3.0-only
   //
   // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/layout/CounterLanguage.java#L18
@@ -53,7 +53,7 @@ public final class Numbers {
   // SPDX-SnippetEnd
 
   // SPDX-SnippetBegin
-  // SPDX-SnippetCopyrightText: © 2015-2022 Daniel Fickling, 2015 Patrick Wright
+  // SPDX-SnippetCopyrightText: 2015-2022 Daniel Fickling, 2015 Patrick Wright
   // SPDX-License-Identifier: LGPL-3.0-only
   //
   // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/layout/CounterLanguage.java#L4

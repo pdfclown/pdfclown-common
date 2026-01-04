@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: © 2025 Stefano Chizzolini and contributors
+  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
   SPDX-License-Identifier: LGPL-3.0-only
 
@@ -125,7 +125,7 @@ public final class Executions {
   }
 
   // SPDX-SnippetBegin
-  // SPDX-SnippetCopyrightText: © 2016-2022 Talsma ICT
+  // SPDX-SnippetCopyrightText: 2016-2022 Talsma ICT
   // SPDX-License-Identifier: Apache-2.0
   //
   // Source: https://github.com/talsma-ict/umldoclet/blob/a1776aa4b3c9af1b073c31969721e867233fe727/src/test/java/nl/talsmasoftware/umldoclet/issues/Issue267Test.java

@@ -1,5 +1,5 @@
 /*
-  SPDX-FileCopyrightText: © 2025 Stefano Chizzolini and contributors
+  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
   SPDX-License-Identifier: LGPL-3.0-only
 
@@ -11,7 +11,7 @@
   header, listing the main changes you applied to the original source.
  */
 /*
-  SPDX-FileCopyrightText: © 2016-2022 Talsma ICT
+  SPDX-FileCopyrightText: 2016-2022 Talsma ICT
 
   SPDX-License-Identifier: Apache-2.0
  */

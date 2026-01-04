@@ -1,5 +1,5 @@
 pdfClown Common <https://github.com/pdfclown/pdfclown-common>
-Copyright 2025 Stefano Chizzolini and others
+Copyright 2025-2026 Stefano Chizzolini and others
 License LGPL-3.0-only <https://spdx.org/licenses/LGPL-3.0-only>
 
 
@@ -10,7 +10,7 @@ Copyright 2001-2025 Apache Software Foundation (ASF)
 License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
 
 JSON-java (org.json) <https://github.com/stleary/JSON-java>
-Copyright N/A
+Copyright none
 License CC0-1.0 <https://spdx.org/licenses/CC0-1.0>
 
 Open HTML to PDF <https://github.com/danfickle/openhtmltopdf>
