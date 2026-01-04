@@ -3,14 +3,14 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (SemVerTest.java) is part of pdfclown-common-build module in pdfClown Common project
+  This file (SemVer2Test.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.meta;
+package org.pdfclown.common.util.meta;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
@@ -26,16 +26,16 @@ import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.__test.BaseTest;
-import org.pdfclown.common.build.meta.SemVer.Id;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;
+import org.pdfclown.common.util.__test.BaseTest;
+import org.pdfclown.common.util.meta.SemVer.Id;
 
 /**
  * @author Stefano Chizzolini
  */
-class SemVerTest extends BaseTest {
+class SemVer2Test extends BaseTest {
   /**
    * Valid version samples.
    */
@@ -105,8 +105,8 @@ class SemVerTest extends BaseTest {
   static Stream<Arguments> compareTo() {
     return argumentsStream(
         cartesian()
-            .<String>composeArgConverter(0, SemVer::of)
-            .<String>composeArgConverter(1, SemVer::of),
+            .<String>composeArgConverter(0, SemVer2::of)
+            .<String>composeArgConverter(1, SemVer2::of),
         // expected
         asList(
             // value0[0]: "1.0.0"
@@ -538,8 +538,8 @@ class SemVerTest extends BaseTest {
   static Stream<Arguments> next() {
     return argumentsStream(
         cartesian()
-            .<String>composeExpectedConverter(SemVer::of)
-            .<String>composeArgConverter(0, SemVer::of),
+            .<String>composeExpectedConverter(SemVer2::of)
+            .<String>composeArgConverter(0, SemVer2::of),
         // expected
         asList(
             // value[0]: "1.0.0"
@@ -550,8 +550,8 @@ class SemVerTest extends BaseTest {
             // [3] id[2]: "PATCH"
             "1.0.1",
             // [4] id[3]: "PRERELEASE"
-            new Failure("ArgumentException",
-                "`id` (PRERELEASE): Stable version cannot increment undefined pre-release"),
+            new Failure("IllegalStateException",
+                "Regular version cannot increment undefined pre-release"),
             // [5] id[4]: "METADATA"
             new Failure("ArgumentException", "`id` (METADATA): INVALID"),
             //
@@ -563,8 +563,8 @@ class SemVerTest extends BaseTest {
             // [8] id[2]: "PATCH"
             "1.9.1",
             // [9] id[3]: "PRERELEASE"
-            new Failure("ArgumentException",
-                "`id` (PRERELEASE): Stable version cannot increment undefined pre-release"),
+            new Failure("IllegalStateException",
+                "Regular version cannot increment undefined pre-release"),
             // [10] id[4]: "METADATA"
             new Failure("ArgumentException", "`id` (METADATA): INVALID"),
             //
@@ -576,8 +576,8 @@ class SemVerTest extends BaseTest {
             // [13] id[2]: "PATCH"
             "1.10.1",
             // [14] id[3]: "PRERELEASE"
-            new Failure("ArgumentException",
-                "`id` (PRERELEASE): Stable version cannot increment undefined pre-release"),
+            new Failure("IllegalStateException",
+                "Regular version cannot increment undefined pre-release"),
             // [15] id[4]: "METADATA"
             new Failure("ArgumentException", "`id` (METADATA): INVALID"),
             //
@@ -589,8 +589,8 @@ class SemVerTest extends BaseTest {
             // [18] id[2]: "PATCH"
             "1.11.1",
             // [19] id[3]: "PRERELEASE"
-            new Failure("ArgumentException",
-                "`id` (PRERELEASE): Stable version cannot increment undefined pre-release"),
+            new Failure("IllegalStateException",
+                "Regular version cannot increment undefined pre-release"),
             // [20] id[4]: "METADATA"
             new Failure("ArgumentException", "`id` (METADATA): INVALID"),
             //
@@ -686,8 +686,8 @@ class SemVerTest extends BaseTest {
             // [58] id[2]: "PATCH"
             "1.0.1",
             // [59] id[3]: "PRERELEASE"
-            new Failure("ArgumentException",
-                "`id` (PRERELEASE): Stable version cannot increment undefined pre-release"),
+            new Failure("IllegalStateException",
+                "Regular version cannot increment undefined pre-release"),
             // [60] id[4]: "METADATA"
             new Failure("ArgumentException", "`id` (METADATA): INVALID"),
             //
@@ -711,21 +711,21 @@ class SemVerTest extends BaseTest {
             // [68] id[2]: "PATCH"
             "1.0.1",
             // [69] id[3]: "PRERELEASE"
-            new Failure("ArgumentException",
-                "`id` (PRERELEASE): Stable version cannot increment undefined pre-release"),
+            new Failure("IllegalStateException",
+                "Regular version cannot increment undefined pre-release"),
             // [70] id[4]: "METADATA"
             new Failure("ArgumentException", "`id` (METADATA): INVALID")),
         // value
         VERSION_LITERALS__VALID,
         // id
-        List.of(SemVer.Id.values()));
+        List.of(Id.values()));
   }
 
   @SuppressWarnings("DataFlowIssue")
   static Stream<Arguments> of_String() {
     return argumentsStream(
         cartesian()
-            .<String>composeExpectedConverter(SemVer::of),
+            .<String>composeExpectedConverter(SemVer2::of),
         // expected
         asList(
             // [1] value[0]: "1.0.0"
@@ -781,7 +781,7 @@ class SemVerTest extends BaseTest {
   static Stream<Arguments> of_int_int_int_String_String() {
     return argumentsStream(
         simple()
-            .<String>composeExpectedConverter(SemVer::of),
+            .<String>composeExpectedConverter(SemVer2::of),
         // expected
         asList(
             // [1] major[0]: 1; minor[0]: 0; patch[0]: 0; prerelease[0]: null; metadata[0]: null
@@ -814,8 +814,8 @@ class SemVerTest extends BaseTest {
   static Stream<Arguments> precedence() {
     return argumentsStream(
         cartesian()
-            .<String>composeArgConverter(0, SemVer::of)
-            .<String>composeArgConverter(1, SemVer::of),
+            .<String>composeArgConverter(0, SemVer2::of)
+            .<String>composeArgConverter(1, SemVer2::of),
         // expected
         asList(
             // value0[0]: "1.0.0"
@@ -1244,10 +1244,106 @@ class SemVerTest extends BaseTest {
   }
 
   @SuppressWarnings("DataFlowIssue")
+  static Stream<Arguments> to() {
+    return argumentsStream(
+        cartesian()
+            .<String>composeArgConverter(0, SemVer2::of),
+        // expected
+        asList(
+            // ver[0]: "1.0.0"
+            // [1] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0",
+            // [2] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0",
+            //
+            // ver[1]: "1.9.0"
+            // [3] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.9.0",
+            // [4] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.9.0",
+            //
+            // ver[2]: "1.10.0"
+            // [5] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.10.0",
+            // [6] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.10.0",
+            //
+            // ver[3]: "1.11.0"
+            // [7] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.11.0",
+            // [8] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.11.0",
+            //
+            // ver[4]: "1.0.0-alpha"
+            // [9] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0-alpha",
+            // [10] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0-alpha",
+            //
+            // ver[5]: "1.0.0-alpha.1"
+            // [11] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0-alpha-1",
+            // [12] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0-alpha.1",
+            //
+            // ver[6]: "1.0.0-0.3.7"
+            // [13] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0-0-3-7",
+            // [14] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0-0.3.7",
+            //
+            // ver[7]: "1.0.0-x.7.z.92"
+            // [15] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0-x-7-z-92",
+            // [16] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0-x.7.z.92",
+            //
+            // ver[8]: "1.0.0-x.-7.z.92"
+            // [17] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0-x--7-z-92",
+            // [18] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0-x.-7.z.92",
+            //
+            // ver[9]: "1.0.0-x-y-z.--"
+            // [19] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0-x-y-z---",
+            // [20] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0-x-y-z.--",
+            //
+            // ver[10]: "1.0.0-alpha+001"
+            // [21] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0-alpha",
+            // [22] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0-alpha+001",
+            //
+            // ver[11]: "1.0.0+20130313144700"
+            // [23] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0",
+            // [24] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0+20130313144700",
+            //
+            // ver[12]: "1.0.0-beta+exp.sha.5114f85"
+            // [25] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0-beta",
+            // [26] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0-beta+exp.sha.5114f85",
+            //
+            // ver[13]: "1.0.0+21AF26D3----117B344092BD"
+            // [27] versionType[0]: org.pdfclown.common.util.meta.SemVer1
+            "1.0.0",
+            // [28] versionType[1]: org.pdfclown.common.util.meta.SemVer2
+            "1.0.0+21AF26D3----117B344092BD"),
+        // ver
+        VERSION_LITERALS__VALID,
+        // versionType
+        List.of(SemVer1.class, SemVer2.class));
+  }
+
+  @SuppressWarnings("DataFlowIssue")
   static Stream<Arguments> toString_() {
     return argumentsStream(
         cartesian()
-            .<String>composeArgConverter(0, SemVer::of),
+            .<String>composeArgConverter(0, SemVer2::of),
         // expected
         asList(
             // [1] value[0]: "1.0.0"
@@ -1286,8 +1382,8 @@ class SemVerTest extends BaseTest {
   static Stream<Arguments> with() {
     return argumentsStream(
         cartesian()
-            .<String>composeExpectedConverter(SemVer::of)
-            .<String>composeArgConverter(0, SemVer::of),
+            .<String>composeExpectedConverter(SemVer2::of)
+            .<String>composeArgConverter(0, SemVer2::of),
         // expected
         asList(
             // ver[0]: "1.0.0"
@@ -1740,14 +1836,351 @@ class SemVerTest extends BaseTest {
         // ver
         VERSION_LITERALS__VALID,
         // id
-        List.of(SemVer.Id.values()),
+        List.of(Id.values()),
         // value
         List.of(8, "rc"));
   }
 
+  @SuppressWarnings("DataFlowIssue")
+  static Stream<Arguments> withPrereleaseSuffix() {
+    return argumentsStream(
+        cartesian()
+            .<String>composeExpectedConverter(SemVer2::of)
+            .<String>composeArgConverter(0, SemVer2::of),
+        // expected
+        asList(
+            // ver[0]: "1.0.0"
+            // -- fieldIndex[0]: -1
+            // [1] value[0]: 8
+            "1.0.0-8",
+            // [2] value[1]: "rc"
+            "1.0.0-rc",
+            // [3] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [4] value[0]: 8
+            "1.0.0-8",
+            // [5] value[1]: "rc"
+            "1.0.0-rc",
+            // [6] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [7] value[0]: 8
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [8] value[1]: "rc"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [9] value[2]: "SNAPSHOT"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            //
+            // ver[1]: "1.9.0"
+            // -- fieldIndex[0]: -1
+            // [10] value[0]: 8
+            "1.9.0-8",
+            // [11] value[1]: "rc"
+            "1.9.0-rc",
+            // [12] value[2]: "SNAPSHOT"
+            "1.9.0-SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [13] value[0]: 8
+            "1.9.0-8",
+            // [14] value[1]: "rc"
+            "1.9.0-rc",
+            // [15] value[2]: "SNAPSHOT"
+            "1.9.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [16] value[0]: 8
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [17] value[1]: "rc"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [18] value[2]: "SNAPSHOT"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            //
+            // ver[2]: "1.10.0"
+            // -- fieldIndex[0]: -1
+            // [19] value[0]: 8
+            "1.10.0-8",
+            // [20] value[1]: "rc"
+            "1.10.0-rc",
+            // [21] value[2]: "SNAPSHOT"
+            "1.10.0-SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [22] value[0]: 8
+            "1.10.0-8",
+            // [23] value[1]: "rc"
+            "1.10.0-rc",
+            // [24] value[2]: "SNAPSHOT"
+            "1.10.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [25] value[0]: 8
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [26] value[1]: "rc"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [27] value[2]: "SNAPSHOT"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            //
+            // ver[3]: "1.11.0"
+            // -- fieldIndex[0]: -1
+            // [28] value[0]: 8
+            "1.11.0-8",
+            // [29] value[1]: "rc"
+            "1.11.0-rc",
+            // [30] value[2]: "SNAPSHOT"
+            "1.11.0-SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [31] value[0]: 8
+            "1.11.0-8",
+            // [32] value[1]: "rc"
+            "1.11.0-rc",
+            // [33] value[2]: "SNAPSHOT"
+            "1.11.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [34] value[0]: 8
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [35] value[1]: "rc"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [36] value[2]: "SNAPSHOT"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            //
+            // ver[4]: "1.0.0-alpha"
+            // -- fieldIndex[0]: -1
+            // [37] value[0]: 8
+            "1.0.0-alpha.8",
+            // [38] value[1]: "rc"
+            "1.0.0-alpha.rc",
+            // [39] value[2]: "SNAPSHOT"
+            "1.0.0-alpha.SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [40] value[0]: 8
+            "1.0.0-8",
+            // [41] value[1]: "rc"
+            "1.0.0-rc",
+            // [42] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [43] value[0]: 8
+            "1.0.0-alpha.8",
+            // [44] value[1]: "rc"
+            "1.0.0-alpha.rc",
+            // [45] value[2]: "SNAPSHOT"
+            "1.0.0-alpha.SNAPSHOT",
+            //
+            // ver[5]: "1.0.0-alpha.1"
+            // -- fieldIndex[0]: -1
+            // [46] value[0]: 8
+            "1.0.0-alpha.1.8",
+            // [47] value[1]: "rc"
+            "1.0.0-alpha.1.rc",
+            // [48] value[2]: "SNAPSHOT"
+            "1.0.0-alpha.1.SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [49] value[0]: 8
+            "1.0.0-8",
+            // [50] value[1]: "rc"
+            "1.0.0-rc",
+            // [51] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [52] value[0]: 8
+            "1.0.0-alpha.8",
+            // [53] value[1]: "rc"
+            "1.0.0-alpha.rc",
+            // [54] value[2]: "SNAPSHOT"
+            "1.0.0-alpha.SNAPSHOT",
+            //
+            // ver[6]: "1.0.0-0.3.7"
+            // -- fieldIndex[0]: -1
+            // [55] value[0]: 8
+            "1.0.0-0.3.7.8",
+            // [56] value[1]: "rc"
+            "1.0.0-0.3.7.rc",
+            // [57] value[2]: "SNAPSHOT"
+            "1.0.0-0.3.7.SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [58] value[0]: 8
+            "1.0.0-8",
+            // [59] value[1]: "rc"
+            "1.0.0-rc",
+            // [60] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [61] value[0]: 8
+            "1.0.0-0.8",
+            // [62] value[1]: "rc"
+            "1.0.0-0.rc",
+            // [63] value[2]: "SNAPSHOT"
+            "1.0.0-0.SNAPSHOT",
+            //
+            // ver[7]: "1.0.0-x.7.z.92"
+            // -- fieldIndex[0]: -1
+            // [64] value[0]: 8
+            "1.0.0-x.7.z.92.8",
+            // [65] value[1]: "rc"
+            "1.0.0-x.7.z.92.rc",
+            // [66] value[2]: "SNAPSHOT"
+            "1.0.0-x.7.z.92.SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [67] value[0]: 8
+            "1.0.0-8",
+            // [68] value[1]: "rc"
+            "1.0.0-rc",
+            // [69] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [70] value[0]: 8
+            "1.0.0-x.8",
+            // [71] value[1]: "rc"
+            "1.0.0-x.rc",
+            // [72] value[2]: "SNAPSHOT"
+            "1.0.0-x.SNAPSHOT",
+            //
+            // ver[8]: "1.0.0-x.-7.z.92"
+            // -- fieldIndex[0]: -1
+            // [73] value[0]: 8
+            "1.0.0-x.-7.z.92.8",
+            // [74] value[1]: "rc"
+            "1.0.0-x.-7.z.92.rc",
+            // [75] value[2]: "SNAPSHOT"
+            "1.0.0-x.-7.z.92.SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [76] value[0]: 8
+            "1.0.0-8",
+            // [77] value[1]: "rc"
+            "1.0.0-rc",
+            // [78] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [79] value[0]: 8
+            "1.0.0-x.8",
+            // [80] value[1]: "rc"
+            "1.0.0-x.rc",
+            // [81] value[2]: "SNAPSHOT"
+            "1.0.0-x.SNAPSHOT",
+            //
+            // ver[9]: "1.0.0-x-y-z.--"
+            // -- fieldIndex[0]: -1
+            // [82] value[0]: 8
+            "1.0.0-x-y-z.--.8",
+            // [83] value[1]: "rc"
+            "1.0.0-x-y-z.--.rc",
+            // [84] value[2]: "SNAPSHOT"
+            "1.0.0-x-y-z.--.SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [85] value[0]: 8
+            "1.0.0-8",
+            // [86] value[1]: "rc"
+            "1.0.0-rc",
+            // [87] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [88] value[0]: 8
+            "1.0.0-x-y-z.8",
+            // [89] value[1]: "rc"
+            "1.0.0-x-y-z.rc",
+            // [90] value[2]: "SNAPSHOT"
+            "1.0.0-x-y-z.SNAPSHOT",
+            //
+            // ver[10]: "1.0.0-alpha+001"
+            // -- fieldIndex[0]: -1
+            // [91] value[0]: 8
+            "1.0.0-alpha.8",
+            // [92] value[1]: "rc"
+            "1.0.0-alpha.rc",
+            // [93] value[2]: "SNAPSHOT"
+            "1.0.0-alpha.SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [94] value[0]: 8
+            "1.0.0-8",
+            // [95] value[1]: "rc"
+            "1.0.0-rc",
+            // [96] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [97] value[0]: 8
+            "1.0.0-alpha.8",
+            // [98] value[1]: "rc"
+            "1.0.0-alpha.rc",
+            // [99] value[2]: "SNAPSHOT"
+            "1.0.0-alpha.SNAPSHOT",
+            //
+            // ver[11]: "1.0.0+20130313144700"
+            // -- fieldIndex[0]: -1
+            // [100] value[0]: 8
+            "1.0.0-8",
+            // [101] value[1]: "rc"
+            "1.0.0-rc",
+            // [102] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [103] value[0]: 8
+            "1.0.0-8",
+            // [104] value[1]: "rc"
+            "1.0.0-rc",
+            // [105] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [106] value[0]: 8
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [107] value[1]: "rc"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [108] value[2]: "SNAPSHOT"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            //
+            // ver[12]: "1.0.0-beta+exp.sha.5114f85"
+            // -- fieldIndex[0]: -1
+            // [109] value[0]: 8
+            "1.0.0-beta.8",
+            // [110] value[1]: "rc"
+            "1.0.0-beta.rc",
+            // [111] value[2]: "SNAPSHOT"
+            "1.0.0-beta.SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [112] value[0]: 8
+            "1.0.0-8",
+            // [113] value[1]: "rc"
+            "1.0.0-rc",
+            // [114] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [115] value[0]: 8
+            "1.0.0-beta.8",
+            // [116] value[1]: "rc"
+            "1.0.0-beta.rc",
+            // [117] value[2]: "SNAPSHOT"
+            "1.0.0-beta.SNAPSHOT",
+            //
+            // ver[13]: "1.0.0+21AF26D3----117B344092BD"
+            // -- fieldIndex[0]: -1
+            // [118] value[0]: 8
+            "1.0.0-8",
+            // [119] value[1]: "rc"
+            "1.0.0-rc",
+            // [120] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[1]: 0
+            // [121] value[0]: 8
+            "1.0.0-8",
+            // [122] value[1]: "rc"
+            "1.0.0-rc",
+            // [123] value[2]: "SNAPSHOT"
+            "1.0.0-SNAPSHOT",
+            // -- fieldIndex[2]: 1
+            // [124] value[0]: 8
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [125] value[1]: "rc"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1"),
+            // [126] value[2]: "SNAPSHOT"
+            new Failure("IndexOutOfBoundsException", "toIndex = 1")),
+        // ver
+        VERSION_LITERALS__VALID,
+        // fieldIndex
+        List.of(-1, 0, 1),
+        // value
+        List.of(8, "rc", "SNAPSHOT"));
+  }
+
   @ParameterizedTest
   @MethodSource
-  void compareTo(Expected<Integer> expected, SemVer value0, SemVer value1) {
+  void compareTo(Expected<Integer> expected, SemVer2 value0, SemVer2 value1) {
     assertParameterizedOf(
         () -> value0.compareTo(value1),
         expected,
@@ -1756,7 +2189,7 @@ class SemVerTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void next(Expected<SemVer> expected, SemVer value, SemVer.Id id) {
+  void next(Expected<SemVer2> expected, SemVer2 value, Id id) {
     assertParameterizedOf(
         () -> value.next(id),
         expected,
@@ -1765,26 +2198,26 @@ class SemVerTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void of_String(Expected<SemVer> expected, String value) {
+  void of_String(Expected<SemVer2> expected, String value) {
     assertParameterizedOf(
-        () -> SemVer.of(value),
+        () -> SemVer2.of(value),
         expected,
         () -> new ExpectedGeneration(value));
   }
 
   @ParameterizedTest
   @MethodSource
-  void of_int_int_int_String_String(Expected<SemVer> expected, int major, int minor, int patch,
+  void of_int_int_int_String_String(Expected<SemVer2> expected, int major, int minor, int patch,
       @Nullable String prerelease, @Nullable String metadata) {
     assertParameterizedOf(
-        () -> SemVer.of(major, minor, patch, prerelease, metadata),
+        () -> SemVer2.of(major, minor, patch, prerelease, metadata),
         expected,
         () -> new ExpectedGeneration(major, minor, patch, prerelease, metadata));
   }
 
   @ParameterizedTest
   @MethodSource
-  void precedence(Expected<Integer> expected, SemVer value0, SemVer value1) {
+  void precedence(Expected<Integer> expected, SemVer2 value0, SemVer2 value1) {
     assertParameterizedOf(
         () -> value0.precedence(value1),
         expected,
@@ -1793,7 +2226,17 @@ class SemVerTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void toString_(Expected<String> expected, SemVer value) {
+  @SuppressWarnings("rawtypes")
+  void to(Expected<String> expected, SemVer2 ver, Class versionType) {
+    assertParameterizedOf(
+        () -> ver.to(versionType).toString(),
+        expected,
+        () -> new ExpectedGeneration(ver, versionType));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void toString_(Expected<String> expected, SemVer2 value) {
     assertParameterizedOf(
         () -> value.toString(),
         expected,
@@ -1803,10 +2246,21 @@ class SemVerTest extends BaseTest {
   @ParameterizedTest
   @MethodSource
   @SuppressWarnings("rawtypes")
-  void with(Expected<SemVer> expected, SemVer ver, Id id, Comparable value) {
+  void with(Expected<SemVer2> expected, SemVer2 ver, Id id, Comparable value) {
     assertParameterizedOf(
         () -> ver.with(id, value),
         expected,
         () -> new ExpectedGeneration(ver, id, value));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  @SuppressWarnings("rawtypes")
+  void withPrereleaseSuffix(Expected<SemVer2> expected, SemVer2 ver, int fieldIndex,
+      Comparable value) {
+    assertParameterizedOf(
+        () -> ver.withPrereleaseSuffix(fieldIndex, value),
+        expected,
+        () -> new ExpectedGeneration(ver, fieldIndex, value));
   }
 }

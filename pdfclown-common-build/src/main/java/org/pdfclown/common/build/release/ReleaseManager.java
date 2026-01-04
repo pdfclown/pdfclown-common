@@ -27,11 +27,9 @@ import static org.pdfclown.common.util.Strings.EMPTY;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.meta.SemVer;
 import org.pdfclown.common.build.meta.SemVer.Id;
+import org.pdfclown.common.build.meta.SemVer1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,50 +66,6 @@ import org.slf4j.LoggerFactory;
  * @author Stefano Chizzolini
  */
 public class ReleaseManager {
-  /**
-   * Version scheme.
-   *
-   * @author Stefano Chizzolini
-   */
-  public enum VersionScheme {
-    /**
-     * <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning 2.0</a>.
-     */
-    SEMVER2
-  }
-
-  abstract static class VersionResolver {
-    static class SemVer2VersionResolver extends VersionResolver {
-      /**
-       * @implNote The development version will have {@code SNAPSHOT} as pre-release identifier,
-       *           while its normal identifiers will be calculated as follows:
-       *           <ul>
-       *           <li>if {@code releaseVersion} is stable (say, {@code 2.0.0}), increment patch
-       *           (say, {@code 2.0.1-SNAPSHOT})</li>
-       *           <li>otherwise ({@code releaseVersion} is pre-release — say, {@code 2.0.0-alpha}),
-       *           leave as-is (say, {@code 2.0.0-SNAPSHOT})</li>
-       *           </ul>
-       */
-      @Override
-      public String getNextDevVersion(String releaseVersion) {
-        var v = SemVer.of(releaseVersion);
-        return (v.isStable() ? v.next(Id.PATCH) : v).with(Id.PRERELEASE, "SNAPSHOT").toString();
-      }
-    }
-
-    private static final Map<VersionScheme, Supplier<VersionResolver>> factories =
-        Map.of(VersionScheme.SEMVER2, SemVer2VersionResolver::new);
-
-    public static VersionResolver of(VersionScheme scheme) {
-      return factories.get(scheme).get();
-    }
-
-    /**
-     * Calculates the next development version based on the release version.
-     */
-    public abstract String getNextDevVersion(String releaseVersion);
-  }
-
   private static final Logger log = LoggerFactory.getLogger(ReleaseManager.class);
 
   static final String SCM_REF__HEAD = "HEAD";
@@ -119,11 +73,37 @@ public class ReleaseManager {
   private static final String MAVEN_EXEC__GLOBAL = "mvn";
   private static final String MAVEN_EXEC__WRAPPER = "./mvnw";
 
+  static void checkOS() {
+    if (!IS_OS_UNIX)
+      throw wrongState("MUST run under a Unix system");
+  }
+
   private static String checkProfiles(String value) {
     if (containsWhitespace(requireNonNull(value)))
       throw wrongArg(null, value, "MUST NOT contain whitespace");
 
     return value;
+  }
+
+  /**
+   * Resolves the next development version according to
+   * <a href="https://maven.apache.org/pom.html#Version_Order_Specification">Maven's Version Order
+   * Specification</a>.
+   * <p>
+   * Such version will have {@code SNAPSHOT} as pre-release suffix, while its incremental identifier
+   * will be calculated as follows:
+   * </p>
+   * <ul>
+   * <li>if {@code releaseVersion} is regular (say, {@code 2.0.0}), increment its patch (say,
+   * {@code 2.0.1-SNAPSHOT})</li>
+   * <li>otherwise ({@code releaseVersion} is pre-release — say, {@code 2.0.0-alpha-1}), increment
+   * its pre-release number (say, {@code 2.0.0-alpha-2-SNAPSHOT})</li>
+   * </ul>
+   */
+  private static SemVer1 nextDevVersion(SemVer1 releaseVersion) {
+    return (releaseVersion.isRegular() ? releaseVersion.next(Id.PATCH)
+        : releaseVersion.next(Id.PRERELEASE))
+            .withPrereleaseSuffix(-1, "SNAPSHOT");
   }
 
   private static String scmTag(String version) {
@@ -141,19 +121,17 @@ public class ReleaseManager {
   private final String releaseVersion;
   private boolean remotePushEnabled = true;
   private final List<Step> steps = new ArrayList<>(asList(BuiltinStep.values()));
-  private final VersionScheme versionScheme = VersionScheme.SEMVER2;
 
   /**
   */
-  public ReleaseManager(Path baseDir, String releaseVersion) {
-    if (!IS_OS_UNIX)
-      throw wrongState("MUST run under a Unix system");
+  public ReleaseManager(Path baseDir, SemVer1 releaseVersion) {
+    checkOS();
 
     this.baseDir = requireNonNull(baseDir, "`baseDir`");
-    this.releaseVersion = requireNotBlank(releaseVersion, "`releaseVersion`");
+    this.releaseVersion = requireNonNull(releaseVersion, "`releaseVersion`").toString();
 
-    this.devVersion = VersionResolver.of(versionScheme).getNextDevVersion(releaseVersion);
-    this.releaseTag = scmTag(releaseVersion);
+    this.devVersion = nextDevVersion(releaseVersion).toString();
+    this.releaseTag = scmTag(this.releaseVersion);
     this.mavenExec = exists(Path.of(MAVEN_EXEC__WRAPPER)) ? MAVEN_EXEC__WRAPPER
         : MAVEN_EXEC__GLOBAL;
   }
@@ -300,13 +278,6 @@ public class ReleaseManager {
    */
   public List<Step> getSteps() {
     return steps;
-  }
-
-  /**
-   * Version scheme to handle project versions.
-   */
-  public VersionScheme getVersionScheme() {
-    return versionScheme;
   }
 
   /**

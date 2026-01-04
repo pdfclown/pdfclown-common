@@ -1113,6 +1113,8 @@ log.info("buildTimestamp: " + buildTimestamp
                 <configuration>
                   <scripts>
                     <script><![CDATA[
+import org.pdfclown.common.build.meta.SemVer1
+import org.pdfclown.common.build.meta.SemVer2
 import org.pdfclown.common.build.release.ReleaseManager
 
 final var USER_PROPERTY_NAME__DRYRUN = "dryRun"
@@ -1123,7 +1125,7 @@ final var releaseVersion = session.userProperties[USER_PROPERTY_NAME__RELEASE_VE
 if (releaseVersion == null)
   throw new IllegalStateException("\"" + USER_PROPERTY_NAME__RELEASE_VERSION + "\" user property MISSING")
 
-new ReleaseManager(project.basedir.toPath(), releaseVersion)
+new ReleaseManager(project.basedir.toPath(), SemVer2.of(releaseVersion).to(SemVer1.class))
     .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY_NAME__RELEASE_STARTPOINT])
     .setDeploymentProfiles("publish")
     .setInstallationProfiles("full")
