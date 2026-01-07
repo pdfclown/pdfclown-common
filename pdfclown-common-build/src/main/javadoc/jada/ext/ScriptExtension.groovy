@@ -27,7 +27,7 @@ class ScriptExtension extends JadaScriptExtension {
         /*
          * [shading] Map shaded packages in Javadoc!
          *
-         * org.pdfclown.common.util --> org.pdfclown.common.build.util
+         * org.pdfclown.common.util --> org.pdfclown.common.build.shaded.util
          */
         getConfig().getOperation(JadaFileProcess.class).addProcessor(
                 new JadaFileProcessor<String>(new TextSerializer()) {
@@ -54,7 +54,7 @@ class ScriptExtension extends JadaScriptExtension {
                                                       FileProcess.Context context) {
                 var newContent = content.replace(
                         "org.pdfclown.common.util",
-                        "org.pdfclown.common.build.util")
+                        "org.pdfclown.common.build.shaded.util")
                 if(!newContent.equals(content)) {
                     context.changeFile()
                     return newContent

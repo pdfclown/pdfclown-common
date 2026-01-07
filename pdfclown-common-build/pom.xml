@@ -224,40 +224,11 @@
           <relocations>
             <relocation>
               <!--
-                INTERNAL
-
-                All used pdfclown-common-util types except those exposed by the API of
-                pdfclown-common-build (see PUBLIC API here below).
-              -->
+                All pdfclown-common-util types used. Those referenced by pdfclown-common-build API,
+                visible in Javadoc, are mapped by Jada post-processing (see [shading] in
+                ScriptExtension.groovy). -->
               <pattern>org.pdfclown.common.util</pattern>
-              <shadedPattern>org.pdfclown.common.build.internal._util</shadedPattern>
-              <excludes>
-                <exclude>org.pdfclown.common.util.ArgumentFormatException*</exclude>
-                <exclude>org.pdfclown.common.util.Objects*</exclude>
-                <exclude>org.pdfclown.common.util.RelatedMap*</exclude>
-                <exclude>org.pdfclown.common.util.annot.*</exclude>
-                <exclude>org.pdfclown.common.util.io.IndentPrintWriter*</exclude>
-                <exclude>org.pdfclown.common.util.xml.Xmls*</exclude>
-              </excludes>
-            </relocation>
-            <relocation>
-              <!--
-                PUBLIC API
-
-                pdfclown-common-util types exposed by the API of pdfclown-common-build (they
-                correspond to the types visible in Javadoc; see [shading] in ScriptExtension.groovy
-                for their mapping).
-              -->
-              <pattern>org.pdfclown.common.util</pattern>
-              <shadedPattern>org.pdfclown.common.build.util</shadedPattern>
-              <includes>
-                <include>org.pdfclown.common.util.ArgumentFormatException*</include>
-                <include>org.pdfclown.common.util.Objects*</include>
-                <include>org.pdfclown.common.util.RelatedMap*</include>
-                <include>org.pdfclown.common.util.annot.*</include>
-                <include>org.pdfclown.common.util.io.IndentPrintWriter*</include>
-                <include>org.pdfclown.common.util.xml.Xmls*</include>
-              </includes>
+              <shadedPattern>org.pdfclown.common.build.shaded.util</shadedPattern>
             </relocation>
           </relocations>
           <minimizeJar>true</minimizeJar>
