@@ -301,6 +301,11 @@ th.colFirst {
   padding: 3px 10px !important;
 }
 
+.rowColor,
+.rowColor th {
+  background-color: #dadae8;
+}
+
 .overviewSummary td,
 .memberSummary td,
 .typeSummary td,
