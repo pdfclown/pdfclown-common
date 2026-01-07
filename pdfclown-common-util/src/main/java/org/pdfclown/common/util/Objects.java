@@ -17,14 +17,17 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
-import static org.apache.commons.lang3.StringUtils.stripToNull;
+import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.pdfclown.common.util.Booleans.parseBoolean;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.COMMA;
+import static org.pdfclown.common.util.Chars.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.util.Chars.DOLLAR;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.DQUOTE;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
@@ -63,7 +66,6 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1452,65 +1454,72 @@ public final class Objects {
   }
 
   /**
-   * Maps an object to its string representation, ensuring its qualification at least with its
+   * Maps an object to its string representation, ensuring it is qualified at least with its
    * {@linkplain Class#getSimpleName() simple class name}.
    *
-   * @return
-   *         <ul>
-   *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
-   *         <li><code>obj.toString()</code> — if it contains the simple class name of
-   *         {@code obj}</li>
-   *         <li>{@link #sqnd(Object) sqnd(obj)}<code> + " {" + obj.toString() + "}"</code> —
-   *         otherwise</li>
-   *         </ul>
+   * @return {@code obj.}{@link Object#toString() toString()}, retaining its qualification or
+   *         applying {@code sqnd(obj)} if missing, and wrapping its attributes with square brackets
+   *         if parentheses are missing.
    */
   public static String toQualifiedString(@Nullable Object obj) {
     if (obj == null)
       return NULL;
 
-    String objString = obj.toString();
-    String sqnd = sqnd(obj);
-    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
-        .filter($ -> {
-          // Qualification corresponds to simple class name?
-          if ($.group(1).equals(obj.getClass().getSimpleName()))
-            return true;
-
-          // Qualification corresponds to either simply- or fully-qualified class name?
-          var norm = $.group(1).replace('$', DOT);
-          return norm.equals(sqnd) || norm.equals(fqnd(obj));
-        }).isPresent()
-            ? objString
-            : sqnd + SPACE + TO_STRING_OPEN + objString + TO_STRING_CLOSE;
+    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, obj.toString())
+        .map($ -> {
+          String simpleName = obj.getClass().getSimpleName();
+          String namePart = ($.group(1).endsWith(simpleName)
+              && ($.group(1).length() == simpleName.length()
+                  || any($.group(1).charAt($.group(1).length() - simpleName.length() - 1),
+                      java.util.Objects::equals, DOT, DOLLAR)))
+                          ? $.group(1)
+                          : EMPTY;
+          String attrPart = stripToEmpty(!namePart.isEmpty() ? $.group(2) : $.group());
+          if (!attrPart.isEmpty()) {
+            switch (attrPart.charAt(0)) {
+              case ROUND_BRACKET_OPEN:
+              case SQUARE_BRACKET_OPEN:
+              case CURLY_BRACE_OPEN:
+                // NOP
+                break;
+              default:
+                attrPart = TO_STRING_OPEN + attrPart + TO_STRING_CLOSE;
+            }
+          }
+          return (!namePart.isEmpty() ? namePart : sqnd(obj)) + attrPart;
+        })
+        .orElseThrow();
   }
 
   /**
    * Maps an object to its string representation, normalizing its qualification with the
    * {@linkplain #sqnd(Object) dotted simply-qualified class name}.
    *
-   * @return Considering the {@linkplain Matcher pattern match} of
-   *         {@code obj.}{@link Object#toString() toString()} as formed by two groups (qualification
-   *         and attributes):
-   *         <ul>
-   *         <li>{@value Strings#NULL} — if {@code obj} is undefined</li>
-   *         <li><code>group()</code> — if its qualification equals the dotted simply-qualified
-   *         class name of {@code obj}</li>
-   *         <li><code>sqnd(obj) + group(2)</code> — if its qualification contains the
-   *         {@linkplain Class#getSimpleName() simple class name} of {@code obj}</li>
-   *         <li><code>sqnd(obj) + " {" + group() + "}"</code> — otherwise</li>
-   *         </ul>
+   * @return {@code obj.}{@link Object#toString() toString()}, replacing its qualification with
+   *         {@code sqnd(obj)}, and wrapping its attributes with square brackets if parentheses are
+   *         missing.
    */
   public static String toSqnQualifiedString(@Nullable Object obj) {
     if (obj == null)
       return NULL;
 
-    String objString = obj.toString();
-    String sqnd = sqnd(obj);
-    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, objString)
-        .map($ -> $.group(1).equals(sqnd) ? $.group()
-            : sqnd + ($.group(1).endsWith(obj.getClass().getSimpleName())
-                ? objToElse(stripToNull($.group(2)), $$ -> S + SPACE + $$, EMPTY)
-                : S + SPACE + TO_STRING_OPEN + $.group() + TO_STRING_CLOSE))
+    return Patterns.match(PATTERN__QUALIFIED_TO_STRING, obj.toString())
+        .map($ -> {
+          String attrPart = stripToEmpty(
+              $.group(1).endsWith(obj.getClass().getSimpleName()) ? $.group(2) : $.group());
+          if (!attrPart.isEmpty()) {
+            switch (attrPart.charAt(0)) {
+              case ROUND_BRACKET_OPEN:
+              case SQUARE_BRACKET_OPEN:
+              case CURLY_BRACE_OPEN:
+                // NOP
+                break;
+              default:
+                attrPart = TO_STRING_OPEN + attrPart + TO_STRING_CLOSE;
+            }
+          }
+          return sqnd(obj) + attrPart;
+        })
         .orElseThrow();
   }
 
@@ -1524,7 +1533,7 @@ public final class Objects {
    *           if keys are not {@link String}.
    */
   public static String toStringWithProperties(Object obj, @Nullable Object... properties) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(TO_STRING_OPEN);
+    var b = new StringBuilder(sqnd(obj)).append(TO_STRING_OPEN);
     for (int i = 0; i < properties.length;) {
       if (i > 0) {
         b.append(TO_STRING_ITEM_SEPARATOR);
@@ -1540,7 +1549,7 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1) {
-    return sqnd(obj) + SPACE + TO_STRING_OPEN
+    return sqnd(obj) + TO_STRING_OPEN
         + key1 + TO_STRING_PROPERTY_SEPARATOR + value1
         + TO_STRING_CLOSE;
   }
@@ -1550,9 +1559,8 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1,
-      String key2,
-      @Nullable Object value2) {
-    return sqnd(obj) + SPACE + TO_STRING_OPEN
+      String key2, @Nullable Object value2) {
+    return sqnd(obj) + TO_STRING_OPEN
         + key1 + TO_STRING_PROPERTY_SEPARATOR + value1 + TO_STRING_ITEM_SEPARATOR
         + key2 + TO_STRING_PROPERTY_SEPARATOR + value2
         + TO_STRING_CLOSE;
@@ -1563,9 +1571,8 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1,
-      String key2,
-      @Nullable Object value2, String key3, @Nullable Object value3) {
-    return sqnd(obj) + SPACE + TO_STRING_OPEN
+      String key2, @Nullable Object value2, String key3, @Nullable Object value3) {
+    return sqnd(obj) + TO_STRING_OPEN
         + key1 + TO_STRING_PROPERTY_SEPARATOR + value1 + TO_STRING_ITEM_SEPARATOR
         + key2 + TO_STRING_PROPERTY_SEPARATOR + value2 + TO_STRING_ITEM_SEPARATOR
         + key3 + TO_STRING_PROPERTY_SEPARATOR + value3
@@ -1580,7 +1587,7 @@ public final class Objects {
    * {@jada.doc END}
    */
   public static String toStringWithValues(Object obj, @Nullable Object... values) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(TO_STRING_OPEN);
+    var b = new StringBuilder(sqnd(obj)).append(TO_STRING_OPEN);
     var filled = false;
     for (var value : values) {
       if (value == null) {
@@ -1604,7 +1611,7 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static String toStringWithValues(Object obj, @Nullable Object value) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE);
+    var b = new StringBuilder(sqnd(obj));
     if (value instanceof Collection || value instanceof Map) {
       b.append(value);
     } else {
@@ -1626,7 +1633,7 @@ public final class Objects {
    */
   public static String toStringWithValues(Object obj, @Nullable Object value1,
       @Nullable Object value2) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(TO_STRING_OPEN);
+    var b = new StringBuilder(sqnd(obj)).append(TO_STRING_OPEN);
     var filled = false;
     if (value1 != null) {
       filled = true;
@@ -1650,7 +1657,7 @@ public final class Objects {
    */
   public static String toStringWithValues(Object obj, @Nullable Object value1,
       @Nullable Object value2, @Nullable Object value3) {
-    var b = new StringBuilder(sqnd(obj)).append(SPACE).append(TO_STRING_OPEN);
+    var b = new StringBuilder(sqnd(obj)).append(TO_STRING_OPEN);
     var filled = false;
     if (value1 != null) {
       filled = true;

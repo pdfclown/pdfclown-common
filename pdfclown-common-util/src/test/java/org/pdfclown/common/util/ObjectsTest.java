@@ -223,11 +223,11 @@ class ObjectsTest extends BaseTest {
       // Wrong FQN.
       "org.something.ToStringObject",
       // Simple type name, with attributes.
-      "ToStringObject{myprop:AAA}",
+      "ToStringObject[myprop=AAA]",
       // Simple type name nested in an attribute.
-      "myprop:List<ToStringObject>",
+      "myprop=List<ToStringObject>",
       // Simple type name nested in an attribute.
-      "myprop:ToStringObject");
+      "myprop=ToStringObject");
 
   private static final List<@Nullable Object> QN_OBJS = asList(
       null,
@@ -656,27 +656,27 @@ class ObjectsTest extends BaseTest {
             // [2] obj[1]: "ToStringObject"
             "ToStringObject",
             // [3] obj[2]: "ToStringObject myprop=something"
-            "ToStringObject myprop=something",
+            "ToStringObject[myprop=something]",
             // [4] obj[3]: "ObjectsTest$ToStringObject"
             "ObjectsTest$ToStringObject",
             // [5] obj[4]: "ObjectsTest$ToStringObject myprop: something"
-            "ObjectsTest$ToStringObject myprop: something",
+            "ObjectsTest$ToStringObject[myprop: something]",
             // [6] obj[5]: "ObjectsTest.ToStringObject myprop: something else"
-            "ObjectsTest.ToStringObject myprop: something else",
+            "ObjectsTest.ToStringObject[myprop: something else]",
             // [7] obj[6]: "org.pdfclown.common.util.ObjectsTest$ToStringObject"
             "org.pdfclown.common.util.ObjectsTest$ToStringObject",
             // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
-            "org.pdfclown.common.util.ObjectsTest.ToStringObject something",
+            "org.pdfclown.common.util.ObjectsTest.ToStringObject[something]",
             // [9] obj[8]: "ToStringObjects"
-            "ObjectsTest.ToStringObject [ToStringObjects]",
+            "ObjectsTest.ToStringObject[ToStringObjects]",
             // [10] obj[9]: "org.something.ToStringObject"
-            "ObjectsTest.ToStringObject [org.something.ToStringObject]",
-            // [11] obj[10]: "ToStringObject{myprop:AAA}"
-            "ToStringObject{myprop:AAA}",
-            // [12] obj[11]: "myprop:List<ToStringObject>"
-            "ObjectsTest.ToStringObject [myprop:List<ToStringObject>]",
-            // [13] obj[12]: "myprop:ToStringObject"
-            "ObjectsTest.ToStringObject [myprop:ToStringObject]"),
+            "org.something.ToStringObject",
+            // [11] obj[10]: "ToStringObject[myprop=AAA]"
+            "ToStringObject[myprop=AAA]",
+            // [12] obj[11]: "myprop=List<ToStringObject>"
+            "ObjectsTest.ToStringObject[myprop=List<ToStringObject>]",
+            // [13] obj[12]: "myprop=ToStringObject"
+            "ObjectsTest.ToStringObject[myprop=ToStringObject]"),
         // obj
         TO_STRINGS);
   }
@@ -692,27 +692,27 @@ class ObjectsTest extends BaseTest {
             // [2] obj[1]: "ToStringObject"
             "ObjectsTest.ToStringObject",
             // [3] obj[2]: "ToStringObject myprop=something"
-            "ObjectsTest.ToStringObject myprop=something",
+            "ObjectsTest.ToStringObject[myprop=something]",
             // [4] obj[3]: "ObjectsTest$ToStringObject"
             "ObjectsTest.ToStringObject",
             // [5] obj[4]: "ObjectsTest$ToStringObject myprop: something"
-            "ObjectsTest.ToStringObject myprop: something",
+            "ObjectsTest.ToStringObject[myprop: something]",
             // [6] obj[5]: "ObjectsTest.ToStringObject myprop: something else"
-            "ObjectsTest.ToStringObject myprop: something else",
+            "ObjectsTest.ToStringObject[myprop: something else]",
             // [7] obj[6]: "org.pdfclown.common.util.ObjectsTest$ToStringObject"
             "ObjectsTest.ToStringObject",
             // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
-            "ObjectsTest.ToStringObject something",
+            "ObjectsTest.ToStringObject[something]",
             // [9] obj[8]: "ToStringObjects"
-            "ObjectsTest.ToStringObject [ToStringObjects]",
+            "ObjectsTest.ToStringObject[ToStringObjects]",
             // [10] obj[9]: "org.something.ToStringObject"
             "ObjectsTest.ToStringObject",
-            // [11] obj[10]: "ToStringObject{myprop:AAA}"
-            "ObjectsTest.ToStringObject {myprop:AAA}",
-            // [12] obj[11]: "myprop:List<ToStringObject>"
-            "ObjectsTest.ToStringObject [myprop:List<ToStringObject>]",
-            // [13] obj[12]: "myprop:ToStringObject"
-            "ObjectsTest.ToStringObject [myprop:ToStringObject]"),
+            // [11] obj[10]: "ToStringObject[myprop=AAA]"
+            "ObjectsTest.ToStringObject[myprop=AAA]",
+            // [12] obj[11]: "myprop=List<ToStringObject>"
+            "ObjectsTest.ToStringObject[myprop=List<ToStringObject>]",
+            // [13] obj[12]: "myprop=ToStringObject"
+            "ObjectsTest.ToStringObject[myprop=ToStringObject]"),
         // obj
         TO_STRINGS);
   }
@@ -722,13 +722,13 @@ class ObjectsTest extends BaseTest {
         simple(),
         // expected
         asList(
-            // [1] obj[0]: Object; properties[0]: "[Ljava.lang.Object;@40ee0a22"
+            // [1] obj[0]: Object; properties[0]: "[Ljava.lang.Object;@bb095"
             new Failure("ClassCastException",
                 "class java.net.URI cannot be cast to class java.lang.String (java.net.URI and java.lang.String are in module java.base of loader 'bootstrap')"),
-            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; properties[1]: "[Ljava.lang.Object;@629f066f"
-            "Clis.Args [adapter=class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
-            // [3] obj[2]: org.pdfclown.common.util.xml.. . .; properties[2]: "[Ljava.lang.Object;@ecfbe91"
-            "Xmls.XPath [profile=COMPACT, level=11]"),
+            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; properties[1]: "[Ljava.lang.Object;@76911385"
+            "Clis.Args[adapter=class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
+            // [3] obj[2]: org.pdfclown.common.util.xml.Xmls.XPath; properties[2]: "[Ljava.lang.Object;@160396db"
+            "Xmls.XPath[profile=COMPACT, level=11]"),
         // obj, properties
         of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
         of(Clis.Args.class, new Object[] { "adapter", Clis.ListIncrementalAdapter.class }),
@@ -741,12 +741,12 @@ class ObjectsTest extends BaseTest {
         simple(),
         // expected
         asList(
-            // [1] obj[0]: Object; features[0]: "[Ljava.lang.Object;@562c877a"
-            "Object [https://www.example.io, Blue]",
-            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; features[1]: "[Ljava.lang.Object;@4d23015c"
-            "Clis.Args [class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
-            // [3] obj[2]: org.pdfclown.common.util.xml.. . .; features[2]: "[Ljava.lang.Object;@441cc260"
-            "Xmls.XPath [true, Yellow, COMPACT]"),
+            // [1] obj[0]: Object; features[0]: "[Ljava.lang.Object;@4409e975"
+            "Object[https://www.example.io, Blue]",
+            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; features[1]: "[Ljava.lang.Object;@125c082e"
+            "Clis.Args[class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
+            // [3] obj[2]: org.pdfclown.common.util.xml.Xmls.XPath; features[2]: "[Ljava.lang.Object;@68ace111"
+            "Xmls.XPath[true, Yellow, COMPACT]"),
         // obj, features
         of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
         of(Clis.Args.class, new Object[] { Clis.ListIncrementalAdapter.class }),
