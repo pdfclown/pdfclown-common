@@ -149,7 +149,9 @@ public class SemVer1 extends SemVer<SemVer1> {
     }
   }
 
-  private transient @Derived @Nullable List<Comparable> prereleaseFields;
+  @Derived
+  private transient @Nullable List<Comparable> prereleaseFields;
+  @Derived
   private transient int prereleaseFieldsBitset;
 
   SemVer1(int major, int minor, int patch, @Nullable String prerelease) {

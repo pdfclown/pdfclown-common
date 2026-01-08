@@ -166,8 +166,10 @@ public class SemVer2 extends SemVer<SemVer2> {
   }
 
   private final String metadata;
-  private transient @Derived @Nullable List<String> metadataFields;
-  private transient @Derived @Nullable List<Comparable> prereleaseFields;
+  @Derived
+  private transient @Nullable List<String> metadataFields;
+  @Derived
+  private transient @Nullable List<Comparable> prereleaseFields;
 
   SemVer2(int major, int minor, int patch, @Nullable String prerelease, @Nullable String metadata) {
     super(major, minor, patch, prerelease);
