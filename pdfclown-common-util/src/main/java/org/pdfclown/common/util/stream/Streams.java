@@ -14,6 +14,7 @@ package org.pdfclown.common.util.stream;
 
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -22,6 +23,13 @@ import java.util.stream.Stream;
  * @author Stefano Chizzolini
  */
 public final class Streams {
+  /**
+   * Gets a stream from a byte array.
+   */
+  public static IntStream intStream(byte[] array) {
+    return IntStream.range(0, array.length).map($ -> array[$]);
+  }
+
   /**
    * Gets a stream whose elements are in reverse order.
    *
