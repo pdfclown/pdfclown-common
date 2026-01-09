@@ -44,6 +44,7 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -1532,16 +1533,81 @@ public final class Objects {
    * @throws ClassCastException
    *           if keys are not {@link String}.
    */
-  public static String toStringWithProperties(Object obj, @Nullable Object... properties) {
-    var b = new StringBuilder(sqnd(obj)).append(TO_STRING_OPEN);
+  public static <A extends Appendable> A toStringWithProperties(A a, Object obj,
+      @Nullable Object... properties) throws IOException {
+    a.append(sqnd(obj)).append(TO_STRING_OPEN);
     for (int i = 0; i < properties.length;) {
       if (i > 0) {
-        b.append(TO_STRING_ITEM_SEPARATOR);
+        a.append(TO_STRING_ITEM_SEPARATOR);
       }
-      b.append((String) properties[i++]).append(TO_STRING_PROPERTY_SEPARATOR)
-          .append(properties[i++]);
+      a.append((String) properties[i++] /* key */).append(TO_STRING_PROPERTY_SEPARATOR)
+          .append(java.util.Objects.toString(properties[i++]) /* value */);
     }
-    return b.append(TO_STRING_CLOSE).toString();
+    a.append(TO_STRING_CLOSE);
+    return a;
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
+   * {@jada.reuseDoc END}
+   */
+  public static <A extends Appendable> A toStringWithProperties(A a, Object obj, String key1,
+      @Nullable Object value1) throws IOException {
+    a.append(sqnd(obj)).append(TO_STRING_OPEN)
+        .append(key1).append(TO_STRING_PROPERTY_SEPARATOR)
+        .append(java.util.Objects.toString(value1))
+        .append(TO_STRING_CLOSE);
+    return a;
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
+   * {@jada.reuseDoc END}
+   */
+  public static <A extends Appendable> A toStringWithProperties(A a, Object obj, String key1,
+      @Nullable Object value1, String key2, @Nullable Object value2) throws IOException {
+    a.append(sqnd(obj)).append(TO_STRING_OPEN)
+        .append(key1).append(TO_STRING_PROPERTY_SEPARATOR)
+        .append(java.util.Objects.toString(value1)).append(TO_STRING_ITEM_SEPARATOR)
+        .append(key2).append(TO_STRING_PROPERTY_SEPARATOR)
+        .append(java.util.Objects.toString(value2))
+        .append(TO_STRING_CLOSE);
+    return a;
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
+   * {@jada.reuseDoc END}
+   */
+  public static <A extends Appendable> A toStringWithProperties(A a, Object obj, String key1,
+      @Nullable Object value1, String key2, @Nullable Object value2, String key3,
+      @Nullable Object value3) throws IOException {
+    a.append(sqnd(obj)).append(TO_STRING_OPEN)
+        .append(key1).append(TO_STRING_PROPERTY_SEPARATOR)
+        .append(java.util.Objects.toString(value1)).append(TO_STRING_ITEM_SEPARATOR)
+        .append(key2).append(TO_STRING_PROPERTY_SEPARATOR)
+        .append(java.util.Objects.toString(value2)).append(TO_STRING_ITEM_SEPARATOR)
+        .append(key3).append(TO_STRING_PROPERTY_SEPARATOR)
+        .append(java.util.Objects.toString(value3))
+        .append(TO_STRING_CLOSE);
+    return a;
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its properties.
+   * {@jada.reuseDoc END}
+   *
+   * @param properties
+   *          Properties (key-value pairs; keys MUST be non-null {@link String}).
+   * @throws ClassCastException
+   *           if keys are not {@link String}.
+   */
+  public static String toStringWithProperties(Object obj, @Nullable Object... properties) {
+    try {
+      return toStringWithProperties(new StringBuilder(), obj, properties).toString();
+    } catch (IOException ex) {
+      throw runtime(ex);
+    }
   }
 
   /**
@@ -1549,9 +1615,11 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1) {
-    return sqnd(obj) + TO_STRING_OPEN
-        + key1 + TO_STRING_PROPERTY_SEPARATOR + value1
-        + TO_STRING_CLOSE;
+    try {
+      return toStringWithProperties(new StringBuilder(), obj, key1, value1).toString();
+    } catch (IOException ex) {
+      throw runtime(ex);
+    }
   }
 
   /**
@@ -1560,10 +1628,12 @@ public final class Objects {
    */
   public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1,
       String key2, @Nullable Object value2) {
-    return sqnd(obj) + TO_STRING_OPEN
-        + key1 + TO_STRING_PROPERTY_SEPARATOR + value1 + TO_STRING_ITEM_SEPARATOR
-        + key2 + TO_STRING_PROPERTY_SEPARATOR + value2
-        + TO_STRING_CLOSE;
+    try {
+      return toStringWithProperties(new StringBuilder(), obj, key1, value1, key2, value2)
+          .toString();
+    } catch (IOException ex) {
+      throw runtime(ex);
+    }
   }
 
   /**
@@ -1572,11 +1642,12 @@ public final class Objects {
    */
   public static String toStringWithProperties(Object obj, String key1, @Nullable Object value1,
       String key2, @Nullable Object value2, String key3, @Nullable Object value3) {
-    return sqnd(obj) + TO_STRING_OPEN
-        + key1 + TO_STRING_PROPERTY_SEPARATOR + value1 + TO_STRING_ITEM_SEPARATOR
-        + key2 + TO_STRING_PROPERTY_SEPARATOR + value2 + TO_STRING_ITEM_SEPARATOR
-        + key3 + TO_STRING_PROPERTY_SEPARATOR + value3
-        + TO_STRING_CLOSE;
+    try {
+      return toStringWithProperties(new StringBuilder(), obj, key1, value1, key2, value2, key3,
+          value3).toString();
+    } catch (IOException ex) {
+      throw runtime(ex);
+    }
   }
 
   /**
@@ -1586,8 +1657,9 @@ public final class Objects {
    * </p>
    * {@jada.doc END}
    */
-  public static String toStringWithValues(Object obj, @Nullable Object... values) {
-    var b = new StringBuilder(sqnd(obj)).append(TO_STRING_OPEN);
+  public static <A extends Appendable> A toStringWithValues(A a, Object obj,
+      @Nullable Object... values) throws IOException {
+    a.append(sqnd(obj)).append(TO_STRING_OPEN);
     var filled = false;
     for (var value : values) {
       if (value == null) {
@@ -1595,12 +1667,110 @@ public final class Objects {
       }
 
       if (filled) {
-        b.append(TO_STRING_ITEM_SEPARATOR);
+        a.append(TO_STRING_ITEM_SEPARATOR);
       }
-      b.append(value);
+      a.append(java.util.Objects.toString(value));
       filled = true;
     }
-    return b.append(TO_STRING_CLOSE).toString();
+    a.append(TO_STRING_CLOSE);
+    return a;
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its values.
+   * <p>
+   * NOTE: {@code null} values are ignored.
+   * </p>
+   * {@jada.reuseDoc END}
+   */
+  public static <A extends Appendable> A toStringWithValues(A a, Object obj, @Nullable Object value)
+      throws IOException {
+    a.append(sqnd(obj));
+    if (value instanceof Collection || value instanceof Map) {
+      a.append(java.util.Objects.toString(value));
+    } else {
+      a.append(TO_STRING_OPEN);
+      if (value != null) {
+        a.append(java.util.Objects.toString(value));
+      }
+      a.append(TO_STRING_CLOSE);
+    }
+    return a;
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its values.
+   * <p>
+   * NOTE: {@code null} values are ignored.
+   * </p>
+   * {@jada.reuseDoc END}
+   */
+  public static <A extends Appendable> A toStringWithValues(A a, Object obj,
+      @Nullable Object value1,
+      @Nullable Object value2) throws IOException {
+    a.append(sqnd(obj)).append(TO_STRING_OPEN);
+    var filled = false;
+    if (value1 != null) {
+      filled = true;
+      a.append(java.util.Objects.toString(value1));
+    }
+    if (value2 != null) {
+      if (filled) {
+        a.append(TO_STRING_ITEM_SEPARATOR);
+      }
+      a.append(java.util.Objects.toString(value2));
+    }
+    a.append(TO_STRING_CLOSE);
+    return a;
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its values.
+   * <p>
+   * NOTE: {@code null} values are ignored.
+   * </p>
+   * {@jada.reuseDoc END}
+   */
+  public static <A extends Appendable> A toStringWithValues(A a, Object obj,
+      @Nullable Object value1,
+      @Nullable Object value2, @Nullable Object value3) throws IOException {
+    a.append(sqnd(obj)).append(TO_STRING_OPEN);
+    var filled = false;
+    if (value1 != null) {
+      filled = true;
+      a.append(java.util.Objects.toString(value1));
+    }
+    if (value2 != null) {
+      if (filled) {
+        a.append(TO_STRING_ITEM_SEPARATOR);
+      } else {
+        filled = true;
+      }
+      a.append(java.util.Objects.toString(value2));
+    }
+    if (value3 != null) {
+      if (filled) {
+        a.append(TO_STRING_ITEM_SEPARATOR);
+      }
+      a.append(java.util.Objects.toString(value3));
+    }
+    a.append(TO_STRING_CLOSE);
+    return a;
+  }
+
+  /**
+   * {@jada.reuseDoc} Gets the string representation of an object, along with its values.
+   * <p>
+   * NOTE: {@code null} values are ignored.
+   * </p>
+   * {@jada.reuseDoc END}
+   */
+  public static String toStringWithValues(Object obj, @Nullable Object... values) {
+    try {
+      return toStringWithValues(new StringBuilder(), obj, values).toString();
+    } catch (IOException ex) {
+      throw runtime(ex);
+    }
   }
 
   /**
@@ -1611,17 +1781,11 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static String toStringWithValues(Object obj, @Nullable Object value) {
-    var b = new StringBuilder(sqnd(obj));
-    if (value instanceof Collection || value instanceof Map) {
-      b.append(value);
-    } else {
-      b.append(TO_STRING_OPEN);
-      if (value != null) {
-        b.append(value);
-      }
-      b.append(TO_STRING_CLOSE);
+    try {
+      return toStringWithValues(new StringBuilder(), obj, value).toString();
+    } catch (IOException ex) {
+      throw runtime(ex);
     }
-    return b.toString();
   }
 
   /**
@@ -1633,19 +1797,11 @@ public final class Objects {
    */
   public static String toStringWithValues(Object obj, @Nullable Object value1,
       @Nullable Object value2) {
-    var b = new StringBuilder(sqnd(obj)).append(TO_STRING_OPEN);
-    var filled = false;
-    if (value1 != null) {
-      filled = true;
-      b.append(value1);
+    try {
+      return toStringWithValues(new StringBuilder(), obj, value1, value2).toString();
+    } catch (IOException ex) {
+      throw runtime(ex);
     }
-    if (value2 != null) {
-      if (filled) {
-        b.append(TO_STRING_ITEM_SEPARATOR);
-      }
-      b.append(value2);
-    }
-    return b.append(TO_STRING_CLOSE).toString();
   }
 
   /**
@@ -1657,27 +1813,11 @@ public final class Objects {
    */
   public static String toStringWithValues(Object obj, @Nullable Object value1,
       @Nullable Object value2, @Nullable Object value3) {
-    var b = new StringBuilder(sqnd(obj)).append(TO_STRING_OPEN);
-    var filled = false;
-    if (value1 != null) {
-      filled = true;
-      b.append(value1);
+    try {
+      return toStringWithValues(new StringBuilder(), obj, value1, value2, value3).toString();
+    } catch (IOException ex) {
+      throw runtime(ex);
     }
-    if (value2 != null) {
-      if (filled) {
-        b.append(TO_STRING_ITEM_SEPARATOR);
-      } else {
-        filled = true;
-      }
-      b.append(value2);
-    }
-    if (value3 != null) {
-      if (filled) {
-        b.append(TO_STRING_ITEM_SEPARATOR);
-      }
-      b.append(value3);
-    }
-    return b.append(TO_STRING_CLOSE).toString();
   }
 
   /**
