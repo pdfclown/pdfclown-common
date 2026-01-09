@@ -38,9 +38,10 @@ import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.HYPHEN;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Conditions.requireEqual;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
@@ -221,8 +222,7 @@ public final class Assertions {
     }
 
     private static String toString(String label, @Nullable Object value) {
-      return label.isEmpty() ? textLiteral(value)
-          : "%s (%s)".formatted(textLiteral(value), label);
+      return label.isEmpty() ? textLiteral(value) : "%s (%s)".formatted(textLiteral(value), label);
     }
 
     private final String label;
@@ -1377,7 +1377,7 @@ public final class Assertions {
 
     @Override
     public String toString() {
-      return name + SPACE + ROUND_BRACKET_OPEN + message + ROUND_BRACKET_CLOSE;
+      return name + SQUARE_BRACKET_OPEN + message + SQUARE_BRACKET_CLOSE;
     }
   }
 

@@ -957,9 +957,9 @@ public final class Xmls {
    */
   public static String toString(Element element) {
     try {
-      var ret = new StringWriter();
-      fragmentTransformer(null).transform(new DOMSource(element), new StreamResult(ret));
-      return ret.toString();
+      var w = new StringWriter();
+      fragmentTransformer(null).transform(new DOMSource(element), new StreamResult(w));
+      return w.toString();
     } catch (TransformerFactoryConfigurationError | TransformerException ex) {
       throw runtime(ex);
     }
