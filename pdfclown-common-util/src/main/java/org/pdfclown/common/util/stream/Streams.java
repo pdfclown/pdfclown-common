@@ -45,6 +45,13 @@ public final class Streams {
     return stack.stream();
   }
 
+  /**
+   * Gets a stream of unsigned values from a byte array.
+   */
+  public static IntStream uintStream(byte[] array) {
+    return IntStream.range(0, array.length).map($ -> array[$] & 0xFF);
+  }
+
   private Streams() {
   }
 }
