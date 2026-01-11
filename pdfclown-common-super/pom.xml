@@ -158,7 +158,7 @@ pdfclown-common-base instead)</description>
       PLUGIN VERSIONS
     -->
     <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
-    <dependency-check-maven.version>12.1.9</dependency-check-maven.version>
+    <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
     <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
     <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
     <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
