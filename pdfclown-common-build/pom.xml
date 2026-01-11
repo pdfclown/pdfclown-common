@@ -43,7 +43,7 @@
       NOTE: Because of cyclic dependency between pdfclown-common-build and pdfclown-common-util, the
       latter cannot be referenced by the former within the project build; consequently, the latest
       already published version MUST be used instead. -->
-    <pdfclown-common-util.version>0.2.2</pdfclown-common-util.version>
+    <pdfclown-common-util.version>0.4.0</pdfclown-common-util.version>
   </properties>
 
   <dependencies>

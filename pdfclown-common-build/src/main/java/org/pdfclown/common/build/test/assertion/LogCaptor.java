@@ -117,7 +117,7 @@ public abstract class LogCaptor
   private static final Function<String, LogCaptor> logCaptorFactory;
   static {
     String implName = fqn(LoggerFactory.getILoggerFactory()).toLowerCase();
-    logCaptorFactory = ServiceProvider.discover(LogCaptorProvider.class).stream()
+    logCaptorFactory = ServiceProvider.discover(LogCaptorProvider.class)
         .map($ -> $.getFactory(implName))
         .filter(Objects::nonNull)
         .findFirst().orElseThrow(() -> missing(implName,

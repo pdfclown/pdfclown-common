@@ -28,8 +28,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.meta.SemVer.Id;
-import org.pdfclown.common.build.meta.SemVer1;
+import org.pdfclown.common.util.meta.SemVer.Id;
+import org.pdfclown.common.util.meta.SemVer1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
