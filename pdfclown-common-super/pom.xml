@@ -242,7 +242,7 @@ pdfclown-common-base instead)</description>
                 See also:
                 - available properties (prepended with "git."): <https://github.com/git-commit-id/git-commit-id-plugin-core/blob/master/src/main/java/pl/project13/core/GitCommitPropertyConstant.java>
               -->
-              <id>get-git-commit-info</id>
+              <id>init-git-commit-info</id>
               <goals>
                 <goal>revision</goal>
               </goals>
@@ -270,7 +270,7 @@ pdfclown-common-base instead)</description>
           </dependencies>
           <executions>
             <execution>
-              <id>execute-jar-init</id>
+              <id>init-build-info</id>
               <goals>
                 <goal>execute</goal>
               </goals>
@@ -379,7 +379,7 @@ log.info("buildTimestamp: " + buildTimestamp
           </dependencies>
           <executions>
             <execution>
-              <id>sources-checkstyle</id>
+              <id>check-sources-style</id>
               <goals>
                 <goal>check</goal>
               </goals>
@@ -394,13 +394,13 @@ log.info("buildTimestamp: " + buildTimestamp
           <version>${maven-plugin-plugin.version}</version>
           <executions>
             <execution>
-              <id>mojo-descriptor-generate</id>
+              <id>generate-plugin-descriptor</id>
               <goals>
                 <goal>descriptor</goal>
               </goals>
             </execution>
             <execution>
-              <id>help-mojo-generate</id>
+              <id>generate-help-mojo</id>
               <goals>
                 <goal>helpmojo</goal>
               </goals>
@@ -505,7 +505,7 @@ log.info("buildTimestamp: " + buildTimestamp
           <version>${sisu-maven-plugin.version}</version>
           <executions>
             <execution>
-              <id>sisu-index-generate</id>
+              <id>generate-sisu-index</id>
               <goals>
                 <goal>main-index</goal>
               </goals>
@@ -523,7 +523,7 @@ log.info("buildTimestamp: " + buildTimestamp
           </configuration>
           <executions>
             <execution>
-              <id>flatten</id>
+              <id>flatten-pom</id>
               <goals>
                 <goal>flatten</goal>
               </goals>
@@ -572,7 +572,7 @@ log.info("buildTimestamp: " + buildTimestamp
           <version>${maven-source-plugin.version}</version>
           <executions>
             <execution>
-              <id>sources-attach</id>
+              <id>generate-sources-jar</id>
               <goals>
                 <goal>jar-no-fork</goal>
               </goals>
@@ -776,7 +776,7 @@ log.info("buildTimestamp: " + buildTimestamp
               </link>
               <link>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
+                <artifactId>junit-jupiter-api</artifactId>
                 <url>https://junit.org/junit5/docs/${junit.version}/api/</url>
               </link>
               <link>
@@ -854,16 +854,10 @@ log.info("buildTimestamp: " + buildTimestamp
           </configuration>
           <executions>
             <execution>
-              <id>javadoc-jar-generate</id>
+              <id>generate-javadoc-jar</id>
               <goals>
                 <goal>jar</goal>
               </goals>
-            </execution>
-            <execution>
-              <id>default-test-javadoc</id>
-              <configuration>
-                <sourcepath>${project.basedir}/src/test/java</sourcepath>
-              </configuration>
             </execution>
           </executions>
         </plugin>
@@ -883,7 +877,7 @@ log.info("buildTimestamp: " + buildTimestamp
           </configuration>
           <executions>
             <execution>
-              <id>integration-test</id>
+              <id>run-integration-test</id>
               <goals>
                 <goal>integration-test</goal>
               </goals>
@@ -1248,7 +1242,7 @@ new ReleaseManager(project.basedir.toPath(), SemVer2.of(releaseVersion).to(SemVe
             <artifactId>gmavenplus-plugin</artifactId>
             <executions>
               <execution>
-                <id>execute-jar-init</id>
+                <id>init-build-info</id>
                 <phase>initialize</phase>
               </execution>
             </executions>
@@ -1334,6 +1328,78 @@ new ReleaseManager(project.basedir.toPath(), SemVer2.of(releaseVersion).to(SemVe
     -->
 
     <profile>
+      <id>test-jar</id>
+      <!--
+        TEST JAR ARTIFACT PROFILE
+
+        Attaches test-related artifacts.
+      -->
+      <activation>
+        <file>
+          <exists>src/test/javadoc/overview.html</exists>
+        </file>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>generate-test-javadoc-jar</id>
+                  <goals>
+                    <goal>test-jar</goal>
+                  </goals>
+                  <configuration>
+                    <sourcepath>src/test/java</sourcepath>
+                    <subpackages>${testJarPackages}</subpackages>
+
+                    <overview>src/test/javadoc/overview.html</overview>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-test-jar</id>
+                <goals>
+                  <goal>test-jar</goal>
+                </goals>
+                <configuration>
+                  <includes>${testJarFiles},${testJarResources}</includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-test-sources-jar</id>
+                <goals>
+                  <goal>test-jar-no-fork</goal>
+                </goals>
+                <configuration>
+                  <includes>${testJarFiles}</includes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
       <id>internal-pom</id>
       <!--
         INTERNAL POM PROFILE
@@ -1359,7 +1425,7 @@ new ReleaseManager(project.basedir.toPath(), SemVer2.of(releaseVersion).to(SemVe
             <artifactId>maven-source-plugin</artifactId>
             <executions>
               <execution>
-                <id>sources-attach</id>
+                <id>generate-sources-jar</id>
                 <phase>none</phase>
               </execution>
             </executions>
@@ -1369,7 +1435,7 @@ new ReleaseManager(project.basedir.toPath(), SemVer2.of(releaseVersion).to(SemVe
             <artifactId>maven-javadoc-plugin</artifactId>
             <executions>
               <execution>
-                <id>javadoc-jar-generate</id>
+                <id>generate-javadoc-jar</id>
                 <phase>none</phase>
               </execution>
             </executions>
