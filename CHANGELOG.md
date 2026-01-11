@@ -1,3 +1,41 @@
+## v0.4.0 (2026-01-11)
+
+### BREAKING CHANGE
+
+- Execution identifiers redefined
+- API references to shaded pdfclown-common-util
+  (`org.pdfclown.common.build.util`) have been remapped to
+  `org.pdfclown.common.build.shaded.util`.
+- `SemVer` renamed to `SemVer2`, its API redefined.
+- `ServiceProvider` API changed return types.
+
+### Feat
+
+- **util**: add support to unsigned `byte[]` stream (`IntStream`)
+- **util**: add support to `Appendable` for `Objects::toStringWith...`
+- **util**: add support to `byte[]` stream (`IntStream`)
+- expand versioning metadata model
+- **util**: consolidate `ServiceProvider`
+- **build**: define `LogCaptorProvider` (SPI)
+
+### Fix
+
+- **super**: improve POM (execution identifiers)
+- **deps**: bump org.owasp:dependency-check-maven from 12.1.9 to 12.2.0 (#61)
+- **deps**: bump com.github.javaparser:javaparser-core from 3.27.1 to 3.28.0 (#59)
+- **deps**: bump org.sonatype.central:central-publishing-maven-plugin from 0.9.0 to 0.10.0 (#57)
+- **build**: simplify pdfclown-common-util shade mapping
+- **util**: improve `Object::toString`-related utilities
+- **build**: improve javadoc table rows contrast
+- **deps**: bump com.puppycrawl.tools:checkstyle from 12.3.0 to 12.3.1 (#56)
+- **deps**: bump org.jsoup:jsoup from 1.21.2 to 1.22.1 (#55)
+
+### Refactor
+
+- normalize `Object::toString` implementations
+- normalize derived fields
+- **util**: clean up code (`ServiceProvider`)
+
 ## v0.3.0 (2025-12-30)
 
 ### BREAKING CHANGE
