@@ -63,6 +63,13 @@
       <artifactId>commons-text</artifactId>
     </dependency>
 
+    <!-- Scripting -->
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy</artifactId>
+      <version>${groovy.version}</version>
+    </dependency>
+
     <!-- I/O -->
     <dependency>
       <groupId>commons-io</groupId>
@@ -75,8 +82,8 @@
 
     <!-- Code manipulation (reflection and generation) -->
     <dependency>
-      <groupId>org.reflections</groupId>
-      <artifactId>reflections</artifactId>
+      <groupId>io.github.classgraph</groupId>
+      <artifactId>classgraph</artifactId>
     </dependency>
     <dependency>
       <groupId>com.github.javaparser</groupId>

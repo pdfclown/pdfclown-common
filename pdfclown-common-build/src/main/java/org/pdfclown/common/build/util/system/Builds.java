@@ -14,25 +14,32 @@ package org.pdfclown.common.build.util.system;
 
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.isRegularFile;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.pdfclown.common.build.internal.temp.util.system.Processes.executeGetElseThrow;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Conditions.requireDirectory;
 import static org.pdfclown.common.util.Conditions.requireFile;
 import static org.pdfclown.common.util.Conditions.requireState;
+import static org.pdfclown.common.util.Exceptions.missingPath;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongState;
 import static org.pdfclown.common.util.Objects.objDo;
+import static org.pdfclown.common.util.Objects.opt;
 import static org.pdfclown.common.util.Objects.sqnd;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__GROOVY;
 import static org.pdfclown.common.util.system.Processes.execute;
 import static org.pdfclown.common.util.system.Processes.osCommand;
-import static org.pdfclown.common.util.system.Processes.unixCommand;
 import static org.pdfclown.common.util.xml.Xmls.xml;
 import static org.pdfclown.common.util.xml.Xmls.xpath;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,7 +99,7 @@ public final class Builds {
 
   private static final Pattern PATTERN__MAVEN_LOG_LINE = Pattern.compile("\\[(\\w+?)] (.*)");
 
-  private static @Nullable Path mavenExecutable;
+  private static @Nullable Path mavenExec;
   private static @Nullable Path mavenHome;
   private static final Map<Path, String> projectArtifactIds = new HashMap<>();
 
@@ -118,6 +126,8 @@ public final class Builds {
    *          <li>provided — just provided dependencies</li>
    *          <li>system — just system dependencies</li>
    *          </ul>
+   * @throws FileNotFoundException
+   *           if {@code projectDir} does not exist.
    * @throws RuntimeException
    *           if the execution failed.
    */
@@ -142,7 +152,9 @@ public final class Builds {
         var error = new StringBuilder();
         var invoker = new DefaultInvoker();
         invoker.execute(objDo(new DefaultInvocationRequest(), $ -> {
-          $.setMavenHome(mavenHome().toFile());
+          $.setMavenHome(mavenHome().orElseThrow(() -> wrongState("""
+              Maven home NOT FOUND: specify it through system property `maven.home` \
+              or environment variable `MAVEN_HOME`""")).toFile());
           $.setPomFile(pomFile.toFile());
           $.setGoals(List.of("dependency:build-classpath"));
           if (scope != null) {
@@ -190,24 +202,37 @@ public final class Builds {
   }
 
   /**
-   * Path of the Maven command (mvn).
-   *
-   * @throws IllegalStateException
-   *           if not found.
+   * Path of Maven command (mvn).
    */
-  public static synchronized Path mavenExecutable() {
-    if (mavenExecutable == null) {
-      /*
-       * NOTE: `mavenHome()` is responsible to set `mavenExecutable` along with itself; if missing,
-       * it throws a nice exception suggesting how to fix the configuration.
-       */
-      mavenHome();
-    }
-    return mavenExecutable;
+  public static synchronized Optional<Path> mavenExec() {
+    return mavenExecAt(null);
   }
 
   /**
-   * Path of the Maven home.
+   * Resolves the path of Maven executable at the given location.
+   * <p>
+   * First (if {@code path} is defined) it looks for local Maven Wrapper (mvnw); if not found, tries
+   * to resolve the regular executable (mvn) from global installation.
+   * </p>
+   */
+  public static synchronized Optional<Path> mavenExecAt(@Nullable Path path) {
+    if (path != null) {
+      final var execName = IS_OS_WINDOWS ? "mvnw.cmd" : "mvnw";
+      Path execFile;
+      //noinspection StatementWithEmptyBody
+      while (!exists(execFile = path.resolve(execName)) && (path = path.getParent()) != null) {
+      }
+      if (path != null)
+        return opt(execFile);
+    }
+    if (mavenExec == null) {
+      mavenHome() /* NOTE: `mavenHome()` is responsible to set `mavenExec` along with itself */;
+    }
+    return opt(mavenExec);
+  }
+
+  /**
+   * Home directory of the global Maven installation.
    * <p>
    * Detection algorithm (the first valid path wins):
    * </p>
@@ -215,75 +240,61 @@ public final class Builds {
    * <li>check system property <code>maven.home</code></li>
    * <li>check environment variable <code>MAVEN_HOME</code></li>
    * <li>check Maven executable version information (<code>mvn -v</code>)</li>
-   * <li>check Maven executable location (Unix only. Bash shell: <code>whereis mvn</code>)</li>
    * </ol>
-   *
-   * @throws IllegalStateException
-   *           if not found.
    */
-  public static synchronized Path mavenHome() {
+  public static synchronized Optional<Path> mavenHome() {
     if (mavenHome != null)
-      return mavenHome;
+      return opt(mavenHome);
 
     // Environment.
     {
       String mavenHomeString;
+      // [1] System property.
       if ((mavenHomeString = System.getProperty("maven.home")) != null) {
         if (detectMavenHome(Path.of(mavenHomeString)))
-          return mavenHome;
+          return opt(mavenHome);
 
         log.warn("Maven home ({}) from system property `maven.home` INVALID", mavenHomeString);
       }
+      // [2] Environment variable.
       if ((mavenHomeString = System.getenv("MAVEN_HOME")) != null) {
         if (detectMavenHome(Path.of(mavenHomeString)))
-          return mavenHome;
+          return opt(mavenHome);
 
         log.warn("Maven home ({}) from environment variable `MAVEN_HOME` INVALID", mavenHomeString);
       }
     }
 
-    // Shell query.
+    // [3] Shell query.
+    detectMavenHome(mavenHomeOf(Path.of("mvn")).orElse(null));
+
+    return opt(mavenHome);
+  }
+
+  /**
+   * Gets the home directory of the installation the given Maven executable belongs to.
+   *
+   * @param exec
+   *          Either regular Maven executable (mvn) or Wrapper (mvnw).
+   */
+  public static Optional<Path> mavenHomeOf(Path exec) {
     try {
       /*
-       * Query `mvn` command itself!
+       * Query Maven executable!
        *
-       * NOTE: `mvn -v` command returns, among its version information, its home path.
+       * NOTE: `-v` option causes the executable to return, among its version information, its home
+       * path.
        */
-      if (detectMavenHome(shellPath(osCommand("mvn -v"),
+      return shellPath(osCommand(exec + " -v"),
           $line -> $line.startsWith("Maven home:")
               ? $line.substring("Maven home:".length()).trim()
-              : null)))
-        return mavenHome;
-
-      if (IS_OS_UNIX) {
-        /*
-         * Query the shell for `mvn` location!
-         *
-         * NOTE: Interactive shell mode ensures `PATH` environment variable comprises additional
-         * execution locations configured in user-specific files like ".bashrc".
-         */
-        Path mavenCommad = shellPath(unixCommand("whereis mvn", /* interactive: */true),
-            $line -> $line.startsWith("mvn:")
-                ? $line.substring("mvn:".length()).trim()
-                : null);
-        if (mavenCommad != null
-            /*
-             * NOTE: Maven command is at "%mavenHome%/bin/mvn", so we have to climb 2 ancestors to
-             * reach home; since the command may be linked, we have to resolve it before walking the
-             * filesystem hierarchy.
-             */
-            && detectMavenHome(mavenCommad.toRealPath().getParent().getParent()))
-          return mavenHome;
-      }
+              : null);
     } catch (IOException ex) {
-      log.warn("Maven home retrieval FAILED", ex);
+      throw runtime(ex);
     } catch (InterruptedException ex) {
       Thread.currentThread().interrupt();
+      return Optional.empty();
     }
-
-    throw wrongState("""
-        Maven home NOT FOUND: specify it through system property `maven.home` or environment \
-        variable `MAVEN_HOME`""");
   }
 
   /**
@@ -319,7 +330,70 @@ public final class Builds {
   }
 
   /**
-   * Stores the path, along with the associated command (mvn), if it corresponds to Maven home.
+   * Gets the version of the project a path belongs to.
+   *
+   * @param path
+   *          An arbitrary position within a project.
+   */
+  public static Optional<String> projectVersion(Path path) {
+    return mavenExecAt(path).map($ -> {
+      try {
+        return executeGetElseThrow(osCommand(
+            $ + " help:evaluate -Dexpression=project.version -q -DforceStdout"), path)
+                .trim() /* NOTE: Trims to ensure no whitespace (including newlines) interferes */;
+      } catch (IOException ex) {
+        throw runtime(ex);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
+      return null;
+    });
+  }
+
+  /**
+   * Executes a build script.
+   * <p>
+   * The script runs under the same {@link ClassLoader} as this library.
+   * </p>
+   *
+   * @param scriptBaseName
+   *          Base name of the script file to execute (its full path is resolved as
+   *          <code>${projectDir}/src/conf/scripts/${scriptBaseName}.groovy</code>).
+   * @param binding
+   *          Script variable bindings.
+   * @param projectDir
+   *          Base directory of the project.
+   * @return Whether the script was executed ({@code false}, if it does not exist).
+   * @throws FileNotFoundException
+   *           if {@code projectDir} does not exist.
+   * @throws IOException
+   *           if script loading failed.
+   */
+  public static boolean runScript(String scriptBaseName, Binding binding, Path projectDir)
+      throws IOException {
+    if (!isDirectory(projectDir))
+      throw missingPath(projectDir);
+
+    var scriptFile = projectDir.resolve("src/conf/scripts/" + scriptBaseName
+        + FILE_EXTENSION__GROOVY);
+    if (!isRegularFile(scriptFile))
+      return false;
+
+    binding.setVariable("projectDir", projectDir);
+
+    var groovy = new GroovyShell(Builds.class.getClassLoader(), binding);
+    Script script = groovy.parse(scriptFile.toFile());
+    script.run();
+    return true;
+  }
+
+  /**
+   * Stores the path, along with the associated executable (mvn), if it corresponds to Maven home.
+   * <p>
+   * <span class="important">IMPORTANT: DO NOT call this method for local Maven installations like
+   * Maven Wrapper, as this method sets static information about the global Maven
+   * installation.</span>
+   * </p>
    *
    * @return Whether {@code path} is Maven home.
    */
@@ -336,7 +410,7 @@ public final class Builds {
     if (exists(executablePath = path.resolve("bin/mvn"))
         || exists(executablePath = path.resolve("bin/mvn.cmd"))) {
       mavenHome = path;
-      mavenExecutable = executablePath;
+      mavenExec = executablePath;
 
       return true;
     } else {
@@ -351,10 +425,10 @@ public final class Builds {
    *
    * @return {@code null}, if not found.
    */
-  private static @Nullable Path shellPath(List<String> args,
+  private static Optional<Path> shellPath(List<String> args,
       Function<String, @Nullable String> consumer)
       throws IOException, InterruptedException {
-    var retRef = new Ref<@Nullable Path>();
+    var retRef = new Ref<Path>();
     execute(args, null, $line -> {
       if (retRef.isEmpty()) {
         var result = consumer.apply($line);
@@ -366,7 +440,7 @@ public final class Builds {
         }
       }
     });
-    return retRef.get();
+    return opt(retRef.get());
   }
 
   private Builds() {

@@ -38,6 +38,7 @@ import org.pdfclown.common.util.Ref;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("DataFlowIssue")
 class BuildsIT extends BaseIT {
   @Test
   void classpath() throws IOException, InterruptedException {
@@ -91,7 +92,7 @@ class BuildsIT extends BaseIT {
 
   @Test
   void mavenExecutable() {
-    assertThat(Builds.mavenExecutable(), is(not(nullValue())));
+    assertThat(Builds.mavenExec().orElse(null), is(not(nullValue())));
   }
 
   @Test
@@ -113,7 +114,7 @@ class BuildsIT extends BaseIT {
     var paths = ProjectPathResolver.of(baseDir);
     if (!isDirectory(paths.resolve(ProjectDirId.MAIN_TARGET))) {
       var out = new Ref<String>();
-      if (execute(osCommand(Builds.mavenExecutable()
+      if (execute(osCommand(Builds.mavenExec().orElseThrow()
           + " compile -q -Dspotless.apply.skip"), baseDir, out) != 0)
         throw runtime("""
             Compilation of {} FAILED:
