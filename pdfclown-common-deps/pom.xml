@@ -20,7 +20,7 @@
   <packaging>pom</packaging>
 
   <name>${project.artifactId}</name>
-  <description>Full Bill of Materials (complete set of pdfClown common dependencies)</description>
+  <description>Full Bill of Materials (complete set of pdfClown Common dependencies)</description>
   <url>${projectRootUrl}</url>
 
   <properties>

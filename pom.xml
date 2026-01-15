@@ -21,7 +21,7 @@
   <packaging>pom</packaging>
 
   <name>${project.artifactId}</name>
-  <description>Bill of Materials (complete set of pdfClown common components)</description>
+  <description>Bill of Materials (complete set of pdfClown Common components)</description>
   <url>${projectRootUrl}</url>
 
   <modules>

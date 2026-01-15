@@ -4,12 +4,16 @@
 </picture><br>pdfClown Common
 </h1>
 
-[![maven](https://img.shields.io/maven-central/v/org.pdfclown/pdfclown-common-bom)](https://search.maven.org/artifact/org.pdfclown/pdfclown-common-bom)
-[![javadoc](https://javadoc.io/badge2/org.pdfclown/pdfclown-common-util/javadoc.svg)](https://javadoc.io/doc/org.pdfclown/pdfclown-common-util)
+<div align="center">
+
+*Common functionalities for pdfClown.org projects*
+
+[![JDK Compatibility](https://img.shields.io/badge/Java-17%2B-blue)](https://openjdk.org/projects/jdk/17/)
+[![maven](https://img.shields.io/maven-central/v/org.pdfclown/pdfclown-common-bom)](https://search.maven.org/artifact/org.pdfclown/pdfclown-common-bom/0.4.0/pom)<br>
 [![build](https://img.shields.io/github/actions/workflow/status/pdfclown/pdfclown-common/build.yml?branch=main&label=build%20%28main%29)](https://github.com/pdfclown/pdfclown-common/actions/workflows/build.yml)
 [![REUSE status](https://api.reuse.software/badge/github.com/pdfclown/pdfclown-common)](https://api.reuse.software/info/github.com/pdfclown/pdfclown-common)
 
-Common functionalities for pdfClown.org projects.
+</div>
 
 ## Usage
 
