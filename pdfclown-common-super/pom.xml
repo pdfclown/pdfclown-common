@@ -466,7 +466,7 @@ log.info("buildTimestamp: " + buildTimestamp
           <configuration>
             <!--
               [mockito] Required by mockito to register its agent (see
-              <https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3>) -->
+              <https://javadoc.io/static/org.mockito/mockito-core/5.21.0/org.mockito/org/mockito/Mockito.html#0.3>) -->
             <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
             <reportsDirectory>${project.build.directory}/test-logs/surefire</reportsDirectory>
@@ -707,7 +707,7 @@ log.info("buildTimestamp: " + buildTimestamp
 
 <div class="header-top">
   <small>
-    <a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}">${project.groupId}:${project.artifactId}</a>:<a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/jar">${project.version}</a>
+    <a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/jar">${project.groupId}:${project.artifactId}:${project.version}</a>
   </small>
 </div>
 ]]></top>
@@ -722,97 +722,82 @@ log.info("buildTimestamp: " + buildTimestamp
               <link>
                 <groupId>com.github.javaparser</groupId>
                 <artifactId>javaparser-core</artifactId>
-                <url>https://javadoc.io/doc/com.github.javaparser/javaparser-core/${javaparser.version}</url>
+                <url>https://javadoc.io/static/com.github.javaparser/javaparser-core/${javaparser.version}</url>
               </link>
               <link>
                 <groupId>com.google.jimfs</groupId>
                 <artifactId>jimfs</artifactId>
-                <url>https://javadoc.io/doc/com.google.jimfs/jimfs/${jimfs.version}</url>
+                <url>https://javadoc.io/static/com.google.jimfs/jimfs/${jimfs.version}</url>
+              </link>
+              <link>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy</artifactId>
+                <url>https://docs.groovy-lang.org/${groovy.version}/html/api/</url>
               </link>
               <link>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
-                <url>https://javadoc.io/doc/io.github.classgraph/classgraph/${classgraph.version}</url>
+                <url>https://javadoc.io/static/io.github.classgraph/classgraph/${classgraph.version}</url>
               </link>
               <link>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <url>https://javadoc.io/doc/net.bytebuddy/byte-buddy/${bytebuddy.version}</url>
-              </link>
-              <link>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-api/</url>
-              </link>
-              <link>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-core/</url>
+                <url>https://javadoc.io/static/net.bytebuddy/byte-buddy/${bytebuddy.version}</url>
               </link>
               <link>
                 <groupId>org.greenrobot</groupId>
                 <artifactId>eventbus-java</artifactId>
-                <url>https://javadoc.io/doc/org.greenrobot/eventbus-java/${eventbus.version}</url>
+                <url>https://javadoc.io/static/org.greenrobot/eventbus-java/${eventbus.version}</url>
               </link>
               <link>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest</artifactId>
-                <url>https://javadoc.io/doc/org.hamcrest/hamcrest/${hamcrest.version}</url>
+                <url>https://javadoc.io/static/org.hamcrest/hamcrest/${hamcrest.version}</url>
               </link>
               <link>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
-                <url>https://javadoc.io/doc/org.json/json/${json.version}</url>
+                <url>https://javadoc.io/static/org.json/json/${json.version}</url>
               </link>
               <link>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
-                <url>https://javadoc.io/doc/org.jsoup/jsoup/${jsoup.version}</url>
+                <url>https://javadoc.io/static/org.jsoup/jsoup/${jsoup.version}</url>
               </link>
               <link>
                 <groupId>org.jspecify</groupId>
                 <artifactId>jspecify</artifactId>
-                <url>https://javadoc.io/doc/org.jspecify/jspecify/${jspecify.version}</url>
+                <url>https://javadoc.io/static/org.jspecify/jspecify/${jspecify.version}</url>
               </link>
               <link>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <url>https://junit.org/junit5/docs/${junit.version}/api/</url>
-              </link>
-              <link>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <url>https://javadoc.io/doc/org.junit.vintage/junit-vintage-engine/${junit.version}</url>
+                <artifactId>junit-jupiter</artifactId>
+                <url>https://docs.junit.org/${junit.version}/api/</url>
               </link>
               <link>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <url>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}</url>
+                <url>https://javadoc.io/static/org.mockito/mockito-core/${mockito.version}</url>
               </link>
               <link>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>pdfclown-common-util</artifactId>
-                <url>https://javadoc.io/doc/org.pdfclown/pdfclown-common-util/${pdfclown-common-util.version}</url>
-              </link>
-              <link>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <url>https://javadoc.io/doc/org.reflections/reflections/${reflections.version}</url>
+                <url>https://javadoc.io/static/org.pdfclown/pdfclown-common-util/${pdfclown-common-util.version}</url>
               </link>
               <link>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
-                <url>https://javadoc.io/doc/org.skyscreamer/jsonassert/${jsonassert.version}</url>
+                <url>https://javadoc.io/static/org.skyscreamer/jsonassert/${jsonassert.version}</url>
               </link>
               <link>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <url>https://javadoc.io/doc/org.slf4j/slf4j-api/${slf4j.version}</url>
+                <url>https://javadoc.io/static/org.slf4j/slf4j-api/${slf4j.version}</url>
               </link>
               <link>
                 <groupId>tech.units</groupId>
                 <artifactId>indriya</artifactId>
-                <url>https://javadoc.io/doc/tech.units/indriya/${indriya.version}</url>
+                <url>https://javadoc.io/static/tech.units/indriya/${indriya.version}</url>
               </link>
             </dependencyLinks>
             <!--
