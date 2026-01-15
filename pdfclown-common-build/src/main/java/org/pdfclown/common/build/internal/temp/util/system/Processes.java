@@ -3,14 +3,14 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Processes.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (Processes.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util.system;
+package org.pdfclown.common.build.internal.temp.util.system;
 
 import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
@@ -30,6 +30,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.Ref;
+import org.pdfclown.common.util.system.ProcessException;
+
+/*
+  TODO: after next release, replace with `org.pdfclown.common.util` counterpart.
+ */
 
 /**
  * Process utilities.

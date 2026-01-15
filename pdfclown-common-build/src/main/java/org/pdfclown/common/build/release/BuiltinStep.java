@@ -14,6 +14,7 @@ package org.pdfclown.common.build.release;
 
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
+import static org.pdfclown.common.build.internal.temp.util.system.Processes.executeGetElseThrow;
 import static org.pdfclown.common.build.release.ReleaseManager.SCM_REF__HEAD;
 import static org.pdfclown.common.util.Chars.DOLLAR;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.function.FailableConsumer;
-import org.pdfclown.common.util.Ref;
 
 /**
  * Built-in release step.
@@ -51,12 +51,8 @@ public enum BuiltinStep implements Step {
    * Checks whether the tag already exists, which indicates this release is redundant.
    */
   SCM_CHECK($ -> {
-    var outputRef = new Ref<String>();
-    executeElseThrow(unixCommand(
-        "git tag -l %s"
-            .formatted($.getReleaseTag())),
-        $.getBaseDir(), outputRef);
-    if (!outputRef.get().isEmpty())
+    if (!executeGetElseThrow(unixCommand("git tag -l %s".formatted($.getReleaseTag())),
+        $.getBaseDir()).isEmpty())
       throw runtime("Cannot prepare the release because its tag ({}) already exists",
           $.getReleaseTag());
   }, true),
@@ -70,11 +66,9 @@ public enum BuiltinStep implements Step {
    * </p>
    */
   SCM_MODIFICATIONS_CHECK($ -> {
-    var outputRef = new Ref<String>();
-    executeElseThrow(unixCommand("git status -s"), $.getBaseDir(), outputRef);
-    if (!outputRef.get().isEmpty())
-      throw runtime("Cannot prepare the release because of local modifications:\n{}",
-          outputRef.get());
+    String output = executeGetElseThrow(unixCommand("git status -s"), $.getBaseDir());
+    if (!output.isEmpty())
+      throw runtime("Cannot prepare the release because of local modifications:\n{}", output);
   }, true),
   /**
    * Creates and checks out the release branch.
@@ -193,7 +187,7 @@ public enum BuiltinStep implements Step {
   private static final int PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__NAME = 2;
 
   /**
-   * Updates the project version as defined in .mvn/maven.config file.
+   * Updates the project version as defined in {@code .mvn/maven.config} file.
    */
   private static void executePomUpdate(ReleaseManager manager, String version, String scmTag) {
     requireNotBlank(version, "`version`");
