@@ -1081,6 +1081,11 @@ log.info("buildTimestamp: " + buildTimestamp
                 <artifactId>pdfclown-common-build</artifactId>
                 <version>${revision}</version>
               </dependency>
+              <dependency>
+                <groupId>org.pdfclown</groupId>
+                <artifactId>pdfclown-common-util</artifactId>
+                <version>${revision}</version>
+              </dependency>
             </dependencies>
             <executions>
               <execution>
@@ -1092,9 +1097,14 @@ log.info("buildTimestamp: " + buildTimestamp
                 <configuration>
                   <scripts>
                     <script><![CDATA[
-import org.pdfclown.common.build.meta.SemVer1
-import org.pdfclown.common.build.meta.SemVer2
+import static org.pdfclown.common.build.util.system.Builds.runScript
+import static org.pdfclown.common.util.Exceptions.wrongState
+
+import groovy.lang.Binding
+import java.util.Map
 import org.pdfclown.common.build.release.ReleaseManager
+import org.pdfclown.common.util.meta.SemVer1
+import org.pdfclown.common.util.meta.SemVer2
 
 final var USER_PROPERTY_NAME__DRYRUN = "dryRun"
 final var USER_PROPERTY_NAME__RELEASE_STARTPOINT = "release.startpoint"
@@ -1102,16 +1112,22 @@ final var USER_PROPERTY_NAME__RELEASE_VERSION = "release.version"
 
 final var releaseVersion = session.userProperties[USER_PROPERTY_NAME__RELEASE_VERSION]
 if (releaseVersion == null)
-  throw new IllegalStateException("\"" + USER_PROPERTY_NAME__RELEASE_VERSION + "\" user property MISSING")
+  throw wrongState("`{}` user property MISSING", USER_PROPERTY_NAME__RELEASE_VERSION)
 
-new ReleaseManager(project.basedir.toPath(), SemVer2.of(releaseVersion).to(SemVer1.class))
+var projectDir = project.basedir.toPath()
+
+var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVer1.class)
+        .toString())
     .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY_NAME__RELEASE_STARTPOINT])
     .setDeploymentProfiles("publish")
     .setInstallationProfiles("full")
     /* NOTE: Activates remote push only if GPG signing is configured. */
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
     .setDryRun(session.userProperties[USER_PROPERTY_NAME__DRYRUN] != null)
-    .execute()
+
+runScript("onRelease", new Binding([manager: manager]), projectDir)
+
+manager.execute()
 ]]></script>
                   </scripts>
                 </configuration>

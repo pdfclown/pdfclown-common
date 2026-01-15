@@ -20,6 +20,7 @@ import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
 import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongState;
 import static org.pdfclown.common.util.Strings.EMPTY;
@@ -32,6 +33,7 @@ import org.pdfclown.common.util.meta.SemVer.Id;
 import org.pdfclown.common.util.meta.SemVer1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  * Release manager.
@@ -123,14 +125,18 @@ public class ReleaseManager {
   private final List<Step> steps = new ArrayList<>(asList(BuiltinStep.values()));
 
   /**
-  */
-  public ReleaseManager(Path baseDir, SemVer1 releaseVersion) {
+   * @param releaseVersion
+   *          (SemVer1)
+   */
+  public ReleaseManager(Path baseDir, String releaseVersion) {
     checkOS();
 
-    this.baseDir = requireNonNull(baseDir, "`baseDir`");
-    this.releaseVersion = requireNonNull(releaseVersion, "`releaseVersion`").toString();
+    var releaseVer = SemVer1.of(requireNonNull(releaseVersion, "`releaseVersion`"));
 
-    this.devVersion = nextDevVersion(releaseVersion).toString();
+    this.baseDir = requireNonNull(baseDir, "`baseDir`");
+    this.releaseVersion = releaseVer.toString();
+
+    this.devVersion = nextDevVersion(releaseVer).toString();
     this.releaseTag = scmTag(this.releaseVersion);
     this.mavenExec = exists(Path.of(MAVEN_EXEC__WRAPPER)) ? MAVEN_EXEC__WRAPPER
         : MAVEN_EXEC__GLOBAL;
@@ -296,6 +302,24 @@ public class ReleaseManager {
    */
   public boolean isRemotePushEnabled() {
     return remotePushEnabled;
+  }
+
+  /**
+   * Logs an event.
+   */
+  public void log(Level level, String message, Object... args) {
+    /*
+     * NOTE: Modern `Logger::atLevel` method may not be supported by slf4j implementations like
+     * `MavenSimpleLogger`, so we have to fall back to legacy specialized methods.
+     */
+    switch (level) {
+      case TRACE -> log.trace(message, args);
+      case INFO -> log.info(message, args);
+      case DEBUG -> log.debug(message, args);
+      case WARN -> log.warn(message, args);
+      case ERROR -> log.error(message, args);
+      default -> throw unexpected(level);
+    }
   }
 
   /**

@@ -32,7 +32,6 @@ import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.annot.InitNonNull;
-import org.pdfclown.common.util.meta.SemVer1;
 
 /**
  * @author Stefano Chizzolini
@@ -100,7 +99,7 @@ class ReleaseManagerTest extends BaseTest {
   @MethodSource
   void _create__devVersion(Expected<String> expected, String releaseVersion) {
     assertParameterizedOf(
-        () -> new ReleaseManager(getEnv().outputPath(EMPTY), SemVer1.of(releaseVersion))
+        () -> new ReleaseManager(getEnv().outputPath(EMPTY), releaseVersion)
             .getDevVersion(),
         expected,
         () -> new ExpectedGeneration(releaseVersion));
