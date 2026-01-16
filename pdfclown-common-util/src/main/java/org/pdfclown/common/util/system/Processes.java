@@ -206,8 +206,23 @@ public final class Processes {
    * </p>
    */
   public static List<String> osCommand(String command) {
+    return osCommand(command, false);
+  }
+
+  /**
+   * Prepares a command for the current OS.
+   * <p>
+   * Spares users from breaking commands into parts.
+   * </p>
+   *
+   * @param interactive
+   *          Whether the command has to run in interactive shell (this may load additional
+   *          configuration, depending on the system; for example, Bash shell loads
+   *          {@code ~/.bashrc} file).
+   */
+  public static List<String> osCommand(String command, boolean interactive) {
     if (IS_OS_UNIX)
-      return unixCommand(command);
+      return unixCommand(command, interactive);
     else if (IS_OS_WINDOWS)
       return winCommand(command);
     else
