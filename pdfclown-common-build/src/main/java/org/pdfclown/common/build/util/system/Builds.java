@@ -17,7 +17,9 @@ import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.pdfclown.common.build.internal.temp.util.system.Processes.execute;
 import static org.pdfclown.common.build.internal.temp.util.system.Processes.executeGetElseThrow;
+import static org.pdfclown.common.build.internal.temp.util.system.Processes.osCommand;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Conditions.requireDirectory;
@@ -32,8 +34,6 @@ import static org.pdfclown.common.util.Objects.opt;
 import static org.pdfclown.common.util.Objects.sqnd;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__GROOVY;
-import static org.pdfclown.common.util.system.Processes.execute;
-import static org.pdfclown.common.util.system.Processes.osCommand;
 import static org.pdfclown.common.util.xml.Xmls.xml;
 import static org.pdfclown.common.util.xml.Xmls.xpath;
 
@@ -51,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.function.Failable;
@@ -152,9 +151,11 @@ public final class Builds {
         var error = new StringBuilder();
         var invoker = new DefaultInvoker();
         invoker.execute(objDo(new DefaultInvocationRequest(), $ -> {
-          $.setMavenHome(mavenHome().orElseThrow(() -> wrongState("""
-              Maven home NOT FOUND: specify it through system property `maven.home` \
-              or environment variable `MAVEN_HOME`""")).toFile());
+          $.setMavenHome(mavenHomeOf(mavenExecAt(projectDir)
+              .orElseThrow(() -> wrongState("Maven executable NOT FOUND at {}", projectDir)))
+                  .orElseThrow(() -> wrongState("""
+                      Maven home NOT FOUND: specify it through system property `maven.home` \
+                      or environment variable `MAVEN_HOME`""")).toFile());
           $.setPomFile(pomFile.toFile());
           $.setGoals(List.of("dependency:build-classpath"));
           if (scope != null) {
@@ -162,6 +163,8 @@ public final class Builds {
           }
           $.setOutputHandler($line -> {
             /*
+             * Extract classpath entries!
+             *
              * NOTE: The interactive output is preceded by level tags (for example "[INFO]") on each
              * log line except the classpath. Apparently, Maven error log lines ("[ERROR]" tag) are
              * sent to stdout, so `setErrorHandler(..)` is useless.
@@ -279,16 +282,11 @@ public final class Builds {
    */
   public static Optional<Path> mavenHomeOf(Path exec) {
     try {
-      /*
-       * Query Maven executable!
-       *
-       * NOTE: `-v` option causes the executable to return, among its version information, its home
-       * path.
-       */
-      return shellPath(osCommand(exec + " -v"),
-          $line -> $line.startsWith("Maven home:")
-              ? $line.substring("Maven home:".length()).trim()
-              : null);
+      Optional<Path> ret;
+      if ((ret = mavenHomeOf(exec, false)).isPresent())
+        return ret;
+
+      return mavenHomeOf(exec, true);
     } catch (IOException ex) {
       throw runtime(ex);
     } catch (InterruptedException ex) {
@@ -421,22 +419,31 @@ public final class Builds {
   }
 
   /**
-   * Extracts an existing path from the output of the shell command.
+   * Gets the home directory of the installation the given Maven executable belongs to.
    *
-   * @return {@code null}, if not found.
+   * @param exec
+   *          Either regular Maven executable (mvn) or Wrapper (mvnw).
+   * @param interactive
+   *          Whether the executable has to run in interactive shell.
    */
-  private static Optional<Path> shellPath(List<String> args,
-      Function<String, @Nullable String> consumer)
+  private static Optional<Path> mavenHomeOf(Path exec, boolean interactive)
       throws IOException, InterruptedException {
+    /*
+     * Query Maven executable!
+     *
+     * NOTE: `-v` option causes the executable to return, among its version information, its home
+     * path.
+     */
     var retRef = new Ref<Path>();
-    execute(args, null, $line -> {
+    execute(osCommand(exec + " -v", interactive), null, $line -> {
       if (retRef.isEmpty()) {
-        var result = consumer.apply($line);
-        if (result != null) {
-          Path path;
-          if (exists(path = Path.of(result))) {
-            retRef.set(path);
-          }
+        if ($line.startsWith("Maven home:")) {
+          Path path = Path.of($line.substring("Maven home:".length()).trim());
+          // Validate retrieved path!
+          if (!exists(path))
+            throw runtime("Resolved Maven home \"{}\" NOT FOUND");
+
+          retRef.set(path);
         }
       }
     });
