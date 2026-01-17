@@ -81,12 +81,13 @@ th {
   text-align: center;
 }
 
-.header-top {
-  padding: 3px 10px;
+.footer-left {
+  padding-right: 10px;
 }
 
 .footer-right {
   float: right;
+  text-align: right;
 }
 
 .important {

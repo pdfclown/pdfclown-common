@@ -704,16 +704,11 @@ log.info("buildTimestamp: " + buildTimestamp
             <top><![CDATA[
 <link rel="stylesheet" type="text/css" href="{@docRoot}/resources/highlight/prism.css">
 <script src="{@docRoot}/resources/highlight/prism.js"></script>
-
-<div class="header-top">
-  <small>
-    <a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/jar">${project.groupId}:${project.artifactId}:${project.version}</a>
-  </small>
-</div>
 ]]></top>
             <bottom><![CDATA[
-<span class="footer-right">${buildTimestamp} (${git.commit.id.describe})</span>
-<span>Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br>
+<span class="footer-right"><a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/jar">${project.groupId}:${project.artifactId}:${project.version}</a><br>
+${buildTimestamp} (${git.commit.id.describe})</span>
+<span class="footer-left">Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br>
 <a href="${project.url}">Project Home</a> | <a href="${projectScmUrl}">Source Repository</a> | <a href="${projectIssuesUrl}">Report a bug or suggest an enhancement</a></span>
 ]]></bottom>
 
