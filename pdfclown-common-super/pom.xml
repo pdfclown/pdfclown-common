@@ -162,7 +162,7 @@ pdfclown-common-base instead)</description>
     <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
     <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
     <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
-    <jada.version>0.2.1</jada.version>
+    <jada.version>0.2.2</jada.version>
     <java.version>17</java.version>
     <maven.version>3.9.12</maven.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
