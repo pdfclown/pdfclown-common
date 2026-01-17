@@ -14,7 +14,6 @@ package org.pdfclown.common.build.release;
 
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
-import static org.pdfclown.common.build.internal.temp.util.system.Processes.executeGetElseThrow;
 import static org.pdfclown.common.build.release.ReleaseManager.SCM_REF__HEAD;
 import static org.pdfclown.common.util.Chars.DOLLAR;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
@@ -25,6 +24,7 @@ import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.system.Processes.executeElseThrow;
+import static org.pdfclown.common.util.system.Processes.executeGetElseThrow;
 import static org.pdfclown.common.util.system.Processes.unixCommand;
 
 import java.util.List;

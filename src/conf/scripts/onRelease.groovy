@@ -5,10 +5,10 @@
 import static java.nio.file.Files.readString
 import static java.nio.file.Files.walkFileTree
 import static java.nio.file.Files.writeString
-import static org.pdfclown.common.build.internal.temp.util.system.Processes.executeGetElseThrow
 import static org.pdfclown.common.util.Exceptions.runtime
 import static org.pdfclown.common.util.Exceptions.wrongState
 import static org.pdfclown.common.util.Objects.found
+import static org.pdfclown.common.util.system.Processes.executeGetElseThrow
 import static org.pdfclown.common.util.system.Processes.osCommand;
 
 import java.nio.file.FileVisitResult
