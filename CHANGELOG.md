@@ -1,3 +1,27 @@
+## v0.5.0 (2026-01-17)
+
+### BREAKING CHANGE
+
+- `ReleaseManager` constructor redefined.
+- `Builds` API redefined.
+- `Processes` API redefined.
+- `org.pdfclown.common.build.meta` replaced by
+`org.pdfclown.common.util.meta`.
+
+### Feat
+
+- **util**: add support to interactive shell execution (`Processes`)
+- **build**: add support to `onRelease` script hook
+
+### Fix
+
+- **deps**: bump net.bytebuddy:byte-buddy from 1.18.3 to 1.18.4 (#63)
+- **build**: support local maven executable resolution (`Builds::classpath`)
+- **build**: improve `Builds`
+- **util**: improve `Processes`
+- **super**: fix Javadoc links
+- **deps**: bump org.pdfclown:pdfclown-common-util from 0.2.2 to 0.4.0
+
 ## v0.4.0 (2026-01-11)
 
 ### BREAKING CHANGE
