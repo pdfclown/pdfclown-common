@@ -23,7 +23,7 @@ on:
 
 jobs:
   release:
-    uses: pdfclown/.github/.github/workflows/release.yml@main
+    uses: pdfclown/.github/.github/workflows/release.yml@v1
     permissions:
       contents: write
     with:

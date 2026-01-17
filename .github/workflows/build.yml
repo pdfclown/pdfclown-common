@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    uses: pdfclown/.github/.github/workflows/build.yml@main
+    uses: pdfclown/.github/.github/workflows/build.yml@v1
     permissions:
       contents: write
       security-events: write

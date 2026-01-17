@@ -12,7 +12,7 @@ on:
 
 jobs:
   main:
-    uses: pdfclown/.github/.github/workflows/pull-request.yml@main
+    uses: pdfclown/.github/.github/workflows/pull-request.yml@v1
     permissions:
       pull-requests: read
     secrets: inherit
