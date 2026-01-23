@@ -953,14 +953,27 @@ public final class Xmls {
   }
 
   /**
+   * Gets the string representation of the XML document.
+   */
+  public static String toString(Document document) {
+    try {
+      var writer = new StringWriter();
+      transformer(null).transform(new DOMSource(document), new StreamResult(writer));
+      return writer.toString();
+    } catch (TransformerException ex) {
+      throw runtime(ex);
+    }
+  }
+
+  /**
    * Gets the string representation of the XML element.
    */
   public static String toString(Element element) {
     try {
-      var w = new StringWriter();
-      fragmentTransformer(null).transform(new DOMSource(element), new StreamResult(w));
-      return w.toString();
-    } catch (TransformerFactoryConfigurationError | TransformerException ex) {
+      var writer = new StringWriter();
+      fragmentTransformer(null).transform(new DOMSource(element), new StreamResult(writer));
+      return writer.toString();
+    } catch (TransformerException ex) {
       throw runtime(ex);
     }
   }
