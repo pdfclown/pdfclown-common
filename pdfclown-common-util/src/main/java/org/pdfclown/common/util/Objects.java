@@ -902,25 +902,27 @@ public final class Objects {
   }
 
   /**
-   * Asserts an object is non-null.
+   * Asserts an object reference is non-null.
    * <p>
    * This is a shorthand to explicit non-null assertion, useful to confirm expected state to
    * compiler when null check is redundant (contrary to
    * {@link java.util.Objects#requireNonNull(Object)}, which enforces null check).
    * </p>
-   * <p>
-   * NOTE: Depending on the compiler's nullness policies' strictness, such method may be unnecessary
-   * and more conveniently replaced by <code>@SuppressWarnings("null")</code> (see also
-   * <a href="https://github.com/jspecify/jspecify/issues/29">JSpecify issue #29</a> for a broader
-   * discussion on the topic).
-   * </p>
-   * <p>
-   * NOTE: Despite this method is accidentally named like {@link java.util.Objects#nonNull(Object)},
-   * there is no risk of clash, as their use contexts never overlap (BTW, the latter represents one
-   * of those ugly naming inconsistencies of the Java API, as its complement is
-   * {@link java.util.Objects#isNull(Object)}).
-   * </p>
    *
+   * @apiNote
+   *          <p>
+   *          Depending on the compiler's nullness policies' strictness, such method may be
+   *          unnecessary and more conveniently replaced by <code>@SuppressWarnings</code> (see also
+   *          <a href="https://github.com/jspecify/jspecify/issues/29">JSpecify issue #29</a> for a
+   *          broader discussion on the topic).
+   *          </p>
+   *          <p>
+   *          Despite this method is accidentally named like
+   *          {@link java.util.Objects#nonNull(Object)}, there is no risk of clash, as their usage
+   *          contexts never overlap (BTW, the latter represents one of those ugly naming
+   *          inconsistencies of the Java API, as its complement is
+   *          {@link java.util.Objects#isNull(Object)}).
+   *          </p>
    * @return {@code obj}
    * @see java.util.Objects#requireNonNull(Object)
    */
