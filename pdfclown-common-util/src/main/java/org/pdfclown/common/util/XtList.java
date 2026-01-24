@@ -286,6 +286,11 @@ public interface XtList<E> extends List<E>, XtCollection<E> {
     return (XtList<E>) XtCollection.super.withoutAll(c);
   }
 
+  @Override
+  default XtList<E> withoutAny() {
+    return (XtList<E>) XtCollection.super.withoutAny();
+  }
+
   /**
    * Fluent {@link #poll(int) poll(..)}.
    *

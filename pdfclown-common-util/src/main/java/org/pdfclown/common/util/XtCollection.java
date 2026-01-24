@@ -115,4 +115,9 @@ public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
     removeAll(c);
     return this;
   }
+
+  default XtCollection<E> withoutAny() {
+    clear();
+    return this;
+  }
 }
