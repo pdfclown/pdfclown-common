@@ -1,11 +1,11 @@
 repos:
   - repo: https://github.com/commit-check/commit-check
-    rev: v2.1.2
+    rev: v2.2.1
     hooks:
       - id: check-branch
         stages: [pre-commit]
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.10.0
+    rev: v4.12.1
     hooks:
       - id: commitizen
         stages: [commit-msg]
