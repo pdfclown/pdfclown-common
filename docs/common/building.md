@@ -37,7 +37,7 @@ This document describes how to set up your development environment to build and 
 
 ## Setup
 
-1. [fork](https://help.github.com/articles/fork-a-repo/) the pdfClown.org project used (in this example, `pdfclown-common`), then clone your fork and configure its upstream:
+1. [fork](https://help.github.com/articles/fork-a-repo/) the pdfClown.org project of your choice (in this example, `pdfclown-common`), then clone your fork and configure its upstream:
 
     ```shell
     # Clone your fork into the current directory!
@@ -55,7 +55,7 @@ This document describes how to set up your development environment to build and 
     git pull upstream main
     ```
 
-2. check the **[prerequisites](#prerequisites)** are satisfied (including those specific to the pdfClown.org project used)
+2. check the **[prerequisites](#prerequisites)** are satisfied (including those specific to the pdfClown.org project of your choice)
 
 3. install **commit validation hooks**:
 
@@ -75,12 +75,12 @@ This document describes how to set up your development environment to build and 
     pre-commit autoupdate
     ```
 
-4. apply any other step specific to the pdfClown.org project used
+4. apply any other step specific to the pdfClown.org project of your choice
 
 ## Building
 
 > [!NOTE]
-> pdfClown.org projects are based on the [Maven build system](https://maven.apache.org/index.html); since they include [Maven Wrapper](https://maven.apache.org/tools/wrapper/) (`mvnw` (Unix)/`mvnw.cmd` (Windows) command), builds work out of the box (no setup needed).
+> pdfClown.org projects are based on the [Maven build system](https://maven.apache.org/index.html); since they include [Maven Wrapper](https://maven.apache.org/tools/wrapper/) (`mvnw` command), builds work out of the box (no setup needed).
 
 ### Installation
 
