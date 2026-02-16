@@ -182,7 +182,7 @@ pdfclown-common-base instead)</description>
     <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     <maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
-    <sisu-maven-plugin.version>0.3.5</sisu-maven-plugin.version>
+    <sisu-maven-plugin.version>1.0.0</sisu-maven-plugin.version>
     <spotless-maven-plugin.version>3.2.1</spotless-maven-plugin.version>
     <spotless-maven-plugin.eclipseJdt.version>4.37</spotless-maven-plugin.eclipseJdt.version>
     <spotless-maven-plugin.eclipseWtp.version>4.21.0</spotless-maven-plugin.eclipseWtp.version>
