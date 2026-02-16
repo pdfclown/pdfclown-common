@@ -12,6 +12,12 @@
       publisher="W3C"
       src="https://www.w3.org/TR/CSS21/"/>
     <part
+      id="2.2"
+      year="2016"
+      title="Cascading Style Sheets, Level 2, Revision 2"
+      publisher="W3C"
+      src="https://www.w3.org/TR/CSS22/"/>
+    <part
       id="CASCADE-5"
       year="2022"
       title="Cascading Style Sheets - Cascading and Inheritance Module, Level 5"
