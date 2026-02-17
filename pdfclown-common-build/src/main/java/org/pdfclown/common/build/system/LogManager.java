@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.system;
 
 import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Objects.objTo;
 
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -53,6 +54,27 @@ public final class LogManager {
   public static final org.slf4j.Marker MARKER__VERBOSE = MarkerFactory.getMarker("VERBOSE");
 
   private static @Nullable Level defaultLevel;
+  private static boolean levelOverridden;
+
+  /**
+   * System property specifying the root log level applied during testing.
+   * <p>
+   * The value of this property corresponds to the name of a {@link Level} constant (for example,
+   * {@link Level#DEBUG DEBUG}).
+   * </p>
+   *
+   * @apiNote For example, to apply {@link Level#TRACE TRACE} level (Maven build system):
+   *          <pre class="lang-shell"><code>
+   * mvn verify ... -Dlog.level=TRACE</code></pre>
+   */
+  public static final String SYSTEM_PROPERTY__LOG_LEVEL = "log.level";
+  static {
+    Level systemLevel = objTo(System.getProperty(SYSTEM_PROPERTY__LOG_LEVEL), Level::valueOf);
+    if (systemLevel != null) {
+      setLevel(systemLevel);
+      levelOverridden = true;
+    }
+  }
 
   /**
    * Applies a logging profile.
@@ -92,13 +114,39 @@ public final class LogManager {
   }
 
   /**
-   * Sets the root logging level.
+   * Root logging level.
+   */
+  public static Level getLevel() {
+    return Level.valueOf(getContext().getConfiguration().getRootLogger().getLevel().name());
+  }
+
+  /**
+   * Whether the {@linkplain #getLevel() root logging level} was set via
+   * {@link #SYSTEM_PROPERTY__LOG_LEVEL}.
+   * <p>
+   * As a consequence, calls to {@link #setLevel(Level)} are ineffective — this is useful to
+   * manually force logging to a certain level, without being subsequently altered by existing
+   * automated configurations.
+   * </p>
+   */
+  public static boolean isLevelOverridden() {
+    return levelOverridden;
+  }
+
+  /**
+   * Sets the {@linkplain #getLevel() root logging level}.
+   * <p>
+   * NOTE: If level setting was {@linkplain #isLevelOverridden() overridden}, calls to this setter
+   * are ignored.
+   * </p>
    *
    * @param value
    *          ({@code null}, to restore the default level)
    */
   public static void setLevel(@Nullable Level value) {
-    if (value == null) {
+    if (levelOverridden)
+      return;
+    else if (value == null) {
       if (defaultLevel == null)
         // NOP
         return;
