@@ -71,6 +71,10 @@ public final class Chars {
    */
   public static final char DQUOTE = '\"';
   /**
+   * {@code =}
+   */
+  public static final char EQUAL = '=';
+  /**
    * {@code #}
    */
   public static final char HASH = '#';

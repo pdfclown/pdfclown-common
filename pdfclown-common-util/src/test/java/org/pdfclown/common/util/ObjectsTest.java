@@ -741,12 +741,12 @@ class ObjectsTest extends BaseTest {
         simple(),
         // expected
         asList(
-            // [1] obj[0]: Object; features[0]: "[Ljava.lang.Object;@4409e975"
-            "Object[https://www.example.io, Blue]",
-            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; features[1]: "[Ljava.lang.Object;@125c082e"
+            // [1] obj[0]: Object; features[0]: "[Ljava.lang.Object;@c5ee75e"
+            "Object[https://www.example.io Blue]",
+            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; features[1]: "[Ljava.lang.Object;@7ba63fe5"
             "Clis.Args[class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
-            // [3] obj[2]: org.pdfclown.common.util.xml.Xmls.XPath; features[2]: "[Ljava.lang.Object;@68ace111"
-            "Xmls.XPath[true, Yellow, COMPACT]"),
+            // [3] obj[2]: org.pdfclown.common.util.xml.Xmls.XPath; features[2]: "[Ljava.lang.Object;@6f330eb9"
+            "Xmls.XPath[true Yellow COMPACT]"),
         // obj, features
         of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
         of(Clis.Args.class, new Object[] { Clis.ListIncrementalAdapter.class }),

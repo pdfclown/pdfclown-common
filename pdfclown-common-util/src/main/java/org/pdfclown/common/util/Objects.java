@@ -25,8 +25,10 @@ import static org.pdfclown.common.util.Chars.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.util.Chars.DOLLAR;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.DQUOTE;
+import static org.pdfclown.common.util.Chars.EQUAL;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
@@ -376,10 +378,11 @@ public final class Objects {
 
   private static final Map<ClassLoader, ProxySpace> proxySpaces = new WeakHashMap<>();
 
-  private static final String TO_STRING_CLOSE = "]";
-  private static final String TO_STRING_ITEM_SEPARATOR = S + COMMA + SPACE;
-  private static final String TO_STRING_OPEN = "[";
-  private static final String TO_STRING_PROPERTY_SEPARATOR = "=";
+  private static final String TO_STRING_CLOSE = S + SQUARE_BRACKET_CLOSE;
+  private static final String TO_STRING_OPEN = S + SQUARE_BRACKET_OPEN;
+  private static final String TO_STRING_PROPERTY_SEPARATOR = S + EQUAL;
+  private static final String TO_STRING_PROPERTY_LIST_SEPARATOR = S + COMMA + SPACE;
+  private static final String TO_STRING_VALUE_LIST_SEPARATOR = S + SPACE;
 
   /**
    * Gets whether an object matches the other one according to the predicate.
@@ -1540,7 +1543,7 @@ public final class Objects {
     a.append(sqnd(obj)).append(TO_STRING_OPEN);
     for (int i = 0; i < properties.length;) {
       if (i > 0) {
-        a.append(TO_STRING_ITEM_SEPARATOR);
+        a.append(TO_STRING_PROPERTY_LIST_SEPARATOR);
       }
       a.append((String) properties[i++] /* key */).append(TO_STRING_PROPERTY_SEPARATOR)
           .append(java.util.Objects.toString(properties[i++]) /* value */);
@@ -1570,7 +1573,7 @@ public final class Objects {
       @Nullable Object value1, String key2, @Nullable Object value2) throws IOException {
     a.append(sqnd(obj)).append(TO_STRING_OPEN)
         .append(key1).append(TO_STRING_PROPERTY_SEPARATOR)
-        .append(java.util.Objects.toString(value1)).append(TO_STRING_ITEM_SEPARATOR)
+        .append(java.util.Objects.toString(value1)).append(TO_STRING_PROPERTY_LIST_SEPARATOR)
         .append(key2).append(TO_STRING_PROPERTY_SEPARATOR)
         .append(java.util.Objects.toString(value2))
         .append(TO_STRING_CLOSE);
@@ -1586,9 +1589,9 @@ public final class Objects {
       @Nullable Object value3) throws IOException {
     a.append(sqnd(obj)).append(TO_STRING_OPEN)
         .append(key1).append(TO_STRING_PROPERTY_SEPARATOR)
-        .append(java.util.Objects.toString(value1)).append(TO_STRING_ITEM_SEPARATOR)
+        .append(java.util.Objects.toString(value1)).append(TO_STRING_PROPERTY_LIST_SEPARATOR)
         .append(key2).append(TO_STRING_PROPERTY_SEPARATOR)
-        .append(java.util.Objects.toString(value2)).append(TO_STRING_ITEM_SEPARATOR)
+        .append(java.util.Objects.toString(value2)).append(TO_STRING_PROPERTY_LIST_SEPARATOR)
         .append(key3).append(TO_STRING_PROPERTY_SEPARATOR)
         .append(java.util.Objects.toString(value3))
         .append(TO_STRING_CLOSE);
@@ -1669,7 +1672,7 @@ public final class Objects {
       }
 
       if (filled) {
-        a.append(TO_STRING_ITEM_SEPARATOR);
+        a.append(TO_STRING_VALUE_LIST_SEPARATOR);
       }
       a.append(java.util.Objects.toString(value));
       filled = true;
@@ -1708,8 +1711,7 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static <A extends Appendable> A toStringWithValues(A a, Object obj,
-      @Nullable Object value1,
-      @Nullable Object value2) throws IOException {
+      @Nullable Object value1, @Nullable Object value2) throws IOException {
     a.append(sqnd(obj)).append(TO_STRING_OPEN);
     var filled = false;
     if (value1 != null) {
@@ -1718,7 +1720,7 @@ public final class Objects {
     }
     if (value2 != null) {
       if (filled) {
-        a.append(TO_STRING_ITEM_SEPARATOR);
+        a.append(TO_STRING_VALUE_LIST_SEPARATOR);
       }
       a.append(java.util.Objects.toString(value2));
     }
@@ -1734,8 +1736,8 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static <A extends Appendable> A toStringWithValues(A a, Object obj,
-      @Nullable Object value1,
-      @Nullable Object value2, @Nullable Object value3) throws IOException {
+      @Nullable Object value1, @Nullable Object value2, @Nullable Object value3)
+      throws IOException {
     a.append(sqnd(obj)).append(TO_STRING_OPEN);
     var filled = false;
     if (value1 != null) {
@@ -1744,7 +1746,7 @@ public final class Objects {
     }
     if (value2 != null) {
       if (filled) {
-        a.append(TO_STRING_ITEM_SEPARATOR);
+        a.append(TO_STRING_VALUE_LIST_SEPARATOR);
       } else {
         filled = true;
       }
@@ -1752,7 +1754,7 @@ public final class Objects {
     }
     if (value3 != null) {
       if (filled) {
-        a.append(TO_STRING_ITEM_SEPARATOR);
+        a.append(TO_STRING_VALUE_LIST_SEPARATOR);
       }
       a.append(java.util.Objects.toString(value3));
     }
