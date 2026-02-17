@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Automated content assertions for integration testing.
  * <p>
  * This class enables checks over data (actual content) against a resource (expected content) which
- * can be {@linkplain Asserter#PARAM_NAME__UPDATE automatically updated}.
+ * can be {@linkplain Asserter#SYSTEM_PROPERTY__FILES_UPDATE automatically updated}.
  * </p>
  *
  * @param <T>
@@ -70,7 +70,7 @@ public abstract class ContentAsserter<T> extends Asserter {
    *          Assertion configuration.
    * @throws AssertionError
    *           if {@code actualFile} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   protected final void doAssertEquals(String expectedResourceName, Path actualFile, Config config) {
     try {
@@ -91,7 +91,7 @@ public abstract class ContentAsserter<T> extends Asserter {
    *          Assertion configuration.
    * @throws AssertionError
    *           if {@code actualContent} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   protected final void doAssertEquals(final String expectedResourceName, final T actualContent,
       final Config config) {

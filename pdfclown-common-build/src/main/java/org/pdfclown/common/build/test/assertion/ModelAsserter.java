@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
  * Automated model assertions for integration testing.
  * <p>
  * This class enables massive checks over a domain model (actual object) against a resource
- * (expected object) which can be {@linkplain Asserter#PARAM_NAME__UPDATE automatically updated}.
- * Comparisons are performed through an {@linkplain ModelMapper abstract model}.
+ * (expected object) which can be {@linkplain Asserter#SYSTEM_PROPERTY__FILES_UPDATE automatically
+ * updated}. Comparisons are performed through an {@linkplain ModelMapper abstract model}.
  * </p>
  *
  * @param <TMap>
@@ -88,7 +88,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    * @throws AssertionError
    *           if the difference between {@code inputObj} and {@code outputObj} doesn't match the
    *           one loaded from {@code expectedDiffResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public void assertDiffEquals(String expectedDiffResourceName, TDiff inputObj, TDiff outputObj,
       Config config) {
@@ -114,7 +114,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    * @throws AssertionError
    *           if {@code actualObj} doesn't match the one loaded from
    *           {@code expectedObjResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public void assertEquals(String expectedObjResourceName, TMap actualObj, Config config) {
     assertEquals(expectedObjResourceName, actualObj, List.of(), config);
@@ -134,7 +134,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    * @throws AssertionError
    *           if {@code actualObj} doesn't match the one loaded from
    *           {@code expectedObjResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public void assertEquals(String expectedObjResourceName, TMap actualObj,
       List<PropertySelector> objSelectors, Config config) {

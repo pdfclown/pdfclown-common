@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Automated file tree assertions for integration testing.
  * <p>
  * This class enables massive checks over a directory of arbitrary depth (actual file tree) against
- * a resource (expected file tree) which can be {@linkplain Asserter#PARAM_NAME__UPDATE
+ * a resource (expected file tree) which can be {@linkplain Asserter#SYSTEM_PROPERTY__FILES_UPDATE
  * automatically updated}.
  * </p>
  *
@@ -53,7 +53,7 @@ public class FileTreeAsserter extends Asserter {
    *          Assertion configuration.
    * @throws AssertionError
    *           if {@code actualDir} doesn't match the one at {@code expectedDirResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public void assertEquals(final String expectedDirResourceName,
       final Path actualDir, final Config config) {

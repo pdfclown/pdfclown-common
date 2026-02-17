@@ -21,7 +21,7 @@ import java.nio.file.Path;
  * Automated text assertions for integration testing.
  * <p>
  * This class enables checks over text (actual content) against a resource (expected content) which
- * can be {@linkplain Asserter#PARAM_NAME__UPDATE automatically updated}.
+ * can be {@linkplain Asserter#SYSTEM_PROPERTY__FILES_UPDATE automatically updated}.
  * </p>
  *
  * @author Stefano Chizzolini
@@ -38,7 +38,7 @@ public class TextAsserter extends ContentAsserter<String> {
    *          Assertion configuration.
    * @throws AssertionError
    *           if {@code actualFile} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public void assertEquals(String expectedResourceName, Path actualFile, Config config) {
     doAssertEquals(expectedResourceName, actualFile, config);
@@ -55,7 +55,7 @@ public class TextAsserter extends ContentAsserter<String> {
    *          Assertion configuration.
    * @throws AssertionError
    *           if {@code actualContent} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public void assertEquals(String expectedResourceName, String actualContent, Config config) {
     doAssertEquals(expectedResourceName, actualContent, config);

@@ -1633,7 +1633,7 @@ public final class Assertions {
   private static final Logger log = LoggerFactory.getLogger(Assertions.class);
 
   /**
-   * CLI parameter specifying whether
+   * System property specifying whether
    * {@linkplain #argumentsStream(ArgumentsStreamStrategy, List, List[]) expected results
    * generation} is enabled for executed {@linkplain ParameterizedTest parameterized tests}.
    * <p>
@@ -1642,10 +1642,10 @@ public final class Assertions {
    * {@linkplain #assertParameterized(Object, Expected, Supplier) validated}. If the expected
    * results are undefined or their validation is false negative because the tested project code
    * innovated the expected state, the {@linkplain #assertParameterized(Object, Expected, Supplier)
-   * validator} can regenerate them through this CLI parameter.
+   * validator} can regenerate them through this property.
    * </p>
    * <p>
-   * The value of this CLI parameter is a boolean which can be omitted (default: {@code true}).
+   * The value of this property is a boolean which can be omitted (default: {@code true}).
    * </p>
    *
    * @apiNote Common usage examples (Maven build system):
@@ -1674,10 +1674,10 @@ public final class Assertions {
    *          you to use their actual names, as they are internally resolved by JUnit.
    *          </p>
    */
-  public static final String PARAM_NAME__PARAMS_UPDATE = "assert.params.update";
+  public static final String SYSTEM_PROPERTY__PARAMS_UPDATE = "assert.params.update";
   static {
-    log.info("`{}` CLI parameter: {}", PARAM_NAME__PARAMS_UPDATE,
-        getBooleanProperty(PARAM_NAME__PARAMS_UPDATE));
+    log.info("`{}` system property: {}", SYSTEM_PROPERTY__PARAMS_UPDATE,
+        getBooleanProperty(SYSTEM_PROPERTY__PARAMS_UPDATE));
   }
 
   /**
@@ -1732,8 +1732,8 @@ public final class Assertions {
    *             "UNDERSCORE_TEST"));
    *   }
    * }</code></pre></li>
-   * <li>or launch the test specifying the {@value #PARAM_NAME__PARAMS_UPDATE} CLI parameter — for
-   * example (Maven build system):<pre class="lang-shell"><code>
+   * <li>or launch the test specifying the {@value #SYSTEM_PROPERTY__PARAMS_UPDATE} system property
+   * — for example (Maven build system):<pre class="lang-shell"><code>
   mvn test ... -Dassert.params.update -Dtest=StringsTest#uncapitalizeGreedy</code></pre>
    * <p>
    * NOTE: The same parameter can obviously be passed to a run configuration within an IDE.
@@ -1770,7 +1770,7 @@ public final class Assertions {
    * <pre class="lang-shell"><code>
   mvn test ... -Dassert.params.update</code></pre>
    * <p>
-   * See {@value #PARAM_NAME__PARAMS_UPDATE} CLI parameter for further information.
+   * See {@value #SYSTEM_PROPERTY__PARAMS_UPDATE} system property for further information.
    * </p>
    * <h4>Arguments Conversion</h4>
    * <p>
@@ -1807,7 +1807,7 @@ public final class Assertions {
    */
   public static Stream<Arguments> argumentsStream(ArgumentsStreamStrategy strategy,
       @Nullable List<?> expected, List<?>... args) {
-    if (getBooleanProperty(PARAM_NAME__PARAMS_UPDATE)) {
+    if (getBooleanProperty(SYSTEM_PROPERTY__PARAMS_UPDATE)) {
       // Force generation mode!
       expected = null;
     }
@@ -1855,7 +1855,7 @@ public final class Assertions {
    *          Current test unit.
    * @throws AssertionError
    *           if {@code actualDir} doesn't match the one at {@code expectedDirResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public static void assertFileTreeEquals(String expectedDirResourceName, Path actualDir,
       Test test) {
@@ -2065,7 +2065,7 @@ public final class Assertions {
    *          Current test unit.
    * @throws AssertionError
    *           if {@code actualFile} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public static void assertTextEquals(String expectedResourceName, Path actualFile, Test test) {
     ASSERTER__TEXT.assertEquals(expectedResourceName, actualFile, new Asserter.Config(test));
@@ -2082,7 +2082,7 @@ public final class Assertions {
    *          Current test unit.
    * @throws AssertionError
    *           if {@code actualContent} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#PARAM_NAME__UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
    */
   public static void assertTextEquals(String expectedResourceName, String actualContent,
       Test test) {
