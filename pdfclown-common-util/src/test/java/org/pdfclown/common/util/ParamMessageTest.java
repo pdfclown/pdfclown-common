@@ -62,17 +62,25 @@ class ParamMessageTest extends BaseTest {
         "Placeholder \"{}\" missing for argument 1 (format: \"{} message\")", null)));
   }
 
+  @Test
+  void format__placeholderMissing_throwable() {
+    assertThat(ParamMessage.format(ParamMessage.ARG + " message", "ARG0", new RuntimeException()),
+        is("ARG0 message"));
+
+    assertThat(logged.getEvents().isEmpty(), is(true));
+  }
+
   /**
-   * Tests that {@link ParamMessage#format(Formatter, String, Object[], int)
-   * ParamMessage.format(..)} is called from {@link ParamMessage#of(String, Object...)
-   * ParamMessage.of(..)} — this spares us from redundant formatting tests on the latter.
+   * Tests that {@link ParamMessage#format(Formatter, String, Object[]) ParamMessage.format(..)} is
+   * called from {@link ParamMessage#of(String, Object...) ParamMessage.of(..)} — this spares us
+   * from redundant formatting tests on the latter.
    */
   @Test
   void of__verifyFormat() {
     try (var staticMock = mockStatic(ParamMessage.class)) {
       staticMock
           /* base ParamMessage.format(..) overload (ALL other format calls end up here) */
-          .when(() -> ParamMessage.format(any(), any(), any(Object[].class), any(Integer.class)))
+          .when(() -> ParamMessage.format(any(), any(), any(Object[].class)))
           .thenReturn(EMPTY);
       staticMock
           .when(() -> ParamMessage.of(any(), any()))
@@ -84,7 +92,7 @@ class ParamMessageTest extends BaseTest {
       ParamMessage.of("Message " + ParamMessage.ARG, "construction");
 
       staticMock.verify(() -> ParamMessage.format(ParamMessage.FORMATTER,
-          "Message " + ParamMessage.ARG, new Object[] { "construction" }, 1));
+          "Message " + ParamMessage.ARG, new Object[] { "construction" }));
     }
   }
 

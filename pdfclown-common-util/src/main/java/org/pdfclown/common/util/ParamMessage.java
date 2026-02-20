@@ -15,6 +15,7 @@ package org.pdfclown.common.util;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.pdfclown.common.util.Exceptions.runtime;
+import static org.pdfclown.common.util.Objects.found;
 import static org.pdfclown.common.util.Objects.isBasic;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
@@ -62,44 +63,30 @@ public class ParamMessage {
      *          Message arguments.
      */
     public String format(@Nullable String format, @Nullable Object[] args) {
-      return format(format, args, args.length);
-    }
-
-    /**
-     * Formats the parameterized string.
-     * <p>
-     * NOTE: If {@link #isQuiet() quiet}, cardinality mismatches between arguments and placeholders
-     * are ignored and logged as warnings; otherwise, an exception is thrown.
-     * </p>
-     *
-     * @param format
-     *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-     * @param args
-     *          Message arguments.
-     * @param argsCount
-     *          Message arguments count.
-     * @implNote Surrounding whitespace of {@code format} is preserved.
-     */
-    public String format(@Nullable String format, @Nullable Object[] args, int argsCount) {
       if (isEmpty(format))
         return EMPTY;
 
       var b = new StringBuilder();
       int index = 0;
       int oldIndex = index;
-      for (int i = 0; i < argsCount; i++) {
+      for (int i = 0; i < args.length; i++) {
         index = format.indexOf(ARG, oldIndex);
-        if (index < 0) {
-          warn("Placeholder {} missing for argument {} (format: {})", textLiteral(ARG), i,
-              textLiteral(format));
+        if (!found(index)) {
+          /*
+           * NOTE: `Throwable` as last argument is expected not to have a placeholder.
+           */
+          if (!(args[i] instanceof Throwable) || i < args.length - 1) {
+            warn("Placeholder {} missing for argument {} (format: {})", textLiteral(ARG), i,
+                textLiteral(format));
+          }
           break;
         }
 
         b.append(format, oldIndex, index).append(formatArg(args[i]));
         oldIndex = index + ARG.length();
       }
-      if (index >= 0 && format.indexOf(ARG, oldIndex) > 0) {
-        warn("Argument {} missing for placeholder {} (format: {})", argsCount, textLiteral(ARG),
+      if (found(format.indexOf(ARG, oldIndex))) {
+        warn("Argument {} missing for placeholder {} (format: {})", args.length, textLiteral(ARG),
             textLiteral(format));
       }
       return b.append(format.substring(oldIndex)).toString();
@@ -159,7 +146,7 @@ public class ParamMessage {
    *          Message arguments.
    */
   public static String format(@Nullable String format, @Nullable Object... args) {
-    return format(FORMATTER, format, args, args.length);
+    return format(FORMATTER, format, args);
   }
 
   /**
@@ -182,12 +169,11 @@ public class ParamMessage {
    */
   public static ParamMessage of(Formatter formatter, @Nullable String format,
       @Nullable Object... args) {
-    int argsCount = args.length;
     Throwable cause = null;
-    if (argsCount > 0 && args[argsCount - 1] instanceof Throwable) {
-      cause = Exceptions.actual((Throwable) args[--argsCount]);
+    if (args.length > 0 && args[args.length - 1] instanceof Throwable) {
+      cause = Exceptions.actual((Throwable) args[args.length - 1]);
     }
-    return new ParamMessage(format(formatter, format, args, argsCount), cause);
+    return new ParamMessage(format(formatter, format, args), cause);
   }
 
   /**
@@ -215,14 +201,12 @@ public class ParamMessage {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments.
-   * @param argsCount
-   *          Message arguments count.
    * @param formatter
    *          Applied formatter.
    */
   static String format(Formatter formatter, @Nullable String format,
-      @Nullable Object[] args, int argsCount) {
-    return formatter.format(format, args, argsCount);
+      @Nullable Object[] args) {
+    return formatter.format(format, args);
   }
 
   private final @Nullable Throwable cause;
