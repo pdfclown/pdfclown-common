@@ -162,7 +162,6 @@
             <additionalOptions
                 combine.children="append">
               <option>--jada-dir "${basedir}/src/main/javadoc/jada"</option>
-              <option>--jada-exts +ScriptExtension</option>
             </additionalOptions>
           </configuration>
         </plugin>
