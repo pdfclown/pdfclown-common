@@ -21,10 +21,11 @@ import java.util.stream.Stream;
  * Stream utilities.
  *
  * @author Stefano Chizzolini
+ * @see org.apache.commons.lang3.stream.Streams
  */
 public final class Streams {
   /**
-   * Gets a stream from a byte array.
+   * Gets a sequential ordered stream from a byte array.
    */
   public static IntStream intStream(byte[] array) {
     return IntStream.range(0, array.length).map($ -> array[$]);
@@ -46,7 +47,7 @@ public final class Streams {
   }
 
   /**
-   * Gets a stream of unsigned values from a byte array.
+   * Gets a sequential ordered stream of unsigned values from a byte array.
    */
   public static IntStream uintStream(byte[] array) {
     return IntStream.range(0, array.length).map($ -> array[$] & 0xFF);
