@@ -40,6 +40,7 @@ import static org.pdfclown.common.util.Numbers.parseNumber;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.NULL;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.Strings.lastIndexOfElse;
 import static org.pdfclown.common.util.reflect.Reflects.stackFrame;
 
 import io.github.classgraph.ClassGraph;
@@ -633,7 +634,7 @@ public final class Objects {
    * @see #sqn(Object)
    */
   public static String fqn(@Nullable Object obj) {
-    return fqn(obj, false, false);
+    return doFqn(obj, false, false);
   }
 
   /**
@@ -651,7 +652,7 @@ public final class Objects {
    * @see #sqnd(Object)
    */
   public static String fqnd(@Nullable Object obj) {
-    return fqn(obj, false, true);
+    return doFqn(obj, false, true);
   }
 
   /**
@@ -665,7 +666,7 @@ public final class Objects {
    * @see #sqnd(String)
    */
   public static String fqnd(@Nullable String typeName) {
-    return fqn(typeName, false, true);
+    return doFqn(typeName, false, true);
   }
 
   /**
@@ -1113,6 +1114,33 @@ public final class Objects {
   }
 
   /**
+   * Gets the {@linkplain Class#getPackageName() fully-qualified class package name} of an object.
+   * <p>
+   * The class is resolved via {@link #asType(Object)}.
+   * </p>
+   *
+   * @return Empty, if {@code obj} is undefined.
+   */
+  public static String pkg(@Nullable Object obj) {
+    return pkg(fqn(obj));
+  }
+
+  /**
+   * Gets the fully-qualified package name from a generic class name.
+   * <p>
+   * Corresponds to the {@linkplain Class#getPackageName() fully-qualified class package name};
+   * enclosing classes are expected to be separated with {@code $} (for example,
+   * {@code "org.pdfclown.common.util.Objects$ClassXCastException"} returns
+   * {@code "org.pdfclown.common.util"}). No syntactic check is applied.
+   * </p>
+   *
+   * @return Empty, if {@code typeName} is undefined.
+   */
+  public static String pkg(@Nullable String typeName) {
+    return objToElse(typeName, $ -> $.substring(0, lastIndexOfElse($, DOT, 0)), EMPTY);
+  }
+
+  /**
    * Quietly applies an operation to an object.
    *
    * @return {@code obj}
@@ -1187,7 +1215,7 @@ public final class Objects {
    * @see #sqn(Object)
    */
   public static String sfqn(@Nullable Object obj) {
-    return fqn(obj, true, false);
+    return doFqn(obj, true, false);
   }
 
   /**
@@ -1201,12 +1229,12 @@ public final class Objects {
    * Useful for repetitive messaging, like logs, where lengthy names become noisy.
    * </p>
    *
-   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @return {@value Strings#NULL}, if {@code typeName} is undefined.
    * @see #sfqnd(String)
    * @see #sqn(String)
    */
   public static String sfqn(@Nullable String typeName) {
-    return fqn(typeName, true, false);
+    return doFqn(typeName, true, false);
   }
 
   /**
@@ -1228,7 +1256,7 @@ public final class Objects {
    * @see #sqnd(Object)
    */
   public static String sfqnd(@Nullable Object obj) {
-    return fqn(obj, true, true);
+    return doFqn(obj, true, true);
   }
 
   /**
@@ -1243,13 +1271,13 @@ public final class Objects {
    * Useful for repetitive messaging, like logs, where lengthy names become noisy.
    * </p>
    *
-   * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @return {@value Strings#NULL}, if {@code typeName} is undefined.
    * @see #sfqn(String)
    * @see #fqnd(String)
    * @see #sqnd(String)
    */
   public static String sfqnd(@Nullable String typeName) {
-    return fqn(typeName, true, true);
+    return doFqn(typeName, true, true);
   }
 
   /**
@@ -1315,7 +1343,7 @@ public final class Objects {
    * @see #sfqn(Object)
    */
   public static String sqn(@Nullable Object obj) {
-    return sqn(obj, false);
+    return doSqn(obj, false);
   }
 
   /**
@@ -1332,7 +1360,7 @@ public final class Objects {
    * @see #sfqn(String)
    */
   public static String sqn(@Nullable String typeName) {
-    return sqn(typeName, false);
+    return doSqn(typeName, false);
   }
 
   /**
@@ -1350,7 +1378,7 @@ public final class Objects {
    * @see #sfqnd(Object)
    */
   public static String sqnd(@Nullable Object obj) {
-    return sqn(obj, true);
+    return doSqn(obj, true);
   }
 
   /**
@@ -1368,7 +1396,7 @@ public final class Objects {
    * @see #sfqnd(String)
    */
   public static String sqnd(@Nullable String typeName) {
-    return sqn(typeName, true);
+    return doSqn(typeName, true);
   }
 
   /**
@@ -2106,11 +2134,11 @@ public final class Objects {
     return true;
   }
 
-  private static String fqn(@Nullable Object obj, boolean shortened, boolean dotted) {
-    return fqn(objTo(asType(obj), Class::getName), shortened, dotted);
+  private static String doFqn(@Nullable Object obj, boolean shortened, boolean dotted) {
+    return doFqn(objTo(asType(obj), Class::getName), shortened, dotted);
   }
 
-  private static String fqn(@Nullable String typeName, boolean shortened, boolean dotted) {
+  private static String doFqn(@Nullable String typeName, boolean shortened, boolean dotted) {
     if (typeName == null)
       return NULL;
 
@@ -2123,6 +2151,14 @@ public final class Objects {
     return typeName;
   }
 
+  private static String doSqn(@Nullable Object obj, boolean dotted) {
+    return doSqn(doFqn(obj, false, false), dotted);
+  }
+
+  private static String doSqn(@Nullable String typeName, boolean dotted) {
+    return doFqn(objTo(typeName, $ -> $.substring($.lastIndexOf(DOT) + 1)), false, dotted);
+  }
+
   private static boolean isAutoInstantiable(Class<?> type) {
     try {
       type.getDeclaredConstructor();
@@ -2130,14 +2166,6 @@ public final class Objects {
     } catch (NoSuchMethodException | SecurityException e) {
       return false;
     }
-  }
-
-  private static String sqn(@Nullable Object obj, boolean dotted) {
-    return sqn(fqn(obj, false, false), dotted);
-  }
-
-  private static String sqn(@Nullable String typeName, boolean dotted) {
-    return fqn(objTo(typeName, $ -> $.substring($.lastIndexOf(DOT) + 1)), false, dotted);
   }
 
   /**

@@ -435,6 +435,48 @@ class ObjectsTest extends BaseTest {
             "\"[one, two]\""));
   }
 
+  static Stream<Arguments> pkg_Object() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] obj[0]: null
+            "",
+            // [2] obj[1]: 0.5
+            "java.lang",
+            // [3] obj[2]: 'a'
+            "java.lang",
+            // [4] obj[3]: "a string"
+            "java.lang",
+            // [5] obj[4]: String
+            "java.lang",
+            // [6] obj[5]: java.util.Map.Entry
+            "java.util"),
+        // obj
+        QN_OBJS);
+  }
+
+  static Stream<Arguments> pkg_String() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] typename[0]: null
+            "",
+            // [2] typename[1]: "java.lang.Double"
+            "java.lang",
+            // [3] typename[2]: "java.lang.Character"
+            "java.lang",
+            // [4] typename[3]: "java.lang.String"
+            "java.lang",
+            // [5] typename[4]: "java.lang.String"
+            "java.lang",
+            // [6] typename[5]: "java.util.Map$Entry"
+            "java.util"),
+        // typename
+        QN_TYPENAMES);
+  }
+
   static Stream<Arguments> sfqn_Object() {
     return argumentsStream(
         cartesian(),
@@ -843,6 +885,24 @@ class ObjectsTest extends BaseTest {
         () -> Objects.parseLiteral(s),
         expected,
         () -> new ExpectedGeneration(s));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void pkg_Object(Expected<String> expected, @Nullable Object obj) {
+    assertParameterizedOf(
+        () -> Objects.pkg(obj),
+        expected,
+        () -> new ExpectedGeneration(obj));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void pkg_String(Expected<String> expected, @Nullable String typename) {
+    assertParameterizedOf(
+        () -> Objects.pkg(typename),
+        expected,
+        () -> new ExpectedGeneration(typename));
   }
 
   /**
