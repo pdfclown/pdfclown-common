@@ -90,25 +90,24 @@ public interface TestEnvironment {
   Path dir(ProjectDirId id);
 
   /**
+   * Resolves the absolute name of a file.
+   *
+   * @return {@code null}, if {@code file} is outside the test space.
+   */
+  default @Nullable String name(Path file) {
+    return Streams.of(ProjectDirId.values())
+        .map($ -> ResourceNames.fromPath(file, dir($), true))
+        .filter(Objects::nonNull)
+        .min(comparing(String::length) /* Keeps the most specific name */).orElse(null);
+  }
+
+  /**
    * Gets the absolute path of an output file (no matter whether it exists).
    *
    * @param name
    *          Output name (either absolute or relative to this environment).
    */
   Path outputPath(String name);
-
-  /**
-   * Resolves the absolute name of a file.
-   *
-   * @return {@code null}, if {@code file} is outside the test space.
-   */
-  default @Nullable String resolveName(Path file) {
-    return Streams.of(ProjectDirId.values())
-        .map($ -> ResourceNames.based(file, dir($), true))
-        .filter(Objects::nonNull)
-        .min(comparing(String::length) /* Keeps the most specific name */)
-        .orElse(null);
-  }
 
   /**
    * Gets the absolute path of a test resource on target side (no matter whether it exists).

@@ -73,12 +73,12 @@ public final class ResourceNames {
    *         </ul>
    * @see #isAbs(CharSequence)
    */
-  public static @Nullable String based(Path file, Path baseDir) {
-    return based(file, baseDir, false);
+  public static @Nullable String fromPath(Path file, Path baseDir) {
+    return fromPath(file, baseDir, false);
   }
 
   /**
-   * Gets the name of a resource, resolved according to the base directory.
+   * Gets the name of a resource, relative to the base directory.
    *
    * @param file
    *          Resource file.
@@ -95,7 +95,7 @@ public final class ResourceNames {
    *         <li>if {@code file} is outside {@code baseDir}: {@code null}</li>
    *         </ul>
    */
-  public static @Nullable String based(Path file, Path baseDir, boolean abs) {
+  public static @Nullable String fromPath(Path file, Path baseDir, boolean abs) {
     file = file.normalize();
     if (file.isAbsolute()) {
       baseDir = baseDir.toAbsolutePath().normalize();
@@ -131,9 +131,9 @@ public final class ResourceNames {
    * @return
    *         <ul>
    *         <li>{@code name} — if {@code name} is absolute</li>
-   *         <li>{@code %BasePackageName%/name} — if {@code name} is relative, where
-   *         {@code %BasePackageName%} is the package of {@code base} whose dots are converted to
-   *         slashes</li>
+   *         <li>{@code %BASE_PACKAGE_NAME%/name} — if {@code name} is relative, where
+   *         {@code %BASE_PACKAGE_NAME%} is the {@linkplain Class#getPackageName() fully-qualified
+   *         class package name} of {@code base}, whose dots are converted to slashes</li>
    *         </ul>
    */
   public static String based(String name, Object base) {
@@ -153,9 +153,9 @@ public final class ResourceNames {
    * @return
    *         <ul>
    *         <li>{@code name} — if {@code name} is absolute</li>
-   *         <li>{@code %BasePackageName%/name} — if {@code name} is relative, where
-   *         {@code %BasePackageName%} is the package of {@code base} whose dots are converted to
-   *         slashes</li>
+   *         <li>{@code %BASE_PACKAGE_NAME%/name} — if {@code name} is relative, where
+   *         {@code %BASE_PACKAGE_NAME%} is the {@linkplain Class#getPackageName() fully-qualified
+   *         class package name} of {@code base}, whose dots are converted to slashes</li>
    *         </ul>
    */
   public static String based(String name, Object base, boolean abs) {
@@ -353,7 +353,7 @@ public final class ResourceNames {
    * @param baseDir
    *          Resource base directory.
    */
-  public static Path path(String name, Path baseDir) {
+  public static Path toPath(String name, Path baseDir) {
     return baseDir.resolve(rel(name));
   }
 

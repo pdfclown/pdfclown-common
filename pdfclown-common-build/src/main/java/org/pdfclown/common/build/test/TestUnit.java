@@ -14,10 +14,12 @@ package org.pdfclown.common.build.test;
 
 import static java.nio.file.Files.exists;
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.util.Chars.UNDERSCORE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.asTopLevelType;
 import static org.pdfclown.common.util.Objects.sqn;
 import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.util.io.Files.resetDirectory;
 
@@ -98,20 +100,20 @@ public abstract class TestUnit implements Test {
         }
       }
 
-      return ResourceNames.path(ResourceNames.isAbs(name) ? name
+      return ResourceNames.toPath(ResourceNames.isAbs(name) ? name
           : ResourceNames.based(ResourceNames.name(sqn(TestUnit.this), name), TestUnit.this),
           dir(ProjectDirId.TEST_OUTPUT));
     }
 
     @Override
     public Path resourcePath(String name) {
-      return ResourceNames.path(ResourceNames.based(name, TestUnit.this),
+      return ResourceNames.toPath(ResourceNames.based(name, TestUnit.this),
           dir(ProjectDirId.TEST_TARGET));
     }
 
     @Override
     public Path resourceSrcPath(String name) {
-      return ResourceNames.path(ResourceNames.based(name, TestUnit.this),
+      return ResourceNames.toPath(ResourceNames.based(name, TestUnit.this),
           dir(ProjectDirId.TEST_RESOURCE_SOURCE));
     }
 
@@ -121,8 +123,8 @@ public abstract class TestUnit implements Test {
           requireNonNull(asTopLevelType(type), "`type`").getSimpleName() + FILE_EXTENSION__JAVA,
           type);
       Path ret;
-      if (exists(ret = ResourceNames.path(name, dir(ProjectDirId.TEST_TYPE_SOURCE)))
-          || exists(ret = ResourceNames.path(name, dir(ProjectDirId.MAIN_TYPE_SOURCE))))
+      if (exists(ret = ResourceNames.toPath(name, dir(ProjectDirId.TEST_TYPE_SOURCE)))
+          || exists(ret = ResourceNames.toPath(name, dir(ProjectDirId.MAIN_TYPE_SOURCE))))
         return ret;
       else
         throw runtime("Source file corresponding to {} NOT FOUND (search paths: {}, {})", type,
@@ -160,6 +162,19 @@ public abstract class TestUnit implements Test {
    */
   public String getTestName() {
     return testInfo.getDisplayName();
+  }
+
+  /**
+   * Gets the absolute path of a test resource on target side (no matter whether it exists) specific
+   * to this test unit.
+   *
+   * @return &nbsp; (format: <code>"%PACKAGE_DIR%/_%TEST_UNIT_SQN%/%name%"</code>, where
+   *         <code>PACKAGE_DIR</code> corresponds to {@link Class#getPackageName()
+   *         this.getClass().getPackageName()}, and <code>TEST_UNIT_SQN</code> is
+   *         {@link org.pdfclown.common.util.Objects#sqn(Object) sqn(this)})
+   */
+  public Path getTestResourcePath(String name) {
+    return getEnv().resourcePath(ResourceNames.name(S + UNDERSCORE + sqn(this), name));
   }
 
   protected Environment __createEnv() {

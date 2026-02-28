@@ -190,7 +190,7 @@ public class ResourceNamesTest extends BaseTest {
             ResourceNames.class.getPackageName()));
   }
 
-  static Stream<Arguments> based_Path__unix() {
+  static Stream<Arguments> fromPath_Path__unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build());
     return argumentsStream(
@@ -241,7 +241,7 @@ public class ResourceNamesTest extends BaseTest {
             fs.getPath("/host/absolute")));
   }
 
-  static Stream<Arguments> based_Path__win() {
+  static Stream<Arguments> fromPath_Path__win() {
     var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build());
     return argumentsStream(
@@ -666,18 +666,18 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void based_Path__unix(Expected<String> expected, Path filePath, Path baseDir) {
+  void fromPath_Path__unix(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
-        () -> ResourceNames.based(filePath, baseDir, true),
+        () -> ResourceNames.fromPath(filePath, baseDir, true),
         expected,
         () -> new ExpectedGeneration(filePath, baseDir));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void based_Path__win(Expected<String> expected, Path filePath, Path baseDir) {
+  void fromPath_Path__win(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
-        () -> ResourceNames.based(filePath, baseDir, true),
+        () -> ResourceNames.fromPath(filePath, baseDir, true),
         expected,
         () -> new ExpectedGeneration(filePath, baseDir));
   }
