@@ -195,64 +195,54 @@ public final class Strings {
 
   /**
    * Gets the index within the string of the first occurrence of a substring; if not found, returns
-   * the end of the string.
-   * <p>
-   * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
-   * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
-   * it doesn't make sense to define a symmetrical {@code lastIndexOfOrBegin(..)} method.
-   * </p>
+   * the default. {@jada.reuseDoc :params}
    *
+   * @param defaultIndex
+   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
+   *          length} is used instead. {@jada.reuseDoc END}
    * @see String#indexOf(String)
    */
-  public static int indexOfElseEnd(String s, String sub) {
-    return indexOfElseEnd(s, sub, 0);
+  public static int indexOfElse(String s, String sub, int defaultIndex) {
+    return doIndexOfElse(s, s.indexOf(sub), defaultIndex);
   }
 
   /**
    * Gets the index within the string of the first occurrence of a substring, searched from the
-   * index; if not found, returns the end of the string.
-   * <p>
-   * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
-   * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
-   * it doesn't make sense to define a symmetrical {@code lastIndexOfOrBegin(..)} method.
-   * </p>
+   * index; if not found, returns the default. {@jada.doc params}
    *
+   * @param defaultIndex
+   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
+   *          length} is used instead. {@jada.doc END}
    * @see String#indexOf(String, int)
    */
-  public static int indexOfElseEnd(String s, String sub, int fromIndex) {
-    int index = s.indexOf(sub, fromIndex);
-    return found(index) ? index : s.length();
+  public static int indexOfElse(String s, String sub, int fromIndex, int defaultIndex) {
+    return doIndexOfElse(s, s.indexOf(sub, fromIndex), defaultIndex);
   }
 
   /**
    * Gets the index within the string of the first occurrence of a character; if not found, returns
-   * the end of the string.
-   * <p>
-   * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
-   * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
-   * it doesn't make sense to define a symmetrical {@code lastIndexOfOrBegin(..)} method.
-   * </p>
+   * the default. {@jada.reuseDoc :params}
    *
+   * @param defaultIndex
+   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
+   *          length} is used instead. {@jada.reuseDoc END}
    * @see String#indexOf(int)
    */
-  public static int indexOfElseEnd(String s, int c) {
-    return indexOfElseEnd(s, c, 0);
+  public static int indexOfElse(String s, int c, int defaultIndex) {
+    return doIndexOfElse(s, s.indexOf(c), defaultIndex);
   }
 
   /**
    * Gets the index within the string of the first occurrence of a character, searched from the
-   * index; if not found, returns the end of the string.
-   * <p>
-   * NOTE: Because of the asymmetry between {@code beginIndex} and {@code endIndex} in
-   * {@link String#substring(int, int)} (the former is inclusive, whilst the latter is exclusive),
-   * it doesn't make sense to define a symmetrical {@code lastIndexOfOrBegin(..)} method.
-   * </p>
+   * index; if not found, returns the default. {@jada.reuseDoc :params}
    *
+   * @param defaultIndex
+   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
+   *          length} is used instead. {@jada.reuseDoc END}
    * @see String#indexOf(int, int)
    */
-  public static int indexOfElseEnd(String s, int c, int fromIndex) {
-    int index = s.indexOf(c, fromIndex);
-    return found(index) ? index : s.length();
+  public static int indexOfElse(String s, int c, int fromIndex, int defaultIndex) {
+    return doIndexOfElse(s, s.indexOf(c, fromIndex), defaultIndex);
   }
 
   /**
@@ -368,6 +358,28 @@ public final class Strings {
   }
 
   /**
+   * Joins the elements of an iterable into a single string, prepending a prefix to each of them.
+   */
+  public static String joinWithPrefix(Iterable<?> obj, String prefix) {
+    var b = new StringBuilder();
+    for (var e : obj) {
+      b.append(prefix).append(e);
+    }
+    return b.toString();
+  }
+
+  /**
+   * Joins the elements of an iterable into a single string, appending a suffix to each of them.
+   */
+  public static String joinWithSuffix(Iterable<?> obj, String suffix) {
+    var b = new StringBuilder();
+    for (var e : obj) {
+      b.append(e).append(suffix);
+    }
+    return b.toString();
+  }
+
+  /**
    * Gets the index of the last matching character, searched backwards.
    *
    * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
@@ -446,6 +458,58 @@ public final class Strings {
    */
   public static int lastIndexOfAny(final @Nullable String s, final int[] cc) {
     return lastIndexOfAny(s, Integer.MAX_VALUE, cc);
+  }
+
+  /**
+   * Gets the index within the string of the last occurrence of a substring; if not found, returns
+   * the default. {@jada.reuseDoc #indexOfElse(*):params}
+   *
+   * @param defaultIndex
+   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
+   *          length} is used instead. {@jada.reuseDoc END}
+   * @see String#indexOf(String)
+   */
+  public static int lastIndexOfElse(String s, String sub, int defaultIndex) {
+    return doIndexOfElse(s, s.lastIndexOf(sub), defaultIndex);
+  }
+
+  /**
+   * Gets the index within the string of the last occurrence of a substring, searched backwards from
+   * the index; if not found, returns the default. {@jada.reuseDoc #indexOfElse(*):params}
+   *
+   * @param defaultIndex
+   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
+   *          length} is used instead. {@jada.reuseDoc END}
+   * @see String#lastIndexOf(String, int)
+   */
+  public static int lastIndexOfElse(String s, String sub, int fromIndex, int defaultIndex) {
+    return doIndexOfElse(s, s.lastIndexOf(sub, fromIndex), defaultIndex);
+  }
+
+  /**
+   * Gets the index within the string of the last occurrence of a character; if not found, returns
+   * the default. {@jada.reuseDoc #indexOfElse(*):params}
+   *
+   * @param defaultIndex
+   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
+   *          length} is used instead. {@jada.reuseDoc END}
+   * @see String#lastIndexOf(int)
+   */
+  public static int lastIndexOfElse(String s, int c, int defaultIndex) {
+    return doIndexOfElse(s, s.lastIndexOf(c), defaultIndex);
+  }
+
+  /**
+   * Gets the index within the string of the last occurrence of a character, searched backwards from
+   * the index; if not found, returns the default. {@jada.reuseDoc #indexOfElse(*):params}
+   *
+   * @param defaultIndex
+   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
+   *          length} is used instead. {@jada.reuseDoc END}
+   * @see String#lastIndexOf(int, int)
+   */
+  public static int lastIndexOfElse(String s, int c, int fromIndex, int defaultIndex) {
+    return doIndexOfElse(s, s.lastIndexOf(c, fromIndex), defaultIndex);
   }
 
   /**
@@ -564,6 +628,10 @@ public final class Strings {
       cc[i] = Character.toLowerCase(cc[i]);
     }
     return new String(cc);
+  }
+
+  private static int doIndexOfElse(String s, int index, int defaultIndex) {
+    return found(index) ? index : found(defaultIndex) ? min(defaultIndex, s.length()) : s.length();
   }
 
   private Strings() {
