@@ -86,7 +86,7 @@ public class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
-  static Stream<Arguments> based_Object() {
+  static Stream<Arguments> absBased() {
     return argumentsStream(
         cartesian(),
         // expected
@@ -143,43 +143,43 @@ public class ResourceNamesTest extends BaseTest {
             //
             // name[5]: ""
             // [21] base[0]: null
-            new Failure("NullPointerException", null),
+            new Failure("NullPointerException", "`base`"),
             // [22] base[1]: ""
-            "",
+            "/",
             // [23] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "org/pdfclown/common/build/util/io",
+            "/org/pdfclown/common/build/util/io",
             // [24] base[3]: "org.pdfclown.common.build.util.io"
-            "org/pdfclown/common/build/util/io",
+            "/org/pdfclown/common/build/util/io",
             //
             // name[6]: "my/relative/resource"
             // [25] base[0]: null
-            new Failure("NullPointerException", null),
+            new Failure("NullPointerException", "`base`"),
             // [26] base[1]: ""
-            "my/relative/resource",
+            "/my/relative/resource",
             // [27] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "org/pdfclown/common/build/util/io/my/relative/resource",
+            "/org/pdfclown/common/build/util/io/my/relative/resource",
             // [28] base[3]: "org.pdfclown.common.build.util.io"
-            "org/pdfclown/common/build/util/io/my/relative/resource",
+            "/org/pdfclown/common/build/util/io/my/relative/resource",
             //
             // name[7]: "my/relative/resource/"
             // [29] base[0]: null
-            new Failure("NullPointerException", null),
+            new Failure("NullPointerException", "`base`"),
             // [30] base[1]: ""
-            "my/relative/resource/",
+            "/my/relative/resource/",
             // [31] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "org/pdfclown/common/build/util/io/my/relative/resource/",
+            "/org/pdfclown/common/build/util/io/my/relative/resource/",
             // [32] base[3]: "org.pdfclown.common.build.util.io"
-            "org/pdfclown/common/build/util/io/my/relative/resource/",
+            "/org/pdfclown/common/build/util/io/my/relative/resource/",
             //
             // name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             // [33] base[0]: null
-            new Failure("NullPointerException", null),
+            new Failure("NullPointerException", "`base`"),
             // [34] base[1]: ""
-            "my/other/deep/relative/resource/",
+            "/my/other/deep/relative/resource/",
             // [35] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource/",
+            "/org/pdfclown/common/build/util/io/my/other/deep/relative/resource/",
             // [36] base[3]: "org.pdfclown.common.build.util.io"
-            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource/"),
+            "/org/pdfclown/common/build/util/io/my/other/deep/relative/resource/"),
         // name
         NAMES,
         // baseType
@@ -190,7 +190,7 @@ public class ResourceNamesTest extends BaseTest {
             ResourceNames.class.getPackageName()));
   }
 
-  static Stream<Arguments> fromPath_Path__unix() {
+  static Stream<Arguments> fromPath__unix() {
     var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build());
     return argumentsStream(
@@ -241,7 +241,7 @@ public class ResourceNamesTest extends BaseTest {
             fs.getPath("/host/absolute")));
   }
 
-  static Stream<Arguments> fromPath_Path__win() {
+  static Stream<Arguments> fromPath__win() {
     var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build());
     return argumentsStream(
@@ -644,6 +644,110 @@ public class ResourceNamesTest extends BaseTest {
         NAMES);
   }
 
+  static Stream<Arguments> relBased() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // name[0]: "/"
+            // [1] base[0]: null
+            "/",
+            // [2] base[1]: ""
+            "/",
+            // [3] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "/",
+            // [4] base[3]: "org.pdfclown.common.build.util.io"
+            "/",
+            //
+            // name[1]: "\\"
+            // [5] base[0]: null
+            "/",
+            // [6] base[1]: ""
+            "/",
+            // [7] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "/",
+            // [8] base[3]: "org.pdfclown.common.build.util.io"
+            "/",
+            //
+            // name[2]: "/my/absolute/resource"
+            // [9] base[0]: null
+            "/my/absolute/resource",
+            // [10] base[1]: ""
+            "/my/absolute/resource",
+            // [11] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "/my/absolute/resource",
+            // [12] base[3]: "org.pdfclown.common.build.util.io"
+            "/my/absolute/resource",
+            //
+            // name[3]: "/my/absolute/resource/"
+            // [13] base[0]: null
+            "/my/absolute/resource/",
+            // [14] base[1]: ""
+            "/my/absolute/resource/",
+            // [15] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "/my/absolute/resource/",
+            // [16] base[3]: "org.pdfclown.common.build.util.io"
+            "/my/absolute/resource/",
+            //
+            // name[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
+            // [17] base[0]: null
+            "/my/other/deep/absolute/resource/",
+            // [18] base[1]: ""
+            "/my/other/deep/absolute/resource/",
+            // [19] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "/my/other/deep/absolute/resource/",
+            // [20] base[3]: "org.pdfclown.common.build.util.io"
+            "/my/other/deep/absolute/resource/",
+            //
+            // name[5]: ""
+            // [21] base[0]: null
+            new Failure("NullPointerException", "`base`"),
+            // [22] base[1]: ""
+            "",
+            // [23] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "org/pdfclown/common/build/util/io",
+            // [24] base[3]: "org.pdfclown.common.build.util.io"
+            "org/pdfclown/common/build/util/io",
+            //
+            // name[6]: "my/relative/resource"
+            // [25] base[0]: null
+            new Failure("NullPointerException", "`base`"),
+            // [26] base[1]: ""
+            "my/relative/resource",
+            // [27] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "org/pdfclown/common/build/util/io/my/relative/resource",
+            // [28] base[3]: "org.pdfclown.common.build.util.io"
+            "org/pdfclown/common/build/util/io/my/relative/resource",
+            //
+            // name[7]: "my/relative/resource/"
+            // [29] base[0]: null
+            new Failure("NullPointerException", "`base`"),
+            // [30] base[1]: ""
+            "my/relative/resource/",
+            // [31] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "org/pdfclown/common/build/util/io/my/relative/resource/",
+            // [32] base[3]: "org.pdfclown.common.build.util.io"
+            "org/pdfclown/common/build/util/io/my/relative/resource/",
+            //
+            // name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
+            // [33] base[0]: null
+            new Failure("NullPointerException", "`base`"),
+            // [34] base[1]: ""
+            "my/other/deep/relative/resource/",
+            // [35] base[2]: org.pdfclown.common.build.util.io.ResourceNames
+            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource/",
+            // [36] base[3]: "org.pdfclown.common.build.util.io"
+            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource/"),
+        // name
+        NAMES,
+        // baseType
+        asList(
+            null,
+            EMPTY,
+            ResourceNames.class,
+            ResourceNames.class.getPackageName()));
+  }
+
   @ParameterizedTest
   @MethodSource
   void abs(Expected<String> expected, String name) {
@@ -655,29 +759,29 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void based_Object(Expected<String> expected, String name,
+  void absBased(Expected<String> expected, String name,
       @Nullable Object base) {
     //noinspection DataFlowIssue : null deliberated.
     assertParameterizedOf(
-        () -> ResourceNames.based(name, base),
+        () -> ResourceNames.absBased(name, base),
         expected,
         () -> new ExpectedGeneration(name, base));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void fromPath_Path__unix(Expected<String> expected, Path filePath, Path baseDir) {
+  void fromPath__unix(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
-        () -> ResourceNames.fromPath(filePath, baseDir, true),
+        () -> ResourceNames.fromPath(filePath, baseDir),
         expected,
         () -> new ExpectedGeneration(filePath, baseDir));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
   @MethodSource
-  void fromPath_Path__win(Expected<String> expected, Path filePath, Path baseDir) {
+  void fromPath__win(Expected<String> expected, Path filePath, Path baseDir) {
     assertParameterizedOf(
-        () -> ResourceNames.fromPath(filePath, baseDir, true),
+        () -> ResourceNames.fromPath(filePath, baseDir),
         expected,
         () -> new ExpectedGeneration(filePath, baseDir));
   }
@@ -747,5 +851,16 @@ public class ResourceNamesTest extends BaseTest {
         () -> ResourceNames.rel(name),
         expected,
         () -> new ExpectedGeneration(name));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void relBased(Expected<String> expected, String name,
+      @Nullable Object base) {
+    //noinspection DataFlowIssue : null deliberated.
+    assertParameterizedOf(
+        () -> ResourceNames.relBased(name, base),
+        expected,
+        () -> new ExpectedGeneration(name, base));
   }
 }

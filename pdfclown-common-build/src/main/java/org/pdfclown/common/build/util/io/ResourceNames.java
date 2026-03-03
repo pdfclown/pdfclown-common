@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.util.io;
 
+import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.SLASH;
@@ -57,7 +58,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the name of a resource, relative to the base directory.
+   * Gets the name of a resource, rooted in the base directory.
    *
    * @param file
    *          Resource file.
@@ -66,36 +67,13 @@ public final class ResourceNames {
    * @return
    *         <ul>
    *         <li>if {@code file} is absolute and under {@code baseDir}: relativized and converted to
-   *         name</li>
+   *         absolute name</li>
    *         <li>if {@code file} is relative and under {@code baseDir} (that is, not prefixed with
-   *         {@code ..}): converted to name</li>
+   *         {@value org.pdfclown.common.util.io.Files#PATH_SUPER}): converted to absolute name</li>
    *         <li>if {@code file} is outside {@code baseDir}: {@code null}</li>
    *         </ul>
-   * @see #isAbs(CharSequence)
    */
   public static @Nullable String fromPath(Path file, Path baseDir) {
-    return fromPath(file, baseDir, false);
-  }
-
-  /**
-   * Gets the name of a resource, relative to the base directory.
-   *
-   * @param file
-   *          Resource file.
-   * @param baseDir
-   *          Resource base directory.
-   * @param abs
-   *          Whether the resulting name is {@linkplain #isAbs(CharSequence) absolute}.
-   * @return
-   *         <ul>
-   *         <li>if {@code file} is absolute and under {@code baseDir}: relativized and converted to
-   *         name</li>
-   *         <li>if {@code file} is relative and under {@code baseDir} (that is, not prefixed with
-   *         {@code ..}): converted to name</li>
-   *         <li>if {@code file} is outside {@code baseDir}: {@code null}</li>
-   *         </ul>
-   */
-  public static @Nullable String fromPath(Path file, Path baseDir, boolean abs) {
     file = file.normalize();
     if (file.isAbsolute()) {
       baseDir = baseDir.toAbsolutePath().normalize();
@@ -113,61 +91,53 @@ public final class ResourceNames {
     else if (file.getName(0).toString().equals(PATH_SUPER))
       return null;
 
-    var ret = normal(file.toString());
-    if (abs) {
-      ret = abs(ret);
-    }
-    return ret;
+    return abs(file.toString());
   }
 
   /**
-   * Gets the name of a resource qualified by the base.
+   * Gets the absolute name of a resource qualified by a base.
    *
    * @param name
    *          Resource name (either relative or absolute).
    * @param base
    *          Base object, whose package name is prepended in case of relative {@code name} (if
-   *          {@code String}, it must be a package name itself).
+   *          {@code String}, it must be a package name).
    * @return
    *         <ul>
-   *         <li>{@code name} — if {@code name} is absolute</li>
-   *         <li>{@code %BASE_PACKAGE_NAME%/name} — if {@code name} is relative, where
-   *         {@code %BASE_PACKAGE_NAME%} is the {@linkplain Class#getPackageName() fully-qualified
-   *         class package name} of {@code base}, whose dots are converted to slashes</li>
+   *         <li>if {@code name} is absolute: {@code name}</li>
+   *         <li>if {@code name} is relative: {@code /%BASE_PACKAGE_NAME%/name}, where
+   *         {@code BASE_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
+   *         fully-qualified class package name} of {@code base}</li>
    *         </ul>
    */
-  public static String based(String name, Object base) {
-    return based(name, base, false);
+  public static String absBased(String name, Object base) {
+    return abs(relBased(name, base));
   }
 
   /**
-   * Gets the name of a resource qualified by the base.
+   * Gets the relative name of a resource qualified by a base.
    *
    * @param name
    *          Resource name (either relative or absolute).
    * @param base
    *          Base object, whose package name is prepended in case of relative {@code name} (if
-   *          {@code String}, it must be a package name itself).
-   * @param abs
-   *          Whether the resulting name is absolute.
+   *          {@code String}, it must be a package name).
    * @return
    *         <ul>
-   *         <li>{@code name} — if {@code name} is absolute</li>
-   *         <li>{@code %BASE_PACKAGE_NAME%/name} — if {@code name} is relative, where
-   *         {@code %BASE_PACKAGE_NAME%} is the {@linkplain Class#getPackageName() fully-qualified
-   *         class package name} of {@code base}, whose dots are converted to slashes</li>
+   *         <li>if {@code name} is absolute: {@code name}</li>
+   *         <li>if {@code name} is relative: {@code %BASE_PACKAGE_NAME%/name}, where
+   *         {@code BASE_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
+   *         fully-qualified class package name} of {@code base}</li>
    *         </ul>
    */
-  public static String based(String name, Object base, boolean abs) {
-    if (!(isAbs(name = normal(name)))) {
-      //noinspection DataFlowIssue : @PolyNull
-      name = name((base instanceof String s ? s : asType(base).getPackageName())
-          .replace(DOT, SLASH), name);
-      if (abs) {
-        name = abs(name);
-      }
-    }
-    return name;
+  public static String relBased(String name, Object base) {
+    //noinspection DataFlowIssue : @PolyNull
+    return isAbs(name = normal(name))
+        ? name
+        : name((base instanceof String s
+            ? rel(s)
+            : asType(requireNonNull(base, "`base`")).getPackageName()).replace(DOT, SLASH),
+            name);
   }
 
   /**

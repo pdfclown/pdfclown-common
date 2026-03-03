@@ -19,9 +19,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.pdfclown.common.util.Chars.UNDERSCORE;
 import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Objects.sqn;
+import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.system.Processes.execute;
 import static org.pdfclown.common.util.system.Processes.osCommand;
 
@@ -42,7 +41,7 @@ import org.pdfclown.common.util.Ref;
 class BuildsIT extends BaseIT {
   @Test
   void classpath() throws IOException, InterruptedException {
-    var projectBaseDir = getEnv().resourcePath(UNDERSCORE + sqn(this));
+    var projectBaseDir = getEnv().resourcePath(EMPTY);
 
     compileProject(projectBaseDir);
 
@@ -81,7 +80,7 @@ class BuildsIT extends BaseIT {
 
   @Test
   void classpath__failure_scope() throws IOException, InterruptedException {
-    var projectBaseDir = getEnv().resourcePath(UNDERSCORE + sqn(this));
+    var projectBaseDir = getEnv().resourcePath(EMPTY);
 
     compileProject(projectBaseDir);
 

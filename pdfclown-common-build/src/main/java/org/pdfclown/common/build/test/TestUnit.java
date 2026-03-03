@@ -19,7 +19,6 @@ import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.asTopLevelType;
 import static org.pdfclown.common.util.Objects.sqn;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.util.io.Files.resetDirectory;
 
@@ -79,6 +78,14 @@ public abstract class TestUnit implements Test {
     }
 
     @Override
+    public String localName(String name) {
+      return ResourceNames.isAbs(name)
+          ? name
+          : ResourceNames.absBased(ResourceNames.name(UNDERSCORE + sqn(TestUnit.this), name),
+              TestUnit.this);
+    }
+
+    @Override
     public synchronized Path outputPath(String name) {
       if (!outputDirInitialized) {
         /*
@@ -99,27 +106,12 @@ public abstract class TestUnit implements Test {
           throw runtime(ex);
         }
       }
-
-      return ResourceNames.toPath(ResourceNames.isAbs(name) ? name
-          : ResourceNames.based(ResourceNames.name(sqn(TestUnit.this), name), TestUnit.this),
-          dir(ProjectDirId.TEST_OUTPUT));
-    }
-
-    @Override
-    public Path resourcePath(String name) {
-      return ResourceNames.toPath(ResourceNames.based(name, TestUnit.this),
-          dir(ProjectDirId.TEST_TARGET));
-    }
-
-    @Override
-    public Path resourceSrcPath(String name) {
-      return ResourceNames.toPath(ResourceNames.based(name, TestUnit.this),
-          dir(ProjectDirId.TEST_RESOURCE_SOURCE));
+      return TestEnvironment.super.outputPath(name);
     }
 
     @Override
     public Path typeSrcPath(Class<?> type) {
-      var name = ResourceNames.based(
+      var name = ResourceNames.absBased(
           requireNonNull(asTopLevelType(type), "`type`").getSimpleName() + FILE_EXTENSION__JAVA,
           type);
       Path ret;
@@ -162,19 +154,6 @@ public abstract class TestUnit implements Test {
    */
   public String getTestName() {
     return testInfo.getDisplayName();
-  }
-
-  /**
-   * Gets the absolute path of a test resource on target side (no matter whether it exists) specific
-   * to this test unit.
-   *
-   * @return &nbsp; (format: <code>"%PACKAGE_DIR%/_%TEST_UNIT_SQN%/%name%"</code>, where
-   *         <code>PACKAGE_DIR</code> corresponds to {@link Class#getPackageName()
-   *         this.getClass().getPackageName()}, and <code>TEST_UNIT_SQN</code> is
-   *         {@link org.pdfclown.common.util.Objects#sqn(Object) sqn(this)})
-   */
-  public Path getTestResourcePath(String name) {
-    return getEnv().resourcePath(ResourceNames.name(S + UNDERSCORE + sqn(this), name));
   }
 
   protected Environment __createEnv() {

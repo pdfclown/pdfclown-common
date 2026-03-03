@@ -12,14 +12,6 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static org.pdfclown.common.util.Chars.UNDERSCORE;
-import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.Objects.sqn;
-import static org.pdfclown.common.util.io.Files.filename;
-
-import org.pdfclown.common.build.util.io.ResourceNames;
-
 /**
  * Test unit.
  *
@@ -30,24 +22,4 @@ public interface Test {
    * Test environment.
    */
   TestEnvironment getEnv();
-
-  /**
-   * Qualifies a resource name prepending the simple name of this test unit to its filename.
-   * <p>
-   * Useful for referencing resources specific to this test unit.
-   * </p>
-   * <p>
-   * For example, if the fully-qualified name of this test unit is
-   * {@code "io.mydomain.myproject.MyOuterClassIT"} and {@code name} is
-   * {@code "my/path/MyResource"}, it returns {@code "my/path/MyOuterClassIT_MyResource"}.
-   * </p>
-   *
-   * @param name
-   *          Resource name.
-   */
-  default String subName(String name) {
-    return ResourceNames.name(requireNonNullElseThrow(ResourceNames.parent(name),
-        () -> wrongArg("name", name, "MUST NOT be root")),
-        sqn(this) + UNDERSCORE + filename(name));
-  }
 }

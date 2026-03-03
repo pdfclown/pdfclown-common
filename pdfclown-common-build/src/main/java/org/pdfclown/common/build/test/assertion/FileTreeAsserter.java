@@ -57,8 +57,8 @@ public class FileTreeAsserter extends Asserter {
    */
   public void assertEquals(final String expectedDirResourceName,
       final Path actualDir, final Config config) {
-    final String expectedDirResourceFqn = ResourceNames.based(
-        expectedDirResourceName, config.getTest(), true);
+    final String expectedDirResourceFqn = ResourceNames.absBased(expectedDirResourceName,
+        config.getTest());
     final Path expectedDir = config.getEnv().resourcePath(expectedDirResourceFqn);
     try {
       var built = false;

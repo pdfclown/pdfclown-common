@@ -95,8 +95,8 @@ public abstract class ContentAsserter<T> extends Asserter {
    */
   protected final void doAssertEquals(final String expectedResourceName, final T actualContent,
       final Config config) {
-    final String expectedResourceFqn = ResourceNames.based(
-        expectedResourceName, config.getTest(), true);
+    final String expectedResourceFqn = ResourceNames.absBased(expectedResourceName,
+        config.getTest());
     final Path expectedFile = config.getEnv().resourcePath(expectedResourceFqn);
     try {
       var built = false;
