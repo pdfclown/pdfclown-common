@@ -1,3 +1,48 @@
+## v0.6.0 (2026-03-03)
+
+### BREAKING CHANGE
+
+- failure message mapping API redefined in `Assertions`.
+- `indexOfElseEnd` replaced by `indexOfElse`.
+- - `ResourceNames.based(Path,...)` renamed as `fromPath`
+- `ResourceNames::path` renamed as `toPath`
+- `TestEnvironment::resolveName` renamed as `name`
+- `ParamMessage.format(String, Object[], int)` removed.
+
+### Feat
+
+- **build**: consolidate resource names support (`ResourceNames`)
+- **build**: improve parameterized tests portability and automation (`Assertions`)
+- **build**: add `Mocks::mockFileSystems`
+- **util**: add `Objects::enclosingTypes`
+- **util**: improve `Objects`
+- **util**: improve `Strings`
+- **build**: improve resource resolution (`TestUnit::getTestResourcePath`)
+- **build**: add `log.level` system property
+- **util**: update fluent collections
+- **util**: consolidate `Xmls::toString` overloads
+
+### Fix
+
+- **deps**: bump org.pdfclown:jada-maven-plugin from 0.2.2 to 0.3.0 (#79)
+- **deps**: bump org.apache.maven.plugins:maven-failsafe-plugin from 3.5.4 to 3.5.5 (#77)
+- **deps**: bump org.apache.maven.plugins:maven-surefire-plugin from 3.5.4 to 3.5.5 (#76)
+- **util**: consolidate `Throwable` argument (`ParamMessage`)
+- **util**: improve `Objects::toString...` methods
+- **build**: normalize assertion system properties
+- **build**: update javadoc bibliographic entries (CSS 2.2)
+- **deps**: bump org.codehaus.gmavenplus:gmavenplus-plugin from 4.3.0 to 4.3.1 (#73)
+- **deps**: bump org.apache.maven.plugins:maven-dependency-plugin from 3.9.0 to 3.10.0 (#72)
+- **deps**: bump net.bytebuddy:byte-buddy from 1.18.4 to 1.18.5 (#71)
+- **deps**: bump com.diffplug.spotless:spotless-maven-plugin from 3.2.0 to 3.2.1 (#69)
+- **deps**: bump com.diffplug.spotless:spotless-maven-plugin from 3.1.0 to 3.2.0 (#68)
+- **deps**: bump org.codehaus.mojo:xml-maven-plugin from 1.2.0 to 1.2.1 (#67)
+- **deps**: bump org.codehaus.gmavenplus:gmavenplus-plugin from 4.2.1 to 4.3.0 (#66)
+- **deps**: bump groovy.version from 5.0.3 to 5.0.4 (#65)
+- **deps**: bump org.pdfclown:jada-maven-plugin from 0.2.0 to 0.2.2 (#64)
+- **build**: improve Javadoc page layout
+- **deps**: bump org.pdfclown:pdfclown-common-util from 0.4.0 to 0.5.0
+
 ## v0.5.0 (2026-01-17)
 
 ### BREAKING CHANGE
