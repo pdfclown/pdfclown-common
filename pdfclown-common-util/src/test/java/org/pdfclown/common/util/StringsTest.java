@@ -266,7 +266,8 @@ class StringsTest extends BaseTest {
         // expected
         asList(
             // [1] s[0]: null
-            new Failure("NullPointerException", null),
+            new Failure("NullPointerException",
+                "Cannot invoke \"String.length()\" because \"s\" is null"),
             // [2] s[1]: ""
             "",
             // [3] s[2]: "\n"

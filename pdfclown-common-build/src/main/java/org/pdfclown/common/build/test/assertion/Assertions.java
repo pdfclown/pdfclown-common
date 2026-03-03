@@ -20,7 +20,6 @@ import static java.util.Collections.binarySearch;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Map.entry;
 import static java.util.Objects.requireNonNull;
-import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.countMatches;
@@ -49,19 +48,22 @@ import static org.pdfclown.common.util.Conditions.requireState;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
+import static org.pdfclown.common.util.Objects.asTopLevelType;
 import static org.pdfclown.common.util.Objects.basicLiteral;
 import static org.pdfclown.common.util.Objects.found;
 import static org.pdfclown.common.util.Objects.fqnd;
 import static org.pdfclown.common.util.Objects.literal;
+import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Objects.objToElseGet;
-import static org.pdfclown.common.util.Objects.sqnd;
+import static org.pdfclown.common.util.Objects.sqn;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.NULL;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
+import static org.pdfclown.common.util.net.Uris.uri;
 import static org.pdfclown.common.util.reflect.Reflects.methodFqn;
 import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
 
@@ -108,6 +110,7 @@ import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.lang.Javas;
+import org.pdfclown.common.build.util.source.JavaParsers;
 import org.pdfclown.common.util.Exceptions;
 import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.Strings;
@@ -521,16 +524,6 @@ public final class Assertions {
       }
     }
 
-    private static final Map<String,
-        UnaryOperator<String>> THROWN_MESSAGE_NORMALIZERS__BUILTIN = Map.of(
-            /*
-             * NOTE: Since Java 14 (see <https://openjdk.java.net/jeps/358>), NPE's message has
-             * changed (it describes which variable is null, whilst previously it didn't provide
-             * such information). To avoid false negatives switching between pre- and post-Java 14
-             * JDKs, all messages are suppressed.
-             */
-            sqnd(NullPointerException.class), $ -> EMPTY);
-
     /**
      * Creates a strategy for Cartesian-product
      * {@linkplain #argumentsStream(ArgumentsStreamStrategy, List, List[]) arguments stream}.
@@ -591,30 +584,8 @@ public final class Assertions {
 
     @Nullable
     Converter converter;
-    Map<String, UnaryOperator<String>> thrownMessageNormalizers =
-        THROWN_MESSAGE_NORMALIZERS__BUILTIN;
 
     protected ArgumentsStreamStrategy() {
-    }
-
-    /**
-     * Adds the message normalizer for a throwable type.
-     * <p>
-     * Useful to extract from the message of specific throwable types the contents which are
-     * invariant across JDKs and third-party components. For example, since Java 14
-     * {@link NullPointerException}'s message <a href="https://openjdk.java.net/jeps/358">has
-     * changed</a> (it describes which variable is null, whilst previously it didn't provide such
-     * information); to avoid false negatives switching between pre- and post-Java 14 JDKs, all
-     * messages are suppressed by a built-in normalizer.
-     * </p>
-     */
-    public ArgumentsStreamStrategy addThrownMessageNormalizer(Class<? extends Throwable> type,
-        UnaryOperator<String> normalizer) {
-      if (thrownMessageNormalizers == THROWN_MESSAGE_NORMALIZERS__BUILTIN) {
-        thrownMessageNormalizers = new HashMap<>(THROWN_MESSAGE_NORMALIZERS__BUILTIN);
-      }
-      thrownMessageNormalizers.put(sqnd(type), normalizer);
-      return this;
     }
 
     /**
@@ -737,26 +708,7 @@ public final class Assertions {
      *          Thrown exception.
      */
     public static <T> Expected<T> failure(Failure thrown) {
-      return failure(thrown, null);
-    }
-
-    /**
-     * New failed result.
-     *
-     * @param thrown
-     *          Thrown exception.
-     * @param thrownMessageNormalizer
-     *          Maps the thrown message to its normal form. Useful to prevent variations across JDKs
-     *          and third-party components from disrupting test assertions against expected messages
-     *          (see also
-     *          {@link ArgumentsStreamStrategy#addThrownMessageNormalizer(Class, UnaryOperator)}).
-     */
-    public static <T> Expected<T> failure(Failure thrown,
-        @Nullable UnaryOperator<String> thrownMessageNormalizer) {
-      var ret = new Expected<T>(null, requireNonNull(thrown));
-      ret.thrownMessageNormalizer = requireNonNullElse(thrownMessageNormalizer,
-          UnaryOperator.identity());
-      return ret;
+      return new Expected<>(null, requireNonNull(thrown));
     }
 
     /**
@@ -775,8 +727,6 @@ public final class Assertions {
     final T returned;
     @Nullable
     final Failure thrown;
-    @Nullable
-    UnaryOperator<String> thrownMessageNormalizer;
 
     private Expected(@Nullable T returned, @Nullable Failure thrown) {
       this.thrown = thrown;
@@ -829,11 +779,37 @@ public final class Assertions {
           ? matcherProvider.apply(returned)
           : is(returned);
     }
+  }
 
-    String normalizeThrownMessage(Failure failure) {
-      assert thrownMessageNormalizer != null;
+  /**
+   * Conversion utilities for the expected results of parameterized tests.
+   *
+   * @author Stefano Chizzolini
+   * @see Assertions#assertParameterized(Object, Expected, Supplier)
+   */
+  public static final class ExpectedConversions {
+    /**
+     * Configures the deserialization of expected paths from their string representation.
+     * <p>
+     * Useful to make expected paths comparable with the corresponding actual paths in the current
+     * testing system; for the purpose, they are prepended with {@code baseDir}.
+     * </p>
+     */
+    public static ArgumentsStreamStrategy preparePathDeserializer(ArgumentsStreamStrategy strategy,
+        Path baseDir) {
+      return strategy.<String>composeExpectedConverter(baseDir::resolve);
+    }
 
-      return thrownMessageNormalizer.apply(failure.getMessage());
+    /**
+     * Configures the serialization of expected paths to their string representation.
+     * <p>
+     * Useful to make expected paths portable across the testing systems; for the purpose, they are
+     * relativized via {@code baseDir}.
+     * </p>
+     */
+    public static ExpectedGeneration<Path> preparePathSerializer(
+        ExpectedGeneration<Path> generation, Path baseDir) {
+      return generation.setExpectedSourceCodeGenerator($ -> literal(uri(baseDir.relativize($))));
     }
   }
 
@@ -847,6 +823,13 @@ public final class Assertions {
    */
   public static class ExpectedGeneration<E> {
     private static final int MAX_ARG_COMMENT_LENGTH__DEFAULT = 50;
+
+    /**
+     * Built-in failure message normalizers by {@linkplain Objects#sqn(Object) simply-qualified}
+     * throwable class name.
+     */
+    private static final Map<String, UnaryOperator<String>> BUILTIN_FAILURE_MESSAGE_NORMALIZERS =
+        Map.of();
 
     /**
      * Gets the constructor source code to use in {@link #setExpectedSourceCodeGenerator(Function)}.
@@ -875,6 +858,8 @@ public final class Assertions {
     @Nullable
     TestEnvironment environment;
     Function<E, String> expectedSourceCodeGenerator = Objects::literal;
+    Map<String, UnaryOperator<String>> failureMessageNormalizers =
+        BUILTIN_FAILURE_MESSAGE_NORMALIZERS;
     int maxArgCommentLength = MAX_ARG_COMMENT_LENGTH__DEFAULT;
     @Nullable
     Appendable out;
@@ -884,6 +869,18 @@ public final class Assertions {
      */
     public ExpectedGeneration(@Nullable Object... args) {
       this.args = requireNonNull(args);
+    }
+
+    /**
+     * Adds the {@linkplain #normalFailureMessage(Failure) message normalizer} for a throwable type.
+     */
+    public ExpectedGeneration<E> addFailureMessageNormalizer(Class<? extends Throwable> type,
+        UnaryOperator<String> normalizer) {
+      if (failureMessageNormalizers == BUILTIN_FAILURE_MESSAGE_NORMALIZERS) {
+        failureMessageNormalizers = new HashMap<>(BUILTIN_FAILURE_MESSAGE_NORMALIZERS);
+      }
+      failureMessageNormalizers.put(sqn(type), normalizer);
+      return this;
     }
 
     /**
@@ -970,6 +967,23 @@ public final class Assertions {
      */
     public String @Nullable [] getParamNames() {
       return paramNames;
+    }
+
+    /**
+     * Gets the normalized message of a failure.
+     * <p>
+     * Useful to extract from the message of a specific throwable type contents which are invariant
+     * across JDKs and third-party components. For example, since Java 14
+     * {@link NullPointerException}'s message <a href="https://openjdk.java.net/jeps/358">has
+     * changed</a> (it describes which expression is null, whilst previously it didn't provide such
+     * information); to avoid inconsistencies switching between pre- and post-Java 14 JDKs,
+     * {@linkplain #addFailureMessageNormalizer(Class, UnaryOperator) all messages can be
+     * suppressed}.
+     * </p>
+     */
+    public String normalFailureMessage(Failure failure) {
+      return failureMessageNormalizers.getOrDefault(failure.getName(), UnaryOperator.identity())
+          .apply(failure.getMessage());
     }
 
     /**
@@ -1173,7 +1187,7 @@ public final class Assertions {
           }
         }
         expectedSourceCode = "new %s(%s, %s)".formatted(failureRef, literal(failure.getName()),
-            literal(failure.getMessage()));
+            literal(generation.normalFailureMessage(failure)));
       } else {
         expectedSourceCode = generation.expectedSourceCodeGenerator.apply(expected);
       }
@@ -1191,7 +1205,7 @@ public final class Assertions {
               "\\\\n\"\n+\"");
         }
       } catch (RuntimeException ex) {
-        throw runtime("Generated expected source code INVALID", ex);
+        throw runtime("Generated expected source code {} INVALID", literal(expectedSourceCode), ex);
       }
 
       // Add the generated source code to output!
@@ -1236,7 +1250,8 @@ public final class Assertions {
       if (editorBuffer != null /* Output to update the source code file */
           || paramNames == null /* Output redirection requiring test metadata retrieval */) {
         try {
-          editor = getCompilationUnitEditor(testFrame.getDeclaringClass(), generation.environment);
+          editor = getCompilationUnitEditor(nonNull(asTopLevelType(testFrame.getDeclaringClass())),
+              generation.environment);
         } catch (IOException ex) {
           throw runtime("Compilation unit `{}` loading FAILED (TIP: {})", testFrame.getClassName(),
               editorBuffer != null
@@ -1248,11 +1263,13 @@ public final class Assertions {
                   : "specify `ExpectedGeneration.paramNames` to avoid source code access",
               ex);
         }
-        for (MethodDeclaration method : editor.source.getPrimaryType()
-            .orElseThrow().getMethodsByName(testFrame.getMethodName())) {
+
+        var sourceType = JavaParsers.sourceType(testFrame.getDeclaringClass(), editor.source)
+            .orElseThrow();
+        for (MethodDeclaration method : sourceType.getMethodsByName(testFrame.getMethodName())) {
           if (method.getParameters().isEmpty()) {
-            MethodDeclaration argumentsSourceMethod = editor.source.getPrimaryType()
-                .orElseThrow().getMethodsBySignature(testFrame.getMethodName()).get(0);
+            MethodDeclaration argumentsSourceMethod = sourceType.getMethodsBySignature(
+                testFrame.getMethodName()).get(0);
             argumentsStreamCall = argumentsSourceMethod.getBody().orElseThrow()
                 .findFirst(MethodCallExpr.class, $ -> $.getNameAsString().equals("argumentsStream"))
                 .orElseThrow();
@@ -1336,7 +1353,7 @@ public final class Assertions {
     }
 
     private void printInfo(Object text) {
-      System.err.printf("\n[%s] %s\n\n", sqnd(this), text);
+      System.err.printf("\n[%s] %s\n\n", sqn(this), text);
     }
   }
 
@@ -1348,6 +1365,10 @@ public final class Assertions {
    */
   @Immutable
   public static class Failure {
+    public static Failure of(Throwable ex) {
+      return new Failure(sqn(ex), ex.getMessage());
+    }
+
     private final String message;
     private final String name;
 
@@ -1825,8 +1846,7 @@ public final class Assertions {
         expectedList = new ArrayList<>(expected.size());
         for (var e : expected) {
           expectedList.add(e instanceof Failure failure
-              ? Expected.failure(failure,
-                  strategy.thrownMessageNormalizers.get(failure.getName()))
+              ? Expected.failure(failure)
               : Expected.success(strategy.converter != null
                   ? strategy.converter.apply(0, e)
                   : e));
@@ -2000,14 +2020,16 @@ public final class Assertions {
       if (actual instanceof Failure actualFailure) {
         if (!expected.isFailure())
           fail("Failure UNEXPECTED (expected: %s (%s); actual: %s)".formatted(
-              textLiteral(expected), sqnd(expected.getReturned()), textLiteral(actual)));
+              textLiteral(expected), sqn(expected.getReturned()), textLiteral(actual)));
 
         var expectedFailure = expected.getThrown();
         assert expectedFailure != null;
 
         assertThat("Throwable.class.name", actualFailure.getName(), is(expectedFailure.getName()));
-        assertThat("Throwable.message", expected.normalizeThrownMessage(actualFailure),
-            is(expected.normalizeThrownMessage(expectedFailure)));
+        assert generationSupplier != null;
+        assertThat("Throwable.message",
+            generationSupplier.get().normalFailureMessage(actualFailure),
+            is(expectedFailure.getMessage()));
       }
       // Regular result.
       else {
@@ -2110,7 +2132,7 @@ public final class Assertions {
     try {
       return expression.get();
     } catch (Throwable ex) {
-      return objTo(Exceptions.actual(ex), $ -> new Failure(sqnd($), $.getMessage()));
+      return objTo(Exceptions.actual(ex), Failure::of);
     }
   }
 
