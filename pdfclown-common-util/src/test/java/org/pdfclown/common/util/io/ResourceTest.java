@@ -15,7 +15,6 @@ package org.pdfclown.common.util.io;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -30,11 +29,8 @@ import static org.pdfclown.common.util.Objects.sqn;
 import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.net.Uris.uri;
 
-import com.google.common.jimfs.Configuration;
-import com.google.common.jimfs.Jimfs;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -49,6 +45,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
+import org.pdfclown.common.build.test.assertion.Mocks;
 import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.pdfclown.common.util.net.Uris;
@@ -156,27 +153,7 @@ class ResourceTest extends BaseTest {
                 "https://www.example.io/absent/conf/checkstyle/checkstyle-checks.xml")));
   }
 
-  final MockedStatic<FileSystems> fileSystemsMock;
-  {
-    /*
-     * NOTE: Called before mocking `FileSystems`, as it relies on its real implementation (sic!).
-     */
-    var defaultFsMock = Jimfs.newFileSystem("local", Configuration.unix());
-
-    fileSystemsMock = mockStatic(FileSystems.class);
-    var fileSystemMock = mock(FileSystem.class);
-    {
-      /*
-       * Relays to default mocked filesystem.
-       */
-      when(fileSystemMock.getPath(any())).then($ -> Path.of($.<String>getArgument(0)));
-    }
-    //noinspection resource
-    fileSystemsMock
-        .when(() -> FileSystems.newFileSystem(any(Path.class), isNull(ClassLoader.class)))
-        .thenReturn(fileSystemMock);
-    fileSystemsMock.when(FileSystems::getDefault).thenReturn(defaultFsMock);
-  }
+  final MockedStatic<FileSystems> fileSystemsMock = Mocks.mockFileSystems();
 
   final MockedStatic<Files> filesMock = mockStatic(Files.class, CALLS_REAL_METHODS);
   {
@@ -243,7 +220,7 @@ class ResourceTest extends BaseTest {
             .setOut(System.err) /*
                                  * IMPORTANT: DO NOT remove `out` redirection, otherwise the
                                  * interaction of the test harness with the filesystem will cause
-                                 * malfunctions (mind the filesystem is mocked in this test unit!).
+                                 * malfunctions (mind the filesystem is mocked in this test unit!)
                                  */);
   }
 
