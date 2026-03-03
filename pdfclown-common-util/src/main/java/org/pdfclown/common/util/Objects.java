@@ -54,6 +54,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -578,6 +579,30 @@ public final class Objects {
       return false;
 
     return deepEquals(resolver.apply(ref1), resolver.apply(ref2), baseRefType, resolver, raw);
+  }
+
+  /**
+   * Gets the types enclosing the given one.
+   *
+   * @param selfInclusive
+   *          Whether {@code type} itself has to be included in the result.
+   * @see #subTypes(Class, ScanResult)
+   * @see #superTypes(Class)
+   */
+  public static Stream<Class<?>> enclosingTypes(Class<?> type, boolean selfInclusive) {
+    if (type.getEnclosingClass() == null)
+      return selfInclusive ? Stream.of(type) : Stream.of();
+
+    var types = new ArrayDeque<Class<?>>();
+    do {
+      if (selfInclusive) {
+        types.push(type);
+      } else {
+        selfInclusive = true;
+      }
+      type = type.getEnclosingClass();
+    } while (type != null);
+    return types.stream();
   }
 
   /**
@@ -1407,6 +1432,7 @@ public final class Objects {
    * @param context
    *          Classpath context where to search the descendants (see {@link #types(ClassLoader)}).
    * @see #superTypes(Class)
+   * @see #enclosingTypes(Class, boolean)
    */
   public static <T> Stream<Class<? extends T>> subTypes(Class<T> type, ScanResult context) {
     return (type.isInterface()
@@ -1422,6 +1448,8 @@ public final class Objects {
    *
    * @param type
    *          Type (either class or interface) whose ancestors are searched.
+   * @see #subTypes(Class, ScanResult)
+   * @see #enclosingTypes(Class, boolean)
    */
   @SuppressWarnings("rawtypes")
   public static @Unmodifiable Iterable<Class> superTypes(Class type) {
@@ -1433,6 +1461,8 @@ public final class Objects {
    *
    * @param type
    *          Type (either class or interface) whose ancestors are searched.
+   * @see #subTypes(Class, ScanResult)
+   * @see #enclosingTypes(Class, boolean)
    */
   @SuppressWarnings("rawtypes")
   public static @Unmodifiable Iterable<Class> superTypes(Class type,
@@ -1449,6 +1479,8 @@ public final class Objects {
    *          Types at which to stop ancestor hierarchy traversal.
    * @param stopperExclusive
    *          Whether stopped types are excluded from returned ancestors.
+   * @see #subTypes(Class, ScanResult)
+   * @see #enclosingTypes(Class, boolean)
    */
   @SuppressWarnings("rawtypes")
   public static @Unmodifiable Iterable<Class> superTypes(Class type,
