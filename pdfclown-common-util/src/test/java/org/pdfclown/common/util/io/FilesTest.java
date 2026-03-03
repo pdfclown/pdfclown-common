@@ -365,7 +365,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.baseName(file, true),
         expected,
-        () -> new ExpectedGeneration(file));
+        () -> new ExpectedGeneration<>(file));
   }
 
   @ParameterizedTest
@@ -374,7 +374,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.cognateFile(file, "_tmp", true),
         expected,
-        () -> new ExpectedGeneration(file));
+        () -> new ExpectedGeneration<>(file));
   }
 
   @ParameterizedTest
@@ -383,7 +383,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.cognateFile(file, "_tmp"),
         expected,
-        () -> new ExpectedGeneration(file));
+        () -> new ExpectedGeneration<>(file));
   }
 
   @ParameterizedTest
@@ -392,7 +392,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.extension(file, true),
         expected,
-        () -> new ExpectedGeneration(file));
+        () -> new ExpectedGeneration<>(file));
   }
 
   @ParameterizedTest
@@ -401,7 +401,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.extension(file),
         expected,
-        () -> new ExpectedGeneration(file));
+        () -> new ExpectedGeneration<>(file));
   }
 
   @ParameterizedTest
@@ -410,7 +410,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.filename(path),
         expected,
-        () -> new ExpectedGeneration(path));
+        () -> new ExpectedGeneration<>(path));
   }
 
   @ParameterizedTest
@@ -419,7 +419,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.isExtension(file, extension, true),
         expected,
-        () -> new ExpectedGeneration(file, extension));
+        () -> new ExpectedGeneration<>(file, extension));
   }
 
   @ParameterizedTest
@@ -428,7 +428,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.isExtension(file, extension),
         expected,
-        () -> new ExpectedGeneration(file, extension));
+        () -> new ExpectedGeneration<>(file, extension));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -437,7 +437,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.path(uri, fs),
         expected,
-        () -> new ExpectedGeneration(uri, fs)
+        () -> new ExpectedGeneration<Path>(uri, fs)
             .setMaxArgCommentLength(50));
   }
 
@@ -447,7 +447,7 @@ class FilesTest extends BaseTest {
     assertParameterizedOf(
         () -> Files.path(uri, fs),
         expected,
-        () -> new ExpectedGeneration(uri, fs)
+        () -> new ExpectedGeneration<Path>(uri, fs)
             .setMaxArgCommentLength(50));
   }
 }

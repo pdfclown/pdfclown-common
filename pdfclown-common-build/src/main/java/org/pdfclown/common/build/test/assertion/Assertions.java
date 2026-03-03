@@ -601,7 +601,7 @@ public final class Assertions {
      *   assertParameterizedOf(
      *       () -&gt; myMethodToTest(arg0, arg1, . . ., argN),
      *       expected,
-     *       () -&gt; new ExpectedGeneration(arg0, arg1, . . ., argN));
+     *       () -&gt; new ExpectedGeneration&lt;&gt;(arg0, arg1, . . ., argN));
      * }</code></pre>
      * <p>
      * then {@code argIndex} = 0 will define the converter to {@code ArgType0} of the input values
@@ -1719,7 +1719,7 @@ public final class Assertions {
    *   assertParameterizedOf(
    *       () -&gt; myMethodToTest(arg0, arg1, . . ., argN),
    *       expected,
-   *       () -&gt; new ExpectedGeneration(arg0, arg1, . . ., argN));
+   *       () -&gt; new ExpectedGeneration&lt;&gt;(arg0, arg1, . . ., argN));
    * }</code></pre>
    * <p>
    * See {@link #assertParameterized(Object, Expected, Supplier) assertParameterized(..)} for more
@@ -2000,7 +2000,7 @@ public final class Assertions {
    *     assertParameterizedOf(
    *         () -&gt; Strings.uncapitalizeGreedy(value)),
    *         expected,
-   *         () -&gt; new ExpectedGeneration(value));
+   *         () -&gt; new ExpectedGeneration&lt;&gt;(value));
    *   }
    * }</code></pre>
    */

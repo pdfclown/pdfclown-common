@@ -102,6 +102,6 @@ class ReleaseManagerTest extends BaseTest {
         () -> new ReleaseManager(getEnv().outputPath(EMPTY), releaseVersion)
             .getDevVersion(),
         expected,
-        () -> new ExpectedGeneration(releaseVersion));
+        () -> new ExpectedGeneration<>(releaseVersion));
   }
 }

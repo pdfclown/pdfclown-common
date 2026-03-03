@@ -288,7 +288,7 @@ class UrisTest extends BaseTest {
     assertParameterizedOf(
         () -> Uris.relativize(from, to),
         expected,
-        () -> new ExpectedGeneration(from, to)
+        () -> new ExpectedGeneration<URI>(from, to)
             .setMaxArgCommentLength(50));
   }
 }

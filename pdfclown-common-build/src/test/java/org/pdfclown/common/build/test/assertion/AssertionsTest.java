@@ -34,7 +34,6 @@ import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 /**
  * @author Stefano Chizzolini
  */
-@SuppressWarnings("ConcatenationWithEmptyString")
 class AssertionsTest extends BaseTest {
   static Stream<Arguments> assertParameterized__cartesian() {
     return Assertions.argumentsStream(
@@ -235,11 +234,10 @@ class AssertionsTest extends BaseTest {
 
   private void doAssertParameterized(Expected<String> expected, @Nullable String value,
       int length) {
-    //noinspection DataFlowIssue : null deliberated.
     Assertions.assertParameterizedOf(
         () -> assertParameterizedTestMethod(value, length),
         expected,
-        () -> new Assertions.ExpectedGeneration(value, length));
+        () -> new Assertions.ExpectedGeneration<>(value, length));
   }
 
   private void doAssertParameterized_generation(Expected<String> expected, String value, int length,
@@ -252,7 +250,7 @@ class AssertionsTest extends BaseTest {
       Assertions.assertParameterizedOf(
           () -> assertParameterizedTestMethod(value, length),
           expected,
-          () -> new Assertions.ExpectedGeneration(value, length)
+          () -> new Assertions.ExpectedGeneration<String>(value, length)
               .setOut(out));
     } finally {
       if (!Assertions.isExpectedGenerationMode()) {

@@ -331,7 +331,7 @@ class StringsTest extends BaseTest {
     assertParameterizedOf(
         () -> Strings.abbreviateMultiline(value, maxLineCount, averageLineLength, marker),
         expected,
-        () -> new ExpectedGeneration(value, maxLineCount, averageLineLength, marker));
+        () -> new ExpectedGeneration<>(value, maxLineCount, averageLineLength, marker));
 
     // Check default ellipsis ("...") overload!
     if (marker.equals("...")) {
@@ -348,7 +348,7 @@ class StringsTest extends BaseTest {
     assertParameterizedOf(
         () -> Strings.stripEmptyLines(s),
         expected,
-        () -> new ExpectedGeneration(s));
+        () -> new ExpectedGeneration<>(s));
   }
 
   @ParameterizedTest
@@ -357,7 +357,7 @@ class StringsTest extends BaseTest {
     assertParameterizedOf(
         () -> Strings.uncapitalizeGreedy(value),
         expected,
-        () -> new ExpectedGeneration(value));
+        () -> new ExpectedGeneration<>(value));
   }
 
   /**

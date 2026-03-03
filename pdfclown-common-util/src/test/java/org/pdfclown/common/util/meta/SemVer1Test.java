@@ -1509,7 +1509,7 @@ class SemVer1Test extends BaseTest {
     assertParameterizedOf(
         () -> value0.compareTo(value1),
         expected,
-        () -> new ExpectedGeneration(value0, value1));
+        () -> new ExpectedGeneration<>(value0, value1));
   }
 
   @ParameterizedTest
@@ -1518,7 +1518,7 @@ class SemVer1Test extends BaseTest {
     assertParameterizedOf(
         () -> value.next(id),
         expected,
-        () -> new ExpectedGeneration(value, id));
+        () -> new ExpectedGeneration<>(value, id));
   }
 
   @ParameterizedTest
@@ -1527,7 +1527,7 @@ class SemVer1Test extends BaseTest {
     assertParameterizedOf(
         () -> SemVer1.of(value),
         expected,
-        () -> new ExpectedGeneration(value));
+        () -> new ExpectedGeneration<>(value));
   }
 
   @ParameterizedTest
@@ -1537,7 +1537,7 @@ class SemVer1Test extends BaseTest {
     assertParameterizedOf(
         () -> SemVer1.of(major, minor, patch, prerelease),
         expected,
-        () -> new ExpectedGeneration(major, minor, patch, prerelease));
+        () -> new ExpectedGeneration<>(major, minor, patch, prerelease));
   }
 
   @ParameterizedTest
@@ -1546,7 +1546,7 @@ class SemVer1Test extends BaseTest {
     assertParameterizedOf(
         () -> value0.precedence(value1),
         expected,
-        () -> new ExpectedGeneration(value0, value1));
+        () -> new ExpectedGeneration<>(value0, value1));
   }
 
   @ParameterizedTest
@@ -1556,7 +1556,7 @@ class SemVer1Test extends BaseTest {
     assertParameterizedOf(
         () -> ver.with(id, value),
         expected,
-        () -> new ExpectedGeneration(ver, id, value));
+        () -> new ExpectedGeneration<>(ver, id, value));
   }
 
   @ParameterizedTest
@@ -1567,6 +1567,6 @@ class SemVer1Test extends BaseTest {
     assertParameterizedOf(
         () -> ver.withPrereleaseSuffix(fieldIndex, value),
         expected,
-        () -> new ExpectedGeneration(ver, fieldIndex, value));
+        () -> new ExpectedGeneration<>(ver, fieldIndex, value));
   }
 }

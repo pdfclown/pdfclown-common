@@ -159,7 +159,7 @@ class PatternsTest extends BaseTest {
         () -> Patterns.globToRegex(glob.getValue())));
 
     assertParameterized(actual, expected,
-        () -> new ExpectedGeneration(glob));
+        () -> new ExpectedGeneration<>(glob));
     assertRegexMatches(actual, glob.matches, true);
     assertRegexMatches(actual, glob.mismatches, false);
   }
@@ -174,7 +174,7 @@ class PatternsTest extends BaseTest {
           return Patterns.indexOfMatchFailure(matcher);
         },
         expected,
-        () -> new ExpectedGeneration(input));
+        () -> new ExpectedGeneration<>(input));
   }
 
   @ParameterizedTest
@@ -184,7 +184,7 @@ class PatternsTest extends BaseTest {
         () -> Patterns.wildcardToRegex(wildcard.getValue())));
 
     assertParameterized(actual, expected,
-        () -> new ExpectedGeneration(wildcard));
+        () -> new ExpectedGeneration<>(wildcard));
     assertRegexMatches(actual, wildcard.matches, true);
     assertRegexMatches(actual, wildcard.mismatches, false);
   }

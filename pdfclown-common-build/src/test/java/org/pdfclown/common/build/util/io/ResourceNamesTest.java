@@ -754,7 +754,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.abs(name),
         expected,
-        () -> new ExpectedGeneration(name));
+        () -> new ExpectedGeneration<>(name));
   }
 
   @ParameterizedTest
@@ -765,7 +765,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.absBased(name, base),
         expected,
-        () -> new ExpectedGeneration(name, base));
+        () -> new ExpectedGeneration<>(name, base));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -774,7 +774,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.fromPath(filePath, baseDir),
         expected,
-        () -> new ExpectedGeneration(filePath, baseDir));
+        () -> new ExpectedGeneration<>(filePath, baseDir));
   }
 
   @ParameterizedTest(autoCloseArguments = false)
@@ -783,7 +783,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.fromPath(filePath, baseDir),
         expected,
-        () -> new ExpectedGeneration(filePath, baseDir));
+        () -> new ExpectedGeneration<>(filePath, baseDir));
   }
 
   @ParameterizedTest
@@ -792,7 +792,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.isAbs(name),
         expected,
-        () -> new ExpectedGeneration(name));
+        () -> new ExpectedGeneration<>(name));
   }
 
   @ParameterizedTest
@@ -801,7 +801,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.isDir(name),
         expected,
-        () -> new ExpectedGeneration(name));
+        () -> new ExpectedGeneration<>(name));
   }
 
   void name_0() {
@@ -814,7 +814,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.name(name0),
         expected,
-        () -> new ExpectedGeneration(name0));
+        () -> new ExpectedGeneration<>(name0));
   }
 
   @ParameterizedTest
@@ -823,7 +823,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.name(name0, name1),
         expected,
-        () -> new ExpectedGeneration(name0, name1));
+        () -> new ExpectedGeneration<>(name0, name1));
   }
 
   @ParameterizedTest
@@ -832,7 +832,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.normal(name),
         expected,
-        () -> new ExpectedGeneration(name));
+        () -> new ExpectedGeneration<>(name));
   }
 
   @ParameterizedTest
@@ -841,7 +841,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.parent(name),
         expected,
-        () -> new ExpectedGeneration(name));
+        () -> new ExpectedGeneration<>(name));
   }
 
   @ParameterizedTest
@@ -850,7 +850,7 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.rel(name),
         expected,
-        () -> new ExpectedGeneration(name));
+        () -> new ExpectedGeneration<>(name));
   }
 
   @ParameterizedTest
@@ -861,6 +861,6 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterizedOf(
         () -> ResourceNames.relBased(name, base),
         expected,
-        () -> new ExpectedGeneration(name, base));
+        () -> new ExpectedGeneration<>(name, base));
   }
 }

@@ -211,7 +211,7 @@ public class IndentTest extends BaseTest {
     assertParameterizedOf(
         () -> Indent.spaces(width, level).toString(),
         expected,
-        () -> new ExpectedGeneration(width, level));
+        () -> new ExpectedGeneration<>(width, level));
   }
 
   // SourceName: testDefaultSpaces

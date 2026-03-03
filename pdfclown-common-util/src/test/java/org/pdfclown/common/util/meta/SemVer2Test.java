@@ -2184,7 +2184,7 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> value0.compareTo(value1),
         expected,
-        () -> new ExpectedGeneration(value0, value1));
+        () -> new ExpectedGeneration<>(value0, value1));
   }
 
   @ParameterizedTest
@@ -2193,7 +2193,7 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> value.next(id),
         expected,
-        () -> new ExpectedGeneration(value, id));
+        () -> new ExpectedGeneration<>(value, id));
   }
 
   @ParameterizedTest
@@ -2202,7 +2202,7 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> SemVer2.of(value),
         expected,
-        () -> new ExpectedGeneration(value));
+        () -> new ExpectedGeneration<>(value));
   }
 
   @ParameterizedTest
@@ -2212,7 +2212,7 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> SemVer2.of(major, minor, patch, prerelease, metadata),
         expected,
-        () -> new ExpectedGeneration(major, minor, patch, prerelease, metadata));
+        () -> new ExpectedGeneration<>(major, minor, patch, prerelease, metadata));
   }
 
   @ParameterizedTest
@@ -2221,7 +2221,7 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> value0.precedence(value1),
         expected,
-        () -> new ExpectedGeneration(value0, value1));
+        () -> new ExpectedGeneration<>(value0, value1));
   }
 
   @ParameterizedTest
@@ -2231,7 +2231,7 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> ver.to(versionType).toString(),
         expected,
-        () -> new ExpectedGeneration(ver, versionType));
+        () -> new ExpectedGeneration<>(ver, versionType));
   }
 
   @ParameterizedTest
@@ -2240,7 +2240,7 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> value.toString(),
         expected,
-        () -> new ExpectedGeneration(value));
+        () -> new ExpectedGeneration<>(value));
   }
 
   @ParameterizedTest
@@ -2250,7 +2250,7 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> ver.with(id, value),
         expected,
-        () -> new ExpectedGeneration(ver, id, value));
+        () -> new ExpectedGeneration<>(ver, id, value));
   }
 
   @ParameterizedTest
@@ -2261,6 +2261,6 @@ class SemVer2Test extends BaseTest {
     assertParameterizedOf(
         () -> ver.withPrereleaseSuffix(fieldIndex, value),
         expected,
-        () -> new ExpectedGeneration(ver, fieldIndex, value));
+        () -> new ExpectedGeneration<>(ver, fieldIndex, value));
   }
 }

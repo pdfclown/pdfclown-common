@@ -522,7 +522,7 @@ class UnitsTest extends BaseTest {
     assertParameterizedOf(
         () -> Units.getFactor(unit.getValue()),
         expected.match($ -> isCloseTo(nonNull($))),
-        () -> new ExpectedGeneration(unit));
+        () -> new ExpectedGeneration<>(unit));
   }
 
   @ParameterizedTest
@@ -532,7 +532,7 @@ class UnitsTest extends BaseTest {
     assertParameterizedOf(
         () -> Units.getFactor((Unit) unit.getValue(), target.getValue()),
         expected.match($ -> isCloseTo(nonNull($))),
-        () -> new ExpectedGeneration(unit, target));
+        () -> new ExpectedGeneration<>(unit, target));
   }
 
   @ParameterizedTest
@@ -541,7 +541,7 @@ class UnitsTest extends BaseTest {
     assertParameterizedOf(
         () -> Units.getOffset(unit.getValue()),
         expected.match($ -> isCloseTo(nonNull($))),
-        () -> new ExpectedGeneration(unit));
+        () -> new ExpectedGeneration<>(unit));
   }
 
   @ParameterizedTest

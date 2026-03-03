@@ -801,7 +801,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.fqn(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @ParameterizedTest
@@ -810,7 +810,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.fqnd(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @ParameterizedTest
@@ -819,7 +819,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.fqnd(typename),
         expected,
-        () -> new ExpectedGeneration(typename));
+        () -> new ExpectedGeneration<>(typename));
   }
 
   @ParameterizedTest
@@ -828,7 +828,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.literal(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @Test
@@ -880,11 +880,11 @@ class ObjectsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void parseLiteral(Expected<@Nullable Object> expected, @Nullable String s) {
+  void parseLiteral(Expected<Object> expected, @Nullable String s) {
     assertParameterizedOf(
         () -> Objects.parseLiteral(s),
         expected,
-        () -> new ExpectedGeneration(s));
+        () -> new ExpectedGeneration<>(s));
   }
 
   @ParameterizedTest
@@ -893,7 +893,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.pkg(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @ParameterizedTest
@@ -902,7 +902,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.pkg(typename),
         expected,
-        () -> new ExpectedGeneration(typename));
+        () -> new ExpectedGeneration<>(typename));
   }
 
   /**
@@ -981,7 +981,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sfqn(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @ParameterizedTest
@@ -990,7 +990,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sfqn(typename),
         expected,
-        () -> new ExpectedGeneration(typename));
+        () -> new ExpectedGeneration<>(typename));
   }
 
   @ParameterizedTest
@@ -999,7 +999,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sfqnd(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @ParameterizedTest
@@ -1008,7 +1008,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sfqnd(typename),
         expected,
-        () -> new ExpectedGeneration(typename));
+        () -> new ExpectedGeneration<>(typename));
   }
 
   @ParameterizedTest
@@ -1017,7 +1017,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.simpleName(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @ParameterizedTest
@@ -1026,7 +1026,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.simpleName(typename),
         expected,
-        () -> new ExpectedGeneration(typename));
+        () -> new ExpectedGeneration<>(typename));
   }
 
   @ParameterizedTest
@@ -1035,7 +1035,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sqn(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @ParameterizedTest
@@ -1044,7 +1044,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sqn(typename),
         expected,
-        () -> new ExpectedGeneration(typename));
+        () -> new ExpectedGeneration<>(typename));
   }
 
   @ParameterizedTest
@@ -1053,7 +1053,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sqnd(obj),
         expected,
-        () -> new ExpectedGeneration(obj));
+        () -> new ExpectedGeneration<>(obj));
   }
 
   @ParameterizedTest
@@ -1062,7 +1062,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.sqnd(typename),
         expected,
-        () -> new ExpectedGeneration(typename));
+        () -> new ExpectedGeneration<>(typename));
   }
 
   @Test
@@ -1106,7 +1106,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.toQualifiedString(obj),
         expected,
-        () -> new ExpectedGeneration(obj)
+        () -> new ExpectedGeneration<String>(obj)
             .setMaxArgCommentLength(100));
   }
 
@@ -1116,7 +1116,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.toSqnQualifiedString(obj),
         expected,
-        () -> new ExpectedGeneration(obj)
+        () -> new ExpectedGeneration<String>(obj)
             .setMaxArgCommentLength(100));
   }
 
@@ -1127,7 +1127,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.toStringWithProperties(obj, properties),
         expected,
-        () -> new ExpectedGeneration(obj, properties));
+        () -> new ExpectedGeneration<>(obj, properties));
   }
 
   @ParameterizedTest
@@ -1136,7 +1136,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.toStringWithValues(obj, features),
         expected,
-        () -> new ExpectedGeneration(obj, features));
+        () -> new ExpectedGeneration<>(obj, features));
   }
 
   @Test
