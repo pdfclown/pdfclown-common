@@ -77,7 +77,7 @@ class RelatedMapTest extends BaseTest {
 
               // Compare arbitrarily (no more relevant aspects to evaluate)!
               return name1.compareTo(name2);
-            }), keys, false);
+            }), keys, false).toList();
       }
     }
 

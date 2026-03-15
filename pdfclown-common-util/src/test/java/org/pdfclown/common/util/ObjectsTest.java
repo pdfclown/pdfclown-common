@@ -1091,7 +1091,7 @@ class ObjectsTest extends BaseTest {
      * NOTE: `containsInRelativeOrder(..)` is needed as newer Java versions may introduce further
      * super types than Java 11.
      */
-    assertThat(actual, containsInRelativeOrder(
+    assertThat(actual.toList(), containsInRelativeOrder(
         List.class,
         UnmodifiableCollection.class,
         Collection.class,

@@ -13,10 +13,8 @@
 package org.pdfclown.common.util;
 
 import static java.lang.Math.subtractExact;
-import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
-import static java.util.Objects.requireNonNullElseGet;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.pdfclown.common.util.Booleans.parseBoolean;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
@@ -35,7 +33,6 @@ import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Numbers.parseNumber;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.NULL;
@@ -60,9 +57,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -96,7 +91,6 @@ import org.apache.commons.text.translate.OctalUnescaper;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.PolyNull;
-import org.pdfclown.common.util.annot.Unmodifiable;
 import org.pdfclown.common.util.regex.Patterns;
 
 /**
@@ -393,16 +387,16 @@ public final class Objects {
    * further objects to be added later.
    * </p>
    */
-  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
-      @Nullable U other1) {
+  public static <T, U> boolean anyThat(@Nullable T obj,
+      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1) {
     return predicate.test(obj, other1);
   }
 
   /**
    * Gets whether an object matches any of the others according to the predicate.
    */
-  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
-      @Nullable U other1, @Nullable U other2) {
+  public static <T, U> boolean anyThat(@Nullable T obj,
+      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2);
   }
@@ -416,8 +410,9 @@ public final class Objects {
    *           this is the standard way Java API itself deals with such cases.
    */
   @SafeVarargs
-  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
-      @Nullable U other1, @Nullable U other2, @Nullable U... others) {
+  public static <T, U> boolean anyThat(@Nullable T obj,
+      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2,
+      @Nullable U... others) {
     if (predicate.test(obj, other1)
         || predicate.test(obj, other2))
       return true;
@@ -431,8 +426,9 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others according to the predicate.
    */
-  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
-      @Nullable U other1, @Nullable U other2, @Nullable U other3) {
+  public static <T, U> boolean anyThat(@Nullable T obj,
+      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2,
+      @Nullable U other3) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3);
@@ -441,8 +437,9 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others according to the predicate.
    */
-  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
-      @Nullable U other1, @Nullable U other2, @Nullable U other3, @Nullable U other4) {
+  public static <T, U> boolean anyThat(@Nullable T obj,
+      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2,
+      @Nullable U other3, @Nullable U other4) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3)
@@ -452,9 +449,9 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others according to the predicate.
    */
-  public static <T, U> boolean any(@Nullable T obj, BiPredicate<@Nullable T, @Nullable U> predicate,
-      @Nullable U other1, @Nullable U other2, @Nullable U other3, @Nullable U other4,
-      @Nullable U other5) {
+  public static <T, U> boolean anyThat(@Nullable T obj,
+      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2,
+      @Nullable U other3, @Nullable U other4, @Nullable U other5) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3)
@@ -589,11 +586,12 @@ public final class Objects {
    * @see #subTypes(Class, ScanResult)
    * @see #superTypes(Class)
    */
-  public static Stream<Class<?>> enclosingTypes(Class<?> type, boolean selfInclusive) {
+  @SuppressWarnings("rawtypes")
+  public static Stream<Class> enclosingTypes(Class type, boolean selfInclusive) {
     if (type.getEnclosingClass() == null)
       return selfInclusive ? Stream.of(type) : Stream.of();
 
-    var types = new ArrayDeque<Class<?>>();
+    var types = new ArrayDeque<Class>();
     do {
       if (selfInclusive) {
         types.push(type);
@@ -899,35 +897,6 @@ public final class Objects {
     return obj == null ? null
         : obj instanceof ClassLoader c ? c
         : asType(obj).getClassLoader();
-  }
-
-  /**
-   * Gets the locale corresponding to a language tag.
-   *
-   * @throws IllegalArgumentException
-   *           if {@code languageTag} is non-conformant.
-   */
-  public static @PolyNull @Nullable Locale locale(@PolyNull @Nullable String languageTag) {
-    if (languageTag == null)
-      return null;
-
-    var ret = Locale.forLanguageTag(languageTag);
-    try {
-      if (!ret.getISO3Language().isEmpty())
-        return ret;
-    } catch (MissingResourceException e) {
-      /* FALLTHRU */
-    }
-    throw wrongArg("languageTag", languageTag);
-  }
-
-  /**
-   * Normalizes a locale.
-   *
-   * @return {@linkplain Locale#getDefault() Default} if {@code locale} is undefined.
-   */
-  public static Locale localeNorm(@Nullable Locale locale) {
-    return requireNonNullElseGet(locale, Locale::getDefault);
   }
 
   /**
@@ -1452,7 +1421,7 @@ public final class Objects {
    * @see #enclosingTypes(Class, boolean)
    */
   @SuppressWarnings("rawtypes")
-  public static @Unmodifiable Iterable<Class> superTypes(Class type) {
+  public static Stream<Class> superTypes(Class type) {
     return superTypes(type, HierarchicalTypeComparator.get());
   }
 
@@ -1465,8 +1434,7 @@ public final class Objects {
    * @see #enclosingTypes(Class, boolean)
    */
   @SuppressWarnings("rawtypes")
-  public static @Unmodifiable Iterable<Class> superTypes(Class type,
-      HierarchicalTypeComparator comparator) {
+  public static Stream<Class> superTypes(Class type, HierarchicalTypeComparator comparator) {
     return superTypes(type, comparator, Set.of(), false);
   }
 
@@ -1483,8 +1451,8 @@ public final class Objects {
    * @see #enclosingTypes(Class, boolean)
    */
   @SuppressWarnings("rawtypes")
-  public static @Unmodifiable Iterable<Class> superTypes(Class type,
-      HierarchicalTypeComparator comparator, Set<Class> stoppers, boolean stopperExclusive) {
+  public static Stream<Class> superTypes(Class type, HierarchicalTypeComparator comparator,
+      Set<Class> stoppers, boolean stopperExclusive) {
     var ret = new TreeSet<>(comparator);
 
     // 1. Interfaces related to `type`.
@@ -1499,7 +1467,7 @@ public final class Objects {
         && collectTypeAndAncestorInterfaces(superType, ret, stoppers, stopperExclusive)) {
       // NOP
     }
-    return unmodifiableSet(ret);
+    return ret.stream();
   }
 
   /**
@@ -1536,7 +1504,7 @@ public final class Objects {
           String simpleName = obj.getClass().getSimpleName();
           String namePart = ($.group(1).endsWith(simpleName)
               && ($.group(1).length() == simpleName.length()
-                  || any($.group(1).charAt($.group(1).length() - simpleName.length() - 1),
+                  || anyThat($.group(1).charAt($.group(1).length() - simpleName.length() - 1),
                       java.util.Objects::equals, DOT, DOLLAR)))
                           ? $.group(1)
                           : EMPTY;
