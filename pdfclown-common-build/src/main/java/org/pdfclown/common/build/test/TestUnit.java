@@ -140,20 +140,23 @@ public abstract class TestUnit implements Test {
   }
 
   /**
-   * Name of the current test method.
+   * Label of the current test.
+   * <p>
+   * Corresponds to JUnit's {@linkplain TestInfo#getDisplayName() display name}.
+   * </p>
    */
-  public String getTestMethodName() {
-    return testInfo.getTestMethod().orElseThrow().getName();
+  public String getTestLabel() {
+    return testInfo.getDisplayName();
   }
 
   /**
    * Name of the current test.
    * <p>
-   * Corresponds to JUnit's display name.
+   * Corresponds to JUnit's {@linkplain TestInfo#getTestMethod() method name}.
    * </p>
    */
   public String getTestName() {
-    return testInfo.getDisplayName();
+    return testInfo.getTestMethod().orElseThrow().getName();
   }
 
   protected Environment __createEnv() {

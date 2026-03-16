@@ -229,14 +229,14 @@ class TestUnitTest extends BaseTest {
   }
 
   @Test
-  @DisplayName("getTestMethodName!")
-  void getTestMethodName_() {
-    assertThat(getTestMethodName(), is("getTestMethodName_"));
+  @DisplayName("getTestLabel!")
+  void getTestLabel_() {
+    assertThat(getTestLabel(), is("getTestLabel!"));
   }
 
   @Test
   @DisplayName("getTestName!")
   void getTestName_() {
-    assertThat(getTestName(), is("getTestName!"));
+    assertThat(getTestName(), is("getTestName_"));
   }
 }
