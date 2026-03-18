@@ -26,6 +26,7 @@ package org.pdfclown.common.util.io;
 import static java.lang.Character.isWhitespace;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
+import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Strings.isEOL;
@@ -85,6 +86,21 @@ public class IndentWriter extends Writer {
   }
 
   @Override
+  public IndentWriter append(CharSequence csq) throws IOException {
+    return (IndentWriter) super.append(csq);
+  }
+
+  @Override
+  public IndentWriter append(CharSequence csq, int start, int end) throws IOException {
+    return (IndentWriter) super.append(csq, start, end);
+  }
+
+  @Override
+  public IndentWriter append(char c) throws IOException {
+    return (IndentWriter) super.append(c);
+  }
+
+  @Override
   public void close() throws IOException {
     if (base instanceof AutoCloseable closeable) {
       try {
@@ -113,6 +129,13 @@ public class IndentWriter extends Writer {
   }
 
   /**
+   * Indentation level.
+   */
+  public int getLevel() {
+    return getIndent().getLevel();
+  }
+
+  /**
    * Increases the {@linkplain #getIndent() indentation}.
    *
    * @return Self.
@@ -122,12 +145,47 @@ public class IndentWriter extends Writer {
   }
 
   /**
+   * Appends a newline.
+   *
+   * @return Self.
+   */
+  public IndentWriter nl() throws IOException {
+    append(LF);
+    return this;
+  }
+
+  /**
    * Sets {@linkplain #getIndent() indentation}.
    *
    * @return Self.
    */
   public IndentWriter setIndent(Indent value) {
     indent = value;
+    return this;
+  }
+
+  /**
+   * Sets {@link #getLevel() level}.
+   *
+   * @return Self.
+   */
+  public IndentWriter setLevel(int value) {
+    return setIndent(getIndent().withLevel(value));
+  }
+
+  // SourceName: whitespace
+  /**
+   * Ensures at least one whitespace character between the last character and the next.
+   * <p>
+   * This method avoids to append a whitespace character if the last character was a whitespace
+   * character itself; the whitespace character will also not be written until other characters need
+   * to be written, thus preventing trailing whitespace.
+   * </p>
+   *
+   * @return Self.
+   */
+  public IndentWriter space() {
+    whitespaceWritable.set(true);
     return this;
   }
 
@@ -143,21 +201,6 @@ public class IndentWriter extends Writer {
    */
   public IndentWriter undent() {
     return setIndent(indent.decrease());
-  }
-
-  /**
-   * Ensures at least one whitespace character between the last character and the next.
-   * <p>
-   * This method avoids to append a whitespace character if the last character was a whitespace
-   * character itself; the whitespace character will also not be written until other characters need
-   * to be written, thus preventing trailing whitespace.
-   * </p>
-   *
-   * @return Self.
-   */
-  public IndentWriter whitespace() {
-    whitespaceWritable.set(true);
-    return this;
   }
 
   // SourceName: indent
@@ -206,5 +249,12 @@ public class IndentWriter extends Writer {
         }
       }
     }
+  }
+
+  /**
+   * Writes a string followed by a newline.
+   */
+  public void writeln(String s) throws IOException {
+    append(s).nl();
   }
 }

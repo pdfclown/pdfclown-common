@@ -83,36 +83,36 @@ public class IndentWriterTest extends BaseTest {
     assertThat(indentWriter.getIndent(), is(equalTo(Indent.DEFAULT.increase())));
   }
 
-  // SourceName: testToStringDelegation
-  @Test
-  void toString__delegation() throws IOException {
-    var indentWriter = new IndentWriter(new StringWriter(), Indent.DEFAULT);
-    indentWriter.write("first line\n");
-    indentWriter.indent();
-    indentWriter.write("second line");
-
-    assertThat(indentWriter, hasToString("first line\n    second line"));
-  }
-
   // SourceName: testNoFlushingTerminatingWhitespace
   @Test
-  void whitespace__noFlushingTerminating() throws IOException {
+  void space__noFlushingTerminating() throws IOException {
     var output = new StringWriter();
-    var indentingWriter = new IndentWriter(output, Indent.DEFAULT);
+    var indentWriter = new IndentWriter(output, Indent.DEFAULT);
     {
-      indentingWriter.write("Some content");
-      indentingWriter.whitespace();
-      indentingWriter.flush();
+      indentWriter.write("Some content");
+      indentWriter.space();
+      indentWriter.flush();
 
       assertThat(output, hasToString("Some content"));
     }
     {
-      indentingWriter.write("more content");
-      indentingWriter.whitespace();
-      indentingWriter.flush();
+      indentWriter.write("more content");
+      indentWriter.space();
+      indentWriter.flush();
 
       assertThat(output, hasToString("Some content more content"));
     }
+  }
+
+  // SourceName: testToStringDelegation
+  @Test
+  void toString__delegation() throws IOException {
+    var indentWriter = new IndentWriter(new StringWriter(), Indent.DEFAULT);
+    indentWriter.append("first line").nl();
+    indentWriter.indent();
+    indentWriter.write("second line");
+
+    assertThat(indentWriter, hasToString("first line\n    second line"));
   }
 
   // SourceName: testIndent
@@ -128,9 +128,9 @@ public class IndentWriterTest extends BaseTest {
   // SourceName: testUnindentFromZero
   @Test
   void withUndent__fromZero() {
-    var indentingWriter = new IndentWriter(new StringWriter(), Indent.DEFAULT);
+    var indentWriter = new IndentWriter(new StringWriter(), Indent.DEFAULT);
 
-    assertThat(indentingWriter.withUndent(), is(sameInstance(indentingWriter)));
+    assertThat(indentWriter.withUndent(), is(sameInstance(indentWriter)));
   }
 
   // SourceName: testWritingFromNonZeroOffset
