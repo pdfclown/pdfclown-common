@@ -34,6 +34,7 @@ import static org.pdfclown.common.util.Strings.isEOL;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jspecify.annotations.Nullable;
 
@@ -229,6 +230,13 @@ public class IndentWriter extends Writer {
     return withIndent(indent.decrease());
   }
 
+  /**
+   * Writes the string representation of an object.
+   */
+  public void write(Object o) throws IOException {
+    write(Objects.toString(o));
+  }
+
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
     if (len > 0) {
@@ -249,6 +257,13 @@ public class IndentWriter extends Writer {
         }
       }
     }
+  }
+
+  /**
+   * Writes the string representation of an object followed by a newline.
+   */
+  public void writeln(Object o) throws IOException {
+    writeln(Objects.toString(o));
   }
 
   /**
