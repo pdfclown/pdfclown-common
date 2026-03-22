@@ -77,6 +77,7 @@ import net.bytebuddy.implementation.InvocationHandlerAdapter;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableRunnable;
 import org.apache.commons.lang3.function.FailableSupplier;
@@ -381,14 +382,13 @@ public final class Objects {
 
   /**
    * Gets whether an object matches the other one according to the predicate.
-   * <p>
-   * NOTE: This method is redundant; it's intended as a placeholder in case the implementer expects
-   * further objects to be added later.
-   * </p>
+   *
+   * @implNote This method is redundant; it's intended as a convenience for complex multi-case
+   *           conditional statements, to even out the predicate representation across the cases.
    */
   public static <T, U> boolean anyThat(@Nullable T obj,
-      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1) {
-    return predicate.test(obj, other1);
+      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other) {
+    return predicate.test(obj, other);
   }
 
   /**
@@ -404,16 +404,14 @@ public final class Objects {
    * Gets whether an object matches any of the others according to the predicate.
    *
    * @implNote Because of the limited expressiveness of varargs, in order to force the caller to
-   *           specify at least two other objects we have to declare two corresponding parameters
-   *           ({@code other1} and {@code other2}) in the signature — despite its inherent ugliness,
-   *           this is the standard way Java API itself deals with such cases.
+   *           specify at least another object, we have to declare a corresponding parameter
+   *           ({@code other1}) in the signature — despite its inherent ugliness, this is the
+   *           standard way Java API itself deals with such cases.
    */
   @SafeVarargs
   public static <T, U> boolean anyThat(@Nullable T obj,
-      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2,
-      @Nullable U... others) {
-    if (predicate.test(obj, other1)
-        || predicate.test(obj, other2))
+      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U... others) {
+    if (predicate.test(obj, other1))
       return true;
     for (var other : others) {
       if (predicate.test(obj, other))
@@ -496,6 +494,20 @@ public final class Objects {
    */
   public static String basicLiteral(@Nullable Object obj) {
     return literal(obj, Object::toString);
+  }
+
+  /**
+   * Clones an object.
+   * <p>
+   * Overcomes {@link java.lang.Cloneable}'s original limitation (provided {@code obj} overrides
+   * {@link Object#clone()} according to the specification) and ensures also a neat cast.
+   * </p>
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends java.lang.Cloneable> T clone(T obj) {
+    return obj instanceof Cloneable
+        ? (T) ((Cloneable) obj).clone()
+        : ObjectUtils.clone(obj);
   }
 
   /**
