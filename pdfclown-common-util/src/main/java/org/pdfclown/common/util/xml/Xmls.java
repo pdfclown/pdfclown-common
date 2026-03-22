@@ -63,7 +63,6 @@ import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFunctionResolver;
 import javax.xml.xpath.XPathVariableResolver;
 import org.apache.commons.lang3.function.FailableBiConsumer;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.Aggregations;
 import org.pdfclown.common.util.annot.Immutable;
@@ -763,7 +762,7 @@ public final class Xmls {
   /**
    * Gets the standard representation of the node list.
    */
-  public static List<@NonNull Node> asList(NodeList nodes) {
+  public static List<Node> asList(NodeList nodes) {
     return nodes.getLength() > 0
         ? new AbstractList<>() {
           @Override

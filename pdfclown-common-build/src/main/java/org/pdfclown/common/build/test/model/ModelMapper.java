@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
 import org.pdfclown.common.util.Objects.HierarchicalTypeComparator;
@@ -410,7 +409,7 @@ public class ModelMapper<T> {
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
    */
-  public JsonObject map(@NonNull T obj) {
+  public JsonObject map(T obj) {
     return map(obj, List.of());
   }
 
@@ -426,7 +425,7 @@ public class ModelMapper<T> {
    *           iterations over the same object a strict operation ordering is enforced (properties
    *           are therefore sorted before being processed).
    */
-  public JsonObject map(@NonNull T obj, List<PropertySelector> selectors) {
+  public JsonObject map(T obj, List<PropertySelector> selectors) {
     return map(obj, selectors, new HashSet<>(), 0);
   }
 

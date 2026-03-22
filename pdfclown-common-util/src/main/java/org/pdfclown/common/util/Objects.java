@@ -88,7 +88,6 @@ import org.apache.commons.text.translate.EntityArrays;
 import org.apache.commons.text.translate.JavaUnicodeEscaper;
 import org.apache.commons.text.translate.LookupTranslator;
 import org.apache.commons.text.translate.OctalUnescaper;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.PolyNull;
 import org.pdfclown.common.util.regex.Patterns;
@@ -924,7 +923,7 @@ public final class Objects {
    * @return {@code obj}
    * @see java.util.Objects#requireNonNull(Object)
    */
-  public static <T> @NonNull T nonNull(@Nullable T obj) {
+  public static <T> T nonNull(@Nullable T obj) {
     assert obj != null;
     return obj;
   }
@@ -991,7 +990,7 @@ public final class Objects {
    *          Object mapping function.
    */
   public static <T, R> @Nullable R objTo(@Nullable T obj,
-      Function<? super @NonNull T, ? extends @Nullable R> mapper) {
+      Function<? super T, ? extends @Nullable R> mapper) {
     return obj != null ? mapper.apply(obj) : null;
   }
 
@@ -1010,7 +1009,7 @@ public final class Objects {
    *          Result if {@code obj} or {@code mapper}'s result are undefined.
    */
   public static <T, R> R objToElse(@Nullable T obj,
-      Function<? super @NonNull T, ? extends @Nullable R> mapper, R defaultResult) {
+      Function<? super T, ? extends @Nullable R> mapper, R defaultResult) {
     return requireNonNullElse(objTo(obj, mapper), defaultResult);
   }
 
@@ -1029,7 +1028,7 @@ public final class Objects {
    *          Result supplier if {@code obj} or {@code mapper}'s result are undefined.
    */
   public static <T, R> @Nullable R objToElseGet(@Nullable T obj,
-      Function<? super @NonNull T, ? extends R> mapper, Supplier<? extends R> defaultSupplier) {
+      Function<? super T, ? extends R> mapper, Supplier<? extends R> defaultSupplier) {
     R ret;
     return obj != null && (ret = mapper.apply(obj)) != null ? ret : defaultSupplier.get();
   }

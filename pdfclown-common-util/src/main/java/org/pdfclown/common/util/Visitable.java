@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.util;
 
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -46,5 +45,5 @@ public interface Visitable<V extends Visitor<?, ?>> {
    *          Supplemental data (depends on {@code visitor} semantics).
    * @return Result (depends on {@code visitor} semantics).
    */
-  <@Nullable R, @Nullable D> R accept(@NonNull V visitor, D data);
+  <R extends @Nullable Object, D extends @Nullable Object> R accept(V visitor, D data);
 }

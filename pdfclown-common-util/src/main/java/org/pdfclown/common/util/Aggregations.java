@@ -36,7 +36,6 @@ import java.util.function.ObjIntConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Unmodifiable;
 
@@ -204,8 +203,6 @@ public final class Aggregations {
    * @author Stefano Chizzolini
    */
   private static class XtArrayList<E> extends ArrayList<E> implements XtList<E> {
-    private static final long serialVersionUID = 1L;
-
     public XtArrayList() {
       super();
     }
@@ -225,10 +222,7 @@ public final class Aggregations {
    *
    * @author Stefano Chizzolini
    */
-  @SuppressWarnings("null")
   private static class XtHashMap<K, V> extends HashMap<K, V> implements XtMap<K, V> {
-    private static final long serialVersionUID = 1L;
-
     public XtHashMap() {
       super();
     }
@@ -249,8 +243,6 @@ public final class Aggregations {
    * @author Stefano Chizzolini
    */
   private static class XtHashSet<E> extends HashSet<E> implements XtSet<E> {
-    private static final long serialVersionUID = 1L;
-
     public XtHashSet() {
       super();
     }
@@ -275,7 +267,7 @@ public final class Aggregations {
    * @param a
    *          Array of elements to insert.
    * @return Whether the list changed as a result of the call.
-   * @see Collections#addAll( Collection, Object[])
+   * @see Collections#addAll(Collection, Object[])
    */
   public static <E> boolean addAll(List<E> target, int index, E[] a) {
     if (a.length == 0)
@@ -309,8 +301,8 @@ public final class Aggregations {
    * @return Element at {@code index}, possibly provided by {@code provider} if undefined.
    */
   public static <E> @Nullable E computeIfAbsent(List<E> target, int index,
-      Function<Integer, ? extends E> provider) {
-    var ret = peek(target, index);
+      Function<Integer, ? extends @Nullable E> provider) {
+    E ret = peek(target, index);
     if (ret == null) {
       ret = provider.apply(index);
       if (ret != null) {
@@ -508,7 +500,7 @@ public final class Aggregations {
    * Creates a new hash set populated with the collections.
    */
   @SafeVarargs
-  public static <E> HashSet<E> hashSet(@NonNull Collection<E>... cc) {
+  public static <E> HashSet<E> hashSet(Collection<E>... cc) {
     var ret = new HashSet<E>();
     for (var c : cc) {
       ret.addAll(c);
@@ -622,7 +614,7 @@ public final class Aggregations {
    * @return Empty, if {@code c} is undefined.
    */
   @SuppressWarnings("unchecked")
-  public static <T extends List<?>> @NonNull T nullToEmpty(@Nullable T c) {
+  public static <T extends List<?>> T nullToEmpty(@Nullable T c) {
     return c != null ? c : (T) Collections.emptyList();
   }
 
@@ -630,7 +622,7 @@ public final class Aggregations {
    * @return Empty, if {@code c} is undefined.
    */
   @SuppressWarnings("unchecked")
-  public static <T extends Set<?>> @NonNull T nullToEmpty(@Nullable T c) {
+  public static <T extends Set<?>> T nullToEmpty(@Nullable T c) {
     return c != null ? c : (T) Collections.emptySet();
   }
 
@@ -638,7 +630,7 @@ public final class Aggregations {
    * @return Empty, if {@code m} is undefined.
    */
   @SuppressWarnings("unchecked")
-  public static <T extends Map<?, ?>> @NonNull T nullToEmpty(@Nullable T m) {
+  public static <T extends Map<?, ?>> T nullToEmpty(@Nullable T m) {
     return m != null ? m : (T) Collections.emptyMap();
   }
 
@@ -805,7 +797,7 @@ public final class Aggregations {
    *          Target list.
    * @return {@code target}.
    */
-  public static <@Nullable E> List<E> trim(List<E> target) {
+  public static <E extends @Nullable Object> List<E> trim(List<E> target) {
     int i = target.size();
     while (i-- > 0 && target.get(i) == null) {
       target.remove(i);

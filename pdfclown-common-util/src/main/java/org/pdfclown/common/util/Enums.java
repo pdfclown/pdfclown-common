@@ -25,7 +25,6 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -118,7 +117,6 @@ public final class Enums {
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   public static <E extends Enum> @Nullable E get(String fqn) {
-    @NonNull
     String[] fqnParts = splitFqn(fqn);
     if (fqnParts[0].isEmpty())
       return null;
@@ -239,7 +237,7 @@ public final class Enums {
 
   @SuppressWarnings("unchecked")
   private static <E, K> Map<K, E> map(Class<E> type,
-      Collector<E, ?, @NonNull Map<K, E>> collector) {
+      Collector<E, ?, Map<K, E>> collector) {
     Stream<E> stream;
     if (Xnum.class.isAssignableFrom(type) && type.isInterface()) {
       stream = (Stream<E>) nonNull(BaseXnum.values((Class<Xnum<K>>) type)).stream();

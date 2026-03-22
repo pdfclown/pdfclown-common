@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -38,7 +37,7 @@ public final class Executions {
    * @throws ExecutionException
    *           if any of the tasks fails to execute.
    */
-  public static void failFast(@NonNull Runnable... tasks)
+  public static void failFast(Runnable... tasks)
       throws ExecutionException, InterruptedException {
     var futures = new ArrayList<CompletableFuture<Void>>();
     var failure = new CompletableFuture<Void>().exceptionally($ex -> {

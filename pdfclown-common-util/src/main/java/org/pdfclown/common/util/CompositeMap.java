@@ -14,7 +14,6 @@ package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNull;
 
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -75,7 +74,7 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
    *           if {@code value} type has no mapping.
    */
   @SuppressWarnings("unchecked")
-  default @Nullable K getKey(@NonNull V value) {
+  default @Nullable K getKey(V value) {
     return requireNonNull((XtMap<K, V>) getMap((Class<V>) value.getClass())).getKey(value);
   }
 
@@ -105,7 +104,7 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
    *           if {@code value} type has no mapping.
    */
   @SuppressWarnings("unchecked")
-  default @Nullable V put(K key, @NonNull V value) {
+  default @Nullable V put(K key, V value) {
     return requireNonNull((XtMap<K, V>) getMap((Class<V>) value.getClass())).put(key, value);
   }
 

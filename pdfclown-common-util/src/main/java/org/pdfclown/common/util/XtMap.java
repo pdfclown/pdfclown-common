@@ -14,7 +14,6 @@ package org.pdfclown.common.util;
 
 import java.util.Iterator;
 import java.util.Map;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -141,7 +140,7 @@ public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   }
 
   @Override
-  default Iterator<Map.@NonNull Entry<K, V>> iterator() {
+  default Iterator<Map.Entry<K, V>> iterator() {
     return entrySet().iterator();
   }
 

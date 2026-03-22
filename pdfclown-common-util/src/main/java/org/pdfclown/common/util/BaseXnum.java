@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.UnmodifiableView;
 import org.pdfclown.common.util.spi.ServiceProvider;
@@ -85,7 +84,7 @@ import org.pdfclown.common.util.spi.XnumProvider;
  *          Domain-specific identity type.
  * @author Stefano Chizzolini
  */
-public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
+public abstract class BaseXnum<K> implements Xnum<K> {
   /**
    * Augmented enumeration descriptor.
    *
@@ -95,11 +94,11 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
    *          Domain-specific identity type.
    * @author Stefano Chizzolini
    */
-  public static class XnumType<E extends Xnum<K>, @NonNull K> {
+  public static class XnumType<E extends Xnum<K>, K> {
     private final Class<K> codeType;
     private final Predicate<K> codeValidator;
     private final Map<K, E> constants = new HashMap<>();
-    private final BiFunction<K, @NonNull Object, E> constructor;
+    private final BiFunction<K, Object, E> constructor;
     private boolean sealed;
     private final Class<E> type;
 
@@ -113,8 +112,8 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
      * @param constructor
      *          Element constructor.
      */
-    private XnumType(Class<@NonNull E> type, Class<@NonNull K> codeType,
-        @Nullable Predicate<K> codeValidator, BiFunction<K, @NonNull Object, E> constructor) {
+    private XnumType(Class<E> type, Class<K> codeType, @Nullable Predicate<K> codeValidator,
+        BiFunction<K, Object, E> constructor) {
       this.type = requireNonNull(type);
       this.codeType = requireNonNull(codeType);
       this.codeValidator = requireNonNullElseGet(codeValidator, () -> $ -> true);
@@ -245,7 +244,7 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
   @SuppressWarnings("rawtypes")
   private static final Map<Class, BaseXnum.XnumType> types = new HashMap<>();
 
-  private static final List<@NonNull XnumProvider> providers =
+  private static final List<XnumProvider> providers =
       ServiceProvider.discover(XnumProvider.class).toList();
 
   /**
@@ -347,9 +346,9 @@ public abstract class BaseXnum<@NonNull K> implements Xnum<K> {
    * @param enumType
    *          Enumeration type.
    */
-  protected static <E extends Xnum<K>, @NonNull K> XnumType<E, K> register(Class<@NonNull E> type,
-      Class<@NonNull K> codeType, @Nullable Predicate<K> codeValidator,
-      BiFunction<K, @NonNull Object, E> constructor, Class<? extends E> enumType) {
+  protected static <E extends Xnum<K>, K> XnumType<E, K> register(Class<E> type,
+      Class<K> codeType, @Nullable Predicate<K> codeValidator, BiFunction<K, Object, E> constructor,
+      Class<? extends E> enumType) {
     if (types.containsKey(type))
       throw wrongArg("type", type, "Interface already registered");
 

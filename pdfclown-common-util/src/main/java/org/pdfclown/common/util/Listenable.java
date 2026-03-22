@@ -12,8 +12,6 @@
  */
 package org.pdfclown.common.util;
 
-import org.jspecify.annotations.NonNull;
-
 /**
  * Observable object.
  *
@@ -27,12 +25,12 @@ public interface Listenable<T extends Listener> {
    *
    * @return Self.
    */
-  Listenable<T> addListener(@NonNull T listener);
+  Listenable<T> addListener(T listener);
 
   /**
    * Removes the listener.
    *
    * @return Whether the listener was removed.
    */
-  boolean removeListener(@NonNull T listener);
+  boolean removeListener(T listener);
 }

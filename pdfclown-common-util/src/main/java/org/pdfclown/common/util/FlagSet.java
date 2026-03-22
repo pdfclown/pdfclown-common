@@ -12,8 +12,6 @@
  */
 package org.pdfclown.common.util;
 
-import org.jspecify.annotations.NonNull;
-
 /**
  * Flags.
  *
@@ -21,7 +19,7 @@ import org.jspecify.annotations.NonNull;
  *          Flag enum type.
  * @author Stefano Chizzolini
  */
-public interface FlagSet<@NonNull E extends Flag> extends XtSet<E> {
+public interface FlagSet<E extends Flag> extends XtSet<E> {
   /**
    * Sets the flag.
    *
