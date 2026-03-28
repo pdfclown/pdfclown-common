@@ -81,6 +81,11 @@ public final class Strings {
   public static final String[] STR_ARRAY__EMPTY = new String[0];
 
   /**
+   * Special value representing the string length in related methods.
+   */
+  public static final int STR_LENGTH = Integer.MAX_VALUE;
+
+  /**
    * Ensures the string doesn't exceed the limits; otherwise, replaces the exceeding substring with
    * a standard ellipsis.
    *
@@ -172,6 +177,13 @@ public final class Strings {
   }
 
   /**
+   * Ensures a string is undefined if empty.
+   */
+  public static @Nullable String emptyToNull(@Nullable String s) {
+    return s != null && !s.isEmpty() ? s : null;
+  }
+
+  /**
    * Gets the index of the first matching character.
    *
    * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
@@ -195,28 +207,28 @@ public final class Strings {
 
   /**
    * Gets the index within the string of the first occurrence of a substring; if not found, returns
-   * the default. {@jada.reuseDoc :params}
+   * the default. {@jada.doc params}
    *
    * @param defaultIndex
-   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
-   *          length} is used instead. {@jada.reuseDoc END}
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.doc END}
    * @see String#indexOf(String)
    */
   public static int indexOfElse(String s, String sub, int defaultIndex) {
-    return doIndexOfElse(s, s.indexOf(sub), defaultIndex);
+    return indexOfElseResult(s, s.indexOf(sub), defaultIndex);
   }
 
   /**
    * Gets the index within the string of the first occurrence of a substring, searched from the
-   * index; if not found, returns the default. {@jada.doc params}
+   * index; if not found, returns the default. {@jada.reuseDoc :params}
    *
    * @param defaultIndex
-   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
-   *          length} is used instead. {@jada.doc END}
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
    * @see String#indexOf(String, int)
    */
   public static int indexOfElse(String s, String sub, int fromIndex, int defaultIndex) {
-    return doIndexOfElse(s, s.indexOf(sub, fromIndex), defaultIndex);
+    return indexOfElseResult(s, s.indexOf(sub, fromIndex), defaultIndex);
   }
 
   /**
@@ -224,12 +236,12 @@ public final class Strings {
    * the default. {@jada.reuseDoc :params}
    *
    * @param defaultIndex
-   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
-   *          length} is used instead. {@jada.reuseDoc END}
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
    * @see String#indexOf(int)
    */
   public static int indexOfElse(String s, int c, int defaultIndex) {
-    return doIndexOfElse(s, s.indexOf(c), defaultIndex);
+    return indexOfElseResult(s, s.indexOf(c), defaultIndex);
   }
 
   /**
@@ -237,12 +249,12 @@ public final class Strings {
    * index; if not found, returns the default. {@jada.reuseDoc :params}
    *
    * @param defaultIndex
-   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
-   *          length} is used instead. {@jada.reuseDoc END}
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
    * @see String#indexOf(int, int)
    */
   public static int indexOfElse(String s, int c, int fromIndex, int defaultIndex) {
-    return doIndexOfElse(s, s.indexOf(c, fromIndex), defaultIndex);
+    return indexOfElseResult(s, s.indexOf(c, fromIndex), defaultIndex);
   }
 
   /**
@@ -457,7 +469,7 @@ public final class Strings {
    * @see StringUtils#indexOfAny(CharSequence, char...)
    */
   public static int lastIndexOfAny(final @Nullable String s, final int[] cc) {
-    return lastIndexOfAny(s, Integer.MAX_VALUE, cc);
+    return lastIndexOfAny(s, STR_LENGTH, cc);
   }
 
   /**
@@ -465,12 +477,12 @@ public final class Strings {
    * the default. {@jada.reuseDoc #indexOfElse(*):params}
    *
    * @param defaultIndex
-   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
-   *          length} is used instead. {@jada.reuseDoc END}
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
    * @see String#indexOf(String)
    */
   public static int lastIndexOfElse(String s, String sub, int defaultIndex) {
-    return doIndexOfElse(s, s.lastIndexOf(sub), defaultIndex);
+    return indexOfElseResult(s, s.lastIndexOf(sub), defaultIndex);
   }
 
   /**
@@ -478,12 +490,12 @@ public final class Strings {
    * the index; if not found, returns the default. {@jada.reuseDoc #indexOfElse(*):params}
    *
    * @param defaultIndex
-   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
-   *          length} is used instead. {@jada.reuseDoc END}
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
    * @see String#lastIndexOf(String, int)
    */
   public static int lastIndexOfElse(String s, String sub, int fromIndex, int defaultIndex) {
-    return doIndexOfElse(s, s.lastIndexOf(sub, fromIndex), defaultIndex);
+    return indexOfElseResult(s, s.lastIndexOf(sub, fromIndex), defaultIndex);
   }
 
   /**
@@ -491,12 +503,12 @@ public final class Strings {
    * the default. {@jada.reuseDoc #indexOfElse(*):params}
    *
    * @param defaultIndex
-   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
-   *          length} is used instead. {@jada.reuseDoc END}
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
    * @see String#lastIndexOf(int)
    */
   public static int lastIndexOfElse(String s, int c, int defaultIndex) {
-    return doIndexOfElse(s, s.lastIndexOf(c), defaultIndex);
+    return indexOfElseResult(s, s.lastIndexOf(c), defaultIndex);
   }
 
   /**
@@ -504,12 +516,12 @@ public final class Strings {
    * the index; if not found, returns the default. {@jada.reuseDoc #indexOfElse(*):params}
    *
    * @param defaultIndex
-   *          If this index is outside the bounds of {@code s}, then its {@linkplain String#length()
-   *          length} is used instead. {@jada.reuseDoc END}
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
    * @see String#lastIndexOf(int, int)
    */
   public static int lastIndexOfElse(String s, int c, int fromIndex, int defaultIndex) {
-    return doIndexOfElse(s, s.lastIndexOf(c, fromIndex), defaultIndex);
+    return indexOfElseResult(s, s.lastIndexOf(c, fromIndex), defaultIndex);
   }
 
   /**
@@ -525,6 +537,13 @@ public final class Strings {
    */
   public static int lineStart(String s, int index) {
     return lastIndexOf(s, Strings::isEOL, index) + 1;
+  }
+
+  /**
+   * Ensures a string is defined, returning empty if undefined.
+   */
+  public static String nullToEmpty(@Nullable String s) {
+    return s != null ? s : EMPTY;
   }
 
   /**
@@ -549,19 +568,6 @@ public final class Strings {
   public static String replaceLast(String s, int oldChar, int newChar) {
     int index = s.lastIndexOf(oldChar);
     return found(index) ? s.substring(0, index) + newChar + s.substring(index + 1) : s;
-  }
-
-  /**
-   * Converts the string to integer.
-   *
-   * @return {@code null}, if {@code s} is invalid.
-   */
-  public static @Nullable Integer strToInteger(String s) {
-    try {
-      return Integer.parseInt(s);
-    } catch (NumberFormatException ex) {
-      return null;
-    }
   }
 
   /**
@@ -630,8 +636,10 @@ public final class Strings {
     return new String(cc);
   }
 
-  private static int doIndexOfElse(String s, int index, int defaultIndex) {
-    return found(index) ? index : found(defaultIndex) ? min(defaultIndex, s.length()) : s.length();
+  private static int indexOfElseResult(String s, int resultIndex, int defaultIndex) {
+    return found(resultIndex) ? resultIndex
+        : defaultIndex == STR_LENGTH ? s.length()
+        : defaultIndex;
   }
 
   private Strings() {
