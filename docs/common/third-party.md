@@ -18,7 +18,7 @@ Whenever any source code from third-party projects is incorporated, it must be d
       ```
       JSONassert <https://github.com/skyscreamer/JSONassert>
       Copyright 2012-2022 Skyscreamer
-      Licensed under Apache License 2.0 <https://www.apache.org/licenses/LICENSE-2.0>
+      License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
       ```
 
 2. in the source file reusing the third-party code, add a **licensing notice** formatted in accordance with the extent of the incorporation, accompanied by additional information (such as `Source`, `SourceName` and `Changes` tags — see down below) whenever appropriate:
