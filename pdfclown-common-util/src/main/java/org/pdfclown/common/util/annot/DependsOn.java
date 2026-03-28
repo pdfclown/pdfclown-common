@@ -70,7 +70,7 @@ import java.util.Collection;
  * import org.bytedeco.javacv.FFmpegFrameGrabber;
  *
  * <span style="background-color:yellow;color:black;">&#64;DependsOn(Dependency.ID__JAVACV)</span>
- * public final Videos {
+ * public final class Videos {
  *   public static BufferedImage frameImage(InputStream videoStream, double frameTime) {
  *     try (var grabber = new FFmpegFrameGrabber(videoStream)) {
  *       . . .
@@ -81,7 +81,7 @@ import java.util.Collection;
  *          call:<pre class="lang-java" data-line="6,12"><code>
  * import static org.pdfclown.common.util.Exceptions.missingClass;
  *
-* public Appearances {
+* public class Appearances {
 *   <span style="background-color:yellow;color:black;">&#64;Requires(Dependency.ID__JAVACV)</span>
 *   public static Image playbackAltImage(InputStream videoStream, double frameTime, Size size) {
 *     try {
