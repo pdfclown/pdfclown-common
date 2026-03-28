@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.util;
 
-import static org.pdfclown.common.util.Objects.objCast;
+import static org.pdfclown.common.util.Objects.tryCast;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -75,7 +75,7 @@ public interface Fluent {
    * @return {@code null} if this is assignment-incompatible with {@code type}.
    */
   default <T> @Nullable T cast(Class<T> type) {
-    return objCast(this, type);
+    return tryCast(this, type);
   }
 
   /**

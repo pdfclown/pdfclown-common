@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,7 +53,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.pdfclown.common.util.system.Clis;
@@ -242,6 +242,19 @@ class ObjectsTest extends BaseTest {
           .map($ -> $ != null ? ($ instanceof Class<?> c ? c : $.getClass()).getName() : null)
           .collect(Collectors.toCollection(ArrayList::new)));
 
+  private static final List<Object> OBJ_TO__OBJS = asList(null, "hello", 42);
+  private static final List<Integer> OBJ_TO__DEFAULT_VALUES = asList(null, 8);
+  /**
+   * Mapper covering both non-null (if argument is {@link String}) and null (any other case) return
+   * values.
+   */
+  private static final Function<Object, @Nullable Integer> OBJ_TO__MAPPER =
+      $ -> $ instanceof String ? $.toString().length() : null;
+  /**
+   * Suppliers covering both non-null and null return values.
+   */
+  private static final List<Supplier<Integer>> OBJ_TO__SUPPLIERS = asList(() -> null, () -> 21);
+
   static Stream<Arguments> fqn_Object() {
     return argumentsStream(
         cartesian(),
@@ -356,6 +369,105 @@ class ObjectsTest extends BaseTest {
             Stream.class,
             Strings.class,
             of("one", "two")));
+  }
+
+  static Stream<Arguments> objTo() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] obj[0]: null
+            null,
+            // [2] obj[1]: "hello"
+            5,
+            // [3] obj[2]: 42
+            null),
+        // obj
+        OBJ_TO__OBJS);
+  }
+
+  static Stream<Arguments> objToElse() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // obj[0]: null
+            // [1] defaultValue[0]: null
+            new Failure("NullPointerException", "defaultObj"),
+            // [2] defaultValue[1]: 8
+            8,
+            //
+            // obj[1]: "hello"
+            // [3] defaultValue[0]: null
+            5,
+            // [4] defaultValue[1]: 8
+            5,
+            //
+            // obj[2]: 42
+            // [5] defaultValue[0]: null
+            new Failure("NullPointerException", "defaultObj"),
+            // [6] defaultValue[1]: 8
+            8),
+        // obj
+        OBJ_TO__OBJS,
+        // defaultValue
+        OBJ_TO__DEFAULT_VALUES);
+  }
+
+  static Stream<Arguments> objToElseGet() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // obj[0]: null
+            // [1] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            null,
+            // [2] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            21,
+            //
+            // obj[1]: "hello"
+            // [3] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            5,
+            // [4] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            5,
+            //
+            // obj[2]: 42
+            // [5] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            null,
+            // [6] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            21),
+        // obj
+        OBJ_TO__OBJS,
+        // supplier
+        OBJ_TO__SUPPLIERS);
+  }
+
+  static Stream<Arguments> objToElseGetNonNull() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // obj[0]: null
+            // [1] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            new Failure("NullPointerException", ""),
+            // [2] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            21,
+            //
+            // obj[1]: "hello"
+            // [3] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            5,
+            // [4] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            5,
+            //
+            // obj[2]: 42
+            // [5] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            new Failure("NullPointerException", ""),
+            // [6] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
+            21),
+        // obj
+        OBJ_TO__OBJS,
+        // supplier
+        OBJ_TO__SUPPLIERS);
   }
 
   /**
@@ -852,30 +964,40 @@ class ObjectsTest extends BaseTest {
     assertThat(Objects.objElseGet(obj, defaultSupplier), is(defaultResult));
   }
 
-  @Test
-  @SuppressWarnings("ConstantValue")
-  void objToElse() {
-    int defaultResult = 0;
-
-    List<Object> obj = of("test");
-    assertThat(Objects.objToElse(obj, List::size, defaultResult), is(1));
-
-    obj = null;
-    assertThat(Objects.objTo(obj, List::size), is(nullValue()));
-    assertThat(Objects.objToElse(obj, List::size, defaultResult), is(defaultResult));
+  @ParameterizedTest
+  @MethodSource
+  void objTo(Expected<Integer> expected, Object obj) {
+    assertParameterizedOf(
+        () -> Objects.objTo(obj, OBJ_TO__MAPPER),
+        expected,
+        () -> expectedGeneration(obj));
   }
 
-  @Test
-  @SuppressWarnings("ConstantValue")
-  void objToElseGet() {
-    int defaultResult = 0;
+  @ParameterizedTest
+  @MethodSource
+  void objToElse(Expected<Integer> expected, Object obj, Integer defaultValue) {
+    assertParameterizedOf(
+        () -> Objects.objToElse(obj, OBJ_TO__MAPPER, defaultValue),
+        expected,
+        () -> expectedGeneration(obj, defaultValue));
+  }
 
-    List<Object> obj = of("test");
-    Supplier<Integer> defaultSupplier = () -> defaultResult;
-    assertThat(Objects.objToElseGet(obj, List::size, defaultSupplier), is(1));
+  @ParameterizedTest
+  @MethodSource
+  void objToElseGet(Expected<Integer> expected, Object obj, Supplier<Integer> supplier) {
+    assertParameterizedOf(
+        () -> Objects.objToElseGet(obj, OBJ_TO__MAPPER, supplier),
+        expected,
+        () -> expectedGeneration(obj, supplier));
+  }
 
-    obj = null;
-    assertThat(Objects.objToElseGet(obj, List::size, defaultSupplier), is(defaultResult));
+  @ParameterizedTest
+  @MethodSource
+  void objToElseGetNonNull(Expected<Integer> expected, Object obj, Supplier<Integer> supplier) {
+    assertParameterizedOf(
+        () -> Objects.objToElseGetNonNull(obj, OBJ_TO__MAPPER, supplier),
+        expected,
+        () -> expectedGeneration(obj, supplier));
   }
 
   @ParameterizedTest
@@ -1106,7 +1228,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.toQualifiedString(obj),
         expected,
-        () -> new ExpectedGeneration<String>(obj)
+        () -> this.<String>expectedGeneration(obj)
             .setMaxArgCommentLength(100));
   }
 
@@ -1116,7 +1238,7 @@ class ObjectsTest extends BaseTest {
     assertParameterizedOf(
         () -> Objects.toSqnQualifiedString(obj),
         expected,
-        () -> new ExpectedGeneration<String>(obj)
+        () -> this.<String>expectedGeneration(obj)
             .setMaxArgCommentLength(100));
   }
 

@@ -540,7 +540,7 @@ public final class Objects {
    *          Whether comparison is done on resolved elements only; otherwise, unresolved elements
    *          are required to be of the same type in order to be resolved.
    */
-  @SuppressWarnings({ "unchecked", "null" })
+  @SuppressWarnings("unchecked")
   public static <R, T> boolean deepEquals(@Nullable T o1, @Nullable T o2, Class<R> baseRefType,
       Function<? super R, @Nullable T> resolver, boolean raw) {
     if (o1 == o2)
@@ -941,20 +941,7 @@ public final class Objects {
   }
 
   /**
-   * Casts an object to a target type.
-   * <p>
-   * Contrary to {@link Class#cast(Object)}, this method is safe without assignment compatibility.
-   * </p>
-   *
-   * @return {@code null}, if {@code obj} is assignment-incompatible with {@code type}.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T, R extends T> @Nullable R objCast(@Nullable T obj, Class<R> type) {
-    return type.isInstance(obj) ? (R) obj : null;
-  }
-
-  /**
-   * Applies an operation to an object.
+   * Applies an operation to an object, if defined.
    *
    * @return {@code obj}
    * @see #quiet(FailableConsumer, Object)
@@ -968,7 +955,7 @@ public final class Objects {
   }
 
   /**
-   * Returns the object, if not null; otherwise, the supplied default.
+   * Returns the object, if defined, otherwise the supplied default.
    * <p>
    * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
    * doesn't enforce its result to be non-null.
@@ -1027,10 +1014,6 @@ public final class Objects {
 
   /**
    * Maps an object.
-   * <p>
-   * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
-   * doesn't enforce its result to be non-null.
-   * </p>
    *
    * @param obj
    *          Object to map.
@@ -1038,11 +1021,29 @@ public final class Objects {
    *          Object mapping function.
    * @param defaultSupplier
    *          Result supplier if {@code obj} or {@code mapper}'s result are undefined.
+   * @see #objToElseGetNonNull(Object, Function, Supplier)
    */
   public static <T, R> @Nullable R objToElseGet(@Nullable T obj,
-      Function<? super T, ? extends R> mapper, Supplier<? extends R> defaultSupplier) {
+      Function<? super T, ? extends @Nullable R> mapper,
+      Supplier<? extends @Nullable R> defaultSupplier) {
     R ret;
     return obj != null && (ret = mapper.apply(obj)) != null ? ret : defaultSupplier.get();
+  }
+
+  /**
+   * Maps an object.
+   *
+   * @param obj
+   *          Object to map.
+   * @param mapper
+   *          Object mapping function.
+   * @param defaultSupplier
+   *          Result supplier if {@code obj} or {@code mapper}'s result are undefined.
+   * @see #objToElseGet(Object, Function, Supplier)
+   */
+  public static <T, R> R objToElseGetNonNull(@Nullable T obj,
+      Function<? super T, ? extends @Nullable R> mapper, Supplier<? extends R> defaultSupplier) {
+    return requireNonNull(objToElseGet(obj, mapper, defaultSupplier));
   }
 
   /**
@@ -1325,7 +1326,6 @@ public final class Objects {
    * @return Two-part string array, where the first item is empty if {@code typeName} has no
    *         package.
    */
-  @SuppressWarnings("null")
   public static String[] splitFqn(String typeName) {
     int pos = typeName.lastIndexOf(DOT);
     return pos >= 0
@@ -1861,6 +1861,19 @@ public final class Objects {
     } catch (IOException ex) {
       throw runtime(ex);
     }
+  }
+
+  /**
+   * Casts an object to a target type, if compatible.
+   * <p>
+   * Contrary to {@link Class#cast(Object)}, this method is safe without assignment compatibility.
+   * </p>
+   *
+   * @return {@code null}, if {@code obj} is assignment-incompatible with {@code type}.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T, R extends T> @Nullable R tryCast(@Nullable T obj, Class<R> type) {
+    return type.isInstance(obj) ? (R) obj : null;
   }
 
   /**
