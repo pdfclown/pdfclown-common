@@ -37,7 +37,6 @@ import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.HYPHEN;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
@@ -47,6 +46,7 @@ import static org.pdfclown.common.util.Conditions.requireNotBlank;
 import static org.pdfclown.common.util.Conditions.requireState;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Objects.asTopLevelType;
 import static org.pdfclown.common.util.Objects.basicLiteral;
@@ -110,8 +110,13 @@ import org.junit.jupiter.api.Named;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.pdfclown.common.build.internal.util.lang.Javas;
+import org.pdfclown.common.build.system.ProjectDirId;
+import org.pdfclown.common.build.system.ProjectPathResolver;
+import org.pdfclown.common.build.util.io.ResourceNames;
 import org.pdfclown.common.build.util.source.JavaParsers;
+import org.pdfclown.common.build.util.system.Builds;
 import org.pdfclown.common.util.Exceptions;
+import org.pdfclown.common.util.Fluent;
 import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.Immutable;
@@ -821,7 +826,7 @@ public final class Assertions {
    * @author Stefano Chizzolini
    * @see Assertions#assertParameterized(Object, Expected, Supplier)
    */
-  public static class ExpectedGeneration<E> {
+  public static class ExpectedGeneration<E> implements Fluent {
     private static final int MAX_ARG_COMMENT_LENGTH__DEFAULT = 50;
 
     /**
@@ -1313,6 +1318,12 @@ public final class Assertions {
             .append(asListMethodRef).append("(" + LF)
             .indent();
       }
+      assert paramNames != null;
+
+      if (generation.args.length != paramNames.length)
+        throw wrongArg("generation.args.length", generation.args.length,
+            "SHOULD match the parameters count ({}: {})", paramNames.length,
+            Arrays.toString(paramNames));
     }
 
     private void end() {
@@ -2212,8 +2223,8 @@ public final class Assertions {
 
     var compilationUnitFile = environment != null
         ? environment.typeSrcPath(type)
-        : Path.of(EMPTY).toAbsolutePath()
-            .resolve("src/test/java/" + type.getName().replace(DOT, SLASH) + FILE_EXTENSION__JAVA);
+        : ProjectPathResolver.of(Builds.projectDir()).resolve(ProjectDirId.TEST_TYPE_SOURCE,
+            ResourceNames.fromType(type) + FILE_EXTENSION__JAVA);
     try {
       return compilationUnitEditors.computeIfAbsent(compilationUnitFile,
           Failable.asFunction(CompilationUnitEditor::new));

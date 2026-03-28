@@ -37,7 +37,6 @@ import org.pdfclown.common.util.Ref;
 /**
  * @author Stefano Chizzolini
  */
-@SuppressWarnings("DataFlowIssue")
 class BuildsIT extends BaseIT {
   @Test
   void classpath() throws IOException, InterruptedException {
@@ -100,7 +99,6 @@ class BuildsIT extends BaseIT {
   }
 
   @Test
-  @SuppressWarnings("DataFlowIssue" /* assertThat(..) supports nullable actual */)
   void projectArtifactId() {
     assertThat(Builds.projectArtifactId(getEnv().dir(ProjectDirId.MAIN_TYPE_SOURCE)),
         is("pdfclown-common-build"));

@@ -18,6 +18,7 @@ import static org.pdfclown.common.util.Chars.UNDERSCORE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.asTopLevelType;
 import static org.pdfclown.common.util.Objects.sqn;
+import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.util.io.Files.resetDirectory;
@@ -35,6 +36,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.build.test.assertion.Test;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
 import org.pdfclown.common.build.util.io.ResourceNames;
+import org.pdfclown.common.build.util.system.Builds;
 import org.pdfclown.common.util.annot.InitNonNull;
 import org.pdfclown.common.util.annot.LazyNonNull;
 
@@ -66,7 +68,7 @@ public abstract class TestUnit implements Test {
     private boolean outputDirInitialized;
 
     public Environment() {
-      this(new MavenPathResolver());
+      this(new MavenPathResolver(Builds.projectDir()));
     }
 
     public Environment(ProjectPathResolver pathResolver) {
@@ -108,6 +110,11 @@ public abstract class TestUnit implements Test {
         }
       }
       return TestEnvironment.super.outputPath(name);
+    }
+
+    @Override
+    public String toString() {
+      return toStringWithValues(this, pathResolver);
     }
 
     @Override

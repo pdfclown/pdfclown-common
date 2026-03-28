@@ -24,9 +24,6 @@ import java.nio.file.Path;
  * @author Stefano Chizzolini
  */
 public class MavenPathResolver extends ProjectPathResolver {
-  public MavenPathResolver() {
-  }
-
   public MavenPathResolver(Path baseDir) {
     super(baseDir);
   }

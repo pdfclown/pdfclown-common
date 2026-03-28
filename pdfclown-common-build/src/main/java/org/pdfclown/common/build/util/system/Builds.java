@@ -26,9 +26,12 @@ import static org.pdfclown.common.util.Exceptions.missingPath;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongState;
+import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.Objects.objDo;
+import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Objects.opt;
 import static org.pdfclown.common.util.Objects.sqnd;
+import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__GROOVY;
 import static org.pdfclown.common.util.system.Processes.execute;
@@ -96,6 +99,8 @@ public final class Builds {
   public static final XPath XPATH__POM = xpath(XPath.Namespaces.of()
       .register(NS_PREFIX__POM, NS__POM));
 
+  private static final String FILENAME__MAVEN_POM = "pom.xml";
+
   private static final Pattern PATTERN__MAVEN_LOG_LINE = Pattern.compile("\\[(\\w+?)] (.*)");
 
   private static @Nullable Path mavenExec;
@@ -142,7 +147,7 @@ public final class Builds {
          */
         var ret = new ArrayList<Path>();
 
-        Path pomFile = requireFile(pathResolver.resolve(ProjectDirId.BASE, "pom.xml"));
+        Path pomFile = requireFile(pathResolver.resolve(ProjectDirId.BASE, FILENAME__MAVEN_POM));
 
         // 1. Build directory.
         ret.add(requireDirectory(pathResolver.resolve(ProjectDirId.MAIN_TARGET)));
@@ -308,19 +313,40 @@ public final class Builds {
    * @implNote Currently supports Maven only.
    */
   public static @Nullable String projectArtifactId(Path path) {
+    return objTo(projectDir(path), $ -> projectArtifactIds.computeIfAbsent($,
+        $key -> objTo($key.resolve(FILENAME__MAVEN_POM), Failable.asFunction(
+            $$ -> requireState(stripToNull(XPATH__POM.nodeValue(
+                NS_PREFIX__POM + ":project/" + NS_PREFIX__POM + ":artifactId",
+                xml($$))), () -> "`artifactId` NOT FOUND in " + $$)))));
+  }
+
+  /**
+   * Gets the current project directory.
+   *
+   * @implNote The project directory is detected starting from the current resource directory.
+   * @throws IllegalStateException
+   *           if the current resource directory is outside any project.
+   */
+  public static Path projectDir() {
+    var resourceDir = Path.of(nonNull(Builds.class.getClassLoader().getResource(EMPTY)).getPath());
+    return requireState(projectDir(resourceDir),
+        () -> "Apparently, the current resource directory %s does NOT belong to any Maven project"
+            .formatted(resourceDir));
+  }
+
+  /**
+   * Gets the project directory a path belongs to.
+   *
+   * @param path
+   *          An arbitrary position within a project.
+   * @return {@code null}, if {@code path} is outside any project.
+   */
+  public static @Nullable Path projectDir(Path path) {
     Path dir = isDirectory(path) ? path : path.getParent();
     while (dir != null) {
-      if (projectArtifactIds.containsKey(dir))
-        return projectArtifactIds.get(dir);
-
-      var pomFile = dir.resolve("pom.xml");
-      if (exists(pomFile)) {
-        return projectArtifactIds.computeIfAbsent(dir, Failable.asFunction(
-            $k -> requireState(stripToNull(
-                XPATH__POM.nodeValue(NS_PREFIX__POM + ":project/" + NS_PREFIX__POM + ":artifactId",
-                    xml(pomFile))),
-                () -> "`artifactId` NOT FOUND in " + pomFile)));
-      }
+      var pomFile = dir.resolve(FILENAME__MAVEN_POM);
+      if (exists(pomFile))
+        return dir;
 
       dir = dir.getParent();
     }

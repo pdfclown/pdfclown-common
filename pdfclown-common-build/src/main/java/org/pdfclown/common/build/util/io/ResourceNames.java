@@ -17,6 +17,7 @@ import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Objects.asType;
+import static org.pdfclown.common.util.Objects.fqn;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.io.Files.PATH_SUPER;
@@ -112,6 +113,13 @@ public final class ResourceNames {
    */
   public static String absBased(String name, Object base) {
     return abs(relBased(name, base));
+  }
+
+  /**
+   * Gets the absolute resource name of an object.
+   */
+  public static String fromType(Object obj) {
+    return abs(fqn(requireNonNull(obj, "`obj`")).replace(DOT, SLASH));
   }
 
   /**

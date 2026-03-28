@@ -15,13 +15,14 @@ package org.pdfclown.common.build.system;
 import static java.nio.file.Files.isRegularFile;
 import static org.pdfclown.common.util.Conditions.requireDirectory;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.io.Files.normal;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import org.pdfclown.common.build.util.io.ResourceNames;
 
 /**
  * Project directory resolver.
@@ -49,10 +50,6 @@ public abstract class ProjectPathResolver {
 
   private final Map<ProjectDirId, Path> base = new HashMap<>();
 
-  public ProjectPathResolver() {
-    this(Path.of(EMPTY));
-  }
-
   public ProjectPathResolver(Path baseDir) {
     base.put(ProjectDirId.BASE, normal(baseDir));
   }
@@ -62,7 +59,12 @@ public abstract class ProjectPathResolver {
   }
 
   public Path resolve(ProjectDirId id, String sub) {
-    return resolve(id).resolve(sub);
+    return resolve(id).resolve(ResourceNames.rel(sub));
+  }
+
+  @Override
+  public String toString() {
+    return toStringWithValues(this, resolve(ProjectDirId.BASE));
   }
 
   /**
