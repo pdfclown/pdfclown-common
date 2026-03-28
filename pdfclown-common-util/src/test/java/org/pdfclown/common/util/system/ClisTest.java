@@ -29,11 +29,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.Objects;
+import org.pdfclown.common.util.__test.BaseTest;
 
 /**
  * @author Stefano Chizzolini
  */
-class ClisTest {
+class ClisTest extends BaseTest {
   static Stream<Arguments> parseArgs() {
     return argumentsStream(
         cartesian(),

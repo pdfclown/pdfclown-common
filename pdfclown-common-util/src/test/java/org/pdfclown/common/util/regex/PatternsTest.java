@@ -32,7 +32,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Argument;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
@@ -159,7 +158,7 @@ class PatternsTest extends BaseTest {
         () -> Patterns.globToRegex(glob.getValue())));
 
     assertParameterized(actual, expected,
-        () -> new ExpectedGeneration<>(glob));
+        () -> expectedGeneration(glob));
     assertRegexMatches(actual, glob.matches, true);
     assertRegexMatches(actual, glob.mismatches, false);
   }
@@ -174,7 +173,7 @@ class PatternsTest extends BaseTest {
           return Patterns.indexOfMatchFailure(matcher);
         },
         expected,
-        () -> new ExpectedGeneration<>(input));
+        () -> expectedGeneration(input));
   }
 
   @ParameterizedTest
@@ -184,7 +183,7 @@ class PatternsTest extends BaseTest {
         () -> Patterns.wildcardToRegex(wildcard.getValue())));
 
     assertParameterized(actual, expected,
-        () -> new ExpectedGeneration<>(wildcard));
+        () -> expectedGeneration(wildcard));
     assertRegexMatches(actual, wildcard.matches, true);
     assertRegexMatches(actual, wildcard.mismatches, false);
   }

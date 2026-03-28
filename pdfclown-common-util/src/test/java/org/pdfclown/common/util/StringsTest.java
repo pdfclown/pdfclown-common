@@ -26,7 +26,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.__test.BaseTest;
 
@@ -331,7 +330,7 @@ class StringsTest extends BaseTest {
     assertParameterizedOf(
         () -> Strings.abbreviateMultiline(value, maxLineCount, averageLineLength, marker),
         expected,
-        () -> new ExpectedGeneration<>(value, maxLineCount, averageLineLength, marker));
+        () -> expectedGeneration(value, maxLineCount, averageLineLength, marker));
 
     // Check default ellipsis ("...") overload!
     if (marker.equals("...")) {
@@ -348,7 +347,7 @@ class StringsTest extends BaseTest {
     assertParameterizedOf(
         () -> Strings.stripEmptyLines(s),
         expected,
-        () -> new ExpectedGeneration<>(s));
+        () -> expectedGeneration(s));
   }
 
   @ParameterizedTest
@@ -357,7 +356,7 @@ class StringsTest extends BaseTest {
     assertParameterizedOf(
         () -> Strings.uncapitalizeGreedy(value),
         expected,
-        () -> new ExpectedGeneration<>(value));
+        () -> expectedGeneration(value));
   }
 
   /**

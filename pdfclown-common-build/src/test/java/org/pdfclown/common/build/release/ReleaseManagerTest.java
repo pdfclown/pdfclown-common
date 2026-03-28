@@ -30,7 +30,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.annot.InitNonNull;
 
 /**
@@ -102,6 +101,6 @@ class ReleaseManagerTest extends BaseTest {
         () -> new ReleaseManager(getEnv().outputPath(EMPTY), releaseVersion)
             .getDevVersion(),
         expected,
-        () -> new ExpectedGeneration<>(releaseVersion));
+        () -> expectedGeneration(releaseVersion));
   }
 }

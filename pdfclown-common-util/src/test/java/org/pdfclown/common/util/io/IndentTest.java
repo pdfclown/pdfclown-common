@@ -41,7 +41,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.util.__test.BaseTest;
 
 // SourceName: nl.talsmasoftware.umldoclet.rendering.indent.IndentationTest
@@ -211,7 +210,7 @@ public class IndentTest extends BaseTest {
     assertParameterizedOf(
         () -> Indent.spaces(width, level).toString(),
         expected,
-        () -> new ExpectedGeneration<>(width, level));
+        () -> expectedGeneration(width, level));
   }
 
   // SourceName: testDefaultSpaces

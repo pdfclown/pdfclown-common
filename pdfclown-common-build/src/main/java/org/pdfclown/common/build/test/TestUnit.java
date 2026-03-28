@@ -31,6 +31,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.pdfclown.common.build.system.MavenPathResolver;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
+import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
 import org.pdfclown.common.build.test.assertion.Test;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
 import org.pdfclown.common.build.util.io.ResourceNames;
@@ -161,6 +162,11 @@ public abstract class TestUnit implements Test {
 
   protected Environment __createEnv() {
     return new Environment();
+  }
+
+  protected <E> ExpectedGeneration<E> expectedGeneration(@Nullable Object... args) {
+    return new ExpectedGeneration<>(args)
+        .setEnvironment(getEnv()).cast();
   }
 
   @BeforeEach

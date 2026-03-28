@@ -151,7 +151,7 @@ class TestUnitTest extends BaseTest {
       assertParameterizedOf(
           () -> sampleTest.getEnv().localName(name),
           expected,
-          () -> new ExpectedGeneration<>(name));
+          () -> expectedGeneration(name));
     }
 
     @ParameterizedTest
@@ -160,7 +160,7 @@ class TestUnitTest extends BaseTest {
       assertParameterizedOf(
           () -> sampleTest.getEnv().outputPath(name),
           expected,
-          () -> prepareExpectedPathSerializer(new ExpectedGeneration<>(name)));
+          () -> prepareExpectedPathSerializer(expectedGeneration(name)));
     }
 
     @ParameterizedTest
@@ -169,7 +169,7 @@ class TestUnitTest extends BaseTest {
       assertParameterizedOf(
           () -> sampleTest.getEnv().resourcePath(name),
           expected,
-          () -> prepareExpectedPathSerializer(new ExpectedGeneration<>(name)));
+          () -> prepareExpectedPathSerializer(expectedGeneration(name)));
     }
 
     @ParameterizedTest
@@ -178,7 +178,7 @@ class TestUnitTest extends BaseTest {
       assertParameterizedOf(
           () -> sampleTest.getEnv().resourceSrcPath(name),
           expected,
-          () -> prepareExpectedPathSerializer(new ExpectedGeneration<>(name)));
+          () -> prepareExpectedPathSerializer(expectedGeneration(name)));
     }
 
     @ParameterizedTest
@@ -187,7 +187,7 @@ class TestUnitTest extends BaseTest {
       assertParameterizedOf(
           () -> sampleTest.getEnv().typeSrcPath(type),
           expected,
-          () -> prepareExpectedPathSerializer(new ExpectedGeneration<>(type))
+          () -> prepareExpectedPathSerializer(expectedGeneration(type))
               .addFailureMessageNormalizer(RuntimeException.class, $ -> {
                 /*
                  * NOTE: Here we normalize paths in the failure message purging their
