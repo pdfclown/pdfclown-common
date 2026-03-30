@@ -58,8 +58,11 @@ public final class Enums {
    *          Constant-vs-code matcher.
    * @return {@code null}, if no match was found.
    */
-  public static <E, K> @Nullable E get(Class<E> type, K code,
+  public static <E, K> @Nullable E get(Class<E> type, @Nullable K code,
       BiFunction<E, K, Boolean> matcher) {
+    if (code == null)
+      return null;
+
     for (E value : map(type).values()) {
       if (matcher.apply(value, code))
         return value;
@@ -82,7 +85,7 @@ public final class Enums {
    *          Constant-to-code mapper.
    * @return {@code null}, if no match was found.
    */
-  public static <E, K> @Nullable E get(Class<E> type, K code, Function<E, K> mapper) {
+  public static <E, K> @Nullable E get(Class<E> type, @Nullable K code, Function<E, K> mapper) {
     return get(type, code, ($constant, $code) -> Objects.equals($code, mapper.apply($constant)));
   }
 
@@ -116,7 +119,10 @@ public final class Enums {
    * @return {@code null}, if no match was found.
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public static <E extends Enum> @Nullable E get(String fqn) {
+  public static <E extends Enum> @Nullable E get(@Nullable String fqn) {
+    if (fqn == null)
+      return null;
+
     String[] fqnParts = splitFqn(fqn);
     if (fqnParts[0].isEmpty())
       return null;
@@ -198,7 +204,6 @@ public final class Enums {
         values.put(type, typeValues = new HashMap<>());
 
         final Map<K, E> target = typeValues;
-        @SuppressWarnings("null")
         final Function<E, K> keyMapper = XtEnum.class.isAssignableFrom(type)
             ? $ -> (K) ((XtEnum<?>) $).getCode()
             : $ -> (K) ((Enum<?>) $).name();
