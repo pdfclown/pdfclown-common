@@ -172,8 +172,8 @@ public abstract class TestUnit implements Test {
   }
 
   protected <E> ExpectedGeneration<E> expectedGeneration(@Nullable Object... args) {
-    return new ExpectedGeneration<>(args)
-        .setEnvironment(getEnv()).cast();
+    return new ExpectedGeneration<E>(args)
+        .setEnvironment(getEnv());
   }
 
   @BeforeEach

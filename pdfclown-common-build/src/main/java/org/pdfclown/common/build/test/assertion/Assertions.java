@@ -116,7 +116,6 @@ import org.pdfclown.common.build.util.io.ResourceNames;
 import org.pdfclown.common.build.util.source.JavaParsers;
 import org.pdfclown.common.build.util.system.Builds;
 import org.pdfclown.common.util.Exceptions;
-import org.pdfclown.common.util.Fluent;
 import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.Immutable;
@@ -826,7 +825,7 @@ public final class Assertions {
    * @author Stefano Chizzolini
    * @see Assertions#assertParameterized(Object, Expected, Supplier)
    */
-  public static class ExpectedGeneration<E> implements Fluent {
+  public static class ExpectedGeneration<E> {
     private static final int MAX_ARG_COMMENT_LENGTH__DEFAULT = 50;
 
     /**

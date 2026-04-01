@@ -22,7 +22,7 @@ package org.pdfclown.common.util;
  *          Element type.
  * @author Stefano Chizzolini
  */
-public interface Aggregation<E> extends Fluent, Iterable<E> {
+public interface Aggregation<E> extends Iterable<E> {
   default boolean isEmpty() {
     return size() == 0;
   }
