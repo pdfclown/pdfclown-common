@@ -13,7 +13,7 @@
 package org.pdfclown.common.util.io;
 
 import static org.pdfclown.common.util.Chars.COLON;
-import static org.pdfclown.common.util.Objects.objTo;
+import static org.pdfclown.common.util.function.Functions.to;
 import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
 import static org.pdfclown.common.util.net.Uris.url;
 
@@ -56,7 +56,8 @@ public interface Resource {
    * @return {@code null}, if the resource corresponding to {@code path} does not exist.
    */
   static @Nullable PathResource of(@Nullable Path path) {
-    return (PathResource) of(objTo(path, Object::toString));
+    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
+    return (PathResource) of(to(path, Object::toString));
   }
 
   /**
@@ -184,7 +185,8 @@ public interface Resource {
    * @return {@code null}, if the resource corresponding to {@code url} does not exist.
    */
   static @Nullable Resource of(@Nullable URI uri) {
-    return of(objTo(uri, Object::toString));
+    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
+    return of(to(uri, Object::toString));
   }
 
   /**
@@ -196,7 +198,8 @@ public interface Resource {
    * @return {@code null}, if the resource corresponding to {@code url} does not exist.
    */
   static @Nullable Resource of(@Nullable URL url) {
-    return of(objTo(url, Object::toString));
+    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
+    return of(to(url, Object::toString));
   }
 
   /**

@@ -21,7 +21,7 @@ import static org.pdfclown.common.util.Conditions.requireType;
 import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.fqn;
-import static org.pdfclown.common.util.Objects.objTo;
+import static org.pdfclown.common.util.function.Functions.to;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
@@ -413,7 +413,7 @@ public class Units extends AbstractSystemOfUnits {
    * @return {@code null}, if {@code quantityType} isn't mapped.
    */
   public static <Q extends Quantity<Q>> @Nullable Dimension getDimension(Class<Q> quantityType) {
-    return objTo(INSTANCE.quantityToUnit.get(quantityType), Unit::getDimension);
+    return to(INSTANCE.quantityToUnit.get(quantityType), Unit::getDimension);
   }
 
   /**

@@ -19,8 +19,8 @@ import static org.pdfclown.common.util.Chars.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
-import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.ParamMessage.ARG;
+import static org.pdfclown.common.util.function.Functions.to;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
@@ -131,8 +131,8 @@ public final class Exceptions {
    */
   public static NoSuchElementException missing(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
-    String valueLiteral = objTo(value, Objects::textLiteral);
-    String message = objTo(format, $ -> ParamMessage.of($, args).getDescription());
+    String valueLiteral = to(value, Objects::textLiteral);
+    String message = to(format, $ -> ParamMessage.of($, args).getDescription());
     return new NoSuchElementException(
         valueLiteral == null ? message
             : message == null ? valueLiteral

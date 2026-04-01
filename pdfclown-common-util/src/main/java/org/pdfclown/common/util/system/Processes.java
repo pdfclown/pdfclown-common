@@ -18,9 +18,9 @@ import static org.apache.commons.lang3.SystemUtils.OS_NAME;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.function.Functions.to;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,8 +58,9 @@ public final class Processes {
      * Furthermore, remotely debugging maven (`mvnDebug`) causes the execution in IntelliJ IDEA to
      * hang if a maven command (`mvn`) is run via `ProcessBuilder`.
      */
+    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     var builder = new ProcessBuilder(command)
-        .directory(objTo(directory, Path::toFile))
+        .directory(to(directory, Path::toFile))
         .inheritIO();
     Process process = builder.start();
     return process.waitFor();
@@ -80,8 +81,9 @@ public final class Processes {
    */
   public static int execute(List<String> command, @Nullable Path directory,
       Consumer<String> consumer) throws IOException, InterruptedException {
+    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     var builder = new ProcessBuilder(command)
-        .directory(objTo(directory, Path::toFile));
+        .directory(to(directory, Path::toFile));
     Process process = builder.start();
     try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
       String line;

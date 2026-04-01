@@ -38,6 +38,9 @@ import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.NULL;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.lastIndexOfElse;
+import static org.pdfclown.common.util.function.Functions.to;
+import static org.pdfclown.common.util.function.Functions.toElse;
+import static org.pdfclown.common.util.function.Functions.tryLet;
 import static org.pdfclown.common.util.reflect.Reflects.stackFrame;
 
 import io.github.classgraph.ClassGraph;
@@ -63,7 +66,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 import java.util.function.BiPredicate;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -78,8 +80,6 @@ import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.function.FailableConsumer;
-import org.apache.commons.lang3.function.FailableRunnable;
 import org.apache.commons.lang3.function.FailableSupplier;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -512,13 +512,9 @@ public final class Objects {
 
   /**
    * Quietly closes an object.
-   *
-   * @return {@code obj}
-   * @see #quiet(FailableConsumer, Object)
    */
-  public static <T extends AutoCloseable> @PolyNull @Nullable T closeQuiet(
-      @PolyNull @Nullable T obj) {
-    return quiet(AutoCloseable::close, obj);
+  public static <T extends AutoCloseable> void closeQuietly(@Nullable T obj) {
+    tryLet(obj, AutoCloseable::close);
   }
 
   /**
@@ -587,6 +583,28 @@ public final class Objects {
       return false;
 
     return deepEquals(resolver.apply(ref1), resolver.apply(ref2), baseRefType, resolver, raw);
+  }
+
+  /**
+   * Returns the object, if defined, otherwise the supplied default.
+   * <p>
+   * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
+   * doesn't enforce its result to be non-null.
+   * </p>
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to evaluate.
+   * @param defaultSupplier
+   *          Object supplier if {@code obj} is undefined.
+   * @see java.util.Objects#requireNonNull(Object)
+   * @see java.util.Objects#requireNonNullElse(Object, Object)
+   * @see java.util.Objects#requireNonNullElseGet(Object, Supplier)
+   */
+  public static <T> @Nullable T elseGet(@Nullable T obj,
+      Supplier<? extends @Nullable T> defaultSupplier) {
+    return obj != null ? obj : defaultSupplier.get();
   }
 
   /**
@@ -890,7 +908,7 @@ public final class Objects {
       return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(s) + DQUOTE;
     else if (obj instanceof Class<?> c)
       //noinspection DataFlowIssue : non-null
-      return objTo(c, $ -> $.getPackageName().startsWith("java.lang")
+      return to(c, $ -> $.getPackageName().startsWith("java.lang")
           ? $.getSimpleName() /*
                                * NOTE: The names of classes belonging to common packages are
                                * simplified to avoid noise
@@ -938,112 +956,6 @@ public final class Objects {
   public static <T> T nonNull(@Nullable T obj) {
     assert obj != null;
     return obj;
-  }
-
-  /**
-   * Applies an operation to an object, if defined.
-   *
-   * @return {@code obj}
-   * @see #quiet(FailableConsumer, Object)
-   */
-  public static <T> @PolyNull @Nullable T objDo(@PolyNull @Nullable T obj,
-      Consumer<? super T> operation) {
-    if (obj != null) {
-      operation.accept(obj);
-    }
-    return obj;
-  }
-
-  /**
-   * Returns the object, if defined, otherwise the supplied default.
-   * <p>
-   * Contrary to {@link java.util.Objects#requireNonNullElseGet(Object, Supplier)}, this method
-   * doesn't enforce its result to be non-null.
-   * </p>
-   *
-   * @param <T>
-   *          Object type.
-   * @param obj
-   *          Object to evaluate.
-   * @param defaultSupplier
-   *          Object supplier if {@code obj} is undefined.
-   * @see java.util.Objects#requireNonNull(Object)
-   * @see java.util.Objects#requireNonNullElse(Object, Object)
-   * @see java.util.Objects#requireNonNullElseGet(Object, Supplier)
-   */
-  public static <T> @Nullable T objElseGet(@Nullable T obj,
-      Supplier<? extends @Nullable T> defaultSupplier) {
-    return obj != null ? obj : defaultSupplier.get();
-  }
-
-  /**
-   * Maps an object.
-   *
-   * @param <T>
-   *          Object type.
-   * @param <R>
-   *          Result type.
-   * @param obj
-   *          Object to map.
-   * @param mapper
-   *          Object mapping function.
-   */
-  public static <T, R> @Nullable R objTo(@Nullable T obj,
-      Function<? super T, ? extends @Nullable R> mapper) {
-    return obj != null ? mapper.apply(obj) : null;
-  }
-
-  /**
-   * Maps an object.
-   *
-   * @param <T>
-   *          Object type.
-   * @param <R>
-   *          Result type.
-   * @param obj
-   *          Object to map.
-   * @param mapper
-   *          Object mapping function.
-   * @param defaultResult
-   *          Result if {@code obj} or {@code mapper}'s result are undefined.
-   */
-  public static <T, R> R objToElse(@Nullable T obj,
-      Function<? super T, ? extends @Nullable R> mapper, R defaultResult) {
-    return requireNonNullElse(objTo(obj, mapper), defaultResult);
-  }
-
-  /**
-   * Maps an object.
-   *
-   * @param obj
-   *          Object to map.
-   * @param mapper
-   *          Object mapping function.
-   * @param defaultSupplier
-   *          Result supplier if {@code obj} or {@code mapper}'s result are undefined.
-   * @see #objToElseGetNonNull(Object, Function, Supplier)
-   */
-  public static <T, R> @Nullable R objToElseGet(@Nullable T obj,
-      Function<? super T, ? extends @Nullable R> mapper,
-      Supplier<? extends @Nullable R> defaultSupplier) {
-    R ret;
-    return obj != null && (ret = mapper.apply(obj)) != null ? ret : defaultSupplier.get();
-  }
-
-  /**
-   * Maps an object.
-   *
-   * @param obj
-   *          Object to map.
-   * @param mapper
-   *          Object mapping function.
-   * @param defaultSupplier
-   *          Result supplier if {@code obj} or {@code mapper}'s result are undefined.
-   * @see #objToElseGet(Object, Function, Supplier)
-   */
-  public static <T, R> R objToElseGetNonNull(@Nullable T obj,
-      Function<? super T, ? extends @Nullable R> mapper, Supplier<? extends R> defaultSupplier) {
-    return requireNonNull(objToElseGet(obj, mapper, defaultSupplier));
   }
 
   /**
@@ -1143,64 +1055,7 @@ public final class Objects {
    * @return Empty, if {@code typeName} is undefined.
    */
   public static String pkg(@Nullable String typeName) {
-    return objToElse(typeName, $ -> $.substring(0, lastIndexOfElse($, DOT, 0)), EMPTY);
-  }
-
-  /**
-   * Quietly applies an operation to an object.
-   *
-   * @return {@code obj}
-   * @see #objDo(Object, Consumer)
-   */
-  public static <T> @PolyNull @Nullable T quiet(FailableConsumer<T, ?> operation,
-      @PolyNull @Nullable T obj) {
-    return quiet(operation, obj, null);
-  }
-
-  /**
-   * Quietly applies an operation to an object.
-   *
-   * @param exceptionHandler
-   *          Handles the exceptions thrown by {@code op}.
-   * @return {@code obj}
-   * @see #objDo(Object, Consumer)
-   */
-  public static <T> @PolyNull @Nullable T quiet(FailableConsumer<T, ?> operation,
-      @PolyNull @Nullable T obj, @Nullable Consumer<Throwable> exceptionHandler) {
-    if (obj != null) {
-      try {
-        operation.accept(obj);
-      } catch (Throwable ex) {
-        if (exceptionHandler != null) {
-          exceptionHandler.accept(ex);
-        }
-      }
-    }
-    return obj;
-  }
-
-  /**
-   * Quietly runs an operation.
-   */
-  public static void quiet(FailableRunnable<?> operation) {
-    quiet(operation, null);
-  }
-
-  /**
-   * Quietly runs an operation.
-   *
-   * @param exceptionHandler
-   *          Handles the exceptions thrown by {@code op}.
-   */
-  public static void quiet(FailableRunnable<?> operation,
-      @Nullable Consumer<Throwable> exceptionHandler) {
-    try {
-      operation.run();
-    } catch (Throwable ex) {
-      if (exceptionHandler != null) {
-        exceptionHandler.accept(ex);
-      }
-    }
+    return toElse(typeName, $ -> $.substring(0, lastIndexOfElse($, DOT, 0)), EMPTY);
   }
 
   /**
@@ -1300,7 +1155,7 @@ public final class Objects {
    * @see #sfqn(Object)
    */
   public static String simpleName(@Nullable Object obj) {
-    return objToElse(asType(obj), Class::getSimpleName, NULL);
+    return toElse(asType(obj), Class::getSimpleName, NULL);
   }
 
   /**
@@ -1316,7 +1171,7 @@ public final class Objects {
    * @see #sfqn(String)
    */
   public static String simpleName(@Nullable String typeName) {
-    return objToElse(typeName,
+    return toElse(typeName,
         $ -> $.substring(Strings.lastIndexOfAny($, new int[] { DOT, DOLLAR }) + 1), NULL);
   }
 
@@ -2159,7 +2014,7 @@ public final class Objects {
   }
 
   private static String doFqn(@Nullable Object obj, boolean shortened, boolean dotted) {
-    return doFqn(objTo(asType(obj), Class::getName), shortened, dotted);
+    return doFqn(to(asType(obj), Class::getName), shortened, dotted);
   }
 
   private static String doFqn(@Nullable String typeName, boolean shortened, boolean dotted) {
@@ -2180,7 +2035,7 @@ public final class Objects {
   }
 
   private static String doSqn(@Nullable String typeName, boolean dotted) {
-    return doFqn(objTo(typeName, $ -> $.substring($.lastIndexOf(DOT) + 1)), false, dotted);
+    return doFqn(to(typeName, $ -> $.substring($.lastIndexOf(DOT) + 1)), false, dotted);
   }
 
   private static boolean isAutoInstantiable(Class<?> type) {

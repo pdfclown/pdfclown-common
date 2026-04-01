@@ -17,8 +17,8 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongState;
-import static org.pdfclown.common.util.Objects.objTo;
-import static org.pdfclown.common.util.Objects.objToElse;
+import static org.pdfclown.common.util.function.Functions.to;
+import static org.pdfclown.common.util.function.Functions.toElse;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -260,7 +260,8 @@ public abstract class BaseXnum<K> implements Xnum<K> {
    *          Domain-specific identity.
    */
   public static <E extends Xnum<K>, K> boolean contains(Class<E> type, @Nullable K code) {
-    return objToElse(get(type), $ -> $.constants.containsKey(code), false);
+    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
+    return toElse(get(type), $ -> $.constants.containsKey(code), false);
   }
 
   /**
@@ -302,7 +303,8 @@ public abstract class BaseXnum<K> implements Xnum<K> {
    *          Domain-specific identity.
    */
   public static <E extends Xnum<K>, K> @Nullable E get(Class<E> type, @Nullable K code) {
-    return objTo(get(type), $ -> $.get(code));
+    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
+    return to(get(type), $ -> $.get(code));
   }
 
   /**
@@ -321,7 +323,7 @@ public abstract class BaseXnum<K> implements Xnum<K> {
      * NOTE: The unmodifiable collection guarantees that changes to the backing collections are
      * visible to it too.
      */
-    return objTo(get(type), $ -> unmodifiableCollection($.constants.values()));
+    return to(get(type), $ -> unmodifiableCollection($.constants.values()));
   }
 
   /**

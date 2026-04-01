@@ -13,7 +13,7 @@
 package org.pdfclown.common.util.__test;
 
 import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
-import static org.pdfclown.common.util.Objects.objTo;
+import static org.pdfclown.common.util.function.Functions.to;
 
 import javax.measure.Unit;
 import org.pdfclown.common.build.test.Test;
@@ -27,7 +27,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrate
 public abstract class BaseTest extends Test {
   private static final ArgumentsStreamStrategy.Converter ARGUMENTS_CONVERTER = ($index, $obj) -> {
     if ($obj instanceof Unit<?> unit) {
-      return objTo(unit, $ -> arg($.getName(), $));
+      return to(unit, $ -> arg($.getName(), $));
     } else
       return $obj;
   };

@@ -19,10 +19,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.sameInstance;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
 import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.simple;
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
@@ -34,18 +30,13 @@ import java.net.URI;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.function.FailableConsumer;
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,6 +46,7 @@ import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrate
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.__test.BaseTest;
+import org.pdfclown.common.util.function.FunctionsTest;
 import org.pdfclown.common.util.system.Clis;
 import org.pdfclown.common.util.xml.Xmls;
 import org.pdfclown.common.util.xml.Xmls.DocumentFactoryProfile;
@@ -242,18 +234,33 @@ class ObjectsTest extends BaseTest {
           .map($ -> $ != null ? ($ instanceof Class<?> c ? c : $.getClass()).getName() : null)
           .collect(Collectors.toCollection(ArrayList::new)));
 
-  private static final List<Object> OBJ_TO__OBJS = asList(null, "hello", 42);
-  private static final List<Integer> OBJ_TO__DEFAULT_VALUES = asList(null, 8);
-  /**
-   * Mapper covering both non-null (if argument is {@link String}) and null (any other case) return
-   * values.
-   */
-  private static final Function<Object, @Nullable Integer> OBJ_TO__MAPPER =
-      $ -> $ instanceof String ? $.toString().length() : null;
-  /**
-   * Suppliers covering both non-null and null return values.
-   */
-  private static final List<Supplier<Integer>> OBJ_TO__SUPPLIERS = asList(() -> null, () -> 21);
+  static Stream<Arguments> elseGet() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // obj[0]: null
+            // [1] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
+            null,
+            // [2] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
+            21,
+            //
+            // obj[1]: "hello"
+            // [3] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
+            "hello",
+            // [4] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
+            "hello",
+            //
+            // obj[2]: 42
+            // [5] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
+            42,
+            // [6] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
+            42),
+        // obj
+        FunctionsTest.OBJS,
+        // supplier
+        FunctionsTest.SUPPLIERS);
+  }
 
   static Stream<Arguments> fqn_Object() {
     return argumentsStream(
@@ -369,105 +376,6 @@ class ObjectsTest extends BaseTest {
             Stream.class,
             Strings.class,
             of("one", "two")));
-  }
-
-  static Stream<Arguments> objTo() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            null,
-            // [2] obj[1]: "hello"
-            5,
-            // [3] obj[2]: 42
-            null),
-        // obj
-        OBJ_TO__OBJS);
-  }
-
-  static Stream<Arguments> objToElse() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] defaultValue[0]: null
-            new Failure("NullPointerException", "defaultObj"),
-            // [2] defaultValue[1]: 8
-            8,
-            //
-            // obj[1]: "hello"
-            // [3] defaultValue[0]: null
-            5,
-            // [4] defaultValue[1]: 8
-            5,
-            //
-            // obj[2]: 42
-            // [5] defaultValue[0]: null
-            new Failure("NullPointerException", "defaultObj"),
-            // [6] defaultValue[1]: 8
-            8),
-        // obj
-        OBJ_TO__OBJS,
-        // defaultValue
-        OBJ_TO__DEFAULT_VALUES);
-  }
-
-  static Stream<Arguments> objToElseGet() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            null,
-            // [2] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            21,
-            //
-            // obj[1]: "hello"
-            // [3] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            5,
-            // [4] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            5,
-            //
-            // obj[2]: 42
-            // [5] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            null,
-            // [6] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            21),
-        // obj
-        OBJ_TO__OBJS,
-        // supplier
-        OBJ_TO__SUPPLIERS);
-  }
-
-  static Stream<Arguments> objToElseGetNonNull() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            new Failure("NullPointerException", ""),
-            // [2] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            21,
-            //
-            // obj[1]: "hello"
-            // [3] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            5,
-            // [4] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            5,
-            //
-            // obj[2]: 42
-            // [5] supplier[0]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            new Failure("NullPointerException", ""),
-            // [6] supplier[1]: "org.pdfclown.common.util.ObjectsTest$$Lambda. . ."
-            21),
-        // obj
-        OBJ_TO__OBJS,
-        // supplier
-        OBJ_TO__SUPPLIERS);
   }
 
   /**
@@ -909,6 +817,15 @@ class ObjectsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
+  void elseGet(Expected<Object> expected, Object obj, Supplier<Integer> supplier) {
+    assertParameterizedOf(
+        () -> Objects.elseGet(obj, supplier),
+        expected,
+        () -> expectedGeneration(obj, supplier));
+  }
+
+  @ParameterizedTest
+  @MethodSource
   void fqn_Object(Expected<String> expected, @Nullable Object obj) {
     assertParameterizedOf(
         () -> Objects.fqn(obj),
@@ -943,63 +860,6 @@ class ObjectsTest extends BaseTest {
         () -> expectedGeneration(obj));
   }
 
-  @Test
-  void objDo() {
-    var obj = new MutableObject<>();
-    Objects.objDo(obj, $ -> $.setValue("RESULT"));
-
-    assertThat(obj.get(), is("RESULT"));
-  }
-
-  @Test
-  @SuppressWarnings("ConstantValue")
-  void objElseGet() {
-    List<Object> defaultResult = Collections.emptyList();
-
-    List<Object> obj = of("test");
-    Supplier<List<Object>> defaultSupplier = () -> defaultResult;
-    assertThat(Objects.objElseGet(obj, defaultSupplier), is(obj));
-
-    obj = null;
-    assertThat(Objects.objElseGet(obj, defaultSupplier), is(defaultResult));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void objTo(Expected<Integer> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Objects.objTo(obj, OBJ_TO__MAPPER),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void objToElse(Expected<Integer> expected, Object obj, Integer defaultValue) {
-    assertParameterizedOf(
-        () -> Objects.objToElse(obj, OBJ_TO__MAPPER, defaultValue),
-        expected,
-        () -> expectedGeneration(obj, defaultValue));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void objToElseGet(Expected<Integer> expected, Object obj, Supplier<Integer> supplier) {
-    assertParameterizedOf(
-        () -> Objects.objToElseGet(obj, OBJ_TO__MAPPER, supplier),
-        expected,
-        () -> expectedGeneration(obj, supplier));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void objToElseGetNonNull(Expected<Integer> expected, Object obj, Supplier<Integer> supplier) {
-    assertParameterizedOf(
-        () -> Objects.objToElseGetNonNull(obj, OBJ_TO__MAPPER, supplier),
-        expected,
-        () -> expectedGeneration(obj, supplier));
-  }
-
   @ParameterizedTest
   @MethodSource
   void parseLiteral(Expected<Object> expected, @Nullable String s) {
@@ -1025,76 +885,6 @@ class ObjectsTest extends BaseTest {
         () -> Objects.pkg(typename),
         expected,
         () -> expectedGeneration(typename));
-  }
-
-  /**
-   * NOTE: {@link Objects#quiet(FailableConsumer, Object)} can NEVER fail per-se; if the object
-   * fails on called operation, that's part of its regular execution.
-   */
-  @Test
-  void quiet_FailableConsumer() {
-    var ref = new MutableObject<>();
-    var obj = new AutoCloseable() {
-      @Override
-      public void close() throws Exception {
-        ref.setValue("DONE");
-        throw new IllegalStateException("FAILED");
-      }
-    };
-    var ret = Objects.quiet(AutoCloseable::close, obj);
-
-    assertThat(ret, sameInstance(obj));
-    assertThat(ref.get(), is("DONE"));
-  }
-
-  /**
-   * NOTE: {@link Objects#quiet(FailableConsumer, Object, Consumer)} can NEVER fail per-se; if the
-   * object fails on called operation, that's part of its regular execution.
-   */
-  @Test
-  void quiet_FailableConsumer_Consumer() {
-    var obj = new AutoCloseable() {
-      @Override
-      public void close() throws Exception {
-        throw new IllegalStateException("FAILED");
-      }
-    };
-    var exceptionRef = new MutableObject<Throwable>();
-    var ret = Objects.quiet(AutoCloseable::close, obj, exceptionRef::setValue);
-
-    assertThat(ret, sameInstance(obj));
-    assertThat(exceptionRef.get(), instanceOf(IllegalStateException.class));
-    assertThat(exceptionRef.get().getMessage(), is("FAILED"));
-  }
-
-  /**
-   * NOTE: {@link Objects#quiet(org.apache.commons.lang3.function.FailableRunnable)} can NEVER fail
-   * per-se; if the operation fails on call, that's part of its regular execution.
-   */
-  @Test
-  void quiet_FailableRunnable() {
-    var ref = new MutableObject<>();
-    Objects.quiet(() -> {
-      ref.setValue("DONE");
-      throw new IllegalStateException("FAILED");
-    });
-
-    assertThat(ref.get(), is("DONE"));
-  }
-
-  /**
-   * NOTE: {@link Objects#quiet(org.apache.commons.lang3.function.FailableRunnable)} can NEVER fail
-   * per-se; if the operation fails on call, that's part of its regular execution.
-   */
-  @Test
-  void quiet_FailableRunnable_Consumer() {
-    var exceptionRef = new MutableObject<Throwable>();
-    Objects.quiet(() -> {
-      throw new IllegalStateException("FAILED");
-    }, exceptionRef::setValue);
-
-    assertThat(exceptionRef.get(), instanceOf(IllegalStateException.class));
-    assertThat(exceptionRef.get().getMessage(), is("FAILED"));
   }
 
   @ParameterizedTest
@@ -1259,37 +1049,5 @@ class ObjectsTest extends BaseTest {
         () -> Objects.toStringWithValues(obj, features),
         expected,
         () -> expectedGeneration(obj, features));
-  }
-
-  @Test
-  void tryGetElse__fail() {
-    var ret = Objects.tryGetElse(() -> {
-      throw new IllegalStateException("FAILED");
-    }, "ALT");
-
-    assertThat(ret, is("ALT"));
-  }
-
-  @Test
-  void tryGetElse__ok() {
-    var ret = Objects.tryGetElse(() -> "RESULT", "ALT");
-
-    assertThat(ret, is("RESULT"));
-  }
-
-  @Test
-  void tryGet__fail() {
-    var ret = Objects.tryGet(() -> {
-      throw new IllegalStateException("FAILED");
-    });
-
-    assertThat(ret, is(nullValue()));
-  }
-
-  @Test
-  void tryGet__ok() {
-    var ret = Objects.tryGet(() -> "RESULT");
-
-    assertThat(ret, is("RESULT"));
   }
 }
