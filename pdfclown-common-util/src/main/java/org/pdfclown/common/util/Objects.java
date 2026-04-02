@@ -80,7 +80,6 @@ import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.function.FailableSupplier;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.translate.AggregateTranslator;
@@ -1729,31 +1728,6 @@ public final class Objects {
   @SuppressWarnings("unchecked")
   public static <T, R extends T> @Nullable R tryCast(@Nullable T obj, Class<R> type) {
     return type.isInstance(obj) ? (R) obj : null;
-  }
-
-  /**
-   * Tries a supplier.
-   *
-   * @return Result of {@code supplier}, or {@code null} if failed.
-   */
-  public static <R> @Nullable R tryGet(FailableSupplier<? extends @Nullable R, ?> supplier) {
-    try {
-      return supplier.get();
-    } catch (Throwable ex) {
-      return null;
-    }
-  }
-
-  /**
-   * Tries a supplier.
-   *
-   * @param defaultResult
-   *          Result in case {@code supplier} fails or its result is undefined.
-   * @return Result of {@code supplier}, if not {@code null}; otherwise, {@code defaultResult}.
-   */
-  public static <R> R tryGetElse(FailableSupplier<? extends @Nullable R, ?> supplier,
-      R defaultResult) {
-    return requireNonNullElse(tryGet(supplier), defaultResult);
   }
 
   /**

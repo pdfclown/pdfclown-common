@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.apache.commons.lang3.function.FailableRunnable;
+import org.apache.commons.lang3.function.FailableSupplier;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.PolyNull;
 
@@ -177,6 +178,39 @@ public final class Functions {
    */
   public static <T, R> R toNonNull(T obj, Function<? super T, ? extends R> mapper) {
     return requireNonNull(to(obj, mapper));
+  }
+
+  /**
+   * Quietly gets a result from a supplier.
+   *
+   * @param <R>
+   *          Result type.
+   * @param supplier
+   *          Result supplier.
+   * @return Result of {@code supplier}, or {@code null} if failed.
+   */
+  public static <R> @Nullable R tryGet(FailableSupplier<? extends @Nullable R, ?> supplier) {
+    try {
+      return supplier.get();
+    } catch (Throwable ex) {
+      return null;
+    }
+  }
+
+  /**
+   * Quietly gets a result from a supplier.
+   *
+   * @param <R>
+   *          Result type.
+   * @param supplier
+   *          Result supplier.
+   * @param defaultResult
+   *          Result in case {@code supplier} fails or its result is undefined.
+   * @return Result of {@code supplier}, if not {@code null}; otherwise, {@code defaultResult}.
+   */
+  public static <R> R tryGetElse(FailableSupplier<? extends @Nullable R, ?> supplier,
+      R defaultResult) {
+    return requireNonNullElse(tryGet(supplier), defaultResult);
   }
 
   /**

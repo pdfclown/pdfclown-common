@@ -34,7 +34,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.build.test.assertion.Assertions.Failure;
-import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
@@ -403,7 +402,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void tryGetElse__fail() {
-    var ret = Objects.tryGetElse(() -> {
+    var ret = Functions.tryGetElse(() -> {
       throw new IllegalStateException("FAILED");
     }, "ALT");
 
@@ -412,14 +411,14 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void tryGetElse__ok() {
-    var ret = Objects.tryGetElse(() -> "RESULT", "ALT");
+    var ret = Functions.tryGetElse(() -> "RESULT", "ALT");
 
     assertThat(ret, is("RESULT"));
   }
 
   @Test
   void tryGet__fail() {
-    var ret = Objects.tryGet(() -> {
+    var ret = Functions.tryGet(() -> {
       throw new IllegalStateException("FAILED");
     });
 
@@ -428,7 +427,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void tryGet__ok() {
-    var ret = Objects.tryGet(() -> "RESULT");
+    var ret = Functions.tryGet(() -> "RESULT");
 
     assertThat(ret, is("RESULT"));
   }
