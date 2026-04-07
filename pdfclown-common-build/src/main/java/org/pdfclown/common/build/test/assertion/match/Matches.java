@@ -41,7 +41,7 @@ public class Matches<T> extends BaseMatcher<T> {
   }
 
   @Override
-  @SuppressWarnings({ "unchecked", "null" })
+  @SuppressWarnings("unchecked")
   public boolean matches(@Nullable Object actualValue) {
     if (actualValue == null)
       return expectedValue == null;

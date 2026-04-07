@@ -133,7 +133,6 @@ public abstract class BaseXnum<K> implements Xnum<K> {
      *           If any of the constants associated to {@code enumType} collides with those already
      *           associated to this augmented enumeration.
      */
-    @SuppressWarnings("null")
     public XnumType<E, K> addAll(Class<? extends E> enumType) {
       if (!enumType.isEnum())
         throw wrongArg("enumType", enumType, "MUST be an enum");
@@ -166,7 +165,6 @@ public abstract class BaseXnum<K> implements Xnum<K> {
      * @throws IllegalArgumentException
      *           If {@code code} is invalid.
      */
-    @SuppressWarnings("null")
     public @Nullable E get(@Nullable K code) {
       var ret = constants.get(code);
       if (ret == null) {

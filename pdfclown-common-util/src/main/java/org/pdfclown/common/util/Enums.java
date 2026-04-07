@@ -235,7 +235,6 @@ public final class Enums {
    * @throws IllegalArgumentException
    *           if {@code type} is neither {@link Enum}- nor {@link Xnum}-derived.
    */
-  @SuppressWarnings("null")
   public static <E, K> Map<K, E> map(Class<E> type, Function<? super E, ? extends K> keyMapper) {
     return map(type, Collectors.toMap(keyMapper, Function.identity()));
   }

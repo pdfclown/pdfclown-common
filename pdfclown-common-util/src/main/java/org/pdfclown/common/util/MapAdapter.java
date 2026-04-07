@@ -101,7 +101,7 @@ public class MapAdapter<K, V> implements XtMap<K, V> {
           }
 
           @Override
-          @SuppressWarnings({ "unchecked", "null" })
+          @SuppressWarnings("unchecked")
           public Entry<K, V> next() {
             var baseEntry = (Map.Entry<?, ?>) base.next();
             return new AbstractMap.SimpleImmutableEntry<>((K) baseEntry.getKey(),
