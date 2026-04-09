@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
  *          Element type.
  * @author Stefano Chizzolini
  */
-public interface XtList<E> extends List<E>, XtCollection<E> {
+public interface XtList<E extends @Nullable Object> extends List<E>, XtCollection<E> {
   @Override
   default boolean add(E e) {
     add(size(), e);

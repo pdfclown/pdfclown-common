@@ -25,7 +25,8 @@ import org.jspecify.annotations.Nullable;
  *          Value type.
  * @author Stefano Chizzolini
  */
-public interface XtMap<K, V> extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
+public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
+    extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
   /**
    * Gets whether any of the keys exists.
    *

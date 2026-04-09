@@ -14,6 +14,7 @@ package org.pdfclown.common.util;
 
 import java.util.Collection;
 import java.util.Set;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Extended set.
@@ -22,7 +23,7 @@ import java.util.Set;
  *          Element type.
  * @author Stefano Chizzolini
  */
-public interface XtSet<E> extends Set<E>, XtCollection<E> {
+public interface XtSet<E extends @Nullable Object> extends Set<E>, XtCollection<E> {
   @Override
   default boolean isEmpty() {
     return XtCollection.super.isEmpty();

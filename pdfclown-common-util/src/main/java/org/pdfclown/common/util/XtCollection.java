@@ -14,6 +14,7 @@ package org.pdfclown.common.util;
 
 import java.util.Collection;
 import java.util.Collections;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Extended collection.
@@ -22,7 +23,7 @@ import java.util.Collections;
  *          Element type.
  * @author Stefano Chizzolini
  */
-public interface XtCollection<E> extends Aggregation<E>, Collection<E> {
+public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>, Collection<E> {
   /**
    * Appends an array of elements.
    *

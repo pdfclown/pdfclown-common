@@ -222,7 +222,8 @@ public final class Aggregations {
    *
    * @author Stefano Chizzolini
    */
-  private static class XtHashMap<K, V> extends HashMap<K, V> implements XtMap<K, V> {
+  private static class XtHashMap<K extends @Nullable Object, V extends @Nullable Object>
+      extends HashMap<K, V> implements XtMap<K, V> {
     public XtHashMap() {
       super();
     }
@@ -242,7 +243,8 @@ public final class Aggregations {
    *
    * @author Stefano Chizzolini
    */
-  private static class XtHashSet<E> extends HashSet<E> implements XtSet<E> {
+  private static class XtHashSet<E extends @Nullable Object> extends HashSet<E>
+      implements XtSet<E> {
     public XtHashSet() {
       super();
     }
@@ -269,7 +271,7 @@ public final class Aggregations {
    * @return Whether the list changed as a result of the call.
    * @see Collections#addAll(Collection, Object[])
    */
-  public static <E> boolean addAll(List<E> target, int index, E[] a) {
+  public static <E extends @Nullable Object> boolean addAll(List<E> target, int index, E[] a) {
     if (a.length == 0)
       return false;
 
@@ -300,7 +302,7 @@ public final class Aggregations {
    *          Element provider.
    * @return Element at {@code index}, possibly provided by {@code provider} if undefined.
    */
-  public static <E> @Nullable E computeIfAbsent(List<E> target, int index,
+  public static <E extends @Nullable Object> @Nullable E computeIfAbsent(List<E> target, int index,
       Function<Integer, ? extends @Nullable E> provider) {
     E ret = peek(target, index);
     if (ret == null) {
@@ -316,7 +318,7 @@ public final class Aggregations {
    * Gets whether the collection contains any of the elements.
    */
   @SafeVarargs
-  public static <E> boolean containsAny(Collection<E> c, E... ee) {
+  public static <E extends @Nullable Object> boolean containsAny(Collection<E> c, E... ee) {
     for (E e : ee) {
       if (c.contains(e))
         return true;
@@ -327,7 +329,7 @@ public final class Aggregations {
   /**
    * @see #containsAny(Collection, Object...)
    */
-  public static <E> boolean containsAny(Collection<E> c, E e1, E e2) {
+  public static <E extends @Nullable Object> boolean containsAny(Collection<E> c, E e1, E e2) {
     return c.contains(e1)
         || c.contains(e2);
   }
@@ -335,7 +337,8 @@ public final class Aggregations {
   /**
    * @see #containsAny(Collection, Object...)
    */
-  public static <E> boolean containsAny(Collection<E> c, E e1, E e2, E e3) {
+  public static <E extends @Nullable Object> boolean containsAny(Collection<E> c, E e1, E e2,
+      E e3) {
     return c.contains(e1)
         || c.contains(e2)
         || c.contains(e3);
@@ -350,7 +353,8 @@ public final class Aggregations {
    *          Value type.
    */
   @SafeVarargs
-  public static <K, V> boolean containsAnyKey(Map<K, V> m, K... kk) {
+  public static <K extends @Nullable Object, V extends @Nullable Object> boolean containsAnyKey(
+      Map<K, V> m, K... kk) {
     for (K k : kk) {
       if (m.containsKey(k))
         return true;
@@ -361,7 +365,8 @@ public final class Aggregations {
   /**
    * @see #containsAnyKey(Map, Object...)
    */
-  public static <K, V> boolean containsAnyKey(Map<K, V> m, K k1, K k2) {
+  public static <K extends @Nullable Object, V extends @Nullable Object> boolean containsAnyKey(
+      Map<K, V> m, K k1, K k2) {
     return m.containsKey(k1)
         || m.containsKey(k2);
   }
@@ -369,7 +374,8 @@ public final class Aggregations {
   /**
    * @see #containsAnyKey(Map, Object...)
    */
-  public static <K, V> boolean containsAnyKey(Map<K, V> m, K k1, K k2, K k3) {
+  public static <K extends @Nullable Object, V extends @Nullable Object> boolean containsAnyKey(
+      Map<K, V> m, K k1, K k2, K k3) {
     return m.containsKey(k1)
         || m.containsKey(k2)
         || m.containsKey(k3);
@@ -378,7 +384,7 @@ public final class Aggregations {
   /**
    * Counts the elements within an iterable.
    */
-  public static <E> int count(Iterable<E> iterable) {
+  public static <E extends @Nullable Object> int count(Iterable<E> iterable) {
     /*
      * NOTE: Apparently, direct access to `iterable.spliterator().getExactSizeIfKnown()` doesn't
      * work (returns `-1`, whilst encapsulating the same `Spliterator` in a stream returns the
@@ -409,14 +415,15 @@ public final class Aggregations {
    * nullable objects.
    * </p>
    */
-  public static <K, V> Map.@Unmodifiable Entry<K, V> entry(@Nullable K key, @Nullable V value) {
+  public static <K extends @Nullable Object,
+      V extends @Nullable Object> Map.@Unmodifiable Entry<K, V> entry(K key, V value) {
     return new AbstractMap.SimpleImmutableEntry<>(key, value);
   }
 
   /**
    * Gets whether the iterable objects are equal.
    */
-  public static <E> boolean equals(Iterable<E> i1, Iterable<E> i2) {
+  public static <E extends @Nullable Object> boolean equals(Iterable<E> i1, Iterable<E> i2) {
     if (i1 == i2)
       return true;
 
@@ -432,7 +439,7 @@ public final class Aggregations {
   /**
    * Creates a set backed by a {@link HashSet}, safe for concurrent modifications.
    */
-  public static <E> Set<E> failSafeSet() {
+  public static <E extends @Nullable Object> Set<E> failSafeSet() {
     return failSafeSet(new HashSet<>());
   }
 
@@ -442,7 +449,7 @@ public final class Aggregations {
    * @param m
    *          Base map.
    */
-  public static <E> Set<E> failSafeSet(Map<E, Boolean> m) {
+  public static <E extends @Nullable Object> Set<E> failSafeSet(Map<E, Boolean> m) {
     return new FailSafeMapBasedSet<>(m);
   }
 
@@ -452,14 +459,14 @@ public final class Aggregations {
    * @param s
    *          Base set.
    */
-  public static <E> Set<E> failSafeSet(Set<E> s) {
+  public static <E extends @Nullable Object> Set<E> failSafeSet(Set<E> s) {
     return new FailSafeSet<>(s);
   }
 
   /**
    * Creates a set backed by a {@link WeakHashMap}, safe for concurrent modifications.
    */
-  public static <E> Set<E> failSafeWeakSet() {
+  public static <E extends @Nullable Object> Set<E> failSafeWeakSet() {
     return failSafeSet(new WeakHashMap<>());
   }
 
@@ -475,7 +482,8 @@ public final class Aggregations {
    * @param action
    *          The action to be performed for each element.
    */
-  public static <E> void forEach(List<E> target, ObjIntConsumer<E> action) {
+  public static <E extends @Nullable Object> void forEach(List<E> target,
+      ObjIntConsumer<E> action) {
     for (int i = 0, l = target.size(); i < l; i++) {
       action.accept(target.get(i), i);
     }
@@ -488,7 +496,8 @@ public final class Aggregations {
    * complexity) — use it for occasional calls only.
    * </p>
    */
-  public static <K, V> @Nullable K getKey(Map<K, V> map, @Nullable V value) {
+  public static <K extends @Nullable Object,
+      V extends @Nullable Object> @Nullable K getKey(Map<K, V> map, V value) {
     for (Map.Entry<K, V> entry : map.entrySet()) {
       if (Objects.equals(entry.getValue(), value))
         return entry.getKey();
@@ -500,7 +509,7 @@ public final class Aggregations {
    * Creates a new hash set populated with the collections.
    */
   @SafeVarargs
-  public static <E> HashSet<E> hashSet(Collection<E>... cc) {
+  public static <E extends @Nullable Object> HashSet<E> hashSet(Collection<E>... cc) {
     var ret = new HashSet<E>();
     for (var c : cc) {
       ret.addAll(c);
@@ -512,7 +521,7 @@ public final class Aggregations {
    * Creates a new hash set populated with the elements.
    */
   @SafeVarargs
-  public static <E> HashSet<E> hashSet(E... ee) {
+  public static <E extends @Nullable Object> HashSet<E> hashSet(E... ee) {
     var ret = new HashSet<E>(ee.length);
     Collections.addAll(ret, ee);
     return ret;
@@ -563,7 +572,7 @@ public final class Aggregations {
   /**
    * Creates a new mutable list.
    */
-  public static <E> XtList<E> list() {
+  public static <E extends @Nullable Object> XtList<E> list() {
     return new XtArrayList<>();
   }
 
@@ -571,7 +580,7 @@ public final class Aggregations {
    * Creates a new mutable list populated with the elements.
    */
   @SafeVarargs
-  public static <E> XtList<E> list(E... ee) {
+  public static <E extends @Nullable Object> XtList<E> list(E... ee) {
     var ret = new XtArrayList<E>();
     Collections.addAll(ret, ee);
     return ret;
@@ -580,14 +589,14 @@ public final class Aggregations {
   /**
    * Creates a new mutable list of the type.
    */
-  public static <E> XtList<E> listOf(Class<E> type) {
+  public static <E extends @Nullable Object> XtList<E> listOf(Class<E> type) {
     return list();
   }
 
   /**
    * Creates a new mutable map.
    */
-  public static <K, V> XtMap<K, V> map() {
+  public static <K extends @Nullable Object, V extends @Nullable Object> XtMap<K, V> map() {
     return new XtHashMap<>();
   }
 
@@ -595,7 +604,8 @@ public final class Aggregations {
    * Creates a new mutable map populated with the entries.
    */
   @SafeVarargs
-  public static <K, V> XtMap<K, V> map(Map.Entry<K, V>... ee) {
+  public static <K extends @Nullable Object,
+      V extends @Nullable Object> XtMap<K, V> map(Map.Entry<K, V>... ee) {
     var ret = new XtHashMap<K, V>();
     for (var e : ee) {
       ret.put(e.getKey(), e.getValue());
@@ -606,7 +616,8 @@ public final class Aggregations {
   /**
    * Creates a new mutable map of the types.
    */
-  public static <K, V> XtMap<K, V> mapOf(Class<K> keyType, Class<V> valueType) {
+  public static <K extends @Nullable Object, V extends @Nullable Object> XtMap<K, V> mapOf(
+      Class<K> keyType, Class<V> valueType) {
     return map();
   }
 
@@ -644,7 +655,7 @@ public final class Aggregations {
    * @return Element at {@code index}, or {@code null} if {@code target} is undefined or index is
    *         out of bounds.
    */
-  public static <E> @Nullable E peek(@Nullable List<E> target, int index) {
+  public static <E extends @Nullable Object> @Nullable E peek(@Nullable List<E> target, int index) {
     return target != null && index >= 0 && index < target.size() ? target.get(index) : null;
   }
 
@@ -665,7 +676,7 @@ public final class Aggregations {
    *          New element to be stored at {@code index}.
    * @return Element previously at {@code index}.
    */
-  public static <E> E place(List<E> target, int index, E e) {
+  public static <E extends @Nullable Object> E place(List<E> target, int index, E e) {
     if (index < 0) {
       size(target, target.size() - index, true);
       index = 0;
@@ -686,21 +697,21 @@ public final class Aggregations {
    * @return Removed element; {@code null}, if {@code target} is undefined or {@code index} is out
    *         of bounds.
    */
-  public static <E> @Nullable E poll(@Nullable List<E> target, int index) {
+  public static <E extends @Nullable Object> @Nullable E poll(@Nullable List<E> target, int index) {
     return target != null && index >= 0 && index < target.size() ? target.remove(index) : null;
   }
 
   /**
    * Creates a new mutable set.
    */
-  public static <E> XtSet<E> set() {
+  public static <E extends @Nullable Object> XtSet<E> set() {
     return new XtHashSet<>();
   }
 
   /**
    * Creates a new mutable set.
    */
-  public static <E> XtSet<E> set(Class<E> elementType) {
+  public static <E extends @Nullable Object> XtSet<E> set(Class<E> elementType) {
     return new XtHashSet<>();
   }
 
@@ -708,10 +719,43 @@ public final class Aggregations {
    * Creates a new mutable set populated with the elements.
    */
   @SafeVarargs
-  public static <E> XtSet<E> set(E... ee) {
+  public static <E extends @Nullable Object> XtSet<E> set(E... ee) {
     var ret = new XtHashSet<E>(ee.length);
     Collections.addAll(ret, ee);
     return ret;
+  }
+
+  /**
+   * Sets the {@link List#size() size} of the list, shrinking or expanding it with {@code null}
+   * elements.
+   *
+   * @param target
+   *          Target list.
+   * @param value
+   *          New size.
+   * @return {@code target}.
+   */
+  public static <E extends @Nullable Object> List<E> size(List<E> target, int value) {
+    return size(target, value, false);
+  }
+
+  /**
+   * Sets the {@link List#size() size} of the list, shrinking or expanding it with {@code null}
+   * elements.
+   *
+   * @param target
+   *          Target list.
+   * @param value
+   *          New size.
+   * @param lowerPadding
+   *          Whether, on shrink, existing elements are removed from the beginning rather than the
+   *          end of the list, and, on expansion, {@code null} elements are inserted at the
+   *          beginning rather than appended at the end of the list.
+   * @return {@code target}.
+   */
+  public static <E extends @Nullable Object> List<E> size(List<E> target, int value,
+      boolean lowerPadding) {
+    return size(target, value, lowerPadding, null);
   }
 
   /**
@@ -729,7 +773,7 @@ public final class Aggregations {
    *          Filling element.
    * @return {@code target}.
    */
-  public static <E> List<@Nullable E> size(List<@Nullable E> target, int value,
+  public static <E extends @Nullable Object> List<E> size(List<E> target, int value,
       boolean lowerPadding, @Nullable E element) {
     int size = target.size();
     while (value > size) {
@@ -752,41 +796,9 @@ public final class Aggregations {
   }
 
   /**
-   * Sets the {@link List#size() size} of the list, shrinking or expanding it with {@code null}
-   * elements.
-   *
-   * @param target
-   *          Target list.
-   * @param value
-   *          New size.
-   * @return {@code target}.
-   */
-  public static <E> List<E> size(List<E> target, int value) {
-    return size(target, value, false);
-  }
-
-  /**
-   * Sets the {@link List#size() size} of the list, shrinking or expanding it with {@code null}
-   * elements.
-   *
-   * @param target
-   *          Target list.
-   * @param value
-   *          New size.
-   * @param lowerPadding
-   *          Whether, on shrink, existing elements are removed from the beginning rather than the
-   *          end of the list, and, on expansion, {@code null} elements are inserted at the
-   *          beginning rather than appended at the end of the list.
-   * @return {@code target}.
-   */
-  public static <E> List<E> size(List<E> target, int value, boolean lowerPadding) {
-    return size(target, value, lowerPadding, null);
-  }
-
-  /**
    * Converts the iterator into a stream.
    */
-  public static <E> Stream<E> stream(Iterator<E> iterator) {
+  public static <E extends @Nullable Object> Stream<E> stream(Iterator<E> iterator) {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
   }
 
@@ -818,7 +830,7 @@ public final class Aggregations {
    *          Returns whether the search is complete and consequently the traversal must end;
    *          otherwise, the traversal continues.
    */
-  public static <T> boolean walk(Collection<? extends T> c,
+  public static <T extends @Nullable Object> boolean walk(Collection<? extends T> c,
       Function<T, @Nullable Collection<? extends T>> childrenGetter, Predicate<T> nodeEvaluator) {
     for (var e : c) {
       if (nodeEvaluator.test(e))
