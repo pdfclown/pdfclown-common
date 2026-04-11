@@ -212,7 +212,8 @@ This document describes how to set up your development environment to build and 
 </tr>
 </table>
 
-> [!TIP] By default, test logs (`%MODULE%/target/test-logs`) are filtered at WARN level; to adjust this threshold, use `log.level` system property, like so:
+> [!TIP]
+> By default, test logs (`%MODULE%/target/test-logs`) are filtered at WARN level; to adjust this threshold, use `log.level` system property, like so:
 >
 > ```shell
 > ./mvnw verify -Dlog.level=INFO
