@@ -17,6 +17,7 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Chars.UNDERSCORE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.asTopLevelType;
+import static org.pdfclown.common.util.Objects.init;
 import static org.pdfclown.common.util.Objects.sqn;
 import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.Strings.EMPTY;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.pdfclown.common.build.system.LogManager;
 import org.pdfclown.common.build.system.MavenPathResolver;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
@@ -130,6 +132,11 @@ public abstract class TestUnit implements Test {
         throw runtime("Source file corresponding to {} NOT FOUND (search paths: {}, {})", type,
             dir(ProjectDirId.TEST_TYPE_SOURCE), dir(ProjectDirId.MAIN_TYPE_SOURCE));
     }
+  }
+
+  static {
+    // Force log management loading as soon as any test unit starts!
+    init(LogManager.class);
   }
 
   private @LazyNonNull @Nullable Environment env;
