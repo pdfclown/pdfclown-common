@@ -14,7 +14,6 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.createDirectories;
-import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -110,23 +109,19 @@ public abstract class ContentAsserter<T> extends Asserter {
         } catch (AssertionError | FileNotFoundException | NoSuchFileException ex) {
           // Unrecoverable?
           if (built || !isUpdatable()) {
-            Path unexpectedActualFile = null;
-            if (exists(expectedFile)) {
-              unexpectedActualFile = config.getEnv().outputPath(
-                  cognateFile(expectedResourceFqn,
-                      "_UNEXPECTED" + extension(expectedResourceFqn, true), true));
-              try {
-                // Save unexpected actual content!
-                createDirectories(unexpectedActualFile.getParent());
-                writeContent(unexpectedActualFile, actualContent);
+            Path unexpectedActualFile = config.getEnv().outputPath(cognateFile(
+                expectedResourceFqn, "_UNEXPECTED" + extension(expectedResourceFqn, true), true));
+            try {
+              // Save unexpected actual content!
+              createDirectories(unexpectedActualFile.getParent());
+              writeContent(unexpectedActualFile, actualContent);
 
-                log.info("Assertion sample {}: unexpected actual content saved to {} "
-                    + "(expected content is at {})", textLiteral(expectedResourceFqn),
-                    textLiteral(unexpectedActualFile), textLiteral(expectedFile));
-              } catch (Exception ex1) {
-                log.warn("Assertion sample {}: unexpected actual content saving FAILED: {}",
-                    textLiteral(expectedResourceFqn), textLiteral(unexpectedActualFile), ex1);
-              }
+              log.info("Assertion sample {}: unexpected actual content saved to {} "
+                  + "(expected content is at {})", textLiteral(expectedResourceFqn),
+                  textLiteral(unexpectedActualFile), textLiteral(expectedFile));
+            } catch (Exception ex1) {
+              log.warn("Assertion sample {}: unexpected actual content saving FAILED: {}",
+                  textLiteral(expectedResourceFqn), textLiteral(unexpectedActualFile), ex1);
             }
 
             evalAssertionError(ex.getMessage(), expectedFile, unexpectedActualFile);

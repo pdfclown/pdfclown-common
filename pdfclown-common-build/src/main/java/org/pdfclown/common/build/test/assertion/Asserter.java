@@ -12,18 +12,18 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.nio.file.Files.exists;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Objects.requireNonNull;
-import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.pdfclown.common.build.internal.temp.util.Strings.abbreviateMultiline;
 import static org.pdfclown.common.build.system.LogManager.MARKER__VERBOSE;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Exceptions.failedIO;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.abbreviateMultiline;
 import static org.pdfclown.common.util.io.Files.copyDirectory;
 import static org.pdfclown.common.util.io.Files.resetDirectory;
 import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
@@ -214,8 +214,8 @@ public abstract class Asserter {
    * @throws AssertionError
    *           If {@code message} is not empty.
    */
-  protected void evalAssertionError(@Nullable String message, Path expectedFile,
-      @Nullable Path actualFile) throws AssertionError {
+  protected void evalAssertionError(@Nullable String message, Path expectedFile, Path actualFile)
+      throws AssertionError {
     if (isBlank(message))
       return;
 
@@ -260,8 +260,8 @@ public abstract class Asserter {
             To confirm the actual changes as expected, enter this command:
               mvn verify -pl {} -D{} -Dtest={}
             """,
-        expectedFile,
-        requireNonNullElse(actualFile, "N/A"),
+        expectedFile + (exists(expectedFile) ? EMPTY : " (MISSING)"),
+        actualFile + (exists(actualFile) ? EMPTY : " (MISSING)"),
         projectArtifactId, textLiteral(testName),
         projectArtifactId, SYSTEM_PROPERTY__FILES_UPDATE, textLiteral(testName));
 
