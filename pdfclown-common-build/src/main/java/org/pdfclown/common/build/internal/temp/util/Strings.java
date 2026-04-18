@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.build.internal.temp.util;
 
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isLowerCase;
@@ -32,6 +32,8 @@ import java.util.function.IntPredicate;
 import org.apache.commons.io.input.CharSequenceReader;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.Chars;
+import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.io.Texts;
 import org.pdfclown.common.util.io.Texts.TextCoords;
 
