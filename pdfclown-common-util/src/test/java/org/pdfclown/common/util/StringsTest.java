@@ -20,6 +20,7 @@ import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStrea
 import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 
+import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,18 +33,17 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-@SuppressWarnings({ "ArraysAsListWithZeroOrOneArgument", "ConcatenationWithEmptyString" })
 class StringsTest extends BaseTest {
   static Stream<Arguments> abbreviateMultiline() {
     return argumentsStream(
         cartesian(),
         // expected
         asList(
-            // value[0]: "1:  A multi-line text to test whether String. . ."
+            // value[0]: "1:  A multi-line text to test whether this m. . ."
             // -- maxLineCount[0]: 10
-            // ---- averageLineLength[0]: 80
+            // ---- maxLength[0]: 800
             // [1] -- marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
                 + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
                 + "4:  - Second: this element line will be a bit shorter\n"
@@ -54,7 +54,7 @@ class StringsTest extends BaseTest {
                 + "9:  - Seventh: this element line will be a bit shorter\n"
                 + "10: - Eighth: this element line will be a bit shorter",
             // [2] -- marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
                 + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
                 + "4:  - Second: this element line will be a bit shorter\n"
@@ -64,169 +64,131 @@ class StringsTest extends BaseTest {
                 + "8:  - Sixth: this element line will be particularly long in order to stick out beyond average line length\n"
                 + "9:  - Seventh: this element line will be a bit shorter\n"
                 + "10: - Eighth: this element line will be a bit shorter",
-            // ---- averageLineLength[1]: 40
+            // ---- maxLength[1]: 240
             // [3] -- marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
                 + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "4:  - Second: this element line will be a bit shorter\n"
-                + "5:  - Third: this element line will be particularly long in order to stick out beyond av...",
+                + "4:  - ...",
             // [4] -- marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
                 + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "4:  - Second: this element line will be a bit shorter\n"
-                + "5:  - Third: this element line will be particularly long in order to stick out beyond av[...]",
-            // ---- averageLineLength[2]: 20
+                + "4:  [...]",
+            // ---- maxLength[2]: 60
             // [5] -- marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particula...",
+            "1:  A multi-line text to test whether this method behave ...",
             // [6] -- marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particula[...]",
-            // ---- averageLineLength[3]: 0
+            "1:  A multi-line text to test whether this method behav[...]",
+            // ---- maxLength[3]: 0
             // [7] -- marker[0]: "..."
-            "...",
+            new Failure("ArgumentException",
+                "`maxLength` (0): MUST be at least equal to `marker.length` (3)"),
             // [8] -- marker[1]: "[...]"
-            "[...]",
+            new Failure("ArgumentException",
+                "`maxLength` (0): MUST be at least equal to `marker.length` (5)"),
             // -- maxLineCount[1]: 6
-            // ---- averageLineLength[0]: 80
+            // ---- maxLength[0]: 800
             // [9] -- marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
                 + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
                 + "4:  - Second: this element line will be a bit shorter\n"
                 + "5:  - Third: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "6:  - Forth: this element line will be a bit shorter...",
+                + "6:  - Forth: this element line will be a bit shorter\n"
+                + "...",
             // [10] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
                 + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
                 + "4:  - Second: this element line will be a bit shorter\n"
                 + "5:  - Third: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "6:  - Forth: this element line will be a bit shorter[...]",
-            // ---- averageLineLength[1]: 40
+                + "6:  - Forth: this element line will be a bit shorter\n"
+                + "[...]",
+            // ---- maxLength[1]: 240
             // [11] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond av...",
+                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
+                + "4:  - ...",
             // [12] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond av[...]",
-            // ---- averageLineLength[2]: 20
+                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
+                + "4:  [...]",
+            // ---- maxLength[2]: 60
             // [13] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list e...",
+            "1:  A multi-line text to test whether this method behave ...",
             // [14] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list e[...]",
-            // ---- averageLineLength[3]: 0
+            "1:  A multi-line text to test whether this method behav[...]",
+            // ---- maxLength[3]: 0
             // [15] - marker[0]: "..."
-            "...",
+            new Failure("ArgumentException",
+                "`maxLength` (0): MUST be at least equal to `marker.length` (3)"),
             // [16] - marker[1]: "[...]"
-            "[...]",
+            new Failure("ArgumentException",
+                "`maxLength` (0): MUST be at least equal to `marker.length` (5)"),
             // -- maxLineCount[2]: 3
-            // ---- averageLineLength[0]: 80
+            // ---- maxLength[0]: 800
             // [17] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond av...",
+                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
+                + "...",
             // [18] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
+            "1:  A multi-line text to test whether this method behave correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond av[...]",
-            // ---- averageLineLength[1]: 40
+                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
+                + "[...]",
+            // ---- maxLength[1]: 240
             // [19] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list e...",
+            "1:  A multi-line text to test whether this method behave correctly.\n"
+                + "2:  Let's add some list elements to beef up this sample:\n"
+                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
+                + "...",
             // [20] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list e[...]",
-            // ---- averageLineLength[2]: 20
+            "1:  A multi-line text to test whether this method behave correctly.\n"
+                + "2:  Let's add some list elements to beef up this sample:\n"
+                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
+                + "[...]",
+            // ---- maxLength[2]: 60
             // [21] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMult...",
+            "1:  A multi-line text to test whether this method behave ...",
             // [22] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMult[...]",
-            // ---- averageLineLength[3]: 0
+            "1:  A multi-line text to test whether this method behav[...]",
+            // ---- maxLength[3]: 0
             // [23] - marker[0]: "..."
-            "...",
+            new Failure("ArgumentException",
+                "`maxLength` (0): MUST be at least equal to `marker.length` (3)"),
             // [24] - marker[1]: "[...]"
-            "[...]",
+            new Failure("ArgumentException",
+                "`maxLength` (0): MUST be at least equal to `marker.length` (5)"),
             // -- maxLineCount[3]: 0
-            // ---- averageLineLength[0]: 80
+            // ---- maxLength[0]: 800
             // [25] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "4:  - Second: this element line will be a bit shorter\n"
-                + "5:  - Third: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "6:  - Forth: this element line will be a bit shorter\n"
-                + "7:  - Fifth: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "8:  - Sixth: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "9:  - Seventh: this element line will be a bit shorter\n"
-                + "10: - Eighth: this element line will be a bit shorter",
+            "...",
             // [26] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "4:  - Second: this element line will be a bit shorter\n"
-                + "5:  - Third: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "6:  - Forth: this element line will be a bit shorter\n"
-                + "7:  - Fifth: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "8:  - Sixth: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "9:  - Seventh: this element line will be a bit shorter\n"
-                + "10: - Eighth: this element line will be a bit shorter",
-            // ---- averageLineLength[1]: 40
+            "[...]",
+            // ---- maxLength[1]: 240
             // [27] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "4:  - Second: this element line will be a bit shorter\n"
-                + "5:  - Third: this element line will be particularly long in order to stick out beyond av...",
+            "...",
             // [28] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "4:  - Second: this element line will be a bit shorter\n"
-                + "5:  - Third: this element line will be particularly long in order to stick out beyond av[...]",
-            // ---- averageLineLength[2]: 20
+            "[...]",
+            // ---- maxLength[2]: 60
             // [29] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particula...",
+            "...",
             // [30] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particula[...]",
-            // ---- averageLineLength[3]: 0
+            "[...]",
+            // ---- maxLength[3]: 0
             // [31] - marker[0]: "..."
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "4:  - Second: this element line will be a bit shorter\n"
-                + "5:  - Third: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "6:  - Forth: this element line will be a bit shorter\n"
-                + "7:  - Fifth: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "8:  - Sixth: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "9:  - Seventh: this element line will be a bit shorter\n"
-                + "10: - Eighth: this element line will be a bit shorter",
+            new Failure("ArgumentException",
+                "`maxLength` (0): MUST be at least equal to `marker.length` (3)"),
             // [32] - marker[1]: "[...]"
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave correctly.\n"
-                + "2:  Let's add some list elements to beef up this sample:\n"
-                + "3:  - First: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "4:  - Second: this element line will be a bit shorter\n"
-                + "5:  - Third: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "6:  - Forth: this element line will be a bit shorter\n"
-                + "7:  - Fifth: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "8:  - Sixth: this element line will be particularly long in order to stick out beyond average line length\n"
-                + "9:  - Seventh: this element line will be a bit shorter\n"
-                + "10: - Eighth: this element line will be a bit shorter"),
+            new Failure("ArgumentException",
+                "`maxLength` (0): MUST be at least equal to `marker.length` (5)")),
         // value
-        asList(
-            "1:  A multi-line text to test whether Strings.abbreviateMultiline(..) method behave "
+        List.of(
+            "1:  A multi-line text to test whether this method behave "
                 + "correctly.\n"
                 + "2:  Let's add some list elements to beef up this sample:\n"
                 + "3:  - First: this element line will be particularly long in order to stick out "
@@ -247,11 +209,11 @@ class StringsTest extends BaseTest {
             6,
             3,
             0),
-        // averageLineLength
+        // maxLength
         asList(
-            80,
-            40,
-            20,
+            800,
+            240,
+            60,
             0),
         // marker
         asList(
@@ -325,20 +287,12 @@ class StringsTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
-  void abbreviateMultiline(Expected<String> expected, String value, int maxLineCount,
-      int averageLineLength, String marker) {
+  void abbreviateMultiline(Expected<String> expected, String value, int maxLineCount, int maxLength,
+      String marker) {
     assertParameterizedOf(
-        () -> Strings.abbreviateMultiline(value, maxLineCount, averageLineLength, marker),
+        () -> Strings.abbreviateMultiline(value, maxLineCount, maxLength, marker),
         expected,
-        () -> expectedGeneration(value, maxLineCount, averageLineLength, marker));
-
-    // Check default ellipsis ("...") overload!
-    if (marker.equals("...")) {
-      assertParameterizedOf(
-          () -> Strings.abbreviateMultiline(value, maxLineCount, averageLineLength),
-          expected,
-          null);
-    }
+        () -> expectedGeneration(value, maxLineCount, maxLength, marker));
   }
 
   @ParameterizedTest

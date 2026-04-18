@@ -15,13 +15,13 @@ package org.pdfclown.common.util;
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isLowerCase;
 import static java.lang.Character.isUpperCase;
-import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.pdfclown.common.util.Chars.CR;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.NBSP;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Objects.found;
 import static org.pdfclown.common.util.Objects.opt;
@@ -89,56 +89,61 @@ public final class Strings {
   /**
    * Ensures the string doesn't exceed the limits; otherwise, replaces the exceeding substring with
    * a standard ellipsis.
+   * <p>
+   * The string is clipped by {@code maxLineCount}, then by {@code maxLength}.
+   * </p>
    *
    * @param maxLineCount
    *          Maximum number of lines.
-   * @param averageLineLength
-   *          Average line length (used along with {@code maxLineCount} to calculate the overall
-   *          maximum string length).
+   * @param maxLength
+   *          Maximum length (ellipsis inclusive).
    * @see StringUtils#abbreviate(String, int)
    */
-  public static String abbreviateMultiline(String s, int maxLineCount, int averageLineLength) {
-    return abbreviateMultiline(s, maxLineCount, averageLineLength, ELLIPSIS);
+  public static String abbreviateMultiline(String s, int maxLineCount, int maxLength) {
+    return abbreviateMultiline(s, maxLineCount, maxLength, ELLIPSIS);
   }
 
   /**
    * Ensures the string doesn't exceed the limits; otherwise, replaces the exceeding substring with
    * a marker.
    * <p>
-   * The string is clipped by {@code maxLineCount}, then by overall string length.
+   * The string is clipped by {@code maxLineCount}, then by {@code maxLength}.
    * </p>
    *
    * @param maxLineCount
    *          Maximum number of lines.
-   * @param averageLineLength
-   *          Average line length (used along with {@code maxLineCount} to calculate the overall
-   *          maximum string length).
+   * @param maxLength
+   *          Maximum length ({@code marker} inclusive).
    * @param marker
    *          Replacement marker.
    * @see StringUtils#abbreviate(String, String, int)
    */
-  public static String abbreviateMultiline(String s, int maxLineCount, int averageLineLength,
+  public static String abbreviateMultiline(String s, int maxLineCount, int maxLength,
       String marker) {
-    if (maxLineCount <= 0 && averageLineLength <= 0)
-      return s;
+    if (maxLineCount < 0) {
+      maxLineCount = 0;
+    }
+    if (maxLength < marker.length())
+      throw wrongArg("maxLength", maxLength, "MUST be at least equal to `marker.length` ({})",
+          marker.length());
 
     String ret = s;
     {
       int pos = -1;
-      int lineCount = 1;
-      while ((pos = ret.indexOf('\n', pos + 1)) >= 0) {
-        if (lineCount == maxLineCount) {
-          ret = ret.substring(0, pos);
-          break;
+      if (maxLineCount > 0) {
+        int lineCount = 1;
+        while ((pos = ret.indexOf(LF, pos + 1)) >= 0) {
+          if (lineCount == maxLineCount) {
+            break;
+          }
+
+          lineCount++;
         }
-
-        lineCount++;
+        pos = pos >= 0 ? pos + 1 : ret.length();
+      } else {
+        pos = 0;
       }
-
-      int maxLength = max(maxLineCount, lineCount) * averageLineLength;
-      if (ret.length() > maxLength) {
-        ret = ret.substring(0, maxLength);
-      }
+      ret = ret.substring(0, min(pos, maxLength - marker.length()));
     }
     //noinspection StringEquality
     if (ret != s) {

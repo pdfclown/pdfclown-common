@@ -273,7 +273,7 @@ public abstract class Asserter {
         """
             %s
             (see pdfclown/assert.log for further information)
-            %s""".formatted(abbreviateMultiline(message, 5, 100), hint));
+            %s""".formatted(abbreviateMultiline(message, 5, 500), hint));
   }
 
   /**
