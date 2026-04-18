@@ -403,8 +403,8 @@
         value="Member name ''{0}'' must match pattern ''{1}''."/>
     </module>
     <module name="ParameterName">
-      <!-- [CUSTOM] Allow any non-capitalized name, with trailing underscore for special cases
-      (e.g., reserved keyword conflict like "extends"). -->
+      <!-- [CUSTOM] Allow any non-capitalized name, with trailing underscore in case of reserved
+      keyword conflict. -->
       <property
         name="format"
         value="^[a-z][a-zA-Z0-9]*[_]?$"/>
@@ -417,10 +417,10 @@
     </module>
 
     <module name="LambdaParameterName">
-      <!-- [CUSTOM] Allow any non-capitalized, possibly underscore-terminated name. -->
+      <!-- [CUSTOM] Allow any non-capitalized, possibly dollar-prefixed name. -->
       <property
         name="format"
-        value="^[a-z$][a-zA-Z0-9$]*[_]?$"/>
+        value="^[a-z$][a-zA-Z0-9$]*$"/>
 <!--
       <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>
 -->
@@ -437,8 +437,8 @@
         value="Catch parameter name ''{0}'' must match pattern ''{1}''."/>
     </module>
     <module name="LocalVariableName">
-      <!-- [CUSTOM] Allow any non-capitalized name, with trailing underscore for special cases
-      (e.g., reserved keyword conflict like "extends"). -->
+      <!-- [CUSTOM] Allow any non-capitalized name, with trailing underscore in case of reserved
+      keyword conflict. -->
       <property
         name="format"
         value="^[a-z][a-zA-Z0-9]*[_]?$"/>
@@ -458,14 +458,14 @@
         value="Pattern variable name ''{0}'' must match pattern ''{1}''."/>
     </module>
     <module name="ClassTypeParameterName">
-      <!-- [CUSTOM] Allow type parameter names like 'K' or 'TMyType'. -->
+      <!-- [CUSTOM] Allow only single capital letter (e.g., 'K') or T prefix (e.g., 'TMyType').
+      -->
       <property
         name="format"
         value="(^[A-Z][0-9]?)$|(^T[A-Z][a-zA-Z0-9]+$)"/>
 <!--
       <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
 -->
-
       <message
         key="name.invalidPattern"
         value="Class type name ''{0}'' must match pattern ''{1}''."/>
