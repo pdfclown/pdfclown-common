@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
@@ -534,7 +535,7 @@ public class ModelMapper<T> {
       if (objSelector == null || objSelector.isSelected("entries", level)) {
         var jsonEntries = new JsonObject(keyComparator);
         for (var entry : map.entrySet()) {
-          jsonEntries.put(entry.getKey().toString(),
+          jsonEntries.put(Objects.toString(entry.getKey()),
               mapValue(entry.getValue(), selectors, visitedObjs, innerLevel));
         }
         ret.put("entries", jsonEntries);
