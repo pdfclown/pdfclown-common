@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -291,6 +292,27 @@ public class ResourceNamesTest extends BaseTest {
             fs.getPath("c:\\absolute")));
   }
 
+  static Stream<Arguments> fromTypeName() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] typeName[0]: null
+            new Failure("NullPointerException", "`typeName`"),
+            // [2] typeName[1]: ""
+            "/",
+            // [3] typeName[2]: "org.pdfclown.common.build.util.io.ResourceNames"
+            "/org/pdfclown/common/build/util/io/ResourceNames",
+            // [4] typeName[3]: "org.pdfclown.common.build.util.io"
+            "/org/pdfclown/common/build/util/io"),
+        // typeName
+        asList(
+            null,
+            EMPTY,
+            ResourceNames.class.getName(),
+            ResourceNames.class.getPackageName()));
+  }
+
   static Stream<Arguments> isAbs() {
     return argumentsStream(
         cartesian(),
@@ -314,33 +336,6 @@ public class ResourceNamesTest extends BaseTest {
             false,
             // [9] name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
             false),
-        // name
-        NAMES);
-  }
-
-  static Stream<Arguments> isDir() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] name[0]: "/"
-            true,
-            // [2] name[1]: "\\"
-            true,
-            // [3] name[2]: "/my/absolute/resource"
-            false,
-            // [4] name[3]: "/my/absolute/resource/"
-            true,
-            // [5] name[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            true,
-            // [6] name[5]: ""
-            true,
-            // [7] name[6]: "my/relative/resource"
-            false,
-            // [8] name[7]: "my/relative/resource/"
-            true,
-            // [9] name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
-            true),
         // name
         NAMES);
   }
@@ -747,6 +742,33 @@ public class ResourceNamesTest extends BaseTest {
             ResourceNames.class.getPackageName()));
   }
 
+  static Stream<Arguments> toTypeName() {
+    return argumentsStream(
+        cartesian(),
+        // expected
+        asList(
+            // [1] name[0]: "/"
+            "",
+            // [2] name[1]: "\\"
+            "",
+            // [3] name[2]: "/my/absolute/resource"
+            "my.absolute.resource",
+            // [4] name[3]: "/my/absolute/resource/"
+            "my.absolute.resource.",
+            // [5] name[4]: "//my/\\\\other\\/\\deep//absolute\\resource/"
+            "my.other.deep.absolute.resource.",
+            // [6] name[5]: ""
+            "",
+            // [7] name[6]: "my/relative/resource"
+            "my.relative.resource",
+            // [8] name[7]: "my/relative/resource/"
+            "my.relative.resource.",
+            // [9] name[8]: "my/\\\\other\\/\\deep//relative\\resource/"
+            "my.other.deep.relative.resource."),
+        // name
+        NAMES);
+  }
+
   @ParameterizedTest
   @MethodSource
   void abs(Expected<String> expected, String name) {
@@ -787,6 +809,15 @@ public class ResourceNamesTest extends BaseTest {
 
   @ParameterizedTest
   @MethodSource
+  void fromTypeName(Expected<String> expected, String typeName) {
+    assertParameterizedOf(
+        () -> ResourceNames.fromTypeName(typeName),
+        expected,
+        () -> expectedGeneration(typeName));
+  }
+
+  @ParameterizedTest
+  @MethodSource
   void isAbs(Expected<Boolean> expected, String name) {
     assertParameterizedOf(
         () -> ResourceNames.isAbs(name),
@@ -794,15 +825,7 @@ public class ResourceNamesTest extends BaseTest {
         () -> expectedGeneration(name));
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void isDir(Expected<Boolean> expected, String name) {
-    assertParameterizedOf(
-        () -> ResourceNames.isDir(name),
-        expected,
-        () -> expectedGeneration(name));
-  }
-
+  @Test
   void name_0() {
     assertParameterized(ResourceNames.name(), Expected.success(EMPTY), null);
   }
@@ -861,5 +884,14 @@ public class ResourceNamesTest extends BaseTest {
         () -> ResourceNames.relBased(name, base),
         expected,
         () -> expectedGeneration(name, base));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void toTypeName(Expected<String> expected, String name) {
+    assertParameterizedOf(
+        () -> ResourceNames.toTypeName(name),
+        expected,
+        () -> expectedGeneration(name));
   }
 }

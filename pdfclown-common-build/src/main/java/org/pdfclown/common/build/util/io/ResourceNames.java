@@ -29,16 +29,16 @@ import org.jspecify.annotations.Nullable;
  * Resource name utilities.
  * <p>
  * Within this class, <b>resource names</b> follow the Java resource name syntax: they are
- * <i>concatenations of slash-separated segments</i>. Trailing slash means directory (otherwise,
- * file); leading slash means absolute name (otherwise, relative) — NOTE: the
+ * <i>concatenations of slash-separated segments</i>. A resource name without leading slash is
+ * <b>relative</b>, whilst with it is <b>absolute</b> — NOTE: the
  * {@linkplain Class#getResource(String) official Java documentation} is misleading, as it states
  * that an absolute resource name "is the portion of the name following the [leading slash]": such
  * definition doesn't make sense, as the lack of leading slash causes the name to be prefixed by a
  * package name (typical behavior of <i>relative</i> names, NOT absolute ones!). The documentation
  * of {@code Class.resolveName(String)} itself falls in contradiction when it says "Add a package
  * name prefix if the name is not absolute. Remove leading [slash] if name is absolute". What the
- * original Java author was evidently intending with the expression "absolute resource name" is the
- * <i>full resource name</i>, NOT the absolute one.
+ * original Java author was evidently intending with the initial expression "absolute resource name"
+ * is the <i>full resource name</i>, NOT the absolute one.
  * </p>
  * <p>
  * All the methods within this class return normalized resource names.
@@ -119,7 +119,30 @@ public final class ResourceNames {
    * Gets the absolute resource name of an object.
    */
   public static String fromType(Object obj) {
-    return abs(fqn(requireNonNull(obj, "`obj`")).replace(DOT, SLASH));
+    return fromTypeName(fqn(requireNonNull(obj, "`obj`")));
+  }
+
+  /**
+   * Gets the absolute resource name corresponding to a type name.
+   * <p>
+   * Dot separators are replaced by slashes.
+   * </p>
+   */
+  public static String fromTypeName(String typeName) {
+    return abs(requireNonNull(typeName, "`typeName`").replace(DOT, SLASH));
+  }
+
+  /**
+   * Gets the type name corresponding to a resource name.
+   * <p>
+   * Slash separators are replaced by dots, leading slash is removed.
+   * </p>
+   *
+   * @param name
+   *          Resource name.
+   */
+  public static String toTypeName(String name) {
+    return rel(name).replace(SLASH, DOT);
   }
 
   /**
@@ -140,12 +163,9 @@ public final class ResourceNames {
    */
   public static String relBased(String name, Object base) {
     //noinspection DataFlowIssue : @PolyNull
-    return isAbs(name = normal(name))
-        ? name
-        : name((base instanceof String s
-            ? rel(s)
-            : asType(requireNonNull(base, "`base`")).getPackageName()).replace(DOT, SLASH),
-            name);
+    return isAbs(name = normal(name)) ? name
+        : name(rel(fromTypeName(requireNonNull(base, "`base`") instanceof String s ? s
+            : asType(base).getPackageName())), name);
   }
 
   /**
@@ -153,22 +173,9 @@ public final class ResourceNames {
    *
    * @implNote For the sake of consistency with the other utilities in this class, which enforce
    *           name normalization, this method accepts also back-slash as separator.
-   * @see #isDir(CharSequence)
    */
   public static boolean isAbs(CharSequence name) {
-    char c = name.length() > 0 ? name.charAt(0) : 0;
-    return c == SLASH || c == BACKSLASH;
-  }
-
-  /**
-   * Gets whether the name is a directory (that is, suffixed by slash or empty (relative root)).
-   *
-   * @implNote For the sake of consistency with the other utilities in this class, which enforce
-   *           name normalization, this method accepts also back-slash as separator.
-   * @see #isAbs(CharSequence)
-   */
-  public static boolean isDir(CharSequence name) {
-    char c = name.length() > 0 ? name.charAt(name.length() - 1) : SLASH;
+    char c = !name.isEmpty() ? name.charAt(0) : 0;
     return c == SLASH || c == BACKSLASH;
   }
 
@@ -202,23 +209,24 @@ public final class ResourceNames {
           }
 
           if (i > 0) {
-            boolean partAbs = isAbs(part);
-            if (isDir(b) == partAbs) {
+            var partBeginsWithSeparator = isAbs(part);
+            var mainIsEmptyOrEndsWithSeparator = b.isEmpty() || b.charAt(b.length() - 1) == SLASH;
+            if (mainIsEmptyOrEndsWithSeparator == partBeginsWithSeparator) {
               /*
-               * Merging contiguous separators, or collapsing leading intermediate separator on
-               * relative root?
+               * Merging contiguous separators (or collapsing leading intermediate separator on
+               * relative root)?
                *
-               * Example (merge case): {"part0/", "/part1"} --> "part0/part1"
+               * Example (merge case): ["part0/" "/part1"] --> "part0/part1"
                *
-               * Example (collapse case): {"", "/part1"} --> "part1"
+               * Example (collapse case): ["" "/part1"] --> "part1"
                */
-              if (partAbs) {
+              if (partBeginsWithSeparator) {
                 part = rel(part);
               }
               /*
-               * Missing separator?
+               * Missing separator.
                *
-               * Example: {"part0", "part1"} --> "part0/part1"
+               * Example: ["part0" "part1"] --> "part0/part1"
                */
               else {
                 b.append(SLASH);
@@ -320,7 +328,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the path of a resource.
+   * Gets the path corresponding to a resource name.
    * <p>
    * {@code name} is resolved according to {@code baseDir}; whether {@code name} is relative or
    * absolute makes no difference.
