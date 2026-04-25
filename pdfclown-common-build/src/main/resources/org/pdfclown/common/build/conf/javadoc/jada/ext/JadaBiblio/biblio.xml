@@ -109,10 +109,10 @@
   </spec>
   <spec
     id="MIME"
-    name="RFC 2045"
+    name="RFC 2046"
     year="1996"
-    title="Multipurpose Internet Mail Extensions (MIME), Part One: Format of Internet Message Bodies"
-    src="http://www.ietf.org/rfc/rfc2045.txt">
+    title="Multipurpose Internet Mail Extensions (MIME), Part Two: Media Types"
+    src="https://www.rfc-editor.org/rfc/rfc2046">
     <see url="https://en.wikipedia.org/wiki/Media_type"/>
   </spec>
   <spec
@@ -135,7 +135,7 @@
     title="Uniform Resource Identifier (URI): Generic Syntax"
     author="Berners-Lee, Fielding, Masinter"
     publisher="IETF"
-    src="https://www.rfc-editor.org/rfc/rfc3986.html"/>
+    src="https://www.rfc-editor.org/rfc/rfc3986"/>
   <spec
     id="W3C-EBNF"
     year="2008"
