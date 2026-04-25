@@ -1,3 +1,85 @@
+## v0.7.0 (2026-04-25)
+
+### BREAKING CHANGE
+
+- `ResourceNames::isDir` removed
+- `averageLineLength` parameter replaced by `maxLength`;
+`marker` parameter length included in `maxLength`
+- `Objects` utilities `tryGet` and `tryGetElse` moved to
+`Functions`
+- `Objects` utilities redefined:
+- `objDo` moved to `Functions::let`
+- `objElseGet` renamed as `elseGet`
+- `objTo` moved to `Functions::to`
+- `objToElse` moved to `Functions::toElse`
+- `objToElseGet` moved to `Functions::toElseGet`
+- `objToElseGetNonNull` moved to `Functions::toElseGetNonNull`
+- `quiet` renamed as `quietly`
+- `Fluent` removed
+- `Objects::objCast` renamed as `tryCast`
+- `ProjectPathResolver`, `MavenPathResolver`
+parameterless constructors removed
+- `Strings::indexOfElse` and `Strings::lastIndexOfElse`
+changed `defaultIndex` parameter semantics (`Strings::STR_LENGTH`,
+instead of out-of-bound value, to return string length);
+`Strings::strToInteger` removed
+- `IndentPrintWriter` removed (use `IndentWriter`
+instead)
+- `TestUnit` API redefined (`getTestName` renamed as
+`getTestLabel`; `getTestMethodName` renamed as `getTestName`)
+- `Objects` API redefined (`any` renamed as `anyThat` to
+emphasize functional use; `Locale`-related methods removed (`locale`,
+`localeNorm`) in favor of Apache Commons Lang3 equivalents
+(`LocaleUtils::toLocale`); `superTypes` return type changed to
+`Stream<Class>` to harmonize with other type hierarchy-related methods)
+
+### Feat
+
+- **build**: improve `ResourceNames`
+- **util**: change `Strings::abbreviateMultiline` semantics
+- **util**: move functional utilities to `Functions`/2
+- **util**: move functional utilities to `Functions`
+- **util**: remove `Fluent`
+- **util**: improve `Objects`
+- **build**: improve `TestUnit`
+- **util**: improve `Strings`
+- **util**: improve `Objects`
+- **util**: improve `IndentWriter`
+- **util**: consolidate indentation-capable writers
+- **build**: improve `TestUnit`
+- **util**: improve `Objects`
+
+### Fix
+
+- **deps**: bump org.jsoup:jsoup from 1.22.1 to 1.22.2 (#95)
+- **deps**: bump commons-io:commons-io from 2.21.0 to 2.22.0 (#94)
+- **build**: update Jada bibliography
+- **deps**: bump maven.version from 3.9.14 to 3.9.15 (#92)
+- **build**: improve `Asserter` hierarchy on assertion error
+- **build**: fix `ModelMapper` on null key
+- **util**: fix `Strings::abbreviateMultiline`
+- **build**: improve `checkstyle-checks`
+- **build**: initialize `LogManager` on test startup
+- **util**: improve aggregation nullness declarations
+- **deps**: bump io.github.git-commit-id:git-commit-id-maven-plugin from 9.0.2 to 10.0.0 (#91)
+- **deps**: bump groovy.version from 5.0.4 to 5.0.5 (#90)
+- **deps**: bump net.bytebuddy:byte-buddy from 1.18.7 to 1.18.8 (#89)
+- **util**: improve `Enums`
+- **deps**: bump org.apache.logging.log4j:log4j-bom from 2.25.3 to 2.25.4 (#88)
+- **build**: fix `Assertions.ExpectedGeneration`
+- clean up nullness annotations
+- **deps**: bump com.diffplug.spotless:spotless-maven-plugin from 3.3.0 to 3.4.0 (#87)
+- **deps**: bump maven.version from 3.9.12 to 3.9.14 (#85)
+- **deps**: bump org.apache.maven.plugins:maven-shade-plugin from 3.6.1 to 3.6.2 (#84)
+- **deps**: bump net.bytebuddy:byte-buddy from 1.18.5 to 1.18.7 (#83)
+- **deps**: bump com.diffplug.spotless:spotless-maven-plugin from 3.2.1 to 3.3.0 (#82)
+
+### Refactor
+
+- normalize the codebase
+- specify `ExpectedGeneration` type parameter
+- **build**: remove temporary pdfclown-common-util code
+
 ## v0.6.0 (2026-03-03)
 
 ### BREAKING CHANGE
