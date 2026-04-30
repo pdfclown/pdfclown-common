@@ -12,15 +12,17 @@
  */
 package org.pdfclown.common.build.test;
 
+import static org.pdfclown.common.util.Objects.anyThat;
+
 import java.lang.StackWalker.StackFrame;
-import java.lang.reflect.Method;
+import java.lang.reflect.AccessibleObject;
 import java.util.Optional;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.pdfclown.common.util.reflect.Reflects;
+import org.pdfclown.common.build.internal.temp.util.reflect.Reflects;
 
 /**
  * Test utilities.
@@ -39,14 +41,14 @@ public final class Tests {
    * </p>
    */
   public static Optional<StackFrame> testFrame() {
-    return Reflects.stackFrame($ -> {
-      Method m = Reflects.method($);
-      return m.isAnnotationPresent(Test.class)
-          || m.isAnnotationPresent(RepeatedTest.class)
-          || m.isAnnotationPresent(ParameterizedTest.class)
-          || m.isAnnotationPresent(TestFactory.class)
-          || m.isAnnotationPresent(TestTemplate.class);
-    });
+    return Reflects.stackFrame($ -> Reflects.method($)
+        .map($$ -> anyThat($$, AccessibleObject::isAnnotationPresent,
+            Test.class,
+            RepeatedTest.class,
+            ParameterizedTest.class,
+            TestFactory.class,
+            TestTemplate.class))
+        .orElse(false));
   }
 
   private Tests() {
