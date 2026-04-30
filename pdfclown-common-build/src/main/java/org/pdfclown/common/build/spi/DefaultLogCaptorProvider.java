@@ -12,8 +12,8 @@
  */
 package org.pdfclown.common.build.spi;
 
-import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Objects.sqnd;
+import static org.pdfclown.common.util.function.Functions.to;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +75,7 @@ public class DefaultLogCaptorProvider implements LogCaptorProvider {
     }
 
     private static org.apache.logging.log4j.@Nullable Level nativeLevel(@Nullable Level level) {
-      return objTo(level, $ -> org.apache.logging.log4j.Level.valueOf($.name()));
+      return to(level, $ -> org.apache.logging.log4j.Level.valueOf($.name()));
     }
 
     private final CaptureAppender appender = new CaptureAppender();

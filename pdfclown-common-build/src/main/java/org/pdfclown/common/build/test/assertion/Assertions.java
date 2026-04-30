@@ -54,14 +54,14 @@ import static org.pdfclown.common.util.Objects.found;
 import static org.pdfclown.common.util.Objects.fqnd;
 import static org.pdfclown.common.util.Objects.literal;
 import static org.pdfclown.common.util.Objects.nonNull;
-import static org.pdfclown.common.util.Objects.objTo;
-import static org.pdfclown.common.util.Objects.objToElseGet;
 import static org.pdfclown.common.util.Objects.sqn;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.ELLIPSIS__CHICAGO;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.NULL;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.function.Functions.to;
+import static org.pdfclown.common.util.function.Functions.toElseGet;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.util.net.Uris.uri;
 import static org.pdfclown.common.util.reflect.Reflects.methodFqn;
@@ -121,7 +121,7 @@ import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.Immutable;
 import org.pdfclown.common.util.annot.LazyNonNull;
 import org.pdfclown.common.util.annot.Unmodifiable;
-import org.pdfclown.common.util.io.IndentPrintWriter;
+import org.pdfclown.common.util.io.IndentWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -380,24 +380,28 @@ public final class Assertions {
 
         @Override
         protected void generateExpectedComment(ExpectedGeneration<?> generation) {
-          for (int i = 0, last = mods.length - 1; i <= last; i++) {
-            if (getIndex() % mods[i] == 0) {
-              // Main level separator.
-              if (i == 0 && generation.args.length > 1 && getIndex() > 0) {
-                out().println("//");
-              }
+          try {
+            for (int i = 0, last = mods.length - 1; i <= last; i++) {
+              if (getIndex() % mods[i] == 0) {
+                // Main level separator.
+                if (i == 0 && generation.args.length > 1 && getIndex() > 0) {
+                  out().writeln("//");
+                }
 
-              // Level title.
-              var indexLabel = i == last ? "[" + (getIndex() + 1) + "] " : EMPTY;
-              var argIndent = max(0, 2 * i - indexLabel.length());
-              out().printf("// %s%s%s%s[%s]: %s\n",
-                  indexLabel,
-                  repeat(HYPHEN, argIndent),
-                  argIndent == 0 ? EMPTY : SPACE,
-                  getParamName(i),
-                  (i == 0 ? getIndex() : getIndex() % mods[i - 1]) / mods[i],
-                  formatArgComment(generation.args[i], generation));
+                // Level title.
+                var indexLabel = i == last ? "[" + (getIndex() + 1) + "] " : EMPTY;
+                var argIndent = max(0, 2 * i - indexLabel.length());
+                out().writeln("// %s%s%s%s[%s]: %s".formatted(
+                    indexLabel,
+                    repeat(HYPHEN, argIndent),
+                    argIndent == 0 ? EMPTY : SPACE,
+                    getParamName(i),
+                    (i == 0 ? getIndex() : getIndex() % mods[i - 1]) / mods[i],
+                    formatArgComment(generation.args[i], generation)));
+              }
             }
+          } catch (IOException ex) {
+            throw runtime(ex);
           }
         }
       }
@@ -473,16 +477,20 @@ public final class Assertions {
 
         @Override
         protected void generateExpectedComment(ExpectedGeneration<?> generation) {
-          out().printf("// [%s] ", getIndex() + 1);
-          for (int i = 0; i < generation.args.length; i++) {
-            if (i > 0) {
-              out().append("; ");
-            }
+          try {
+            out().write("// [%s] ".formatted(getIndex() + 1));
+            for (int i = 0; i < generation.args.length; i++) {
+              if (i > 0) {
+                out().append("; ");
+              }
 
-            out().printf("%s[%s]: %s", getParamName(i), getIndex(),
-                formatArgComment(generation.args[i], generation));
+              out().write("%s[%s]: %s".formatted(getParamName(i), getIndex(),
+                  formatArgComment(generation.args[i], generation)));
+            }
+            out().append("\n");
+          } catch (IOException e) {
+            throw new RuntimeException(e);
           }
-          out().append("\n");
         }
       }
 
@@ -1091,7 +1099,7 @@ public final class Assertions {
      * {@linkplain ExpectedGeneration#getOut() external}) the generated expected results are written
      * to.
      */
-    private @Nullable IndentPrintWriter out;
+    private @Nullable IndentWriter out;
     private String @Nullable [] paramNames;
     private @Nullable String testMethodFqn;
 
@@ -1213,7 +1221,11 @@ public final class Assertions {
       }
 
       // Add the generated source code to output!
-      out().append(expectedSourceCode);
+      try {
+        out().append(expectedSourceCode);
+      } catch (IOException ex) {
+        throw runtime(ex);
+      }
     }
 
     /**
@@ -1228,7 +1240,7 @@ public final class Assertions {
     /**
      * Output stream for generated expected results.
      */
-    protected IndentPrintWriter out() {
+    protected IndentWriter out() {
       assert out != null;
 
       return out;
@@ -1239,7 +1251,7 @@ public final class Assertions {
         paramNames = generation.paramNames;
       }
 
-      out = IndentPrintWriter.of(generation.out != null
+      out = IndentWriter.of(generation.out != null
           // Output redirection to arbitrary stream.
           ? generation.out
           // Output to update test unit's source code file.
@@ -1307,15 +1319,20 @@ public final class Assertions {
         if (editor != null && editor.tryImport(asListMethodRef, true)) {
           asListMethodRef = METHOD_NAME__AS_LIST;
         }
-        out()
-            .append("," + LF)
-            .setLevel(argumentsStreamCall != null
-                ? (argumentsStreamCall.getArguments().get(0).getBegin().orElseThrow().column - 1)
-                    / out().getIndent().getWidth()
-                : 0)
-            .append("// expected" + LF)
-            .append(asListMethodRef).append("(" + LF)
-            .indent();
+
+        try {
+          out()
+              .append("," + LF)
+              .setLevel(argumentsStreamCall != null
+                  ? (argumentsStreamCall.getArguments().get(0).getBegin().orElseThrow().column - 1)
+                      / out().getIndent().getWidth()
+                  : 0)
+              .append("// expected" + LF)
+              .append(asListMethodRef).append("(" + LF)
+              .indent();
+        } catch (IOException ex) {
+          throw runtime(ex);
+        }
       }
       assert paramNames != null;
 
@@ -1325,7 +1342,7 @@ public final class Assertions {
             Arrays.toString(paramNames));
     }
 
-    private void end() {
+    private void end() throws IOException {
       assert out != null;
 
       String target;
@@ -1353,12 +1370,16 @@ public final class Assertions {
     }
 
     private void endExpected() {
-      if (index == getCount() - 1) {
-        out().print(S + ROUND_BRACKET_CLOSE);
+      try {
+        if (index == getCount() - 1) {
+          out().write(S + ROUND_BRACKET_CLOSE);
 
-        end();
-      } else {
-        out().println(S + COMMA);
+          end();
+        } else {
+          out().writeln(S + COMMA);
+        }
+      } catch (IOException ex) {
+        throw runtime(ex);
       }
     }
 
@@ -1582,7 +1603,7 @@ public final class Assertions {
           return false;
       }
       if (!found) {
-        Position start = requireNonNull(objToElseGet(
+        Position start = requireNonNull(toElseGet(
             source.getImports().getFirst().orElse(null),
             $ -> $.getBegin().orElseThrow(),
             () -> source.getPackageDeclaration().orElseThrow().getEnd().orElseThrow().right(1)),
@@ -2142,7 +2163,7 @@ public final class Assertions {
     try {
       return expression.get();
     } catch (Throwable ex) {
-      return objTo(Exceptions.actual(ex), Failure::of);
+      return to(Exceptions.actual(ex), Failure::of);
     }
   }
 

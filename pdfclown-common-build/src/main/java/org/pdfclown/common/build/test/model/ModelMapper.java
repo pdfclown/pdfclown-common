@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
 import org.pdfclown.common.util.Objects.HierarchicalTypeComparator;
@@ -271,11 +272,11 @@ public class ModelMapper<T> {
           .explicitPriority();
 
       @SuppressWarnings("NotNullFieldNotInitialized")
-      private @InitNonNull Function<Class, Iterable<Class>> base;
+      private @InitNonNull Function<Class, Stream<Class>> base;
 
       @Override
       public Iterable<Class> apply(Class type) {
-        return base.apply(type);
+        return base.apply(type).toList();
       }
 
       @Override

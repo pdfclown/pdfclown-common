@@ -20,9 +20,9 @@ import static org.pdfclown.common.util.Conditions.requireNotBlank;
 import static org.pdfclown.common.util.Exceptions.missing;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
-import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.function.Functions.to;
 import static org.pdfclown.common.util.system.Processes.executeElseThrow;
 import static org.pdfclown.common.util.system.Processes.executeGetElseThrow;
 import static org.pdfclown.common.util.system.Processes.unixCommand;
@@ -171,7 +171,7 @@ public enum BuiltinStep implements Step {
    */
   DEPLOY($ -> executeElseThrow(unixCommand(
       $.getMavenCommand("clean %s %s"
-          .formatted($.isRemotePushEnabled() ? "deploy" : "install", objTo(
+          .formatted($.isRemotePushEnabled() ? "deploy" : "install", to(
               $.isRemotePushEnabled() ? $.getDeploymentProfiles() : $.getInstallationProfiles(),
               $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY)))),
       $.getBaseDir()));

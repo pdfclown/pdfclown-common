@@ -13,7 +13,7 @@
 package org.pdfclown.common.build.system;
 
 import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Objects.objTo;
+import static org.pdfclown.common.util.function.Functions.to;
 
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -69,7 +69,7 @@ public final class LogManager {
    */
   public static final String SYSTEM_PROPERTY__LOG_LEVEL = "log.level";
   static {
-    Level systemLevel = objTo(System.getProperty(SYSTEM_PROPERTY__LOG_LEVEL), Level::valueOf);
+    Level systemLevel = to(System.getProperty(SYSTEM_PROPERTY__LOG_LEVEL), Level::valueOf);
     if (systemLevel != null) {
       setLevel(systemLevel);
       levelOverridden = true;

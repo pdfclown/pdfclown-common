@@ -27,12 +27,12 @@ import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongState;
 import static org.pdfclown.common.util.Objects.nonNull;
-import static org.pdfclown.common.util.Objects.objDo;
-import static org.pdfclown.common.util.Objects.objTo;
 import static org.pdfclown.common.util.Objects.opt;
 import static org.pdfclown.common.util.Objects.sqnd;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.function.Functions.let;
+import static org.pdfclown.common.util.function.Functions.to;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__GROOVY;
 import static org.pdfclown.common.util.system.Processes.execute;
 import static org.pdfclown.common.util.system.Processes.executeGetElseThrow;
@@ -155,7 +155,7 @@ public final class Builds {
         // 2. Dependencies.
         var error = new StringBuilder();
         var invoker = new DefaultInvoker();
-        invoker.execute(objDo(new DefaultInvocationRequest(), $ -> {
+        invoker.execute(let(new DefaultInvocationRequest(), $ -> {
           $.setMavenHome(mavenHomeOf(mavenExecAt(projectDir)
               .orElseThrow(() -> wrongState("Maven executable NOT FOUND at {}", projectDir)))
                   .orElseThrow(() -> wrongState("""
@@ -313,8 +313,8 @@ public final class Builds {
    * @implNote Currently supports Maven only.
    */
   public static @Nullable String projectArtifactId(Path path) {
-    return objTo(projectDir(path), $ -> projectArtifactIds.computeIfAbsent($,
-        $key -> objTo($key.resolve(FILENAME__MAVEN_POM), Failable.asFunction(
+    return to(projectDir(path), $ -> projectArtifactIds.computeIfAbsent($,
+        $key -> to($key.resolve(FILENAME__MAVEN_POM), Failable.asFunction(
             $$ -> requireState(stripToNull(XPATH__POM.nodeValue(
                 NS_PREFIX__POM + ":project/" + NS_PREFIX__POM + ":artifactId",
                 xml($$))), () -> "`artifactId` NOT FOUND in " + $$)))));
