@@ -12,16 +12,8 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static org.approvaltests.combinations.CombinationsHelper.filterEmpty;
-import static org.pdfclown.common.util.Chars.COLON;
-import static org.pdfclown.common.util.Chars.COMMA;
-import static org.pdfclown.common.util.Chars.SPACE;
-import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
-import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
-
 import java.util.List;
 import java.util.function.Function;
-import org.approvaltests.combinations.SkipCombination;
 import org.approvaltests.core.Options;
 import org.jspecify.annotations.Nullable;
 import org.lambda.functions.Function1;
@@ -42,7 +34,6 @@ import org.pdfclown.common.build.util.Tuple6;
 import org.pdfclown.common.build.util.Tuple7;
 import org.pdfclown.common.build.util.Tuple8;
 import org.pdfclown.common.build.util.Tuple9;
-import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.Immutable;
 
 /**
@@ -160,39 +151,9 @@ public class TupleVerifier extends CallVerifier {
       void doVerify(Function1<T, O> call, List<String> labels, List<T> inputs) {
     var response = new StringBuilder();
     for (var input : inputs) {
-      response.append(getResponse(call, labels, input));
+      response.append(getResponse(() -> call.call(input), labels, input.toArray()));
     }
 
     verifyResponse(response.toString());
-  }
-
-  private String formatInputs(List<String> labels, Object... objects) {
-    List<Object> values = filterEmpty(objects);
-    var b = new StringBuilder();
-    b.append(SQUARE_BRACKET_OPEN);
-    for (int i = 0; i < values.size(); i++) {
-      if (i > 0) {
-        b.append(COMMA).append(SPACE);
-      }
-      String label = i < labels.size() ? labels.get(i) : null;
-      if (label != null) {
-        b.append(label).append(COLON).append(SPACE);
-      }
-      b.append(getInputFormatter().apply(values.get(i)));
-    }
-    return b.append(SQUARE_BRACKET_CLOSE).toString();
-  }
-
-  private <T extends Tuple<?>, O extends @Nullable Object> //
-      String getResponse(Function1<T, O> call, List<String> labels, T input) {
-    String result;
-    try {
-      result = getOutputFormatter().apply(call.call(input));
-    } catch (SkipCombination ex) {
-      return Strings.EMPTY;
-    } catch (Throwable ex) {
-      result = getExceptionFormatter().apply(ex);
-    }
-    return "%s => %s\n".formatted(formatInputs(labels, (Object[]) input.toArray()), result);
   }
 }

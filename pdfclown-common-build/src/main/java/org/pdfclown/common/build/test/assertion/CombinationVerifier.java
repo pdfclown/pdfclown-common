@@ -23,21 +23,14 @@
   - type parameter names normalized
   - array parameters replaced with `java.util.List`
   - `options` parameter redefined as field
-  - customizable formatters
+  - customizable formatters added
  */
 package org.pdfclown.common.build.test.assertion;
 
 import static org.approvaltests.combinations.CombinationsHelper.EMPTY_ENTRY;
-import static org.approvaltests.combinations.CombinationsHelper.filterEmpty;
-import static org.pdfclown.common.util.Chars.COLON;
-import static org.pdfclown.common.util.Chars.COMMA;
-import static org.pdfclown.common.util.Chars.SPACE;
-import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
-import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 
 import java.util.List;
 import java.util.function.Function;
-import org.approvaltests.combinations.SkipCombination;
 import org.approvaltests.core.Options;
 import org.jspecify.annotations.Nullable;
 import org.lambda.actions.Action9;
@@ -50,7 +43,6 @@ import org.lambda.functions.Function6;
 import org.lambda.functions.Function7;
 import org.lambda.functions.Function8;
 import org.lambda.functions.Function9;
-import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.Immutable;
 
 /*-
@@ -200,7 +192,7 @@ public class CombinationVerifier extends CallVerifier {
     return (CombinationVerifier) super.withOutputFormatter(value);
   }
 
-  // SourceName: doForAllCombinations
+  // SourceName: CombinationsHelper.doForAllCombinations
   private <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
       I7 extends @Nullable Object, I8 extends @Nullable Object, I9 extends @Nullable Object> //
@@ -239,47 +231,11 @@ public class CombinationVerifier extends CallVerifier {
     var response = new StringBuilder();
     doCombinations(inputs1, inputs2, inputs3, inputs4, inputs5, inputs6, inputs7, inputs8, inputs9,
         (input1, input2, input3, input4, input5, input6, input7, input8, input9) -> response.append(
-            getResponse(call, labels, input1, input2, input3, input4, input5, input6,
-                input7, input8, input9)));
+            getResponse(() -> call.call(input1, input2, input3, input4, input5, input6, input7,
+                input8, input9), labels,
+                new @Nullable Object[] { input1, input2, input3, input4,
+                    input5, input6, input7, input8, input9 })));
 
     verifyResponse(response.toString());
-  }
-
-  private String formatInputs(List<String> labels, Object... objects) {
-    List<Object> values = filterEmpty(objects);
-    var b = new StringBuilder();
-    b.append(SQUARE_BRACKET_OPEN);
-    for (int i = 0; i < values.size(); i++) {
-      if (i > 0) {
-        b.append(COMMA).append(SPACE);
-      }
-      String label = i < labels.size() ? labels.get(i) : null;
-      if (label != null) {
-        b.append(label).append(COLON).append(SPACE);
-      }
-      b.append(getInputFormatter().apply(values.get(i)));
-    }
-    return b.append(SQUARE_BRACKET_CLOSE).toString();
-  }
-
-  // SourceName: getCombinationText
-  private <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
-      I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
-      I7 extends @Nullable Object, I8 extends @Nullable Object, I9 extends @Nullable Object,
-      O extends @Nullable Object> //
-      String getResponse(Function9<I1, I2, I3, I4, I5, I6, I7, I8, I9, O> call, List<String> labels,
-          I1 input1, I2 input2, I3 input3, I4 input4, I5 input5, I6 input6, I7 input7, I8 input8,
-          I9 input9) {
-    String result;
-    try {
-      result = getOutputFormatter().apply(call.call(input1, input2, input3, input4, input5, input6,
-          input7, input8, input9));
-    } catch (SkipCombination ex) {
-      return Strings.EMPTY;
-    } catch (Throwable ex) {
-      result = getExceptionFormatter().apply(ex);
-    }
-    return "%s => %s\n".formatted(formatInputs(labels, input1, input2, input3, input4, input5,
-        input6, input7, input8, input9), result);
   }
 }

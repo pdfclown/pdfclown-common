@@ -12,11 +12,21 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static org.approvaltests.combinations.CombinationsHelper.filterEmpty;
 import static org.pdfclown.common.build.test.assertion.Verifiers.FORMATTER__BASIC;
 import static org.pdfclown.common.build.test.assertion.Verifiers.FORMATTER__EXCEPTION__BASIC;
+import static org.pdfclown.common.util.Chars.COLON;
+import static org.pdfclown.common.util.Chars.COMMA;
+import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
+import org.approvaltests.combinations.SkipCombination;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.Immutable;
 
 /**
@@ -96,4 +106,41 @@ public abstract class CallVerifier extends Verifier {
     ret.outputFormatter = value;
     return ret;
   }
+
+  protected String getResponse(Supplier<@Nullable Object> outputSupplier, List<String> labels,
+      @Nullable Object[] inputs) {
+    String output;
+    try {
+      output = getOutputFormatter().apply(outputSupplier.get());
+    } catch (SkipCombination ex) {
+      return Strings.EMPTY;
+    } catch (Throwable ex) {
+      output = getExceptionFormatter().apply(ex);
+    }
+    return "%s => %s\n".formatted(formatInputs(labels, inputs), output);
+  }
+
+  // SPDX-SnippetBegin
+  // SPDX-SnippetCopyrightText: ?-2026 Llewellyn Falco
+  // SPDX-License-Identifier: Apache-2.0
+  //
+  // Source: https://github.com/approvals/ApprovalTests.Java/blob/8452841b8bc430fe069f93bb413ccc913213087a/approvaltests/src/main/java/org/approvaltests/combinations/CombinationsHelper.java#L109
+  // SourceName: org.approvaltests.combinations.CombinationsHelper.formatInputs
+  private String formatInputs(List<String> labels, @Nullable Object... objects) {
+    List<Object> values = filterEmpty(objects);
+    var b = new StringBuilder();
+    b.append(SQUARE_BRACKET_OPEN);
+    for (int i = 0; i < values.size(); i++) {
+      if (i > 0) {
+        b.append(COMMA).append(SPACE);
+      }
+      String label = i < labels.size() ? labels.get(i) : null;
+      if (label != null) {
+        b.append(label).append(COLON).append(SPACE);
+      }
+      b.append(getInputFormatter().apply(values.get(i)));
+    }
+    return b.append(SQUARE_BRACKET_CLOSE).toString();
+  }
+  // SPDX-SnippetEnd
 }
