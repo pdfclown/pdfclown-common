@@ -385,16 +385,16 @@ public final class Objects {
    * @implNote This method is redundant; it's intended as a convenience for complex multi-case
    *           conditional statements, to even out the predicate representation across the cases.
    */
-  public static <T, U> boolean anyThat(@Nullable T obj,
-      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other) {
+  public static <T extends @Nullable Object, U extends @Nullable Object> boolean anyThat(T obj,
+      BiPredicate<T, U> predicate, U other) {
     return predicate.test(obj, other);
   }
 
   /**
    * Gets whether an object matches any of the others according to the predicate.
    */
-  public static <T, U> boolean anyThat(@Nullable T obj,
-      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2) {
+  public static <T extends @Nullable Object, U extends @Nullable Object> boolean anyThat(T obj,
+      BiPredicate<T, U> predicate, U other1, U other2) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2);
   }
@@ -408,8 +408,8 @@ public final class Objects {
    *           standard way Java API itself deals with such cases.
    */
   @SafeVarargs
-  public static <T, U> boolean anyThat(@Nullable T obj,
-      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U... others) {
+  public static <T extends @Nullable Object, U extends @Nullable Object> boolean anyThat(T obj,
+      BiPredicate<T, U> predicate, U other1, U... others) {
     if (predicate.test(obj, other1))
       return true;
     for (var other : others) {
@@ -422,9 +422,8 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others according to the predicate.
    */
-  public static <T, U> boolean anyThat(@Nullable T obj,
-      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2,
-      @Nullable U other3) {
+  public static <T extends @Nullable Object, U extends @Nullable Object> boolean anyThat(T obj,
+      BiPredicate<T, U> predicate, U other1, U other2, U other3) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3);
@@ -433,9 +432,8 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others according to the predicate.
    */
-  public static <T, U> boolean anyThat(@Nullable T obj,
-      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2,
-      @Nullable U other3, @Nullable U other4) {
+  public static <T extends @Nullable Object, U extends @Nullable Object> boolean anyThat(T obj,
+      BiPredicate<T, U> predicate, U other1, U other2, U other3, U other4) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3)
@@ -445,9 +443,8 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others according to the predicate.
    */
-  public static <T, U> boolean anyThat(@Nullable T obj,
-      BiPredicate<@Nullable T, @Nullable U> predicate, @Nullable U other1, @Nullable U other2,
-      @Nullable U other3, @Nullable U other4, @Nullable U other5) {
+  public static <T extends @Nullable Object, U extends @Nullable Object> boolean anyThat(T obj,
+      BiPredicate<T, U> predicate, U other1, U other2, U other3, U other4, U other5) {
     return predicate.test(obj, other1)
         || predicate.test(obj, other2)
         || predicate.test(obj, other3)
