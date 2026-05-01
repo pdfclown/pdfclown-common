@@ -13,28 +13,20 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Arrays.asList;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.simple;
-import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.util.Objects.simpleName;
+import static org.pdfclown.common.util.Exceptions.runtime;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
-import org.pdfclown.common.build.test.assertion.Assertions.Failure;
+import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
-import org.pdfclown.common.util.io.Texts.TextCoords;
 
 /**
  * @author Stefano Chizzolini
  */
 class TextsTest extends BaseTest {
-  static Stream<Arguments> textCoords() {
+  @Test
+  void textCoords() {
     var text =
         """
             ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ
@@ -49,34 +41,20 @@ class TextsTest extends BaseTest {
             ГЕНЕРАЛЬНА АСАМБЛЕЯ
             проголошує цю Загальну Декларацію Ппав Людини як завдання, до виконання якого повинні прагнути всі народи і всі держави з тим, щоб кожна людина і кожний орган суспільства, завжди маючи на увазі цю Декларацію, прагнули шляхом освіти сприяти поважанню цих прав і свобод і забезпеченню, шляхом національних і міжнародних прогресивних заходів, загального і ефективного візнання і здійснення їх як серед народів держав - членів Організації, так і серед народів територій, що перебувають під їх юрисдикцією.""";
 
-    return argumentsStream(
-        simple(),
-        // expected
+    combinationVerifier.verify(
+        (subtext) -> {
+          try {
+            return Texts.textCoords(new StringReader(text), text.indexOf(subtext)).orElseThrow();
+          } catch (IOException ex) {
+            throw runtime(ex);
+          }
+        },
+        List.of("subtext"),
+        // subtext
         asList(
-            // [1] text[0]: "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ\nПРЕАМБУЛА\n. . ."; subtext[0]: "Something not existing in the text"
-            new Failure("NoSuchElementException", "No value present"),
-            // [2] text[1]: "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ\nПРЕАМБУЛА\n. . ."; subtext[1]: "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ"
-            new TextCoords(1, 1),
-            // [3] text[2]: "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ\nПРЕАМБУЛА\n. . ."; subtext[2]: "народи Об'єднаних Націй підтвердили в Статут. . ."
-            new TextCoords(7, 21),
-            // [4] text[3]: "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ\nПРЕАМБУЛА\n. . ."; subtext[3]: "проголошує цю Загальну Декларацію Ппав Людини"
-            new TextCoords(11, 1)),
-        // text, subtext
-        List.of(text, "Something not existing in the text"),
-        List.of(text, "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ"),
-        List.of(text,
-            "народи Об'єднаних Націй підтвердили в Статуті свою віру в основні права людини"),
-        List.of(text, "проголошує цю Загальну Декларацію Ппав Людини"));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void textCoords(Expected<TextCoords> expected, String text, String subtext) {
-    assertParameterizedOf(
-        () -> Texts.textCoords(new StringReader(text), text.indexOf(subtext)).orElseThrow(),
-        expected,
-        () -> new ExpectedGeneration<TextCoords>(text, subtext)
-            .setExpectedSourceCodeGenerator($ -> "new %s(%s, %s)".formatted(simpleName($), $.line(),
-                $.column())));
+            "Something not existing in the text",
+            "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ",
+            "народи Об'єднаних Націй підтвердили в Статуті свою віру в основні права людини",
+            "проголошує цю Загальну Декларацію Ппав Людини"));
   }
 }

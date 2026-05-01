@@ -1,0 +1,6 @@
+[obj: null, defaultValue: null] => <<NullPointerException: "defaultObj">>
+[obj: null, defaultValue: 8] => 8
+[obj: "hello", defaultValue: null] => <<NullPointerException: "defaultObj">>
+[obj: "hello", defaultValue: 8] => 8
+[obj: 42, defaultValue: null] => 42
+[obj: 42, defaultValue: 8] => 42

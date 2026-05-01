@@ -1,0 +1,6 @@
+[obj: null] => "null"
+[obj: 0.5] => "Double"
+[obj: 'a'] => "Character"
+[obj: "a string"] => "String"
+[obj: String] => "String"
+[obj: java.util.Map.Entry] => "Map$Entry"

@@ -13,45 +13,20 @@
 package org.pdfclown.common.util.system;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
-import static org.hamcrest.Matchers.contains;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
-import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.util.Chars.COMMA;
-import static org.pdfclown.common.util.Strings.S;
 
 import java.util.List;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.ExpectedGeneration;
-import org.pdfclown.common.util.Objects;
+import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
  * @author Stefano Chizzolini
  */
 class ClisTest extends BaseTest {
-  static Stream<Arguments> parseArgs() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] argsString[0]: "val1 val2 \"val3 (dquote)\" 'val4 (squote)'"
-            asList("val1", "val2", "val3 (dquote)", "val4 (squote)"),
-            // [2] argsString[1]: "val1 \"val2 (\\\"dquote\\\")\" 'val3 (\\'squ. . ."
-            asList("val1", "val2 (\"dquote\")", "val3 ('squote')"),
-            // [3] argsString[2]: "val1 \"val2 (\\\"dquote\\\") 'val3 (\\'squot. . ."
-            asList("val1", "val2 (\"dquote\") 'val3 ('squote')'"),
-            // [4] argsString[3]: "val1 \"val2 (\\\"dquote\\\")\"'val3 (\\'squo. . ."
-            asList("val1", "val2 (\"dquote\")val3 ('squote')"),
-            // [5] argsString[4]: "\"Multi-\nLine\nArgument\" \"val2\""
-            asList("Multi-\nLine\nArgument", "val2"),
-            // [6] argsString[5]: "val1 C:\\\\Some\\\\Random\\\\Path\\\\"
-            asList("val1", "C:\\Some\\Random\\Path\\")),
+  @Test
+  void parseArgs() {
+    combinationVerifier.verify(
+        (argsString) -> Clis.parseArgs(argsString),
+        List.of("argsString"),
         // argsString
         asList(
             // Quoted arguments embracing whitespace.
@@ -66,18 +41,5 @@ class ClisTest extends BaseTest {
             "\"Multi-\nLine\nArgument\" \"val2\"",
             // Escaped backslashes.
             "val1 C:\\\\Some\\\\Random\\\\Path\\\\"));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void parseArgs(Expected<List<String>> expected, String argsString) {
-    assertParameterizedOf(
-        () -> Clis.parseArgs(argsString),
-        expected.match($ -> contains($.toArray(String[]::new))),
-        () -> new ExpectedGeneration<List<String>>(argsString)
-            .setExpectedSourceCodeGenerator(
-                $ -> "asList(%s)".formatted($.stream()
-                    .map(Objects::literal)
-                    .collect(joining(S + COMMA)))));
   }
 }

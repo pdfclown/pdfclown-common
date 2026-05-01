@@ -17,23 +17,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
-import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
@@ -43,12 +34,14 @@ public class FunctionsTest extends BaseTest {
   /**
    * Consumer covering both success and failure (in this case, {@link ClassCastException}).
    */
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   public static final Consumer<Object> CONSUMER = $ -> ((Integer) $).doubleValue();
   public static final List<Integer> DEFAULT_VALUES = asList(null, 8);
   /**
    * Mapper covering both success (non-null (if argument is {@link Integer}) and null) and failure
    * (in this case, {@link ClassCastException}).
    */
+  @SuppressWarnings("UnnecessaryUnboxing")
   public static final Function<Object, @Nullable Integer> MAPPER =
       $ -> $ != null ? ((Integer) $).intValue() /* Fails if type mismatch */
           : null /* null */;
@@ -57,272 +50,23 @@ public class FunctionsTest extends BaseTest {
    */
   public static final List<Object> OBJS = asList(
       null,
-      "hello" /* Non-null, invalid */,
-      42 /* Non-null, valid */);
+      // Non-null, invalid
+      "hello",
+      // Non-null, valid
+      42);
   /**
    * Suppliers covering both non-null and null return values.
    */
-  public static final List<Supplier<Integer>> SUPPLIERS = asList(() -> null, () -> 21);
+  @SuppressWarnings("rawtypes")
+  public static final List<Supplier> SUPPLIERS = asList(() -> null, () -> 21);
 
-  static Stream<Arguments> let() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            null,
-            // [2] obj[1]: "hello"
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            // [3] obj[2]: 42
-            42),
+  @Test
+  void let() {
+    combinationVerifier.verify(
+        (obj) -> Functions.let(obj, CONSUMER),
+        List.of("obj"),
         // obj
         OBJS);
-  }
-
-  static Stream<Arguments> to() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            null,
-            // [2] obj[1]: "hello"
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            // [3] obj[2]: 42
-            42),
-        // obj
-        OBJS);
-  }
-
-  static Stream<Arguments> toElse() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] defaultValue[0]: null
-            new Failure("NullPointerException", "defaultObj"),
-            // [2] defaultValue[1]: 8
-            8,
-            //
-            // obj[1]: "hello"
-            // [3] defaultValue[0]: null
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            // [4] defaultValue[1]: 8
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            //
-            // obj[2]: 42
-            // [5] defaultValue[0]: null
-            42,
-            // [6] defaultValue[1]: 8
-            42),
-        // obj
-        OBJS,
-        // defaultValue
-        DEFAULT_VALUES);
-  }
-
-  static Stream<Arguments> toElseGet() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            null,
-            // [2] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            21,
-            //
-            // obj[1]: "hello"
-            // [3] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            // [4] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            //
-            // obj[2]: 42
-            // [5] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42,
-            // [6] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42),
-        // obj
-        OBJS,
-        // supplier
-        SUPPLIERS);
-  }
-
-  static Stream<Arguments> toElseGetNonNull() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            new Failure("NullPointerException", ""),
-            // [2] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            21,
-            //
-            // obj[1]: "hello"
-            // [3] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            // [4] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            //
-            // obj[2]: 42
-            // [5] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42,
-            // [6] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42),
-        // obj
-        OBJS,
-        // supplier
-        SUPPLIERS);
-  }
-
-  static Stream<Arguments> toNonNull() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            new Failure("NullPointerException", ""),
-            // [2] obj[1]: "hello"
-            new Failure("ClassCastException",
-                "class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')"),
-            // [3] obj[2]: 42
-            42),
-        // obj
-        OBJS);
-  }
-
-  static Stream<Arguments> tryLet() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            null,
-            // [2] obj[1]: "hello"
-            "hello",
-            // [3] obj[2]: 42
-            42),
-        // obj
-        OBJS);
-  }
-
-  static Stream<Arguments> tryTo() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            null,
-            // [2] obj[1]: "hello"
-            null,
-            // [3] obj[2]: 42
-            42),
-        // obj
-        OBJS);
-  }
-
-  static Stream<Arguments> tryToElse() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] defaultValue[0]: null
-            new Failure("NullPointerException", "defaultObj"),
-            // [2] defaultValue[1]: 8
-            8,
-            //
-            // obj[1]: "hello"
-            // [3] defaultValue[0]: null
-            new Failure("NullPointerException", "defaultObj"),
-            // [4] defaultValue[1]: 8
-            8,
-            //
-            // obj[2]: 42
-            // [5] defaultValue[0]: null
-            42,
-            // [6] defaultValue[1]: 8
-            42),
-        // obj
-        OBJS,
-        // defaultValue
-        DEFAULT_VALUES);
-  }
-
-  static Stream<Arguments> tryToElseGet() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            null,
-            // [2] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            21,
-            //
-            // obj[1]: "hello"
-            // [3] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            null,
-            // [4] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            21,
-            //
-            // obj[2]: 42
-            // [5] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42,
-            // [6] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42),
-        // obj
-        OBJS,
-        // supplier
-        SUPPLIERS);
-  }
-
-  static Stream<Arguments> tryToElseGetNonNull() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            new Failure("NullPointerException", ""),
-            // [2] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            21,
-            //
-            // obj[1]: "hello"
-            // [3] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            new Failure("NullPointerException", ""),
-            // [4] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            21,
-            //
-            // obj[2]: 42
-            // [5] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42,
-            // [6] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42),
-        // obj
-        OBJS,
-        // supplier
-        SUPPLIERS);
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void let(Expected<Object> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Functions.let(obj, CONSUMER),
-        expected,
-        () -> expectedGeneration(obj));
   }
 
   /**
@@ -355,49 +99,57 @@ public class FunctionsTest extends BaseTest {
     assertThat(exceptionRef.get().getMessage(), is("FAILED"));
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void to(Expected<Integer> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Functions.to(obj, MAPPER),
-        expected,
-        () -> expectedGeneration(obj));
+  @Test
+  void to() {
+    combinationVerifier.verify(
+        (obj) -> Functions.to(obj, MAPPER),
+        List.of("obj"),
+        // obj
+        OBJS);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toElse(Expected<Integer> expected, Object obj, Integer defaultValue) {
-    assertParameterizedOf(
-        () -> Functions.toElse(obj, MAPPER, defaultValue),
-        expected,
-        () -> expectedGeneration(obj, defaultValue));
+  @Test
+  void toElse() {
+    combinationVerifier.verify(
+        (obj, defaultValue) -> Functions.toElse(obj, MAPPER, defaultValue),
+        List.of("obj", "defaultValue"),
+        // obj
+        OBJS,
+        // defaultValue
+        DEFAULT_VALUES);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toElseGet(Expected<Integer> expected, Object obj, Supplier<Integer> supplier) {
-    assertParameterizedOf(
-        () -> Functions.toElseGet(obj, MAPPER, supplier),
-        expected,
-        () -> expectedGeneration(obj, supplier));
+  @Test
+  @SuppressWarnings("unchecked")
+  void toElseGet() {
+    combinationVerifier.verify(
+        (obj, supplier) -> Functions.toElseGet(obj, MAPPER, supplier),
+        List.of("obj", "supplier"),
+        // obj
+        OBJS,
+        // supplier
+        SUPPLIERS);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toElseGetNonNull(Expected<Integer> expected, Object obj, Supplier<Integer> supplier) {
-    assertParameterizedOf(
-        () -> Functions.toElseGetNonNull(obj, MAPPER, supplier),
-        expected,
-        () -> expectedGeneration(obj, supplier));
+  @Test
+  @SuppressWarnings("unchecked")
+  void toElseGetNonNull() {
+    combinationVerifier.verify(
+        (obj, supplier) -> Functions.toElseGetNonNull(obj, MAPPER, supplier),
+        List.of("obj", "supplier"),
+        // obj
+        OBJS,
+        // supplier
+        SUPPLIERS);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toNonNull(Expected<Integer> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Functions.toNonNull(obj, MAPPER),
-        expected,
-        () -> expectedGeneration(obj));
+  @Test
+  void toNonNull() {
+    combinationVerifier.verify(
+        (obj) -> Functions.toNonNull(obj, MAPPER),
+        List.of("obj"),
+        // obj
+        OBJS);
   }
 
   @Test
@@ -432,48 +184,56 @@ public class FunctionsTest extends BaseTest {
     assertThat(ret, is("RESULT"));
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void tryLet(Expected<Object> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Functions.tryLet(obj, CONSUMER::accept),
-        expected,
-        () -> expectedGeneration(obj));
+  @Test
+  void tryLet() {
+    combinationVerifier.verify(
+        (obj) -> Functions.tryLet(obj, CONSUMER::accept),
+        List.of("obj"),
+        // obj
+        OBJS);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void tryTo(Expected<Integer> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Functions.tryTo(obj, MAPPER::apply),
-        expected,
-        () -> expectedGeneration(obj));
+  @Test
+  void tryTo() {
+    combinationVerifier.verify(
+        (obj) -> Functions.tryTo(obj, MAPPER::apply),
+        List.of("obj"),
+        // obj
+        OBJS);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void tryToElse(Expected<Integer> expected, Object obj, Integer defaultValue) {
-    assertParameterizedOf(
-        () -> Functions.tryToElse(obj, MAPPER::apply, defaultValue),
-        expected,
-        () -> expectedGeneration(obj, defaultValue));
+  @Test
+  void tryToElse() {
+    combinationVerifier.verify(
+        (obj, defaultValue) -> Functions.tryToElse(obj, MAPPER::apply, defaultValue),
+        List.of("obj", "defaultValue"),
+        // obj
+        OBJS,
+        // defaultValue
+        DEFAULT_VALUES);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void tryToElseGet(Expected<Integer> expected, Object obj, Supplier<Integer> supplier) {
-    assertParameterizedOf(
-        () -> Functions.tryToElseGet(obj, MAPPER::apply, supplier),
-        expected,
-        () -> expectedGeneration(obj, supplier));
+  @Test
+  @SuppressWarnings("unchecked")
+  void tryToElseGet() {
+    combinationVerifier.verify(
+        (obj, supplier) -> Functions.tryToElseGet(obj, MAPPER::apply, supplier),
+        List.of("obj", "supplier"),
+        // obj
+        OBJS,
+        // supplier
+        SUPPLIERS);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void tryToElseGetNonNull(Expected<Integer> expected, Object obj, Supplier<Integer> supplier) {
-    assertParameterizedOf(
-        () -> Functions.tryToElseGetNonNull(obj, MAPPER::apply, supplier),
-        expected,
-        () -> expectedGeneration(obj, supplier));
+  @Test
+  @SuppressWarnings("unchecked")
+  void tryToElseGetNonNull() {
+    combinationVerifier.verify(
+        (obj, supplier) -> Functions.tryToElseGetNonNull(obj, MAPPER::apply, supplier),
+        List.of("obj", "supplier"),
+        // obj
+        OBJS,
+        // supplier
+        SUPPLIERS);
   }
 }

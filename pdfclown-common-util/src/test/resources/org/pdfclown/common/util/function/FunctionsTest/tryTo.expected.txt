@@ -1,0 +1,3 @@
+[obj: null] => null
+[obj: "hello"] => null
+[obj: 42] => 42

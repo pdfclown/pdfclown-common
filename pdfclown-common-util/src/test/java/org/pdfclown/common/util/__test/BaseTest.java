@@ -12,12 +12,9 @@
  */
 package org.pdfclown.common.util.__test;
 
-import static org.pdfclown.common.build.test.assertion.Assertions.Argument.arg;
-import static org.pdfclown.common.util.function.Functions.to;
-
-import javax.measure.Unit;
 import org.pdfclown.common.build.test.Test;
-import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy;
+import org.pdfclown.common.build.test.assertion.CombinationVerifier;
+import org.pdfclown.common.build.test.assertion.TupleVerifier;
 
 /**
  * Module-specific unit test.
@@ -25,20 +22,6 @@ import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrate
  * @author Stefano Chizzolini
  */
 public abstract class BaseTest extends Test {
-  private static final ArgumentsStreamStrategy.Converter ARGUMENTS_CONVERTER = ($index, $obj) -> {
-    if ($obj instanceof Unit<?> unit) {
-      return to(unit, $ -> arg($.getName(), $));
-    } else
-      return $obj;
-  };
-
-  protected static ArgumentsStreamStrategy cartesianArgumentsStreamStrategy() {
-    return ArgumentsStreamStrategy.cartesian()
-        .setConverter(ARGUMENTS_CONVERTER);
-  }
-
-  protected static ArgumentsStreamStrategy simpleArgumentsStreamStrategy() {
-    return ArgumentsStreamStrategy.simple()
-        .setConverter(ARGUMENTS_CONVERTER);
-  }
+  protected static final CombinationVerifier combinationVerifier = new CombinationVerifier();
+  protected static final TupleVerifier tupleVerifier = new TupleVerifier();
 }

@@ -13,6 +13,7 @@
 package org.pdfclown.common.util.io;
 
 import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.createFile;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
@@ -454,6 +455,19 @@ public final class Files {
     return new Diff(
         dir1, visit1.relativizeFiles(dir1, true, null),
         dir2, visit2.relativizeFiles(dir2, true, null));
+  }
+
+  /**
+   * Ensures a file exists, otherwise creates it and its nonexistent parent directories.
+   *
+   * @return {@code path}
+   */
+  public static Path ensureFile(Path path) throws IOException {
+    if (!exists(path)) {
+      createDirectories(path.getParent());
+      createFile(path);
+    }
+    return path;
   }
 
   /**

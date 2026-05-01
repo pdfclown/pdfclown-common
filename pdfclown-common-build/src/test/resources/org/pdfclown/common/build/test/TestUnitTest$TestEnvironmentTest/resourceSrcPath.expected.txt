@@ -1,0 +1,4 @@
+[name: "/"] => "src/test/resources"
+[name: "/my/absolute/resource.html"] => "src/test/resources/my/absolute/resource.html"
+[name: ""] => "src/test/resources/org/pdfclown/common/build/test/TestUnitTest$SampleTest"
+[name: "my/relative/resource.html"] => "src/test/resources/org/pdfclown/common/build/test/TestUnitTest$SampleTest/my/relative/resource.html"

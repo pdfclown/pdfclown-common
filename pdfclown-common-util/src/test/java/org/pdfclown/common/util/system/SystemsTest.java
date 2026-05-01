@@ -13,39 +13,29 @@
 package org.pdfclown.common.util.system;
 
 import static java.util.Arrays.asList;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
-import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 
-import java.util.stream.Stream;
-import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.assertion.Assertions.Expected;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
  * @author Stefano Chizzolini
  */
 class SystemsTest extends BaseTest {
-  static Stream<Arguments> getBooleanProperty() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] value[0]: null
-            false,
-            // [2] value[1]: "false"
-            false,
-            // [3] value[2]: "something else"
-            false,
-            // [4] value[3]: ""
-            true,
-            // [5] value[4]: "true"
-            true,
-            // [6] value[5]: "True"
-            true),
+  @Test
+  void getBooleanProperty() {
+    final var key = "myProperty";
+
+    combinationVerifier.verify(
+        (value) -> {
+          if (value != null) {
+            System.setProperty(key, value);
+          } else {
+            System.clearProperty(key);
+          }
+          return Systems.getBooleanProperty(key);
+        },
+        List.of("value"),
         // value
         asList(
             null,
@@ -54,23 +44,5 @@ class SystemsTest extends BaseTest {
             "",
             "true",
             "True"));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void getBooleanProperty(Expected<Boolean> expected, @Nullable String value) {
-    final var key = "myProperty";
-
-    assertParameterizedOf(
-        () -> {
-          if (value != null) {
-            System.setProperty(key, value);
-          } else {
-            System.clearProperty(key);
-          }
-          return Systems.getBooleanProperty(key);
-        },
-        expected,
-        () -> expectedGeneration(value));
   }
 }

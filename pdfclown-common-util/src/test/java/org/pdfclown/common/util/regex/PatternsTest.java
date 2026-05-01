@@ -13,25 +13,15 @@
 package org.pdfclown.common.util.regex;
 
 import static java.util.Arrays.asList;
-import static java.util.Objects.requireNonNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
-import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
-import static org.pdfclown.common.build.test.assertion.Assertions.evalParameterized;
 
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.test.assertion.Assertions.Argument;
-import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
@@ -72,16 +62,18 @@ class PatternsTest extends BaseTest {
       (?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?\
       $""");
 
-  static Stream<Arguments> globToRegex() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] glob[0]: "\"/**/my*.*\" (regex)"
-            "/.*/my[^/]*\\.[^/]*",
-            // [2] glob[1]: "\"/home/*User/**/foo?a?/*.md\" (regex)"
-            "/home/[^/]*User/.*/foo.a./[^/]*\\.md"),
-        // pattern
+  @Test
+  void globToRegex() {
+    combinationVerifier.verify(
+        (glob) -> {
+          var actual = Patterns.globToRegex(glob.getValue());
+
+          assertRegexMatches(actual, glob.matches, true);
+          assertRegexMatches(actual, glob.mismatches, false);
+          return actual;
+        },
+        List.of("glob"),
+        // glob
         asList(
             new PatternArgument("/**/my*.*",
                 asList(
@@ -102,27 +94,15 @@ class PatternsTest extends BaseTest {
                     "/home/SuperUser/a/random/subdir/foocat/NOTEmd"))));
   }
 
-  static Stream<Arguments> indexOfMatchFailure() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] input[0]: "1.0.0"
-            5,
-            // [2] input[1]: "1.0.0-alpha"
-            11,
-            // [3] input[2]: "1.11.0.99"
-            6,
-            // [4] input[3]: "1.-11.0"
-            2,
-            // [5] input[4]: "1.01.0"
-            3,
-            // [6] input[5]: "1.0.0-00.3.7"
-            8,
-            // [7] input[6]: "1.0.0_alpha"
-            5,
-            // [8] input[7]: "1.0.0.5-alpha"
-            5),
+  @Test
+  void indexOfMatchFailure() {
+    combinationVerifier.verify(
+        (input) -> {
+          Matcher matcher = PATTERN__SEM_VER.matcher(input);
+          matcher.find();
+          return Patterns.indexOfMatchFailure(matcher);
+        },
+        List.of("input"),
         // input
         List.of(
             // VALID
@@ -137,55 +117,22 @@ class PatternsTest extends BaseTest {
             "1.0.0.5-alpha"));
   }
 
-  static Stream<Arguments> wildcardToRegex() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] pattern[0]: "\"Som? content. * more (*)\\\\?\" (regex)"
-            "Som. content\\. .* more \\(.*\\)\\?"),
+  @Test
+  void wildcardToRegex() {
+    combinationVerifier.verify(
+        (wildcard) -> {
+          var actual = Patterns.wildcardToRegex(wildcard.getValue());
+
+          assertRegexMatches(actual, wildcard.matches, true);
+          assertRegexMatches(actual, wildcard.mismatches, false);
+          return actual;
+        },
+        List.of("wildcard"),
         // wildcard
         asList(
             new PatternArgument("Som? content. * more (*)\\?",
                 asList("Some content. Whatever more (don't know)?"),
                 asList("Som content. Whatever more (don't know)?"))));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void globToRegex(Expected<String> expected, PatternArgument glob) {
-    var actual = requireNonNull((String) evalParameterized(
-        () -> Patterns.globToRegex(glob.getValue())));
-
-    assertParameterized(actual, expected,
-        () -> expectedGeneration(glob));
-    assertRegexMatches(actual, glob.matches, true);
-    assertRegexMatches(actual, glob.mismatches, false);
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void indexOfMatchFailure(Expected<Integer> expected, String input) {
-    assertParameterizedOf(
-        () -> {
-          Matcher matcher = PATTERN__SEM_VER.matcher(input);
-          matcher.find();
-          return Patterns.indexOfMatchFailure(matcher);
-        },
-        expected,
-        () -> expectedGeneration(input));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void wildcardToRegex(Expected<String> expected, PatternArgument wildcard) {
-    var actual = requireNonNull((String) evalParameterized(
-        () -> Patterns.wildcardToRegex(wildcard.getValue())));
-
-    assertParameterized(actual, expected,
-        () -> expectedGeneration(wildcard));
-    assertRegexMatches(actual, wildcard.matches, true);
-    assertRegexMatches(actual, wildcard.mismatches, false);
   }
 
   /**

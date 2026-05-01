@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.__test;
 
 import org.pdfclown.common.build.test.Test;
+import org.pdfclown.common.build.test.assertion.CombinationVerifier;
 
 /**
  * Module-specific unit test.
@@ -20,4 +21,5 @@ import org.pdfclown.common.build.test.Test;
  * @author Stefano Chizzolini
  */
 public abstract class BaseTest extends Test {
+  protected static final CombinationVerifier combinationVerifier = new CombinationVerifier();
 }

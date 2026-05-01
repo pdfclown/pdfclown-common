@@ -1,0 +1,7 @@
+[major: 1, minor: 0, patch: 0, prerelease: null, metadata: null] => "1.0.0"
+[major: 1, minor: 0, patch: 0, prerelease: "alpha.1", metadata: ""] => "1.0.0-alpha.1"
+[major: -1, minor: 0, patch: 0, prerelease: "alpha.1", metadata: "abc"] => <<ArgumentException: "`major` (-1): INVALID">>
+[major: 1, minor: -1, patch: 0, prerelease: "alpha.1", metadata: "abc"] => <<ArgumentException: "`minor` (-1): INVALID">>
+[major: 1, minor: 0, patch: -1, prerelease: "alpha.1", metadata: "abc"] => <<ArgumentException: "`patch` (-1): INVALID">>
+[major: 1, minor: 0, patch: 0, prerelease: "alpha!.1", metadata: "abc"] => <<ArgumentException: "`prerelease` (\"alpha!.1\"): INVALID">>
+[major: 1, minor: 0, patch: 0, prerelease: "alpha.1", metadata: "+abc"] => <<ArgumentException: "`metadata` (\"+abc\"): INVALID">>

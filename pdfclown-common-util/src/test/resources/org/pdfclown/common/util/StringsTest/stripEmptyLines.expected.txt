@@ -1,0 +1,4 @@
+[s: null] => <<NullPointerException: "Cannot invoke \"String.length()\" because \"s\" is null">>
+[s: ""] => ""
+[s: "\n"] => ""
+[s: "\n\n           \nFirst non-empty line\n     Second line   \n\nThird line\n\n"] => "           \nFirst non-empty line\n     Second line   \n\nThird line"

@@ -1,0 +1,4 @@
+[subtext: "Something not existing in the text"] => <<NoSuchElementException: "No value present">>
+[subtext: "ЗАГАЛЬНА ДЕКЛАРАЦІЯ ПРАВ ЛЮДИНІ"] => TextCoords[line=1, column=1]
+[subtext: "народи Об'єднаних Націй підтвердили в Статуті свою віру в основні права людини"] => TextCoords[line=7, column=21]
+[subtext: "проголошує цю Загальну Декларацію Ппав Людини"] => TextCoords[line=11, column=1]

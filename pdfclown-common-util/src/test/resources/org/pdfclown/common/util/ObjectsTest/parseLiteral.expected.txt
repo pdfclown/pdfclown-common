@@ -1,0 +1,14 @@
+[s: "null"] => null
+[s: "1234"] => 1234
+[s: "1.987"] => 1.987
+[s: "1.5E-4"] => 0.00015
+[s: "true"] => true
+[s: "'\\''"] => '\''
+[s: "'\"'"] => '"'
+[s: "\"\""] => ""
+[s: "\"Text with:\\n- \\\"quoted content\\\"\\n- newlines\""] => "Text with:\n- \"quoted content\"\n- newlines"
+[s: "\"测试文本\""] => "测试文本"
+[s: "String"] => "String"
+[s: "java.util.stream.Stream"] => "java.util.stream.Stream"
+[s: "org.pdfclown.common.util.Strings"] => "org.pdfclown.common.util.Strings"
+[s: "\"[one, two]\""] => "[one, two]"

@@ -1,0 +1,6 @@
+[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => null
+[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => 21
+[obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => <<ClassCastException: "class java.lang.String cannot be cast to class java.lang.Integer">>
+[obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => <<ClassCastException: "class java.lang.String cannot be cast to class java.lang.Integer">>
+[obj: 42, supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => 42
+[obj: 42, supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => 42

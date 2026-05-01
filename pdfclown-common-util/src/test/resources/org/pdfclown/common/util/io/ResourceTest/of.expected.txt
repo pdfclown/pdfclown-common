@@ -1,0 +1,13 @@
+[name: null] => null
+[name: "classpath:org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"] => ResourceTest.ResourceResult[ClasspathResource org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml]
+[name: "classpath:org/pdfclown/common/build/absent/conf/checkstyle/checkstyle-checks.xml"] => null
+[name: "org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml"] => ResourceTest.ResourceResult[ClasspathResource org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml jar:file:/pdfclown-common-build.jar!/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml]
+[name: "org/pdfclown/common/build/absent/conf/checkstyle/checkstyle-checks.xml"] => null
+[name: "classpath:org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"] => ResourceTest.ResourceResult[ClasspathResource org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml]
+[name: "classpath:org/pdfclown/common/util/absent/conf/checkstyle/checkstyle-checks.xml"] => null
+[name: "org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml"] => ResourceTest.ResourceResult[ClasspathResource org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml file:/org/pdfclown/common/util/conf/checkstyle/checkstyle-checks.xml]
+[name: "org/pdfclown/common/util/absent/conf/checkstyle/checkstyle-checks.xml"] => null
+[name: "/home/myuser/conf/checkstyle/checkstyle-checks.xml"] => ResourceTest.ResourceResult[FileResource /home/myuser/conf/checkstyle/checkstyle-checks.xml jimfs://local/home/myuser/conf/checkstyle/checkstyle-checks.xml]
+[name: "conf/checkstyle/checkstyle-checks.xml"] => ResourceTest.ResourceResult[FileResource conf/checkstyle/checkstyle-checks.xml jimfs://local/home/test/root/conf/checkstyle/checkstyle-checks.xml]
+[name: "https://www.example.io/conf/checkstyle/checkstyle-checks.xml"] => ResourceTest.ResourceResult[WebResource https://www.example.io/conf/checkstyle/checkstyle-checks.xml https://www.example.io/conf/checkstyle/checkstyle-checks.xml]
+[name: "https://www.example.io/absent/conf/checkstyle/checkstyle-checks.xml"] => null

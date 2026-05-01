@@ -1,0 +1,6 @@
+[typename: null] => ""
+[typename: "java.lang.Double"] => "java.lang"
+[typename: "java.lang.Character"] => "java.lang"
+[typename: "java.lang.String"] => "java.lang"
+[typename: "java.lang.String"] => "java.lang"
+[typename: "java.util.Map$Entry"] => "java.util"

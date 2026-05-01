@@ -1,0 +1,3 @@
+[obj: null] => <<NullPointerException: null>>
+[obj: "hello"] => <<ClassCastException: "class java.lang.String cannot be cast to class java.lang.Integer">>
+[obj: 42] => 42

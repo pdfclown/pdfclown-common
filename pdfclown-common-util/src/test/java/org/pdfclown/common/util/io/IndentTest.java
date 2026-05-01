@@ -23,9 +23,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
-import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
@@ -35,12 +32,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.stream.Stream;
+import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 import org.pdfclown.common.util.__test.BaseTest;
 
 // SourceName: nl.talsmasoftware.umldoclet.rendering.indent.IndentationTest
@@ -49,86 +42,6 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini (adaptation to pdfclown-common-util)
  */
 public class IndentTest extends BaseTest {
-  static Stream<Arguments> spaces() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // width[0]: 0
-            // [1] level[0]: -1
-            "",
-            // [2] level[1]: 0
-            "",
-            // [3] level[2]: 1
-            "",
-            // [4] level[3]: 2
-            "",
-            // [5] level[4]: 6
-            "",
-            //
-            // width[1]: 1
-            // [6] level[0]: -1
-            "",
-            // [7] level[1]: 0
-            "",
-            // [8] level[2]: 1
-            " ",
-            // [9] level[3]: 2
-            "  ",
-            // [10] level[4]: 6
-            "      ",
-            //
-            // width[2]: 2
-            // [11] level[0]: -1
-            "",
-            // [12] level[1]: 0
-            "",
-            // [13] level[2]: 1
-            "  ",
-            // [14] level[3]: 2
-            "    ",
-            // [15] level[4]: 6
-            "            ",
-            //
-            // width[3]: 3
-            // [16] level[0]: -1
-            "",
-            // [17] level[1]: 0
-            "",
-            // [18] level[2]: 1
-            "   ",
-            // [19] level[3]: 2
-            "      ",
-            // [20] level[4]: 6
-            "                  ",
-            //
-            // width[4]: 4
-            // [21] level[0]: -1
-            "",
-            // [22] level[1]: 0
-            "",
-            // [23] level[2]: 1
-            "    ",
-            // [24] level[3]: 2
-            "        ",
-            // [25] level[4]: 6
-            "                        "),
-        // width
-        asList(
-            0,
-            1,
-            2,
-            3,
-            4),
-        // level
-        asList(
-            -1,
-            0,
-            1,
-            2,
-            6));
-  }
-
   @SuppressWarnings("unchecked")
   private static <S extends Serializable> S deserialize(byte[] bytes) {
     try (var in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
@@ -203,14 +116,25 @@ public class IndentTest extends BaseTest {
     assertThat(Indent.NONE.decrease(), is(sameInstance(Indent.NONE)));
   }
 
-  // SourceName: testSpacesWidth*
-  @ParameterizedTest
-  @MethodSource
-  void spaces(Expected<String> expected, int width, int level) {
-    assertParameterizedOf(
-        () -> Indent.spaces(width, level).toString(),
-        expected,
-        () -> expectedGeneration(width, level));
+  @Test
+  void spaces() {
+    combinationVerifier.verify(
+        (width, level) -> Indent.spaces(width, level).toString(),
+        List.of("width", "level"),
+        // width
+        asList(
+            0,
+            1,
+            2,
+            3,
+            4),
+        // level
+        asList(
+            -1,
+            0,
+            1,
+            2,
+            6));
   }
 
   // SourceName: testDefaultSpaces

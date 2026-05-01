@@ -12,24 +12,17 @@
  */
 package org.pdfclown.common.util.io;
 
-import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.function.Functions.to;
-import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
-import static org.pdfclown.common.util.net.Uris.url;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Immutable;
-import org.pdfclown.common.util.net.Uris;
 
 /**
  * Resource.
@@ -56,7 +49,6 @@ public interface Resource {
    * @return {@code null}, if the resource corresponding to {@code path} does not exist.
    */
   static @Nullable PathResource of(@Nullable Path path) {
-    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     return (PathResource) of(to(path, Object::toString));
   }
 
@@ -129,35 +121,7 @@ public interface Resource {
    */
   static @Nullable Resource of(@Nullable String name, ClassLoader cl,
       Function<Path, Path> fileResolver) {
-    if (name == null)
-      return null;
-    else if (name.startsWith(SCHEME__CLASSPATH + COLON))
-      // [explicit classpath resource]
-      return ClasspathResource.of(name, cl);
-
-    try {
-      var file = Path.of(name);
-      if (!file.isAbsolute()) {
-        file = fileResolver.apply(file);
-      }
-      if (Files.exists(file))
-        // [filesystem resource]
-        return new FileResource(name, file);
-    } catch (InvalidPathException | IOError ex) {
-      // FALLTHRU
-    }
-
-    try {
-      URI uri = new URI(name);
-      if (uri.isAbsolute())
-        // [URL resource]
-        return Uris.exists(url(uri)) ? new WebResource(name, uri) : null;
-    } catch (URISyntaxException ex) {
-      // FALLTHRU
-    }
-
-    // [implicit classpath resource]
-    return ClasspathResource.of(name, cl);
+    return AbstractResource.of(name, cl, fileResolver, FileSystems.getDefault());
   }
 
   /**
@@ -185,7 +149,6 @@ public interface Resource {
    * @return {@code null}, if the resource corresponding to {@code url} does not exist.
    */
   static @Nullable Resource of(@Nullable URI uri) {
-    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     return of(to(uri, Object::toString));
   }
 
@@ -198,7 +161,6 @@ public interface Resource {
    * @return {@code null}, if the resource corresponding to {@code url} does not exist.
    */
   static @Nullable Resource of(@Nullable URL url) {
-    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     return of(to(url, Object::toString));
   }
 

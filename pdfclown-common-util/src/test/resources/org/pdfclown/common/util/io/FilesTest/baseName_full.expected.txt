@@ -1,0 +1,5 @@
+[file: "/home/me/my.sub/test/obj.TAR.GZ"] => "obj"
+[file: "smb://myhost/my.sub/test/obj.TAR.gz"] => "obj"
+[file: "C:\\my.sub\\test\\obj.tar.GZ"] => "obj"
+[file: "\\\\myhost\\my.sub\\test\\obj.tar.gz"] => "obj"
+[file: "/home/me/my/test/obj-5.2.9.tar2.gz"] => "obj-5.2.9"

@@ -1,0 +1,6 @@
+[obj: null] => ""
+[obj: 0.5] => "java.lang"
+[obj: 'a'] => "java.lang"
+[obj: "a string"] => "java.lang"
+[obj: String] => "java.lang"
+[obj: java.util.Map.Entry] => "java.util"

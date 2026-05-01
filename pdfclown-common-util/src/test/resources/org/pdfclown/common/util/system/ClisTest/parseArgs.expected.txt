@@ -1,0 +1,6 @@
+[argsString: "val1 val2 \"val3 (dquote)\" 'val4 (squote)'"] => "[val1, val2, val3 (dquote), val4 (squote)]"
+[argsString: "val1 \"val2 (\\\"dquote\\\")\" 'val3 (\\'squote\\')'"] => "[val1, val2 (\"dquote\"), val3 ('squote')]"
+[argsString: "val1 \"val2 (\\\"dquote\\\") 'val3 (\\'squote\\')'"] => "[val1, val2 (\"dquote\") 'val3 ('squote')']"
+[argsString: "val1 \"val2 (\\\"dquote\\\")\"'val3 (\\'squote\\')'"] => "[val1, val2 (\"dquote\")val3 ('squote')]"
+[argsString: "\"Multi-\nLine\nArgument\" \"val2\""] => "[Multi-\nLine\nArgument, val2]"
+[argsString: "val1 C:\\\\Some\\\\Random\\\\Path\\\\"] => "[val1, C:\\Some\\Random\\Path\\]"

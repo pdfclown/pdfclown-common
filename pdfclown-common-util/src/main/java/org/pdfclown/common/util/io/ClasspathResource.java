@@ -67,7 +67,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
    */
   private static final Map<String, FileSystem> fileSystems = new HashMap<>();
 
-  static @Nullable ClasspathResource of(String name, ClassLoader cl) {
+  static @Nullable ClasspathResource of(String name, ClassLoader cl, FileSystem fs) {
     URL url;
     {
       int index = name.indexOf(COLON);
@@ -86,7 +86,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
       }
       url = cl.getResource(name);
     }
-    return url != null ? new ClasspathResource(name, url) : null;
+    return url != null ? new ClasspathResource(name, url, fs) : null;
   }
 
   @SuppressWarnings("RedundantCast" /*
@@ -109,7 +109,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   private final Path path;
   private final URI uri;
 
-  protected ClasspathResource(String name, URL url) {
+  protected ClasspathResource(String name, URL url, FileSystem fs) {
     super(name);
 
     try {
@@ -124,7 +124,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
          * NOTE: We have to access `URL.path` instead of `URI.path`, as the latter returns `null`
          * since URI treats JAR protocol as opaque (that is, non-hierarchical).
          */
-        Path jarFile = Path.of(jarFileName(url.getPath()));
+        Path jarFile = fs.getPath(jarFileName(url.getPath()));
         String jarEntryName = jarEntryName(url.getPath());
         path = asFileSystem(jarFile).getPath(jarEntryName);
       }

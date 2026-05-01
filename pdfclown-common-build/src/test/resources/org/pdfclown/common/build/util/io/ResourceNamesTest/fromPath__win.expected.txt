@@ -1,0 +1,12 @@
+[filePath: "relative\\index1.html", baseDir: "local"] => "/relative/index1.html"
+[filePath: "relative\\index1.html", baseDir: "..\\local"] => "/relative/index1.html"
+[filePath: "relative\\index1.html", baseDir: "c:\\absolute"] => "/relative/index1.html"
+[filePath: "..\\relative\\index2.html", baseDir: "local"] => null
+[filePath: "..\\relative\\index2.html", baseDir: "..\\local"] => null
+[filePath: "..\\relative\\index2.html", baseDir: "c:\\absolute"] => null
+[filePath: "c:\\cwd\\local\\index3.html", baseDir: "local"] => "/index3.html"
+[filePath: "c:\\cwd\\local\\index3.html", baseDir: "..\\local"] => null
+[filePath: "c:\\cwd\\local\\index3.html", baseDir: "c:\\absolute"] => null
+[filePath: "c:\\absolute\\another\\index4.html", baseDir: "local"] => null
+[filePath: "c:\\absolute\\another\\index4.html", baseDir: "..\\local"] => null
+[filePath: "c:\\absolute\\another\\index4.html", baseDir: "c:\\absolute"] => "/another/index4.html"

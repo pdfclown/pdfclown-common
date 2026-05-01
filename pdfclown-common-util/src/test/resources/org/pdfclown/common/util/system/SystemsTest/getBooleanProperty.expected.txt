@@ -1,0 +1,6 @@
+[value: null] => false
+[value: "false"] => false
+[value: "something else"] => false
+[value: ""] => true
+[value: "true"] => true
+[value: "True"] => true

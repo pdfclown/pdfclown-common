@@ -19,10 +19,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.hasItem;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.simple;
-import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
+import static org.pdfclown.common.build.util.Tuple.tuple;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.io.Serializable;
@@ -34,17 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy;
-import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.pdfclown.common.util.function.FunctionsTest;
 import org.pdfclown.common.util.system.Clis;
@@ -234,132 +224,49 @@ class ObjectsTest extends BaseTest {
           .map($ -> $ != null ? ($ instanceof Class<?> c ? c : $.getClass()).getName() : null)
           .collect(Collectors.toCollection(ArrayList::new)));
 
-  static Stream<Arguments> elseGet() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // obj[0]: null
-            // [1] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            null,
-            // [2] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            21,
-            //
-            // obj[1]: "hello"
-            // [3] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            "hello",
-            // [4] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            "hello",
-            //
-            // obj[2]: 42
-            // [5] supplier[0]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42,
-            // [6] supplier[1]: "org.pdfclown.common.util.function.FunctionsT. . ."
-            42),
+  @Test
+  void elseGet() {
+    combinationVerifier.verify(
+        (obj, supplier) -> Objects.elseGet(obj, supplier),
+        List.of("obj", "supplier"),
         // obj
         FunctionsTest.OBJS,
         // supplier
         FunctionsTest.SUPPLIERS);
   }
 
-  static Stream<Arguments> fqn_Object() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 0.5
-            "java.lang.Double",
-            // [3] obj[2]: 'a'
-            "java.lang.Character",
-            // [4] obj[3]: "a string"
-            "java.lang.String",
-            // [5] obj[4]: String
-            "java.lang.String",
-            // [6] obj[5]: java.util.Map.Entry
-            "java.util.Map$Entry"),
+  @Test
+  void fqn_Object() {
+    combinationVerifier.verify(
+        (obj) -> Objects.fqn(obj),
+        List.of("obj"),
         // obj
         QN_OBJS);
   }
 
-  static Stream<Arguments> fqnd_Object() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 0.5
-            "java.lang.Double",
-            // [3] obj[2]: 'a'
-            "java.lang.Character",
-            // [4] obj[3]: "a string"
-            "java.lang.String",
-            // [5] obj[4]: String
-            "java.lang.String",
-            // [6] obj[5]: java.util.Map.Entry
-            "java.util.Map.Entry"),
+  @Test
+  void fqnd_Object() {
+    combinationVerifier.verify(
+        (obj) -> Objects.fqnd(obj),
+        List.of("obj"),
         // obj
         QN_OBJS);
   }
 
-  static Stream<Arguments> fqnd_String() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] typename[0]: null
-            "null",
-            // [2] typename[1]: "java.lang.Double"
-            "java.lang.Double",
-            // [3] typename[2]: "java.lang.Character"
-            "java.lang.Character",
-            // [4] typename[3]: "java.lang.String"
-            "java.lang.String",
-            // [5] typename[4]: "java.lang.String"
-            "java.lang.String",
-            // [6] typename[5]: "java.util.Map$Entry"
-            "java.util.Map.Entry"),
+  @Test
+  void fqnd_String() {
+    combinationVerifier.verify(
+        (typename) -> Objects.fqnd(typename),
+        List.of("typename"),
         // typename
         QN_TYPENAMES);
   }
 
-  static Stream<Arguments> literal() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 1234
-            "1234",
-            // [3] obj[2]: 1.987
-            "1.987",
-            // [4] obj[3]: 1.5E-4
-            "1.5E-4",
-            // [5] obj[4]: true
-            "true",
-            // [6] obj[5]: '\''
-            "'\\''",
-            // [7] obj[6]: '"'
-            "'\"'",
-            // [8] obj[7]: ""
-            "\"\"",
-            // [9] obj[8]: "Text with:\n- \"quoted content\"\n- newlines"
-            "\"Text with:\\n"
-                + "- \\\"quoted content\\\"\\n"
-                + "- newlines\"",
-            // [10] obj[9]: "测试文本"
-            "\"测试文本\"",
-            // [11] obj[10]: String
-            "String",
-            // [12] obj[11]: java.util.stream.Stream
-            "java.util.stream.Stream",
-            // [13] obj[12]: org.pdfclown.common.util.Strings
-            "org.pdfclown.common.util.Strings",
-            // [14] obj[13]: "[one, two]"
-            "\"[one, two]\""),
+  @Test
+  void literal() {
+    combinationVerifier.verify(
+        (obj) -> Objects.literal(obj),
+        List.of("obj"),
         // obj
         asList(
             null,
@@ -379,48 +286,14 @@ class ObjectsTest extends BaseTest {
   }
 
   /**
-   * @implNote The {@code s} argument list corresponds to the {@code expected} list of
-   *           {@link #literal()}; because of the interaction of automated code generation (see also
-   *           {@link org.pdfclown.common.build.test.assertion.Assertions#argumentsStream(ArgumentsStreamStrategy, List, List[])
-   *           argumentsStream(..)}), it cannot be dynamically extracted from the result of that
-   *           method; in case that {@code expected} list changes, it should be manually copied
-   *           here.
+   * @implNote The {@code s} argument list corresponds to the expected result of {@link #literal()};
+   *           in case that the expected result changes, it should be manually copied here.
    */
-  static Stream<Arguments> parseLiteral() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] s[0]: "null"
-            null,
-            // [2] s[1]: "1234"
-            1234,
-            // [3] s[2]: "1.987"
-            1.987F,
-            // [4] s[3]: "1.5E-4"
-            1.5E-4F,
-            // [5] s[4]: "true"
-            true,
-            // [6] s[5]: "'\\''"
-            '\'',
-            // [7] s[6]: "'\"'"
-            '"',
-            // [8] s[7]: "\"\""
-            "",
-            // [9] s[8]: "\"Text with:\\n- \\\"quoted content\\\"\\n- . . ."
-            "Text with:\n"
-                + "- \"quoted content\"\n"
-                + "- newlines",
-            // [10] s[9]: "\"测试文本\""
-            "测试文本",
-            // [11] s[10]: "String"
-            "String",
-            // [12] s[11]: "java.util.stream.Stream"
-            "java.util.stream.Stream",
-            // [13] s[12]: "org.pdfclown.common.util.Strings"
-            "org.pdfclown.common.util.Strings",
-            // [14] s[13]: "\"[one, two]\""
-            "[one, two]"),
+  @Test
+  void parseLiteral() {
+    combinationVerifier.verify(
+        (s) -> Objects.parseLiteral(s),
+        List.of("s"),
         // s (see implementation note)
         asList(
             // [1] obj[0]: null
@@ -455,526 +328,112 @@ class ObjectsTest extends BaseTest {
             "\"[one, two]\""));
   }
 
-  static Stream<Arguments> pkg_Object() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "",
-            // [2] obj[1]: 0.5
-            "java.lang",
-            // [3] obj[2]: 'a'
-            "java.lang",
-            // [4] obj[3]: "a string"
-            "java.lang",
-            // [5] obj[4]: String
-            "java.lang",
-            // [6] obj[5]: java.util.Map.Entry
-            "java.util"),
+  @Test
+  void pkg_Object() {
+    combinationVerifier.verify(
+        (obj) -> Objects.pkg(obj),
+        List.of("obj"),
         // obj
         QN_OBJS);
   }
 
-  static Stream<Arguments> pkg_String() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] typename[0]: null
-            "",
-            // [2] typename[1]: "java.lang.Double"
-            "java.lang",
-            // [3] typename[2]: "java.lang.Character"
-            "java.lang",
-            // [4] typename[3]: "java.lang.String"
-            "java.lang",
-            // [5] typename[4]: "java.lang.String"
-            "java.lang",
-            // [6] typename[5]: "java.util.Map$Entry"
-            "java.util"),
+  @Test
+  void pkg_String() {
+    combinationVerifier.verify(
+        (typename) -> Objects.pkg(typename),
+        List.of("typename"),
         // typename
         QN_TYPENAMES);
   }
 
-  static Stream<Arguments> sfqn_Object() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 0.5
-            "j.l.Double",
-            // [3] obj[2]: 'a'
-            "j.l.Character",
-            // [4] obj[3]: "a string"
-            "j.l.String",
-            // [5] obj[4]: String
-            "j.l.String",
-            // [6] obj[5]: java.util.Map.Entry
-            "j.u.Map$Entry"),
+  @Test
+  void sfqn_Object() {
+    combinationVerifier.verify(
+        (obj) -> Objects.sfqn(obj),
+        List.of("obj"),
         // obj
         QN_OBJS);
   }
 
-  static Stream<Arguments> sfqn_String() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] typename[0]: null
-            "null",
-            // [2] typename[1]: "java.lang.Double"
-            "j.l.Double",
-            // [3] typename[2]: "java.lang.Character"
-            "j.l.Character",
-            // [4] typename[3]: "java.lang.String"
-            "j.l.String",
-            // [5] typename[4]: "java.lang.String"
-            "j.l.String",
-            // [6] typename[5]: "java.util.Map$Entry"
-            "j.u.Map$Entry"),
+  @Test
+  void sfqn_String() {
+    combinationVerifier.verify(
+        (typename) -> Objects.sfqn(typename),
+        List.of("typename"),
         // typename
         QN_TYPENAMES);
   }
 
-  static Stream<Arguments> sfqnd_Object() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 0.5
-            "j.l.Double",
-            // [3] obj[2]: 'a'
-            "j.l.Character",
-            // [4] obj[3]: "a string"
-            "j.l.String",
-            // [5] obj[4]: String
-            "j.l.String",
-            // [6] obj[5]: java.util.Map.Entry
-            "j.u.Map.Entry"),
+  @Test
+  void sfqnd_Object() {
+    combinationVerifier.verify(
+        (obj) -> Objects.sfqnd(obj),
+        List.of("obj"),
         // obj
         QN_OBJS);
   }
 
-  static Stream<Arguments> sfqnd_String() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] typename[0]: null
-            "null",
-            // [2] typename[1]: "java.lang.Double"
-            "j.l.Double",
-            // [3] typename[2]: "java.lang.Character"
-            "j.l.Character",
-            // [4] typename[3]: "java.lang.String"
-            "j.l.String",
-            // [5] typename[4]: "java.lang.String"
-            "j.l.String",
-            // [6] typename[5]: "java.util.Map$Entry"
-            "j.u.Map.Entry"),
+  @Test
+  void sfqnd_String() {
+    combinationVerifier.verify(
+        (typename) -> Objects.sfqnd(typename),
+        List.of("typename"),
         // typename
         QN_TYPENAMES);
   }
 
-  static Stream<Arguments> simpleName_Object() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 0.5
-            "Double",
-            // [3] obj[2]: 'a'
-            "Character",
-            // [4] obj[3]: "a string"
-            "String",
-            // [5] obj[4]: String
-            "String",
-            // [6] obj[5]: java.util.Map.Entry
-            "Entry"),
+  @Test
+  void simpleName_Object() {
+    combinationVerifier.verify(
+        (obj) -> Objects.simpleName(obj),
+        List.of("obj"),
         // obj
         QN_OBJS);
   }
 
-  static Stream<Arguments> simpleName_String() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] typename[0]: null
-            "null",
-            // [2] typename[1]: "java.lang.Double"
-            "Double",
-            // [3] typename[2]: "java.lang.Character"
-            "Character",
-            // [4] typename[3]: "java.lang.String"
-            "String",
-            // [5] typename[4]: "java.lang.String"
-            "String",
-            // [6] typename[5]: "java.util.Map$Entry"
-            "Entry"),
+  @Test
+  void simpleName_String() {
+    combinationVerifier.verify(
+        (typename) -> Objects.simpleName(typename),
+        List.of("typename"),
         // typename
         QN_TYPENAMES);
   }
 
-  static Stream<Arguments> sqn_Object() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 0.5
-            "Double",
-            // [3] obj[2]: 'a'
-            "Character",
-            // [4] obj[3]: "a string"
-            "String",
-            // [5] obj[4]: String
-            "String",
-            // [6] obj[5]: java.util.Map.Entry
-            "Map$Entry"),
+  @Test
+  void sqn_Object() {
+    combinationVerifier.verify(
+        (obj) -> Objects.sqn(obj),
+        List.of("obj"),
         // obj
         QN_OBJS);
   }
 
-  static Stream<Arguments> sqn_String() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] typename[0]: null
-            "null",
-            // [2] typename[1]: "java.lang.Double"
-            "Double",
-            // [3] typename[2]: "java.lang.Character"
-            "Character",
-            // [4] typename[3]: "java.lang.String"
-            "String",
-            // [5] typename[4]: "java.lang.String"
-            "String",
-            // [6] typename[5]: "java.util.Map$Entry"
-            "Map$Entry"),
+  @Test
+  void sqn_String() {
+    combinationVerifier.verify(
+        (typename) -> Objects.sqn(typename),
+        List.of("typename"),
         // typename
         QN_TYPENAMES);
   }
 
-  static Stream<Arguments> sqnd_Object() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: 0.5
-            "Double",
-            // [3] obj[2]: 'a'
-            "Character",
-            // [4] obj[3]: "a string"
-            "String",
-            // [5] obj[4]: String
-            "String",
-            // [6] obj[5]: java.util.Map.Entry
-            "Map.Entry"),
+  @Test
+  void sqnd_Object() {
+    combinationVerifier.verify(
+        (obj) -> Objects.sqnd(obj),
+        List.of("obj"),
         // obj
         QN_OBJS);
   }
 
-  static Stream<Arguments> sqnd_String() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] typename[0]: null
-            "null",
-            // [2] typename[1]: "java.lang.Double"
-            "Double",
-            // [3] typename[2]: "java.lang.Character"
-            "Character",
-            // [4] typename[3]: "java.lang.String"
-            "String",
-            // [5] typename[4]: "java.lang.String"
-            "String",
-            // [6] typename[5]: "java.util.Map$Entry"
-            "Map.Entry"),
+  @Test
+  void sqnd_String() {
+    combinationVerifier.verify(
+        (typename) -> Objects.sqnd(typename),
+        List.of("typename"),
         // typename
         QN_TYPENAMES);
-  }
-
-  static Stream<Arguments> toQualifiedString() {
-    return argumentsStream(
-        cartesian()
-            .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: "ToStringObject"
-            "ToStringObject",
-            // [3] obj[2]: "ToStringObject myprop=something"
-            "ToStringObject[myprop=something]",
-            // [4] obj[3]: "ObjectsTest$ToStringObject"
-            "ObjectsTest$ToStringObject",
-            // [5] obj[4]: "ObjectsTest$ToStringObject myprop: something"
-            "ObjectsTest$ToStringObject[myprop: something]",
-            // [6] obj[5]: "ObjectsTest.ToStringObject myprop: something else"
-            "ObjectsTest.ToStringObject[myprop: something else]",
-            // [7] obj[6]: "org.pdfclown.common.util.ObjectsTest$ToStringObject"
-            "org.pdfclown.common.util.ObjectsTest$ToStringObject",
-            // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
-            "org.pdfclown.common.util.ObjectsTest.ToStringObject[something]",
-            // [9] obj[8]: "ToStringObjects"
-            "ObjectsTest.ToStringObject[ToStringObjects]",
-            // [10] obj[9]: "org.something.ToStringObject"
-            "org.something.ToStringObject",
-            // [11] obj[10]: "ToStringObject[myprop=AAA]"
-            "ToStringObject[myprop=AAA]",
-            // [12] obj[11]: "myprop=List<ToStringObject>"
-            "ObjectsTest.ToStringObject[myprop=List<ToStringObject>]",
-            // [13] obj[12]: "myprop=ToStringObject"
-            "ObjectsTest.ToStringObject[myprop=ToStringObject]"),
-        // obj
-        TO_STRINGS);
-  }
-
-  static Stream<Arguments> toSqnQualifiedString() {
-    return argumentsStream(
-        cartesian()
-            .<String>composeArgConverter(0, $ -> $ != null ? new ToStringObject($) : null),
-        // expected
-        asList(
-            // [1] obj[0]: null
-            "null",
-            // [2] obj[1]: "ToStringObject"
-            "ObjectsTest.ToStringObject",
-            // [3] obj[2]: "ToStringObject myprop=something"
-            "ObjectsTest.ToStringObject[myprop=something]",
-            // [4] obj[3]: "ObjectsTest$ToStringObject"
-            "ObjectsTest.ToStringObject",
-            // [5] obj[4]: "ObjectsTest$ToStringObject myprop: something"
-            "ObjectsTest.ToStringObject[myprop: something]",
-            // [6] obj[5]: "ObjectsTest.ToStringObject myprop: something else"
-            "ObjectsTest.ToStringObject[myprop: something else]",
-            // [7] obj[6]: "org.pdfclown.common.util.ObjectsTest$ToStringObject"
-            "ObjectsTest.ToStringObject",
-            // [8] obj[7]: "org.pdfclown.common.util.ObjectsTest.ToStringObject something"
-            "ObjectsTest.ToStringObject[something]",
-            // [9] obj[8]: "ToStringObjects"
-            "ObjectsTest.ToStringObject[ToStringObjects]",
-            // [10] obj[9]: "org.something.ToStringObject"
-            "ObjectsTest.ToStringObject",
-            // [11] obj[10]: "ToStringObject[myprop=AAA]"
-            "ObjectsTest.ToStringObject[myprop=AAA]",
-            // [12] obj[11]: "myprop=List<ToStringObject>"
-            "ObjectsTest.ToStringObject[myprop=List<ToStringObject>]",
-            // [13] obj[12]: "myprop=ToStringObject"
-            "ObjectsTest.ToStringObject[myprop=ToStringObject]"),
-        // obj
-        TO_STRINGS);
-  }
-
-  static Stream<Arguments> toStringWithProperties() {
-    return argumentsStream(
-        simple(),
-        // expected
-        asList(
-            // [1] obj[0]: Object; properties[0]: "[Ljava.lang.Object;@bb095"
-            new Failure("ClassCastException",
-                "class java.net.URI cannot be cast to class java.lang.String (java.net.URI and java.lang.String are in module java.base of loader 'bootstrap')"),
-            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; properties[1]: "[Ljava.lang.Object;@76911385"
-            "Clis.Args[adapter=class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
-            // [3] obj[2]: org.pdfclown.common.util.xml.Xmls.XPath; properties[2]: "[Ljava.lang.Object;@160396db"
-            "Xmls.XPath[profile=COMPACT, level=11]"),
-        // obj, properties
-        of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
-        of(Clis.Args.class, new Object[] { "adapter", Clis.ListIncrementalAdapter.class }),
-        of(Xmls.XPath.class,
-            new Object[] { "profile", DocumentFactoryProfile.COMPACT, "level", 11 }));
-  }
-
-  static Stream<Arguments> toStringWithValues() {
-    return argumentsStream(
-        simple(),
-        // expected
-        asList(
-            // [1] obj[0]: Object; features[0]: "[Ljava.lang.Object;@c5ee75e"
-            "Object[https://www.example.io Blue]",
-            // [2] obj[1]: org.pdfclown.common.util.system.Clis.Args; features[1]: "[Ljava.lang.Object;@7ba63fe5"
-            "Clis.Args[class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]",
-            // [3] obj[2]: org.pdfclown.common.util.xml.Xmls.XPath; features[2]: "[Ljava.lang.Object;@6f330eb9"
-            "Xmls.XPath[true Yellow COMPACT]"),
-        // obj, features
-        of(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
-        of(Clis.Args.class, new Object[] { Clis.ListIncrementalAdapter.class }),
-        of(Xmls.XPath.class, new Object[] { true, "Yellow", DocumentFactoryProfile.COMPACT }));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void elseGet(Expected<Object> expected, Object obj, Supplier<Integer> supplier) {
-    assertParameterizedOf(
-        () -> Objects.elseGet(obj, supplier),
-        expected,
-        () -> expectedGeneration(obj, supplier));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void fqn_Object(Expected<String> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.fqn(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void fqnd_Object(Expected<String> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.fqnd(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void fqnd_String(Expected<String> expected, @Nullable String typename) {
-    assertParameterizedOf(
-        () -> Objects.fqnd(typename),
-        expected,
-        () -> expectedGeneration(typename));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void literal(Expected<Object> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.literal(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void parseLiteral(Expected<Object> expected, @Nullable String s) {
-    assertParameterizedOf(
-        () -> Objects.parseLiteral(s),
-        expected,
-        () -> expectedGeneration(s));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void pkg_Object(Expected<String> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.pkg(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void pkg_String(Expected<String> expected, @Nullable String typename) {
-    assertParameterizedOf(
-        () -> Objects.pkg(typename),
-        expected,
-        () -> expectedGeneration(typename));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void sfqn_Object(Expected<String> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.sfqn(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void sfqn_String(Expected<String> expected, @Nullable String typename) {
-    assertParameterizedOf(
-        () -> Objects.sfqn(typename),
-        expected,
-        () -> expectedGeneration(typename));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void sfqnd_Object(Expected<String> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.sfqnd(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void sfqnd_String(Expected<String> expected, @Nullable String typename) {
-    assertParameterizedOf(
-        () -> Objects.sfqnd(typename),
-        expected,
-        () -> expectedGeneration(typename));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void simpleName_Object(Expected<String> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.simpleName(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void simpleName_String(Expected<String> expected, @Nullable String typename) {
-    assertParameterizedOf(
-        () -> Objects.simpleName(typename),
-        expected,
-        () -> expectedGeneration(typename));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void sqn_Object(Expected<String> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.sqn(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void sqn_String(Expected<String> expected, @Nullable String typename) {
-    assertParameterizedOf(
-        () -> Objects.sqn(typename),
-        expected,
-        () -> expectedGeneration(typename));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void sqnd_Object(Expected<String> expected, @Nullable Object obj) {
-    assertParameterizedOf(
-        () -> Objects.sqnd(obj),
-        expected,
-        () -> expectedGeneration(obj));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void sqnd_String(Expected<String> expected, @Nullable String typename) {
-    assertParameterizedOf(
-        () -> Objects.sqnd(typename),
-        expected,
-        () -> expectedGeneration(typename));
   }
 
   @Test
@@ -1012,42 +471,45 @@ class ObjectsTest extends BaseTest {
         Object.class));
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toQualifiedString(Expected<String> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Objects.toQualifiedString(obj),
-        expected,
-        () -> this.<String>expectedGeneration(obj)
-            .setMaxArgCommentLength(100));
+  @Test
+  void toQualifiedString() {
+    combinationVerifier.verify(
+        (obj) -> Objects.toQualifiedString(obj),
+        List.of("obj"),
+        // obj
+        TO_STRINGS.stream().map($ -> $ != null ? new ToStringObject($) : null).toList());
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toSqnQualifiedString(Expected<String> expected, Object obj) {
-    assertParameterizedOf(
-        () -> Objects.toSqnQualifiedString(obj),
-        expected,
-        () -> this.<String>expectedGeneration(obj)
-            .setMaxArgCommentLength(100));
+  @Test
+  void toSqnQualifiedString() {
+    combinationVerifier.verify(
+        (obj) -> Objects.toSqnQualifiedString(obj),
+        List.of("obj"),
+        // obj
+        TO_STRINGS.stream().map($ -> $ != null ? new ToStringObject($) : null).toList());
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toStringWithProperties(Expected<String> expected, Object obj,
-      @Nullable Object[] properties) {
-    assertParameterizedOf(
-        () -> Objects.toStringWithProperties(obj, properties),
-        expected,
-        () -> expectedGeneration(obj, properties));
+  @Test
+  void toStringWithProperties() {
+    tupleVerifier.verify(
+        (obj, properties) -> Objects.toStringWithProperties(obj, properties),
+        List.of("obj", "properties"),
+        List.of(
+            tuple(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
+            tuple(Clis.Args.class, new Object[] { "adapter", Clis.ListIncrementalAdapter.class }),
+            tuple(Xmls.XPath.class,
+                new Object[] { "profile", DocumentFactoryProfile.COMPACT, "level", 11 })));
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toStringWithValues(Expected<String> expected, Object obj, @Nullable Object[] features) {
-    assertParameterizedOf(
-        () -> Objects.toStringWithValues(obj, features),
-        expected,
-        () -> expectedGeneration(obj, features));
+  @Test
+  void toStringWithValues() {
+    tupleVerifier.verify(
+        (obj, features) -> Objects.toStringWithValues(obj, features),
+        List.of("obj", "features"),
+        List.of(
+            tuple(Object.class, new Object[] { URI.create("https://www.example.io"), "Blue" }),
+            tuple(Clis.Args.class, new Object[] { Clis.ListIncrementalAdapter.class }),
+            tuple(Xmls.XPath.class,
+                new Object[] { true, "Yellow", DocumentFactoryProfile.COMPACT })));
   }
 }

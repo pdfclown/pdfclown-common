@@ -13,312 +13,117 @@
 package org.pdfclown.common.build.util.io;
 
 import static java.util.Arrays.asList;
-import static org.pdfclown.common.build.test.assertion.Assertions.Argument.qnamed;
-import static org.pdfclown.common.build.test.assertion.Assertions.ArgumentsStreamStrategy.cartesian;
-import static org.pdfclown.common.build.test.assertion.Assertions.argumentsStream;
 import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterizedOf;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.List;
-import java.util.stream.Stream;
-import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.pdfclown.common.build.__test.BaseTest;
 import org.pdfclown.common.build.test.assertion.Assertions.Expected;
-import org.pdfclown.common.build.test.assertion.Assertions.Failure;
 
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("Convert2MethodRef")
 public class ResourceNamesTest extends BaseTest {
-  public static final List<Named<String>> NAMES = asList(
-      qnamed("Normal absolute root",
-          "/"),
-      qnamed("Backslash absolute root",
-          "\\"),
-      qnamed("Normal absolute name with extension",
-          "/my/absolute/Resource.txt"),
-      qnamed("Normal absolute name with extension and dotted folder (INVALID)",
-          "/my/absolute.sub/Resource.txt"),
-      qnamed("Slash-trailing absolute name",
-          "/my/absolute/resource/"),
-      qnamed("Slash- and backslash-ridden absolute name",
-          "//my/\\\\other\\/\\deep//absolute\\resource/"),
-      qnamed("Relative root",
-          ""),
-      qnamed("Normal relative name with extension",
-          "my/relative/Resource.txt"),
-      qnamed("Slash-trailing relative name",
-          "my/relative/resource/"),
-      qnamed("Slash- and backslash-ridden relative name",
-          "my/\\\\other\\/\\deep//relative\\resource/"));
+  private static final List<Object> BASES = asList(
+      null,
+      EMPTY,
+      ResourceNames.class,
+      ResourceNames.class.getPackageName());
 
-  static Stream<Arguments> abs() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] name[0]: "/"
-            "/",
-            // [2] name[1]: "\\"
-            "/",
-            // [3] name[2]: "/my/absolute/Resource.txt"
-            "/my/absolute/Resource.txt",
-            // [4] name[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute.sub/Resource.txt",
-            // [5] name[4]: "/my/absolute/resource/"
-            "/my/absolute/resource/",
-            // [6] name[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/other/deep/absolute/resource/",
-            // [7] name[6]: ""
-            "/",
-            // [8] name[7]: "my/relative/Resource.txt"
-            "/my/relative/Resource.txt",
-            // [9] name[8]: "my/relative/resource/"
-            "/my/relative/resource/",
-            // [10] name[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "/my/other/deep/relative/resource/"),
+  public static final List<String> NAMES = asList(
+      // Normal absolute root
+      "/",
+      // Backslash absolute root
+      "\\",
+      // Normal absolute name with extension
+      "/my/absolute/Resource.txt",
+      // Normal absolute name with extension and dotted folder (INVALID)
+      "/my/absolute.sub/Resource.txt",
+      // Slash-trailing absolute name
+      "/my/absolute/resource/",
+      // Slash- and backslash-ridden absolute name
+      "//my/\\\\other\\/\\deep//absolute\\resource/",
+      // Relative root
+      "",
+      // Normal relative name with extension
+      "my/relative/Resource.txt",
+      // Slash-trailing relative name
+      "my/relative/resource/",
+      // Slash- and backslash-ridden relative name
+      "my/\\\\other\\/\\deep//relative\\resource/");
+
+  @Test
+  void abs() {
+    combinationVerifier.verify(
+        (name) -> ResourceNames.abs(name),
+        List.of("name"),
         // name
         NAMES);
   }
 
-  static Stream<Arguments> absBased() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // name[0]: "/"
-            // [1] base[0]: null
-            "/",
-            // [2] base[1]: ""
-            "/",
-            // [3] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/",
-            // [4] base[3]: "org.pdfclown.common.build.util.io"
-            "/",
-            //
-            // name[1]: "\\"
-            // [5] base[0]: null
-            "/",
-            // [6] base[1]: ""
-            "/",
-            // [7] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/",
-            // [8] base[3]: "org.pdfclown.common.build.util.io"
-            "/",
-            //
-            // name[2]: "/my/absolute/Resource.txt"
-            // [9] base[0]: null
-            "/my/absolute/Resource.txt",
-            // [10] base[1]: ""
-            "/my/absolute/Resource.txt",
-            // [11] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/my/absolute/Resource.txt",
-            // [12] base[3]: "org.pdfclown.common.build.util.io"
-            "/my/absolute/Resource.txt",
-            //
-            // name[3]: "/my/absolute.sub/Resource.txt"
-            // [13] base[0]: null
-            "/my/absolute.sub/Resource.txt",
-            // [14] base[1]: ""
-            "/my/absolute.sub/Resource.txt",
-            // [15] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/my/absolute.sub/Resource.txt",
-            // [16] base[3]: "org.pdfclown.common.build.util.io"
-            "/my/absolute.sub/Resource.txt",
-            //
-            // name[4]: "/my/absolute/resource/"
-            // [17] base[0]: null
-            "/my/absolute/resource/",
-            // [18] base[1]: ""
-            "/my/absolute/resource/",
-            // [19] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/my/absolute/resource/",
-            // [20] base[3]: "org.pdfclown.common.build.util.io"
-            "/my/absolute/resource/",
-            //
-            // name[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            // [21] base[0]: null
-            "/my/other/deep/absolute/resource/",
-            // [22] base[1]: ""
-            "/my/other/deep/absolute/resource/",
-            // [23] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/my/other/deep/absolute/resource/",
-            // [24] base[3]: "org.pdfclown.common.build.util.io"
-            "/my/other/deep/absolute/resource/",
-            //
-            // name[6]: ""
-            // [25] base[0]: null
-            new Failure("NullPointerException", "`base`"),
-            // [26] base[1]: ""
-            "/",
-            // [27] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/org/pdfclown/common/build/util/io",
-            // [28] base[3]: "org.pdfclown.common.build.util.io"
-            "/org/pdfclown/common/build/util/io",
-            //
-            // name[7]: "my/relative/Resource.txt"
-            // [29] base[0]: null
-            new Failure("NullPointerException", "`base`"),
-            // [30] base[1]: ""
-            "/my/relative/Resource.txt",
-            // [31] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/org/pdfclown/common/build/util/io/my/relative/Resource.txt",
-            // [32] base[3]: "org.pdfclown.common.build.util.io"
-            "/org/pdfclown/common/build/util/io/my/relative/Resource.txt",
-            //
-            // name[8]: "my/relative/resource/"
-            // [33] base[0]: null
-            new Failure("NullPointerException", "`base`"),
-            // [34] base[1]: ""
-            "/my/relative/resource/",
-            // [35] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/org/pdfclown/common/build/util/io/my/relative/resource/",
-            // [36] base[3]: "org.pdfclown.common.build.util.io"
-            "/org/pdfclown/common/build/util/io/my/relative/resource/",
-            //
-            // name[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            // [37] base[0]: null
-            new Failure("NullPointerException", "`base`"),
-            // [38] base[1]: ""
-            "/my/other/deep/relative/resource/",
-            // [39] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/org/pdfclown/common/build/util/io/my/other/deep/relative/resource/",
-            // [40] base[3]: "org.pdfclown.common.build.util.io"
-            "/org/pdfclown/common/build/util/io/my/other/deep/relative/resource/"),
+  @Test
+  void absBased() {
+    combinationVerifier.verify(
+        (name, base) -> ResourceNames.absBased(name, base),
+        List.of("name", "base"),
         // name
         NAMES,
-        // baseType
-        asList(
-            null,
-            EMPTY,
-            ResourceNames.class,
-            ResourceNames.class.getPackageName()));
+        // base
+        BASES);
   }
 
-  static Stream<Arguments> fromPath__unix() {
-    var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
-        .setWorkingDirectory("/host/cwd").build());
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // filePath[0]: "relative/index1.html"
-            // [1] baseDir[0]: "local"
-            "/relative/index1.html",
-            // [2] baseDir[1]: "../local"
-            "/relative/index1.html",
-            // [3] baseDir[2]: "/host/absolute"
-            "/relative/index1.html",
-            //
-            // filePath[1]: "../relative/index2.html"
-            // [4] baseDir[0]: "local"
-            null,
-            // [5] baseDir[1]: "../local"
-            null,
-            // [6] baseDir[2]: "/host/absolute"
-            null,
-            //
-            // filePath[2]: "/host/cwd/local/index3.html"
-            // [7] baseDir[0]: "local"
-            "/index3.html",
-            // [8] baseDir[1]: "../local"
-            null,
-            // [9] baseDir[2]: "/host/absolute"
-            null,
-            //
-            // filePath[3]: "/host/absolute/another/index4.html"
-            // [10] baseDir[0]: "local"
-            null,
-            // [11] baseDir[1]: "../local"
-            null,
-            // [12] baseDir[2]: "/host/absolute"
-            "/another/index4.html"),
-        // filePath
-        asList(
-            fs.getPath("relative/index1.html"),
-            fs.getPath("../relative/index2.html"),
-            fs.getPath("/host/cwd/local/index3.html"),
-            fs.getPath("/host/absolute/another/index4.html")),
-        // baseDir
-        asList(
-            fs.getPath("local/"),
-            fs.getPath("../local"),
-            fs.getPath("/host/absolute")));
+  @Test
+  void fromPath__unix() throws IOException {
+    try (var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
+        .setWorkingDirectory("/host/cwd").build())) {
+      combinationVerifier.verify(
+          (filePath, baseDir) -> ResourceNames.fromPath(filePath, baseDir),
+          List.of("filePath", "baseDir"),
+          // filePath
+          asList(
+              fs.getPath("relative/index1.html"),
+              fs.getPath("../relative/index2.html"),
+              fs.getPath("/host/cwd/local/index3.html"),
+              fs.getPath("/host/absolute/another/index4.html")),
+          // baseDir
+          asList(
+              fs.getPath("local/"),
+              fs.getPath("../local"),
+              fs.getPath("/host/absolute")));
+    }
   }
 
-  static Stream<Arguments> fromPath__win() {
-    var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
-        .setWorkingDirectory("c:\\cwd").build());
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // filePath[0]: "relative\\index1.html"
-            // [1] baseDir[0]: "local"
-            "/relative/index1.html",
-            // [2] baseDir[1]: "..\\local"
-            "/relative/index1.html",
-            // [3] baseDir[2]: "c:\\absolute"
-            "/relative/index1.html",
-            //
-            // filePath[1]: "..\\relative\\index2.html"
-            // [4] baseDir[0]: "local"
-            null,
-            // [5] baseDir[1]: "..\\local"
-            null,
-            // [6] baseDir[2]: "c:\\absolute"
-            null,
-            //
-            // filePath[2]: "c:\\cwd\\local\\index3.html"
-            // [7] baseDir[0]: "local"
-            "/index3.html",
-            // [8] baseDir[1]: "..\\local"
-            null,
-            // [9] baseDir[2]: "c:\\absolute"
-            null,
-            //
-            // filePath[3]: "c:\\absolute\\another\\index4.html"
-            // [10] baseDir[0]: "local"
-            null,
-            // [11] baseDir[1]: "..\\local"
-            null,
-            // [12] baseDir[2]: "c:\\absolute"
-            "/another/index4.html"),
-        // filePath
-        asList(
-            fs.getPath("relative\\index1.html"),
-            fs.getPath("..\\relative\\index2.html"),
-            fs.getPath("c:\\cwd\\local\\index3.html"),
-            fs.getPath("c:\\absolute\\another\\index4.html")),
-        // baseDir
-        asList(
-            fs.getPath("local\\"),
-            fs.getPath("..\\local"),
-            fs.getPath("c:\\absolute")));
+  @Test
+  void fromPath__win() throws IOException {
+    try (var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
+        .setWorkingDirectory("c:\\cwd").build())) {
+      combinationVerifier.verify(
+          (filePath, baseDir) -> ResourceNames.fromPath(filePath, baseDir),
+          List.of("filePath", "baseDir"),
+          // filePath
+          asList(
+              fs.getPath("relative\\index1.html"),
+              fs.getPath("..\\relative\\index2.html"),
+              fs.getPath("c:\\cwd\\local\\index3.html"),
+              fs.getPath("c:\\absolute\\another\\index4.html")),
+          // baseDir
+          asList(
+              fs.getPath("local\\"),
+              fs.getPath("..\\local"),
+              fs.getPath("c:\\absolute")));
+    }
   }
 
-  static Stream<Arguments> fromTypeName() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] typeName[0]: null
-            new Failure("NullPointerException", "`typeName`"),
-            // [2] typeName[1]: ""
-            "/",
-            // [3] typeName[2]: "org.pdfclown.common.build.util.io.ResourceNames"
-            "/org/pdfclown/common/build/util/io/ResourceNames",
-            // [4] typeName[3]: "org.pdfclown.common.build.util.io"
-            "/org/pdfclown/common/build/util/io"),
+  @Test
+  void fromTypeName() {
+    combinationVerifier.verify(
+        (typeName) -> ResourceNames.fromTypeName(typeName),
+        List.of("typeName"),
         // typeName
         asList(
             null,
@@ -327,579 +132,13 @@ public class ResourceNamesTest extends BaseTest {
             ResourceNames.class.getPackageName()));
   }
 
-  static Stream<Arguments> isAbs() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] name[0]: "/"
-            true,
-            // [2] name[1]: "\\"
-            true,
-            // [3] name[2]: "/my/absolute/Resource.txt"
-            true,
-            // [4] name[3]: "/my/absolute.sub/Resource.txt"
-            true,
-            // [5] name[4]: "/my/absolute/resource/"
-            true,
-            // [6] name[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            true,
-            // [7] name[6]: ""
-            false,
-            // [8] name[7]: "my/relative/Resource.txt"
-            false,
-            // [9] name[8]: "my/relative/resource/"
-            false,
-            // [10] name[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            false),
+  @Test
+  void isAbs() {
+    combinationVerifier.verify(
+        (name) -> ResourceNames.isAbs(name),
+        List.of("name"),
         // name
         NAMES);
-  }
-
-  static Stream<Arguments> name_1() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] name0[0]: "/"
-            "/",
-            // [2] name0[1]: "\\"
-            "/",
-            // [3] name0[2]: "/my/absolute/Resource.txt"
-            "/my/absolute/Resource.txt",
-            // [4] name0[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute.sub/Resource.txt",
-            // [5] name0[4]: "/my/absolute/resource/"
-            "/my/absolute/resource/",
-            // [6] name0[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/other/deep/absolute/resource/",
-            // [7] name0[6]: ""
-            "",
-            // [8] name0[7]: "my/relative/Resource.txt"
-            "my/relative/Resource.txt",
-            // [9] name0[8]: "my/relative/resource/"
-            "my/relative/resource/",
-            // [10] name0[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my/other/deep/relative/resource/"),
-        // name0
-        NAMES);
-  }
-
-  static Stream<Arguments> name_2() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // name0[0]: "/"
-            // [1] name1[0]: "/"
-            "/",
-            // [2] name1[1]: "\\"
-            "/",
-            // [3] name1[2]: "/my/absolute/Resource.txt"
-            "/my/absolute/Resource.txt",
-            // [4] name1[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute.sub/Resource.txt",
-            // [5] name1[4]: "/my/absolute/resource/"
-            "/my/absolute/resource/",
-            // [6] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/other/deep/absolute/resource/",
-            // [7] name1[6]: ""
-            "/",
-            // [8] name1[7]: "my/relative/Resource.txt"
-            "/my/relative/Resource.txt",
-            // [9] name1[8]: "my/relative/resource/"
-            "/my/relative/resource/",
-            // [10] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "/my/other/deep/relative/resource/",
-            //
-            // name0[1]: "\\"
-            // [11] name1[0]: "/"
-            "/",
-            // [12] name1[1]: "\\"
-            "/",
-            // [13] name1[2]: "/my/absolute/Resource.txt"
-            "/my/absolute/Resource.txt",
-            // [14] name1[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute.sub/Resource.txt",
-            // [15] name1[4]: "/my/absolute/resource/"
-            "/my/absolute/resource/",
-            // [16] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/other/deep/absolute/resource/",
-            // [17] name1[6]: ""
-            "/",
-            // [18] name1[7]: "my/relative/Resource.txt"
-            "/my/relative/Resource.txt",
-            // [19] name1[8]: "my/relative/resource/"
-            "/my/relative/resource/",
-            // [20] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "/my/other/deep/relative/resource/",
-            //
-            // name0[2]: "/my/absolute/Resource.txt"
-            // [21] name1[0]: "/"
-            "/my/absolute/Resource.txt/",
-            // [22] name1[1]: "\\"
-            "/my/absolute/Resource.txt/",
-            // [23] name1[2]: "/my/absolute/Resource.txt"
-            "/my/absolute/Resource.txt/my/absolute/Resource.txt",
-            // [24] name1[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute/Resource.txt/my/absolute.sub/Resource.txt",
-            // [25] name1[4]: "/my/absolute/resource/"
-            "/my/absolute/Resource.txt/my/absolute/resource/",
-            // [26] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/absolute/Resource.txt/my/other/deep/absolute/resource/",
-            // [27] name1[6]: ""
-            "/my/absolute/Resource.txt",
-            // [28] name1[7]: "my/relative/Resource.txt"
-            "/my/absolute/Resource.txt/my/relative/Resource.txt",
-            // [29] name1[8]: "my/relative/resource/"
-            "/my/absolute/Resource.txt/my/relative/resource/",
-            // [30] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "/my/absolute/Resource.txt/my/other/deep/relative/resource/",
-            //
-            // name0[3]: "/my/absolute.sub/Resource.txt"
-            // [31] name1[0]: "/"
-            "/my/absolute.sub/Resource.txt/",
-            // [32] name1[1]: "\\"
-            "/my/absolute.sub/Resource.txt/",
-            // [33] name1[2]: "/my/absolute/Resource.txt"
-            "/my/absolute.sub/Resource.txt/my/absolute/Resource.txt",
-            // [34] name1[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute.sub/Resource.txt/my/absolute.sub/Resource.txt",
-            // [35] name1[4]: "/my/absolute/resource/"
-            "/my/absolute.sub/Resource.txt/my/absolute/resource/",
-            // [36] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/absolute.sub/Resource.txt/my/other/deep/absolute/resource/",
-            // [37] name1[6]: ""
-            "/my/absolute.sub/Resource.txt",
-            // [38] name1[7]: "my/relative/Resource.txt"
-            "/my/absolute.sub/Resource.txt/my/relative/Resource.txt",
-            // [39] name1[8]: "my/relative/resource/"
-            "/my/absolute.sub/Resource.txt/my/relative/resource/",
-            // [40] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "/my/absolute.sub/Resource.txt/my/other/deep/relative/resource/",
-            //
-            // name0[4]: "/my/absolute/resource/"
-            // [41] name1[0]: "/"
-            "/my/absolute/resource/",
-            // [42] name1[1]: "\\"
-            "/my/absolute/resource/",
-            // [43] name1[2]: "/my/absolute/Resource.txt"
-            "/my/absolute/resource/my/absolute/Resource.txt",
-            // [44] name1[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute/resource/my/absolute.sub/Resource.txt",
-            // [45] name1[4]: "/my/absolute/resource/"
-            "/my/absolute/resource/my/absolute/resource/",
-            // [46] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/absolute/resource/my/other/deep/absolute/resource/",
-            // [47] name1[6]: ""
-            "/my/absolute/resource/",
-            // [48] name1[7]: "my/relative/Resource.txt"
-            "/my/absolute/resource/my/relative/Resource.txt",
-            // [49] name1[8]: "my/relative/resource/"
-            "/my/absolute/resource/my/relative/resource/",
-            // [50] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "/my/absolute/resource/my/other/deep/relative/resource/",
-            //
-            // name0[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            // [51] name1[0]: "/"
-            "/my/other/deep/absolute/resource/",
-            // [52] name1[1]: "\\"
-            "/my/other/deep/absolute/resource/",
-            // [53] name1[2]: "/my/absolute/Resource.txt"
-            "/my/other/deep/absolute/resource/my/absolute/Resource.txt",
-            // [54] name1[3]: "/my/absolute.sub/Resource.txt"
-            "/my/other/deep/absolute/resource/my/absolute.sub/Resource.txt",
-            // [55] name1[4]: "/my/absolute/resource/"
-            "/my/other/deep/absolute/resource/my/absolute/resource/",
-            // [56] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/other/deep/absolute/resource/my/other/deep/absolute/resource/",
-            // [57] name1[6]: ""
-            "/my/other/deep/absolute/resource/",
-            // [58] name1[7]: "my/relative/Resource.txt"
-            "/my/other/deep/absolute/resource/my/relative/Resource.txt",
-            // [59] name1[8]: "my/relative/resource/"
-            "/my/other/deep/absolute/resource/my/relative/resource/",
-            // [60] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "/my/other/deep/absolute/resource/my/other/deep/relative/resource/",
-            //
-            // name0[6]: ""
-            // [61] name1[0]: "/"
-            "",
-            // [62] name1[1]: "\\"
-            "",
-            // [63] name1[2]: "/my/absolute/Resource.txt"
-            "my/absolute/Resource.txt",
-            // [64] name1[3]: "/my/absolute.sub/Resource.txt"
-            "my/absolute.sub/Resource.txt",
-            // [65] name1[4]: "/my/absolute/resource/"
-            "my/absolute/resource/",
-            // [66] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "my/other/deep/absolute/resource/",
-            // [67] name1[6]: ""
-            "",
-            // [68] name1[7]: "my/relative/Resource.txt"
-            "my/relative/Resource.txt",
-            // [69] name1[8]: "my/relative/resource/"
-            "my/relative/resource/",
-            // [70] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my/other/deep/relative/resource/",
-            //
-            // name0[7]: "my/relative/Resource.txt"
-            // [71] name1[0]: "/"
-            "my/relative/Resource.txt/",
-            // [72] name1[1]: "\\"
-            "my/relative/Resource.txt/",
-            // [73] name1[2]: "/my/absolute/Resource.txt"
-            "my/relative/Resource.txt/my/absolute/Resource.txt",
-            // [74] name1[3]: "/my/absolute.sub/Resource.txt"
-            "my/relative/Resource.txt/my/absolute.sub/Resource.txt",
-            // [75] name1[4]: "/my/absolute/resource/"
-            "my/relative/Resource.txt/my/absolute/resource/",
-            // [76] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "my/relative/Resource.txt/my/other/deep/absolute/resource/",
-            // [77] name1[6]: ""
-            "my/relative/Resource.txt",
-            // [78] name1[7]: "my/relative/Resource.txt"
-            "my/relative/Resource.txt/my/relative/Resource.txt",
-            // [79] name1[8]: "my/relative/resource/"
-            "my/relative/Resource.txt/my/relative/resource/",
-            // [80] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my/relative/Resource.txt/my/other/deep/relative/resource/",
-            //
-            // name0[8]: "my/relative/resource/"
-            // [81] name1[0]: "/"
-            "my/relative/resource/",
-            // [82] name1[1]: "\\"
-            "my/relative/resource/",
-            // [83] name1[2]: "/my/absolute/Resource.txt"
-            "my/relative/resource/my/absolute/Resource.txt",
-            // [84] name1[3]: "/my/absolute.sub/Resource.txt"
-            "my/relative/resource/my/absolute.sub/Resource.txt",
-            // [85] name1[4]: "/my/absolute/resource/"
-            "my/relative/resource/my/absolute/resource/",
-            // [86] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "my/relative/resource/my/other/deep/absolute/resource/",
-            // [87] name1[6]: ""
-            "my/relative/resource/",
-            // [88] name1[7]: "my/relative/Resource.txt"
-            "my/relative/resource/my/relative/Resource.txt",
-            // [89] name1[8]: "my/relative/resource/"
-            "my/relative/resource/my/relative/resource/",
-            // [90] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my/relative/resource/my/other/deep/relative/resource/",
-            //
-            // name0[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            // [91] name1[0]: "/"
-            "my/other/deep/relative/resource/",
-            // [92] name1[1]: "\\"
-            "my/other/deep/relative/resource/",
-            // [93] name1[2]: "/my/absolute/Resource.txt"
-            "my/other/deep/relative/resource/my/absolute/Resource.txt",
-            // [94] name1[3]: "/my/absolute.sub/Resource.txt"
-            "my/other/deep/relative/resource/my/absolute.sub/Resource.txt",
-            // [95] name1[4]: "/my/absolute/resource/"
-            "my/other/deep/relative/resource/my/absolute/resource/",
-            // [96] name1[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "my/other/deep/relative/resource/my/other/deep/absolute/resource/",
-            // [97] name1[6]: ""
-            "my/other/deep/relative/resource/",
-            // [98] name1[7]: "my/relative/Resource.txt"
-            "my/other/deep/relative/resource/my/relative/Resource.txt",
-            // [99] name1[8]: "my/relative/resource/"
-            "my/other/deep/relative/resource/my/relative/resource/",
-            // [100] name1[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my/other/deep/relative/resource/my/other/deep/relative/resource/"),
-        // name0
-        NAMES,
-        // name1
-        NAMES);
-  }
-
-  static Stream<Arguments> normal() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] name[0]: "/"
-            "/",
-            // [2] name[1]: "\\"
-            "/",
-            // [3] name[2]: "/my/absolute/Resource.txt"
-            "/my/absolute/Resource.txt",
-            // [4] name[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute.sub/Resource.txt",
-            // [5] name[4]: "/my/absolute/resource/"
-            "/my/absolute/resource/",
-            // [6] name[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/other/deep/absolute/resource/",
-            // [7] name[6]: ""
-            "",
-            // [8] name[7]: "my/relative/Resource.txt"
-            "my/relative/Resource.txt",
-            // [9] name[8]: "my/relative/resource/"
-            "my/relative/resource/",
-            // [10] name[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my/other/deep/relative/resource/"),
-        // name
-        NAMES);
-  }
-
-  static Stream<Arguments> parent() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] name[0]: "/"
-            null,
-            // [2] name[1]: "\\"
-            null,
-            // [3] name[2]: "/my/absolute/Resource.txt"
-            "/my/absolute",
-            // [4] name[3]: "/my/absolute.sub/Resource.txt"
-            "/my/absolute.sub",
-            // [5] name[4]: "/my/absolute/resource/"
-            "/my/absolute/resource",
-            // [6] name[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "/my/other/deep/absolute/resource",
-            // [7] name[6]: ""
-            null,
-            // [8] name[7]: "my/relative/Resource.txt"
-            "my/relative",
-            // [9] name[8]: "my/relative/resource/"
-            "my/relative/resource",
-            // [10] name[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my/other/deep/relative/resource"),
-        // name
-        NAMES);
-  }
-
-  static Stream<Arguments> rel() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] name[0]: "/"
-            "",
-            // [2] name[1]: "\\"
-            "",
-            // [3] name[2]: "/my/absolute/Resource.txt"
-            "my/absolute/Resource.txt",
-            // [4] name[3]: "/my/absolute.sub/Resource.txt"
-            "my/absolute.sub/Resource.txt",
-            // [5] name[4]: "/my/absolute/resource/"
-            "my/absolute/resource/",
-            // [6] name[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "my/other/deep/absolute/resource/",
-            // [7] name[6]: ""
-            "",
-            // [8] name[7]: "my/relative/Resource.txt"
-            "my/relative/Resource.txt",
-            // [9] name[8]: "my/relative/resource/"
-            "my/relative/resource/",
-            // [10] name[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my/other/deep/relative/resource/"),
-        // name
-        NAMES);
-  }
-
-  static Stream<Arguments> relBased() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // name[0]: "/"
-            // [1] base[0]: null
-            "/",
-            // [2] base[1]: ""
-            "/",
-            // [3] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/",
-            // [4] base[3]: "org.pdfclown.common.build.util.io"
-            "/",
-            //
-            // name[1]: "\\"
-            // [5] base[0]: null
-            "/",
-            // [6] base[1]: ""
-            "/",
-            // [7] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/",
-            // [8] base[3]: "org.pdfclown.common.build.util.io"
-            "/",
-            //
-            // name[2]: "/my/absolute/Resource.txt"
-            // [9] base[0]: null
-            "/my/absolute/Resource.txt",
-            // [10] base[1]: ""
-            "/my/absolute/Resource.txt",
-            // [11] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/my/absolute/Resource.txt",
-            // [12] base[3]: "org.pdfclown.common.build.util.io"
-            "/my/absolute/Resource.txt",
-            //
-            // name[3]: "/my/absolute.sub/Resource.txt"
-            // [13] base[0]: null
-            "/my/absolute.sub/Resource.txt",
-            // [14] base[1]: ""
-            "/my/absolute.sub/Resource.txt",
-            // [15] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/my/absolute.sub/Resource.txt",
-            // [16] base[3]: "org.pdfclown.common.build.util.io"
-            "/my/absolute.sub/Resource.txt",
-            //
-            // name[4]: "/my/absolute/resource/"
-            // [17] base[0]: null
-            "/my/absolute/resource/",
-            // [18] base[1]: ""
-            "/my/absolute/resource/",
-            // [19] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/my/absolute/resource/",
-            // [20] base[3]: "org.pdfclown.common.build.util.io"
-            "/my/absolute/resource/",
-            //
-            // name[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            // [21] base[0]: null
-            "/my/other/deep/absolute/resource/",
-            // [22] base[1]: ""
-            "/my/other/deep/absolute/resource/",
-            // [23] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "/my/other/deep/absolute/resource/",
-            // [24] base[3]: "org.pdfclown.common.build.util.io"
-            "/my/other/deep/absolute/resource/",
-            //
-            // name[6]: ""
-            // [25] base[0]: null
-            new Failure("NullPointerException", "`base`"),
-            // [26] base[1]: ""
-            "",
-            // [27] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "org/pdfclown/common/build/util/io",
-            // [28] base[3]: "org.pdfclown.common.build.util.io"
-            "org/pdfclown/common/build/util/io",
-            //
-            // name[7]: "my/relative/Resource.txt"
-            // [29] base[0]: null
-            new Failure("NullPointerException", "`base`"),
-            // [30] base[1]: ""
-            "my/relative/Resource.txt",
-            // [31] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "org/pdfclown/common/build/util/io/my/relative/Resource.txt",
-            // [32] base[3]: "org.pdfclown.common.build.util.io"
-            "org/pdfclown/common/build/util/io/my/relative/Resource.txt",
-            //
-            // name[8]: "my/relative/resource/"
-            // [33] base[0]: null
-            new Failure("NullPointerException", "`base`"),
-            // [34] base[1]: ""
-            "my/relative/resource/",
-            // [35] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "org/pdfclown/common/build/util/io/my/relative/resource/",
-            // [36] base[3]: "org.pdfclown.common.build.util.io"
-            "org/pdfclown/common/build/util/io/my/relative/resource/",
-            //
-            // name[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            // [37] base[0]: null
-            new Failure("NullPointerException", "`base`"),
-            // [38] base[1]: ""
-            "my/other/deep/relative/resource/",
-            // [39] base[2]: org.pdfclown.common.build.util.io.ResourceNames
-            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource/",
-            // [40] base[3]: "org.pdfclown.common.build.util.io"
-            "org/pdfclown/common/build/util/io/my/other/deep/relative/resource/"),
-        // name
-        NAMES,
-        // baseType
-        asList(
-            null,
-            EMPTY,
-            ResourceNames.class,
-            ResourceNames.class.getPackageName()));
-  }
-
-  static Stream<Arguments> toTypeName() {
-    return argumentsStream(
-        cartesian(),
-        // expected
-        asList(
-            // [1] name[0]: "/"
-            "",
-            // [2] name[1]: "\\"
-            "",
-            // [3] name[2]: "/my/absolute/Resource.txt"
-            "my.absolute.Resource",
-            // [4] name[3]: "/my/absolute.sub/Resource.txt"
-            new Failure("ArgumentException",
-                "`name` (\"my/absolute.sub/Resource.txt\"): Dots NOT allowed inside folder parts"),
-            // [5] name[4]: "/my/absolute/resource/"
-            "my.absolute.resource.",
-            // [6] name[5]: "//my/\\\\other\\/\\deep//absolute\\resource/"
-            "my.other.deep.absolute.resource.",
-            // [7] name[6]: ""
-            "",
-            // [8] name[7]: "my/relative/Resource.txt"
-            "my.relative.Resource",
-            // [9] name[8]: "my/relative/resource/"
-            "my.relative.resource.",
-            // [10] name[9]: "my/\\\\other\\/\\deep//relative\\resource/"
-            "my.other.deep.relative.resource."),
-        // name
-        NAMES);
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void abs(Expected<String> expected, String name) {
-    assertParameterizedOf(
-        () -> ResourceNames.abs(name),
-        expected,
-        () -> expectedGeneration(name));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void absBased(Expected<String> expected, String name,
-      @Nullable Object base) {
-    //noinspection DataFlowIssue : null deliberated.
-    assertParameterizedOf(
-        () -> ResourceNames.absBased(name, base),
-        expected,
-        () -> expectedGeneration(name, base));
-  }
-
-  @ParameterizedTest(autoCloseArguments = false)
-  @MethodSource
-  void fromPath__unix(Expected<String> expected, Path filePath, Path baseDir) {
-    assertParameterizedOf(
-        () -> ResourceNames.fromPath(filePath, baseDir),
-        expected,
-        () -> expectedGeneration(filePath, baseDir));
-  }
-
-  @ParameterizedTest(autoCloseArguments = false)
-  @MethodSource
-  void fromPath__win(Expected<String> expected, Path filePath, Path baseDir) {
-    assertParameterizedOf(
-        () -> ResourceNames.fromPath(filePath, baseDir),
-        expected,
-        () -> expectedGeneration(filePath, baseDir));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void fromTypeName(Expected<String> expected, String typeName) {
-    assertParameterizedOf(
-        () -> ResourceNames.fromTypeName(typeName),
-        expected,
-        () -> expectedGeneration(typeName));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void isAbs(Expected<Boolean> expected, String name) {
-    assertParameterizedOf(
-        () -> ResourceNames.isAbs(name),
-        expected,
-        () -> expectedGeneration(name));
   }
 
   @Test
@@ -907,68 +146,70 @@ public class ResourceNamesTest extends BaseTest {
     assertParameterized(ResourceNames.name(), Expected.success(EMPTY), null);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void name_1(Expected<String> expected, String name0) {
-    assertParameterizedOf(
-        () -> ResourceNames.name(name0),
-        expected,
-        () -> expectedGeneration(name0));
+  @Test
+  void name_1() {
+    combinationVerifier.verify(
+        (parts0) -> ResourceNames.name(parts0),
+        List.of("parts[0]"),
+        // parts[0]
+        NAMES);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void name_2(Expected<String> expected, String name0, String name1) {
-    assertParameterizedOf(
-        () -> ResourceNames.name(name0, name1),
-        expected,
-        () -> expectedGeneration(name0, name1));
+  @Test
+  void name_2() {
+    combinationVerifier.verify(
+        (parts0, parts1) -> ResourceNames.name(parts0, parts1),
+        List.of("parts[0]", "parts[1]"),
+        // parts[0]
+        NAMES,
+        // parts[1]
+        NAMES);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void normal(Expected<String> expected, String name) {
-    assertParameterizedOf(
-        () -> ResourceNames.normal(name),
-        expected,
-        () -> expectedGeneration(name));
+  @Test
+  void normal() {
+    combinationVerifier.verify(
+        (name) -> ResourceNames.normal(name),
+        List.of("name"),
+        // name
+        NAMES);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void parent(Expected<String> expected, String name) {
-    assertParameterizedOf(
-        () -> ResourceNames.parent(name),
-        expected,
-        () -> expectedGeneration(name));
+  @Test
+  void parent() {
+    combinationVerifier.verify(
+        (name) -> ResourceNames.parent(name),
+        List.of("name"),
+        // name
+        NAMES);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void rel(Expected<String> expected, String name) {
-    assertParameterizedOf(
-        () -> ResourceNames.rel(name),
-        expected,
-        () -> expectedGeneration(name));
+  @Test
+  void rel() {
+    combinationVerifier.verify(
+        (name) -> ResourceNames.rel(name),
+        List.of("name"),
+        // name
+        NAMES);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void relBased(Expected<String> expected, String name,
-      @Nullable Object base) {
-    //noinspection DataFlowIssue : null deliberated.
-    assertParameterizedOf(
-        () -> ResourceNames.relBased(name, base),
-        expected,
-        () -> expectedGeneration(name, base));
+  @Test
+  void relBased() {
+    combinationVerifier.verify(
+        (name, base) -> ResourceNames.relBased(name, base),
+        List.of("name", "base"),
+        // name
+        NAMES,
+        // base
+        BASES);
   }
 
-  @ParameterizedTest
-  @MethodSource
-  void toTypeName(Expected<String> expected, String name) {
-    assertParameterizedOf(
-        () -> ResourceNames.toTypeName(name),
-        expected,
-        () -> expectedGeneration(name));
+  @Test
+  void toTypeName() {
+    combinationVerifier.verify(
+        (name) -> ResourceNames.toTypeName(name),
+        List.of("name"),
+        // name
+        NAMES);
   }
 }

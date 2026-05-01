@@ -1,0 +1,4 @@
+[type: org.pdfclown.common.build.test.assertion.TestEnvironment] => "src/main/java/org/pdfclown/common/build/test/assertion/TestEnvironment.java"
+[type: org.pdfclown.common.build.test.TestUnitTest] => "src/test/java/org/pdfclown/common/build/test/TestUnitTest.java"
+[type: org.pdfclown.common.build.release.ReleaseManager] => "src/main/java/org/pdfclown/common/build/release/ReleaseManager.java"
+[type: String] => <<RuntimeException: "Source file corresponding to String NOT FOUND (search paths: \"src/test/java\", \"src/main/java\")">>
