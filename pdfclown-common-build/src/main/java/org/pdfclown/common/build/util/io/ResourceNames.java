@@ -16,7 +16,9 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.SLASH;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.asType;
+import static org.pdfclown.common.util.Objects.found;
 import static org.pdfclown.common.util.Objects.fqn;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
@@ -116,17 +118,33 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the absolute resource name of an object.
+   * Gets the absolute abstract resource name of an object.
+   * <p>
+   * This is a <i>purely syntactic conversion from class to resource namespaces</i>, where dot
+   * separators are replaced by slashes, and a slash is prefixed; consequently, the result does NOT
+   * make any assumption on its actual resource type and no file extension is included (for example,
+   * {@code fromType("")} returns {@code "/java/util/String"}, NEITHER
+   * {@code "/java/util/String.class"} NOR {@code "/java/util/String.java"}).
+   * </p>
+   *
+   * @see #fromTypeName(String)
    */
   public static String fromType(Object obj) {
     return fromTypeName(fqn(requireNonNull(obj, "`obj`")));
   }
 
   /**
-   * Gets the absolute resource name corresponding to a type name.
+   * Gets the absolute abstract resource name corresponding to a type name.
    * <p>
-   * Dot separators are replaced by slashes.
+   * This is a <i>purely syntactic conversion from class to resource namespaces</i>, where dot
+   * separators are replaced by slashes, and a slash is prefixed; consequently, the result does NOT
+   * make any assumption on its actual resource type and no file extension is included (for example,
+   * {@code fromTypeName("java.util.String")} returns {@code "/java/util/String"}, NEITHER
+   * {@code "/java/util/String.class"} NOR {@code "/java/util/String.java"}).
    * </p>
+   *
+   * @see #fromType(Object)
+   * @see #toTypeName(String)
    */
   public static String fromTypeName(String typeName) {
     return abs(requireNonNull(typeName, "`typeName`").replace(DOT, SLASH));
@@ -135,14 +153,34 @@ public final class ResourceNames {
   /**
    * Gets the type name corresponding to a resource name.
    * <p>
-   * Slash separators are replaced by dots, leading slash is removed.
+   * Slash separators are replaced by dots, while leading slash and file extension are removed.
    * </p>
    *
    * @param name
    *          Resource name.
+   * @throws IllegalArgumentException
+   *           if {@code name} contains any dot inside folder parts, as they conflict with
+   *           corresponding package syntax — in particular, the resulting package/class name could
+   *           not reverse to the initial resource name and any relative resource name
+   *           {@linkplain Class#getResource(String) resolved} on it would point to a different
+   *           resource folder than the initial one (for example,
+   *           {@code "/my/internal.scripts/conf"} would return {@code "my.internal.scripts.conf"},
+   *           whose classes would resolve relative names to {@code "/my/internal/scripts/conf"}
+   *           instead of initial {@code "/my/internal.scripts/conf"}).
+   * @see #fromTypeName(String)
    */
   public static String toTypeName(String name) {
-    return rel(name).replace(SLASH, DOT);
+    name = rel(name);
+    int dotPos = name.indexOf(DOT);
+    if (found(dotPos)) {
+      // Forbid dots inside folder parts!
+      if (name.lastIndexOf(SLASH) > dotPos)
+        throw wrongArg("name", name, "Dots NOT allowed inside folder parts");
+
+      // Remove file extension!
+      name = name.substring(0, dotPos);
+    }
+    return name.replace(SLASH, DOT);
   }
 
   /**
