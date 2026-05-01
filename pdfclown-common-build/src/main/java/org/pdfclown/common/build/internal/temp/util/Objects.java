@@ -385,7 +385,7 @@ public final class Objects {
   private static final String TO_STRING_VALUE_LIST_SEPARATOR = S + SPACE;
 
   private static final Pattern PATTERN__TO_STRING_OBJID = Pattern.compile(
-      "(\\$\\$Lambda)\\$\\d+/0x[0-9a-fA-F]+|@[0-9a-fA-F]+$");
+      "(\\$\\$Lambda)\\S*?/0x[0-9a-fA-F]+|@[0-9a-fA-F]+$");
 
   /**
    * Literal formatter for non-basic objects.
@@ -1478,7 +1478,7 @@ public final class Objects {
    * <ul>
    * <li>at-sign character (<code>&#64;</code>) followed by the unsigned hexadecimal representation
    * of the hash code of the object (<code>@[0-9a-fA-F]+$</code>) is removed</li>
-   * <li>lambda identifier (<code>(\$\$Lambda)\$\d+/0x[0-9a-fA-F]+</code>) is removed</li>
+   * <li>lambda identifier (<code>(\$\$Lambda)\S*?/0x[0-9a-fA-F]+</code>) is removed</li>
    * <li>floating-point numbers are normalized to maximum 5 decimal positions</li>
    * </ul>
    */
