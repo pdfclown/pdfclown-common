@@ -65,9 +65,9 @@ class TestUnitTest extends BaseTest {
               // [2] name[1]: "/my/absolute/resource.html"
               "/my/absolute/resource.html",
               // [3] name[2]: ""
-              "/org/pdfclown/common/build/test/_TestUnitTest$SampleTest",
+              "/org/pdfclown/common/build/test/TestUnitTest$SampleTest",
               // [4] name[3]: "my/relative/resource.html"
-              "/org/pdfclown/common/build/test/_TestUnitTest$SampleTest/my/relative/resource.html"),
+              "/org/pdfclown/common/build/test/TestUnitTest$SampleTest/my/relative/resource.html"),
           // name
           NAMES);
     }
@@ -82,9 +82,9 @@ class TestUnitTest extends BaseTest {
               // [2] name[1]: "/my/absolute/resource.html"
               "target/test-output/my/absolute/resource.html",
               // [3] name[2]: ""
-              "target/test-output/org/pdfclown/common/build/test/_TestUnitTest$SampleTest",
+              "target/test-output/org/pdfclown/common/build/test/TestUnitTest$SampleTest",
               // [4] name[3]: "my/relative/resource.html"
-              "target/test-output/org/pdfclown/common/build/test/_TestUnitTest$SampleTest/my/relative/resource.html"),
+              "target/test-output/org/pdfclown/common/build/test/TestUnitTest$SampleTest/my/relative/resource.html"),
           // name
           NAMES);
     }
@@ -99,9 +99,9 @@ class TestUnitTest extends BaseTest {
               // [2] name[1]: "/my/absolute/resource.html"
               "target/test-classes/my/absolute/resource.html",
               // [3] name[2]: ""
-              "target/test-classes/org/pdfclown/common/build/test/_TestUnitTest$SampleTest",
+              "target/test-classes/org/pdfclown/common/build/test/TestUnitTest$SampleTest",
               // [4] name[3]: "my/relative/resource.html"
-              "target/test-classes/org/pdfclown/common/build/test/_TestUnitTest$SampleTest/my/relative/resource.html"),
+              "target/test-classes/org/pdfclown/common/build/test/TestUnitTest$SampleTest/my/relative/resource.html"),
           // name
           NAMES);
     }
@@ -116,9 +116,9 @@ class TestUnitTest extends BaseTest {
               // [2] name[1]: "/my/absolute/resource.html"
               "src/test/resources/my/absolute/resource.html",
               // [3] name[2]: ""
-              "src/test/resources/org/pdfclown/common/build/test/_TestUnitTest$SampleTest",
+              "src/test/resources/org/pdfclown/common/build/test/TestUnitTest$SampleTest",
               // [4] name[3]: "my/relative/resource.html"
-              "src/test/resources/org/pdfclown/common/build/test/_TestUnitTest$SampleTest/my/relative/resource.html"),
+              "src/test/resources/org/pdfclown/common/build/test/TestUnitTest$SampleTest/my/relative/resource.html"),
           // name
           NAMES);
     }

@@ -14,11 +14,9 @@ package org.pdfclown.common.build.test;
 
 import static java.nio.file.Files.exists;
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.Chars.UNDERSCORE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.asTopLevelType;
 import static org.pdfclown.common.util.Objects.init;
-import static org.pdfclown.common.util.Objects.sqn;
 import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
@@ -84,10 +82,8 @@ public abstract class TestUnit implements Test {
 
     @Override
     public String localName(String name) {
-      return ResourceNames.isAbs(name)
-          ? name
-          : ResourceNames.absBased(ResourceNames.name(UNDERSCORE + sqn(TestUnit.this), name),
-              TestUnit.this);
+      return ResourceNames.isAbs(name) ? name
+          : ResourceNames.name(ResourceNames.fromType(TestUnit.this), name);
     }
 
     @Override
