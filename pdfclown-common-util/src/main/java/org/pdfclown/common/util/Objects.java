@@ -54,12 +54,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -379,6 +381,51 @@ public final class Objects {
   private static final String TO_STRING_PROPERTY_LIST_SEPARATOR = S + COMMA + SPACE;
   private static final String TO_STRING_VALUE_LIST_SEPARATOR = S + SPACE;
 
+  private static final Pattern PATTERN__TO_STRING_OBJID = Pattern.compile(
+      "(\\$\\$Lambda)\\$\\d+/0x[0-9a-fA-F]+|@[0-9a-fA-F]+$");
+
+  /**
+   * Literal formatter for non-basic objects.
+   * <p>
+   * The string representation is returned as-is if qualified by class name (or the object is an
+   * {@link Enum} element), otherwise as a literal string.
+   * </p>
+   *
+   * @see #literal(Object, Function)
+   */
+  public static final Function<Object, String> FORMATTER__LITERAL__NON_BASIC__QUALIFIER_AWARE =
+      $ -> {
+        var s = $.toString();
+        return $ instanceof Enum<?> || s.contains(simpleName($)) ? s : literal(s);
+      };
+  /**
+   * Literal formatter for non-basic objects, {@linkplain #toStringStable(Object) stable} across
+   * executions and systems.
+   * <p>
+   * Useful for test reproducibility.
+   * </p>
+   * <p>
+   * The string representation is returned as-is if qualified by class name (or the object is an
+   * {@link Enum} element), otherwise as a literal string.
+   * </p>
+   *
+   * @see #literal(Object, Function)
+   */
+  public static final Function<Object,
+      String> FORMATTER__LITERAL__NON_BASIC__STABLE_QUALIFIER_AWARE =
+          $ -> {
+            var s = toStringStable($);
+            return $ instanceof Enum<?> || s.contains(toStringStable(simpleName($))) ? s
+                : literal(s);
+          };
+
+  private static final ThreadLocal<DecimalFormat> FORMATTER__STABLE_DECIMAL =
+      ThreadLocal.withInitial(() -> {
+        var ret = (DecimalFormat) DecimalFormat.getInstance(Locale.ROOT);
+        ret.applyPattern("#.#####");
+        return ret;
+      });
+
   /**
    * Gets whether an object matches the other one according to the predicate.
    *
@@ -483,13 +530,13 @@ public final class Objects {
   /**
    * Maps an object to its literal string representation within generic strings.
    *
-   * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is
-   *         ({@link Object#toString()}).
+   * @return Same as {@link #literal(Object)}, except non-basic objects are represented according to
+   *         {@link #FORMATTER__LITERAL__NON_BASIC__QUALIFIER_AWARE}.
    * @see #literal(Object)
    * @see #textLiteral(Object)
    */
   public static String basicLiteral(@Nullable Object obj) {
-    return literal(obj, Object::toString);
+    return literal(obj, FORMATTER__LITERAL__NON_BASIC__QUALIFIER_AWARE);
   }
 
   /**
@@ -877,13 +924,13 @@ public final class Objects {
    *         <li>if {@code obj} is {@link Class}: {@linkplain #fqnd(Object) dotted fully-qualified
    *         class name}, or {@linkplain Class#getSimpleName() simple name} for common types (under
    *         {@code java.lang} package)</li>{@jada.doc END}
-   *         <li>otherwise: applies {@link Function#apply(Object) nonBasicConverter}</li>
+   *         <li>otherwise: applies {@code nonBasicFormatter}</li>
    *         </ul>
    * @see #basicLiteral(Object)
    * @see #textLiteral(Object)
    * @see #parseLiteral(String)
    */
-  public static String literal(@Nullable Object obj, Function<Object, String> nonBasicConverter) {
+  public static String literal(@Nullable Object obj, Function<Object, String> nonBasicFormatter) {
     if (obj == null)
       return NULL;
     else if (obj instanceof Float)
@@ -911,7 +958,7 @@ public final class Objects {
                                */
           : fqnd($));
     else
-      return nonBasicConverter.apply(obj);
+      return nonBasicFormatter.apply(obj);
   }
 
   /**
@@ -1335,18 +1382,15 @@ public final class Objects {
   /**
    * Maps an object to its literal string representation for text messages.
    *
-   * @return Same as {@link #basicLiteral(Object)}}, except certain non-basic types ({@link File},
-   *         {@link Path}) are still represented as {@code String} for convenience.
+   * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is;
+   *         nonetheless, certain types ({@link File}, {@link Path}) are still represented like
+   *         {@code String} for convenience.
    * @see #literal(Object)
    * @see #basicLiteral(Object)
    */
   public static String textLiteral(@Nullable Object obj) {
-    return literal(obj, $ -> {
-      if ($ instanceof File || $ instanceof Path)
-        return literal($.toString());
-      else
-        return $.toString();
-    });
+    return literal(obj, $ -> $ instanceof File || $ instanceof Path ? literal($.toString())
+        : $.toString());
   }
 
   /**
@@ -1417,6 +1461,30 @@ public final class Objects {
           return sqnd(obj) + attrPart;
         })
         .orElseThrow();
+  }
+
+  /**
+   * Gets the string representation of an object, normalized to ensure stability across executions
+   * and systems.
+   * <p>
+   * Useful for test reproducibility.
+   * </p>
+   * <p>
+   * Supported cases:
+   * </p>
+   * <ul>
+   * <li>at-sign character (<code>&#64;</code>) followed by the unsigned hexadecimal representation
+   * of the hash code of the object (<code>@[0-9a-fA-F]+$</code>) is removed</li>
+   * <li>lambda identifier (<code>(\$\$Lambda)\$\d+/0x[0-9a-fA-F]+</code>) is removed</li>
+   * <li>floating-point numbers are normalized to maximum 5 decimal positions</li>
+   * </ul>
+   */
+  public static String toStringStable(Object obj) {
+    if (obj instanceof Double || obj instanceof Float)
+      return FORMATTER__STABLE_DECIMAL.get().format(obj);
+    else
+      return PATTERN__TO_STRING_OBJID.matcher(obj.toString()).replaceAll(
+          "$1" /* Removes instance-specific parts, retaining only lambda's class name */);
   }
 
   /**
