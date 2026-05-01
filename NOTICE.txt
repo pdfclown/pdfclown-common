@@ -5,8 +5,16 @@ License LGPL-3.0-only <https://spdx.org/licenses/LGPL-3.0-only>
 
 This product reuses source code from third-party projects [1]:
 
-commons-lang <https://github.com/apache/commons-lang>
+Apache Commons Lang <https://github.com/apache/commons-lang>
 Copyright 2001-2025 Apache Software Foundation (ASF)
+License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
+
+Apache Groovy
+Copyright 2003-2026 The Apache Software Foundation
+License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
+
+ApprovalTests.Java <https://github.com/approvals/ApprovalTests.Java>
+Copyright ?-2026 Llewellyn Falco
 License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
 
 JSON-java (org.json) <https://github.com/stleary/JSON-java>

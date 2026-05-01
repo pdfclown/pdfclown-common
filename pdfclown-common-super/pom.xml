@@ -130,6 +130,7 @@ pdfclown-common-base instead)</description>
       NOTE: Brought here because of plugin-level references (otherwise, their natural place would
       be pdfclown-common-deps).
     -->
+    <approvaltests.version>30.1.0</approvaltests.version>
     <bytebuddy.version>1.18.8</bytebuddy.version>
     <classgraph.version>4.8.184</classgraph.version>
     <eventbus.version>3.3.1</eventbus.version>
@@ -714,6 +715,11 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
 
             <detectLinks>true</detectLinks>
             <dependencyLinks>
+              <link>
+                <groupId>com.approvaltests</groupId>
+                <artifactId>approvaltests</artifactId>
+                <url>https://javadoc.io/doc/com.approvaltests/approvaltests/${approvaltests.version}</url>
+              </link>
               <link>
                 <groupId>com.github.javaparser</groupId>
                 <artifactId>javaparser-core</artifactId>
