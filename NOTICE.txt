@@ -9,7 +9,7 @@ Apache Commons Lang <https://github.com/apache/commons-lang>
 Copyright 2001-2025 Apache Software Foundation (ASF)
 License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
 
-Apache Groovy
+Apache Groovy <https://github.com/apache/groovy>
 Copyright 2003-2026 The Apache Software Foundation
 License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
 
