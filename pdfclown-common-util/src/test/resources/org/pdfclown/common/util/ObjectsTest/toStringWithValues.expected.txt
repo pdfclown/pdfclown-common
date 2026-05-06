@@ -1,3 +1,3 @@
-[obj: Object, features: "[Ljava.lang.Object;"] => "Object[https://www.example.io Blue]"
-[obj: org.pdfclown.common.util.system.Clis.Args, features: "[Ljava.lang.Object;"] => "Clis.Args[class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]"
-[obj: org.pdfclown.common.util.xml.Xmls.XPath, features: "[Ljava.lang.Object;"] => "Xmls.XPath[true Yellow COMPACT]"
+[obj: Object, features: [https://www.example.io, "Blue"]] => "Object[https://www.example.io Blue]"
+[obj: org.pdfclown.common.util.system.Clis.Args, features: [org.pdfclown.common.util.system.Clis.ListIncrementalAdapter]] => "Clis.Args[class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]"
+[obj: org.pdfclown.common.util.xml.Xmls.XPath, features: [true, "Yellow", COMPACT]] => "Xmls.XPath[true Yellow COMPACT]"

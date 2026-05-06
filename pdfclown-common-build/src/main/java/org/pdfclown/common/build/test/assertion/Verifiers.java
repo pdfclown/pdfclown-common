@@ -12,10 +12,8 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static org.pdfclown.common.build.internal.temp.util.Objects.FORMATTER__LITERAL__NON_BASIC__STABLE_QUALIFIER_AWARE;
-import static org.pdfclown.common.build.internal.temp.util.Objects.basicLiteral;
 import static org.pdfclown.common.build.internal.temp.util.Objects.simpleName;
-import static org.pdfclown.common.build.internal.temp.util.Objects.toStringStable;
+import static org.pdfclown.common.build.internal.temp.util.Objects.stableLiteral;
 import static org.pdfclown.common.util.Objects.literal;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.net.Uris.uri;
@@ -33,8 +31,6 @@ import org.pdfclown.common.build.internal.temp.util.Objects;
  * @author Stefano Chizzolini
  */
 public final class Verifiers {
-  private static final String FORMAT__EXCEPTION = "<<%s: %s>>";
-
   private static final Pattern PATTERN__EXCEPTION_MESSAGE__STABLE = Pattern.compile(
       "\\s*\\(.+ are in module \\S+ of loader \\S+\\)");
 
@@ -42,21 +38,10 @@ public final class Verifiers {
    * Formatter normalizing the string representation of objects for test reproducibility.
    * <p>
    * Strips the string representation of its unstable parts, which may change across executions or
-   * systems. Supported cases:
+   * systems — see {@link Objects#stableLiteral(Object)}.
    * </p>
-   * <ul>
-   * <li>{@linkplain Objects#FORMATTER__LITERAL__NON_BASIC__STABLE_QUALIFIER_AWARE instance-specific
-   * parts} are removed</li>
-   * <li>floating-point numbers are normalized to maximum 5 decimal positions</li>
-   * </ul>
    */
-  public static final Function<@Nullable Object, String> FORMATTER__BASIC =
-      $ -> {
-        if ($ instanceof Double || $ instanceof Float)
-          return toStringStable($);
-        else
-          return literal($, FORMATTER__LITERAL__NON_BASIC__STABLE_QUALIFIER_AWARE);
-      };
+  public static final Function<@Nullable Object, String> FORMATTER__BASIC = Objects::stableLiteral;
 
   /**
    * Formatter normalizing exception messages for test reproducibility.
@@ -70,7 +55,7 @@ public final class Verifiers {
    * </ul>
    */
   public static final UnaryOperator<@Nullable String> FORMATTER__EXCEPTION_MESSAGE__BASIC =
-      $ -> $ != null ? basicLiteral(PATTERN__EXCEPTION_MESSAGE__STABLE.matcher($)
+      $ -> $ != null ? stableLiteral(PATTERN__EXCEPTION_MESSAGE__STABLE.matcher($)
           .replaceAll(EMPTY)) : null;
 
   /**
@@ -85,7 +70,7 @@ public final class Verifiers {
    */
   public static Function<Throwable, String> exceptionFormatter(
       UnaryOperator<@Nullable String> messageFormatter) {
-    return $ -> FORMAT__EXCEPTION.formatted(simpleName($), messageFormatter.apply($.getMessage()));
+    return $ -> "<<%s: %s>>".formatted(simpleName($), messageFormatter.apply($.getMessage()));
   }
 
   /**

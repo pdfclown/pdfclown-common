@@ -15,10 +15,12 @@ package org.pdfclown.common.build.internal.temp.util;
 import static java.lang.Math.subtractExact;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
+import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.pdfclown.common.util.Booleans.parseBoolean;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.COMMA;
+import static org.pdfclown.common.util.Chars.CURLY_BRACE_CLOSE;
 import static org.pdfclown.common.util.Chars.CURLY_BRACE_OPEN;
 import static org.pdfclown.common.util.Chars.DOLLAR;
 import static org.pdfclown.common.util.Chars.DOT;
@@ -91,6 +93,7 @@ import org.apache.commons.text.translate.JavaUnicodeEscaper;
 import org.apache.commons.text.translate.LookupTranslator;
 import org.apache.commons.text.translate.OctalUnescaper;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.stream.Streams;
 import org.pdfclown.common.util.ArgumentException;
 import org.pdfclown.common.util.Cloneable;
 import org.pdfclown.common.util.Strings;
@@ -384,43 +387,7 @@ public final class Objects {
   private static final String TO_STRING_PROPERTY_LIST_SEPARATOR = S + COMMA + SPACE;
   private static final String TO_STRING_VALUE_LIST_SEPARATOR = S + SPACE;
 
-  private static final Pattern PATTERN__TO_STRING_OBJID = Pattern.compile(
-      "(\\$\\$Lambda)\\S*?/0x[0-9a-fA-F]+|@[0-9a-fA-F]+$");
-
-  /**
-   * Literal formatter for non-basic objects.
-   * <p>
-   * The string representation is returned as-is if qualified by class name (or the object is an
-   * {@link Enum} element), otherwise as a literal string.
-   * </p>
-   *
-   * @see #literal(Object, Function)
-   */
-  public static final Function<Object, String> FORMATTER__LITERAL__NON_BASIC__QUALIFIER_AWARE =
-      $ -> {
-        var s = $.toString();
-        return $ instanceof Enum<?> || s.contains(simpleName($)) ? s : literal(s);
-      };
-  /**
-   * Literal formatter for non-basic objects, {@linkplain #toStringStable(Object) stable} across
-   * executions and systems.
-   * <p>
-   * Useful for test reproducibility.
-   * </p>
-   * <p>
-   * The string representation is returned as-is if qualified by class name (or the object is an
-   * {@link Enum} element), otherwise as a literal string.
-   * </p>
-   *
-   * @see #literal(Object, Function)
-   */
-  public static final Function<Object,
-      String> FORMATTER__LITERAL__NON_BASIC__STABLE_QUALIFIER_AWARE =
-          $ -> {
-            var s = toStringStable($);
-            return $ instanceof Enum<?> || s.contains(toStringStable(simpleName($))) ? s
-                : literal(s);
-          };
+  private static final Pattern PATTERN__TO_STRING_OBJID = Pattern.compile("@[0-9a-fA-F]+$");
 
   private static final ThreadLocal<DecimalFormat> FORMATTER__STABLE_DECIMAL =
       ThreadLocal.withInitial(() -> {
@@ -531,15 +498,18 @@ public final class Objects {
   }
 
   /**
-   * Maps an object to its literal string representation within generic strings.
+   * Maps an object to its literal string representation if primitive, otherwise to its simple
+   * string representation.
    *
-   * @return Same as {@link #literal(Object)}, except non-basic objects are represented according to
-   *         {@link #FORMATTER__LITERAL__NON_BASIC__QUALIFIER_AWARE}.
+   * @return Same as {@link #literal(Object)}, except non-basic objects are represented
+   *         {@linkplain Object#toString() as-is}.
    * @see #literal(Object)
+   * @see #deepLiteral(Object)
+   * @see #stableLiteral(Object)
    * @see #textLiteral(Object)
    */
   public static String basicLiteral(@Nullable Object obj) {
-    return literal(obj, FORMATTER__LITERAL__NON_BASIC__QUALIFIER_AWARE);
+    return literal(obj, Object::toString);
   }
 
   /**
@@ -629,6 +599,56 @@ public final class Objects {
       return false;
 
     return deepEquals(resolver.apply(ref1), resolver.apply(ref2), baseRefType, resolver, raw);
+  }
+
+  /**
+   * Maps an object to its literal string representation if primitive, otherwise to its simple
+   * string representation, elements inclusive (in case of array, {@linkplain Collection collection}
+   * or {@linkplain Map map}).
+   *
+   * @return Same as {@link #basicLiteral(Object)}, except in case {@code obj} is an array, a
+   *         collection or a map.
+   * @see #literal(Object)
+   * @see #basicLiteral(Object)
+   * @see #stableLiteral(Object)
+   * @see #textLiteral(Object)
+   */
+  public static String deepLiteral(@Nullable Object obj) {
+    return deepLiteral(obj, Objects::deepLiteral, Object::toString);
+  }
+
+  /**
+   * Maps an object to its literal string representation, elements inclusive (in case of array,
+   * {@linkplain Collection collection} or {@linkplain Map map}).
+   *
+   * @param formatter
+   *          Formatter applied to elements in arrays, collections or maps. Typically, a recursive
+   *          reference to the calling method.
+   * @param nonBasicFormatter
+   *          Formatter applied to non-basic objects.
+   * @return Same as {@link #literal(Object, Function)}, except in case {@code obj} is an array, a
+   *         collection or a map.
+   * @see #literal(Object)
+   * @see #basicLiteral(Object)
+   * @see #stableLiteral(Object)
+   * @see #textLiteral(Object)
+   */
+  public static String deepLiteral(@Nullable Object obj,
+      Function<@Nullable Object, String> formatter, Function<Object, String> nonBasicFormatter) {
+    if (obj instanceof Collection<?> c)
+      return c.stream()
+          .map(formatter)
+          .collect(joining(S + COMMA + SPACE, S + SQUARE_BRACKET_OPEN, S + SQUARE_BRACKET_CLOSE));
+    else if (obj instanceof Map<?, ?> m)
+      return m.entrySet().stream()
+          .map($ -> formatter.apply($.getKey()) + EQUAL + formatter.apply($.getValue()))
+          .collect(joining(S + COMMA + SPACE, S + CURLY_BRACE_OPEN, S + CURLY_BRACE_CLOSE));
+    else if (obj != null && obj.getClass().isArray())
+      return Streams.fromArray(obj)
+          .map(formatter)
+          .collect(joining(S + COMMA + SPACE, S + SQUARE_BRACKET_OPEN, S + SQUARE_BRACKET_CLOSE));
+    else
+      return literal(obj, nonBasicFormatter);
   }
 
   /**
@@ -870,12 +890,11 @@ public final class Objects {
   }
 
   /**
-   * {@jada.reuseDoc} Maps an object to its literal string representation.
+   * Maps an object to its literal string representation.
    * <p>
-   * The result is syntactically compatible with Java language, so that it can be safely used in
-   * source code.
+   * The result is syntactically compatible with Java language, so it can be safely used in source
+   * code.
    * </p>
-   * {@jada.reuseDoc END}
    *
    * @return
    *         <ul>
@@ -896,6 +915,8 @@ public final class Objects {
    *         <li>otherwise: like {@code String}</li>
    *         </ul>
    * @see #basicLiteral(Object)
+   * @see #deepLiteral(Object)
+   * @see #stableLiteral(Object)
    * @see #textLiteral(Object)
    * @see #parseLiteral(String)
    */
@@ -904,13 +925,10 @@ public final class Objects {
   }
 
   /**
-   * {@jada.doc} Maps an object to its literal string representation.
-   * <p>
-   * The result is syntactically compatible with Java language, so that it can be safely used in
-   * source code.
-   * </p>
-   * {@jada.doc END}
+   * Maps an object to its literal string representation.
    *
+   * @param nonBasicFormatter
+   *          Formatter applied to non-basic objects.
    * @return
    *         <ul>
    *         {@jada.doc return}
@@ -953,7 +971,6 @@ public final class Objects {
     else if (obj instanceof String s)
       return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(s) + DQUOTE;
     else if (obj instanceof Class<?> c)
-      //noinspection DataFlowIssue : non-null
       return to(c, $ -> $.getPackageName().startsWith("java.lang")
           ? $.getSimpleName() /*
                                * NOTE: The names of classes belonging to common packages are
@@ -1306,6 +1323,52 @@ public final class Objects {
   }
 
   /**
+   * Maps an object to its literal string representation if primitive, otherwise to its simple
+   * string representation, elements inclusive (in case of array, {@linkplain Collection collection}
+   * or {@linkplain Map map}), normalized to ensure stability across executions and systems.
+   * <p>
+   * Useful for test reproducibility.
+   * </p>
+   * <p>
+   * Supported cases:
+   * </p>
+   * <ul>
+   * <li>floating-point numbers: normalized to maximum 5 decimal positions</li>
+   * <li>arrays: items are mapped to their stable string representation</li>
+   * <li>{@linkplain Collection collection}s: elements are mapped to their stable string
+   * representation, then, in case of {@linkplain Set set}, they are sorted</li>
+   * <li>{@linkplain Map map}s: keys and values are mapped to their stable string representation,
+   * then entries are sorted by key</li>
+   * <li>any other object: the hexadecimal representation of the object's hash code
+   * (<code>"@[0-9a-fA-F]+$"</code>, see {@link Object#toString()}) is removed</li>
+   * </ul>
+   *
+   * @return Same as {@link #deepLiteral(Object)}, except stability.
+   */
+  public static String stableLiteral(@Nullable Object obj) {
+    if (obj instanceof Float)
+      /*
+       * NOTE: Literal float MUST be marked by suffix to override default double type.
+       */
+      return FORMATTER__STABLE_DECIMAL.get().format(obj) + "F";
+    else if (obj instanceof Double)
+      return FORMATTER__STABLE_DECIMAL.get().format(obj);
+    else if (obj instanceof Set<?> s) {
+      return s.stream()
+          .map(Objects::stableLiteral)
+          .sorted()
+          .collect(joining(S + COMMA + SPACE, S + SQUARE_BRACKET_OPEN, S + SQUARE_BRACKET_CLOSE));
+    } else if (obj instanceof Map<?, ?> m)
+      return m.entrySet().stream()
+          .map($ -> stableLiteral($.getKey()) + EQUAL + stableLiteral($.getValue()))
+          .sorted()
+          .collect(joining(S + COMMA + SPACE, S + CURLY_BRACE_OPEN, S + CURLY_BRACE_CLOSE));
+    else
+      return deepLiteral(obj, Objects::stableLiteral,
+          $ -> PATTERN__TO_STRING_OBJID.matcher($.toString()).replaceAll(EMPTY));
+  }
+
+  /**
    * Gets type descendants available on a classpath.
    *
    * @param type
@@ -1385,11 +1448,12 @@ public final class Objects {
   /**
    * Maps an object to its literal string representation for text messages.
    *
-   * @return Same as {@link #literal(Object)}, except non-basic objects are represented as-is;
-   *         nonetheless, certain types ({@link File}, {@link Path}) are still represented like
-   *         {@code String} for convenience.
+   * @return Same as {@link #basicLiteral(Object)}, except certain types ({@link File},
+   *         {@link Path}) are still represented like literal {@code String} for convenience.
    * @see #literal(Object)
    * @see #basicLiteral(Object)
+   * @see #deepLiteral(Object)
+   * @see #stableLiteral(Object)
    */
   public static String textLiteral(@Nullable Object obj) {
     return literal(obj, $ -> $ instanceof File || $ instanceof Path ? literal($.toString())
@@ -1476,18 +1540,40 @@ public final class Objects {
    * Supported cases:
    * </p>
    * <ul>
-   * <li>at-sign character (<code>&#64;</code>) followed by the unsigned hexadecimal representation
-   * of the hash code of the object (<code>@[0-9a-fA-F]+$</code>) is removed</li>
-   * <li>lambda identifier (<code>(\$\$Lambda)\S*?/0x[0-9a-fA-F]+</code>) is removed</li>
-   * <li>floating-point numbers are normalized to maximum 5 decimal positions</li>
+   * <li>floating-point numbers: normalized to maximum 5 decimal positions</li>
+   * <li>arrays: items are mapped to their stable string representation</li>
+   * <li>{@linkplain Collection collection}s: elements are mapped to their stable string
+   * representation, then, in case of {@linkplain Set set}, they are sorted</li>
+   * <li>{@linkplain Map map}s: keys and values are mapped to their stable string representation,
+   * then entries are sorted by key</li>
+   * <li>any other object: the hexadecimal representation of the object's hash code
+   * (<code>"@[0-9a-fA-F]+$"</code>, see {@link Object#toString()}) is removed</li>
    * </ul>
    */
-  public static String toStringStable(Object obj) {
-    if (obj instanceof Double || obj instanceof Float)
+  public static String toStringStable(@Nullable Object obj) {
+    if (obj == null)
+      return NULL;
+    else if (obj instanceof Double || obj instanceof Float)
       return FORMATTER__STABLE_DECIMAL.get().format(obj);
+    else if (obj instanceof Collection<?> c) {
+      var stream = c.stream()
+          .map(Objects::toStringStable);
+      if (c instanceof Set<?>) {
+        stream = stream.sorted();
+      }
+      return stream
+          .collect(joining(S + COMMA + SPACE, S + SQUARE_BRACKET_OPEN, S + SQUARE_BRACKET_CLOSE));
+    } else if (obj instanceof Map<?, ?> m)
+      return m.entrySet().stream()
+          .map($ -> toStringStable($.getKey()) + EQUAL + toStringStable($.getValue()))
+          .sorted()
+          .collect(joining(S + COMMA + SPACE, S + CURLY_BRACE_OPEN, S + CURLY_BRACE_CLOSE));
+    else if (obj.getClass().isArray())
+      return Streams.fromArray(obj)
+          .map(Objects::toStringStable)
+          .collect(joining(S + COMMA + SPACE, S + SQUARE_BRACKET_OPEN, S + SQUARE_BRACKET_CLOSE));
     else
-      return PATTERN__TO_STRING_OBJID.matcher(obj.toString()).replaceAll(
-          "$1" /* Removes instance-specific parts, retaining only lambda's class name */);
+      return PATTERN__TO_STRING_OBJID.matcher(obj.toString()).replaceAll(EMPTY);
   }
 
   /**

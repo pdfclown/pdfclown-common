@@ -11,4 +11,4 @@
 [obj: String] => "String"
 [obj: java.util.stream.Stream] => "java.util.stream.Stream"
 [obj: org.pdfclown.common.util.Strings] => "org.pdfclown.common.util.Strings"
-[obj: "[one, two]"] => "\"[one, two]\""
+[obj: ["one", "two"]] => "\"[one, two]\""

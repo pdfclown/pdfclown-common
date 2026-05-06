@@ -1,3 +1,3 @@
-[obj: Object, properties: "[Ljava.lang.Object;"] => <<ClassCastException: "class java.net.URI cannot be cast to class java.lang.String">>
-[obj: org.pdfclown.common.util.system.Clis.Args, properties: "[Ljava.lang.Object;"] => "Clis.Args[adapter=class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]"
-[obj: org.pdfclown.common.util.xml.Xmls.XPath, properties: "[Ljava.lang.Object;"] => "Xmls.XPath[profile=COMPACT, level=11]"
+[obj: Object, properties: [https://www.example.io, "Blue"]] => <<ClassCastException: "class java.net.URI cannot be cast to class java.lang.String">>
+[obj: org.pdfclown.common.util.system.Clis.Args, properties: ["adapter", org.pdfclown.common.util.system.Clis.ListIncrementalAdapter]] => "Clis.Args[adapter=class org.pdfclown.common.util.system.Clis$ListIncrementalAdapter]"
+[obj: org.pdfclown.common.util.xml.Xmls.XPath, properties: ["profile", COMPACT, "level", 11]] => "Xmls.XPath[profile=COMPACT, level=11]"

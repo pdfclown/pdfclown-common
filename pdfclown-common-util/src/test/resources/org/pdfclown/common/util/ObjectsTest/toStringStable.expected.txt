@@ -1,0 +1,7 @@
+[obj: null] => "null"
+[obj: -0.12346] => "-0.12346"
+[obj: [-0.12346, NaN]] => "[-0.12346, NaN]"
+[obj: ["yellow", "green", "blue", "red", "pink", "magenta"]] => "[yellow, green, blue, red, pink, magenta]"
+[obj: ["blue", "green", "magenta", "pink", "red", "yellow"]] => "[blue, green, magenta, pink, red, yellow]"
+[obj: {"blue"=-0.12346, "green"=1, "magenta"=["blue", "green", "magenta", "pink", "red", "yellow"], "pink"=true, "red"='2', "yellow"=null}] => "{blue=-0.12346, green=1, magenta=[blue, green, magenta, pink, red, yellow], pink=true, red=2, yellow=null}"
+[obj: MyObject] => "MyObject"

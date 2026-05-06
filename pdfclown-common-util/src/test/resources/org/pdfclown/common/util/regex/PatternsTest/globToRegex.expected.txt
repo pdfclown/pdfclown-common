@@ -1,2 +1,2 @@
-[glob: "\"/**/my*.*\" (pattern)"] => "/.*/my[^/]*\\.[^/]*"
-[glob: "\"/home/*User/**/foo?a?/*.md\" (pattern)"] => "/home/[^/]*User/.*/foo.a./[^/]*\\.md"
+[glob: "/**/my*.*" (pattern)] => "/.*/my[^/]*\\.[^/]*"
+[glob: "/home/*User/**/foo?a?/*.md" (pattern)] => "/home/[^/]*User/.*/foo.a./[^/]*\\.md"

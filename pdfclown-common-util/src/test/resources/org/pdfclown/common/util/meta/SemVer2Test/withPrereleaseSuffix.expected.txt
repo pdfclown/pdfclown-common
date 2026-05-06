@@ -1,126 +1,126 @@
-[ver: "1.0.0", fieldIndex: -1, value: 8] => "1.0.0-8"
-[ver: "1.0.0", fieldIndex: -1, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0", fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.0.0", fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.0.0", fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.9.0", fieldIndex: -1, value: 8] => "1.9.0-8"
-[ver: "1.9.0", fieldIndex: -1, value: "rc"] => "1.9.0-rc"
-[ver: "1.9.0", fieldIndex: -1, value: "SNAPSHOT"] => "1.9.0-SNAPSHOT"
-[ver: "1.9.0", fieldIndex: 0, value: 8] => "1.9.0-8"
-[ver: "1.9.0", fieldIndex: 0, value: "rc"] => "1.9.0-rc"
-[ver: "1.9.0", fieldIndex: 0, value: "SNAPSHOT"] => "1.9.0-SNAPSHOT"
-[ver: "1.9.0", fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.9.0", fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.9.0", fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.10.0", fieldIndex: -1, value: 8] => "1.10.0-8"
-[ver: "1.10.0", fieldIndex: -1, value: "rc"] => "1.10.0-rc"
-[ver: "1.10.0", fieldIndex: -1, value: "SNAPSHOT"] => "1.10.0-SNAPSHOT"
-[ver: "1.10.0", fieldIndex: 0, value: 8] => "1.10.0-8"
-[ver: "1.10.0", fieldIndex: 0, value: "rc"] => "1.10.0-rc"
-[ver: "1.10.0", fieldIndex: 0, value: "SNAPSHOT"] => "1.10.0-SNAPSHOT"
-[ver: "1.10.0", fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.10.0", fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.10.0", fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.11.0", fieldIndex: -1, value: 8] => "1.11.0-8"
-[ver: "1.11.0", fieldIndex: -1, value: "rc"] => "1.11.0-rc"
-[ver: "1.11.0", fieldIndex: -1, value: "SNAPSHOT"] => "1.11.0-SNAPSHOT"
-[ver: "1.11.0", fieldIndex: 0, value: 8] => "1.11.0-8"
-[ver: "1.11.0", fieldIndex: 0, value: "rc"] => "1.11.0-rc"
-[ver: "1.11.0", fieldIndex: 0, value: "SNAPSHOT"] => "1.11.0-SNAPSHOT"
-[ver: "1.11.0", fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.11.0", fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.11.0", fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.0.0-alpha", fieldIndex: -1, value: 8] => "1.0.0-alpha.8"
-[ver: "1.0.0-alpha", fieldIndex: -1, value: "rc"] => "1.0.0-alpha.rc"
-[ver: "1.0.0-alpha", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-alpha.SNAPSHOT"
-[ver: "1.0.0-alpha", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0-alpha", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0-alpha", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0-alpha", fieldIndex: 1, value: 8] => "1.0.0-alpha.8"
-[ver: "1.0.0-alpha", fieldIndex: 1, value: "rc"] => "1.0.0-alpha.rc"
-[ver: "1.0.0-alpha", fieldIndex: 1, value: "SNAPSHOT"] => "1.0.0-alpha.SNAPSHOT"
-[ver: "1.0.0-alpha.1", fieldIndex: -1, value: 8] => "1.0.0-alpha.1.8"
-[ver: "1.0.0-alpha.1", fieldIndex: -1, value: "rc"] => "1.0.0-alpha.1.rc"
-[ver: "1.0.0-alpha.1", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-alpha.1.SNAPSHOT"
-[ver: "1.0.0-alpha.1", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0-alpha.1", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0-alpha.1", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0-alpha.1", fieldIndex: 1, value: 8] => "1.0.0-alpha.8"
-[ver: "1.0.0-alpha.1", fieldIndex: 1, value: "rc"] => "1.0.0-alpha.rc"
-[ver: "1.0.0-alpha.1", fieldIndex: 1, value: "SNAPSHOT"] => "1.0.0-alpha.SNAPSHOT"
-[ver: "1.0.0-0.3.7", fieldIndex: -1, value: 8] => "1.0.0-0.3.7.8"
-[ver: "1.0.0-0.3.7", fieldIndex: -1, value: "rc"] => "1.0.0-0.3.7.rc"
-[ver: "1.0.0-0.3.7", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-0.3.7.SNAPSHOT"
-[ver: "1.0.0-0.3.7", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0-0.3.7", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0-0.3.7", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0-0.3.7", fieldIndex: 1, value: 8] => "1.0.0-0.8"
-[ver: "1.0.0-0.3.7", fieldIndex: 1, value: "rc"] => "1.0.0-0.rc"
-[ver: "1.0.0-0.3.7", fieldIndex: 1, value: "SNAPSHOT"] => "1.0.0-0.SNAPSHOT"
-[ver: "1.0.0-x.7.z.92", fieldIndex: -1, value: 8] => "1.0.0-x.7.z.92.8"
-[ver: "1.0.0-x.7.z.92", fieldIndex: -1, value: "rc"] => "1.0.0-x.7.z.92.rc"
-[ver: "1.0.0-x.7.z.92", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-x.7.z.92.SNAPSHOT"
-[ver: "1.0.0-x.7.z.92", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0-x.7.z.92", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0-x.7.z.92", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0-x.7.z.92", fieldIndex: 1, value: 8] => "1.0.0-x.8"
-[ver: "1.0.0-x.7.z.92", fieldIndex: 1, value: "rc"] => "1.0.0-x.rc"
-[ver: "1.0.0-x.7.z.92", fieldIndex: 1, value: "SNAPSHOT"] => "1.0.0-x.SNAPSHOT"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: -1, value: 8] => "1.0.0-x.-7.z.92.8"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: -1, value: "rc"] => "1.0.0-x.-7.z.92.rc"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-x.-7.z.92.SNAPSHOT"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: 1, value: 8] => "1.0.0-x.8"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: 1, value: "rc"] => "1.0.0-x.rc"
-[ver: "1.0.0-x.-7.z.92", fieldIndex: 1, value: "SNAPSHOT"] => "1.0.0-x.SNAPSHOT"
-[ver: "1.0.0-x-y-z.--", fieldIndex: -1, value: 8] => "1.0.0-x-y-z.--.8"
-[ver: "1.0.0-x-y-z.--", fieldIndex: -1, value: "rc"] => "1.0.0-x-y-z.--.rc"
-[ver: "1.0.0-x-y-z.--", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-x-y-z.--.SNAPSHOT"
-[ver: "1.0.0-x-y-z.--", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0-x-y-z.--", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0-x-y-z.--", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0-x-y-z.--", fieldIndex: 1, value: 8] => "1.0.0-x-y-z.8"
-[ver: "1.0.0-x-y-z.--", fieldIndex: 1, value: "rc"] => "1.0.0-x-y-z.rc"
-[ver: "1.0.0-x-y-z.--", fieldIndex: 1, value: "SNAPSHOT"] => "1.0.0-x-y-z.SNAPSHOT"
-[ver: "1.0.0-alpha+001", fieldIndex: -1, value: 8] => "1.0.0-alpha.8"
-[ver: "1.0.0-alpha+001", fieldIndex: -1, value: "rc"] => "1.0.0-alpha.rc"
-[ver: "1.0.0-alpha+001", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-alpha.SNAPSHOT"
-[ver: "1.0.0-alpha+001", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0-alpha+001", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0-alpha+001", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0-alpha+001", fieldIndex: 1, value: 8] => "1.0.0-alpha.8"
-[ver: "1.0.0-alpha+001", fieldIndex: 1, value: "rc"] => "1.0.0-alpha.rc"
-[ver: "1.0.0-alpha+001", fieldIndex: 1, value: "SNAPSHOT"] => "1.0.0-alpha.SNAPSHOT"
-[ver: "1.0.0+20130313144700", fieldIndex: -1, value: 8] => "1.0.0-8"
-[ver: "1.0.0+20130313144700", fieldIndex: -1, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0+20130313144700", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0+20130313144700", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0+20130313144700", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0+20130313144700", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0+20130313144700", fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.0.0+20130313144700", fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.0.0+20130313144700", fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: -1, value: 8] => "1.0.0-beta.8"
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: -1, value: "rc"] => "1.0.0-beta.rc"
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-beta.SNAPSHOT"
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: 1, value: 8] => "1.0.0-beta.8"
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: 1, value: "rc"] => "1.0.0-beta.rc"
-[ver: "1.0.0-beta+exp.sha.5114f85", fieldIndex: 1, value: "SNAPSHOT"] => "1.0.0-beta.SNAPSHOT"
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: -1, value: 8] => "1.0.0-8"
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: -1, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: -1, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: 0, value: 8] => "1.0.0-8"
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: 0, value: "rc"] => "1.0.0-rc"
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: 0, value: "SNAPSHOT"] => "1.0.0-SNAPSHOT"
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
-[ver: "1.0.0+21AF26D3----117B344092BD", fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0, fieldIndex: -1, value: 8] => 1.0.0-8
+[ver: 1.0.0, fieldIndex: -1, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0, fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0, fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0, fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.9.0, fieldIndex: -1, value: 8] => 1.9.0-8
+[ver: 1.9.0, fieldIndex: -1, value: "rc"] => 1.9.0-rc
+[ver: 1.9.0, fieldIndex: -1, value: "SNAPSHOT"] => 1.9.0-SNAPSHOT
+[ver: 1.9.0, fieldIndex: 0, value: 8] => 1.9.0-8
+[ver: 1.9.0, fieldIndex: 0, value: "rc"] => 1.9.0-rc
+[ver: 1.9.0, fieldIndex: 0, value: "SNAPSHOT"] => 1.9.0-SNAPSHOT
+[ver: 1.9.0, fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.9.0, fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.9.0, fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.10.0, fieldIndex: -1, value: 8] => 1.10.0-8
+[ver: 1.10.0, fieldIndex: -1, value: "rc"] => 1.10.0-rc
+[ver: 1.10.0, fieldIndex: -1, value: "SNAPSHOT"] => 1.10.0-SNAPSHOT
+[ver: 1.10.0, fieldIndex: 0, value: 8] => 1.10.0-8
+[ver: 1.10.0, fieldIndex: 0, value: "rc"] => 1.10.0-rc
+[ver: 1.10.0, fieldIndex: 0, value: "SNAPSHOT"] => 1.10.0-SNAPSHOT
+[ver: 1.10.0, fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.10.0, fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.10.0, fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.11.0, fieldIndex: -1, value: 8] => 1.11.0-8
+[ver: 1.11.0, fieldIndex: -1, value: "rc"] => 1.11.0-rc
+[ver: 1.11.0, fieldIndex: -1, value: "SNAPSHOT"] => 1.11.0-SNAPSHOT
+[ver: 1.11.0, fieldIndex: 0, value: 8] => 1.11.0-8
+[ver: 1.11.0, fieldIndex: 0, value: "rc"] => 1.11.0-rc
+[ver: 1.11.0, fieldIndex: 0, value: "SNAPSHOT"] => 1.11.0-SNAPSHOT
+[ver: 1.11.0, fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.11.0, fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.11.0, fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0-alpha, fieldIndex: -1, value: 8] => 1.0.0-alpha.8
+[ver: 1.0.0-alpha, fieldIndex: -1, value: "rc"] => 1.0.0-alpha.rc
+[ver: 1.0.0-alpha, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-alpha.SNAPSHOT
+[ver: 1.0.0-alpha, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0-alpha, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0-alpha, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0-alpha, fieldIndex: 1, value: 8] => 1.0.0-alpha.8
+[ver: 1.0.0-alpha, fieldIndex: 1, value: "rc"] => 1.0.0-alpha.rc
+[ver: 1.0.0-alpha, fieldIndex: 1, value: "SNAPSHOT"] => 1.0.0-alpha.SNAPSHOT
+[ver: 1.0.0-alpha.1, fieldIndex: -1, value: 8] => 1.0.0-alpha.1.8
+[ver: 1.0.0-alpha.1, fieldIndex: -1, value: "rc"] => 1.0.0-alpha.1.rc
+[ver: 1.0.0-alpha.1, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-alpha.1.SNAPSHOT
+[ver: 1.0.0-alpha.1, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0-alpha.1, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0-alpha.1, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0-alpha.1, fieldIndex: 1, value: 8] => 1.0.0-alpha.8
+[ver: 1.0.0-alpha.1, fieldIndex: 1, value: "rc"] => 1.0.0-alpha.rc
+[ver: 1.0.0-alpha.1, fieldIndex: 1, value: "SNAPSHOT"] => 1.0.0-alpha.SNAPSHOT
+[ver: 1.0.0-0.3.7, fieldIndex: -1, value: 8] => 1.0.0-0.3.7.8
+[ver: 1.0.0-0.3.7, fieldIndex: -1, value: "rc"] => 1.0.0-0.3.7.rc
+[ver: 1.0.0-0.3.7, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-0.3.7.SNAPSHOT
+[ver: 1.0.0-0.3.7, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0-0.3.7, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0-0.3.7, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0-0.3.7, fieldIndex: 1, value: 8] => 1.0.0-0.8
+[ver: 1.0.0-0.3.7, fieldIndex: 1, value: "rc"] => 1.0.0-0.rc
+[ver: 1.0.0-0.3.7, fieldIndex: 1, value: "SNAPSHOT"] => 1.0.0-0.SNAPSHOT
+[ver: 1.0.0-x.7.z.92, fieldIndex: -1, value: 8] => 1.0.0-x.7.z.92.8
+[ver: 1.0.0-x.7.z.92, fieldIndex: -1, value: "rc"] => 1.0.0-x.7.z.92.rc
+[ver: 1.0.0-x.7.z.92, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-x.7.z.92.SNAPSHOT
+[ver: 1.0.0-x.7.z.92, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0-x.7.z.92, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0-x.7.z.92, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0-x.7.z.92, fieldIndex: 1, value: 8] => 1.0.0-x.8
+[ver: 1.0.0-x.7.z.92, fieldIndex: 1, value: "rc"] => 1.0.0-x.rc
+[ver: 1.0.0-x.7.z.92, fieldIndex: 1, value: "SNAPSHOT"] => 1.0.0-x.SNAPSHOT
+[ver: 1.0.0-x.-7.z.92, fieldIndex: -1, value: 8] => 1.0.0-x.-7.z.92.8
+[ver: 1.0.0-x.-7.z.92, fieldIndex: -1, value: "rc"] => 1.0.0-x.-7.z.92.rc
+[ver: 1.0.0-x.-7.z.92, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-x.-7.z.92.SNAPSHOT
+[ver: 1.0.0-x.-7.z.92, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0-x.-7.z.92, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0-x.-7.z.92, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0-x.-7.z.92, fieldIndex: 1, value: 8] => 1.0.0-x.8
+[ver: 1.0.0-x.-7.z.92, fieldIndex: 1, value: "rc"] => 1.0.0-x.rc
+[ver: 1.0.0-x.-7.z.92, fieldIndex: 1, value: "SNAPSHOT"] => 1.0.0-x.SNAPSHOT
+[ver: 1.0.0-x-y-z.--, fieldIndex: -1, value: 8] => 1.0.0-x-y-z.--.8
+[ver: 1.0.0-x-y-z.--, fieldIndex: -1, value: "rc"] => 1.0.0-x-y-z.--.rc
+[ver: 1.0.0-x-y-z.--, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-x-y-z.--.SNAPSHOT
+[ver: 1.0.0-x-y-z.--, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0-x-y-z.--, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0-x-y-z.--, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0-x-y-z.--, fieldIndex: 1, value: 8] => 1.0.0-x-y-z.8
+[ver: 1.0.0-x-y-z.--, fieldIndex: 1, value: "rc"] => 1.0.0-x-y-z.rc
+[ver: 1.0.0-x-y-z.--, fieldIndex: 1, value: "SNAPSHOT"] => 1.0.0-x-y-z.SNAPSHOT
+[ver: 1.0.0-alpha+001, fieldIndex: -1, value: 8] => 1.0.0-alpha.8
+[ver: 1.0.0-alpha+001, fieldIndex: -1, value: "rc"] => 1.0.0-alpha.rc
+[ver: 1.0.0-alpha+001, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-alpha.SNAPSHOT
+[ver: 1.0.0-alpha+001, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0-alpha+001, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0-alpha+001, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0-alpha+001, fieldIndex: 1, value: 8] => 1.0.0-alpha.8
+[ver: 1.0.0-alpha+001, fieldIndex: 1, value: "rc"] => 1.0.0-alpha.rc
+[ver: 1.0.0-alpha+001, fieldIndex: 1, value: "SNAPSHOT"] => 1.0.0-alpha.SNAPSHOT
+[ver: 1.0.0+20130313144700, fieldIndex: -1, value: 8] => 1.0.0-8
+[ver: 1.0.0+20130313144700, fieldIndex: -1, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0+20130313144700, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0+20130313144700, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0+20130313144700, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0+20130313144700, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0+20130313144700, fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0+20130313144700, fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0+20130313144700, fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: -1, value: 8] => 1.0.0-beta.8
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: -1, value: "rc"] => 1.0.0-beta.rc
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-beta.SNAPSHOT
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: 1, value: 8] => 1.0.0-beta.8
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: 1, value: "rc"] => 1.0.0-beta.rc
+[ver: 1.0.0-beta+exp.sha.5114f85, fieldIndex: 1, value: "SNAPSHOT"] => 1.0.0-beta.SNAPSHOT
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: -1, value: 8] => 1.0.0-8
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: -1, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: -1, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: 0, value: 8] => 1.0.0-8
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: 0, value: "rc"] => 1.0.0-rc
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: 0, value: "SNAPSHOT"] => 1.0.0-SNAPSHOT
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: 1, value: 8] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: 1, value: "rc"] => <<IndexOutOfBoundsException: "toIndex = 1">>
+[ver: 1.0.0+21AF26D3----117B344092BD, fieldIndex: 1, value: "SNAPSHOT"] => <<IndexOutOfBoundsException: "toIndex = 1">>

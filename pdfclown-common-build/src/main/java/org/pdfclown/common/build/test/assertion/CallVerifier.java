@@ -117,7 +117,13 @@ public abstract class CallVerifier extends Verifier {
     } catch (Throwable ex) {
       output = getExceptionFormatter().apply(ex);
     }
-    return "%s => %s\n".formatted(formatInputs(labels, inputs), output);
+    /*
+     * NOTE: Trailing whitespace may be automatically trimmed by external source code formatters,
+     * causing false negatives between expected and actual results; therefore, a special value
+     * (`((EMPTY))`) is applied in case `output` is blank.
+     */
+    return "%s => %s\n".formatted(formatInputs(labels, inputs),
+        !output.isBlank() ? output : "((EMPTY))");
   }
 
   // SPDX-SnippetBegin

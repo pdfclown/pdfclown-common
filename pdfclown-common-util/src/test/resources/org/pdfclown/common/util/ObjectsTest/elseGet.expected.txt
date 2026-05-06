@@ -1,6 +1,6 @@
-[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => null
-[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => 21
-[obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => "hello"
-[obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => "hello"
-[obj: 42, supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => 42
-[obj: 42, supplier: org.pdfclown.common.util.function.FunctionsTest$$Lambda] => 42
+[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => null
+[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$IntSupplier] => 21
+[obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => "hello"
+[obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$IntSupplier] => "hello"
+[obj: 42, supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => 42
+[obj: 42, supplier: org.pdfclown.common.util.function.FunctionsTest$IntSupplier] => 42

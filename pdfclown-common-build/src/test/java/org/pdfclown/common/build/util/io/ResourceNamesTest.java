@@ -13,16 +13,16 @@
 package org.pdfclown.common.build.util.io;
 
 import static java.util.Arrays.asList;
-import static org.pdfclown.common.build.test.assertion.Assertions.assertParameterized;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import java.io.IOException;
 import java.util.List;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.__test.BaseTest;
-import org.pdfclown.common.build.test.assertion.Assertions.Expected;
 
 /**
  * @author Stefano Chizzolini
@@ -143,7 +143,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void name_0() {
-    assertParameterized(ResourceNames.name(), Expected.success(EMPTY), null);
+    assertThat(ResourceNames.name(), Matchers.is(EMPTY));
   }
 
   @Test

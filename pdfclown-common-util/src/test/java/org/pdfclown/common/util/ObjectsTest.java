@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.pdfclown.common.build.util.Tuple.tuple;
+import static org.pdfclown.common.util.Aggregations.map;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.io.Serializable;
@@ -31,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
@@ -44,6 +46,7 @@ import org.pdfclown.common.util.xml.Xmls.DocumentFactoryProfile;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("Convert2MethodRef")
 class ObjectsTest extends BaseTest {
   /**
    * Simulates an object with arbitrary {@link #toString()}.
@@ -487,6 +490,36 @@ class ObjectsTest extends BaseTest {
         List.of("obj"),
         // obj
         TO_STRINGS.stream().map($ -> $ != null ? new ToStringObject($) : null).toList());
+  }
+
+  @Test
+  void toStringStable() {
+    combinationVerifier
+        .verify(
+            (obj) -> Objects.toStringStable(obj),
+            List.of("obj"),
+            // obj
+            asList(
+                // null object
+                null,
+                // floating-point number
+                -0.123456789,
+                // array
+                new double[] { -0.123456789, Double.NaN },
+                // collection
+                List.of("yellow", "green", "blue", "red", "pink", "magenta"),
+                // set
+                Set.of("yellow", "green", "blue", "red", "pink", "magenta"),
+                // map
+                map()
+                    .with("yellow", null)
+                    .with("green", 1)
+                    .with("blue", -0.123456789)
+                    .with("red", '2')
+                    .with("pink", true)
+                    .with("magenta", Set.of("yellow", "green", "blue", "red", "pink", "magenta")),
+                // any other object (hexadecimal hash code suffix)
+                new ToStringObject("MyObject@16fdec90")));
   }
 
   @Test

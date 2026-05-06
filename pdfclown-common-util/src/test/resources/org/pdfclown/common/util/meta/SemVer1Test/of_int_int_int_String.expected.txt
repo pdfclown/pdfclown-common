@@ -1,5 +1,5 @@
-[major: 1, minor: 0, patch: 0, prerelease: null] => "1.0.0"
-[major: 1, minor: 0, patch: 0, prerelease: "alpha1"] => "1.0.0-alpha1"
+[major: 1, minor: 0, patch: 0, prerelease: null] => 1.0.0
+[major: 1, minor: 0, patch: 0, prerelease: "alpha1"] => 1.0.0-alpha1
 [major: -1, minor: 0, patch: 0, prerelease: "alpha1"] => <<ArgumentException: "`major` (-1): INVALID">>
 [major: 1, minor: -1, patch: 0, prerelease: "alpha1"] => <<ArgumentException: "`minor` (-1): INVALID">>
 [major: 1, minor: 0, patch: -1, prerelease: "alpha1"] => <<ArgumentException: "`patch` (-1): INVALID">>

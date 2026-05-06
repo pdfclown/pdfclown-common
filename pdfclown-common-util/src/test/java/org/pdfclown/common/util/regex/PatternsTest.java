@@ -30,20 +30,28 @@ import org.pdfclown.common.util.__test.BaseTest;
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 class PatternsTest extends BaseTest {
   static class PatternArgument extends Argument<String> {
-    /**
-     * Samples matching {@linkplain #getValue() regex}.
-     */
-    List<String> matches;
-    /**
-     * Samples not matching {@linkplain #getValue() regex}.
-     */
-    List<String> mismatches;
+    private final List<String> matches;
+    private final List<String> mismatches;
 
     PatternArgument(String payload, List<String> matches, List<String> mismatches) {
       super("pattern", payload);
 
       this.matches = matches;
       this.mismatches = mismatches;
+    }
+
+    /**
+     * Samples matching {@linkplain #getPayload() regex}.
+     */
+    public List<String> getMatches() {
+      return matches;
+    }
+
+    /**
+     * Samples not matching {@linkplain #getPayload() regex}.
+     */
+    public List<String> getMismatches() {
+      return mismatches;
     }
   }
 
@@ -66,10 +74,10 @@ class PatternsTest extends BaseTest {
   void globToRegex() {
     combinationVerifier.verify(
         (glob) -> {
-          var actual = Patterns.globToRegex(glob.getValue());
+          var actual = Patterns.globToRegex(glob.getPayload());
 
-          assertRegexMatches(actual, glob.matches, true);
-          assertRegexMatches(actual, glob.mismatches, false);
+          assertRegexMatches(actual, glob.getMatches(), true);
+          assertRegexMatches(actual, glob.getMismatches(), false);
           return actual;
         },
         List.of("glob"),
@@ -121,10 +129,10 @@ class PatternsTest extends BaseTest {
   void wildcardToRegex() {
     combinationVerifier.verify(
         (wildcard) -> {
-          var actual = Patterns.wildcardToRegex(wildcard.getValue());
+          var actual = Patterns.wildcardToRegex(wildcard.getPayload());
 
-          assertRegexMatches(actual, wildcard.matches, true);
-          assertRegexMatches(actual, wildcard.mismatches, false);
+          assertRegexMatches(actual, wildcard.getMatches(), true);
+          assertRegexMatches(actual, wildcard.getMismatches(), false);
           return actual;
         },
         List.of("wildcard"),

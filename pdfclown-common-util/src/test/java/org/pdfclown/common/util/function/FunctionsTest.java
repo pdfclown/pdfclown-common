@@ -31,6 +31,20 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini
  */
 public class FunctionsTest extends BaseTest {
+  private static final class IntSupplier implements Supplier<Integer> {
+    @Override
+    public Integer get() {
+      return 21;
+    }
+  }
+
+  private static final class NullSupplier implements Supplier<Object> {
+    @Override
+    public Object get() {
+      return null;
+    }
+  }
+
   /**
    * Consumer covering both success and failure (in this case, {@link ClassCastException}).
    */
@@ -43,8 +57,7 @@ public class FunctionsTest extends BaseTest {
    */
   @SuppressWarnings("UnnecessaryUnboxing")
   public static final Function<Object, @Nullable Integer> MAPPER =
-      $ -> $ != null ? ((Integer) $).intValue() /* Fails if type mismatch */
-          : null /* null */;
+      $ -> $ != null ? ((Integer) $).intValue() /* Fails if type mismatch */ : null;
   /**
    * Objects covering both null and non-null (valid and invalid) argument values.
    */
@@ -53,12 +66,16 @@ public class FunctionsTest extends BaseTest {
       // Non-null, invalid
       "hello",
       // Non-null, valid
-      42);
+      42);;
   /**
    * Suppliers covering both non-null and null return values.
+   *
+   * @implNote These suppliers are deliberately NOT implemented as lambdas in order to make their
+   *           type name stable (lambdas are identified by implementation-specific names which vary
+   *           by JVM vendor and version) for reproducible test results.
    */
   @SuppressWarnings("rawtypes")
-  public static final List<Supplier> SUPPLIERS = asList(() -> null, () -> 21);
+  public static final List<Supplier> SUPPLIERS = asList(new NullSupplier(), new IntSupplier());
 
   @Test
   void let() {

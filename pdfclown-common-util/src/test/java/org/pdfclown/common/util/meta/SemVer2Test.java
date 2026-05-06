@@ -154,7 +154,7 @@ class SemVer2Test extends BaseTest {
   @Test
   void to() {
     combinationVerifier.verify(
-        (ver, versionType) -> ver.to(versionType).toString(),
+        (ver, versionType) -> ver.to(versionType),
         List.of("ver", "versionType"),
         // ver
         VERSION_LITERALS__VALID.stream().map(SemVer2::of).toList(),
