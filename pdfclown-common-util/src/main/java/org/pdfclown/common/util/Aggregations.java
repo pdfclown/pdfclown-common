@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -793,13 +792,6 @@ public final class Aggregations {
       }
     }
     return target;
-  }
-
-  /**
-   * Converts the iterator into a stream.
-   */
-  public static <E extends @Nullable Object> Stream<E> stream(Iterator<E> iterator) {
-    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false);
   }
 
   /**
