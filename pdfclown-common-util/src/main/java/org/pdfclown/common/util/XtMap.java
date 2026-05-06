@@ -155,7 +155,7 @@ public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
   /**
    * Fluent {@link #put(Object, Object) put}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtMap<K, V> with(K key, V value) {
     put(key, value);
@@ -165,7 +165,7 @@ public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
   /**
    * Fluent {@link #remove(Object) remove}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtMap<K, V> without(K key) {
     remove(key);

@@ -234,7 +234,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   /**
    * Fluent {@link List#add(int, Object) add(..)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtList<E> with(int index, E e) {
     add(index, e);
@@ -249,7 +249,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   /**
    * Fluent {@link List#set(int, Object) set(..)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtList<E> withElse(int index, E e) {
     set(index, e);
@@ -259,7 +259,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   /**
    * Fluent {@link #place(int, Object) place(..)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtList<E> withElseSafe(int index, E e) {
     place(index, e);
@@ -274,7 +274,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   /**
    * Fluent {@link List#remove(int) remove(..)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtList<E> without(int index) {
     remove(index);
@@ -294,7 +294,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   /**
    * Fluent {@link #poll(int) poll(..)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtList<E> withoutSafe(int index) {
     poll(index);

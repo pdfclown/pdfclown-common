@@ -80,7 +80,7 @@ public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>
   /**
    * Fluent {@link Collection#add(Object) add(Object)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtCollection<E> with(E e) {
     add(e);
@@ -90,7 +90,7 @@ public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>
   /**
    * Fluent {@link Collection#addAll(Collection) addAll(Collection)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtCollection<E> withAll(Collection<? extends E> c) {
     addAll(c);
@@ -100,7 +100,7 @@ public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>
   /**
    * Fluent {@link Collection#remove(Object) remove(Object)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtCollection<E> without(E e) {
     remove(e);
@@ -110,7 +110,7 @@ public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>
   /**
    * Fluent {@link Collection#removeAll(Collection) removeAll(Collection)}.
    *
-   * @return This object.
+   * @return Self.
    */
   default XtCollection<E> withoutAll(Collection<?> c) {
     removeAll(c);
