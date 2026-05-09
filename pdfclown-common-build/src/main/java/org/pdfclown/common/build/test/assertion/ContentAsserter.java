@@ -16,13 +16,15 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.pdfclown.common.build.test.assertion.Verifier.Namer.FILE_QUALIFIER__APPROVED;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.sqnd;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__ZIP;
 import static org.pdfclown.common.util.io.Files.baseName;
-import static org.pdfclown.common.util.io.Files.cognateFile;
 import static org.pdfclown.common.util.io.Files.extension;
 import static org.pdfclown.common.util.io.Files.isExtension;
 
@@ -109,8 +111,16 @@ public abstract class ContentAsserter<T> extends Asserter {
         } catch (AssertionError | FileNotFoundException | NoSuchFileException ex) {
           // Unrecoverable?
           if (built || !isUpdatable()) {
-            Path unexpectedActualFile = config.getEnv().outputPath(cognateFile(
-                expectedResourceFqn, "_UNEXPECTED" + extension(expectedResourceFqn, true), true));
+            var baseResourceFqn = substringBefore(expectedResourceFqn, FILE_QUALIFIER__APPROVED);
+            if (baseResourceFqn.equals(expectedResourceFqn))
+              throw runtime("Filename of expected file {} MUST contain {} qualifier",
+                  expectedResourceFqn, textLiteral(FILE_QUALIFIER__APPROVED));
+
+            var extension = expectedResourceFqn.substring(baseResourceFqn.length()
+                + FILE_QUALIFIER__APPROVED.length());
+
+            Path unexpectedActualFile = config.getEnv().outputPath(baseResourceFqn + ".UNEXPECTED"
+                + extension);
             try {
               // Save unexpected actual content!
               createDirectories(unexpectedActualFile.getParent());
