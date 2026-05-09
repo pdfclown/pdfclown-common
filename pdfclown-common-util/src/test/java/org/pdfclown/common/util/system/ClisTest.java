@@ -13,6 +13,7 @@
 package org.pdfclown.common.util.system;
 
 import static java.util.Arrays.asList;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ import org.pdfclown.common.util.__test.BaseTest;
 class ClisTest extends BaseTest {
   @Test
   void parseArgs() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (argsString) -> Clis.parseArgs(argsString),
         List.of("argsString"),
         // argsString

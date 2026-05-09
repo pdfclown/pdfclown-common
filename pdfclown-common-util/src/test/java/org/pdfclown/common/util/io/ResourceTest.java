@@ -19,6 +19,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
 import static org.pdfclown.common.util.Objects.simpleName;
 import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.function.Functions.to;
@@ -168,7 +169,7 @@ class ResourceTest extends BaseTest {
         // NOP: empty file.
       }
 
-      combinationVerifier.verify(
+      VERIFIER__COMBINATION.verify(
           (name) -> to(AbstractResource.of(name, ofClassLoaderMock, fileResolver, fs),
               $ -> new ResourceResult(simpleName($), $.getName(), $.getUri())),
           List.of("name"),

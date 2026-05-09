@@ -16,6 +16,8 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__TUPLE;
 import static org.pdfclown.common.build.util.Tuple.tuple;
 
 import java.util.Comparator;
@@ -80,7 +82,7 @@ class UnitsTest extends BaseTest {
 
   @Test
   void getFactor_Unit() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (unit) -> Units.getFactor(unit),
         List.of("unit"),
         // unit
@@ -92,7 +94,7 @@ class UnitsTest extends BaseTest {
 
   @Test
   void getFactor_Unit_Unit() {
-    tupleVerifier.verify(
+    VERIFIER__TUPLE.verify(
         (unit, target) -> Units.getFactor(unit, target),
         List.of("unit", "target"),
         List.<Tuple2<Unit, Unit>>of(
@@ -107,7 +109,7 @@ class UnitsTest extends BaseTest {
 
   @Test
   void getOffset_Unit() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (unit) -> Units.getOffset(unit),
         List.of("unit"),
         // unit
@@ -116,7 +118,7 @@ class UnitsTest extends BaseTest {
 
   @Test
   void getQuantityType() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (unit) -> ((XtUnit) unit).getQuantityType(),
         List.of("unit"),
         // unit
@@ -125,7 +127,7 @@ class UnitsTest extends BaseTest {
 
   @Test
   void getQuantityType__external() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (unit) -> Units.getQuantityType(unit),
         List.of("unit"),
         // unit

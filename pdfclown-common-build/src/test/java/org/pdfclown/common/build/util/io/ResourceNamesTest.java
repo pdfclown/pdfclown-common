@@ -14,6 +14,7 @@ package org.pdfclown.common.build.util.io;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import com.google.common.jimfs.Configuration;
@@ -59,7 +60,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void abs() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (name) -> ResourceNames.abs(name),
         List.of("name"),
         // name
@@ -68,7 +69,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void absBased() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (name, base) -> ResourceNames.absBased(name, base),
         List.of("name", "base"),
         // name
@@ -81,7 +82,7 @@ public class ResourceNamesTest extends BaseTest {
   void fromPath__unix() throws IOException {
     try (var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build())) {
-      combinationVerifier.verify(
+      VERIFIER__COMBINATION.verify(
           (filePath, baseDir) -> ResourceNames.fromPath(filePath, baseDir),
           List.of("filePath", "baseDir"),
           // filePath
@@ -102,7 +103,7 @@ public class ResourceNamesTest extends BaseTest {
   void fromPath__win() throws IOException {
     try (var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build())) {
-      combinationVerifier.verify(
+      VERIFIER__COMBINATION.verify(
           (filePath, baseDir) -> ResourceNames.fromPath(filePath, baseDir),
           List.of("filePath", "baseDir"),
           // filePath
@@ -121,7 +122,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void fromTypeName() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (typeName) -> ResourceNames.fromTypeName(typeName),
         List.of("typeName"),
         // typeName
@@ -134,7 +135,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void isAbs() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (name) -> ResourceNames.isAbs(name),
         List.of("name"),
         // name
@@ -148,7 +149,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void name_1() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (parts0) -> ResourceNames.name(parts0),
         List.of("parts[0]"),
         // parts[0]
@@ -157,7 +158,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void name_2() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (parts0, parts1) -> ResourceNames.name(parts0, parts1),
         List.of("parts[0]", "parts[1]"),
         // parts[0]
@@ -168,7 +169,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void normal() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (name) -> ResourceNames.normal(name),
         List.of("name"),
         // name
@@ -177,7 +178,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void parent() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (name) -> ResourceNames.parent(name),
         List.of("name"),
         // name
@@ -186,7 +187,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void rel() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (name) -> ResourceNames.rel(name),
         List.of("name"),
         // name
@@ -195,7 +196,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void relBased() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (name, base) -> ResourceNames.relBased(name, base),
         List.of("name", "base"),
         // name
@@ -206,7 +207,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void toTypeName() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (name) -> ResourceNames.toTypeName(name),
         List.of("name"),
         // name

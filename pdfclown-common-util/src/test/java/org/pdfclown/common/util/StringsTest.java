@@ -16,6 +16,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class StringsTest extends BaseTest {
         + "9:  - Seventh: this element line will be a bit shorter\n"
         + "10: - Eighth: this element line will be a bit shorter";
 
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (maxLineCount, maxLength, marker) -> Strings.abbreviateMultiline(value, maxLineCount,
             maxLength, marker),
         List.of("maxLineCount", "maxLength", "marker"),
@@ -67,7 +68,7 @@ class StringsTest extends BaseTest {
 
   @Test
   void stripEmptyLines() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (s) -> Strings.stripEmptyLines(s),
         List.of("s"),
         // s
@@ -85,7 +86,7 @@ class StringsTest extends BaseTest {
 
   @Test
   void uncapitalizeGreedy() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (value) -> Strings.uncapitalizeGreedy(value),
         List.of("value"),
         // value

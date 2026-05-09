@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
@@ -118,7 +119,7 @@ public class IndentTest extends BaseTest {
 
   @Test
   void spaces() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (width, level) -> Indent.spaces(width, level).toString(),
         List.of("width", "level"),
         // width

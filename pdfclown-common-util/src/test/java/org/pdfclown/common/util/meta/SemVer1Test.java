@@ -14,6 +14,8 @@ package org.pdfclown.common.util.meta;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__TUPLE;
 import static org.pdfclown.common.build.util.Tuple.tuple;
 
 import java.util.ArrayList;
@@ -85,7 +87,7 @@ class SemVer1Test extends BaseTest {
 
   @Test
   void compareTo() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (value0, value1) -> value0.compareTo(value1),
         List.of("value0", "value1"),
         // value0
@@ -96,7 +98,7 @@ class SemVer1Test extends BaseTest {
 
   @Test
   void next() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (value, id) -> value.next(id),
         List.of("value", "id"),
         // value
@@ -107,7 +109,7 @@ class SemVer1Test extends BaseTest {
 
   @Test
   void of_String() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (value) -> SemVer1.of(value),
         List.of("value"),
         // value
@@ -116,7 +118,7 @@ class SemVer1Test extends BaseTest {
 
   @Test
   void of_int_int_int_String() {
-    tupleVerifier.verify(
+    VERIFIER__TUPLE.verify(
         (major, minor, patch, prerelease) -> SemVer1.of(major, minor, patch, prerelease),
         List.of("major", "minor", "patch", "prerelease"),
         asList(
@@ -133,7 +135,7 @@ class SemVer1Test extends BaseTest {
 
   @Test
   void precedence() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (value0, value1) -> value0.precedence(value1),
         List.of("value0", "value1"),
         // value0
@@ -144,7 +146,7 @@ class SemVer1Test extends BaseTest {
 
   @Test
   void with() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (ver, id, value) -> ver.with(id, value),
         List.of("ver", "id", "value"),
         // ver
@@ -157,7 +159,7 @@ class SemVer1Test extends BaseTest {
 
   @Test
   void withPrereleaseSuffix() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (ver, fieldIndex, value) -> ver.withPrereleaseSuffix(fieldIndex, value),
         List.of("ver", "fieldIndex", "value"),
         // ver

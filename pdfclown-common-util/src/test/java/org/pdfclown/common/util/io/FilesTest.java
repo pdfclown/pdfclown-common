@@ -13,6 +13,7 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Arrays.asList;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -50,7 +51,7 @@ class FilesTest extends BaseTest {
 
   @Test
   void baseName_full() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (file) -> Files.baseName(file, true),
         List.of("file"),
         // file
@@ -59,7 +60,7 @@ class FilesTest extends BaseTest {
 
   @Test
   void cognateFile_full() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (file) -> Files.cognateFile(file, "_tmp", true),
         List.of("file"),
         // file
@@ -68,7 +69,7 @@ class FilesTest extends BaseTest {
 
   @Test
   void cognateFile_notFull() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (file) -> Files.cognateFile(file, "_tmp"),
         List.of("file"),
         // file
@@ -77,7 +78,7 @@ class FilesTest extends BaseTest {
 
   @Test
   void extension_full() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (file) -> Files.extension(file, true),
         List.of("file"),
         // file
@@ -86,7 +87,7 @@ class FilesTest extends BaseTest {
 
   @Test
   void extension_notFull() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (file) -> Files.extension(file),
         List.of("file"),
         // file
@@ -95,7 +96,7 @@ class FilesTest extends BaseTest {
 
   @Test
   void filename() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (path) -> Files.filename(path),
         List.of("path"),
         // path
@@ -104,7 +105,7 @@ class FilesTest extends BaseTest {
 
   @Test
   void isExtension_full() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (file, extension) -> Files.isExtension(file, extension, true),
         List.of("file", "extension"),
         // file
@@ -115,7 +116,7 @@ class FilesTest extends BaseTest {
 
   @Test
   void isExtension_notFull() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (file, extension) -> Files.isExtension(file, extension),
         List.of("file", "extension"),
         // file
@@ -127,7 +128,7 @@ class FilesTest extends BaseTest {
   @Test
   void path__unix() throws IOException {
     try (var fs = Jimfs.newFileSystem(Configuration.unix())) {
-      combinationVerifier.verify(
+      VERIFIER__COMBINATION.verify(
           (uri) -> Files.path(URI.create(uri), fs),
           List.of("uri"),
           // uri
@@ -142,7 +143,7 @@ class FilesTest extends BaseTest {
   @Test
   void path__win() throws IOException {
     try (var fs = Jimfs.newFileSystem(Configuration.windows())) {
-      combinationVerifier.verify(
+      VERIFIER__COMBINATION.verify(
           (uri) -> Files.path(URI.create(uri), fs),
           List.of("uri"),
           // uri

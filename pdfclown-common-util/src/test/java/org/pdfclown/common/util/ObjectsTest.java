@@ -19,6 +19,8 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.hasItem;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__TUPLE;
 import static org.pdfclown.common.build.util.Tuple.tuple;
 import static org.pdfclown.common.util.Aggregations.map;
 import static org.pdfclown.common.util.Strings.EMPTY;
@@ -229,7 +231,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void elseGet() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj, supplier) -> Objects.elseGet(obj, supplier),
         List.of("obj", "supplier"),
         // obj
@@ -240,7 +242,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void fqn_Object() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.fqn(obj),
         List.of("obj"),
         // obj
@@ -249,7 +251,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void fqnd_Object() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.fqnd(obj),
         List.of("obj"),
         // obj
@@ -258,7 +260,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void fqnd_String() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (typename) -> Objects.fqnd(typename),
         List.of("typename"),
         // typename
@@ -267,7 +269,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void literal() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.literal(obj),
         List.of("obj"),
         // obj
@@ -294,7 +296,7 @@ class ObjectsTest extends BaseTest {
    */
   @Test
   void parseLiteral() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (s) -> Objects.parseLiteral(s),
         List.of("s"),
         // s (see implementation note)
@@ -333,7 +335,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void pkg_Object() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.pkg(obj),
         List.of("obj"),
         // obj
@@ -342,7 +344,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void pkg_String() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (typename) -> Objects.pkg(typename),
         List.of("typename"),
         // typename
@@ -351,7 +353,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void sfqn_Object() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.sfqn(obj),
         List.of("obj"),
         // obj
@@ -360,7 +362,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void sfqn_String() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (typename) -> Objects.sfqn(typename),
         List.of("typename"),
         // typename
@@ -369,7 +371,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void sfqnd_Object() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.sfqnd(obj),
         List.of("obj"),
         // obj
@@ -378,7 +380,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void sfqnd_String() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (typename) -> Objects.sfqnd(typename),
         List.of("typename"),
         // typename
@@ -387,7 +389,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void simpleName_Object() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.simpleName(obj),
         List.of("obj"),
         // obj
@@ -396,7 +398,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void simpleName_String() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (typename) -> Objects.simpleName(typename),
         List.of("typename"),
         // typename
@@ -405,7 +407,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void sqn_Object() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.sqn(obj),
         List.of("obj"),
         // obj
@@ -414,7 +416,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void sqn_String() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (typename) -> Objects.sqn(typename),
         List.of("typename"),
         // typename
@@ -423,7 +425,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void sqnd_Object() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.sqnd(obj),
         List.of("obj"),
         // obj
@@ -432,7 +434,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void sqnd_String() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (typename) -> Objects.sqnd(typename),
         List.of("typename"),
         // typename
@@ -476,7 +478,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void toQualifiedString() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.toQualifiedString(obj),
         List.of("obj"),
         // obj
@@ -485,7 +487,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void toSqnQualifiedString() {
-    combinationVerifier.verify(
+    VERIFIER__COMBINATION.verify(
         (obj) -> Objects.toSqnQualifiedString(obj),
         List.of("obj"),
         // obj
@@ -494,7 +496,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void toStringStable() {
-    combinationVerifier
+    VERIFIER__COMBINATION
         .verify(
             (obj) -> Objects.toStringStable(obj),
             List.of("obj"),
@@ -524,7 +526,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void toStringWithProperties() {
-    tupleVerifier.verify(
+    VERIFIER__TUPLE.verify(
         (obj, properties) -> Objects.toStringWithProperties(obj, properties),
         List.of("obj", "properties"),
         List.of(
@@ -536,7 +538,7 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void toStringWithValues() {
-    tupleVerifier.verify(
+    VERIFIER__TUPLE.verify(
         (obj, features) -> Objects.toStringWithValues(obj, features),
         List.of("obj", "features"),
         List.of(
