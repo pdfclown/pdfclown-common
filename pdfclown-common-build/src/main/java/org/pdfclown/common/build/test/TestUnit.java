@@ -34,6 +34,7 @@ import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.pdfclown.common.build.test.assertion.Test;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
+import org.pdfclown.common.build.test.assertion.Verifier;
 import org.pdfclown.common.build.util.io.ResourceNames;
 import org.pdfclown.common.build.util.system.Builds;
 import org.pdfclown.common.util.annot.InitNonNull;
@@ -130,8 +131,11 @@ public abstract class TestUnit implements Test {
   }
 
   static {
-    // Force log management loading as soon as any test unit starts!
+    // Trigger test-related configuration loading as soon as any test unit starts:
+    // - log management
     init(LogManager.class);
+    // - test approvals
+    init(Verifier.class);
   }
 
   private @LazyNonNull @Nullable Environment env;

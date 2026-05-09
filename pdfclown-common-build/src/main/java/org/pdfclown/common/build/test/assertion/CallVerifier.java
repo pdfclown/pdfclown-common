@@ -20,13 +20,14 @@ import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
+import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.approvaltests.Approvals;
 import org.approvaltests.combinations.SkipCombination;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.Immutable;
 
 /**
@@ -107,23 +108,39 @@ public abstract class CallVerifier extends Verifier {
     return ret;
   }
 
+  /**
+   * Gets a single call response.
+   *
+   * @param outputSupplier
+   *          Call wrapper.
+   * @param labels
+   *          Argument labels.
+   * @param inputs
+   *          Call arguments.
+   * @return Call response in the form {@code "%INPUTS% => %OUTPUT%"}.
+   */
   protected String getResponse(Supplier<@Nullable Object> outputSupplier, List<String> labels,
       @Nullable Object[] inputs) {
     String output;
     try {
       output = getOutputFormatter().apply(outputSupplier.get());
     } catch (SkipCombination ex) {
-      return Strings.EMPTY;
+      return EMPTY;
     } catch (Throwable ex) {
       output = getExceptionFormatter().apply(ex);
     }
-    /*
-     * NOTE: Trailing whitespace may be automatically trimmed by external source code formatters,
-     * causing false negatives between expected and actual results; therefore, a special value
-     * (`((EMPTY))`) is applied in case `output` is blank.
-     */
-    return "%s => %s\n".formatted(formatInputs(labels, inputs),
-        !output.isBlank() ? output : "((EMPTY))");
+    return "%s => %s\n".formatted(formatInputs(labels, inputs), output);
+  }
+
+  /**
+   * Verifies the call responses as a whole.
+   *
+   * @param response
+   *          Multi-line aggregation of {@linkplain #getResponse(Supplier, List, Object[]) call
+   *          responses}.
+   */
+  protected void verifyResponse(String response) {
+    Approvals.verify(response, prepareOptions(null));
   }
 
   // SPDX-SnippetBegin

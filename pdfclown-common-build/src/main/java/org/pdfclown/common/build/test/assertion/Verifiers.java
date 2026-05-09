@@ -65,6 +65,15 @@ public final class Verifiers {
   public static final Function<Throwable, String> FORMATTER__EXCEPTION__BASIC =
       exceptionFormatter(FORMATTER__EXCEPTION_MESSAGE__BASIC);
 
+  //------------------------------------------------------------------------------------------------
+  // WARNING: DO NOT move the existing fields across this line (initialization order hazard!).
+  //------------------------------------------------------------------------------------------------
+
+  public static final CombinationVerifier VERIFIER__COMBINATION = new CombinationVerifier();
+  public static final FileVerifier VERIFIER__FILE = new FileVerifier();
+  public static final SimpleVerifier VERIFIER__SIMPLE = new SimpleVerifier();
+  public static final TupleVerifier VERIFIER__TUPLE = new TupleVerifier();
+
   /**
    * Creates an exception formatter.
    */
@@ -122,8 +131,9 @@ public final class Verifiers {
   /**
    * Creates a path verifier from the given one.
    */
-  public static CombinationVerifier pathVerifier(CombinationVerifier verifier, Path baseDir) {
-    return verifier
+  @SuppressWarnings("unchecked")
+  public static <T extends CallVerifier> T pathVerifier(T verifier, Path baseDir) {
+    return (T) verifier
         .withOutputFormatter(pathFormatter(baseDir))
         .withExceptionFormatter(pathExceptionFormatter(baseDir));
   }
