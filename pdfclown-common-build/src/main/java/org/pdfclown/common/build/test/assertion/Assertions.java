@@ -94,7 +94,7 @@ public final class Assertions {
    *          Current test unit.
    * @throws AssertionError
    *           if {@code actualDir} doesn't match the one at {@code expectedDirResourceName}.
-   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   public static void assertFileTreeEquals(String expectedDirResourceName, Path actualDir,
       Test test) {
@@ -139,7 +139,7 @@ public final class Assertions {
    *          Current test unit.
    * @throws AssertionError
    *           if {@code actualFile} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   public static void assertTextEquals(String expectedResourceName, Path actualFile, Test test) {
     ASSERTER__TEXT.assertEquals(expectedResourceName, actualFile, new Asserter.Config(test));
@@ -156,7 +156,7 @@ public final class Assertions {
    *          Current test unit.
    * @throws AssertionError
    *           if {@code actualContent} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#SYSTEM_PROPERTY__FILES_UPDATE
+   * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   public static void assertTextEquals(String expectedResourceName, String actualContent,
       Test test) {

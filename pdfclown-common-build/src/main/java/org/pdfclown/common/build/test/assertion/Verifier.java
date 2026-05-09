@@ -167,7 +167,7 @@ public abstract class Verifier implements Cloneable {
   protected void verifyResponse(String response) {
     var options = this.options;
     // Automatically update assertion resources?
-    if (Systems.getBooleanProperty(Asserter.SYSTEM_PROPERTY__FILES_UPDATE)) {
+    if (Systems.getBooleanProperty(Asserter.SYSTEM_PROPERTY__UPDATE_EXPECTED)) {
       /*
        * NOTE: In case of automated assertion resources update, received mismatching files are
        * auto-approved.

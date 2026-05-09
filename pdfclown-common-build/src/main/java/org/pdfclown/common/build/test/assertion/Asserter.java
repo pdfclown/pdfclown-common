@@ -164,17 +164,17 @@ public abstract class Asserter {
    *          <ul>
    *          <li>to regenerate all the mismatching resources, no matter the tests they belong to:
    *          <pre class="lang-shell"><code>
-   * mvn verify ... -Dassert.files.update</code></pre></li>
+   * mvn verify ... -Dassert.expected.update</code></pre></li>
    *          <li>to regenerate the mismatching resources belonging to specific test classes (for
    *          example, "MyObjectIT"): <pre class="lang-shell"><code>
-   * mvn verify ... -Dassert.files.update -Dtest=MyObjectIT</code></pre></li>
+   * mvn verify ... -Dassert.expected.update -Dtest=MyObjectIT</code></pre></li>
    *          <li>to regenerate the mismatching resources belonging to specific test cases (for
    *          example, "MyObjectIT.myTest"): <pre class="lang-shell"><code>
-   * mvn verify ... -Dassert.files.update -Dtest=MyObjectIT#myTest</code></pre></li>
+   * mvn verify ... -Dassert.expected.update -Dtest=MyObjectIT#myTest</code></pre></li>
    *          <li>to regenerate the mismatching resources belonging to multiple test classes (for
    *          example, MyObjectIT and MyOtherObjectIT), they can be specified as a comma-separated
    *          list: <pre class="lang-shell"><code>
-   * mvn verify ... -Dassert.files.update -Dtest=MyObjectIT,MyOtherObjectIT</code></pre></li>
+   * mvn verify ... -Dassert.expected.update -Dtest=MyObjectIT,MyOtherObjectIT</code></pre></li>
    *          </ul>
    *          <p>
    *          NOTE: {@code test} CLI parameter is typically mapped by Maven plugins (such as
@@ -186,10 +186,10 @@ public abstract class Asserter {
    *          you to use their actual names, as they are internally resolved by JUnit.
    *          </p>
    */
-  public static final String SYSTEM_PROPERTY__FILES_UPDATE = "assert.files.update";
+  public static final String SYSTEM_PROPERTY__UPDATE_EXPECTED = "assert.expected.update";
   static {
-    log.info("`{}` system property: {}", SYSTEM_PROPERTY__FILES_UPDATE,
-        getBooleanProperty(SYSTEM_PROPERTY__FILES_UPDATE));
+    log.info("`{}` system property: {}", SYSTEM_PROPERTY__UPDATE_EXPECTED,
+        getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED));
   }
 
   /**
@@ -263,7 +263,7 @@ public abstract class Asserter {
         expectedFile + (exists(expectedFile) ? EMPTY : " (MISSING)"),
         actualFile + (exists(actualFile) ? EMPTY : " (MISSING)"),
         projectArtifactId, textLiteral(testName),
-        projectArtifactId, SYSTEM_PROPERTY__FILES_UPDATE, textLiteral(testName));
+        projectArtifactId, SYSTEM_PROPERTY__UPDATE_EXPECTED, textLiteral(testName));
 
     // Log (full message).
     getLog().error(MARKER__VERBOSE, "{}" + LF + "{}", message, hint);
@@ -286,7 +286,7 @@ public abstract class Asserter {
    * counterparts.
    */
   protected boolean isUpdatable() {
-    return getBooleanProperty(SYSTEM_PROPERTY__FILES_UPDATE);
+    return getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED);
   }
 
   /**
