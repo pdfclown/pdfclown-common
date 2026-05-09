@@ -21,20 +21,43 @@ import org.jspecify.annotations.Nullable;
  */
 public final class Systems {
   /**
-   * Gets the boolean corresponding to a {@linkplain System#getProperty(String) system property}.
+   * {@jada.reuseDoc} Gets the boolean corresponding to a {@linkplain System#getProperty(String)
+   * system property}.
    * <p>
    * Contrary to {@link Boolean#getBoolean(String)}, this method takes into account also the
    * behavior of CLI flags (for example, {@code -Dmyflag}), whose empty string represents
    * {@code true}.
    * </p>
+   * {@jada.reuseDoc END} {@jada.reuseDoc :params}
    *
    * @param key
    *          System property name.
    * @return {@code true}, if the property value is empty or equals {@code "true"}
-   *         (case-insensitive).
+   *         (case-insensitive).{@jada.reuseDoc END}
    */
   public static boolean getBooleanProperty(String key) {
     return parsePropertyBoolean(System.getProperty(key));
+  }
+
+  /**
+   * {@jada.doc} Gets the boolean corresponding to a {@linkplain System#getProperty(String) system
+   * property}.
+   * <p>
+   * Contrary to {@link Boolean#getBoolean(String)}, this method takes into account also the
+   * behavior of CLI flags (for example, {@code -Dmyflag}), whose empty string represents
+   * {@code true}.
+   * </p>
+   * {@jada.doc END}
+   *
+   * @param defaultValue
+   *          Value to return if the property is undefined. {@jada.doc params}
+   * @param key
+   *          System property name.
+   * @return {@code true}, if the property value is empty or equals {@code "true"}
+   *         (case-insensitive).{@jada.doc END}
+   */
+  public static boolean getBooleanProperty(String key, boolean defaultValue) {
+    return parsePropertyBoolean(System.getProperty(key, Boolean.toString(defaultValue)));
   }
 
   /**
