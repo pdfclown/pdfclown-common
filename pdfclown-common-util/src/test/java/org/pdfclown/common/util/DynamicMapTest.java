@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.pdfclown.common.util.Objects.superTypes;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.Objects.HierarchicalTypeComparator;
@@ -34,30 +36,29 @@ import org.pdfclown.common.util.annot.InitNonNull;
 /**
  * @author Stefano Chizzolini
  */
-class RelatedMapTest extends BaseTest {
+class DynamicMapTest extends BaseTest {
   /**
    * Based on {@link org.pdfclown.common.build.test.model.ModelMapper}.{@code ValueMapperMap}.
    */
   @SuppressWarnings("rawtypes")
-  static class ClassMap extends RelatedMap<Class, Object> {
-    private static class RelatedKeysProvider extends RelatedMap.RelatedProvider<Class> {
+  static class ClassMap extends DynamicMap<Class, Object> {
+    private static class DynamicKeysProvider extends DynamicProvider<Class> {
       /**
        * Explicit type priorities.
        */
       private TypePriorityComparator priorities =
           HierarchicalTypeComparator.Priorities.explicitPriority();
 
-      @SuppressWarnings("NotNullFieldNotInitialized")
-      private @InitNonNull Function<Class, Iterable<Class>> base;
+      private @InitNonNull Function<Class, Stream<Class>> base;
 
       @Override
-      public Iterable<Class> apply(Class type) {
+      public Stream<Class> apply(Class type) {
         return base.apply(type);
       }
 
       @Override
-      public RelatedKeysProvider clone() {
-        var ret = (RelatedKeysProvider) super.clone();
+      public DynamicKeysProvider clone() {
+        var ret = (DynamicKeysProvider) super.clone();
         ret.priorities = ret.priorities.clone();
         return ret;
       }
@@ -77,10 +78,11 @@ class RelatedMapTest extends BaseTest {
 
               // Compare arbitrarily (no more relevant aspects to evaluate)!
               return name1.compareTo(name2);
-            }), keys, false).toList();
+            }), keys, false);
       }
     }
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static int libraryPriority(String name) {
@@ -96,16 +98,16 @@ class RelatedMapTest extends BaseTest {
     private final Map<Object, Class> rootTypes = new HashMap<>();
 
     ClassMap() {
-      super(new RelatedKeysProvider());
+      super(new DynamicKeysProvider());
 
-      ((RelatedKeysProvider) getRelatedKeysProvider()).init(keySet());
+      ((DynamicKeysProvider) getRelatedKeysProvider()).init(keySet());
     }
 
     /**
      * Type priorities.
      */
     public TypePriorityComparator getPriorities() {
-      return ((RelatedKeysProvider) getRelatedKeysProvider()).priorities;
+      return ((DynamicKeysProvider) getRelatedKeysProvider()).priorities;
     }
 
     @Override
@@ -129,7 +131,6 @@ class RelatedMapTest extends BaseTest {
   }
 
   @Test
-  @SuppressWarnings("DataFlowIssue")
   void _main() {
     var classMap = new ClassMap();
 

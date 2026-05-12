@@ -26,6 +26,7 @@ import static org.pdfclown.common.util.Strings.S;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.Serial;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -40,10 +41,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.DynamicMap;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
 import org.pdfclown.common.util.Objects.HierarchicalTypeComparator;
 import org.pdfclown.common.util.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
-import org.pdfclown.common.util.RelatedMap;
 import org.pdfclown.common.util.annot.InitNonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -263,8 +264,8 @@ public class ModelMapper<T> {
    * @author Stefano Chizzolini
    */
   @SuppressWarnings("rawtypes")
-  protected static class ValueMapperMap extends RelatedMap<Class, ValueMapper> {
-    private static class RelatedKeysProvider extends RelatedMap.RelatedProvider<Class> {
+  protected static class ValueMapperMap extends DynamicMap<Class, ValueMapper> {
+    private static class RelatedKeysProvider extends DynamicMap.DynamicProvider<Class> {
       /**
        * Explicit type priorities.
        */
@@ -275,8 +276,8 @@ public class ModelMapper<T> {
       private @InitNonNull Function<Class, Stream<Class>> base;
 
       @Override
-      public Iterable<Class> apply(Class type) {
-        return base.apply(type).toList();
+      public Stream<Class> apply(Class type) {
+        return base.apply(type);
       }
 
       @Override
@@ -305,6 +306,7 @@ public class ModelMapper<T> {
       }
     }
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static int libraryPriority(String name) {
@@ -340,8 +342,7 @@ public class ModelMapper<T> {
       return super.put(key, value);
     }
 
-    public @Nullable ValueMapper put(Class key, ValueMapper value,
-        int priority) {
+    public @Nullable ValueMapper put(Class key, ValueMapper value, int priority) {
       getPriorities().set(priority, key);
       return put(key, value);
     }

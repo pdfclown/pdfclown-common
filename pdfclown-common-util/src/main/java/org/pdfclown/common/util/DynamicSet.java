@@ -17,14 +17,14 @@ import static org.pdfclown.common.util.Exceptions.runtime;
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Set;
-import org.pdfclown.common.util.RelatedMap.RelatedProvider;
+import org.pdfclown.common.util.DynamicMap.DynamicProvider;
 
 /**
  * Set whose matches are dynamically expanded based on element correlations.
  * <p>
  * Implicit matches are discovered looking for elements related to missing ones, provided by
- * {@link #getRelatedProvider() relatedProvider}; once a related element is found, the missing
- * element is mapped to its value, ensuring a match on next requests.
+ * {@link #getRelatedElementsProvider() relatedElementsProvider}; once a related element is found,
+ * the missing element is mapped to its value, ensuring a match on next requests.
  * </p>
  * <p>
  * Useful, for example, in case of hierarchical sets, like {@link Class}: adding a certain class,
@@ -36,21 +36,21 @@ import org.pdfclown.common.util.RelatedMap.RelatedProvider;
  *          Element type.
  * @author Stefano Chizzolini
  */
-public class RelatedSet<E> extends AbstractSet<E>
+public class DynamicSet<E> extends AbstractSet<E>
     implements Set<E>, Cloneable {
   /**
    * Dummy value to associate in {@link #base} with an element of this set.
    */
   private static final Object VALUE = new Object();
 
-  private RelatedMap<E, Object> base;
+  private DynamicMap<E, Object> base;
 
-  public RelatedSet(RelatedMap<E, Object> base) {
+  public DynamicSet(DynamicMap<E, Object> base) {
     this.base = base;
   }
 
-  public RelatedSet(RelatedProvider<E> relatedProvider) {
-    this(new RelatedMap<>(relatedProvider));
+  public DynamicSet(DynamicProvider<E> relatedElementsProvider) {
+    this(new DynamicMap<>(relatedElementsProvider));
   }
 
   @Override
@@ -64,10 +64,10 @@ public class RelatedSet<E> extends AbstractSet<E>
   }
 
   @Override
-  public RelatedSet<E> clone() {
+  public DynamicSet<E> clone() {
     try {
       @SuppressWarnings("unchecked")
-      var ret = (RelatedSet<E>) super.clone();
+      var ret = (DynamicSet<E>) super.clone();
       ret.base = base.clone();
       return ret;
     } catch (CloneNotSupportedException ex) {
@@ -103,7 +103,7 @@ public class RelatedSet<E> extends AbstractSet<E>
   /**
    * Provides a sequence of elements related to the given one.
    */
-  protected RelatedProvider<E> getRelatedProvider() {
+  protected DynamicProvider<E> getRelatedElementsProvider() {
     return base.getRelatedKeysProvider();
   }
 }

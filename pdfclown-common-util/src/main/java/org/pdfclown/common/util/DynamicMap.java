@@ -16,10 +16,12 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.sqn;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,8 @@ import org.slf4j.LoggerFactory;
  *           explicit, user-defined ones} — this is useful for tracing entries back to their
  *           respective root assignments.
  */
-public class RelatedMap<K, V> extends HashMap<K, V> {
+@SuppressWarnings("unchecked")
+public class DynamicMap<K, V> extends HashMap<K, V> {
   /**
    * Provides the elements related to the given one.
    *
@@ -55,33 +58,32 @@ public class RelatedMap<K, V> extends HashMap<K, V> {
    *          Element type.
    * @author Stefano Chizzolini
    */
-  public abstract static class RelatedProvider<E>
-      implements Function<E, Iterable<E>>, Cloneable {
+  public abstract static class DynamicProvider<E>
+      implements Function<E, Stream<E>>, Cloneable {
     @Override
-    public RelatedProvider<E> clone() {
+    public DynamicProvider<E> clone() {
       try {
-        //noinspection unchecked
-        return (RelatedProvider<E>) super.clone();
+        return (DynamicProvider<E>) super.clone();
       } catch (CloneNotSupportedException ex) {
         throw runtime(ex);
       }
     }
   }
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
-  private static final Logger log = LoggerFactory.getLogger(RelatedMap.class);
+  private static final Logger log = LoggerFactory.getLogger(DynamicMap.class);
 
-  private RelatedProvider<K> relatedKeysProvider;
+  private DynamicProvider<K> relatedKeysProvider;
 
-  public RelatedMap(RelatedProvider<K> relatedKeysProvider) {
+  public DynamicMap(DynamicProvider<K> relatedKeysProvider) {
     this.relatedKeysProvider = requireNonNull(relatedKeysProvider, "`relatedKeysProvider`");
   }
 
   @Override
-  public RelatedMap<K, V> clone() {
-    @SuppressWarnings("unchecked")
-    var ret = (RelatedMap<K, V>) super.clone();
+  public DynamicMap<K, V> clone() {
+    var ret = (DynamicMap<K, V>) super.clone();
     ret.relatedKeysProvider = ret.relatedKeysProvider.clone();
     return ret;
   }
@@ -101,16 +103,15 @@ public class RelatedMap<K, V> extends HashMap<K, V> {
   @Override
   public @Nullable V get(@Nullable Object key) {
     // Query explicit mapping!
-    var ret = super.get(key);
+    V ret = super.get(key);
     if (ret == null && key != null) {
-      @SuppressWarnings("unchecked")
       final var k = (K) key;
-      Iterator<K> relatedKeysItr = relatedKeysProvider.apply(k).iterator();
 
       if (log.isDebugEnabled()) {
         log.debug("Related key SEARCH for {}", sqn(k));
       }
 
+      Iterator<K> relatedKeysItr = relatedKeysProvider.apply(k).iterator();
       while (relatedKeysItr.hasNext()) {
         var relatedKey = relatedKeysItr.next();
 
@@ -136,7 +137,7 @@ public class RelatedMap<K, V> extends HashMap<K, V> {
 
   @Override
   public final V getOrDefault(@Nullable Object key, V defaultValue) {
-    var ret = get(key);
+    V ret = get(key);
     return ret != null ? ret : defaultValue;
   }
 
@@ -150,7 +151,7 @@ public class RelatedMap<K, V> extends HashMap<K, V> {
   /**
    * Provides a sequence of keys related to the given one.
    */
-  protected RelatedProvider<K> getRelatedKeysProvider() {
+  protected DynamicProvider<K> getRelatedKeysProvider() {
     return relatedKeysProvider;
   }
 

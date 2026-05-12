@@ -25,12 +25,11 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-class RelatedSetTest extends BaseTest {
+class DynamicSetTest extends BaseTest {
   @SuppressWarnings("rawtypes")
-  static class ClassSet extends RelatedSet<Class> {
-
+  static class ClassSet extends DynamicSet<Class> {
     ClassSet() {
-      super(new RelatedMapTest.ClassMap());
+      super(new DynamicMapTest.ClassMap());
     }
   }
 
