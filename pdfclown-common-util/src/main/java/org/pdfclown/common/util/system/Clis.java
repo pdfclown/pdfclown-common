@@ -19,11 +19,13 @@ import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Chars.DQUOTE;
 import static org.pdfclown.common.util.Chars.MINUS;
+import static org.pdfclown.common.util.Chars.PIPE;
 import static org.pdfclown.common.util.Chars.PLUS;
 import static org.pdfclown.common.util.Chars.SEMICOLON;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUOTE;
 import static org.pdfclown.common.util.Exceptions.unsupported;
+import static org.pdfclown.common.util.Objects.toStringWithProperties;
 import static org.pdfclown.common.util.Strings.S;
 
 import java.nio.file.Files;
@@ -38,11 +40,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.stream.Streams;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.io.Resource;
+import org.pdfclown.common.util.regex.Patterns;
 
 /**
  * Command-line utilities.
@@ -134,6 +138,104 @@ public final class Clis {
           .map($ -> $.contains(S + SPACE) ? wrap($, DQUOTE) : $)
           .collect(joining(S + SPACE));
     }
+  }
+
+  /**
+   * File Inclusion filter.
+   * <p>
+   * Paths can be expressed as globs (with {@code "**"}, {@code '*'} and {@code '?'} wildcards) —
+   * this mechanism emulates <a href=
+   * "https://maven.apache.org/plugins/maven-resources-plugin/examples/include-exclude.html">file
+   * filters commonly used by Apache Maven plugins</a>.
+   * </p>
+   *
+   * @author Stefano Chizzolini
+   */
+  public static class FileInclusionFilter extends InclusionFilter {
+    @Override
+    protected Predicate<String> toPredicate(List<String> filter, boolean defaultResult) {
+      return !filter.isEmpty() ? Pattern.compile(filter.stream()
+          .map(Patterns::globToRegex)
+          .collect(joining(S + PIPE)))
+          .asMatchPredicate()
+          : $$ -> defaultResult;
+    }
+  }
+
+  /**
+   * Inclusion filter.
+   *
+   * @author Stefano Chizzolini
+   */
+  public abstract static class InclusionFilter {
+    private final List<String> includes = new ArrayList<>();
+    private final List<String> excludes = new ArrayList<>();
+
+    /**
+     * Resets this filter.
+     */
+    public InclusionFilter clear() {
+      includes.clear();
+      excludes.clear();
+      return this;
+    }
+
+    /**
+     * Adds an exclusive filter.
+     */
+    public InclusionFilter exclude(String glob) {
+      excludes.add(glob);
+      return this;
+    }
+
+    /**
+     * Exclusive filters.
+     *
+     * @return (glob)
+     */
+    public List<String> getExcludes() {
+      return excludes;
+    }
+
+    /**
+     * Inclusive filters.
+     *
+     * @return (glob)
+     */
+    public List<String> getIncludes() {
+      return includes;
+    }
+
+    /**
+     * Adds an inclusive filter.
+     */
+    public InclusionFilter include(String glob) {
+      includes.add(glob);
+      return this;
+    }
+
+    /**
+     * Whether this filter is empty.
+     */
+    public boolean isEmpty() {
+      return includes.isEmpty() && excludes.isEmpty();
+    }
+
+    /**
+     * Converts this filter to an equivalent predicate.
+     */
+    public Predicate<String> toPredicate() {
+      var includePredicate = toPredicate(getIncludes(), true);
+      var excludePredicate = toPredicate(getExcludes(), false);
+      return $ -> includePredicate.test($) && !excludePredicate.test($);
+    }
+
+    @Override
+    public String toString() {
+      return toStringWithProperties(this, "includes", includes, "excludes", excludes);
+    }
+
+    protected abstract Predicate<String> toPredicate(List<String> filter, boolean defaultResult);
   }
 
   /**
