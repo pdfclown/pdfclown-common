@@ -26,6 +26,7 @@ import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.io.Files;
 
 /**
  * Resource name utilities.
@@ -61,7 +62,7 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the name of a resource, rooted in the base directory.
+   * Gets the name of a resource, rooted in a base directory.
    *
    * @param file
    *          Resource file.
@@ -70,16 +71,18 @@ public final class ResourceNames {
    * @return
    *         <ul>
    *         <li>if {@code file} is absolute and under {@code baseDir}: relativized and converted to
-   *         absolute name</li>
-   *         <li>if {@code file} is relative and under {@code baseDir} (that is, not prefixed with
-   *         {@value org.pdfclown.common.util.io.Files#PATH_SUPER}): converted to absolute name</li>
+   *         absolute resource name</li>
+   *         <li>if {@code file} is relative and under {@code baseDir} (that is, NOT prefixed with
+   *         {@value Files#PATH_SUPER}): converted to absolute resource name</li>
    *         <li>if {@code file} is outside {@code baseDir}: {@code null}</li>
    *         </ul>
+   * @throws NullPointerException
+   *           if {@code file} is absolute and {@code baseDir} is undefined.
    */
-  public static @Nullable String fromPath(Path file, Path baseDir) {
+  public static @Nullable String fromPath(Path file, @Nullable Path baseDir) {
     file = file.normalize();
     if (file.isAbsolute()) {
-      baseDir = baseDir.toAbsolutePath().normalize();
+      baseDir = requireNonNull(baseDir, "`baseDir`").toAbsolutePath().normalize();
       // Absolute file outside `baseDir`?
       if (!file.startsWith(baseDir))
         return null;

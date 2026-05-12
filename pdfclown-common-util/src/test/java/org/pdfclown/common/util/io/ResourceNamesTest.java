@@ -93,6 +93,7 @@ public class ResourceNamesTest extends BaseTest {
               fs.getPath("/host/absolute/another/index4.html")),
           // baseDir
           asList(
+              null,
               fs.getPath("local/"),
               fs.getPath("../local"),
               fs.getPath("/host/absolute")));
@@ -114,6 +115,7 @@ public class ResourceNamesTest extends BaseTest {
               fs.getPath("c:\\absolute\\another\\index4.html")),
           // baseDir
           asList(
+              null,
               fs.getPath("local\\"),
               fs.getPath("..\\local"),
               fs.getPath("c:\\absolute")));
