@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import org.pdfclown.common.build.util.io.ResourceNames;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 
 /**
  * Project directory resolver.

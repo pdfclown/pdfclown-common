@@ -41,7 +41,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.util.io.ResourceNames;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

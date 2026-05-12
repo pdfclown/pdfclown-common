@@ -18,8 +18,8 @@ import java.nio.file.Path;
 import java.util.Objects;
 import org.apache.commons.lang3.stream.Streams;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.system.ProjectDirId;
-import org.pdfclown.common.build.util.io.ResourceNames;
 
 /**
  * Test environment.

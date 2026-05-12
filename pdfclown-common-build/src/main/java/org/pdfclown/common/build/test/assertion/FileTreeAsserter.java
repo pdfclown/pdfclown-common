@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import org.pdfclown.common.build.util.io.ResourceNames;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.util.io.Files.Diff;
 import org.pdfclown.common.util.io.Files.Diff.FileStatus;
 import org.slf4j.Logger;

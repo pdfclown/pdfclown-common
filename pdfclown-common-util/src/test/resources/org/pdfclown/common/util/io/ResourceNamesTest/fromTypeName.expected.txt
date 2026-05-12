@@ -1,0 +1,4 @@
+[typeName: null] => <<NullPointerException: "`typeName`">>
+[typeName: ""] => "/"
+[typeName: "org.pdfclown.common.util.io.ResourceNames"] => "/org/pdfclown/common/util/io/ResourceNames"
+[typeName: "org.pdfclown.common.util.io"] => "/org/pdfclown/common/util/io"
