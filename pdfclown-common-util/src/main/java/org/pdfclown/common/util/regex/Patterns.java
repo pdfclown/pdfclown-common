@@ -12,6 +12,10 @@
  */
 package org.pdfclown.common.util.regex;
 
+import static org.pdfclown.common.util.Chars.BACKSLASH;
+import static org.pdfclown.common.util.Chars.SLASH;
+import static org.pdfclown.common.util.Exceptions.unexpected;
+
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,18 +27,33 @@ import java.util.regex.Pattern;
  */
 public final class Patterns {
   /**
-   * Converts the (filesystem-aware) glob to regex.
+   * Glob expressions must be interpreted according to the classic
+   * <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob</a> algorithm, which is
+   * filesystem-oriented. In particular, it supports the globstar ({@code "**"}).
+   */
+  private static final int GLOB_MODE__FILESYSTEM = 0;
+  /**
+   * Glob expressions must be interpreted as wildcard pattern supporting
+   * <a href="https://en.wikipedia.org/wiki/Glob_(programming)">globbing</a> metacharacters
+   * ({@code '?'}, {@code '*'}).
+   */
+  private static final int GLOB_MODE__WILDCARD = 1;
+
+  private static final String REGEX__FILE_SEPARATORS = "/\\\\";
+
+  /**
+   * Converts the (filesystem-oriented) glob to regex.
    *
    * @param glob
    *          Glob pattern interpreted according to the classic
    *          <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob</a> algorithm, which
-   *          is filesystem-aware. In particular, it supports the globstar ({@code **}).<br>
-   *          NOTE: Character classes ({@code [...]}) are NOT supported.
+   *          is filesystem-oriented. In particular, it supports the globstar ({@code "**"}).<br>
+   *          NOTE: Character classes ({@code "["..."]"}) are NOT supported.
    * @implNote This method was spurred by the current lack of native support (see
    *           <a href="https://bugs.openjdk.org/browse/JDK-8241641">JDK-8241641</a>).
    */
   public static String globToRegex(String glob) {
-    return globToRegex(glob, true);
+    return globToRegex(glob, GLOB_MODE__FILESYSTEM);
   }
 
   /**
@@ -84,24 +103,23 @@ public final class Patterns {
    * @param wildcard
    *          Wildcard pattern supporting
    *          <a href="https://en.wikipedia.org/wiki/Glob_(programming)">globbing</a> metacharacters
-   *          ({@code ?}, {@code *}).<br>
-   *          NOTE: Character classes ({@code [...]}) are NOT supported.
+   *          ({@code '?'}, {@code '*'}).<br>
+   *          NOTE: Character classes ({@code "["..."]"}) are NOT supported.
    * @implNote This method was spurred by the current lack of native support (see
    *           <a href="https://bugs.openjdk.org/browse/JDK-8241641">JDK-8241641</a>).
    */
   public static String wildcardToRegex(String wildcard) {
-    return globToRegex(wildcard, false);
+    return globToRegex(wildcard, GLOB_MODE__WILDCARD);
   }
 
   /**
    * @param glob
    *          Glob pattern.
-   * @param fileSystemAware
-   *          Whether {@code glob} must be interpreted according to the classic
-   *          <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob</a> algorithm, which
-   *          is filesystem-aware. In particular, it supports the globstar ({@code **}).
+   * @param globMode
+   *          How to interpret {@code glob} ({@link #GLOB_MODE__FILESYSTEM},
+   *          {@link #GLOB_MODE__WILDCARD}).
    */
-  private static String globToRegex(String glob, boolean fileSystemAware) {
+  private static String globToRegex(String glob, int globMode) {
     var b = new StringBuilder();
     int i = 0;
     while (i < glob.length()) {
@@ -120,44 +138,73 @@ public final class Patterns {
         case '+':
         case '|':
           // Escape reserved regex symbol!
-          b.append('\\').append(c);
+          b.append(BACKSLASH).append(c);
           break;
         // Glob escape symbol.
-        case '\\': {
+        case BACKSLASH: {
           int i1 = i + 1;
           if (glob.length() > i1) {
             char c1 = glob.charAt(i1);
             switch (c1) {
-              // Escaped reserved glob symbol.
+              // Reserved glob symbol.
               case '?':
               case '*':
                 // Escape reserved regex symbol!
-                b.append('\\').append(c1);
+                b.append(BACKSLASH).append(c1);
                 i = i1;
                 break mainSwitch;
               default:
+                // NOP
             }
           }
+
           // Literal backslash.
-          b.append('\\').append(c);
+          switch (globMode) {
+            case GLOB_MODE__WILDCARD:
+              b.append(BACKSLASH).append(c);
+              break;
+            case GLOB_MODE__FILESYSTEM:
+              b.append("[" + REGEX__FILE_SEPARATORS + "]");
+              break;
+            default:
+              throw unexpected("globMode", globMode);
+          }
           break;
         }
+        case SLASH:
+          switch (globMode) {
+            case GLOB_MODE__WILDCARD:
+              b.append(SLASH);
+              break;
+            case GLOB_MODE__FILESYSTEM:
+              b.append("[" + REGEX__FILE_SEPARATORS + "]");
+              break;
+            default:
+              throw unexpected("globMode", globMode);
+          }
+          break;
         // `?` operator.
         case '?':
           b.append('.');
           break;
         // `*` operator.
         case '*':
-          if (fileSystemAware) {
-            int i1 = i + 1;
-            if (glob.length() > i1 && glob.charAt(i1) == '*') {
-              b.append(".*") /* Any (including level separator) */;
-              i = i1;
-            } else {
-              b.append("[^/]*") /* Any but level separator */;
+          switch (globMode) {
+            case GLOB_MODE__WILDCARD:
+              b.append(".*");
+              break;
+            case GLOB_MODE__FILESYSTEM: {
+              int i1 = i + 1;
+              if (glob.length() > i1 && glob.charAt(i1) == '*') {
+                b.append(".*") /* Any (including level separators) */;
+                i = i1;
+              } else {
+                b.append("[^" + REGEX__FILE_SEPARATORS + "]*") /* Any but level separators */;
+              }
             }
-          } else {
-            b.append(".*");
+              break;
+            default:
+              throw unexpected("globMode", globMode);
           }
           break;
         default:

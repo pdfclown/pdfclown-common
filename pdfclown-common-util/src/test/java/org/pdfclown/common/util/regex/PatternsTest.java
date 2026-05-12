@@ -12,10 +12,10 @@
  */
 package org.pdfclown.common.util.regex;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.util.Objects.nonNull;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -28,7 +28,6 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 class PatternsTest extends BaseTest {
   static class PatternArgument extends Argument<String> {
     private final List<String> matches;
@@ -75,7 +74,7 @@ class PatternsTest extends BaseTest {
   void globToRegex() {
     VERIFIER__COMBINATION.verify(
         (glob) -> {
-          var actual = Patterns.globToRegex(glob.getPayload());
+          var actual = Patterns.globToRegex(nonNull(glob.getPayload()));
 
           assertRegexMatches(actual, glob.getMatches(), true);
           assertRegexMatches(actual, glob.getMismatches(), false);
@@ -83,21 +82,45 @@ class PatternsTest extends BaseTest {
         },
         List.of("glob"),
         // glob
-        asList(
-            new PatternArgument("/**/my*.*",
-                asList(
-                    "/home/usr/Pictures/myRainbow.jpg",
+        List.of(
+            new PatternArgument("**/my*.*",
+                List.of(
+                    "/home/usr/Pictures/myFile.jpg",
                     "/home/usr/Documents/myFile.html",
                     "/home/usr/Projects/foobar/foobar-core/src/main/resources/html/myProject.html"),
-                asList(
-                    "myRainbow.jpg",
+                List.of(
+                    "myFile.jpg",
                     "/home/usr/Documents/file.html")),
-            new PatternArgument("/home/*User/**/foo?a?/*.md",
-                asList(
+            /*
+             * Same as previous case, to demonstrate transparent support to Windows despite Unix
+             * separator.
+             */
+            new PatternArgument("**/my*.*",
+                List.of(
+                    "C:\\usr\\Pictures\\myFile.jpg",
+                    "C:\\usr\\Documents\\myFile.html",
+                    "C:\\usr\\Projects\\foobar\\foobar-core\\src\\main\\resources\\html\\myProject.html"),
+                List.of(
+                    "myFile.jpg",
+                    "C:\\usr\\Documents\\file.html")),
+            /*
+             * Same as previous case, to demonstrate transparent support to Unix despite Windows
+             * separator.
+             */
+            new PatternArgument("**\\my*.*",
+                List.of(
+                    "/home/usr/Pictures/myFile.jpg",
+                    "/home/usr/Documents/myFile.html",
+                    "/home/usr/Projects/foobar/foobar-core/src/main/resources/html/myProject.html"),
+                List.of(
+                    "myFile.jpg",
+                    "/home/usr/Documents/file.html")),
+            new PatternArgument("**User/**/foo?a?/*.md",
+                List.of(
                     "/home/User/MyDocs/foobar/readme.md",
                     "/home/BlueUser/MyDocs/foocat/readme.md",
                     "/home/SuperUser/a/random/subdir/foocat/NOTE.md"),
-                asList(
+                List.of(
                     "/home/User/foobar/readme.md",
                     "/home/BlueUser/MyDocs/fooca/readme.md",
                     "/home/SuperUser/a/random/subdir/foocat/NOTEmd"))));
@@ -108,6 +131,7 @@ class PatternsTest extends BaseTest {
     VERIFIER__COMBINATION.verify(
         (input) -> {
           Matcher matcher = PATTERN__SEM_VER.matcher(input);
+          //noinspection ResultOfMethodCallIgnored
           matcher.find();
           return Patterns.indexOfMatchFailure(matcher);
         },
@@ -130,7 +154,7 @@ class PatternsTest extends BaseTest {
   void wildcardToRegex() {
     VERIFIER__COMBINATION.verify(
         (wildcard) -> {
-          var actual = Patterns.wildcardToRegex(wildcard.getPayload());
+          var actual = Patterns.wildcardToRegex(nonNull(wildcard.getPayload()));
 
           assertRegexMatches(actual, wildcard.getMatches(), true);
           assertRegexMatches(actual, wildcard.getMismatches(), false);
@@ -138,10 +162,10 @@ class PatternsTest extends BaseTest {
         },
         List.of("wildcard"),
         // wildcard
-        asList(
+        List.of(
             new PatternArgument("Som? content. * more (*)\\?",
-                asList("Some content. Whatever more (don't know)?"),
-                asList("Som content. Whatever more (don't know)?"))));
+                List.of("Some content. Whatever more (don't know)?"),
+                List.of("Som content. Whatever more (don't know)?"))));
   }
 
   /**
