@@ -1,3 +1,61 @@
+## v0.8.0 (2026-05-14)
+
+### BREAKING CHANGE
+
+- `RelatedMap` renamed as `DynamicMap`; `RelatedSet`
+renamed as `DynamicSet`
+- `Clis` removed from `build` module
+- `org.pdfclown.common.build.util.io.ResourceNames`
+moved to `org.pdfclown.common.util.io.ResourceNames`
+- redefine `Verifier.Namer` as `Verifier.DefaultNamer`;
+move `Verifier::verifyResponse` to `CallVerifier`
+- `Asserter.SYSTEM_PROPERTY__FILES_UPDATE` replaced by
+`SYSTEM_PROPERTY__UPDATE_EXPECTED`
+- `Aggregations::stream` removed
+- `Assertions::assertParameterized` and related API
+removed
+- `TestUnit::localName` changed semantics (test
+unit-specific resources are placed in directory of the same name)
+- `Objects::basicLiteral` semantics changed
+- `ResourceNames::toTypeName` semantics changed (file
+extension removed, dotted folder parts not allowed)
+- `Reflects::method` changed return type to
+`Optional<Method>`
+
+### Feat
+
+- **util**: rename dynamic aggregations
+- **util**: add `Clis.InclusionFilter` hierarchy
+- **build**: remove `Clis`
+- move `ResourceNames` to `util` module
+- **build**: harmonize `Asserter`s to approval files' naming conventions
+- **build**: improve `Verifier` hierarchy
+- **build**: replace `Asserter.SYSTEM_PROPERTY__FILES_UPDATE`
+- **util**: add `defaultValue` support to `Systems::getBooleanProperty`
+- **util**: remove `Aggregations::stream`
+- replace parametric assertions (`Assertions::assertParameterized`) with approvals (`Verifier`)
+- **build**: implement support to ApprovalTests
+- **build**: improve test resources layout
+- **util**: improve `Objects` (non-basic literal formatters)
+- **build**: improve `ResourceNames` (class names semantics)
+- **util**: improve `Reflects` (optional return types)
+
+### Fix
+
+- **deps**: bump jada.version from 0.3.0 to 0.4.1
+- **util**: improve `ResourceNames::fromPath`
+- **util**: generalize `Patterns::globToRegex`
+- **deps**: bump com.github.javaparser:javaparser-core from 3.28.0 to 3.28.1 (#101)
+- **deps**: bump groovy.version from 5.0.5 to 5.0.6 (#99)
+- **deps**: bump org.apache.logging.log4j:log4j-bom from 2.25.4 to 2.26.0 (#98)
+- **util**: fix `Objects::toStringStable`
+- **deps**: bump org.pdfclown:pdfclown-common-util from 0.6.0 to 0.7.0
+
+### Refactor
+
+- **build**: consolidate `CallVerifier` hierarchy
+- **util**: improve `Objects` (nullness annotations)
+
 ## v0.7.0 (2026-04-25)
 
 ### BREAKING CHANGE
