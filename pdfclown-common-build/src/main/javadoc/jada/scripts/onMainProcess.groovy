@@ -2,7 +2,7 @@
   This script tweaks the generated Javadoc.
  */
 
-import static org.pdfclown.common.util.Objects.any
+import static org.pdfclown.common.util.Objects.anyThat
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__HTML
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__SVG
 import static org.pdfclown.common.util.io.Files.extension
@@ -39,7 +39,7 @@ self.getConfig().getOperation(JadaFileProcess.class).addProcessor(
 
     @Override
     boolean isProcessable(Path file, FileProcess.Context context) {
-        return any(extension(file), String::equalsIgnoreCase, FILE_EXTENSION__HTML,
+        return anyThat(extension(file), String::equalsIgnoreCase, FILE_EXTENSION__HTML,
             FILE_EXTENSION__SVG)
     }
 

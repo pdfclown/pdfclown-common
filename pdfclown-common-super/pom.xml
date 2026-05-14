@@ -163,7 +163,7 @@ pdfclown-common-base instead)</description>
     <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
     <git-commit-id-maven-plugin.version>10.0.0</git-commit-id-maven-plugin.version>
     <gmavenplus-plugin.version>4.3.1</gmavenplus-plugin.version>
-    <jada.version>0.3.0</jada.version>
+    <jada.version>0.4.1</jada.version>
     <java.version>17</java.version>
     <maven.version>3.9.15</maven.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
@@ -627,6 +627,7 @@ log.info("buildTimestamp: " + buildTimestamp
                 "${buildResourcesRootPath}/org/pdfclown/common/build/conf/javadoc/jada"</option>
               <option>--jada-dir "${rootdir}/src/main/javadoc/jada"</option>
               <option>--jada-exts JadaBiblio,JadaUML</option>
+              <option>--jada-file-optimize-filter "**.css,/resources/**.js"</option>
               <option>--biblio-used-only</option>
               <option>--uml-package-deps-exclude
                 +*internal*,org.apache.logging.log4j.core.*</option>
@@ -721,6 +722,11 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 <url>https://javadoc.io/doc/com.approvaltests/approvaltests/${approvaltests.version}</url>
               </link>
               <link>
+                <groupId>com.approvaltests</groupId>
+                <artifactId>approvaltests-util</artifactId>
+                <url>https://javadoc.io/doc/com.approvaltests/approvaltests-util/${approvaltests.version}</url>
+              </link>
+              <link>
                 <groupId>com.github.javaparser</groupId>
                 <artifactId>javaparser-core</artifactId>
                 <url>https://javadoc.io/doc/com.github.javaparser/javaparser-core/${javaparser.version}</url>
@@ -744,6 +750,16 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
                 <url>https://javadoc.io/doc/net.bytebuddy/byte-buddy/${bytebuddy.version}</url>
+              </link>
+              <link>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-api</url>
+              </link>
+              <link>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-core</url>
               </link>
               <link>
                 <groupId>org.greenrobot</groupId>
@@ -774,6 +790,21 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <url>https://docs.junit.org/${junit.version}/api/</url>
+              </link>
+              <link>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <url>https://docs.junit.org/${junit.version}/api/org.junit.jupiter.api/module-summary.html</url>
+              </link>
+              <link>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <url>https://docs.junit.org/${junit.version}/api/org.junit.jupiter.engine/module-summary.html</url>
+              </link>
+              <link>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <url>https://docs.junit.org/${junit.version}/api/org.junit.jupiter.params/module-summary.html</url>
               </link>
               <link>
                 <groupId>org.mockito</groupId>
