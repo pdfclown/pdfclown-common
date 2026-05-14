@@ -12,9 +12,9 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static org.pdfclown.common.build.internal.temp.util.Objects.simpleName;
-import static org.pdfclown.common.build.internal.temp.util.Objects.stableLiteral;
 import static org.pdfclown.common.util.Objects.literal;
+import static org.pdfclown.common.util.Objects.simpleName;
+import static org.pdfclown.common.util.Objects.stableLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.net.Uris.uri;
 
@@ -23,7 +23,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.temp.util.Objects;
+import org.pdfclown.common.util.Objects;
 
 /**
  * {@link Verifier} utilities.

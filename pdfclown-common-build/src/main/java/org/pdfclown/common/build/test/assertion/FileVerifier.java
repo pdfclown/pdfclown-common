@@ -23,9 +23,9 @@ import org.approvaltests.internal.logs.FailedFileLog;
 import org.approvaltests.reporters.ReporterWithApprovalPower;
 import org.jspecify.annotations.Nullable;
 import org.lambda.functions.Function2;
-import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.io.ResourceNames;
 
 /**
  * Verifier for approval testing of files.

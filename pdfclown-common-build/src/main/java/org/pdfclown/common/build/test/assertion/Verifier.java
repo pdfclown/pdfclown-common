@@ -32,13 +32,13 @@ import org.approvaltests.namer.ApprovalNamer;
 import org.approvaltests.reporters.AutoApproveReporter;
 import org.approvaltests.reporters.QuietReporter;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.pdfclown.common.build.test.Tests;
 import org.pdfclown.common.build.util.system.Builds;
 import org.pdfclown.common.build.util.system.Runtimes;
 import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.io.ResourceNames;
 import org.pdfclown.common.util.system.Systems;
 
 /**

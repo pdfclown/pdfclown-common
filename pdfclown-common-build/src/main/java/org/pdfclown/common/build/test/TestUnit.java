@@ -28,7 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.system.LogManager;
 import org.pdfclown.common.build.system.MavenPathResolver;
 import org.pdfclown.common.build.system.ProjectDirId;
@@ -39,6 +38,7 @@ import org.pdfclown.common.build.test.assertion.Verifier;
 import org.pdfclown.common.build.util.system.Builds;
 import org.pdfclown.common.util.annot.InitNonNull;
 import org.pdfclown.common.util.annot.LazyNonNull;
+import org.pdfclown.common.util.io.ResourceNames;
 
 /**
  * Automated testing unit.
