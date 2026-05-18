@@ -140,4 +140,14 @@ public class DefaultLogCaptorProvider implements LogCaptorProvider {
   public @Nullable Function<String, LogCaptor> getFactory(String implName) {
     return implName.contains("log4j") ? Log4jCaptor::new : null;
   }
+
+  @Override
+  public int getPriority() {
+    return 0;
+  }
+
+  @Override
+  public boolean isAvailable() {
+    return true;
+  }
 }

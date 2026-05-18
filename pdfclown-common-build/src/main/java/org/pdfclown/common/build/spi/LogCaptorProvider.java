@@ -33,14 +33,4 @@ public interface LogCaptorProvider extends ServiceProvider {
    */
   @Nullable
   Function<String, LogCaptor> getFactory(String implName);
-
-  @Override
-  default int getPriority() {
-    return 0;
-  }
-
-  @Override
-  default boolean isAvailable() {
-    return true;
-  }
 }
