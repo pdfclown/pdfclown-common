@@ -88,23 +88,6 @@ public class SemVer2 extends SemVer<SemVer2> {
   }
 
   /**
-   * @throws ArgumentFormatException
-   *           if {@code value} is not a valid semantic version.
-   */
-  public static SemVer2 of(String value) {
-    Matcher m = PATTERN__SEM_VER.matcher(value);
-    if (!m.find())
-      throw new ArgumentFormatException(null, value, indexOfMatchFailure(m));
-
-    return new SemVer2(
-        parseInt(m.group(PATTERN_GROUP__MAJOR)),
-        parseInt(m.group(PATTERN_GROUP__MINOR)),
-        parseInt(m.group(PATTERN_GROUP__PATCH)),
-        m.group(PATTERN_GROUP__PRERELEASE),
-        m.group(PATTERN_GROUP__METADATA));
-  }
-
-  /**
   */
   public static SemVer2 of(int major, int minor, int patch, @Nullable String prerelease,
       @Nullable String metadata) {
@@ -163,6 +146,23 @@ public class SemVer2 extends SemVer<SemVer2> {
       }
       throw unexpected("Invalid offset not matched");
     }
+  }
+
+  /**
+   * @throws ArgumentFormatException
+   *           if {@code value} is not a valid semantic version.
+   */
+  public static SemVer2 of(String value) {
+    Matcher m = PATTERN__SEM_VER.matcher(value);
+    if (!m.find())
+      throw new ArgumentFormatException(null, value, indexOfMatchFailure(m));
+
+    return new SemVer2(
+        parseInt(m.group(PATTERN_GROUP__MAJOR)),
+        parseInt(m.group(PATTERN_GROUP__MINOR)),
+        parseInt(m.group(PATTERN_GROUP__PATCH)),
+        m.group(PATTERN_GROUP__PRERELEASE),
+        m.group(PATTERN_GROUP__METADATA));
   }
 
   private final String metadata;

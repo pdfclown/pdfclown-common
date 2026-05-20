@@ -376,13 +376,13 @@ public final class Aggregations {
     }
 
     @SuppressWarnings("unused")
-    XtHashMap(Map<? extends K, ? extends V> m) {
-      super(m);
+    XtHashMap(int initialCapacity) {
+      super(initialCapacity);
     }
 
     @SuppressWarnings("unused")
-    XtHashMap(int initialCapacity) {
-      super(initialCapacity);
+    XtHashMap(Map<? extends K, ? extends V> m) {
+      super(m);
     }
   }
 

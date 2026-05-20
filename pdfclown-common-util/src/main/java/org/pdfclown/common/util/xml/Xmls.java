@@ -425,8 +425,8 @@ public final class Xmls {
        *          Content source where this expression will be evaluated.
        * @return Empty, if not found.
        */
-      public String nodeValue(Object source) {
-        return requireState(get(source, XPathConstants.STRING));
+      public List<Node> nodes(Object source) {
+        return asList(requireState(get(source, XPathConstants.NODESET)));
       }
 
       /**
@@ -436,8 +436,8 @@ public final class Xmls {
        *          Content source where this expression will be evaluated.
        * @return Empty, if not found.
        */
-      public List<Node> nodes(Object source) {
-        return asList(requireState(get(source, XPathConstants.NODESET)));
+      public String nodeValue(Object source) {
+        return requireState(get(source, XPathConstants.STRING));
       }
 
       /**
@@ -570,8 +570,8 @@ public final class Xmls {
      *          Content source where {@code expression} will be evaluated.
      * @return Empty, if not found.
      */
-    public String nodeValue(String expression, Object source) {
-      return requireState(get(expression, source, XPathConstants.STRING));
+    public List<Node> nodes(String expression, Object source) {
+      return asList(requireState(get(expression, source, XPathConstants.NODESET)));
     }
 
     /**
@@ -583,8 +583,8 @@ public final class Xmls {
      *          Content source where {@code expression} will be evaluated.
      * @return Empty, if not found.
      */
-    public List<Node> nodes(String expression, Object source) {
-      return asList(requireState(get(expression, source, XPathConstants.NODESET)));
+    public String nodeValue(String expression, Object source) {
+      return requireState(get(expression, source, XPathConstants.STRING));
     }
 
     /**
