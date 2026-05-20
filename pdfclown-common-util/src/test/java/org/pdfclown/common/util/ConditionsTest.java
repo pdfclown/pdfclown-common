@@ -12,10 +12,13 @@
  */
 package org.pdfclown.common.util;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
 
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.pdfclown.common.util.collect.Range;
@@ -23,8 +26,17 @@ import org.pdfclown.common.util.collect.Range;
 /**
  * @author Stefano Chizzolini
  */
-@SuppressWarnings("CodeBlock2Expr")
+@SuppressWarnings({ "CodeBlock2Expr", "Convert2MethodRef" })
 class ConditionsTest extends BaseTest {
+  private static final List<@Nullable String> STRING_NAMES = asList(
+      null,
+      "myArg");
+  private static final List<@Nullable String> STRING_VALUES = asList(
+      null,
+      "",
+      " non blank ",
+      "normal");
+
   @Test
   void requireEqual__failure() {
     final int value = 42;
@@ -40,6 +52,30 @@ class ConditionsTest extends BaseTest {
     final int value = 42;
 
     assertEquals(value, Conditions.requireEqual(value, 42));
+  }
+
+  @Test
+  void requireNormal() {
+    //noinspection DataFlowIssue : null intended
+    VERIFIER__COMBINATION.verify(
+        (value, name) -> Conditions.requireNormal(value, name),
+        List.of("value", "name"),
+        // value
+        STRING_VALUES,
+        // name
+        STRING_NAMES);
+  }
+
+  @Test
+  void requireNotBlank() {
+    //noinspection DataFlowIssue : null intended
+    VERIFIER__COMBINATION.verify(
+        (value, name) -> Conditions.requireNotBlank(value, name),
+        List.of("value", "name"),
+        // value
+        STRING_VALUES,
+        // name
+        STRING_NAMES);
   }
 
   @Test

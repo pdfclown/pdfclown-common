@@ -70,6 +70,7 @@ class ObjectsTest extends BaseTest {
   /**
    * Simulating {@code java.util.Collections.UnmodifiableCollection}.
    */
+  @SuppressWarnings({ "NullableProblems", "DataFlowIssue" })
   static class UnmodifiableCollection<E> implements Collection<E>, Serializable {
     @Override
     public boolean add(E e) {
@@ -139,6 +140,7 @@ class ObjectsTest extends BaseTest {
   /**
    * Simulating {@code java.util.Collections.UnmodifiableList}.
    */
+  @SuppressWarnings({ "NullableProblems", "DataFlowIssue" })
   static class UnmodifiableList<E> extends UnmodifiableCollection<E> implements List<E> {
     @Override
     public void add(int index, E element) {

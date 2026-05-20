@@ -1,0 +1,8 @@
+[value: null, name: null] => <<ArgumentException: "`value`: MUST NOT be blank">>
+[value: null, name: "myArg"] => <<ArgumentException: "`myArg`: MUST NOT be blank">>
+[value: "", name: null] => <<ArgumentException: "`value` (\"\"): MUST NOT be blank">>
+[value: "", name: "myArg"] => <<ArgumentException: "`myArg` (\"\"): MUST NOT be blank">>
+[value: " non blank ", name: null] => " non blank "
+[value: " non blank ", name: "myArg"] => " non blank "
+[value: "normal", name: null] => "normal"
+[value: "normal", name: "myArg"] => "normal"

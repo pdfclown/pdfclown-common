@@ -1,0 +1,8 @@
+[value: null, name: null] => <<ArgumentException: "`value`: MUST be stripped and NOT empty">>
+[value: null, name: "myArg"] => <<ArgumentException: "`myArg`: MUST be stripped and NOT empty">>
+[value: "", name: null] => <<ArgumentException: "`value` (\"\"): MUST be stripped and NOT empty">>
+[value: "", name: "myArg"] => <<ArgumentException: "`myArg` (\"\"): MUST be stripped and NOT empty">>
+[value: " non blank ", name: null] => <<ArgumentException: "`value` (\" non blank \"): MUST be stripped and NOT empty">>
+[value: " non blank ", name: "myArg"] => <<ArgumentException: "`myArg` (\" non blank \"): MUST be stripped and NOT empty">>
+[value: "normal", name: null] => "normal"
+[value: "normal", name: "myArg"] => "normal"

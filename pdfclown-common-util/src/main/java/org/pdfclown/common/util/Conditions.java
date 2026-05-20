@@ -13,7 +13,6 @@
 package org.pdfclown.common.util;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.pdfclown.common.util.Exceptions.missingPath;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
@@ -405,6 +404,43 @@ public final class Conditions {
   }
 
   /**
+   * Requires the value is {@linkplain String#strip() stripped} and not {@linkplain String#isEmpty()
+   * empty}.
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static String requireNormal(String value) {
+    return requireNormal(value, null);
+  }
+
+  /**
+   * Requires the value is {@linkplain String#strip() stripped} and not {@linkplain String#isEmpty()
+   * empty}.
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static String requireNormal(String value, @Nullable String name) {
+    /*
+     * NOTE: Explicit null check to avoid possible NPE, which would bypass the intended exception.
+     */
+    //noinspection ConstantValue
+    if (value != null && !value.isEmpty() && value.strip().equals(value))
+      return value;
+
+    throw wrongArg(name, value, "MUST be stripped and NOT empty");
+  }
+
+  /**
    * Requires the value is within normal range, that is between 0 and 1 (inclusive).
    *
    * @param <T>
@@ -437,7 +473,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is not blank.
+   * Requires the value is not {@linkplain String#isBlank() blank}.
    *
    * @param value
    *          Value to validate.
@@ -450,7 +486,7 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is not blank.
+   * Requires the value is not {@linkplain String#isBlank() blank}.
    *
    * @param value
    *          Value to validate.
@@ -462,9 +498,10 @@ public final class Conditions {
    */
   public static String requireNotBlank(String value, @Nullable String name) {
     /*
-     * IMPORTANT: DO NOT use `String::isBlank`, it may cause NPE, disrupting the logic path.
+     * NOTE: Explicit null check to avoid possible NPE, which would bypass the intended exception.
      */
-    if (!isBlank(value))
+    //noinspection ConstantValue
+    if (value != null && !value.isBlank())
       return value;
 
     throw wrongArg(name, value, "MUST NOT be blank");
