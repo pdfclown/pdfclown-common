@@ -12,17 +12,25 @@
  */
 package org.pdfclown.common.util.reflect;
 
+import static java.util.stream.Collectors.joining;
+import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Chars.DOT;
+import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.fqnd;
+import static org.pdfclown.common.util.Strings.NULL;
+import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.function.Functions.toElse;
 
 import java.lang.StackWalker.StackFrame;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.Objects;
 
 /**
  * Reflection utilities.
@@ -30,6 +38,9 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public final class Reflects {
+  private static final StackWalker STACK_WALKER =
+      StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
+
   /**
    * Calls the method on the target object.
    *
@@ -53,6 +64,8 @@ public final class Reflects {
    *
    * @param <T>
    *          Return type.
+   * @throws RuntimeException
+   *           if the call fails.
    */
   @SuppressWarnings("unchecked")
   public static <T extends @Nullable Object> T callOrThrow(final Object obj,
@@ -61,21 +74,32 @@ public final class Reflects {
     try {
       return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
     } catch (InvocationTargetException ex) {
-      throw runtime("Call to `{}::{}` FAILED", fqnd(obj), methodName, ex.getCause());
+      throw runtime("Call to `{}.{}({})` FAILED", fqnd(obj), methodName, toElse(paramTypes,
+          $ -> Arrays.stream($).map(Objects::literal).collect(joining(S + COMMA + SPACE)), NULL),
+          ex.getCause());
     }
   }
 
   /**
-   * Gets the calling frame.
+   * Gets the class of the caller who invoked the method that invoked this one.
+   *
+   * @see #callerFrame()
+   */
+  public static Class<?> callerClass() {
+    return STACK_WALKER.getCallerClass();
+  }
+
+  /**
+   * Gets the stack frame of the caller who invoked the method that invoked this one.
    * <p>
    * {@link StackFrame#getDeclaringClass()} is supported.
    * </p>
    *
+   * @see #callerClass()
    * @see #stackFrame(Predicate)
    */
   public static StackFrame callerFrame() {
-    //noinspection OptionalGetWithoutIsPresent : Exception should NEVER happen.
-    return stackFrame($ -> true).get();
+    return stackFrame($ -> true).orElseThrow();
   }
 
   /**
@@ -85,6 +109,8 @@ public final class Reflects {
    *          Return type.
    * @param getter
    *          Method name of the property getter (for example "getMyProperty").
+   * @throws RuntimeException
+   *           if the call fails.
    */
   @SuppressWarnings({ "unchecked" })
   public static <T> T get(Object obj, String getter) {
@@ -125,19 +151,21 @@ public final class Reflects {
    * <pre>
    * ## INCIDENTAL FRAMES ##
    *   frame[x+n]    &lt;-- we are HERE (Reflects.stackFrame(Predicate))
-   *   . . .         &lt;-- Reflects...(..)
-   *   frame[x+1]    &lt;-- Reflects...(..)
+   *   . . .         &lt;-- Reflects...(...)
+   *   frame[x+1]    &lt;-- Reflects...(...)
    *   frame[x]      &lt;-- this is YOU (current frame)
    * ## SELECTABLE FRAMES ##
-   *   frame[x-1]    &lt;-- this is the first frame to evaluate
+   *   frame[x-1]    &lt;-- this is the first frame to evaluate (caller frame)
    *   frame[x-2]
    *   . . .
    *   frame[0]      &lt;-- this is the last frame to evaluate</pre>
    *
+   * @param selector
+   *          Evaluates frames for selection. As soon as {@code true}, the walk stops.
    * @see #callerFrame()
    */
   public static Optional<StackFrame> stackFrame(Predicate<StackFrame> selector) {
-    return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk($ -> $
+    return STACK_WALKER.walk($ -> $
         // Skip incidental frames!
         .dropWhile($$ -> $$.getDeclaringClass() == Reflects.class)
         // Skip current frame!
