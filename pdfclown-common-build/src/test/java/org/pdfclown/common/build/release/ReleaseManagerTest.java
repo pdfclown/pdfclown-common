@@ -15,7 +15,7 @@ package org.pdfclown.common.build.release;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
@@ -50,7 +50,7 @@ class ReleaseManagerTest extends BaseTest {
 
   @Test
   void new__devVersion() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (releaseVersion) -> new ReleaseManager(getEnv().outputPath(EMPTY), releaseVersion)
             .getDevVersion(),
         List.of("releaseVersion"),

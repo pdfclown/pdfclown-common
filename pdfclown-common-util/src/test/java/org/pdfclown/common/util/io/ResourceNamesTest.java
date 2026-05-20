@@ -14,7 +14,7 @@ package org.pdfclown.common.util.io;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import com.google.common.jimfs.Configuration;
@@ -60,7 +60,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void abs() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (name) -> ResourceNames.abs(name),
         List.of("name"),
         // name
@@ -69,7 +69,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void absBased() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (name, base) -> ResourceNames.absBased(name, base),
         List.of("name", "base"),
         // name
@@ -82,7 +82,7 @@ public class ResourceNamesTest extends BaseTest {
   void fromPath__unix() throws IOException {
     try (var fs = Jimfs.newFileSystem(Configuration.unix().toBuilder()
         .setWorkingDirectory("/host/cwd").build())) {
-      VERIFIER__COMBINATION.verify(
+      COMBINATION.verify(
           (filePath, baseDir) -> ResourceNames.fromPath(filePath, baseDir),
           List.of("filePath", "baseDir"),
           // filePath
@@ -104,7 +104,7 @@ public class ResourceNamesTest extends BaseTest {
   void fromPath__win() throws IOException {
     try (var fs = Jimfs.newFileSystem(Configuration.windows().toBuilder()
         .setWorkingDirectory("c:\\cwd").build())) {
-      VERIFIER__COMBINATION.verify(
+      COMBINATION.verify(
           (filePath, baseDir) -> ResourceNames.fromPath(filePath, baseDir),
           List.of("filePath", "baseDir"),
           // filePath
@@ -124,7 +124,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void fromTypeName() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (typeName) -> ResourceNames.fromTypeName(typeName),
         List.of("typeName"),
         // typeName
@@ -137,7 +137,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void isAbs() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (name) -> ResourceNames.isAbs(name),
         List.of("name"),
         // name
@@ -151,7 +151,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void name_1() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (parts0) -> ResourceNames.name(parts0),
         List.of("parts[0]"),
         // parts[0]
@@ -160,7 +160,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void name_2() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (parts0, parts1) -> ResourceNames.name(parts0, parts1),
         List.of("parts[0]", "parts[1]"),
         // parts[0]
@@ -171,7 +171,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void normal() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (name) -> ResourceNames.normal(name),
         List.of("name"),
         // name
@@ -180,7 +180,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void parent() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (name) -> ResourceNames.parent(name),
         List.of("name"),
         // name
@@ -189,7 +189,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void rel() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (name) -> ResourceNames.rel(name),
         List.of("name"),
         // name
@@ -198,7 +198,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void relBased() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (name, base) -> ResourceNames.relBased(name, base),
         List.of("name", "base"),
         // name
@@ -209,7 +209,7 @@ public class ResourceNamesTest extends BaseTest {
 
   @Test
   void toTypeName() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (name) -> ResourceNames.toTypeName(name),
         List.of("name"),
         // name

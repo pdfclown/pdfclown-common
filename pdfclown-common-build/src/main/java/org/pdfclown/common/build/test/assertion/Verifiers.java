@@ -69,10 +69,10 @@ public final class Verifiers {
   // WARNING: DO NOT move the existing fields across this line (initialization order hazard!).
   //------------------------------------------------------------------------------------------------
 
-  public static final CombinationVerifier VERIFIER__COMBINATION = new CombinationVerifier();
-  public static final FileVerifier VERIFIER__FILE = new FileVerifier();
-  public static final SimpleVerifier VERIFIER__SIMPLE = new SimpleVerifier();
-  public static final TupleVerifier VERIFIER__TUPLE = new TupleVerifier();
+  public static final CombinationVerifier COMBINATION = new CombinationVerifier();
+  public static final FileVerifier FILE = new FileVerifier();
+  public static final SimpleVerifier SIMPLE = new SimpleVerifier();
+  public static final TupleVerifier TUPLE = new TupleVerifier();
 
   /**
    * Creates an exception formatter.

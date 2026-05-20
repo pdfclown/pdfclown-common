@@ -14,8 +14,8 @@ package org.pdfclown.common.util.meta;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__TUPLE;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.TUPLE;
 import static org.pdfclown.common.build.util.Tuple.tuple;
 
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void compareTo() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (value0, value1) -> value0.compareTo(value1),
         List.of("value0", "value1"),
         // value0
@@ -106,7 +106,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void next() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (value, id) -> value.next(id),
         List.of("value", "id"),
         // value
@@ -117,7 +117,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void of_int_int_int_String_String() {
-    VERIFIER__TUPLE.verify(
+    TUPLE.verify(
         (major, minor, patch, prerelease, metadata) -> SemVer2.of(major, minor, patch, prerelease,
             metadata),
         List.of("major", "minor", "patch", "prerelease", "metadata"),
@@ -135,7 +135,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void of_String() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (value) -> SemVer2.of(value),
         List.of("value"),
         // value
@@ -144,7 +144,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void precedence() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (value0, value1) -> value0.precedence(value1),
         List.of("value0", "value1"),
         // value0
@@ -155,7 +155,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void to() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (ver, versionType) -> ver.to(versionType),
         List.of("ver", "versionType"),
         // ver
@@ -166,7 +166,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void toString_() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (value) -> value.toString(),
         List.of("value"),
         // value
@@ -175,7 +175,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void with() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (ver, id, value) -> ver.with(id, value),
         List.of("ver", "id", "value"),
         // ver
@@ -188,7 +188,7 @@ class SemVer2Test extends BaseTest {
 
   @Test
   void withPrereleaseSuffix() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (ver, fieldIndex, value) -> ver.withPrereleaseSuffix(fieldIndex, value),
         List.of("ver", "fieldIndex", "value"),
         // ver

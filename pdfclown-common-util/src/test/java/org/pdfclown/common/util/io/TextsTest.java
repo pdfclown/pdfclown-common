@@ -13,7 +13,7 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Arrays.asList;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import static org.pdfclown.common.util.Exceptions.runtime;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ class TextsTest extends BaseTest {
             ГЕНЕРАЛЬНА АСАМБЛЕЯ
             проголошує цю Загальну Декларацію Ппав Людини як завдання, до виконання якого повинні прагнути всі народи і всі держави з тим, щоб кожна людина і кожний орган суспільства, завжди маючи на увазі цю Декларацію, прагнули шляхом освіти сприяти поважанню цих прав і свобод і забезпеченню, шляхом національних і міжнародних прогресивних заходів, загального і ефективного візнання і здійснення їх як серед народів держав - членів Організації, так і серед народів територій, що перебувають під їх юрисдикцією.""";
 
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (subtext) -> {
           try {
             return Texts.textCoords(new StringReader(text), text.indexOf(subtext)).orElseThrow();

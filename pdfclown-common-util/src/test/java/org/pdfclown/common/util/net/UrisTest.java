@@ -13,7 +13,7 @@
 package org.pdfclown.common.util.net;
 
 import static java.util.Arrays.asList;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.net.URI;
@@ -47,7 +47,7 @@ class UrisTest extends BaseTest {
                 + $.getPath().replace("from", "to")))
         .collect(Collectors.toCollection(ArrayList::new));
 
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         ($from, $to) -> Uris.relativize($from, $to),
         List.of("from", "to"),
         // from

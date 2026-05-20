@@ -15,7 +15,7 @@ package org.pdfclown.common.build.test;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -38,12 +38,12 @@ class TestUnitTest extends BaseTest {
 
   @Nested
   class TestEnvironmentTest {
-    private static final CombinationVerifier VERIFIER__PATH = Verifiers.pathVerifier(
-        VERIFIER__COMBINATION, PROJECT_DIR);
+    private static final CombinationVerifier PATH_COMBINATION = Verifiers.pathVerifier(
+        COMBINATION, PROJECT_DIR);
 
     @Test
     void localName() {
-      VERIFIER__COMBINATION.verify(
+      COMBINATION.verify(
           (name) -> sampleTest.getEnv().localName(name),
           List.of("name"),
           // name
@@ -52,7 +52,7 @@ class TestUnitTest extends BaseTest {
 
     @Test
     void outputPath() {
-      VERIFIER__PATH.verify(
+      PATH_COMBINATION.verify(
           (name) -> sampleTest.getEnv().outputPath(name),
           List.of("name"),
           // name
@@ -61,7 +61,7 @@ class TestUnitTest extends BaseTest {
 
     @Test
     void resourcePath() {
-      VERIFIER__PATH.verify(
+      PATH_COMBINATION.verify(
           (name) -> sampleTest.getEnv().resourcePath(name),
           List.of("name"),
           // name
@@ -70,7 +70,7 @@ class TestUnitTest extends BaseTest {
 
     @Test
     void resourceSrcPath() {
-      VERIFIER__PATH.verify(
+      PATH_COMBINATION.verify(
           (name) -> sampleTest.getEnv().resourceSrcPath(name),
           List.of("name"),
           // name
@@ -79,7 +79,7 @@ class TestUnitTest extends BaseTest {
 
     @Test
     void typeSrcPath() {
-      VERIFIER__PATH.verify(
+      PATH_COMBINATION.verify(
           (type) -> sampleTest.getEnv().typeSrcPath(type),
           List.of("type"),
           // type

@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -80,7 +80,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void let() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj) -> Functions.let(obj, CONSUMER),
         List.of("obj"),
         // obj
@@ -119,7 +119,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void to() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj) -> Functions.to(obj, MAPPER),
         List.of("obj"),
         // obj
@@ -128,7 +128,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void toElse() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj, defaultValue) -> Functions.toElse(obj, MAPPER, defaultValue),
         List.of("obj", "defaultValue"),
         // obj
@@ -140,7 +140,7 @@ public class FunctionsTest extends BaseTest {
   @Test
   @SuppressWarnings("unchecked")
   void toElseGet() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj, supplier) -> Functions.toElseGet(obj, MAPPER, supplier),
         List.of("obj", "supplier"),
         // obj
@@ -152,7 +152,7 @@ public class FunctionsTest extends BaseTest {
   @Test
   @SuppressWarnings("unchecked")
   void toElseGetNonNull() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj, supplier) -> Functions.toElseGetNonNull(obj, MAPPER, supplier),
         List.of("obj", "supplier"),
         // obj
@@ -163,7 +163,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void toNonNull() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj) -> Functions.toNonNull(obj, MAPPER),
         List.of("obj"),
         // obj
@@ -204,7 +204,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void tryLet() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj) -> Functions.tryLet(obj, CONSUMER::accept),
         List.of("obj"),
         // obj
@@ -213,7 +213,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void tryTo() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj) -> Functions.tryTo(obj, MAPPER::apply),
         List.of("obj"),
         // obj
@@ -222,7 +222,7 @@ public class FunctionsTest extends BaseTest {
 
   @Test
   void tryToElse() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj, defaultValue) -> Functions.tryToElse(obj, MAPPER::apply, defaultValue),
         List.of("obj", "defaultValue"),
         // obj
@@ -234,7 +234,7 @@ public class FunctionsTest extends BaseTest {
   @Test
   @SuppressWarnings("unchecked")
   void tryToElseGet() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj, supplier) -> Functions.tryToElseGet(obj, MAPPER::apply, supplier),
         List.of("obj", "supplier"),
         // obj
@@ -246,7 +246,7 @@ public class FunctionsTest extends BaseTest {
   @Test
   @SuppressWarnings("unchecked")
   void tryToElseGetNonNull() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (obj, supplier) -> Functions.tryToElseGetNonNull(obj, MAPPER::apply, supplier),
         List.of("obj", "supplier"),
         // obj

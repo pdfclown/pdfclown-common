@@ -14,7 +14,7 @@ package org.pdfclown.common.util.regex;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import static org.pdfclown.common.util.Objects.nonNull;
 
 import java.util.List;
@@ -72,7 +72,7 @@ class PatternsTest extends BaseTest {
 
   @Test
   void globToRegex() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (glob) -> {
           var actual = Patterns.globToRegex(nonNull(glob.getPayload()));
 
@@ -128,7 +128,7 @@ class PatternsTest extends BaseTest {
 
   @Test
   void indexOfMatchFailure() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (input) -> {
           Matcher matcher = PATTERN__SEM_VER.matcher(input);
           //noinspection ResultOfMethodCallIgnored
@@ -152,7 +152,7 @@ class PatternsTest extends BaseTest {
 
   @Test
   void wildcardToRegex() {
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (wildcard) -> {
           var actual = Patterns.wildcardToRegex(nonNull(wildcard.getPayload()));
 

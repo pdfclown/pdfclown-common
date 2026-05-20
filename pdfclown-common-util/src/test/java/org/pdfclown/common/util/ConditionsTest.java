@@ -15,7 +15,7 @@ package org.pdfclown.common.util;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 
 import java.util.List;
 import org.jspecify.annotations.Nullable;
@@ -57,7 +57,7 @@ class ConditionsTest extends BaseTest {
   @Test
   void requireNormal() {
     //noinspection DataFlowIssue : null intended
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (value, name) -> Conditions.requireNormal(value, name),
         List.of("value", "name"),
         // value
@@ -69,7 +69,7 @@ class ConditionsTest extends BaseTest {
   @Test
   void requireNotBlank() {
     //noinspection DataFlowIssue : null intended
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (value, name) -> Conditions.requireNotBlank(value, name),
         List.of("value", "name"),
         // value

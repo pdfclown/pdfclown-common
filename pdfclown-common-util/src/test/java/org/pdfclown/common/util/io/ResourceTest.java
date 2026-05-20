@@ -19,7 +19,7 @@ import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Strings.S;
@@ -145,7 +145,7 @@ class ResourceTest extends BaseTest {
       }
 
       //noinspection DataFlowIssue : false positive (result is nullable by contract!)
-      VERIFIER__COMBINATION.verify(
+      COMBINATION.verify(
           (name) -> AbstractResource.of(name, ofClassLoaderMock, fileResolver, fs).orElse(null),
           List.of("name"),
           // name

@@ -13,7 +13,7 @@
 package org.pdfclown.common.util.system;
 
 import static java.util.Arrays.asList;
-import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class SystemsTest extends BaseTest {
   void getBooleanProperty() {
     final var key = "myProperty";
 
-    VERIFIER__COMBINATION.verify(
+    COMBINATION.verify(
         (value) -> {
           if (value != null) {
             System.setProperty(key, value);
