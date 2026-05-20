@@ -171,22 +171,6 @@ public class FunctionsTest extends BaseTest {
   }
 
   @Test
-  void tryGetElse__fail() {
-    var ret = Functions.tryGetElse(() -> {
-      throw new IllegalStateException("FAILED");
-    }, "ALT");
-
-    assertThat(ret, is("ALT"));
-  }
-
-  @Test
-  void tryGetElse__ok() {
-    var ret = Functions.tryGetElse(() -> "RESULT", "ALT");
-
-    assertThat(ret, is("RESULT"));
-  }
-
-  @Test
   void tryGet__fail() {
     var ret = Functions.tryGet(() -> {
       throw new IllegalStateException("FAILED");
@@ -198,6 +182,22 @@ public class FunctionsTest extends BaseTest {
   @Test
   void tryGet__ok() {
     var ret = Functions.tryGet(() -> "RESULT");
+
+    assertThat(ret, is("RESULT"));
+  }
+
+  @Test
+  void tryGetElse__fail() {
+    var ret = Functions.tryGetElse(() -> {
+      throw new IllegalStateException("FAILED");
+    }, "ALT");
+
+    assertThat(ret, is("ALT"));
+  }
+
+  @Test
+  void tryGetElse__ok() {
+    var ret = Functions.tryGetElse(() -> "RESULT", "ALT");
 
     assertThat(ret, is("RESULT"));
   }

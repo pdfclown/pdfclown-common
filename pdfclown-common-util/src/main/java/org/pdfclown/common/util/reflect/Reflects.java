@@ -60,27 +60,6 @@ public final class Reflects {
   }
 
   /**
-   * Calls the method on the target object.
-   *
-   * @param <T>
-   *          Return type.
-   * @throws RuntimeException
-   *           if the call fails.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T extends @Nullable Object> T callOrThrow(final Object obj,
-      final String methodName, Class<?> @Nullable [] paramTypes, Object @Nullable [] args)
-      throws NoSuchMethodException, IllegalAccessException {
-    try {
-      return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
-    } catch (InvocationTargetException ex) {
-      throw runtime("Call to `{}.{}({})` FAILED", fqnd(obj), methodName, toElse(paramTypes,
-          $ -> Arrays.stream($).map(Objects::literal).collect(joining(S + COMMA + SPACE)), NULL),
-          ex.getCause());
-    }
-  }
-
-  /**
    * Gets the class of the caller who invoked the method that invoked this one.
    *
    * @see #callerFrame()
@@ -100,6 +79,27 @@ public final class Reflects {
    */
   public static StackFrame callerFrame() {
     return stackFrame($ -> true).orElseThrow();
+  }
+
+  /**
+   * Calls the method on the target object.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws RuntimeException
+   *           if the call fails.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends @Nullable Object> T callOrThrow(final Object obj,
+      final String methodName, Class<?> @Nullable [] paramTypes, Object @Nullable [] args)
+      throws NoSuchMethodException, IllegalAccessException {
+    try {
+      return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
+    } catch (InvocationTargetException ex) {
+      throw runtime("Call to `{}.{}({})` FAILED", fqnd(obj), methodName, toElse(paramTypes,
+          $ -> Arrays.stream($).map(Objects::literal).collect(joining(S + COMMA + SPACE)), NULL),
+          ex.getCause());
+    }
   }
 
   /**

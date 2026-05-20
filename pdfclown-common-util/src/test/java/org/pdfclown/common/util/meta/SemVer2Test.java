@@ -116,15 +116,6 @@ class SemVer2Test extends BaseTest {
   }
 
   @Test
-  void of_String() {
-    VERIFIER__COMBINATION.verify(
-        (value) -> SemVer2.of(value),
-        List.of("value"),
-        // value
-        VERSION_LITERALS__MIXED);
-  }
-
-  @Test
   void of_int_int_int_String_String() {
     VERIFIER__TUPLE.verify(
         (major, minor, patch, prerelease, metadata) -> SemVer2.of(major, minor, patch, prerelease,
@@ -140,6 +131,15 @@ class SemVer2Test extends BaseTest {
             tuple(1, 0, -1, "alpha.1", "abc"),
             tuple(1, 0, 0, "alpha!.1", "abc"),
             tuple(1, 0, 0, "alpha.1", "+abc")));
+  }
+
+  @Test
+  void of_String() {
+    VERIFIER__COMBINATION.verify(
+        (value) -> SemVer2.of(value),
+        List.of("value"),
+        // value
+        VERSION_LITERALS__MIXED);
   }
 
   @Test

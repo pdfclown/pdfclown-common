@@ -212,32 +212,6 @@ public final class Strings {
   }
 
   /**
-   * Gets the index within the string of the first occurrence of a substring; if not found, returns
-   * the default. {@jada.doc params}
-   *
-   * @param defaultIndex
-   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
-   *          {@link String#length() s.length}). {@jada.doc END}
-   * @see String#indexOf(String)
-   */
-  public static int indexOfElse(String s, String sub, int defaultIndex) {
-    return indexOfElseResult(s, s.indexOf(sub), defaultIndex);
-  }
-
-  /**
-   * Gets the index within the string of the first occurrence of a substring, searched from the
-   * index; if not found, returns the default. {@jada.reuseDoc :params}
-   *
-   * @param defaultIndex
-   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
-   *          {@link String#length() s.length}). {@jada.reuseDoc END}
-   * @see String#indexOf(String, int)
-   */
-  public static int indexOfElse(String s, String sub, int fromIndex, int defaultIndex) {
-    return indexOfElseResult(s, s.indexOf(sub, fromIndex), defaultIndex);
-  }
-
-  /**
    * Gets the index within the string of the first occurrence of a character; if not found, returns
    * the default. {@jada.reuseDoc :params}
    *
@@ -261,6 +235,32 @@ public final class Strings {
    */
   public static int indexOfElse(String s, int c, int fromIndex, int defaultIndex) {
     return indexOfElseResult(s, s.indexOf(c, fromIndex), defaultIndex);
+  }
+
+  /**
+   * Gets the index within the string of the first occurrence of a substring; if not found, returns
+   * the default. {@jada.doc params}
+   *
+   * @param defaultIndex
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.doc END}
+   * @see String#indexOf(String)
+   */
+  public static int indexOfElse(String s, String sub, int defaultIndex) {
+    return indexOfElseResult(s, s.indexOf(sub), defaultIndex);
+  }
+
+  /**
+   * Gets the index within the string of the first occurrence of a substring, searched from the
+   * index; if not found, returns the default. {@jada.reuseDoc :params}
+   *
+   * @param defaultIndex
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
+   * @see String#indexOf(String, int)
+   */
+  public static int indexOfElse(String s, String sub, int fromIndex, int defaultIndex) {
+    return indexOfElseResult(s, s.indexOf(sub, fromIndex), defaultIndex);
   }
 
   /**
@@ -479,32 +479,6 @@ public final class Strings {
   }
 
   /**
-   * Gets the index within the string of the last occurrence of a substring; if not found, returns
-   * the default. {@jada.reuseDoc #indexOfElse(*):params}
-   *
-   * @param defaultIndex
-   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
-   *          {@link String#length() s.length}). {@jada.reuseDoc END}
-   * @see String#indexOf(String)
-   */
-  public static int lastIndexOfElse(String s, String sub, int defaultIndex) {
-    return indexOfElseResult(s, s.lastIndexOf(sub), defaultIndex);
-  }
-
-  /**
-   * Gets the index within the string of the last occurrence of a substring, searched backwards from
-   * the index; if not found, returns the default. {@jada.reuseDoc #indexOfElse(*):params}
-   *
-   * @param defaultIndex
-   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
-   *          {@link String#length() s.length}). {@jada.reuseDoc END}
-   * @see String#lastIndexOf(String, int)
-   */
-  public static int lastIndexOfElse(String s, String sub, int fromIndex, int defaultIndex) {
-    return indexOfElseResult(s, s.lastIndexOf(sub, fromIndex), defaultIndex);
-  }
-
-  /**
    * Gets the index within the string of the last occurrence of a character; if not found, returns
    * the default. {@jada.reuseDoc #indexOfElse(*):params}
    *
@@ -531,6 +505,32 @@ public final class Strings {
   }
 
   /**
+   * Gets the index within the string of the last occurrence of a substring; if not found, returns
+   * the default. {@jada.reuseDoc #indexOfElse(*):params}
+   *
+   * @param defaultIndex
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
+   * @see String#indexOf(String)
+   */
+  public static int lastIndexOfElse(String s, String sub, int defaultIndex) {
+    return indexOfElseResult(s, s.lastIndexOf(sub), defaultIndex);
+  }
+
+  /**
+   * Gets the index within the string of the last occurrence of a substring, searched backwards from
+   * the index; if not found, returns the default. {@jada.reuseDoc #indexOfElse(*):params}
+   *
+   * @param defaultIndex
+   *          Result in case no occurrence is found ({@link #STR_LENGTH}, to return
+   *          {@link String#length() s.length}). {@jada.reuseDoc END}
+   * @see String#lastIndexOf(String, int)
+   */
+  public static int lastIndexOfElse(String s, String sub, int fromIndex, int defaultIndex) {
+    return indexOfElseResult(s, s.lastIndexOf(sub, fromIndex), defaultIndex);
+  }
+
+  /**
    * Gets the end of the line at the position.
    */
   public static int lineEnd(String s, int index) {
@@ -553,6 +553,16 @@ public final class Strings {
   }
 
   /**
+   * Replaces the last occurrence of the given character.
+   *
+   * @return {@code s}, if {@code oldChar} was not found.
+   */
+  public static String replaceLast(String s, int oldChar, int newChar) {
+    int index = s.lastIndexOf(oldChar);
+    return found(index) ? s.substring(0, index) + newChar + s.substring(index + 1) : s;
+  }
+
+  /**
    * Replaces the last occurrence of the given substring.
    * <p>
    * NOTE: Contrary to {@link String#replaceFirst(String, String)}, this method does NOT support
@@ -564,16 +574,6 @@ public final class Strings {
   public static String replaceLast(String s, String oldSub, String newSub) {
     int index = s.lastIndexOf(oldSub);
     return found(index) ? s.substring(0, index) + newSub + s.substring(index + oldSub.length()) : s;
-  }
-
-  /**
-   * Replaces the last occurrence of the given character.
-   *
-   * @return {@code s}, if {@code oldChar} was not found.
-   */
-  public static String replaceLast(String s, int oldChar, int newChar) {
-    int index = s.lastIndexOf(oldChar);
-    return found(index) ? s.substring(0, index) + newChar + s.substring(index + 1) : s;
   }
 
   /**

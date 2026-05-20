@@ -43,31 +43,6 @@ import org.pdfclown.common.util.annot.PolyNull;
  * @see Conditions
  */
 public final class Exceptions {
-  public static EOFException EOF() {
-    return new EOFException();
-  }
-
-  public static NotImplementedException TODO() {
-    return new NotImplementedException();
-  }
-
-  /**
-   * {@jada.reuseDoc ParamMessage#of(*):params}
-   *
-   * @param format
-   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
-   * @param args
-   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
-   *          {@link java.io.UncheckedIOException UncheckedIOException},
-   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
-   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
-   *          it is unwrapped). {@jada.reuseDoc END}
-   */
-  public static NotImplementedException TODO(@Nullable String format, @Nullable Object... args) {
-    return throwable(NotImplementedException::new, format, args);
-  }
-
   /**
    * Gets the actual exception, unwrapping the associated checked exception if any.
    *
@@ -89,6 +64,10 @@ public final class Exceptions {
       return undeclared.getUndeclaredThrowable();
     } else
       return throwable;
+  }
+
+  public static EOFException EOF() {
+    return new EOFException();
   }
 
   /**
@@ -245,6 +224,27 @@ public final class Exceptions {
       @Nullable Object... args) {
     var message = ParamMessage.of(format, args);
     return factory.apply(message.getDescription(), message.getCause());
+  }
+
+  public static NotImplementedException TODO() {
+    return new NotImplementedException();
+  }
+
+  /**
+   * {@jada.reuseDoc ParamMessage#of(*):params}
+   *
+   * @param format
+   *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
+   * @param args
+   *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
+   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          {@link java.io.UncheckedIOException UncheckedIOException},
+   *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
+   *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
+   *          it is unwrapped). {@jada.reuseDoc END}
+   */
+  public static NotImplementedException TODO(@Nullable String format, @Nullable Object... args) {
+    return throwable(NotImplementedException::new, format, args);
   }
 
   public static UnexpectedCaseError unexpected(@Nullable Object value) {

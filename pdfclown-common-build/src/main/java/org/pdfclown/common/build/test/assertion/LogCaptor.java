@@ -170,17 +170,17 @@ public abstract class LogCaptor
   }
 
   /**
-   * Gets the first captured event matching the predicate.
-   */
-  public Optional<LoggingEvent> event(Predicate<? super LoggingEvent> predicate) {
-    return events(predicate).findFirst();
-  }
-
-  /**
    * Gets the captured event at the position.
    */
   public LoggingEvent event(int index) {
     return getEvents().get(index);
+  }
+
+  /**
+   * Gets the first captured event matching the predicate.
+   */
+  public Optional<LoggingEvent> event(Predicate<? super LoggingEvent> predicate) {
+    return events(predicate).findFirst();
   }
 
   /**

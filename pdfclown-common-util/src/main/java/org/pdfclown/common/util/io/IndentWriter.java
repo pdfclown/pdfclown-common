@@ -87,6 +87,11 @@ public class IndentWriter extends Writer {
   }
 
   @Override
+  public IndentWriter append(char c) throws IOException {
+    return (IndentWriter) super.append(c);
+  }
+
+  @Override
   public IndentWriter append(CharSequence csq) throws IOException {
     return (IndentWriter) super.append(csq);
   }
@@ -94,11 +99,6 @@ public class IndentWriter extends Writer {
   @Override
   public IndentWriter append(CharSequence csq, int start, int end) throws IOException {
     return (IndentWriter) super.append(csq, start, end);
-  }
-
-  @Override
-  public IndentWriter append(char c) throws IOException {
-    return (IndentWriter) super.append(c);
   }
 
   @Override
@@ -230,13 +230,6 @@ public class IndentWriter extends Writer {
     return withIndent(indent.decrease());
   }
 
-  /**
-   * Writes the string representation of an object.
-   */
-  public void write(Object o) throws IOException {
-    write(Objects.toString(o));
-  }
-
   @Override
   public void write(char[] cbuf, int off, int len) throws IOException {
     if (len > 0) {
@@ -257,6 +250,13 @@ public class IndentWriter extends Writer {
         }
       }
     }
+  }
+
+  /**
+   * Writes the string representation of an object.
+   */
+  public void write(Object o) throws IOException {
+    write(Objects.toString(o));
   }
 
   /**

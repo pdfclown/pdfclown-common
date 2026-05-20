@@ -471,41 +471,6 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is within the range.
-   *
-   * @param value
-   *          Value to validate.
-   * @param range
-   *          Range.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static <T extends Number> T requireRange(T value, Range<T> range) {
-    return requireRange(value, range, null);
-  }
-
-  /**
-   * Requires the value is within the range.
-   *
-   * @param value
-   *          Value to validate.
-   * @param range
-   *          Range.
-   * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static <T extends Number> T requireRange(T value, Range<T> range, @Nullable String name) {
-    if (range.contains(value))
-      return value;
-
-    throw wrongArg(name, value, "MUST be within {} range", range);
-  }
-
-  /**
    * Requires the value is within the range (inclusive).
    * <p>
    * For arbitrary bounds, use {@link #requireRange(Number, Range, String)} instead.
@@ -550,6 +515,41 @@ public final class Conditions {
       throw wrongArg(name, value, "MUST be between {} and {}", min, max);
 
     return value;
+  }
+
+  /**
+   * Requires the value is within the range.
+   *
+   * @param value
+   *          Value to validate.
+   * @param range
+   *          Range.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static <T extends Number> T requireRange(T value, Range<T> range) {
+    return requireRange(value, range, null);
+  }
+
+  /**
+   * Requires the value is within the range.
+   *
+   * @param value
+   *          Value to validate.
+   * @param range
+   *          Range.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static <T extends Number> T requireRange(T value, Range<T> range, @Nullable String name) {
+    if (range.contains(value))
+      return value;
+
+    throw wrongArg(name, value, "MUST be within {} range", range);
   }
 
   /**
