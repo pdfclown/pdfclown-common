@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
+import org.pdfclown.common.util.collect.Range;
 
 /**
  * @author Stefano Chizzolini
@@ -86,7 +87,7 @@ class ConditionsTest extends BaseTest {
           "myParam");
     });
     assertEquals(
-        "`myParam` (1L): MUST be one of { Boolean, Integer, org.pdfclown.common.util.Range }",
+        "`myParam` (1L): MUST be one of { Boolean, Integer, org.pdfclown.common.util.collect.Range }",
         exception.getMessage());
   }
 

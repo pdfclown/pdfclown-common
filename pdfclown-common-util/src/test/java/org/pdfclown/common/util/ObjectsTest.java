@@ -22,8 +22,8 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__COMBINATION;
 import static org.pdfclown.common.build.test.assertion.Verifiers.VERIFIER__TUPLE;
 import static org.pdfclown.common.build.util.Tuple.tuple;
-import static org.pdfclown.common.util.Aggregations.map;
 import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.collect.Aggregations.map;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -40,6 +40,7 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
+import org.pdfclown.common.util.collect.XtList;
 import org.pdfclown.common.util.function.FunctionsTest;
 import org.pdfclown.common.util.system.Clis;
 import org.pdfclown.common.util.xml.Xmls;

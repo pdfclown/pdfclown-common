@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.util.collect;
 
 import java.util.Collection;
 import java.util.Set;
@@ -32,5 +32,30 @@ public interface XtSet<E extends @Nullable Object> extends Set<E>, XtCollection<
   @Override
   default boolean removeAll(Collection<?> c) {
     return XtCollection.super.removeAll(c);
+  }
+
+  @Override
+  default XtSet<E> with(E e) {
+    return (XtSet<E>) XtCollection.super.with(e);
+  }
+
+  @Override
+  default XtSet<E> withAll(Collection<? extends E> c) {
+    return (XtSet<E>) XtCollection.super.withAll(c);
+  }
+
+  @Override
+  default XtSet<E> without(E e) {
+    return (XtSet<E>) XtCollection.super.without(e);
+  }
+
+  @Override
+  default XtSet<E> withoutAll(Collection<?> c) {
+    return (XtSet<E>) XtCollection.super.withoutAll(c);
+  }
+
+  @Override
+  default XtSet<E> withoutAny() {
+    return (XtSet<E>) XtCollection.super.withoutAny();
   }
 }

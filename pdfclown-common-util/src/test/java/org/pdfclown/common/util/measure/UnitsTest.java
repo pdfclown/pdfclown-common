@@ -28,8 +28,8 @@ import javax.measure.quantity.Area;
 import javax.measure.quantity.ElectricPotential;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.util.Tuple2;
-import org.pdfclown.common.util.Aggregations;
 import org.pdfclown.common.util.__test.BaseTest;
+import org.pdfclown.common.util.collect.Aggregations;
 import tech.units.indriya.format.SimpleQuantityFormat;
 import tech.units.indriya.format.SimpleUnitFormat;
 

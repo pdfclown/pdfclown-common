@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.util.collect;
 
 import static java.lang.Math.signum;
 import static org.pdfclown.common.util.Chars.COMMA;
@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.ArgumentException;
+import org.pdfclown.common.util.Numbers;
 import org.pdfclown.common.util.annot.Immutable;
 
 /**

@@ -10,10 +10,11 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.util.collect;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,7 +27,7 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
-    extends Aggregation<Map.Entry<K, V>>, Map<K, V> {
+    extends Aggregation<Entry<K, V>>, Map<K, V> {
   /**
    * Gets whether any of the keys exists.
    *

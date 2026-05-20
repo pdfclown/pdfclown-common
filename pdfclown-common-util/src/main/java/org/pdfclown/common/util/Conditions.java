@@ -31,6 +31,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.PolyNull;
+import org.pdfclown.common.util.collect.Range;
 
 /**
  * Validation utilities.

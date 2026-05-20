@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.util.collect;
 
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.runtime;
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.Cloneable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

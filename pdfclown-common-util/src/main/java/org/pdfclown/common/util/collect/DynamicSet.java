@@ -10,14 +10,15 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.util.collect;
 
 import static org.pdfclown.common.util.Exceptions.runtime;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Set;
-import org.pdfclown.common.util.DynamicMap.DynamicProvider;
+import org.pdfclown.common.util.Cloneable;
+import org.pdfclown.common.util.collect.DynamicMap.DynamicProvider;
 
 /**
  * Set whose matches are dynamically expanded based on element correlations.

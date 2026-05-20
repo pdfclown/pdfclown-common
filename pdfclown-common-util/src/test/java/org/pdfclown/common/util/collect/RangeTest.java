@@ -10,7 +10,7 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.util.collect;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -19,8 +19,9 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.pdfclown.common.util.Range.Endpoint;
+import org.pdfclown.common.util.ArgumentException;
 import org.pdfclown.common.util.__test.BaseTest;
+import org.pdfclown.common.util.collect.Range.Endpoint;
 
 /**
  * @author Stefano Chizzolini

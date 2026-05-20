@@ -10,9 +10,10 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.util.collect;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.util.Exceptions.unsupported;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -196,22 +197,169 @@ public final class Aggregations {
     }
   }
 
+  @SuppressWarnings("unchecked")
+  private static class MapWrapper<K, V> implements XtMap<K, V> {
+    private final Map<? super K, ? super V> base;
+
+    MapWrapper(Map<? super K, ? super V> base) {
+      this.base = requireNonNull(base);
+    }
+
+    @Override
+    public void clear() {
+      base.clear();
+    }
+
+    @Override
+    public boolean containsKey(@Nullable Object key) {
+      return base.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(@Nullable Object value) {
+      return base.containsValue(value);
+    }
+
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+      return new Set<>() {
+        @Override
+        public boolean add(@Nullable Entry<K, V> e) {
+          throw unsupported();
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends Entry<K, V>> c) {
+          throw unsupported();
+        }
+
+        @Override
+        public void clear() {
+          MapWrapper.this.base.clear();
+        }
+
+        @Override
+        public boolean contains(@Nullable Object o) {
+          return MapWrapper.this.base.entrySet().contains(o);
+        }
+
+        @Override
+        public boolean containsAll(Collection<?> c) {
+          return MapWrapper.this.base.entrySet().containsAll(c);
+        }
+
+        @Override
+        public boolean isEmpty() {
+          return MapWrapper.this.isEmpty();
+        }
+
+        @Override
+        public Iterator<Entry<K, V>> iterator() {
+          return new Iterator<>() {
+            final Iterator<?> base = MapWrapper.this.base.entrySet().iterator();
+
+            @Override
+            public boolean hasNext() {
+              return base.hasNext();
+            }
+
+            @Override
+            public Entry<K, V> next() {
+              return (Entry<K, V>) base.next();
+            }
+          };
+        }
+
+        @Override
+        public boolean remove(@Nullable Object o) {
+          return MapWrapper.this.base.entrySet().remove(o);
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+          return MapWrapper.this.base.entrySet().removeAll(c);
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+          return MapWrapper.this.base.entrySet().retainAll(c);
+        }
+
+        @Override
+        public int size() {
+          return MapWrapper.this.size();
+        }
+
+        @Override
+        public Object[] toArray() {
+          return MapWrapper.this.base.entrySet().toArray();
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+          return MapWrapper.this.base.entrySet().toArray(a);
+        }
+      };
+    }
+
+    @Override
+    public V get(@Nullable Object key) {
+      return (V) base.get(key);
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return base.isEmpty();
+    }
+
+    @Override
+    public Set<K> keySet() {
+      return (Set<K>) base.keySet();
+    }
+
+    @Override
+    public V put(K key, V value) {
+      return (V) base.put(key, value);
+    }
+
+    @Override
+    public void putAll(Map<? extends @Nullable K, ? extends @Nullable V> m) {
+      base.putAll(m);
+    }
+
+    @Override
+    public V remove(@Nullable Object key) {
+      return (V) base.remove(key);
+    }
+
+    @Override
+    public int size() {
+      return base.size();
+    }
+
+    @Override
+    public Collection<V> values() {
+      return (Collection<V>) base.values();
+    }
+  }
+
   /**
    * Extended mutable list.
    *
    * @author Stefano Chizzolini
    */
   private static class XtArrayList<E> extends ArrayList<E> implements XtList<E> {
-    public XtArrayList() {
+    XtArrayList() {
       super();
     }
 
     @SuppressWarnings("unused")
-    public XtArrayList(Collection<? extends E> c) {
+    XtArrayList(Collection<? extends E> c) {
       super(c);
     }
 
-    public XtArrayList(int initialCapacity) {
+    @SuppressWarnings("unused")
+    XtArrayList(int initialCapacity) {
       super(initialCapacity);
     }
   }
@@ -223,16 +371,17 @@ public final class Aggregations {
    */
   private static class XtHashMap<K extends @Nullable Object, V extends @Nullable Object>
       extends HashMap<K, V> implements XtMap<K, V> {
-    public XtHashMap() {
+    XtHashMap() {
       super();
     }
 
     @SuppressWarnings("unused")
-    public XtHashMap(Map<? extends K, ? extends V> m) {
+    XtHashMap(Map<? extends K, ? extends V> m) {
       super(m);
     }
 
-    public XtHashMap(int initialCapacity) {
+    @SuppressWarnings("unused")
+    XtHashMap(int initialCapacity) {
       super(initialCapacity);
     }
   }
@@ -384,13 +533,9 @@ public final class Aggregations {
    * Counts the elements within an iterable.
    */
   public static <E extends @Nullable Object> int count(Iterable<E> iterable) {
-    /*
-     * NOTE: Apparently, direct access to `iterable.spliterator().getExactSizeIfKnown()` doesn't
-     * work (returns `-1`, whilst encapsulating the same `Spliterator` in a stream returns the
-     * correct count!... does it count the actual iterations??), so we have to involve streams,
-     * alas.
-     */
-    return (int) StreamSupport.stream(iterable.spliterator(), false).count();
+    var itr = iterable.spliterator();
+    return itr.getExactSizeIfKnown() >= 0 ? (int) itr.getExactSizeIfKnown()
+        : (int) StreamSupport.stream(itr, false).count();
   }
 
   /**
@@ -409,9 +554,10 @@ public final class Aggregations {
 
   /**
    * Creates a new entry.
+   * <h4>Rationale</h4>
    * <p>
-   * Contrary to standard {@link Map#entry(Object, Object) Map.entry(..)}, this method allows
-   * nullable objects.
+   * This method allows nullable key and value, providing an alternative to standard
+   * {@link Map#entry(Object, Object) Map.entry(..)}.
    * </p>
    */
   public static <K extends @Nullable Object,
@@ -505,28 +651,6 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new hash set populated with the collections.
-   */
-  @SafeVarargs
-  public static <E extends @Nullable Object> HashSet<E> hashSet(Collection<E>... cc) {
-    var ret = new HashSet<E>();
-    for (var c : cc) {
-      ret.addAll(c);
-    }
-    return ret;
-  }
-
-  /**
-   * Creates a new hash set populated with the elements.
-   */
-  @SafeVarargs
-  public static <E extends @Nullable Object> HashSet<E> hashSet(E... ee) {
-    var ret = new HashSet<E>(ee.length);
-    Collections.addAll(ret, ee);
-    return ret;
-  }
-
-  /**
    * Whether the collection is empty.
    */
   public static boolean isEmpty(@Nullable Collection<?> c) {
@@ -586,7 +710,7 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new mutable list of the type.
+   * Creates a new mutable list of the given element type.
    */
   public static <E extends @Nullable Object> XtList<E> listOf(Class<E> type) {
     return list();
@@ -613,11 +737,18 @@ public final class Aggregations {
   }
 
   /**
-   * Creates a new mutable map of the types.
+   * Creates a new mutable map of the given types.
    */
   public static <K extends @Nullable Object, V extends @Nullable Object> XtMap<K, V> mapOf(
       Class<K> keyType, Class<V> valueType) {
     return map();
+  }
+
+  /**
+   * Wraps a map.
+   */
+  public static <K, V> XtMap<K, V> mapOn(Map<? super K, ? super V> base) {
+    return new MapWrapper<>(base);
   }
 
   /**
