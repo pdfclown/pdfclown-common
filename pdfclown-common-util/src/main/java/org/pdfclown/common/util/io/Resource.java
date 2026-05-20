@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Immutable;
@@ -39,35 +39,35 @@ import org.pdfclown.common.util.annot.Immutable;
 @Immutable
 public interface Resource {
   /**
-   * Gets the resource corresponding to the path.
+   * Gets the resource corresponding to a path.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
    *
    * @param path
    *          Path.
-   * @return {@code null}, if the resource corresponding to {@code path} does not exist.
+   * @return Empty, if the resource corresponding to {@code path} does not exist.
    */
-  static @Nullable PathResource of(@Nullable Path path) {
-    return (PathResource) of(to(path, Object::toString));
+  static Optional<PathResource> of(@Nullable Path path) {
+    return path(to(path, Object::toString));
   }
 
   /**
-   * Gets the resource corresponding to the name.
+   * Gets the resource corresponding to a name.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
    *
    * @param name
    *          Resource name.
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(@Nullable String name) {
-    return of(name, Resource.class.getClassLoader());
+  static Optional<Resource> of(@Nullable String name) {
+    return of(name, null, null);
   }
 
   /**
-   * Gets the resource corresponding to the name.
+   * Gets the resource corresponding to a name.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
@@ -76,41 +76,45 @@ public interface Resource {
    *          Resource name.
    * @param cl
    *          Class loader for resource lookup.
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(@Nullable String name, ClassLoader cl) {
-    return of(name, cl, Path::toAbsolutePath);
+  static Optional<Resource> of(@Nullable String name, ClassLoader cl) {
+    return of(name, cl, null);
   }
 
   /**
-   * Gets the resource corresponding to the name.
+   * Gets the resource corresponding to a name.
    * <p>
    * Supported resource types:
    * </p>
    * <ul>
    * <li>classpath (either explicitly qualified via URI scheme ({@code "classpath:"}), or
    * automatically detected)</li>
-   * <li>filesystem</li>
+   * <li>filesystem (either explicitly qualified via URI scheme ({@code "file:"}), or automatically
+   * detected)</li>
    * <li>generic URL</li>
    * </ul>
    *
    * @param name
    *          Resource name.
    * @param cl
-   *          Class loader for resource lookup.
+   *          Class loader for resource lookup. If undefined, the caller's class loader is used.
    * @param fileResolver
-   *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
-   * @throws IllegalArgumentException
-   *           if {@code name} is an invalid URL.
-   * @implNote Name resolution algorithm:
+   *          Resolves relative filesystem paths to their absolute representation. If undefined,
+   *          they are resolved against the filesystem default directory (current working
+   *          directory).
+   * @return Empty, if the resource corresponding to {@code name} does not exist.
+   * @implNote {@code name} is nullable to accommodate methods like
+   *           {@link Class#getResource(String)}. Resolution algorithm:
    *           <ol>
    *           <li><b>[explicit classpath resource]</b> if {@code name} is prefixed by
    *           {@code "classpath:"}, it is resolved through {@code cl} and returned</li>
+   *           <li><b>[filesystem resource]</b> if {@code name} is prefixed by {@code "file:"}, it
+   *           is resolved through {@code fileResolver} to an absolute filesystem path and
+   *           returned</li>
    *           <li><b>[filesystem resource]</b> if {@code name}, resolved through
    *           {@code fileResolver} to an absolute filesystem path, exists, it is returned</li>
-   *           <li><b>[URL resource]</b> if {@code name} is an absolute URI, it is converted to URL
-   *           and returned</li>
+   *           <li><b>[URL resource]</b> if {@code name} is an absolute URL, it is returned</li>
    *           <li><b>[implicit classpath resource]</b> otherwise, {@code name} is resolved through
    *           {@code cl} and returned</li>
    *           </ol>
@@ -118,51 +122,77 @@ public interface Resource {
    *           NOTE: In any case, the resolved resource is checked for existence before being
    *           returned.
    *           </p>
+   *           <p>
+   *           </p>
    */
-  static @Nullable Resource of(@Nullable String name, ClassLoader cl,
-      Function<Path, Path> fileResolver) {
-    return AbstractResource.of(name, cl, fileResolver, FileSystems.getDefault());
+  static Optional<Resource> of(@Nullable String name, @Nullable ClassLoader cl,
+      @Nullable Function<Path, Path> fileResolver) {
+    return AbstractResource.of(name, cl, fileResolver, null);
   }
 
   /**
-   * Gets the resource corresponding to the name.
+   * Gets the resource corresponding to a URI.
+   * <p>
+   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * </p>
+   *
+   * @return Empty, if the resource corresponding to {@code url} does not exist.
+   */
+  static Optional<Resource> of(@Nullable URI uri) {
+    return of(to(uri, Object::toString));
+  }
+
+  /**
+   * Gets the resource corresponding to a URL.
+   * <p>
+   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * </p>
+   *
+   * @return Empty, if the resource corresponding to {@code url} does not exist.
+   */
+  static Optional<Resource> of(@Nullable URL url) {
+    return of(to(url, Object::toString));
+  }
+
+  /**
+   * Gets the resource corresponding to a name.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
    *
    * @param name
    *          Resource name.
-   * @param fileResolver
-   *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(@Nullable String name, Function<Path, Path> fileResolver) {
-    return of(name, Resource.class.getClassLoader(), fileResolver);
+  static Optional<PathResource> path(@Nullable String name) {
+    return path(name, null, null);
   }
 
   /**
-   * Gets the resource corresponding to the URI.
+   * Gets the resource corresponding to a name.
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
    *
-   * @return {@code null}, if the resource corresponding to {@code url} does not exist.
+   * @param name
+   *          Resource name.
+   * @param cl
+   *          Class loader for resource lookup.
+   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(@Nullable URI uri) {
-    return of(to(uri, Object::toString));
+  static Optional<PathResource> path(@Nullable String name, ClassLoader cl) {
+    return path(name, cl, null);
+  }
+
+  static Optional<PathResource> path(@Nullable String name, @Nullable ClassLoader cl,
+      @Nullable Function<Path, Path> fileResolver) {
+    return of(name, cl, fileResolver).map(PathResource.class::cast);
   }
 
   /**
-   * Gets the resource corresponding to the URL.
-   * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
-   * </p>
-   *
-   * @return {@code null}, if the resource corresponding to {@code url} does not exist.
+   * Canonical representation of this resource.
    */
-  static @Nullable Resource of(@Nullable URL url) {
-    return of(to(url, Object::toString));
-  }
+  String asString();
 
   /**
    * Original name used to retrieve this resource.

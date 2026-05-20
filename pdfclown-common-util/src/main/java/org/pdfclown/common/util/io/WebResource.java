@@ -34,6 +34,11 @@ public class WebResource extends AbstractResource {
   }
 
   @Override
+  public String asString() {
+    return uri.toString();
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o)
       return true;
@@ -52,10 +57,5 @@ public class WebResource extends AbstractResource {
   @Override
   public int hashCode() {
     return uri.hashCode();
-  }
-
-  @Override
-  public String toString() {
-    return uri.toString();
   }
 }

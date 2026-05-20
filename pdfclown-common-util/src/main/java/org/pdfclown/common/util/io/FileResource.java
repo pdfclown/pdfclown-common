@@ -36,6 +36,11 @@ public class FileResource extends AbstractResource implements PathResource {
   }
 
   @Override
+  public String asString() {
+    return path.toString();
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o)
       return true;
@@ -59,10 +64,5 @@ public class FileResource extends AbstractResource implements PathResource {
   @Override
   public int hashCode() {
     return path.hashCode();
-  }
-
-  @Override
-  public String toString() {
-    return path.toString();
   }
 }

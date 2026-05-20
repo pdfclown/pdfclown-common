@@ -14,12 +14,9 @@ package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Chars.COLON;
-import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Objects.isSameType;
-import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
 import static org.pdfclown.common.util.net.Uris.SCHEME__FILE;
 import static org.pdfclown.common.util.net.Uris.SCHEME__JAR;
 
@@ -34,7 +31,6 @@ import java.nio.file.ProviderMismatchException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.function.Failable;
-import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Immutable;
 
 /**
@@ -47,10 +43,10 @@ import org.pdfclown.common.util.annot.Immutable;
  * <b>Directories</b> are transparently handled no matter whether they are plain filesystem nodes or
  * jar entries: they can be {@linkplain Files#newDirectoryStream(Path) listed} and recursively
  * {@linkplain Files#walkFileTree(Path, java.nio.file.FileVisitor) walked}. The only limitation is
- * the impossibility to {@linkplain Path#resolve(Path) directly resolve} relativized walked files
- * into the physical filesystem, as they belong to a separate filesystem (otherwise a
+ * the impossibility to {@linkplain Path#resolve(Path) directly resolve} walked files into the
+ * physical filesystem, as they belong to a separate filesystem (otherwise a
  * {@link ProviderMismatchException} is thrown); nonetheless, the workaround is pretty simple:
- * {@linkplain Path#resolve(String) resolve the string representation} of the walked file instead.
+ * {@linkplain Path#resolve(String) resolve the string representation} of the walked files instead.
  * </p>
  *
  * @author Stefano Chizzolini
@@ -67,32 +63,6 @@ public class ClasspathResource extends AbstractResource implements PathResource 
    */
   private static final Map<String, FileSystem> fileSystems = new HashMap<>();
 
-  static @Nullable ClasspathResource of(String name, ClassLoader cl, FileSystem fs) {
-    URL url;
-    {
-      int index = name.indexOf(COLON);
-      // Strip classpath scheme!
-      if (index != INDEX__NOT_FOUND && name.substring(0, index).equals(SCHEME__CLASSPATH)) {
-        index++;
-      } else {
-        index = 0;
-      }
-      // Strip leading slash!
-      if (name.charAt(index) == SLASH) {
-        index++;
-      }
-      if (index > 0) {
-        name = name.substring(index);
-      }
-      url = cl.getResource(name);
-    }
-    return url != null ? new ClasspathResource(name, url, fs) : null;
-  }
-
-  @SuppressWarnings("RedundantCast" /*
-                                     * NOTE: Since Java 13, `ClassLoader` cast is mandatory because
-                                     * of overload ambiguity
-                                     */)
   private static FileSystem asFileSystem(Path path) {
     return fileSystems.computeIfAbsent(path.toString(),
         Failable.asFunction($k -> FileSystems.newFileSystem(path, (ClassLoader) null)));
@@ -130,11 +100,16 @@ public class ClasspathResource extends AbstractResource implements PathResource 
       }
         break;
       case SCHEME__FILE:
-        path = Path.of(url.getPath());
+        path = fs.getPath(url.getPath());
         break;
       default:
         throw unexpected("uri.scheme", uri.getScheme());
     }
+  }
+
+  @Override
+  public String asString() {
+    return uri.toString();
   }
 
   @Override
@@ -161,10 +136,5 @@ public class ClasspathResource extends AbstractResource implements PathResource 
   @Override
   public int hashCode() {
     return uri.hashCode();
-  }
-
-  @Override
-  public String toString() {
-    return uri.toString();
   }
 }

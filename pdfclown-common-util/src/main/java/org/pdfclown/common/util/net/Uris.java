@@ -15,11 +15,13 @@ package org.pdfclown.common.util.net;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.apache.commons.lang3.StringUtils.indexOfDifference;
+import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.Strings.indexOfElse;
 import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.io.IOException;
@@ -30,6 +32,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Path;
+import java.util.Locale;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.stream.Streams;
 
@@ -47,6 +50,11 @@ public final class Uris {
    * <a href="https://en.wikipedia.org/wiki/File_URI_scheme">{@code file}</a> scheme.
    */
   public static final String SCHEME__FILE = "file";
+  /**
+   * <a href="https://en.wikipedia.org/wiki/HTTPS">Hypertext Transfer Protocol Secure
+   * ({@code https})</a> scheme.
+   */
+  public static final String SCHEME__HTTPS = "https";
   /**
    * {@link java.net.JarURLConnection jar} resource protocol.
    */
@@ -130,6 +138,18 @@ public final class Uris {
     return URI.create(
         (PATH_SUPER + SLASH).repeat(countMatches(fromPath.substring(index), SLASH))
             + toPath.substring(index));
+  }
+
+  /**
+   * Gets the scheme of a URI.
+   * <p>
+   * No syntactic check is applied to {@code uri}.
+   * </p>
+   *
+   * @return (lower-case)
+   */
+  public static String scheme(String uri) {
+    return uri.substring(0, indexOfElse(uri, COLON, 0)).toLowerCase(Locale.ROOT);
   }
 
   /**

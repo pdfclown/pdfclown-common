@@ -525,49 +525,18 @@ public final class Clis {
    * <ul>
    * <li>classpath (either explicitly qualified via URI scheme ({@code "classpath:"}), or
    * automatically detected)</li>
-   * <li>filesystem</li>
+   * <li>filesystem (either explicitly qualified via URI scheme ({@code "file:"}), or automatically
+   * detected)</li>
    * <li>generic URL</li>
    * </ul>
    * {@jada.reuseDoc END}
    *
    * @param name
-   *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
-   *          {@code "classpath:"} prefix)).
+   *          Resource name.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
   public static @Nullable Resource parseResource(String name) {
-    return Resource.of(name);
-  }
-
-  /**
-   * {@jada.doc} Parses the resource corresponding to the name.
-   * <p>
-   * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options).
-   * </p>
-   * <p>
-   * Supported sources:
-   * </p>
-   * <ul>
-   * <li>classpath (either explicitly qualified via URI scheme ({@code "classpath:"}), or
-   * automatically detected)</li>
-   * <li>filesystem</li>
-   * <li>generic URL</li>
-   * </ul>
-   * {@jada.doc END}
-   *
-   * @param name
-   *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
-   *          {@code "classpath:"} prefix)).
-   * @param cl
-   *          {@link ClassLoader} for classpath resource resolution.
-   * @param fileResolver
-   *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
-   */
-  public static @Nullable Resource parseResource(String name, ClassLoader cl,
-      Function<Path, Path> fileResolver) {
-    return Resource.of(name, cl, fileResolver);
+    return parseResource(name, null, null);
   }
 
   /**
@@ -582,20 +551,53 @@ public final class Clis {
    * <ul>
    * <li>classpath (either explicitly qualified via URI scheme ({@code "classpath:"}), or
    * automatically detected)</li>
-   * <li>filesystem</li>
+   * <li>filesystem (either explicitly qualified via URI scheme ({@code "file:"}), or automatically
+   * detected)</li>
    * <li>generic URL</li>
    * </ul>
    * {@jada.reuseDoc END}
    *
    * @param name
-   *          Resource name (URL, filesystem path or classpath resource (possibly qualified by
-   *          {@code "classpath:"} prefix)).
-   * @param fileResolver
-   *          Filesystem path resolver. Converts relative paths to their absolute counterparts.
+   *          Resource name.
+   * @param cl
+   *          Class loader for resource lookup. If undefined, the caller's class loader is used.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    */
-  public static @Nullable Resource parseResource(String name, Function<Path, Path> fileResolver) {
-    return Resource.of(name, fileResolver);
+  public static @Nullable Resource parseResource(String name, ClassLoader cl) {
+    return parseResource(name, cl, null);
+  }
+
+  /**
+   * {@jada.doc} Parses the resource corresponding to the name.
+   * <p>
+   * Useful to convert textual references to resources (such as those coming from configuration
+   * files or command-line options).
+   * </p>
+   * <p>
+   * Supported sources:
+   * </p>
+   * <ul>
+   * <li>classpath (either explicitly qualified via URI scheme ({@code "classpath:"}), or
+   * automatically detected)</li>
+   * <li>filesystem (either explicitly qualified via URI scheme ({@code "file:"}), or automatically
+   * detected)</li>
+   * <li>generic URL</li>
+   * </ul>
+   * {@jada.doc END}
+   *
+   * @param name
+   *          Resource name.
+   * @param cl
+   *          Class loader for resource lookup. If undefined, the caller's class loader is used.
+   * @param fileResolver
+   *          Resolves relative filesystem paths to their absolute representation. If undefined,
+   *          they are resolved against the filesystem default directory (current working
+   *          directory).
+   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   */
+  public static @Nullable Resource parseResource(String name, @Nullable ClassLoader cl,
+      @Nullable Function<Path, Path> fileResolver) {
+    return Resource.of(name, cl, fileResolver).orElse(null);
   }
 
   private Clis() {

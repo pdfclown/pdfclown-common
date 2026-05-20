@@ -13,17 +13,29 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.Chars.COLON;
+import static org.pdfclown.common.util.Chars.SLASH;
+import static org.pdfclown.common.util.Objects.opt;
+import static org.pdfclown.common.util.Objects.toStringWithValues;
+import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.internal.Internals.ROOT_PACKAGE;
+import static org.pdfclown.common.util.io.Files.path;
 import static org.pdfclown.common.util.net.Uris.SCHEME__CLASSPATH;
+import static org.pdfclown.common.util.net.Uris.SCHEME__FILE;
+import static org.pdfclown.common.util.net.Uris.scheme;
 import static org.pdfclown.common.util.net.Uris.url;
+import static org.pdfclown.common.util.reflect.Reflects.stackFrame;
 
 import java.io.IOError;
+import java.lang.StackWalker.StackFrame;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Immutable;
@@ -36,38 +48,89 @@ import org.pdfclown.common.util.net.Uris;
  */
 @Immutable
 public abstract class AbstractResource implements Resource {
-  static @Nullable Resource of(@Nullable String name, ClassLoader cl,
-      Function<Path, Path> fileResolver, FileSystem fs) {
-
+  /**
+   * @see Resource#of(String, ClassLoader, Function)
+   */
+  static Optional<Resource> of(@Nullable String name, @Nullable ClassLoader cl,
+      @Nullable Function<Path, Path> fileResolver, @Nullable FileSystem fs) {
     if (name == null)
-      return null;
-    else if (name.startsWith(SCHEME__CLASSPATH + COLON))
-      // [explicit classpath resource]
-      return ClasspathResource.of(name, cl, fs);
+      return opt(null);
+
+    if (fs == null) {
+      fs = FileSystems.getDefault();
+    }
+
+    var scheme = scheme(requireNonNull(name, "`name`"));
+    switch (scheme) {
+      case SCHEME__CLASSPATH:
+        // [explicit classpath resource]
+        return ofClasspath(name.substring(scheme.length() + 1), cl, fs);
+      case SCHEME__FILE:
+        // [filesystem resource]
+        try {
+          Path file = path(new URI(name), fs);
+          return opt(Files.exists(file) ? new FileResource(name, file) : null);
+        } catch (URISyntaxException ex) {
+          // NOP
+        }
+        break;
+      default:
+        break;
+    }
 
     try {
-      var file = fs.getPath(name);
+      Path file = fs.getPath(name);
       if (!file.isAbsolute()) {
+        if (fileResolver == null) {
+          fileResolver = Path::toAbsolutePath;
+        }
         file = fileResolver.apply(file);
       }
       if (Files.exists(file))
         // [filesystem resource]
-        return new FileResource(name, file);
+        return opt(new FileResource(name, file));
     } catch (InvalidPathException | IOError ex) {
-      // FALLTHRU
+      // NOP
     }
 
     try {
-      URI uri = new URI(name);
+      var uri = new URI(name);
       if (uri.isAbsolute())
         // [URL resource]
-        return Uris.exists(url(uri)) ? new WebResource(name, uri) : null;
+        return opt(Uris.exists(url(uri)) ? new WebResource(name, uri) : null);
     } catch (URISyntaxException ex) {
-      // FALLTHRU
+      // NOP
     }
 
     // [implicit classpath resource]
-    return ClasspathResource.of(name, cl, fs);
+    return ofClasspath(name, cl, fs);
+  }
+
+  /**
+   * @param name
+   *          Resource name WITHOUT scheme.
+   * @implNote Leading slash is stripped from {@code name} (see also
+   *           {@link Class#getResource(String)}).
+   */
+  private static Optional<Resource> ofClasspath(String name, @Nullable ClassLoader cl,
+      FileSystem fs) {
+    if (cl == null) {
+      cl = stackFrame($ -> !$.getClassName()
+          .startsWith(ROOT_PACKAGE) /* Ignores any intermediate caller within this library */)
+              .map(StackFrame::getDeclaringClass)
+              .orElseThrow().getClassLoader();
+    }
+
+    URL url;
+    {
+      // Strip leading slash!
+      if (name.startsWith(S + SLASH)) {
+        name = name.substring(1);
+      }
+
+      url = cl.getResource(name);
+    }
+    return opt(url != null ? new ClasspathResource(name, url, fs) : null);
   }
 
   private final String name;
@@ -79,5 +142,10 @@ public abstract class AbstractResource implements Resource {
   @Override
   public String getName() {
     return name;
+  }
+
+  @Override
+  public String toString() {
+    return toStringWithValues(this, getName(), getUri());
   }
 }

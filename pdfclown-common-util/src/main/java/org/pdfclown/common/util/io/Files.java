@@ -611,7 +611,70 @@ public final class Files {
    *           nor undefined).
    */
   public static Path path(URI uri) {
-    return path(uri, FileSystems.getDefault());
+    return path(uri, null);
+  }
+
+  /**
+   * Converts the URI to the corresponding path.
+   * <p>
+   * Contrary to {@link Path#of(URI)}, this function supports also relative URIs, remedying the
+   * limitation of the standard API which rejects URIs missing their scheme.
+   * </p>
+   *
+   * @param fs
+   *          Target filesystem.
+   * @throws IllegalArgumentException
+   *           if {@code uri} does not represent a file (that is, its scheme is neither {@code file}
+   *           nor undefined).
+   */
+  public static Path path(URI uri, @Nullable FileSystem fs) {
+    if (fs == null) {
+      fs = FileSystems.getDefault();
+    }
+
+    // Absolute URI?
+    if (uri.isAbsolute()) {
+      if (!isFile(uri))
+        throw wrongArg("uri", uri, "MUST be a file-schemed URI");
+
+      var b = new StringBuilder();
+      // Windows-like?
+      if (fs.getSeparator().equals(S + BACKSLASH)) {
+        String s;
+        // Host.
+        if ((s = uri.getAuthority()) != null) {
+          b.append(fs.getSeparator()).append(fs.getSeparator()).append(s)
+              .append(fs.getSeparator());
+        }
+        // Path.
+        s = uri.getPath();
+        {
+          // Remove leading slashes!
+          int i = 0;
+          while (i < s.length() && s.charAt(i) == SLASH) {
+            i++;
+          }
+          if (i > 0) {
+            s = s.substring(i);
+          }
+          b.append(s);
+        }
+      }
+      // Unix-like.
+      else {
+        String s;
+        // Host.
+        if ((s = uri.getAuthority()) != null) {
+          b.append(fs.getSeparator()).append(s);
+        }
+        // Path.
+        b.append(uri.getPath());
+      }
+      return fs.getPath(b.toString());
+    }
+    // Relative URI.
+    else
+      return fs.getPath(EMPTY, uri.toString());
   }
 
   /**
@@ -622,12 +685,29 @@ public final class Files {
    * </p>
    *
    * @throws IllegalArgumentException
-   *           if {@code uri} does not represent a file (that is, its scheme is neither {@code file}
+   *           if {@code url} does not represent a file (that is, its scheme is neither {@code file}
    *           nor undefined).
    */
   public static Path path(URL url) {
+    return path(url, null);
+  }
+
+  /**
+   * Converts the URL to the corresponding path.
+   * <p>
+   * Contrary to {@link Path#of(URI)}, this function supports also relative URLs, remedying the
+   * limitation of the standard API which rejects URIs missing their scheme.
+   * </p>
+   *
+   * @param fs
+   *          Target filesystem.
+   * @throws IllegalArgumentException
+   *           if {@code url} does not represent a file (that is, its scheme is neither {@code file}
+   *           nor undefined).
+   */
+  public static Path path(URL url, @Nullable FileSystem fs) {
     try {
-      return path(url.toURI());
+      return path(url.toURI(), fs);
     } catch (URISyntaxException ex) {
       throw wrongArg("url", url, null, ex);
     }
@@ -679,57 +759,6 @@ public final class Files {
    */
   public static long size(Path path) {
     return path.toFile().length();
-  }
-
-  /**
-   * @throws IllegalArgumentException
-   *           if {@code uri} does not represent a file (that is, its scheme is neither {@code file}
-   *           nor undefined).
-   */
-  static Path path(URI uri, FileSystem fs) {
-    // Absolute URI?
-    if (uri.isAbsolute()) {
-      if (!isFile(uri))
-        throw wrongArg("uri", uri, "MUST be a file-schemed URI");
-
-      var b = new StringBuilder();
-      // Windows-like?
-      if (fs.getSeparator().equals(S + BACKSLASH)) {
-        String s;
-        // Host.
-        if ((s = uri.getAuthority()) != null) {
-          b.append(fs.getSeparator()).append(fs.getSeparator()).append(s)
-              .append(fs.getSeparator());
-        }
-        // Path.
-        s = uri.getPath();
-        {
-          // Remove leading slashes!
-          int i = 0;
-          while (i < s.length() && s.charAt(i) == SLASH) {
-            i++;
-          }
-          if (i > 0) {
-            s = s.substring(i);
-          }
-          b.append(s);
-        }
-      }
-      // Unix-like.
-      else {
-        String s;
-        // Host.
-        if ((s = uri.getAuthority()) != null) {
-          b.append(fs.getSeparator()).append(s);
-        }
-        // Path.
-        b.append(uri.getPath());
-      }
-      return fs.getPath(b.toString());
-    }
-    // Relative URI.
-    else
-      return fs.getPath(EMPTY, uri.toString());
   }
 
   private static AccumulatorPathVisitor collectFiles(Path dir) throws IOException {
