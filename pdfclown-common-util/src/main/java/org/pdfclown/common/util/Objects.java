@@ -42,6 +42,7 @@ import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.lastIndexOfElse;
 import static org.pdfclown.common.util.function.Functions.to;
 import static org.pdfclown.common.util.function.Functions.toElse;
+import static org.pdfclown.common.util.function.Functions.toNonNull;
 import static org.pdfclown.common.util.function.Functions.tryLet;
 import static org.pdfclown.common.util.reflect.Reflects.stackFrame;
 
@@ -968,7 +969,7 @@ public final class Objects {
     else if (obj instanceof String s)
       return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(s) + DQUOTE;
     else if (obj instanceof Class<?> c)
-      return to(c, $ -> $.getPackageName().startsWith("java.lang")
+      return toNonNull(c, $ -> $.getPackageName().startsWith("java.lang")
           ? $.getSimpleName() /*
                                * NOTE: The names of classes belonging to common packages are
                                * simplified to avoid noise
