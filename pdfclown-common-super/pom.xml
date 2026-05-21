@@ -187,6 +187,7 @@ pdfclown-common-base instead)</description>
     <spotless-maven-plugin.version>3.5.1</spotless-maven-plugin.version>
     <spotless-maven-plugin.eclipseJdt.version>4.37</spotless-maven-plugin.eclipseJdt.version>
     <spotless-maven-plugin.eclipseWtp.version>4.21.0</spotless-maven-plugin.eclipseWtp.version>
+    <spotless-maven-plugin.prettier.version>3.8.3</spotless-maven-plugin.prettier.version>
     <xml-maven-plugin.version>1.2.1</xml-maven-plugin.version>
   </properties>
 
@@ -1595,36 +1596,35 @@ manager.execute()
               <!-- See <https://github.com/diffplug/spotless/tree/main/plugin-maven> -->
 
               <formats>
-                <!--
-                  WARNING: Avoid eclipseWtp for CSS formatting, it's buggy! corrupts property
-                  declarations arbitrarily converting constants to strings, and breaks at-rule
-                  names; for example:
-                    font-family: inherit !important;
-                  to
-                    font-family: "inherit !important";
-                  and
-                    @right-middle {
-                      . . .
-                    }
-                  to
-                    @
-                    right-middle {
-                      . . .
-                    }
-                -->
-
                 <format>
+                  <!--
+                    WARNING: DO NOT use eclipseWtp for CSS formatting, it's buggy! It corrupts
+                    property declarations arbitrarily converting constants to strings, and breaks
+                    at-rule names; for example:
+                      font-family: inherit !important;
+                    to
+                      font-family: "inherit !important";
+                    and
+                      @right-middle {
+                        . . .
+                      }
+                    to
+                      @
+                      right-middle {
+                        . . .
+                      }
+                  -->
                   <includes>
                     <include>src/**/*.css</include>
                     <include>src/**/*.html</include>
                   </includes>
-                  <!-- DO NOT alter test resources (their formatting may be significant) -->
                   <excludes>
+                    <!-- DO NOT alter test resources (their formatting may be significant) -->
                     <exclude>src/test/**/*</exclude>
                   </excludes>
 
                   <prettier>
-                    <prettierVersion>2.0.5</prettierVersion>
+                    <prettierVersion>${spotless-maven-plugin.prettier.version}</prettierVersion>
                     <config>
                       <printWidth>100</printWidth>
                     </config>
@@ -1639,7 +1639,6 @@ manager.execute()
 
                   <eclipseWtp>
                     <version>${spotless-maven-plugin.eclipseWtp.version}</version>
-
                     <type>XML</type>
                     <files>
                       <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/org.eclipse.wst.xml.core.prefs</file>
@@ -1651,9 +1650,7 @@ manager.execute()
               <java>
                 <eclipse>
                   <version>${spotless-maven-plugin.eclipseJdt.version}</version>
-
                   <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/java-style.xml</file>
-
                   <sortMembersEnabled>true</sortMembersEnabled>
                   <!-- Sort order of the member categories:
                   - T: (Nested) Types
