@@ -79,23 +79,6 @@ class ConditionsTest extends BaseTest {
   }
 
   @Test
-  void requireRange__failure() {
-    final int value = 42;
-
-    var exception = assertThrows(IllegalArgumentException.class, () -> {
-      Conditions.requireRange(value, 40, 41, "myIntParam");
-    });
-    assertEquals("`myIntParam` (42): MUST be between 40 and 41", exception.getMessage());
-  }
-
-  @Test
-  void requireRange__success() {
-    final int value = 42;
-
-    assertEquals(value, Conditions.requireRange(value, 40, 42));
-  }
-
-  @Test
   void requireType_Class__failure() {
     Number value = 1L;
 
@@ -134,5 +117,22 @@ class ConditionsTest extends BaseTest {
     Number result = Conditions.requireType(value, List.of(Boolean.class, Long.class,
         Range.class), "myParam");
     assertEquals(value, result);
+  }
+
+  @Test
+  void requireWithin__failure() {
+    final int value = 42;
+
+    var exception = assertThrows(IllegalArgumentException.class, () -> {
+      Conditions.requireWithin(value, 40, 41, "myIntParam");
+    });
+    assertEquals("`myIntParam` (42): MUST be between 40 and 41", exception.getMessage());
+  }
+
+  @Test
+  void requireWithin__success() {
+    final int value = 42;
+
+    assertEquals(value, Conditions.requireWithin(value, 40, 42));
   }
 }

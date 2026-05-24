@@ -231,34 +231,6 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is within unsigned-byte range, that is between 0 and 255 (inclusive).
-   *
-   * @param value
-   *          Value to validate.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static int requireByteRange(int value) {
-    return requireByteRange(value, null);
-  }
-
-  /**
-   * Requires the value is within unsigned-byte range, that is between 0 and 255 (inclusive).
-   *
-   * @param value
-   *          Value to validate.
-   * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static int requireByteRange(int value, @Nullable String name) {
-    return requireRange(value, 0, 255, name);
-  }
-
-  /**
    * Requires the directory exists.
    *
    * @return {@code dir}
@@ -441,38 +413,6 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is within normal range, that is between 0 and 1 (inclusive).
-   *
-   * @param <T>
-   *          Value type.
-   * @param value
-   *          Value to validate.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static <T extends Number> T requireNormalRange(T value) {
-    return requireNormalRange(value, null);
-  }
-
-  /**
-   * Requires the value is within normal range, that is between 0 and 1 (inclusive).
-   *
-   * @param <T>
-   *          Value type.
-   * @param value
-   *          Value to validate.
-   * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static <T extends Number> T requireNormalRange(T value, @Nullable String name) {
-    return requireRange(value, 0, 1, name);
-  }
-
-  /**
    * Requires the value is not {@linkplain String#isBlank() blank}.
    *
    * @param value
@@ -505,88 +445,6 @@ public final class Conditions {
       return value;
 
     throw wrongArg(name, value, "MUST NOT be blank");
-  }
-
-  /**
-   * Requires the value is within the range (inclusive).
-   * <p>
-   * For arbitrary bounds, use {@link #requireRange(Number, Range, String)} instead.
-   * </p>
-   *
-   * @param value
-   *          Value to validate.
-   * @param min
-   *          Lower bound.
-   * @param max
-   *          Higher bound.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static <T extends Number> T requireRange(T value, int min, int max) {
-    return requireRange(value, min, max, null);
-  }
-
-  /**
-   * Requires the value is within the range (inclusive).
-   * <p>
-   * For arbitrary bounds, use {@link #requireRange(Number, Range, String)} instead.
-   * </p>
-   *
-   * @param value
-   *          Value to validate.
-   * @param min
-   *          Lower bound.
-   * @param max
-   *          Higher bound.
-   * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static <T extends Number> T requireRange(T value, int min, int max,
-      @Nullable String name) {
-    if (value.floatValue() < min
-        || value.floatValue() > max)
-      throw wrongArg(name, value, "MUST be between {} and {}", min, max);
-
-    return value;
-  }
-
-  /**
-   * Requires the value is within the range.
-   *
-   * @param value
-   *          Value to validate.
-   * @param range
-   *          Range.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static <T extends Number> T requireRange(T value, Range<T> range) {
-    return requireRange(value, range, null);
-  }
-
-  /**
-   * Requires the value is within the range.
-   *
-   * @param value
-   *          Value to validate.
-   * @param range
-   *          Range.
-   * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static <T extends Number> T requireRange(T value, Range<T> range, @Nullable String name) {
-    if (range.contains(value))
-      return value;
-
-    throw wrongArg(name, value, "MUST be within {} range", range);
   }
 
   /**
@@ -738,6 +596,148 @@ public final class Conditions {
     }
 
     throw wrongArgOpt(name, value, null, types);
+  }
+
+  /**
+   * Requires the value is within the range (inclusive).
+   * <p>
+   * For arbitrary bounds, use {@link #requireWithin(Number, Range, String)} instead.
+   * </p>
+   *
+   * @param value
+   *          Value to validate.
+   * @param min
+   *          Lower bound.
+   * @param max
+   *          Higher bound.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static <T extends Number> T requireWithin(T value, int min, int max) {
+    return requireWithin(value, min, max, null);
+  }
+
+  /**
+   * Requires the value is within the range (inclusive).
+   * <p>
+   * For arbitrary bounds, use {@link #requireWithin(Number, Range, String)} instead.
+   * </p>
+   *
+   * @param value
+   *          Value to validate.
+   * @param min
+   *          Lower bound.
+   * @param max
+   *          Higher bound.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static <T extends Number> T requireWithin(T value, int min, int max,
+      @Nullable String name) {
+    if (value.floatValue() < min
+        || value.floatValue() > max)
+      throw wrongArg(name, value, "MUST be between {} and {}", min, max);
+
+    return value;
+  }
+
+  /**
+   * Requires the value is within the range.
+   *
+   * @param value
+   *          Value to validate.
+   * @param range
+   *          Range.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static <T extends Number> T requireWithin(T value, Range<T> range) {
+    return requireWithin(value, range, null);
+  }
+
+  /**
+   * Requires the value is within the range.
+   *
+   * @param value
+   *          Value to validate.
+   * @param range
+   *          Range.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static <T extends Number> T requireWithin(T value, Range<T> range, @Nullable String name) {
+    if (range.contains(value))
+      return value;
+
+    throw wrongArg(name, value, "MUST be within {} range", range);
+  }
+
+  /**
+   * Requires the value is within unsigned-byte range, that is between 0 and 255 (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireWithinByte(int value) {
+    return requireWithinByte(value, null);
+  }
+
+  /**
+   * Requires the value is within unsigned-byte range, that is between 0 and 255 (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireWithinByte(int value, @Nullable String name) {
+    return requireWithin(value, 0, 255, name);
+  }
+
+  /**
+   * Requires the value is within normal range, that is between 0 and 1 (inclusive).
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static <T extends Number> T requireWithinNormal(T value) {
+    return requireWithinNormal(value, null);
+  }
+
+  /**
+   * Requires the value is within normal range, that is between 0 and 1 (inclusive).
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static <T extends Number> T requireWithinNormal(T value, @Nullable String name) {
+    return requireWithin(value, 0, 1, name);
   }
 
   private Conditions() {
