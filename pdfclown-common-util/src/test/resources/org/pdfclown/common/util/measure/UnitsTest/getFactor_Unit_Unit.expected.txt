@@ -1,7 +1,7 @@
-[unit: m, target: m] => 1
-[unit: m, target: cm] => 100
-[unit: ft, target: km] => 0.0003
+[unit: m, target: m] => 1.0
+[unit: m, target: cm] => 100.0
+[unit: ft, target: km] => 3.048E-4
 [unit: ft, target: ft²] => <<UnconvertibleException: "javax.measure.IncommensurableException: ft is not compatible with ft²">>
-[unit: ac, target: ha] => 0.40469
-[unit: ℃, target: K] => 1
+[unit: ac, target: ha] => 4.046856422E-1
+[unit: ℃, target: K] => 1.0
 [unit: h, target: K] => <<UnconvertibleException: "javax.measure.IncommensurableException: h is not compatible with K">>

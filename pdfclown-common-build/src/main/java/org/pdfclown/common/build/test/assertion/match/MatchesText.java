@@ -16,8 +16,8 @@ import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.abbreviate;
 import static org.apache.commons.lang3.StringUtils.leftPad;
+import static org.pdfclown.common.build.internal.temp.util.Objects.found;
 import static org.pdfclown.common.util.Chars.LF;
-import static org.pdfclown.common.util.Objects.found;
 import static org.pdfclown.common.util.Strings.ELLIPSIS;
 import static org.pdfclown.common.util.Strings.EMPTY;
 

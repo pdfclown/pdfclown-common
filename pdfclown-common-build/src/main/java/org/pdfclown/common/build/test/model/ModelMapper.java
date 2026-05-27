@@ -13,15 +13,15 @@
 package org.pdfclown.common.build.test.model;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
+import static org.pdfclown.common.build.internal.temp.util.Objects.sqn;
+import static org.pdfclown.common.build.internal.temp.util.Objects.superTypes;
+import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithProperties;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongState;
-import static org.pdfclown.common.util.Objects.fqn;
-import static org.pdfclown.common.util.Objects.sqn;
-import static org.pdfclown.common.util.Objects.superTypes;
-import static org.pdfclown.common.util.Objects.toStringWithProperties;
 import static org.pdfclown.common.util.Strings.S;
 
 import java.beans.IntrospectionException;
@@ -41,10 +41,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.Objects.HierarchicalTypeComparator;
+import org.pdfclown.common.build.internal.temp.util.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
 import org.pdfclown.common.util.DynamicMap;
-import org.pdfclown.common.util.Objects.HierarchicalTypeComparator;
-import org.pdfclown.common.util.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
 import org.pdfclown.common.util.annot.InitNonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

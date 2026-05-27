@@ -14,10 +14,10 @@ package org.pdfclown.common.build.test;
 
 import static java.nio.file.Files.exists;
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.temp.util.Objects.asTopLevelType;
+import static org.pdfclown.common.build.internal.temp.util.Objects.init;
+import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Objects.asTopLevelType;
-import static org.pdfclown.common.util.Objects.init;
-import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.util.io.Files.resetDirectory;

@@ -13,9 +13,9 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.temp.util.Objects.OBJ_ARRAY__EMPTY;
+import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
 import static org.pdfclown.common.util.Exceptions.missing;
-import static org.pdfclown.common.util.Objects.OBJ_ARRAY__EMPTY;
-import static org.pdfclown.common.util.Objects.fqn;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;

@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.build.spi;
 
-import static org.pdfclown.common.util.Objects.sqnd;
+import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
 import static org.pdfclown.common.util.function.Functions.to;
 
 import java.util.ArrayList;

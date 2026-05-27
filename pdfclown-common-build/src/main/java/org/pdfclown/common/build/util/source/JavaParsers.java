@@ -12,8 +12,8 @@
  */
 package org.pdfclown.common.build.util.source;
 
-import static org.pdfclown.common.util.Objects.enclosingTypes;
-import static org.pdfclown.common.util.Objects.opt;
+import static org.pdfclown.common.build.internal.temp.util.Objects.enclosingTypes;
+import static org.pdfclown.common.build.internal.temp.util.Objects.opt;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.TypeDeclaration;

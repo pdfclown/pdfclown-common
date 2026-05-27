@@ -13,9 +13,9 @@
 package org.pdfclown.common.build.system;
 
 import static java.nio.file.Files.isRegularFile;
+import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.Conditions.requireDirectory;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.io.Files.normal;
 
 import java.io.FileNotFoundException;

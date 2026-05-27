@@ -270,6 +270,10 @@ class ObjectsTest extends BaseTest {
         QN_TYPENAMES);
   }
 
+  /**
+   * @implNote TODO: Anytime the expected result of this test changes, it should be manually copied
+   *           to {@link #parseLiteral()} as {@code s} argument list.
+   */
   @Test
   void literal() {
     COMBINATION.verify(
@@ -278,25 +282,41 @@ class ObjectsTest extends BaseTest {
         // obj
         asList(
             null,
+            // integer
             1_234,
+            // single-precision floating-point number
+            1.987f,
+            // double-precision floating-point number
             1.987,
+            // double-precision floating-point number
             1.5e-4,
+            // special single-precision floating-point number
+            Float.NaN,
+            Float.NEGATIVE_INFINITY,
+            Float.POSITIVE_INFINITY,
+            // special double-precision floating-point number
+            Double.NaN,
+            Double.NEGATIVE_INFINITY,
+            Double.POSITIVE_INFINITY,
+            // boolean
             true,
+            // char
             '\'',
             '"',
+            // string
             EMPTY,
+            // string with whitespace
             "Text with:\n- \"quoted content\"\n- newlines",
+            // string with characters outside the BMP
             "测试文本",
+            // class
             String.class,
             Stream.class,
             Strings.class,
+            // generic object
             of("one", "two")));
   }
 
-  /**
-   * @implNote The {@code s} argument list corresponds to the expected result of {@link #literal()};
-   *           in case that the expected result changes, it should be manually copied here.
-   */
   @Test
   void parseLiteral() {
     COMBINATION.verify(
@@ -507,10 +527,30 @@ class ObjectsTest extends BaseTest {
             asList(
                 // null object
                 null,
-                // floating-point number
-                -0.123456789,
+                // single-precision floating-point number with limited decimal places
+                -0.12345f,
+                // double-precision floating-point number with limited decimal places
+                -0.12345,
+                // single-precision floating-point number with exceeding decimal places and rounding to floor
+                -0.1234567891234f,
+                // double-precision floating-point number with exceeding decimal places and rounding to floor
+                -0.1234567891234,
+                // single-precision floating-point number with exceeding decimal places and rounding to ceiling
+                -0.1234567891567f,
+                // double-precision floating-point number with exceeding decimal places and rounding to ceiling
+                -0.1234567891567,
+                // tiny single-precision floating-point number
+                -0.0000123456789f,
+                // tiny double-precision floating-point number
+                -0.0000123456789,
+                // single-precision floating-point number clipped to integer
+                100.000000000001f,
+                // double-precision floating-point number clipped to integer
+                100.000000000001,
+                // integer
+                100,
                 // array
-                new double[] { -0.123456789, Double.NaN },
+                new double[] { 1234, -0.123456789, Double.NaN, Float.NEGATIVE_INFINITY },
                 // collection
                 List.of("yellow", "green", "blue", "red", "pink", "magenta"),
                 // set
@@ -520,6 +560,8 @@ class ObjectsTest extends BaseTest {
                     .with("yellow", null)
                     .with("green", 1)
                     .with("blue", -0.123456789)
+                    .with("black", Double.POSITIVE_INFINITY)
+                    .with("white", Float.NaN)
                     .with("red", '2')
                     .with("pink", true)
                     .with("magenta", Set.of("yellow", "green", "blue", "red", "pink", "magenta")),

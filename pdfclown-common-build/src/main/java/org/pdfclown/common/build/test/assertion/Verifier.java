@@ -13,11 +13,11 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.stream.Collectors.joining;
+import static org.pdfclown.common.build.internal.temp.util.Objects.literal;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Objects.literal;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 

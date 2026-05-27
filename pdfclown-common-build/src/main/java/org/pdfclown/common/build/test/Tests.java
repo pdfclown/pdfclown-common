@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.build.test;
 
-import static org.pdfclown.common.util.Objects.anyThat;
+import static org.pdfclown.common.build.internal.temp.util.Objects.anyThat;
 
 import java.lang.StackWalker.StackFrame;
 import java.lang.reflect.AccessibleObject;

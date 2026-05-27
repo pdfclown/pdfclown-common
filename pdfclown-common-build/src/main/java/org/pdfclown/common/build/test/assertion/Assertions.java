@@ -14,8 +14,8 @@ package org.pdfclown.common.build.test.assertion;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.pdfclown.common.build.internal.temp.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
-import static org.pdfclown.common.util.Objects.textLiteral;
 
 import java.nio.file.Path;
 import java.util.Comparator;

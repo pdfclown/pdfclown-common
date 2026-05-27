@@ -3,20 +3,22 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Objects.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (Objects.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.build.internal.temp.util;
 
 import static java.lang.Math.subtractExact;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNormal;
 import static org.pdfclown.common.util.Booleans.parseBoolean;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.COMMA;
@@ -31,8 +33,6 @@ import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
-import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.util.Conditions.requireNormal;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Numbers.parseNumber;
@@ -95,6 +95,9 @@ import org.apache.commons.text.translate.JavaUnicodeEscaper;
 import org.apache.commons.text.translate.LookupTranslator;
 import org.apache.commons.text.translate.OctalUnescaper;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.ArgumentException;
+import org.pdfclown.common.util.Cloneable;
+import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.PolyNull;
 import org.pdfclown.common.util.regex.Patterns;
 import org.pdfclown.common.util.stream.Streams;

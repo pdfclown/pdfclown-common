@@ -13,10 +13,10 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
+import static org.pdfclown.common.build.internal.temp.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SPACE;
-import static org.pdfclown.common.util.Objects.sqnd;
-import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.io.Files.diff;
 
 import java.io.FileNotFoundException;

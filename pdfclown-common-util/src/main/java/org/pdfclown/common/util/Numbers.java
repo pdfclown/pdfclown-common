@@ -79,6 +79,20 @@ public final class Numbers {
   // SPDX-SnippetEnd
 
   /**
+   * Gets whether a value is equivalent to an integer.
+   */
+  public static boolean isInteger(double value) {
+    return value == (int) value;
+  }
+
+  /**
+   * Gets whether a value is equivalent to an integer.
+   */
+  public static boolean isInteger(float value) {
+    return value == (int) value;
+  }
+
+  /**
    * Converts the string to the corresponding number.
    * <p>
    * See {@link NumberUtils#createNumber(String)} for more information.
