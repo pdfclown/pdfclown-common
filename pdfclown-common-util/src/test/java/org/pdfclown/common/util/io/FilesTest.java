@@ -50,9 +50,9 @@ class FilesTest extends BaseTest {
       "/home/me/my/test/obj-5.2.9.tar2.gz");
 
   @Test
-  void baseName_full() {
+  void basename_full() {
     COMBINATION.verify(
-        (file) -> Files.baseName(file, true),
+        (file) -> Files.basename(file, true),
         List.of("file"),
         // file
         FILES);

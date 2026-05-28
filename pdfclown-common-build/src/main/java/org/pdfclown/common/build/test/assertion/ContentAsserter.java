@@ -20,11 +20,11 @@ import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.temp.util.Objects.textLiteral;
+import static org.pdfclown.common.build.internal.temp.util.io.Files.basename;
 import static org.pdfclown.common.build.test.assertion.Verifier.Namer.FILE_QUALIFIER__APPROVED;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__ZIP;
-import static org.pdfclown.common.util.io.Files.baseName;
 import static org.pdfclown.common.util.io.Files.extension;
 import static org.pdfclown.common.util.io.Files.isExtension;
 
@@ -230,7 +230,7 @@ public abstract class ContentAsserter<T> extends Asserter {
     String filename = file.getFileName().toString();
     if (isExtension(filename, FILE_EXTENSION__ZIP)) {
       try (var out = new ZipOutputStream(new FileOutputStream(file.toFile()))) {
-        out.putNextEntry(new ZipEntry(baseName(filename)));
+        out.putNextEntry(new ZipEntry(basename(filename)));
         out.write(content.getBytes(UTF_8));
       }
     } else {
