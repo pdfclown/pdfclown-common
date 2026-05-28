@@ -773,7 +773,7 @@ public final class Objects {
   /**
    * Gets the fully-qualified class name of an object.
    * <p>
-   * Corresponds to the {@linkplain Class#getName() class name}. The class is resolved via
+   * Corresponds to the {@linkplain Class#getName() class name}, resolved via
    * {@link #asType(Object)}.
    * </p>
    *
@@ -789,10 +789,10 @@ public final class Objects {
   /**
    * Gets the dotted fully-qualified class name of an object.
    * <p>
-   * The {@linkplain Class#getName() class name} has its inner-class separators ($) replaced with
-   * dots (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "org.pdfclown.common.util.Objects.ClassXCastException"}). The class is resolved via
-   * {@link #asType(Object)}.
+   * The {@linkplain Class#getName() class name}, resolved via {@link #asType(Object)}, has its
+   * inner-class separators ($) replaced with dots (for example,
+   * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
+   * {@code "org.pdfclown.common.util.Objects.ClassXCastException"}).
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -1174,10 +1174,10 @@ public final class Objects {
   /**
    * Gets the shortened fully-qualified class name of an object.
    * <p>
-   * The {@linkplain Class#getName() class name} has each package segment reduced to its initial
-   * character (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "o.p.c.u.Objects$ClassXCastException"}). The class is resolved via
-   * {@link #asType(Object)}.
+   * The {@linkplain Class#getName() class name}, resolved via {@link #asType(Object)}, has each
+   * package segment reduced to its initial character (for example,
+   * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
+   * {@code "o.p.c.u.Objects$ClassXCastException"}).
    * </p>
    * <p>
    * Useful for repetitive messaging, like logs, where lengthy names become noisy.
@@ -1214,11 +1214,10 @@ public final class Objects {
   /**
    * Gets the shortened dotted fully-qualified class name of an object.
    * <p>
-   * The {@linkplain Class#getName() class name} has each package segment reduced to its initial
-   * character, then its inner-class separators ($) replaced with dots (for example,
-   * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "o.p.c.u.Objects.ClassXCastException"}). The class is resolved via
-   * {@link #asType(Object)}.
+   * The {@linkplain Class#getName() class name}, resolved via {@link #asType(Object)}, has each
+   * package segment reduced to its initial character, then its inner-class separators ($) replaced
+   * with dots (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
+   * {@code "o.p.c.u.Objects.ClassXCastException"}).
    * </p>
    * <p>
    * Useful for repetitive messaging, like logs, where lengthy names become noisy.
@@ -1304,10 +1303,10 @@ public final class Objects {
   /**
    * Gets the simply-qualified class name of an object.
    * <p>
-   * The {@linkplain Class#getSimpleName() simple class name} is qualified with its enclosing
-   * classes till the top level (for example,
+   * The {@linkplain Class#getSimpleName() simple class name}, resolved via {@link #asType(Object)},
+   * is qualified with its enclosing classes till the top level (for example,
    * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "Objects$ClassXCastException"}). The class is resolved via {@link #asType(Object)}.
+   * {@code "Objects$ClassXCastException"}).
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
@@ -1339,10 +1338,10 @@ public final class Objects {
   /**
    * Gets the dotted simply-qualified class name of an object.
    * <p>
-   * The {@linkplain Class#getSimpleName() simple class name} is qualified with its enclosing
-   * classes till the top level, replacing inner-class separators ($) with dots (for example,
-   * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
-   * {@code "Objects.ClassXCastException"}). The class is resolved via {@link #asType(Object)}.
+   * The {@linkplain Class#getSimpleName() simple class name}, resolved via {@link #asType(Object)},
+   * is qualified with its enclosing classes till the top level, replacing inner-class separators
+   * ($) with dots (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException}
+   * returns {@code "Objects.ClassXCastException"}).
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
