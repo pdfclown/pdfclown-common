@@ -23,9 +23,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.util.io.Files.Diff;
 import org.pdfclown.common.util.io.Files.Diff.FileStatus;
-import org.pdfclown.common.util.io.ResourceNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,7 @@ public class FileTreeAsserter extends Asserter {
    */
   public void assertEquals(final String expectedDirResourceName,
       final Path actualDir, final Config config) {
-    final String expectedDirResourceFqn = ResourceNames.absBased(expectedDirResourceName,
+    final String expectedDirResourceFqn = ResourceNames.localName(expectedDirResourceName,
         config.getTest());
     final Path expectedDir = config.getEnv().resourcePath(expectedDirResourceFqn);
     try {

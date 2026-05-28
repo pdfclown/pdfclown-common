@@ -107,7 +107,7 @@ public interface TestEnvironment {
    * @return
    *         <ul>
    *         <li>if {@code name} is absolute: {@code name}</li>
-   *         <li>if {@code name} is relative: <code>"/%TEST_PACKAGE%/_%TEST_SQN%/%name%"</code>,
+   *         <li>if {@code name} is relative: <code>"/%TEST_PACKAGE%/%TEST_SQN%/%name%"</code>,
    *         where {@code TEST_PACKAGE} is the slash-separated {@linkplain Class#getPackageName()
    *         fully-qualified class package name} of the test class, and {@code TEST_SQN} is the
    *         {@linkplain org.pdfclown.common.util.Objects#sqn(Object) simply-qualified class name}

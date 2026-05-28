@@ -22,10 +22,9 @@ import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.temp.util.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.basename;
 import static org.pdfclown.common.build.test.assertion.Verifier.Namer.FILE_QUALIFIER__APPROVED;
+import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__ZIP;
-import static org.pdfclown.common.util.io.Files.extension;
 import static org.pdfclown.common.util.io.Files.isExtension;
 
 import java.io.ByteArrayOutputStream;
@@ -41,8 +40,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.util.Exceptions;
-import org.pdfclown.common.util.io.ResourceNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,11 +59,14 @@ import org.slf4j.LoggerFactory;
 public abstract class ContentAsserter<T> extends Asserter {
   private static final Logger log = LoggerFactory.getLogger(ContentAsserter.class);
 
+  private static final String FILE_QUALIFIER__UNEXPECTED = DOT + "UNEXPECTED";
+
   /**
    * Asserts that a file matches the expected one.
    *
-   * @param expectedResourceName
-   *          Resource name of the expected file.
+   * @param expectedResourceBasename
+   *          Resource basename of the expected file. If relative, it is resolved on the local name
+   *          of {@link Config#getTest() config.getTest()}.
    * @param actualFile
    *          Actual file.
    * @param config
@@ -73,9 +75,10 @@ public abstract class ContentAsserter<T> extends Asserter {
    *           if {@code actualFile} doesn't match the content of {@code expectedResourceName}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
-  protected final void doAssertEquals(String expectedResourceName, Path actualFile, Config config) {
+  protected final void doAssertEquals(String expectedResourceBasename, String fileExtension,
+      Path actualFile, Config config) {
     try {
-      doAssertEquals(expectedResourceName, readContent(actualFile), config);
+      doAssertEquals(expectedResourceBasename, fileExtension, readContent(actualFile), config);
     } catch (IOException ex) {
       fail(ex);
     }
@@ -84,8 +87,9 @@ public abstract class ContentAsserter<T> extends Asserter {
   /**
    * Asserts that a content matches the expected one.
    *
-   * @param expectedResourceName
-   *          Resource name of the expected content.
+   * @param expectedResourceBasename
+   *          Resource basename of the expected content. If relative, it is resolved on the local
+   *          name of {@link Config#getTest() config.getTest()}.
    * @param actualContent
    *          Actual content.
    * @param config
@@ -94,10 +98,11 @@ public abstract class ContentAsserter<T> extends Asserter {
    *           if {@code actualContent} doesn't match the content of {@code expectedResourceName}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
-  protected final void doAssertEquals(final String expectedResourceName, final T actualContent,
+  protected final void doAssertEquals(final String expectedResourceBasename, String fileExtension,
+      final T actualContent,
       final Config config) {
-    final String expectedResourceFqn = ResourceNames.absBased(expectedResourceName,
-        config.getTest());
+    final String expectedResourceFqn = ResourceNames.localName(expectedResourceBasename
+        + FILE_QUALIFIER__APPROVED + fileExtension, config.getTest());
     final Path expectedFile = config.getEnv().resourcePath(expectedResourceFqn);
     try {
       var built = false;
@@ -111,30 +116,22 @@ public abstract class ContentAsserter<T> extends Asserter {
         } catch (AssertionError | FileNotFoundException | NoSuchFileException ex) {
           // Unrecoverable?
           if (built || !isUpdatable()) {
-            var baseResourceFqn = substringBefore(expectedResourceFqn, FILE_QUALIFIER__APPROVED);
-            if (baseResourceFqn.equals(expectedResourceFqn))
-              throw runtime("Filename of expected file {} MUST contain {} qualifier",
-                  expectedResourceFqn, textLiteral(FILE_QUALIFIER__APPROVED));
-
-            var extension = expectedResourceFqn.substring(baseResourceFqn.length()
-                + FILE_QUALIFIER__APPROVED.length());
-
-            Path unexpectedActualFile = config.getEnv().outputPath(baseResourceFqn + ".UNEXPECTED"
-                + extension);
+            Path actualFile = config.getEnv().outputPath(substringBefore(expectedResourceFqn,
+                FILE_QUALIFIER__APPROVED) + FILE_QUALIFIER__UNEXPECTED + fileExtension);
             try {
               // Save unexpected actual content!
-              createDirectories(unexpectedActualFile.getParent());
-              writeContent(unexpectedActualFile, actualContent);
+              createDirectories(actualFile.getParent());
+              writeContent(actualFile, actualContent);
 
               log.info("Assertion sample {}: unexpected actual content saved to {} "
                   + "(expected content is at {})", textLiteral(expectedResourceFqn),
-                  textLiteral(unexpectedActualFile), textLiteral(expectedFile));
+                  textLiteral(actualFile), textLiteral(expectedFile));
             } catch (Exception ex1) {
               log.warn("Assertion sample {}: unexpected actual content saving FAILED: {}",
-                  textLiteral(expectedResourceFqn), textLiteral(unexpectedActualFile), ex1);
+                  textLiteral(expectedResourceFqn), textLiteral(actualFile), ex1);
             }
 
-            evalAssertionError(ex.getMessage(), expectedFile, unexpectedActualFile);
+            evalAssertionError(ex.getMessage(), expectedFile, actualFile);
           }
 
           /*
@@ -164,8 +161,8 @@ public abstract class ContentAsserter<T> extends Asserter {
    * Asserts that a content matches the expected one.
    * <p>
    * <span class="important">IMPORTANT: This method is for internal use only; derived classes should
-   * call {@link #doAssertEquals(String, Object, Config)} or
-   * {@link #doAssertEquals(String, Path, Config)} instead.</span>
+   * call {@link #doAssertEquals(String, String, Object, Config)} or
+   * {@link #doAssertEquals(String, String, Path, Config)} instead.</span>
    * </p>
    */
   protected abstract void doAssertEquals(T expectedContent, T actualContent);

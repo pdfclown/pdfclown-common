@@ -14,8 +14,10 @@ package org.pdfclown.common.build.test.assertion;
 
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.temp.util.Objects.typeOf;
+import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__JSON;
 import static org.pdfclown.common.util.Conditions.requireType;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
+import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__ZIP;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -55,6 +57,8 @@ import org.slf4j.LoggerFactory;
 public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object> {
   private static final Logger log = LoggerFactory.getLogger(ModelAsserter.class);
 
+  private static final String FILE_EXTENSION__JSON_ZIP = FILE_EXTENSION__JSON + FILE_EXTENSION__ZIP;
+
   protected Supplier<ModelComparator<TDiff, ? extends TMapDiff>> modelComparatorSupplier;
   protected Supplier<ModelMapper<TMapDiff>> modelDiffMapperSupplier;
   protected Supplier<ModelMapper<TMap>> modelMapperSupplier;
@@ -78,8 +82,10 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
   /**
    * Asserts that the difference between objects matches the expected one.
    *
-   * @param expectedDiffResourceName
-   *          Resource name of the expected object difference in serialized (JSON) form.
+   * @param expectedDiffResourceBasename
+   *          Resource basename of the expected object difference in serialized (JSON) form. If
+   *          relative, it is resolved on the local name of {@link Config#getTest()
+   *          config.getTest()}.
    * @param inputObj
    *          Input object.
    * @param outputObj
@@ -91,7 +97,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    *           one loaded from {@code expectedDiffResourceName}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
-  public void assertDiffEquals(String expectedDiffResourceName, TDiff inputObj, TDiff outputObj,
+  public void assertDiffEquals(String expectedDiffResourceBasename, TDiff inputObj, TDiff outputObj,
       Config config) {
     // Compare the objects!
     List<? extends TMapDiff> diffs = modelComparatorSupplier.get().compare(inputObj, outputObj);
@@ -100,14 +106,15 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
     JsonArray actualJsonArray = modelDiffMapperSupplier.get().mapAll(diffs);
 
     // Check consistency with expected comparison!
-    doAssertEquals(expectedDiffResourceName, actualJsonArray, config);
+    doAssertEquals(expectedDiffResourceBasename, FILE_EXTENSION__JSON_ZIP, actualJsonArray, config);
   }
 
   /**
    * Asserts that an object matches the expected one.
    *
-   * @param expectedObjResourceName
-   *          Resource name of the expected object in serialized (JSON) form.
+   * @param expectedObjResourceBasename
+   *          Resource basename of the expected object in serialized (JSON) form. If relative, it is
+   *          resolved on the local name of {@link Config#getTest() config.getTest()}.
    * @param actualObj
    *          Actual object.
    * @param config
@@ -117,15 +124,16 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    *           {@code expectedObjResourceName}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
-  public void assertEquals(String expectedObjResourceName, TMap actualObj, Config config) {
-    assertEquals(expectedObjResourceName, actualObj, List.of(), config);
+  public void assertEquals(String expectedObjResourceBasename, TMap actualObj, Config config) {
+    assertEquals(expectedObjResourceBasename, actualObj, List.of(), config);
   }
 
   /**
    * Asserts that an object matches the expected one.
    *
-   * @param expectedObjResourceName
-   *          Resource name of the expected object in serialized (JSON) form.
+   * @param expectedObjResourceBasename
+   *          Resource basename of the expected object in serialized (JSON) form. If relative, it is
+   *          resolved on the local name of {@link Config#getTest() config.getTest()}.
    * @param actualObj
    *          Actual object.
    * @param objSelectors
@@ -137,7 +145,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    *           {@code expectedObjResourceName}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
-  public void assertEquals(String expectedObjResourceName, TMap actualObj,
+  public void assertEquals(String expectedObjResourceBasename, TMap actualObj,
       List<PropertySelector> objSelectors, Config config) {
     /*
      * Property selector consolidation.
@@ -183,7 +191,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
     var actualJsonObj = modelMapperSupplier.get().map(actualObj, objSelectors);
 
     // Check consistency with expected object!
-    doAssertEquals(expectedObjResourceName, actualJsonObj, config);
+    doAssertEquals(expectedObjResourceBasename, FILE_EXTENSION__JSON_ZIP, actualJsonObj, config);
   }
 
   @Override
