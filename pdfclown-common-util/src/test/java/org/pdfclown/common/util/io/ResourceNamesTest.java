@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.__test.BaseTest;
 
 /**
@@ -34,7 +35,8 @@ public class ResourceNamesTest extends BaseTest {
       null,
       EMPTY,
       ResourceNames.class,
-      ResourceNames.class.getPackageName());
+      ResourceNames.class.getPackageName(),
+      Objects.HierarchicalTypeComparator.class);
 
   public static final List<String> NAMES = asList(
       // Normal absolute root
@@ -142,6 +144,17 @@ public class ResourceNamesTest extends BaseTest {
         List.of("name"),
         // name
         NAMES);
+  }
+
+  @Test
+  void localName() {
+    COMBINATION.verify(
+        (name, obj) -> ResourceNames.localName(name, obj),
+        List.of("name", "obj"),
+        // name
+        NAMES,
+        // obj
+        BASES);
   }
 
   @Test

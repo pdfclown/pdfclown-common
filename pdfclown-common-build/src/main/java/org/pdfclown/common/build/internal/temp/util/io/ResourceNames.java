@@ -3,14 +3,14 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (ResourceNames.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (ResourceNames.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util.io;
+package org.pdfclown.common.build.internal.temp.util.io;
 
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
@@ -26,6 +26,7 @@ import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.io.Files;
 
 /**
  * Resource name utilities.
@@ -141,7 +142,7 @@ public final class ResourceNames {
    * @see #absBased(String, Object)
    */
   public static String localName(String name, Object obj) {
-    return isAbs(name) ? normal(name) : name(fromType(obj), name);
+    return isAbs(name) ? name : name(fromType(obj), name);
   }
 
   /**
