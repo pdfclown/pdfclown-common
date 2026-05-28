@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.util.Comparator.comparing;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.temp.util.Objects.typeOf;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__JSON;
@@ -22,14 +23,13 @@ import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__ZIP;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pdfclown.common.build.test.model.JsonArray;
-import org.pdfclown.common.build.test.model.ModelComparator;
+import org.pdfclown.common.build.test.model.ModelDiffer;
 import org.pdfclown.common.build.test.model.ModelMapper;
 import org.pdfclown.common.build.test.model.ModelMapper.PropertySelector;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -49,9 +49,9 @@ import org.slf4j.LoggerFactory;
  * @param <TMap>
  *          Model mapping type.
  * @param <TMapDiff>
- *          Model comparison mapping type.
+ *          Model difference mapping type.
  * @param <TDiff>
- *          Model comparison type.
+ *          Model difference type.
  * @author Stefano Chizzolini
  */
 public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object> {
@@ -59,7 +59,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
 
   private static final String FILE_EXTENSION__JSON_ZIP = FILE_EXTENSION__JSON + FILE_EXTENSION__ZIP;
 
-  protected Supplier<ModelComparator<TDiff, ? extends TMapDiff>> modelComparatorSupplier;
+  protected Supplier<ModelDiffer<TDiff, ? extends TMapDiff>> modelDifferSupplier;
   protected Supplier<ModelMapper<TMapDiff>> modelDiffMapperSupplier;
   protected Supplier<ModelMapper<TMap>> modelMapperSupplier;
 
@@ -67,16 +67,16 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    * @param modelMapperSupplier
    *          Model mapper factory.
    * @param modelDiffMapperSupplier
-   *          Model comparison mapper factory.
-   * @param modelComparatorSupplier
-   *          Model comparator factory.
+   *          Model difference mapper factory.
+   * @param modelDifferSupplier
+   *          Model difference collector factory.
    */
   public ModelAsserter(Supplier<ModelMapper<TMap>> modelMapperSupplier,
       Supplier<ModelMapper<TMapDiff>> modelDiffMapperSupplier,
-      Supplier<ModelComparator<TDiff, ? extends TMapDiff>> modelComparatorSupplier) {
+      Supplier<ModelDiffer<TDiff, ? extends TMapDiff>> modelDifferSupplier) {
     this.modelMapperSupplier = modelMapperSupplier;
     this.modelDiffMapperSupplier = modelDiffMapperSupplier;
-    this.modelComparatorSupplier = modelComparatorSupplier;
+    this.modelDifferSupplier = modelDifferSupplier;
   }
 
   /**
@@ -93,19 +93,19 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    * @param config
    *          Assertion configuration.
    * @throws AssertionError
-   *           if the difference between {@code inputObj} and {@code outputObj} doesn't match the
-   *           one loaded from {@code expectedDiffResourceName}.
+   *           if the difference between {@code inputObj} and {@code outputObj} doesn't match that
+   *           from {@code expectedDiffResourceBasename}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   public void assertDiffEquals(String expectedDiffResourceBasename, TDiff inputObj, TDiff outputObj,
       Config config) {
-    // Compare the objects!
-    List<? extends TMapDiff> diffs = modelComparatorSupplier.get().compare(inputObj, outputObj);
+    // Collect the differences between the objects!
+    List<? extends TMapDiff> diffs = modelDifferSupplier.get().diff(inputObj, outputObj);
 
-    // Map the comparison to JSON!
+    // Map the differences to JSON!
     JsonArray actualJsonArray = modelDiffMapperSupplier.get().mapAll(diffs);
 
-    // Check consistency with expected comparison!
+    // Check consistency with expected differences!
     doAssertEquals(expectedDiffResourceBasename, FILE_EXTENSION__JSON_ZIP, actualJsonArray, config);
   }
 
@@ -158,7 +158,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
       var targetObjSelectors = new ArrayList<>(objSelectors) /* NOTE: Preserves original order */;
       var prevRef = new PropertySelector[1];
       objSelectors.stream()
-          .sorted(Comparator.comparing($ -> $.getType().getName()))
+          .sorted(comparing($ -> $.getType().getName()))
           .forEachOrdered($ -> {
             var prev = prevRef[0];
             if (prev != null && $.getType() == prev.getType()) {

@@ -50,16 +50,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Domain object converter to abstract model (JSON format).
+ * Domain-to-abstract model (JSON format) converter.
  * <p>
  * Domain objects are evaluated as:
  * </p>
  * <ul>
- * <li><b>primary</b> (complex objects), mapped by {@link #map(Object, List, Set, int)} as
+ * <li><b>compositions</b> (complex objects), mapped by {@link #map(Object, List, Set, int)} as
  * full-fledged JSON objects</li>
- * <li><b>secondary</b> (components (either properties or aggregations (maps or collections)) of
- * primary objects), mapped by {@link #mapValue(Object, List, Set, int)} as either simple values
- * (such as {@code String}) or primary objects themselves.</li>
+ * <li><b>components</b> (either properties or aggregations (maps or collections)) of compositions),
+ * mapped by {@link #mapValue(Object, List, Set, int)} as either simple values (such as
+ * {@code String}) or compositions themselves.</li>
  * </ul>
  *
  * @author Stefano Chizzolini

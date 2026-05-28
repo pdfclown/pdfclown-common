@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (ModelComparator.java) is part of pdfclown-common-build module in pdfClown Common
+  This file (ModelDiffer.java) is part of pdfclown-common-build module in pdfClown Common
   project <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -15,7 +15,7 @@ package org.pdfclown.common.build.test.model;
 import java.util.List;
 
 /**
- * Domain object comparator.
+ * Domain object difference collector.
  *
  * @param <TModel>
  *          Model type.
@@ -23,11 +23,9 @@ import java.util.List;
  *          Difference type.
  * @author Stefano Chizzolini
  */
-public abstract class ModelComparator<TModel, TDiff> {
+public abstract class ModelDiffer<TModel, TDiff> {
   /**
-   * Compares objects.
-   *
-   * @return Differences.
+   * Gets the differences between objects.
    */
-  public abstract List<TDiff> compare(TModel obj1, TModel obj2);
+  public abstract List<TDiff> diff(TModel obj1, TModel obj2);
 }

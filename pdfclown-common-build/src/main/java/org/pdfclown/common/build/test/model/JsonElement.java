@@ -38,7 +38,7 @@ public interface JsonElement {
    * There are two kinds of values:
    * </p>
    * <ul>
-   * <li>domain objects ({@code JsonElement})</li>
+   * <li>primary objects ({@code JsonElement})</li>
    * <li>ancillary objects (any other object)</li>
    * </ul>
    *
