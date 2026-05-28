@@ -81,7 +81,6 @@ public final class Assertions {
   }
 
   private static final FileTreeAsserter ASSERTER__FILE_TREE = new FileTreeAsserter();
-  private static final TextAsserter ASSERTER__TEXT = new TextAsserter();
 
   /**
    * Asserts that a file tree matches the expected one.
@@ -126,41 +125,6 @@ public final class Assertions {
       assertTrue(comparator.compare(expectedElement, actualElement) == 0);
     }
     assertFalse(actualItr.hasNext());
-  }
-
-  /**
-   * Asserts that a file matches the expected one.
-   *
-   * @param expectedResourceName
-   *          Resource name of the expected file.
-   * @param actualFile
-   *          Actual file.
-   * @param test
-   *          Current test unit.
-   * @throws AssertionError
-   *           if {@code actualFile} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
-   */
-  public static void assertTextEquals(String expectedResourceName, Path actualFile, Test test) {
-    ASSERTER__TEXT.assertEquals(expectedResourceName, actualFile, new Asserter.Config(test));
-  }
-
-  /**
-   * Asserts that a content matches the expected one.
-   *
-   * @param expectedResourceName
-   *          Resource name of the expected content.
-   * @param actualContent
-   *          Actual content.
-   * @param test
-   *          Current test unit.
-   * @throws AssertionError
-   *           if {@code actualContent} doesn't match the content of {@code expectedResourceName}.
-   * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
-   */
-  public static void assertTextEquals(String expectedResourceName, String actualContent,
-      Test test) {
-    ASSERTER__TEXT.assertEquals(expectedResourceName, actualContent, new Asserter.Config(test));
   }
 
   /**
