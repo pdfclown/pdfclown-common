@@ -26,7 +26,6 @@ import static org.pdfclown.common.util.Strings.S;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.io.Serial;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -43,8 +42,8 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.temp.util.Objects.HierarchicalTypeComparator;
 import org.pdfclown.common.build.internal.temp.util.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
+import org.pdfclown.common.build.internal.temp.util.collect.DynamicMap;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
-import org.pdfclown.common.util.DynamicMap;
 import org.pdfclown.common.util.annot.InitNonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,7 +264,7 @@ public class ModelMapper<T> {
    */
   @SuppressWarnings("rawtypes")
   protected static class ValueMapperMap extends DynamicMap<Class, ValueMapper> {
-    private static class RelatedKeysProvider extends DynamicMap.DynamicProvider<Class> {
+    private static class DynamicTypeProvider extends DynamicMap.DynamicProvider<Class> {
       /**
        * Explicit type priorities.
        */
@@ -281,8 +280,8 @@ public class ModelMapper<T> {
       }
 
       @Override
-      public RelatedKeysProvider clone() {
-        var ret = (RelatedKeysProvider) super.clone();
+      public DynamicTypeProvider clone() {
+        var ret = (DynamicTypeProvider) super.clone();
         ret.priorities = ret.priorities.clone();
         return ret;
       }
@@ -306,54 +305,42 @@ public class ModelMapper<T> {
       }
     }
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     private static int libraryPriority(String name) {
       return name.startsWith("org.pdfclown.") ? -1 : 0;
     }
 
-    /**
-     * Explicitly mapped types.
-     * <p>
-     * Represents all the mappings not derived from related ones.
-     * </p>
-     */
-    private final Map<ValueMapper, Class> rootTypes = new HashMap<>();
-
     ValueMapperMap() {
-      super(new RelatedKeysProvider());
+      super(new DynamicTypeProvider());
 
-      ((RelatedKeysProvider) getRelatedKeysProvider()).init(keySet());
+      ((DynamicTypeProvider) getRelatedKeysProvider()).init(keySet());
     }
 
     /**
      * Type priorities.
+     * <p>
+     * Override any other criteria to sort {@linkplain #getRelatedKeysProvider() related keys}.
+     * </p>
      */
     public TypePriorityComparator getPriorities() {
-      return ((RelatedKeysProvider) getRelatedKeysProvider()).priorities;
+      return ((DynamicTypeProvider) getRelatedKeysProvider()).priorities;
     }
 
-    @Override
-    public @Nullable ValueMapper put(Class key, ValueMapper value) {
-      if (!rootTypes.containsKey(value)) {
-        rootTypes.put(value, key);
-      }
-      return super.put(key, value);
-    }
-
+    /**
+     * @param priority
+     *          {@linkplain #getPriorities() Type priority}.
+     */
     public @Nullable ValueMapper put(Class key, ValueMapper value, int priority) {
       getPriorities().set(priority, key);
+
       return put(key, value);
     }
 
     @Override
-    protected void putRelated(Class relatedKey, Class key, ValueMapper value) {
-      put(key, value, getPriorities().get(relatedKey));
+    protected void putDynamic(Class key, ValueMapper value, Class parentKey) {
+      var priorities = getPriorities();
+      priorities.set(priorities.get(parentKey), key);
 
-      if (log.isDebugEnabled()) {
-        log.debug("ValueMapper.putRelated: {} from {}", sqn(key), sqn(relatedKey));
-      }
+      super.putDynamic(key, value, parentKey);
     }
   }
 
@@ -636,8 +623,8 @@ public class ModelMapper<T> {
 
     var valueMapper = valueMappers.get(value.getClass());
     assert valueMapper != null /*
-                                * NOTE: By definition, there MUST be a fallback mapper for Object
-                                * class, so it cannot be null in any case
+                                * NOTE: There MUST be a fallback mapper for `Object` class, so, by
+                                * definition, it cannot be null, ever
                                 */;
     return valueMapper.map(value, selectors, visitedObjs, level);
   }

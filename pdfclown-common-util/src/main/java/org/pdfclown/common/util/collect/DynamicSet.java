@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (RelatedSet.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (DynamicSet.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -17,15 +17,20 @@ import static org.pdfclown.common.util.Exceptions.runtime;
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.Cloneable;
 import org.pdfclown.common.util.collect.DynamicMap.DynamicProvider;
 
 /**
- * Set whose matches are dynamically expanded based on element correlations.
+ * Set whose elements are dynamically expanded based on element correlations.
  * <p>
- * Implicit matches are discovered looking for elements related to missing ones, provided by
+ * Implicit elements are discovered looking for elements related to missing ones, provided by
  * {@link #getRelatedElementsProvider() relatedElementsProvider}; once a related element is found,
- * the missing element is mapped to its value, ensuring a match on next requests.
+ * the missing element is added, ensuring a match on next {@linkplain #contains(Object) requests}.
+ * </p>
+ * <p>
+ * Elements {@linkplain #add(Object) explicitly defined} by users are <b>root elements</b>, whilst
+ * <b>dynamic elements</b> are associated to the respective roots through a chain of parents.
  * </p>
  * <p>
  * Useful, for example, in case of hierarchical sets, like {@link Class}: adding a certain class,
@@ -81,6 +86,31 @@ public class DynamicSet<E> extends AbstractSet<E>
     return base.containsKey(o);
   }
 
+  /**
+   * Gets the element the given one was dynamically derived from.
+   *
+   * @return {@code null}, if {@code e} is root or missing.
+   */
+  public @Nullable E getParent(E e) {
+    return base.getParentKey(e);
+  }
+
+  /**
+   * Gets the root element associated to the given element.
+   *
+   * @return
+   *         <ul>
+   *         <li>distinct element, if {@code e} is derived (dynamic mapping)</li>
+   *         <li>{@code e}, if it is user-defined (explicit mapping)</li>
+   *         <li>{@code null}, if no mapping, neither explicit nor dynamic, exists, even if
+   *         {@code e} can potentially be derived from an existing root (only a call to
+   *         {@link #contains(Object)} triggers its mapping).</li>
+   *         </ul>
+   */
+  public @Nullable E getRoot(E e) {
+    return base.getRootKey(e);
+  }
+
   @Override
   public boolean isEmpty() {
     return base.isEmpty();
@@ -94,6 +124,13 @@ public class DynamicSet<E> extends AbstractSet<E>
   @Override
   public boolean remove(Object o) {
     return base.remove(o) == VALUE;
+  }
+
+  /**
+   * Root elements.
+   */
+  public Set<E> rootSet() {
+    return base.rootKeySet();
   }
 
   @Override

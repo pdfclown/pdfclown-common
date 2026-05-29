@@ -13,11 +13,13 @@
 package org.pdfclown.common.util.collect;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.pdfclown.common.util.Objects.superTypes;
 
-import java.io.Serial;
+import java.util.AbstractList;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,8 +48,8 @@ class DynamicMapTest extends BaseTest {
       /**
        * Explicit type priorities.
        */
-      private TypePriorityComparator priorities =
-          HierarchicalTypeComparator.Priorities.explicitPriority();
+      private TypePriorityComparator priorities = HierarchicalTypeComparator.Priorities
+          .explicitPriority();
 
       private @InitNonNull Function<Class, Stream<Class>> base;
 
@@ -82,20 +84,9 @@ class DynamicMapTest extends BaseTest {
       }
     }
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     private static int libraryPriority(String name) {
       return name.startsWith("org.pdfclown.") ? -1 : 0;
     }
-
-    /**
-     * Explicitly mapped types.
-     * <p>
-     * Represents all the mappings not derived from related ones.
-     * </p>
-     */
-    private final Map<Object, Class> rootTypes = new HashMap<>();
 
     ClassMap() {
       super(new DynamicKeysProvider());
@@ -105,28 +96,30 @@ class DynamicMapTest extends BaseTest {
 
     /**
      * Type priorities.
+     * <p>
+     * Override any other criteria to sort {@linkplain #getRelatedKeysProvider() related keys}.
+     * </p>
      */
     public TypePriorityComparator getPriorities() {
       return ((DynamicKeysProvider) getRelatedKeysProvider()).priorities;
     }
 
-    @Override
-    public @Nullable Object put(Class key, Object value) {
-      if (!rootTypes.containsKey(value)) {
-        rootTypes.put(value, key);
-      }
-      return super.put(key, value);
-    }
-
-    public @Nullable Object put(Class key, Object value,
-        int priority) {
+    /**
+     * @param priority
+     *          {@linkplain #getPriorities() Type priority}.
+     */
+    public @Nullable Object put(Class key, Object value, int priority) {
       getPriorities().set(priority, key);
+
       return put(key, value);
     }
 
     @Override
-    protected void putRelated(Class relatedKey, Class key, Object value) {
-      put(key, value, getPriorities().get(relatedKey));
+    protected void putDynamic(Class key, Object value, Class parentKey) {
+      var priorities = getPriorities();
+      priorities.set(priorities.get(parentKey), key);
+
+      super.putDynamic(key, value, parentKey);
     }
   }
 
@@ -146,18 +139,52 @@ class DynamicMapTest extends BaseTest {
     assertThat("Subclass `String` SHOULD NOT be resolvable", classMap.get(String.class),
         is(nullValue()));
 
-    var classMap2 = classMap.clone();
+    // getParentKey
+    assertThat("Root key SHOULD return null parent", classMap.getParentKey(Map.class),
+        is(nullValue()));
+    assertThat("Root key SHOULD return null parent", classMap.getParentKey(Collection.class),
+        is(nullValue()));
+    assertThat("Derived key SHOULD return parent", classMap.getParentKey(TreeMap.class),
+        is(AbstractMap.class));
+    assertThat("Derived key SHOULD return parent", classMap.getParentKey(ArrayList.class),
+        is(AbstractList.class));
+    assertThat("Derivable-yet-not-mapped key SHOULD return null parent",
+        classMap.getParentKey(HashMap.class),
+        is(nullValue()));
+
+    // getRootKey
+    assertThat("Root key SHOULD return itself", classMap.getRootKey(Map.class),
+        is(Map.class));
+    assertThat("Root key SHOULD return itself", classMap.getRootKey(Collection.class),
+        is(Collection.class));
+    assertThat("Derived key SHOULD return its root", classMap.getRootKey(TreeMap.class),
+        is(Map.class));
+    assertThat("Derived key SHOULD return its root", classMap.getRootKey(ArrayList.class),
+        is(Collection.class));
+    assertThat("Derivable-yet-not-mapped key SHOULD return null root",
+        classMap.getRootKey(HashMap.class),
+        is(nullValue()));
+
+    // rootKeySet
+    assertThat(classMap.rootKeySet(), containsInAnyOrder(Map.class, Collection.class));
+
+    // clone
+    var classMapClone = classMap.clone();
 
     /*
      * NOTE: Initially, the clone is supposed to have the same yet distinct mapping as the original
      * map.
      */
-    assertThat("Subclass `TreeMap` SHOULD be resolved on clone", classMap2.get(TreeMap.class),
+    assertThat("Subclass `TreeMap` SHOULD be resolved on clone", classMapClone.get(TreeMap.class),
         is(mapClassValue));
-    assertThat("Subclass `ArrayList` SHOULD be resolved on clone", classMap2.get(ArrayList.class),
+    assertThat("Subclass `ArrayList` SHOULD be resolved on clone",
+        classMapClone.get(ArrayList.class),
         is(collectionClassValue));
-    assertThat("Subclass `String` SHOULD NOT be resolvable on clone", classMap2.get(String.class),
+    assertThat("Subclass `String` SHOULD NOT be resolvable on clone",
+        classMapClone.get(String.class),
         is(nullValue()));
+
+    assertThat(classMapClone.rootKeySet(), containsInAnyOrder(Map.class, Collection.class));
 
     /*
      * NOTE: Applying a new mapping to the original map should not affect its clone.
@@ -167,18 +194,52 @@ class DynamicMapTest extends BaseTest {
 
     assertThat("Subclass `String` SHOULD be resolved", classMap.get(String.class),
         is(objectClassValue));
-    assertThat("Subclass `String` SHOULD NOT be resolvable on clone", classMap2.get(String.class),
+    assertThat("Subclass `String` SHOULD NOT be resolvable on clone",
+        classMapClone.get(String.class),
         is(nullValue()));
+
+    assertThat("Subclass `String` SHOULD have parent", classMap.getParentKey(String.class),
+        is(Object.class));
+    assertThat("Subclass `String` SHOULD NOT have parent on clone",
+        classMapClone.getParentKey(String.class),
+        is(nullValue()));
+
+    assertThat("Subclass `String` SHOULD have root", classMap.getRootKey(String.class),
+        is(Object.class));
+    assertThat("Subclass `String` SHOULD NOT have root on clone",
+        classMapClone.getRootKey(String.class),
+        is(nullValue()));
+
+    assertThat(classMap.rootKeySet(),
+        containsInAnyOrder(Object.class, Map.class, Collection.class));
+    assertThat(classMapClone.rootKeySet(), containsInAnyOrder(Map.class, Collection.class));
 
     /*
      * NOTE: Applying a new mapping to the clone should not affect the original map.
      */
     String stringClassValue = String.class.getName();
-    classMap2.put(String.class, stringClassValue);
+    classMapClone.put(String.class, stringClassValue);
 
     assertThat("Subclass `String` SHOULD be resolved", classMap.get(String.class),
         is(objectClassValue));
-    assertThat("Subclass `String` SHOULD be resolved on clone", classMap2.get(String.class),
+    assertThat("Subclass `String` SHOULD be resolved on clone", classMapClone.get(String.class),
         is(stringClassValue));
+
+    assertThat("Subclass `String` SHOULD have parent", classMap.getParentKey(String.class),
+        is(Object.class));
+    assertThat("Subclass `String` (root) SHOULD NOT have parent on clone",
+        classMapClone.getParentKey(String.class),
+        is(nullValue()));
+
+    assertThat("Subclass `String` SHOULD have root", classMap.getRootKey(String.class),
+        is(Object.class));
+    assertThat("Subclass `String` (root) SHOULD have itself as root on clone",
+        classMapClone.getRootKey(String.class),
+        is(String.class));
+
+    assertThat(classMap.rootKeySet(),
+        containsInAnyOrder(Object.class, Map.class, Collection.class));
+    assertThat(classMapClone.rootKeySet(),
+        containsInAnyOrder(String.class, Map.class, Collection.class));
   }
 }
