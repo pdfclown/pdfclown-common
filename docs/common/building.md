@@ -213,10 +213,25 @@ This document describes how to set up your development environment to build and 
 </table>
 
 > [!TIP]
-> By default, test logs (`%MODULE%/target/test-logs`) are filtered at WARN level; to adjust this threshold, use `log.level` system property, like so:
+> By default, **test logs** (`%MODULE%/target/test-logs`) are filtered at WARN level; to adjust this threshold, use `log.level` system property, like so:
 >
 > ```shell
 > ./mvnw verify -Dlog.level=INFO
+> ```
+
+> [!TIP]
+> **Test resources** are automatically managed by the testing harness. In case of test failures:
+>
+> - to **manually update expected test resources (via diff dialogs)**, use `assert.reporter.enabled` system property, like so:
+>
+> ```shell
+> ./mvnw verify -Dassert.reporter.enabled
+> ```
+>
+> - to **automatically update expected test resources**, use `assert.expected.update` system property, like so:
+>
+> ```shell
+> ./mvnw verify -Dassert.expected.update
 > ```
 
 ### Other Checks
