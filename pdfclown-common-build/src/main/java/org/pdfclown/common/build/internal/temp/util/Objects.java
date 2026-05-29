@@ -12,13 +12,13 @@
  */
 package org.pdfclown.common.build.internal.temp.util;
 
-import static java.lang.Math.subtractExact;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNormal;
+import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.hierarchicalType;
 import static org.pdfclown.common.util.Booleans.parseBoolean;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.COMMA;
@@ -34,7 +34,6 @@ import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
 import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Numbers.parseNumber;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.NULL;
@@ -61,7 +60,6 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -95,6 +93,8 @@ import org.apache.commons.text.translate.JavaUnicodeEscaper;
 import org.apache.commons.text.translate.LookupTranslator;
 import org.apache.commons.text.translate.OctalUnescaper;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.collect.Comparators;
+import org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator;
 import org.pdfclown.common.util.ArgumentException;
 import org.pdfclown.common.util.Cloneable;
 import org.pdfclown.common.util.Strings;
@@ -128,176 +128,6 @@ public final class Objects {
       this(message);
 
       initCause(cause);
-    }
-  }
-
-  /**
-   * Hierarchical type comparator.
-   *
-   * @author Stefano Chizzolini
-   */
-  @SuppressWarnings("rawtypes")
-  public static class HierarchicalTypeComparator implements Comparator<Class> {
-    /**
-     * Additional ordering criteria for {@link HierarchicalTypeComparator}.
-     *
-     * @author Stefano Chizzolini
-     */
-    public static class Priorities {
-      /**
-       * Type comparator based on explicit priorities.
-       *
-       * @author Stefano Chizzolini
-       */
-      public static class TypePriorityComparator implements Comparator<Class>, Cloneable {
-        private int minPriority;
-        private int maxPriority;
-        private HashMap<Class, Integer> priorities = new HashMap<>();
-
-        private TypePriorityComparator() {
-        }
-
-        @Override
-        public TypePriorityComparator clone() {
-          try {
-            var ret = (TypePriorityComparator) super.clone();
-            //noinspection unchecked
-            ret.priorities = (HashMap<Class, Integer>) ret.priorities.clone();
-            return ret;
-          } catch (CloneNotSupportedException ex) {
-            throw runtime(ex);
-          }
-        }
-
-        @Override
-        public int compare(Class o1, Class o2) {
-          return priorities.getOrDefault(o1, 0) - priorities.getOrDefault(o2, 0);
-        }
-
-        /**
-         * Gets the priority associated to the type.
-         *
-         * @return {@code 0}, if no priority is associated to {@code type}.
-         */
-        public int get(Class<?> type) {
-          return getOrDefault(type, 0);
-        }
-
-        /**
-         * Gets the priority associated to the type.
-         *
-         * @return {@code defaultValue}, if no priority is associated to {@code type}.
-         */
-        public int getOrDefault(Class<?> type, int defaultValue) {
-          return priorities.getOrDefault(type, defaultValue);
-        }
-
-        /**
-         * Associates a priority to the type.
-         */
-        public TypePriorityComparator set(int priority, Class<?> type) {
-          if (priority < minPriority) {
-            subtractExact(priority, maxPriority) /* Checks underflow */;
-            subtractExact(maxPriority, priority) /* Checks overflow */;
-            minPriority = priority;
-          } else if (priority > maxPriority) {
-            subtractExact(minPriority, priority) /* Checks underflow */;
-            subtractExact(priority, minPriority) /* Checks overflow */;
-            maxPriority = priority;
-          }
-          priorities.put(type, priority);
-          return this;
-        }
-
-        /**
-         * Associates a priority to the types.
-         */
-        public TypePriorityComparator set(int priority, Class<?>... types) {
-          for (var type : types) {
-            set(priority, type);
-          }
-          return this;
-        }
-
-        /**
-         * Associates a sequence of priorities to the types.
-         */
-        public TypePriorityComparator setInOrder(int priority, Class<?>... types) {
-          for (var type : types) {
-            set(priority++, type);
-          }
-          return this;
-        }
-      }
-
-      private static final Comparator<Class> COMPARATOR__INTERFACE_PRIORITY =
-          new Comparator<>() {
-            @Override
-            public int compare(Class o1, Class o2) {
-              return interfacePriority(o1) - interfacePriority(o2);
-            }
-
-            private int interfacePriority(Class<?> type) {
-              return type.isInterface() ? 1 : 0;
-            }
-          };
-
-      /**
-       * Compares types by explicit priority.
-       */
-      public static TypePriorityComparator explicitPriority() {
-        return new TypePriorityComparator();
-      }
-
-      /**
-       * Compares types prioritizing concrete types over interfaces.
-       */
-      public static Comparator<Class> interfacePriority() {
-        return COMPARATOR__INTERFACE_PRIORITY;
-      }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static final HierarchicalTypeComparator INSTANCE =
-        new HierarchicalTypeComparator(
-            ($1, $2) -> {
-              // Prioritize specialized types over super types!
-              if ($1.isAssignableFrom($2))
-                return 1;
-              else if ($2.isAssignableFrom($1))
-                return -1;
-              else
-                return 0;
-            });
-
-    /**
-     * Basic hierarchical type comparator.
-     */
-    public static HierarchicalTypeComparator get() {
-      return INSTANCE;
-    }
-
-    private final Comparator<Class> base;
-
-    private HierarchicalTypeComparator(Comparator<Class> base) {
-      this.base = base;
-    }
-
-    @Override
-    public int compare(Class o1, Class o2) {
-      if (o1 == o2)
-        return 0;
-
-      int ret = base.compare(o1, o2);
-      if (ret == 0)
-        throw unexpected(ret, "unable to decide over type priority between `{}` and `{}`", o1, o2);
-
-      return ret;
-    }
-
-    @Override
-    public HierarchicalTypeComparator thenComparing(Comparator<? super Class> other) {
-      return new HierarchicalTypeComparator(base.thenComparing(other));
     }
   }
 
@@ -1439,8 +1269,7 @@ public final class Objects {
   }
 
   /**
-   * Gets type ancestors, ordered by {@linkplain HierarchicalTypeComparator#get() default
-   * comparator}.
+   * Gets type ancestors, ordered by {@linkplain Comparators#hierarchicalType() default comparator}.
    *
    * @param type
    *          Type (either class or interface) whose ancestors are searched.
@@ -1449,7 +1278,7 @@ public final class Objects {
    */
   @SuppressWarnings("rawtypes")
   public static Stream<Class> superTypes(Class type) {
-    return superTypes(type, HierarchicalTypeComparator.get());
+    return superTypes(type, hierarchicalType());
   }
 
   /**

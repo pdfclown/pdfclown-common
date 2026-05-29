@@ -24,6 +24,7 @@ import static org.pdfclown.common.build.test.assertion.Verifiers.TUPLE;
 import static org.pdfclown.common.build.util.Tuple.tuple;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.collect.Aggregations.map;
+import static org.pdfclown.common.util.collect.Comparators.hierarchicalType;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -40,6 +41,7 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
+import org.pdfclown.common.util.collect.Comparators.HierarchicalTypeComparator;
 import org.pdfclown.common.util.collect.XtList;
 import org.pdfclown.common.util.function.FunctionsTest;
 import org.pdfclown.common.util.system.Clis;
@@ -479,12 +481,11 @@ class ObjectsTest extends BaseTest {
 
   @Test
   void superTypes() {
-    var actual = Objects.superTypes(UnmodifiableList.class,
-        Objects.HierarchicalTypeComparator.get()
-            .thenComparing(Objects.HierarchicalTypeComparator.Priorities.explicitPriority()
-                .set(999, Serializable.class))
-            .thenComparing(Objects.HierarchicalTypeComparator.Priorities.interfacePriority()
-                .reversed()));
+    var actual = Objects.superTypes(UnmodifiableList.class, hierarchicalType()
+        .thenComparing(HierarchicalTypeComparator.Priorities.explicitPriority()
+            .set(999, Serializable.class))
+        .thenComparing(HierarchicalTypeComparator.Priorities.interfacePriority()
+            .reversed()));
 
     /*
      * NOTE: `containsInRelativeOrder(..)` is needed as newer Java versions may introduce further

@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.pdfclown.common.util.Objects.superTypes;
+import static org.pdfclown.common.util.collect.Comparators.hierarchicalType;
 
 import java.util.AbstractList;
 import java.util.AbstractMap;
@@ -30,10 +31,9 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
-import org.pdfclown.common.util.Objects.HierarchicalTypeComparator;
-import org.pdfclown.common.util.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.pdfclown.common.util.annot.InitNonNull;
+import org.pdfclown.common.util.collect.Comparators.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
 
 /**
  * @author Stefano Chizzolini
@@ -48,7 +48,7 @@ class DynamicMapTest extends BaseTest {
       /**
        * Explicit type priorities.
        */
-      private TypePriorityComparator priorities = HierarchicalTypeComparator.Priorities
+      private TypePriorityComparator priorities = Comparators.HierarchicalTypeComparator.Priorities
           .explicitPriority();
 
       private @InitNonNull Function<Class, Stream<Class>> base;
@@ -66,9 +66,9 @@ class DynamicMapTest extends BaseTest {
       }
 
       void init(Set<Class> keys) {
-        base = $ -> superTypes($, HierarchicalTypeComparator.get()
+        base = $ -> superTypes($, hierarchicalType()
             .thenComparing(priorities)
-            .thenComparing(HierarchicalTypeComparator.Priorities.interfacePriority())
+            .thenComparing(Comparators.HierarchicalTypeComparator.Priorities.interfacePriority())
             .thenComparing(($1, $2) -> {
               int ret;
               var name1 = $1.getName();

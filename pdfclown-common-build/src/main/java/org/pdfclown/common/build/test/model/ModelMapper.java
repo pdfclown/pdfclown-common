@@ -17,6 +17,9 @@ import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqn;
 import static org.pdfclown.common.build.internal.temp.util.Objects.superTypes;
 import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithProperties;
+import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator.Priorities.explicitPriority;
+import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator.Priorities.interfacePriority;
+import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.hierarchicalType;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.runtime;
@@ -40,8 +43,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.internal.temp.util.Objects.HierarchicalTypeComparator;
-import org.pdfclown.common.build.internal.temp.util.Objects.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
+import org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
 import org.pdfclown.common.build.internal.temp.util.collect.DynamicMap;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
 import org.pdfclown.common.util.annot.InitNonNull;
@@ -268,8 +270,7 @@ public class ModelMapper<T> {
       /**
        * Explicit type priorities.
        */
-      private TypePriorityComparator priorities = HierarchicalTypeComparator.Priorities
-          .explicitPriority();
+      private TypePriorityComparator priorities = explicitPriority();
 
       @SuppressWarnings("NotNullFieldNotInitialized")
       private @InitNonNull Function<Class, Stream<Class>> base;
@@ -287,9 +288,9 @@ public class ModelMapper<T> {
       }
 
       void init(Set<Class> keys) {
-        base = $ -> superTypes($, HierarchicalTypeComparator.get()
+        base = $ -> superTypes($, hierarchicalType()
             .thenComparing(priorities)
-            .thenComparing(HierarchicalTypeComparator.Priorities.interfacePriority())
+            .thenComparing(interfacePriority())
             .thenComparing(($1, $2) -> {
               int ret;
               var name1 = $1.getName();

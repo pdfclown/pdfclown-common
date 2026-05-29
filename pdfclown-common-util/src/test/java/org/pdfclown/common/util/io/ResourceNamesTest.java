@@ -36,7 +36,7 @@ public class ResourceNamesTest extends BaseTest {
       EMPTY,
       ResourceNames.class,
       ResourceNames.class.getPackageName(),
-      Objects.HierarchicalTypeComparator.class);
+      Objects.ClassXCastException.class);
 
   public static final List<String> NAMES = asList(
       // Normal absolute root
