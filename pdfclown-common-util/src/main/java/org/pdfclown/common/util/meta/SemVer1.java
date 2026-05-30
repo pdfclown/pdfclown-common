@@ -31,7 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.ArgumentFormatException;
-import org.pdfclown.common.util.annot.Derived;
 import org.pdfclown.common.util.annot.Immutable;
 
 /**
@@ -149,9 +148,7 @@ public class SemVer1 extends SemVer<SemVer1> {
         m.group(PATTERN_GROUP__PRERELEASE));
   }
 
-  @Derived
   private transient @Nullable List<Comparable> prereleaseFields;
-  @Derived
   private transient int prereleaseFieldsBitset;
 
   SemVer1(int major, int minor, int patch, @Nullable String prerelease) {

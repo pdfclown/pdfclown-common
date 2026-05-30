@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.stream.Streams;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.ArgumentFormatException;
-import org.pdfclown.common.util.annot.Derived;
 import org.pdfclown.common.util.annot.Immutable;
 
 /**
@@ -166,9 +165,8 @@ public class SemVer2 extends SemVer<SemVer2> {
   }
 
   private final String metadata;
-  @Derived
+
   private transient @Nullable List<String> metadataFields;
-  @Derived
   private transient @Nullable List<Comparable> prereleaseFields;
 
   SemVer2(int major, int minor, int patch, @Nullable String prerelease, @Nullable String metadata) {

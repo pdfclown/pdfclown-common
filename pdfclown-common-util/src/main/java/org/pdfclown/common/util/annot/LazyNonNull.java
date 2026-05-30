@@ -62,7 +62,6 @@ import org.jspecify.annotations.Nullable;
  * </p>
  *
  * @author Stefano Chizzolini
- * @see Derived
  * @see InitNonNull
  * @see Nullable
  * @see <a href="https://github.com/jspecify/jspecify/issues/431">JSpecify issue 431 — What about

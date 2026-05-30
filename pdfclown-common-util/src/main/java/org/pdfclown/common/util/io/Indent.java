@@ -26,10 +26,10 @@ import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.TAB;
 import static org.pdfclown.common.util.Objects.isSameType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
-import org.pdfclown.common.util.annot.Derived;
 import org.pdfclown.common.util.annot.Immutable;
 
 // SourceName: nl.talsmasoftware.umldoclet.rendering.indent.Indentation
@@ -46,6 +46,7 @@ import org.pdfclown.common.util.annot.Immutable;
  */
 @Immutable
 public final class Indent implements CharSequence, Serializable {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   /*
@@ -121,7 +122,6 @@ public final class Indent implements CharSequence, Serializable {
   private final char symbol;
   private final int width;
 
-  @Derived
   private final transient String value;
 
   private Indent(final int width, final char symbol, final int level) {
