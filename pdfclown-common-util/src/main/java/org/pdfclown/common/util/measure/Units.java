@@ -54,6 +54,7 @@ import tech.units.indriya.unit.TransformedUnit;
  * @author Stefano Chizzolini
  */
 @Immutable
+@SuppressWarnings("unchecked")
 public class Units extends AbstractSystemOfUnits {
   private static final Units INSTANCE = new Units();
 
@@ -387,9 +388,7 @@ public class Units extends AbstractSystemOfUnits {
             @SuppressWarnings("rawtypes")
             Class quantityType = $;
             if (!INSTANCE.quantityToUnit.containsKey(quantityType)) {
-              @SuppressWarnings("unchecked")
               var defaultUnit = tech.units.indriya.unit.Units.getInstance().getUnit(quantityType);
-              //noinspection unchecked
               defaultUnit(quantityType, wrap(defaultUnit));
             }
           });
@@ -412,6 +411,7 @@ public class Units extends AbstractSystemOfUnits {
    *
    * @return {@code null}, if {@code quantityType} isn't mapped.
    */
+  @SuppressWarnings("rawtypes" /* javac lint suppression */)
   public static <Q extends Quantity<Q>> @Nullable Dimension getDimension(Class<Q> quantityType) {
     return to(INSTANCE.quantityToUnit.get(quantityType), Unit::getDimension);
   }
@@ -512,6 +512,7 @@ public class Units extends AbstractSystemOfUnits {
   @SuppressWarnings("unchecked")
   protected static <Q extends Quantity<Q>> XtUnit<Q> addBaseUnit(Units unitSystem,
       Class<Q> quantityType, Unit<Q> unit) {
+    //noinspection DataFlowIssue : @PolyNull
     return defaultUnit(quantityType, addUnit(unitSystem, requireType(unit, BaseUnit.class)),
         unitSystem);
   }

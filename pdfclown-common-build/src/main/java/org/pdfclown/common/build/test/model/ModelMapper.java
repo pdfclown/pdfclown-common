@@ -29,6 +29,7 @@ import static org.pdfclown.common.util.Strings.S;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.Serial;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -305,6 +306,9 @@ public class ModelMapper<T> {
             }), keys, false);
       }
     }
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private static int libraryPriority(String name) {
       return name.startsWith("org.pdfclown.") ? -1 : 0;

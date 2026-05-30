@@ -54,10 +54,10 @@ public class Comparators {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public TypePriorityComparator clone() {
           try {
             var ret = (TypePriorityComparator) super.clone();
-            //noinspection unchecked
             ret.priorities = (HashMap<Class, Integer>) ret.priorities.clone();
             return ret;
           } catch (CloneNotSupportedException ex) {
@@ -91,6 +91,7 @@ public class Comparators {
         /**
          * Associates a priority to the type.
          */
+        @SuppressWarnings("ResultOfMethodCallIgnored")
         public TypePriorityComparator set(int priority, Class<?> type) {
           if (priority < minPriority) {
             subtractExact(priority, maxPriority) /* Checks underflow */;
@@ -183,6 +184,7 @@ public class Comparators {
     }
 
     @Override
+    @SuppressWarnings("NullableProblems" /* false positive */)
     public HierarchicalTypeComparator thenComparing(Comparator<? super Class> other) {
       return new HierarchicalTypeComparator(base.thenComparing(other));
     }

@@ -15,6 +15,7 @@ package org.pdfclown.common.util.collect;
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.TODO;
 
+import java.io.Serial;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public class HashDeque<E> extends ArrayDeque<E> {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   private final Set<E> base = new HashSet<>();

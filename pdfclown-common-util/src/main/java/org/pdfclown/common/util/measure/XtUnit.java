@@ -17,6 +17,7 @@ import static org.pdfclown.common.util.Conditions.requireType;
 import static org.pdfclown.common.util.measure.Units.unwrap;
 import static org.pdfclown.common.util.measure.Units.wrap;
 
+import java.io.Serial;
 import java.util.Map;
 import javax.measure.Dimension;
 import javax.measure.Prefix;
@@ -46,9 +47,10 @@ import tech.units.indriya.AbstractUnit;
  */
 @Immutable
 public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
+  @Serial
   private static final long serialVersionUID = 1L;
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "DataFlowIssue" /* @PolyNull */ })
   public static <Q extends Quantity<Q>> XtUnit<Q> of(Unit<Q> base) {
     return new XtUnit<Q>(requireType(base, AbstractUnit.class));
   }

@@ -71,6 +71,18 @@
       <artifactId>byte-buddy</artifactId>
     </dependency>
 
+    <dependency>
+      <!--
+        NOTE: According to javac lint, tech.units:indriya has an issue referencing `API` annotation
+        of apiguardian-api ("unknown enum constant Status.EXPERIMENTAL"), since indriya declares its
+        dependency as optional while its retention is runtime; as a consequence, we have to
+        explicitly reference it (see also
+        <https://github.com/spring-cloud/spring-cloud-release/issues/231>,
+        <https://github.com/junit-team/junit-framework/issues/1104>) -->
+      <groupId>org.apiguardian</groupId>
+      <artifactId>apiguardian-api</artifactId>
+    </dependency>
+
     <!--
       TESTING
     -->

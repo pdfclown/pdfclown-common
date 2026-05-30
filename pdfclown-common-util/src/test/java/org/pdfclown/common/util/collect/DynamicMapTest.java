@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.pdfclown.common.util.Objects.superTypes;
 import static org.pdfclown.common.util.collect.Comparators.hierarchicalType;
 
+import java.io.Serial;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -83,6 +84,9 @@ class DynamicMapTest extends BaseTest {
             }), keys, false);
       }
     }
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private static int libraryPriority(String name) {
       return name.startsWith("org.pdfclown.") ? -1 : 0;

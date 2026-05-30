@@ -164,6 +164,7 @@ public abstract class SemVer<T extends SemVer<T>> implements Version<T>, Compara
    * @see #compareTo(SemVer)
    */
   @Override
+  @SuppressWarnings("unchecked")
   public int precedence(T o) {
     /*
      * [RULE 11.1] Precedence MUST be calculated by separating the version into major, minor, patch

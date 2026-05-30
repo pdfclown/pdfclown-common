@@ -14,6 +14,7 @@ package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNullElse;
 
+import java.io.Serial;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -22,6 +23,9 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public class ArgumentFormatException extends ArgumentException {
+  @Serial
+  private static final long serialVersionUID = 1L;
+
   private final int offset;
 
   public ArgumentFormatException(@Nullable String argName, @Nullable Object argValue,

@@ -26,6 +26,7 @@ import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.collect.Aggregations.map;
 import static org.pdfclown.common.util.collect.Comparators.hierarchicalType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.AbstractList;
@@ -74,6 +75,9 @@ class ObjectsTest extends BaseTest {
    */
   @SuppressWarnings({ "NullableProblems", "DataFlowIssue" })
   static class UnmodifiableCollection<E> implements Collection<E>, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Override
     public boolean add(E e) {
       return false;
@@ -144,6 +148,9 @@ class ObjectsTest extends BaseTest {
    */
   @SuppressWarnings({ "NullableProblems", "DataFlowIssue" })
   static class UnmodifiableList<E> extends UnmodifiableCollection<E> implements List<E> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Override
     public void add(int index, E element) {
     }

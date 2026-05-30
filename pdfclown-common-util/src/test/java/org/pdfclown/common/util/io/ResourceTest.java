@@ -75,6 +75,7 @@ class ResourceTest extends BaseTest {
   }
 
   @Test
+  @SuppressWarnings({ "EmptyTryBlock", "try" })
   void of() throws IOException {
     try (var fs = Jimfs.newFileSystem("local", Configuration.unix())) {
       UnaryOperator<Path> fileResolver = $ -> fs.getPath("/home/test/root").resolve($);

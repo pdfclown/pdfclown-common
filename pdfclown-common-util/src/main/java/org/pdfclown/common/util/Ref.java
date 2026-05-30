@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util;
 
+import java.io.Serial;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 
@@ -26,6 +27,7 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public final class Ref<T> extends MutableObject<T> {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   public Ref() {

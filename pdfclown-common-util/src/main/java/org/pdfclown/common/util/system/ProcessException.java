@@ -17,12 +17,17 @@ import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SEMICOLON;
 import static org.pdfclown.common.util.Chars.SPACE;
 
+import java.io.Serial;
+
 /**
  * Process execution failure.
  *
  * @author Stefano Chizzolini
  */
 public class ProcessException extends RuntimeException {
+  @Serial
+  private static final long serialVersionUID = 1L;
+
   private static String buildMessage(int exitCode, String command, String message) {
     var b = new StringBuilder();
     if (!message.isEmpty()) {

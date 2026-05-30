@@ -50,6 +50,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -113,6 +114,9 @@ public final class Objects {
    * </p>
    */
   public static class ClassXCastException extends ClassCastException {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     /**
     */
     public ClassXCastException(String message) {

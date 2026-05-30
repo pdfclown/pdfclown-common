@@ -27,6 +27,7 @@ import org.pdfclown.common.util.meta.SemVer.Id;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("Convert2MethodRef")
 class SemVer2Test extends BaseTest {
   /**
    * Valid version samples.
@@ -154,6 +155,7 @@ class SemVer2Test extends BaseTest {
   }
 
   @Test
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   void to() {
     COMBINATION.verify(
         (ver, versionType) -> ver.to(versionType),

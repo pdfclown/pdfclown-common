@@ -32,6 +32,7 @@
     <!--
       VERSIONS
     -->
+    <apiguardian.version>1.1.2</apiguardian.version>
     <commons.io.version>2.22.0</commons.io.version>
     <commons.lang.version>3.20.0</commons.lang.version>
     <commons.text.version>1.15.0</commons.text.version>
@@ -68,6 +69,13 @@
         <artifactId>jspecify</artifactId>
         <version>${jspecify.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apiguardian</groupId>
+        <artifactId>apiguardian-api</artifactId>
+        <version>${apiguardian.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <dependency>
         <!-- Measurement (JSR 385) -->
         <groupId>tech.units</groupId>

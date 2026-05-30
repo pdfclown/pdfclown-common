@@ -75,8 +75,7 @@ public class FunctionsTest extends BaseTest {
    *           type name stable (lambdas are identified by implementation-specific names which vary
    *           by JVM vendor and version) for reproducible test results.
    */
-  @SuppressWarnings("rawtypes")
-  public static final List<Supplier> SUPPLIERS = asList(new NullSupplier(), new IntSupplier());
+  public static final List<Supplier<?>> SUPPLIERS = asList(new NullSupplier(), new IntSupplier());
 
   @Test
   void let() {
@@ -138,7 +137,6 @@ public class FunctionsTest extends BaseTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   void toElseGet() {
     COMBINATION.verify(
         (obj, supplier) -> Functions.toElseGet(obj, MAPPER, supplier),
@@ -150,7 +148,6 @@ public class FunctionsTest extends BaseTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   void toElseGetNonNull() {
     COMBINATION.verify(
         (obj, supplier) -> Functions.toElseGetNonNull(obj, MAPPER, supplier),
@@ -232,7 +229,6 @@ public class FunctionsTest extends BaseTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   void tryToElseGet() {
     COMBINATION.verify(
         (obj, supplier) -> Functions.tryToElseGet(obj, MAPPER::apply, supplier),
@@ -244,7 +240,6 @@ public class FunctionsTest extends BaseTest {
   }
 
   @Test
-  @SuppressWarnings("unchecked")
   void tryToElseGetNonNull() {
     COMBINATION.verify(
         (obj, supplier) -> Functions.tryToElseGetNonNull(obj, MAPPER::apply, supplier),

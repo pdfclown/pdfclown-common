@@ -14,6 +14,7 @@ package org.pdfclown.common.util;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.io.Serial;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,6 +27,7 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public class NotImplementedException extends UnsupportedOperationException {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   public NotImplementedException() {

@@ -45,6 +45,7 @@ import org.pdfclown.common.util.annot.Unmodifiable;
 public class Tuple<E extends @Nullable Object> extends AbstractList<E>
     implements Comparable<Tuple<E>>, RandomAccess {
   @SafeVarargs
+  @SuppressWarnings("varargs")
   public static <E extends @Nullable Object> Tuple<E> tuple(E... elements) {
     return new Tuple<>(elements);
   }
@@ -115,6 +116,7 @@ public class Tuple<E extends @Nullable Object> extends AbstractList<E>
   private final E[] elements;
 
   @SafeVarargs
+  @SuppressWarnings("varargs")
   Tuple(E... elements) {
     this.elements = requireNonNull(elements, "`elements`");
   }

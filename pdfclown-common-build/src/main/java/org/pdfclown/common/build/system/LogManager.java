@@ -102,10 +102,10 @@ public final class LogManager {
     Configuration logConfig = logContext.getConfiguration();
     Appender appender = logConfig.getAppender(appenderName);
     var loggerConfig = LoggerConfig.newBuilder()
-        .withConfig(logConfig)
-        .withIncludeLocation("true")
-        .withLoggerName(packageType.getPackageName())
-        .withRefs(new AppenderRef[] {
+        .setConfig(logConfig)
+        .setIncludeLocation("true")
+        .setLoggerName(packageType.getPackageName())
+        .setRefs(new AppenderRef[] {
             AppenderRef.createAppenderRef(appender.getName(), null, null) })
         .build();
     loggerConfig.addAppender(appender, null, null);

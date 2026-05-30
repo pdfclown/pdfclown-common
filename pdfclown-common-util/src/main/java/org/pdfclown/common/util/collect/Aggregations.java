@@ -15,6 +15,7 @@ package org.pdfclown.common.util.collect;
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.unsupported;
 
+import java.io.Serial;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -349,6 +350,9 @@ public final class Aggregations {
    * @author Stefano Chizzolini
    */
   private static class XtArrayList<E> extends ArrayList<E> implements XtList<E> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     XtArrayList() {
       super();
     }
@@ -371,6 +375,9 @@ public final class Aggregations {
    */
   private static class XtHashMap<K extends @Nullable Object, V extends @Nullable Object>
       extends HashMap<K, V> implements XtMap<K, V> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     XtHashMap() {
       super();
     }
@@ -393,6 +400,9 @@ public final class Aggregations {
    */
   private static class XtHashSet<E extends @Nullable Object> extends HashSet<E>
       implements XtSet<E> {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public XtHashSet() {
       super();
     }
@@ -703,6 +713,7 @@ public final class Aggregations {
    * Creates a new mutable list populated with the elements.
    */
   @SafeVarargs
+  @SuppressWarnings("varargs")
   public static <E extends @Nullable Object> XtList<E> list(E... ee) {
     var ret = new XtArrayList<E>();
     Collections.addAll(ret, ee);
@@ -849,6 +860,7 @@ public final class Aggregations {
    * Creates a new mutable set populated with the elements.
    */
   @SafeVarargs
+  @SuppressWarnings("varargs")
   public static <E extends @Nullable Object> XtSet<E> set(E... ee) {
     var ret = new XtHashSet<E>(ee.length);
     Collections.addAll(ret, ee);

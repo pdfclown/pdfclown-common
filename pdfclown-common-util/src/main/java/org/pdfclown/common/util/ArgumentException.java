@@ -21,6 +21,7 @@ import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Objects.basicLiteral;
 
+import java.io.Serial;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -35,6 +36,9 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public class ArgumentException extends IllegalArgumentException {
+  @Serial
+  private static final long serialVersionUID = 1L;
+
   private static String buildMessage(String argName,
       @Nullable Object argValue, @Nullable String message) {
     var b = new StringBuilder();
@@ -43,7 +47,7 @@ public class ArgumentException extends IllegalArgumentException {
       b.append(SPACE).append(ROUND_BRACKET_OPEN).append(basicLiteral(argValue))
           .append(ROUND_BRACKET_CLOSE);
     }
-    if (b.length() > 0) {
+    if (!b.isEmpty()) {
       b.append(COLON).append(SPACE);
     }
     return b.append(requireNonNullElse(stripToNull(message), "INVALID")).toString();
