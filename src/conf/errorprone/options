@@ -1,0 +1,3 @@
+-Xep:AssignmentExpression:OFF
+-Xep:EffectivelyPrivate:OFF
+-XepOpt:Javadoc:customInlineTags=biblio.spec,jada.doc,jada.reuseDoc

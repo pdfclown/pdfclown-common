@@ -65,6 +65,16 @@ pdfclown-common-base instead)</description>
 
   <properties>
     <!--
+      MAIN PROPERTIES
+    -->
+    <!-- Source code compatibility level with Java platform -->
+    <java.version>17</java.version>
+    <!-- JDK to use for toolchains (compiler, Javadoc tool, and so on)
+      NOTE: For simplicity, it should correspond to the java version configured in `.tool-versions`
+      file, so it can be seamlessly set up in CI contexts. -->
+    <jdk.version>21</jdk.version>
+
+    <!--
       ROOT-PROJECT-SPECIFIC PROPERTIES
 
       These properties MUST be specified in every root POM inheriting from this one.
@@ -76,48 +86,32 @@ pdfclown-common-base instead)</description>
 
       These properties MUST be specified in every POM inheriting from this one.
     -->
-    <!--
-      Path to the root project directory.
-      This is an ugly workaround to the notorious lack of a standard way to point to the root
+    <!-- Path to the root project directory.
+      NOTE: This is an ugly workaround to the notorious lack of a standard way to point to the root
       project directory no matter the current project building in the reactor. -->
     <rootdir>${project.basedir}/..</rootdir>
 
     <!--
       THIRD-PARTY PROPERTIES
     -->
-    <!--
-      [mockito] DO NOT REMOVE `argLine` empty declaration (required for later @ reference
-      resolution). -->
+    <!-- [mockito] IMPORTANT: DO NOT REMOVE `argLine` empty declaration (required for later
+      @-reference resolution). -->
     <argLine/>
-    <!--
-      Enable javac `source` and `target` options (see
-      <https://maven.apache.org/plugins/maven-compiler-plugin/examples/set-compiler-source-and-target.html>)
-
-      NOTE: Modern javac (9+) provides `release` option (see
+    <!-- Enable modern (9+) javac `release` option (see
       <https://maven.apache.org/plugins/maven-compiler-plugin/examples/set-compiler-release.html>)
-      to enforce code compliance with public JDK API; however, this mode is prone to various issues:
-        - in certain cases, like JPMS module exports, javac `release` option is incompatible
-        - JDK tools like javadoc may apply validation rules which are incompatible with source code
-          targeting another JDK version
-
-      Consequently, we stick to good old source+target options, constraining JDK to the same version
-      via toolchain. -->
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
+      to enforce code compliance with public JDK API. -->
+    <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!--
-      Force surefire and failsafe to show the full stack on test failure. -->
+    <!-- Force surefire and failsafe to show the full stack on test failure. -->
     <trimStackTrace>false</trimStackTrace>
 
     <!--
       CUSTOM PROPERTIES
     -->
-    <!--
-      NOTE: Derived POMs MUST override this property either specifying their own filesystem-based
-      resources path, or setting it empty (i.e., classpath-based resources) and declaring the build
-      resources artifact (namely, pdfclown-common-build) as dependency of the plugins referencing
-      those resources (BTW, some plugins support also the equivalent "classpath:" protocol, but
-      that's not a standard practice, so we have to stick to common heuristics). -->
+    <!-- NOTE: External derived POMs are expected to use pdfclown-common-base as parent; it takes
+      the responsibility to reset this property, so POMs can decide either to specify their own
+      filesystem-based resources path, or declare the build resources artifact (namely,
+      pdfclown-common-build) as dependency of the plugins referencing those resources. -->
     <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
     <checkstyleSkip>false</checkstyleSkip>
     <projectIssuesUrl>${projectRootUrl}/issues</projectIssuesUrl>
@@ -160,11 +154,11 @@ pdfclown-common-base instead)</description>
     -->
     <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
     <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
+    <error-prone.version>2.49.0</error-prone.version>
     <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
     <git-commit-id-maven-plugin.version>10.0.0</git-commit-id-maven-plugin.version>
     <gmavenplus-plugin.version>4.3.1</gmavenplus-plugin.version>
     <jada.version>0.4.1</jada.version>
-    <java.version>17</java.version>
     <maven.version>3.9.16</maven.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-checkstyle-plugin.puppycrawl.version>12.3.1</maven-checkstyle-plugin.puppycrawl.version>
@@ -177,8 +171,6 @@ pdfclown-common-base instead)</description>
     <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
     <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <maven-plugin-plugin.version>3.15.2</maven-plugin-plugin.version>
-    <!--
-      FIXME: once maven-shade-plugin supports Java 25, restore its run on `build.yml` workflow. -->
     <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
     <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
@@ -242,7 +234,8 @@ pdfclown-common-base instead)</description>
             <execution>
               <!--
                 See also:
-                - available properties (prepended with "git."): <https://github.com/git-commit-id/git-commit-id-plugin-core/blob/master/src/main/java/pl/project13/core/GitCommitPropertyConstant.java>
+                - available properties (prepended with "git."):
+                  <https://github.com/git-commit-id/git-commit-id-plugin-core/blob/master/src/main/java/pl/project13/core/GitCommitPropertyConstant.java>
               -->
               <id>init-git-commit-info</id>
               <goals>
@@ -943,7 +936,7 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 mechanism doesn't support a transformation to express `${java.version} + 1`); as a
                 workaround, we specify an arbitrarily large minor (9) to cover all the plausible
                 range. -->
-              <version>[${java.version},${java.version}.9]</version>
+              <version>[${jdk.version},${jdk.version}.9]</version>
             </jdk>
           </toolchains>
         </configuration>
@@ -1579,8 +1572,8 @@ manager.execute()
       <!--
         FULL-FORMAT PROFILE
 
-        Fully-formatted source code. By default, projects are applied this profile unless they
-        explicit opt-out via "no-format" marker file.
+        Fully formats the source code. By default, this profile is active unless projects explicit
+        opt-out via marker file.
       -->
       <activation>
         <file>
@@ -1679,6 +1672,66 @@ manager.execute()
                 </importOrder>
                 <trimTrailingWhitespace/>
               </java>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>lint</id>
+      <!--
+        LINT PROFILE
+
+        Applies linting on compilation. By default, this profile is active unless opted-out via
+        system property.
+      -->
+      <activation>
+        <property>
+          <name>!skipLint</name>
+        </property>
+      </activation>
+      <properties/>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <compilerArgs
+                  combine.children="append">
+                <arg>-Xlint:all,-cast,-fallthrough,-finally,-processing</arg>
+
+                <!--
+                  Error Prone plugin
+                -->
+                <arg>-Xplugin:ErrorProne @${rootdir}/src/conf/errorprone/options</arg>
+                <arg>-XDcompilePolicy=simple</arg>
+                <arg>--should-stop=ifError=FLOW</arg>
+                <!-- JDK21+ (see <https://github.com/google/error-prone/issues/5426>) -->
+                <arg>-XDaddTypeAnnotationsToSymbol=true</arg>
+                <!-- Exports required by Error Prone -->
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+              </compilerArgs>
+              <annotationProcessorPaths>
+                <path>
+                  <groupId>com.google.errorprone</groupId>
+                  <artifactId>error_prone_core</artifactId>
+                  <version>${error-prone.version}</version>
+                </path>
+                <!--
+                  NOTE: Other annotation processors go HERE (if `annotationProcessorPaths` element
+                  is set, processors will no longer be discovered on the regular `-classpath`). -->
+              </annotationProcessorPaths>
             </configuration>
           </plugin>
         </plugins>
