@@ -61,6 +61,28 @@ public final class ResourceNames {
   }
 
   /**
+   * Gets the absolute name of a resource qualified by a base.
+   *
+   * @param name
+   *          Resource name (either relative or absolute).
+   * @param base
+   *          Object whose package name is prepended in case of relative {@code name} (if
+   *          {@code String}, it must be a package name).
+   * @return
+   *         <ul>
+   *         <li>if {@code name} is absolute: {@code name}</li>
+   *         <li>if {@code name} is relative: {@code /%BASE_PACKAGE_NAME%/name}, where
+   *         {@code BASE_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
+   *         fully-qualified class package name} of {@code base}</li>
+   *         </ul>
+   * @see #relBased(String, Object)
+   * @see #localName(String, Object)
+   */
+  public static String absBased(String name, Object base) {
+    return abs(relBased(name, base));
+  }
+
+  /**
    * Gets the name of a resource, rooted in a base directory.
    *
    * @param file
@@ -100,51 +122,6 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the absolute name of a resource qualified by a base.
-   *
-   * @param name
-   *          Resource name (either relative or absolute).
-   * @param base
-   *          Object whose package name is prepended in case of relative {@code name} (if
-   *          {@code String}, it must be a package name).
-   * @return
-   *         <ul>
-   *         <li>if {@code name} is absolute: {@code name}</li>
-   *         <li>if {@code name} is relative: {@code /%BASE_PACKAGE_NAME%/name}, where
-   *         {@code BASE_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
-   *         fully-qualified class package name} of {@code base}</li>
-   *         </ul>
-   * @see #relBased(String, Object)
-   * @see #localName(String, Object)
-   */
-  public static String absBased(String name, Object base) {
-    return abs(relBased(name, base));
-  }
-
-  /**
-   * Gets the absolute name of a resource local to an object.
-   *
-   * @param name
-   *          Resource name (either relative or absolute).
-   * @param obj
-   *          Object whose type name is prepended in case of relative {@code name}.
-   * @return
-   *         <ul>
-   *         <li>if {@code name} is absolute: {@code name}</li>
-   *         <li>if {@code name} is relative:
-   *         <code>"/%OBJ_PACKAGE_NAME%/%OBJ_TYPE_SQN%/%name%"</code>, where
-   *         {@code OBJ_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
-   *         fully-qualified class package name} of {@code obj}, and {@code OBJ_TYPE_SQN} is the
-   *         {@linkplain org.pdfclown.common.util.Objects#sqn(Object) simply-qualified class name}
-   *         of {@code obj}</li>
-   *         </ul>
-   * @see #absBased(String, Object)
-   */
-  public static String localName(String name, Object obj) {
-    return isAbs(name) ? normal(name) : name(fromType(obj), name);
-  }
-
-  /**
    * Gets the absolute abstract resource name of an object.
    * <p>
    * This is a <i>purely syntactic conversion from class to resource namespaces</i>, where dot
@@ -178,62 +155,6 @@ public final class ResourceNames {
   }
 
   /**
-   * Gets the type name corresponding to a resource name.
-   * <p>
-   * Slash separators are replaced by dots, while leading slash and file extension are removed.
-   * </p>
-   *
-   * @param name
-   *          Resource name.
-   * @throws IllegalArgumentException
-   *           if {@code name} contains any dot inside folder parts, as they conflict with
-   *           corresponding package syntax — in particular, the resulting package/class name could
-   *           not reverse to the initial resource name and any relative resource name
-   *           {@linkplain Class#getResource(String) resolved} on it would point to a different
-   *           resource folder than the initial one (for example,
-   *           {@code "/my/internal.scripts/conf"} would return {@code "my.internal.scripts.conf"},
-   *           whose classes would resolve relative names to {@code "/my/internal/scripts/conf"}
-   *           instead of initial {@code "/my/internal.scripts/conf"}).
-   * @see #fromTypeName(String)
-   */
-  public static String toTypeName(String name) {
-    name = rel(name);
-    int dotPos = name.indexOf(DOT);
-    if (found(dotPos)) {
-      // Forbid dots inside folder parts!
-      if (name.lastIndexOf(SLASH) > dotPos)
-        throw wrongArg("name", name, "Dots NOT allowed inside folder parts");
-
-      // Remove file extension!
-      name = name.substring(0, dotPos);
-    }
-    return name.replace(SLASH, DOT);
-  }
-
-  /**
-   * Gets the relative name of a resource qualified by a base.
-   *
-   * @param name
-   *          Resource name (either relative or absolute).
-   * @param base
-   *          Object whose package name is prepended in case of relative {@code name} (if
-   *          {@code String}, it must be a package name).
-   * @return
-   *         <ul>
-   *         <li>if {@code name} is absolute: {@code name}</li>
-   *         <li>if {@code name} is relative: {@code %BASE_PACKAGE_NAME%/name}, where
-   *         {@code BASE_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
-   *         fully-qualified class package name} of {@code base}</li>
-   *         </ul>
-   */
-  public static String relBased(String name, Object base) {
-    //noinspection DataFlowIssue : @PolyNull
-    return isAbs(name = normal(name)) ? name
-        : name(rel(fromTypeName(requireNonNull(base, "`base`") instanceof String s ? s
-            : asType(base).getPackageName())), name);
-  }
-
-  /**
    * Gets whether the name is absolute (that is, prefixed by slash).
    *
    * @implNote For the sake of consistency with the other utilities in this class, which enforce
@@ -242,6 +163,29 @@ public final class ResourceNames {
   public static boolean isAbs(CharSequence name) {
     char c = !name.isEmpty() ? name.charAt(0) : 0;
     return c == SLASH || c == BACKSLASH;
+  }
+
+  /**
+   * Gets the absolute name of a resource local to an object.
+   *
+   * @param name
+   *          Resource name (either relative or absolute).
+   * @param obj
+   *          Object whose type name is prepended in case of relative {@code name}.
+   * @return
+   *         <ul>
+   *         <li>if {@code name} is absolute: {@code name}</li>
+   *         <li>if {@code name} is relative:
+   *         <code>"/%OBJ_PACKAGE_NAME%/%OBJ_TYPE_SQN%/%name%"</code>, where
+   *         {@code OBJ_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
+   *         fully-qualified class package name} of {@code obj}, and {@code OBJ_TYPE_SQN} is the
+   *         {@linkplain org.pdfclown.common.util.Objects#sqn(Object) simply-qualified class name}
+   *         of {@code obj}</li>
+   *         </ul>
+   * @see #absBased(String, Object)
+   */
+  public static String localName(String name, Object obj) {
+    return isAbs(name) ? normal(name) : name(fromType(obj), name);
   }
 
   /**
@@ -391,6 +335,40 @@ public final class ResourceNames {
   }
 
   /**
+   * Ensures the resource name is relative.
+   *
+   * @param name
+   *          Resource name.
+   * @see #isAbs(CharSequence)
+   */
+  public static String rel(String name) {
+    return isAbs(name = normal(name)) ? name.substring(1) : name;
+  }
+
+  /**
+   * Gets the relative name of a resource qualified by a base.
+   *
+   * @param name
+   *          Resource name (either relative or absolute).
+   * @param base
+   *          Object whose package name is prepended in case of relative {@code name} (if
+   *          {@code String}, it must be a package name).
+   * @return
+   *         <ul>
+   *         <li>if {@code name} is absolute: {@code name}</li>
+   *         <li>if {@code name} is relative: {@code %BASE_PACKAGE_NAME%/name}, where
+   *         {@code BASE_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
+   *         fully-qualified class package name} of {@code base}</li>
+   *         </ul>
+   */
+  public static String relBased(String name, Object base) {
+    //noinspection DataFlowIssue : @PolyNull
+    return isAbs(name = normal(name)) ? name
+        : name(rel(fromTypeName(requireNonNull(base, "`base`") instanceof String s ? s
+            : asType(base).getPackageName())), name);
+  }
+
+  /**
    * Gets the path corresponding to a resource name.
    * <p>
    * {@code name} is resolved according to {@code baseDir}; whether {@code name} is relative or
@@ -407,14 +385,36 @@ public final class ResourceNames {
   }
 
   /**
-   * Ensures the resource name is relative.
+   * Gets the type name corresponding to a resource name.
+   * <p>
+   * Slash separators are replaced by dots, while leading slash and file extension are removed.
+   * </p>
    *
    * @param name
    *          Resource name.
-   * @see #isAbs(CharSequence)
+   * @throws IllegalArgumentException
+   *           if {@code name} contains any dot inside folder parts, as they conflict with
+   *           corresponding package syntax — in particular, the resulting package/class name could
+   *           not reverse to the initial resource name and any relative resource name
+   *           {@linkplain Class#getResource(String) resolved} on it would point to a different
+   *           resource folder than the initial one (for example,
+   *           {@code "/my/internal.scripts/conf"} would return {@code "my.internal.scripts.conf"},
+   *           whose classes would resolve relative names to {@code "/my/internal/scripts/conf"}
+   *           instead of initial {@code "/my/internal.scripts/conf"}).
+   * @see #fromTypeName(String)
    */
-  public static String rel(String name) {
-    return isAbs(name = normal(name)) ? name.substring(1) : name;
+  public static String toTypeName(String name) {
+    name = rel(name);
+    int dotPos = name.indexOf(DOT);
+    if (found(dotPos)) {
+      // Forbid dots inside folder parts!
+      if (name.lastIndexOf(SLASH) > dotPos)
+        throw wrongArg("name", name, "Dots NOT allowed inside folder parts");
+
+      // Remove file extension!
+      name = name.substring(0, dotPos);
+    }
+    return name.replace(SLASH, DOT);
   }
 
   private ResourceNames() {

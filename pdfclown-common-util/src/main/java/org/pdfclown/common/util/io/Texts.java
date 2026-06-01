@@ -31,6 +31,14 @@ import java.util.regex.Pattern;
  */
 public final class Texts {
   /**
+   * Text coordinates.
+   *
+   * @author Stefano Chizzolini
+   */
+  public record TextCoords(int line, int column) {
+  }
+
+  /**
    * Replaces each substring in a text file that matches the given {@linkplain Pattern regular
    * expression} with the replacement.
    *
@@ -76,13 +84,5 @@ public final class Texts {
   }
 
   private Texts() {
-  }
-
-  /**
-   * Text coordinates.
-   *
-   * @author Stefano Chizzolini
-   */
-  public record TextCoords(int line, int column) {
   }
 }
