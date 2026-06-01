@@ -21,7 +21,6 @@ import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Objects.basicLiteral;
 
-import java.io.Serial;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -35,10 +34,8 @@ import org.jspecify.annotations.Nullable;
  *
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("serial" /* serialization is currently not a concern */)
 public class ArgumentException extends IllegalArgumentException {
-  @Serial
-  private static final long serialVersionUID = 1L;
-
   private static String buildMessage(String argName,
       @Nullable Object argValue, @Nullable String message) {
     var b = new StringBuilder();

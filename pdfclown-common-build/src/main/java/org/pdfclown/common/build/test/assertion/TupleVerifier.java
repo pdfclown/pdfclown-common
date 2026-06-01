@@ -44,14 +44,16 @@ import org.pdfclown.common.util.annot.Immutable;
 @Immutable
 public class TupleVerifier extends CallVerifier {
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, O extends @Nullable Object> //
       void verify(Function2<I1, I2, O> call, List<String> labels, List<Tuple2<I1, I2>> inputs) {
     doVerify($ -> call.call($.getE1(), $.getE2()), labels, inputs);
   }
 
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       O extends @Nullable Object> //
       void verify(Function3<I1, I2, I3, O> call, List<String> labels,
@@ -60,7 +62,8 @@ public class TupleVerifier extends CallVerifier {
   }
 
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, O extends @Nullable Object> //
       void verify(Function4<I1, I2, I3, I4, O> call, List<String> labels,
@@ -69,7 +72,8 @@ public class TupleVerifier extends CallVerifier {
   }
 
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, O extends @Nullable Object> //
       void verify(Function5<I1, I2, I3, I4, I5, O> call, List<String> labels,
@@ -78,7 +82,8 @@ public class TupleVerifier extends CallVerifier {
   }
 
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
       O extends @Nullable Object> //
@@ -89,7 +94,8 @@ public class TupleVerifier extends CallVerifier {
   }
 
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
       I7 extends @Nullable Object, O extends @Nullable Object> //
@@ -100,7 +106,8 @@ public class TupleVerifier extends CallVerifier {
   }
 
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
       I7 extends @Nullable Object, I8 extends @Nullable Object, O extends @Nullable Object> //
@@ -111,7 +118,8 @@ public class TupleVerifier extends CallVerifier {
   }
 
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
       I7 extends @Nullable Object, I8 extends @Nullable Object, I9 extends @Nullable Object,

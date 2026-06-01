@@ -40,6 +40,9 @@ import org.pdfclown.common.util.annot.Immutable;
  * <a href="https://semver.org/spec/v2.0.0.html">Semantic Version 2.0.0</a>.
  *
  * @author Stefano Chizzolini
+ * @implSpec Subclasses are expected NOT to introduce additional semantic fields, as
+ *           equivalence-related methods ({@link #equals(Object)} and {@link #hashCode()}) are
+ *           sealed to preserve symmetry.
  */
 @Immutable
 @SuppressWarnings("rawtypes")
@@ -87,7 +90,8 @@ public class SemVer2 extends SemVer<SemVer2> {
   }
 
   /**
-  */
+   * Creates a version from its components.
+   */
   public static SemVer2 of(int major, int minor, int patch, @Nullable String prerelease,
       @Nullable String metadata) {
     /*
@@ -98,27 +102,20 @@ public class SemVer2 extends SemVer<SemVer2> {
     var offsets = new int[5];
     for (int i = 0; i < 5; i++) {
       switch (i) {
-        case 0:
-          b.append(major).append(DOT);
-          break;
-        case 1:
-          b.append(minor).append(DOT);
-          break;
-        case 2:
-          b.append(patch);
-          break;
-        case 3:
+        case 0 -> b.append(major).append(DOT);
+        case 1 -> b.append(minor).append(DOT);
+        case 2 -> b.append(patch);
+        case 3 -> {
           if (!isEmpty(prerelease)) {
             b.append(HYPHEN).append(prerelease);
           }
-          break;
-        case 4:
+        }
+        case 4 -> {
           if (!isEmpty(metadata)) {
             b.append(PLUS).append(metadata);
           }
-          break;
-        default:
-          throw unexpected(i);
+        }
+        default -> throw unexpected(i);
       }
       offsets[i] = b.length();
     }
@@ -128,18 +125,14 @@ public class SemVer2 extends SemVer<SemVer2> {
       for (int i = 0; i < offsets.length; i++) {
         if (offsets[i] > ex.getOffset()) {
           switch (i) {
-            case 0:
-              throw wrongArg("major", major);
-            case 1:
-              throw wrongArg("minor", minor);
-            case 2:
-              throw wrongArg("patch", patch);
-            case 3:
-              throw wrongArg("prerelease", prerelease);
-            case 4:
-              throw wrongArg("metadata", metadata);
-            default:
+            case 0 -> throw wrongArg("major", major);
+            case 1 -> throw wrongArg("minor", minor);
+            case 2 -> throw wrongArg("patch", patch);
+            case 3 -> throw wrongArg("prerelease", prerelease);
+            case 4 -> throw wrongArg("metadata", metadata);
+            default -> {
               // NOP
+            }
           }
         }
       }
@@ -148,6 +141,8 @@ public class SemVer2 extends SemVer<SemVer2> {
   }
 
   /**
+   * Creates a version from its string representation.
+   *
    * @throws ArgumentFormatException
    *           if {@code value} is not a valid semantic version.
    */
@@ -180,15 +175,17 @@ public class SemVer2 extends SemVer<SemVer2> {
     return precedence == 0 ? this.metadata.compareTo(o.metadata) : precedence;
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass())
-      return false;
-
-    var that = (SemVer2) o;
-    return this.major == that.major && this.minor == that.minor && this.patch == that.patch
+  public final boolean equals(Object o) {
+    return this == o || (o instanceof SemVer2 that
+        && this.major == that.major
+        && this.minor == that.minor
+        && this.patch == that.patch
         && Objects.equals(this.prerelease, that.prerelease)
-        && Objects.equals(this.metadata, that.metadata);
+        && Objects.equals(this.metadata, that.metadata));
   }
 
   @Override
@@ -215,8 +212,11 @@ public class SemVer2 extends SemVer<SemVer2> {
     return prereleaseFields;
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return Objects.hash(major, minor, patch, prerelease, metadata);
   }
 

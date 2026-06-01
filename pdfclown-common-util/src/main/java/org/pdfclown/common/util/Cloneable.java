@@ -17,6 +17,7 @@ package org.pdfclown.common.util;
  *
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("JavaLangClash")
 public interface Cloneable extends java.lang.Cloneable {
   Object clone();
 }

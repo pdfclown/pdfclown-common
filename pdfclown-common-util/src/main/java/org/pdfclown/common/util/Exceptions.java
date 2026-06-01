@@ -96,6 +96,8 @@ public final class Exceptions {
   }
 
   /**
+   * Creates an exception for missing value.
+   *
    * @param value
    *          Mismatching value. {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
@@ -154,6 +156,8 @@ public final class Exceptions {
   }
 
   /**
+   * Creates an exception for path not found.
+   *
    * @param path
    *          Missing path.
    */
@@ -252,6 +256,8 @@ public final class Exceptions {
   }
 
   /**
+   * Creates an error for an unexpected value.
+   *
    * @param value
    *          Invalid value. {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
@@ -306,6 +312,8 @@ public final class Exceptions {
   }
 
   /**
+   * Creates an argument exception for an invalid value.
+   *
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @param value
@@ -332,6 +340,8 @@ public final class Exceptions {
   }
 
   /**
+   * Creates an argument exception for value outside the acceptable options.
+   *
    * @param <T>
    *          Value type.
    * @param name

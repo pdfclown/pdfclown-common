@@ -88,7 +88,7 @@ import org.xml.sax.SAXParseException;
  *
  * @author Stefano Chizzolini
  */
-@SuppressWarnings("SameParameterValue")
+@SuppressWarnings({ "SameParameterValue", "this-escape", "TypeParameterUnusedInFormals" })
 public final class Xmls {
   /**
    * Document factory profile.
@@ -98,6 +98,7 @@ public final class Xmls {
    *
    * @author Stefano Chizzolini
    */
+  @SuppressWarnings("ImmutableEnumChecker")
   public enum DocumentFactoryProfile implements UnaryOperator<DocumentBuilderFactory> {
     /**
      * Compact document.

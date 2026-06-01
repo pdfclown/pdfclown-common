@@ -145,8 +145,7 @@ public final class Strings {
       }
       ret = ret.substring(0, min(pos, maxLength - marker.length()));
     }
-    //noinspection StringEquality
-    if (ret != s) {
+    if (!ret.equals(s)) {
       ret += marker;
     }
     return ret;
@@ -344,20 +343,22 @@ public final class Strings {
       char c = s.charAt(i);
       if (!isDigit(c)) {
         switch (c) {
-          case '.':
+          case '.' -> {
             if (!decimal && !integer) {
               decimal = true;
               break;
             }
             return false;
-          case '+':
-          case '-':
+          }
+          case '+', '-' -> {
             if (i == 0 && signable) {
               break;
             }
             return false;
-          default:
+          }
+          default -> {
             return false;
+          }
         }
       }
     }

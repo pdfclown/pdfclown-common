@@ -16,7 +16,6 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.sqn;
 
-import java.io.Serial;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,7 +55,7 @@ import org.slf4j.LoggerFactory;
  *           apart from {@linkplain #put(Object, Object) user-defined ones}, in order to trace them
  *           back to their respective {@linkplain #getRootKey(Object) roots}.
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "serial" /* serialization is currently not a concern */, "unchecked" })
 public class DynamicMap<K, V> extends HashMap<K, V> {
   /**
    * Provides the elements related to the given one.
@@ -77,12 +76,9 @@ public class DynamicMap<K, V> extends HashMap<K, V> {
     }
   }
 
-  @Serial
-  private static final long serialVersionUID = 1L;
-
   private static final Logger log = LoggerFactory.getLogger(DynamicMap.class);
 
-  private Map<K, K> parentKeys = new HashMap<>();
+  private HashMap<K, K> parentKeys = new HashMap<>();
   private DynamicProvider<K> relatedKeysProvider;
 
   public DynamicMap(DynamicProvider<K> relatedKeysProvider) {

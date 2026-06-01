@@ -44,8 +44,12 @@ import tech.units.indriya.AbstractUnit;
  * @param <Q>
  *          Quantity type measured by this unit.
  * @author Stefano Chizzolini
+ * @implSpec Subclasses are expected NOT to introduce additional semantic fields, as
+ *           equivalence-related methods ({@link #equals(Object)} and {@link #hashCode()}) are
+ *           sealed to preserve symmetry.
  */
 @Immutable
+@SuppressWarnings("this-escape")
 public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
   @Serial
   private static final long serialVersionUID = 1L;
@@ -75,17 +79,13 @@ public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
     return wrap(base.divide(divisor));
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  @SuppressWarnings("rawtypes")
-  public boolean equals(@Nullable Object obj) {
-    if (this == obj)
-      return true;
-    else if (obj == null)
-      return false;
-    else if (getClass() != obj.getClass())
-      return false;
-
-    return base.equals(((XtUnit) obj).base);
+  public final boolean equals(@Nullable Object o) {
+    return this == o || (o instanceof XtUnit<?> that
+        && this.base.equals(that.base));
   }
 
   /**
@@ -133,8 +133,11 @@ public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
     return base.getSystemConverter();
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + base.hashCode();

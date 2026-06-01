@@ -81,11 +81,8 @@ public final class LogManager {
    */
   public static void applyProfile(Profile profile) {
     switch (profile) {
-      case CLI:
-        setLevel(Level.INFO);
-        break;
-      default:
-        throw unexpected("profile", profile);
+      case CLI -> setLevel(Level.INFO);
+      default -> throw unexpected("profile", profile);
     }
   }
 

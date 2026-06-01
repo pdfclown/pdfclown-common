@@ -89,7 +89,7 @@ public class ClasspathResource extends AbstractResource implements PathResource 
     }
 
     switch (uri.getScheme()) {
-      case SCHEME__JAR: {
+      case SCHEME__JAR -> {
         /*
          * NOTE: We have to access `URL.path` instead of `URI.path`, as the latter returns `null`
          * since URI treats JAR protocol as opaque (that is, non-hierarchical).
@@ -98,12 +98,8 @@ public class ClasspathResource extends AbstractResource implements PathResource 
         String jarEntryName = jarEntryName(url.getPath());
         path = asFileSystem(jarFile).getPath(jarEntryName);
       }
-        break;
-      case SCHEME__FILE:
-        path = fs.getPath(url.getPath());
-        break;
-      default:
-        throw unexpected("uri.scheme", uri.getScheme());
+      case SCHEME__FILE -> path = fs.getPath(url.getPath());
+      default -> throw unexpected("uri.scheme", uri.getScheme());
     }
   }
 

@@ -37,6 +37,9 @@ import org.pdfclown.common.util.annot.Immutable;
  * <a href="https://semver.org/spec/v1.0.0.html">Semantic Version 1.0.0</a>.
  *
  * @author Stefano Chizzolini
+ * @implSpec Subclasses are expected NOT to introduce additional semantic fields, as
+ *           equivalence-related methods ({@link #equals(Object)} and {@link #hashCode()}) are
+ *           sealed to preserve symmetry.
  */
 @Immutable
 @SuppressWarnings("rawtypes")
@@ -80,6 +83,7 @@ public class SemVer1 extends SemVer<SemVer1> {
   }
 
   /**
+   * Creates a version from its components.
    */
   public static SemVer1 of(int major, int minor, int patch, @Nullable String prerelease) {
     /*
@@ -90,22 +94,15 @@ public class SemVer1 extends SemVer<SemVer1> {
     var offsets = new int[4];
     for (int i = 0; i < offsets.length; i++) {
       switch (i) {
-        case 0:
-          b.append(major).append(DOT);
-          break;
-        case 1:
-          b.append(minor).append(DOT);
-          break;
-        case 2:
-          b.append(patch);
-          break;
-        case 3:
+        case 0 -> b.append(major).append(DOT);
+        case 1 -> b.append(minor).append(DOT);
+        case 2 -> b.append(patch);
+        case 3 -> {
           if (!isEmpty(prerelease)) {
             b.append(HYPHEN).append(prerelease);
           }
-          break;
-        default:
-          throw unexpected(i);
+        }
+        default -> throw unexpected(i);
       }
       offsets[i] = b.length();
     }
@@ -115,16 +112,13 @@ public class SemVer1 extends SemVer<SemVer1> {
       for (int i = 0; i < offsets.length; i++) {
         if (offsets[i] > ex.getOffset()) {
           switch (i) {
-            case 0:
-              throw wrongArg("major", major);
-            case 1:
-              throw wrongArg("minor", minor);
-            case 2:
-              throw wrongArg("patch", patch);
-            case 3:
-              throw wrongArg("prerelease", prerelease);
-            default:
+            case 0 -> throw wrongArg("major", major);
+            case 1 -> throw wrongArg("minor", minor);
+            case 2 -> throw wrongArg("patch", patch);
+            case 3 -> throw wrongArg("prerelease", prerelease);
+            default -> {
               // NOP
+            }
           }
         }
       }
@@ -133,6 +127,8 @@ public class SemVer1 extends SemVer<SemVer1> {
   }
 
   /**
+   * Creates a version from its string representation.
+   *
    * @throws ArgumentFormatException
    *           if {@code value} is not a valid semantic version.
    */
@@ -155,15 +151,16 @@ public class SemVer1 extends SemVer<SemVer1> {
     super(major, minor, patch, prerelease);
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass())
-      return false;
-
-    var that = (SemVer1) o;
-    return this.getMajor() == that.getMajor() && this.getMinor() == that.getMinor()
+  public final boolean equals(@Nullable Object o) {
+    return this == o || (o instanceof SemVer1 that
+        && this.getMajor() == that.getMajor()
+        && this.getMinor() == that.getMinor()
         && this.patch == that.patch
-        && Objects.equals(this.prerelease, that.prerelease);
+        && Objects.equals(this.prerelease, that.prerelease));
   }
 
   /**
@@ -232,8 +229,11 @@ public class SemVer1 extends SemVer<SemVer1> {
     return prereleaseFields;
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return Objects.hash(major, minor, patch, prerelease);
   }
 
@@ -275,6 +275,7 @@ public class SemVer1 extends SemVer<SemVer1> {
    *           if {@code id} is {@link Id#METADATA}.
    * @see #next(Id)
    */
+  @Override
   public SemVer1 with(Id id, Comparable value) {
     return switch (id) {
       case MAJOR -> new SemVer1((Integer) value, 0, 0, EMPTY);
@@ -352,7 +353,7 @@ public class SemVer1 extends SemVer<SemVer1> {
    *          Field index.
    */
   private boolean isPrereleaseFieldSynthesized(int index) {
-    return (prereleaseFieldsBitset & (1 << index + PRERELEASE_FIELDS_BITSET_MAX_COUNT)) != 0;
+    return (prereleaseFieldsBitset & (1 << (index + PRERELEASE_FIELDS_BITSET_MAX_COUNT))) != 0;
   }
 
   /**
@@ -366,6 +367,6 @@ public class SemVer1 extends SemVer<SemVer1> {
    * Sets {@link #isPrereleaseFieldSynthesized(int) prereleaseFieldSynthesized}.
    */
   private void setPrereleaseFieldSynthesized(int index) {
-    prereleaseFieldsBitset |= 1 << index + PRERELEASE_FIELDS_BITSET_MAX_COUNT;
+    prereleaseFieldsBitset |= 1 << (index + PRERELEASE_FIELDS_BITSET_MAX_COUNT);
   }
 }

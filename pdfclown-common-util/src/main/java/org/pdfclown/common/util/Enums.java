@@ -118,7 +118,7 @@ public final class Enums {
    *          Fully qualified name.
    * @return {@code null}, if no match was found.
    */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({ "unchecked", "rawtypes", "TypeParameterUnusedInFormals" })
   public static <E extends Enum> @Nullable E get(@Nullable String fqn) {
     if (fqn == null)
       return null;
@@ -135,6 +135,8 @@ public final class Enums {
   }
 
   /**
+   * Gets the constant associated to the key or fails if missing.
+   *
    * @param <E>
    *          Constant type.
    * @param type

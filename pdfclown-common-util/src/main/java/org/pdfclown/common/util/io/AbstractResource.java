@@ -49,7 +49,7 @@ import org.pdfclown.common.util.net.Uris;
 @Immutable
 public abstract class AbstractResource implements Resource {
   /**
-   * @see Resource#of(String, ClassLoader, Function)
+   * (see {@link Resource#of(String, ClassLoader, Function)})
    */
   static Optional<Resource> of(@Nullable String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver, @Nullable FileSystem fs) {
@@ -62,10 +62,11 @@ public abstract class AbstractResource implements Resource {
 
     var scheme = scheme(requireNonNull(name, "`name`"));
     switch (scheme) {
-      case SCHEME__CLASSPATH:
+      case SCHEME__CLASSPATH -> {
         // [explicit classpath resource]
         return ofClasspath(name.substring(scheme.length() + 1), cl, fs);
-      case SCHEME__FILE:
+      }
+      case SCHEME__FILE -> {
         // [filesystem resource]
         try {
           Path file = path(new URI(name), fs);
@@ -73,9 +74,10 @@ public abstract class AbstractResource implements Resource {
         } catch (URISyntaxException ex) {
           // NOP
         }
-        break;
-      default:
-        break;
+      }
+      default -> {
+        // NOP
+      }
     }
 
     try {

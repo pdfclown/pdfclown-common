@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util.system;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.OS_NAME;
@@ -81,11 +82,10 @@ public final class Processes {
    */
   public static int execute(List<String> command, @Nullable Path directory,
       Consumer<String> consumer) throws IOException, InterruptedException {
-    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     var builder = new ProcessBuilder(command)
         .directory(to(directory, Path::toFile));
     Process process = builder.start();
-    try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+    try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), UTF_8))) {
       String line;
       while ((line = reader.readLine()) != null) {
         consumer.accept(line);

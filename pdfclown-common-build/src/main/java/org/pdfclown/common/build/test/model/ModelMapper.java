@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("this-escape")
 public class ModelMapper<T> {
   /**
    * Property selector.
@@ -167,6 +168,7 @@ public class ModelMapper<T> {
     /**
      * Creates a mutable selector copying the given one.
      */
+    @SuppressWarnings("this-escape")
     public PropertySelector(PropertySelector source) {
       this(source.getType(), source.isExclusive());
 
@@ -331,6 +333,8 @@ public class ModelMapper<T> {
     }
 
     /**
+     * Like {@link #put(Object, Object)}, with explicit type priority.
+     *
      * @param priority
      *          {@linkplain #getPriorities() Type priority}.
      */

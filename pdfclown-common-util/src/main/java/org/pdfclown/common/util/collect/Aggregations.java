@@ -52,7 +52,6 @@ public final class Aggregations {
    * See {@link FailSafeSet} for further information.
    * </p>
    *
-   * @param <E>
    * @author Stefano Chizzolini
    */
   private static class FailSafeMapBasedSet<E> extends FailSafeSet<E> {
@@ -78,7 +77,6 @@ public final class Aggregations {
    * cases such as observer deregistration during observers iteration.
    * </p>
    *
-   * @param <E>
    * @author Stefano Chizzolini
    */
   private static class FailSafeSet<E> extends AbstractSet<E> {
@@ -473,7 +471,7 @@ public final class Aggregations {
   }
 
   /**
-   * Gets whether the collection contains any of the elements.
+   * Gets whether a collection contains any of the given elements.
    */
   @SafeVarargs
   public static <E extends @Nullable Object> boolean containsAny(Collection<E> c, E... ee) {
@@ -485,7 +483,7 @@ public final class Aggregations {
   }
 
   /**
-   * @see #containsAny(Collection, Object...)
+   * Gets whether a collection contains any of the given elements.
    */
   public static <E extends @Nullable Object> boolean containsAny(Collection<E> c, E e1, E e2) {
     return c.contains(e1)
@@ -493,7 +491,7 @@ public final class Aggregations {
   }
 
   /**
-   * @see #containsAny(Collection, Object...)
+   * Gets whether a collection contains any of the given elements.
    */
   public static <E extends @Nullable Object> boolean containsAny(Collection<E> c, E e1, E e2,
       E e3) {
@@ -503,7 +501,7 @@ public final class Aggregations {
   }
 
   /**
-   * Gets whether the map contains any of the keys.
+   * Gets whether a map contains any of the given keys.
    *
    * @param <K>
    *          Key type.
@@ -521,7 +519,7 @@ public final class Aggregations {
   }
 
   /**
-   * @see #containsAnyKey(Map, Object...)
+   * Gets whether a map contains any of the given keys.
    */
   public static <K extends @Nullable Object, V extends @Nullable Object> boolean containsAnyKey(
       Map<K, V> m, K k1, K k2) {
@@ -530,7 +528,7 @@ public final class Aggregations {
   }
 
   /**
-   * @see #containsAnyKey(Map, Object...)
+   * Gets whether a map contains any of the given keys.
    */
   public static <K extends @Nullable Object, V extends @Nullable Object> boolean containsAnyKey(
       Map<K, V> m, K k1, K k2, K k3) {
@@ -549,14 +547,14 @@ public final class Aggregations {
   }
 
   /**
-   * @return {@code null}, if {@code c} is empty.
+   * Returns the given collection, or undefined if empty.
    */
   public static <T extends Collection<?>> @Nullable T emptyToNull(@Nullable T c) {
     return isFilled(c) ? c : null;
   }
 
   /**
-   * @return {@code null}, if {@code m} is empty.
+   * Returns the given map, or undefined if empty.
    */
   public static <T extends Map<?, ?>> @Nullable T emptyToNull(@Nullable T m) {
     return isFilled(m) ? m : null;
@@ -763,7 +761,7 @@ public final class Aggregations {
   }
 
   /**
-   * @return Empty, if {@code c} is undefined.
+   * Returns the given list, or empty if undefined.
    */
   @SuppressWarnings("unchecked")
   public static <T extends List<?>> T nullToEmpty(@Nullable T c) {
@@ -771,7 +769,7 @@ public final class Aggregations {
   }
 
   /**
-   * @return Empty, if {@code c} is undefined.
+   * Returns the given set, or empty if undefined.
    */
   @SuppressWarnings("unchecked")
   public static <T extends Set<?>> T nullToEmpty(@Nullable T c) {
@@ -779,7 +777,7 @@ public final class Aggregations {
   }
 
   /**
-   * @return Empty, if {@code m} is undefined.
+   * Returns the given map, or empty if undefined.
    */
   @SuppressWarnings("unchecked")
   public static <T extends Map<?, ?>> T nullToEmpty(@Nullable T m) {

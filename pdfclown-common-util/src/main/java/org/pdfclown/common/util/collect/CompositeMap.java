@@ -88,6 +88,7 @@ public interface CompositeMap<K, V, M extends XtMap<? extends K, ? extends V>> {
    *           ancestor graph (both concrete classes and interfaces) of the type must be traversed
    *           until a match is found.
    */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
   <R extends M> @Nullable R getMap(Class<? extends V> type);
 
   /**

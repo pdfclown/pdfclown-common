@@ -72,7 +72,7 @@ public abstract class ContentAsserter<T> extends Asserter {
    * @param config
    *          Assertion configuration.
    * @throws AssertionError
-   *           if {@code actualFile} doesn't match the content of {@code expectedResourceName}.
+   *           if {@code actualFile} doesn't match the content of {@code expectedResourceBasename}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   protected final void doAssertEquals(String expectedResourceBasename, String fileExtension,
@@ -95,7 +95,8 @@ public abstract class ContentAsserter<T> extends Asserter {
    * @param config
    *          Assertion configuration.
    * @throws AssertionError
-   *           if {@code actualContent} doesn't match the content of {@code expectedResourceName}.
+   *           if {@code actualContent} doesn't match the content of
+   *           {@code expectedResourceBasename}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   protected final void doAssertEquals(final String expectedResourceBasename, String fileExtension,

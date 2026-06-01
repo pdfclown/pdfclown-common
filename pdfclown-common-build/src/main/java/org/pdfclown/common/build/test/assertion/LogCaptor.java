@@ -19,6 +19,7 @@ import static org.pdfclown.common.util.Exceptions.missing;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -116,7 +117,7 @@ public abstract class LogCaptor
 
   private static final Function<String, LogCaptor> logCaptorFactory;
   static {
-    String implName = fqn(LoggerFactory.getILoggerFactory()).toLowerCase();
+    String implName = fqn(LoggerFactory.getILoggerFactory()).toLowerCase(Locale.ROOT);
     logCaptorFactory = ServiceProvider.discover(LogCaptorProvider.class)
         .map($ -> $.getFactory(implName))
         .filter(Objects::nonNull)

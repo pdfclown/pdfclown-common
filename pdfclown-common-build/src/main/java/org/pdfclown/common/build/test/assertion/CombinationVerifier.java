@@ -63,6 +63,7 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
+   * Verifies the given call with its arguments.
    */
   public <I1 extends @Nullable Object, O extends @Nullable Object> //
       void verify(Function1<I1, O> call, List<String> labels, List<I1> inputs1) {
@@ -72,7 +73,8 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
-  */
+   * Verifies the given call with its arguments.
+   */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, O extends @Nullable Object> //
       void verify(Function2<I1, I2, O> call, List<String> labels, List<I1> inputs1,
           List<I2> inputs2) {
@@ -82,6 +84,7 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
+   * Verifies the given call with its arguments.
    */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       O extends @Nullable Object> //
@@ -93,6 +96,7 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
+   * Verifies the given call with its arguments.
    */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, O extends @Nullable Object> //
@@ -104,6 +108,7 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
+   * Verifies the given call with its arguments.
    */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, O extends @Nullable Object> //
@@ -115,6 +120,7 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
+   * Verifies the given call with its arguments.
    */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
@@ -128,6 +134,7 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
+   * Verifies the given call with its arguments.
    */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
@@ -141,6 +148,7 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
+   * Verifies the given call with its arguments.
    */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,
@@ -155,6 +163,7 @@ public class CombinationVerifier extends CallVerifier {
 
   // SourceName: verifyAllCombinations
   /**
+   * Verifies the given call with its arguments.
    */
   public <I1 extends @Nullable Object, I2 extends @Nullable Object, I3 extends @Nullable Object,
       I4 extends @Nullable Object, I5 extends @Nullable Object, I6 extends @Nullable Object,

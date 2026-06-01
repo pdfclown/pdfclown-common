@@ -119,6 +119,7 @@ public final class Patterns {
    *          How to interpret {@code glob} ({@link #GLOB_MODE__FILESYSTEM},
    *          {@link #GLOB_MODE__WILDCARD}).
    */
+  @SuppressWarnings("LabelledBreakTarget")
   private static String globToRegex(String glob, int globMode) {
     var b = new StringBuilder();
     int i = 0;
@@ -126,74 +127,60 @@ public final class Patterns {
       char c = glob.charAt(i);
       mainSwitch: switch (c) {
         // Reserved regex symbol.
-        case '.':
-        case '(':
-        case ')':
-        case '[':
-        case ']':
-        case '{':
-        case '}':
-        case '^':
-        case '$':
-        case '+':
-        case '|':
-          // Escape reserved regex symbol!
-          b.append(BACKSLASH).append(c);
-          break;
+        case //
+            '.', //
+            '(', //
+            ')', //
+            '[', //
+            ']', //
+            '{', //
+            '}', //
+            '^', //
+            '$', //
+            '+', //
+            '|' ->
+            // Escape reserved regex symbol!
+            b.append(BACKSLASH).append(c);
         // Glob escape symbol.
-        case BACKSLASH: {
+        case BACKSLASH -> {
           int i1 = i + 1;
           if (glob.length() > i1) {
             char c1 = glob.charAt(i1);
             switch (c1) {
               // Reserved glob symbol.
-              case '?':
-              case '*':
+              case '?', '*' -> {
                 // Escape reserved regex symbol!
                 b.append(BACKSLASH).append(c1);
                 i = i1;
                 break mainSwitch;
-              default:
+              }
+              default -> {
                 // NOP
+              }
             }
           }
 
           // Literal backslash.
           switch (globMode) {
-            case GLOB_MODE__WILDCARD:
-              b.append(BACKSLASH).append(c);
-              break;
-            case GLOB_MODE__FILESYSTEM:
-              b.append("[" + REGEX__FILE_SEPARATORS + "]");
-              break;
-            default:
-              throw unexpected("globMode", globMode);
+            case GLOB_MODE__WILDCARD -> b.append(BACKSLASH).append(c);
+            case GLOB_MODE__FILESYSTEM -> b.append("[" + REGEX__FILE_SEPARATORS + "]");
+            default -> throw unexpected("globMode", globMode);
           }
-          break;
         }
-        case SLASH:
+        case SLASH -> {
           switch (globMode) {
-            case GLOB_MODE__WILDCARD:
-              b.append(SLASH);
-              break;
-            case GLOB_MODE__FILESYSTEM:
-              b.append("[" + REGEX__FILE_SEPARATORS + "]");
-              break;
-            default:
-              throw unexpected("globMode", globMode);
+            case GLOB_MODE__WILDCARD -> b.append(SLASH);
+            case GLOB_MODE__FILESYSTEM -> b.append("[" + REGEX__FILE_SEPARATORS + "]");
+            default -> throw unexpected("globMode", globMode);
           }
-          break;
+        }
         // `?` operator.
-        case '?':
-          b.append('.');
-          break;
+        case '?' -> b.append('.');
         // `*` operator.
-        case '*':
+        case '*' -> {
           switch (globMode) {
-            case GLOB_MODE__WILDCARD:
-              b.append(".*");
-              break;
-            case GLOB_MODE__FILESYSTEM: {
+            case GLOB_MODE__WILDCARD -> b.append(".*");
+            case GLOB_MODE__FILESYSTEM -> {
               int i1 = i + 1;
               if (glob.length() > i1 && glob.charAt(i1) == '*') {
                 b.append(".*") /* Any (including level separators) */;
@@ -202,14 +189,10 @@ public final class Patterns {
                 b.append("[^" + REGEX__FILE_SEPARATORS + "]*") /* Any but level separators */;
               }
             }
-              break;
-            default:
-              throw unexpected("globMode", globMode);
+            default -> throw unexpected("globMode", globMode);
           }
-          break;
-        default:
-          b.append(c);
-          break;
+        }
+        default -> b.append(c);
       }
       i++;
     }

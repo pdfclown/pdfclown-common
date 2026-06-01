@@ -184,6 +184,9 @@ public class Tuple<E extends @Nullable Object> extends AbstractList<E>
   }
 
   /**
+   * Returns a view of the portion of this tuple between the specified fromIndex, inclusive, and
+   * toIndex, exclusive.
+   *
    * @see #subList(int, int)
    */
   public Tuple<E> subTuple(int fromIndex, int toIndex) {

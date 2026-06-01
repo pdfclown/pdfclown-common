@@ -50,6 +50,7 @@ public final class Reflects {
    *         {@code null} is a valid return value, use
    *         {@link #callOrThrow(Object, String, Class[], Object[])} instead)).
    */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
   public static <T> @Nullable T call(final Object obj, final String methodName,
       Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
     try {
@@ -89,7 +90,7 @@ public final class Reflects {
    * @throws RuntimeException
    *           if the call fails.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
   public static <T extends @Nullable Object> T callOrThrow(final Object obj,
       final String methodName, Class<?> @Nullable [] paramTypes, Object @Nullable [] args)
       throws NoSuchMethodException, IllegalAccessException {
@@ -112,7 +113,7 @@ public final class Reflects {
    * @throws RuntimeException
    *           if the call fails.
    */
-  @SuppressWarnings({ "unchecked" })
+  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
   public static <T> T get(Object obj, String getter) {
     try {
       return (T) obj.getClass().getMethod(getter, (Class<?>[]) null).invoke(obj);

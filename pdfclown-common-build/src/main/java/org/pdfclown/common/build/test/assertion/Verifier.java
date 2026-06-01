@@ -175,13 +175,15 @@ public abstract class Verifier implements Cloneable {
           .collect(joining(S + LF, EMPTY, S + LF)));
 
   /**
-  */
+   * Verification options.
+   */
   public Options getOptions() {
     return options;
   }
 
   /**
-  */
+   * Clones this verifier with the given {@link #getOptions() options}.
+   */
   public Verifier withOptions(Options value) {
     var ret = (Verifier) clone();
     ret.options = value;

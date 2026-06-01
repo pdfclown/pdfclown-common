@@ -188,7 +188,7 @@ public class Range<T> {
    *           if arguments are numbers of different types (allowing them would cause ambiguities on
    *           value comparison — see also the observations in {@link #numeric(Range)}).
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "PatternMatchingInstanceof", "unchecked" })
   public static <T> Range<T> closed(@Nullable T lower, @Nullable T upper) {
     if (lower instanceof Number && upper != null) {
       var type = (Class<? extends Number>) requireEqual(upper.getClass(), lower.getClass(),
@@ -273,7 +273,7 @@ public class Range<T> {
 
   @Override
   public boolean equals(@Nullable Object o) {
-    if (super.equals(o))
+    if (o == this)
       return true;
     else if (!isSameType(o, this))
       return false;

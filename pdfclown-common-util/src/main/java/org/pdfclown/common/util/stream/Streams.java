@@ -14,8 +14,6 @@ package org.pdfclown.common.util.stream;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -33,8 +31,7 @@ public final class Streams {
    *           ones are mapped to boxed values.
    */
   public static Stream<?> fromArray(Object array) {
-    return array instanceof Object[]
-        ? Arrays.stream((Object[]) array)
+    return array instanceof Object[] a ? Arrays.stream(a)
         : IntStream.range(0, Array.getLength(array)).mapToObj($ -> Array.get(array, $));
   }
 
@@ -43,21 +40,6 @@ public final class Streams {
    */
   public static IntStream intStream(byte[] array) {
     return IntStream.range(0, array.length).map($ -> array[$]);
-  }
-
-  /**
-   * Gets a stream whose elements are in reverse order.
-   *
-   * @param stream
-   *          <span class="warning">WARNING: MUST NOT be an infinite stream (such as
-   *          {@link Random#ints()}), as it would cause {@link OutOfMemoryError}.</span>
-   * @see <a href="https://www.dontpanicblog.co.uk/2020/10/23/reverse-order-stream/">Reverse order a
-   *      Stream in Java</a>
-   */
-  public static <T> Stream<T> reverse(Stream<T> stream) {
-    var stack = new LinkedList<T>();
-    stream.forEachOrdered(stack::push);
-    return stack.stream();
   }
 
   /**

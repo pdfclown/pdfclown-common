@@ -65,7 +65,7 @@ public class JsonObject extends JSONObject implements JsonElement {
   // Source: ibid.
   // SourceName: org.json.JSONObject.writeValue(Writer, Object, int, int)
   // Changes: null value flaw fixed.
-  @SuppressWarnings("UnusedReturnValue")
+  @SuppressWarnings({ "PatternMatchingInstanceof", "UnusedReturnValue" })
   private static Writer writeValue(Writer writer, @Nullable Object value,
       int indentFactor, int indent) throws JSONException, IOException {
     if (value == null || value.equals("null")) {

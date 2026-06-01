@@ -120,13 +120,14 @@ public final class Objects {
     /**
     */
     public ClassXCastException(String message) {
-      super(message);
+      this(message, null);
     }
 
     /**
     */
-    public ClassXCastException(String message, Throwable cause) {
-      this(message);
+    @SuppressWarnings("this-escape")
+    public ClassXCastException(String message, @Nullable Throwable cause) {
+      super(message);
 
       initCause(cause);
     }
@@ -383,8 +384,7 @@ public final class Objects {
    */
   @SuppressWarnings("unchecked")
   public static <T extends java.lang.Cloneable> T clone(T obj) {
-    return obj instanceof Cloneable
-        ? (T) ((Cloneable) obj).clone()
+    return obj instanceof Cloneable c ? (T) c.clone()
         : ObjectUtils.clone(obj);
   }
 
@@ -564,9 +564,10 @@ public final class Objects {
    * (Same as {@link java.util.Objects#equals(Object, Object)}, but applies
    * {@link String#equalsIgnoreCase(String)} instead of {@link Object#equals(Object)})
    */
+  @SuppressWarnings({ "ReferenceEquality", "StringEquality" })
   public static boolean equalsIgnoreCase(@Nullable String s1, @Nullable String s2) {
-    //noinspection StringEquality
-    return (s1 == s2) || (s1 != null && s1.equalsIgnoreCase(s2));
+    return (s1 != null && s1.equalsIgnoreCase(s2))
+        || (s1 == s2 /* Checks whether they are both null */);
   }
 
   /**
@@ -931,6 +932,7 @@ public final class Objects {
    *         </ul>
    * @see #literal(Object)
    */
+  @SuppressWarnings("StatementSwitchToExpressionSwitch")
   public static @Nullable Object parseLiteral(@Nullable String s) {
     // Undefined, or null literal?
     if (s == null || (s = s.trim()).equals(NULL))
@@ -1350,6 +1352,7 @@ public final class Objects {
    *         applying {@code sqnd(obj)} if missing, and wrapping its attributes with square brackets
    *         if parentheses are missing.
    */
+  @SuppressWarnings("StatementSwitchToExpressionSwitch")
   public static String toQualifiedString(@Nullable Object obj) {
     if (obj == null)
       return NULL;
@@ -1388,6 +1391,7 @@ public final class Objects {
    *         {@code sqnd(obj)}, and wrapping its attributes with square brackets if parentheses are
    *         missing.
    */
+  @SuppressWarnings("StatementSwitchToExpressionSwitch")
   public static String toSqnQualifiedString(@Nullable Object obj) {
     if (obj == null)
       return NULL;
@@ -1855,6 +1859,7 @@ public final class Objects {
    * @see #xflat(Object)
    * @see #xinstanceof(Object, Class)
    */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
   public static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj) {
     return xcast(obj, null);
   }
@@ -1885,6 +1890,7 @@ public final class Objects {
    * @see #xflat(Object)
    * @see #xinstanceof(Object, Class)
    */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
   public static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj,
       @Nullable Object loadingHint) {
     return xcast(obj, loadingHint, null);
@@ -1896,7 +1902,7 @@ public final class Objects {
    *
    * @see #xcast(Object, Object)
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
   public static <T> @PolyNull @Nullable T xflat(@PolyNull @Nullable Object obj) {
     if (obj == null)
       return null;
@@ -2049,6 +2055,7 @@ public final class Objects {
     return doFqn(to(typeName, $ -> $.substring($.lastIndexOf(DOT) + 1)), false, dotted);
   }
 
+  @SuppressWarnings("ReturnValueIgnored")
   private static boolean isAutoInstantiable(Class<?> type) {
     try {
       type.getDeclaredConstructor();
@@ -2089,7 +2096,7 @@ public final class Objects {
    * @throws ClassXCastException
    *           if {@code obj} has no corresponding type in target class loader context.
    */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({ "unchecked", "rawtypes", "TypeParameterUnusedInFormals" })
   private static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj,
       final @Nullable Object loadingHint, final @Nullable Class<?> targetTypeHint) {
     if (obj == null)

@@ -363,11 +363,8 @@ public final class Clis {
     for (int i = 0, l = argsString.length(); i < l; i++) {
       char c = argsString.charAt(i);
       switch (c) {
-        case BACKSLASH:
-          b.append(argsString.charAt(++i));
-          break;
-        case SQUOTE:
-        case DQUOTE:
+        case BACKSLASH -> b.append(argsString.charAt(++i));
+        case SQUOTE, DQUOTE -> {
           if (delimiter > 0) {
             if (c == delimiter) {
               delimiter = 0;
@@ -377,8 +374,8 @@ public final class Clis {
           } else {
             delimiter = c;
           }
-          break;
-        default:
+        }
+        default -> {
           if (delimiter > 0) {
             b.append(c);
           } else if (Character.isWhitespace(c)) {
@@ -391,6 +388,7 @@ public final class Clis {
           } else {
             b.append(c);
           }
+        }
       }
     }
     // End last argument!
@@ -475,14 +473,14 @@ public final class Clis {
       {
         char c = s.charAt(0);
         switch (c) {
-          case PLUS:
-          case MINUS:
+          case PLUS, MINUS -> {
             modifier = c;
             s = s.substring(1);
-            break;
-          default:
+          }
+          default -> {
             target.clear();
             modifier = PLUS;
+          }
         }
       }
       transformer

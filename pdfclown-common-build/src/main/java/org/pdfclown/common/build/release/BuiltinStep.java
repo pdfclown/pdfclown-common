@@ -202,16 +202,17 @@ public enum BuiltinStep implements Step {
       while (m.find()) {
         String newParamValue;
         switch (m.group(PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__NAME)) {
-          case MAVEN_CONFIG_PARAM__REVISION:
+          case MAVEN_CONFIG_PARAM__REVISION -> {
             newParamValue = version;
             version = null;
-            break;
-          case MAVEN_CONFIG_PARAM__SCM_TAG:
+          }
+          case MAVEN_CONFIG_PARAM__SCM_TAG -> {
             newParamValue = scmTag;
             scmTag = null;
-            break;
-          default:
+          }
+          default -> {
             continue;
+          }
         }
         m.appendReplacement(b, S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN
             + newParamValue);
@@ -300,6 +301,7 @@ public enum BuiltinStep implements Step {
     }
   }
 
+  @SuppressWarnings("ImmutableEnumChecker")
   private final FailableConsumer<ReleaseManager, Exception> operation;
   private final boolean readOnly;
 
@@ -322,6 +324,7 @@ public enum BuiltinStep implements Step {
     return name();
   }
 
+  @Override
   public boolean isReadOnly() {
     return readOnly;
   }

@@ -143,6 +143,7 @@ public class FileVerifier extends Verifier {
       this.approver = approver;
     }
 
+    @Override
     public VerifyResult approve() {
       FileApprover.tracker.assertUnique(approved.getPath());
       ApprovedFileLog.log(approved);
@@ -151,6 +152,7 @@ public class FileVerifier extends Verifier {
       return approver.call(received, approved);
     }
 
+    @Override
     public void cleanUpAfterSuccess(ApprovalFailureReporter reporter) {
       received.delete();
       if (reporter instanceof ApprovalReporterWithCleanUp r) {
@@ -158,10 +160,12 @@ public class FileVerifier extends Verifier {
       }
     }
 
+    @Override
     public void fail() {
       throw errorGenerator.call(received.getPath(), approved.getPath());
     }
 
+    @Override
     public VerifyResult reportFailure(ApprovalFailureReporter reporter) {
       FailedFileLog.log(received, approved);
 

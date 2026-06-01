@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.tool;
 
 import static java.lang.System.out;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
@@ -207,7 +208,7 @@ public abstract class Debug {
   protected static String promptArg(String name, String description, @Nullable String hint) {
     out.printf("-> %s (ENTER %s)%s: ", name, description,
         (hint = stripToNull(hint)) != null ? SPACE + hint : EMPTY);
-    return new Scanner(System.in).nextLine();
+    return new Scanner(System.in, UTF_8).nextLine();
   }
 
   private @Nullable Recording record;
@@ -266,6 +267,8 @@ public abstract class Debug {
   protected abstract void doRun();
 
   /**
+   * Debug ended.
+   *
    * @implSpec Implementations MUST call their overridden counterpart respecting proper call nesting
    *           with {@link #onStart()}, like this:<pre class="lang-java"><code>
    * &#64;Override
@@ -290,6 +293,8 @@ public abstract class Debug {
   }
 
   /**
+   * Debug started.
+   *
    * @see #onEnd()
    */
   protected void onStart() {

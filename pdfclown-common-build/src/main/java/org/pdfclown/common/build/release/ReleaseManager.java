@@ -29,7 +29,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.meta.SemVer.Id;
+import org.pdfclown.common.util.meta.SemVer;
 import org.pdfclown.common.util.meta.SemVer1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,8 +103,8 @@ public class ReleaseManager {
    * </ul>
    */
   private static SemVer1 nextDevVersion(SemVer1 releaseVersion) {
-    return (releaseVersion.isRegular() ? releaseVersion.next(Id.PATCH)
-        : releaseVersion.next(Id.PRERELEASE))
+    return (releaseVersion.isRegular() ? releaseVersion.next(SemVer.Id.PATCH)
+        : releaseVersion.next(SemVer.Id.PRERELEASE))
             .withPrereleaseSuffix(-1, "SNAPSHOT");
   }
 

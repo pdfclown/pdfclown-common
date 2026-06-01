@@ -13,6 +13,8 @@
 package org.pdfclown.common.util.internal;
 
 /**
+ * Internal utilities.
+ *
  * @author Stefano Chizzolini
  */
 public class Internals {

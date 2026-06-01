@@ -121,7 +121,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    *          Assertion configuration.
    * @throws AssertionError
    *           if {@code actualObj} doesn't match the one loaded from
-   *           {@code expectedObjResourceName}.
+   *           {@code expectedObjResourceBasename}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   public void assertEquals(String expectedObjResourceBasename, TMap actualObj, Config config) {
@@ -142,7 +142,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    *          Assertion configuration.
    * @throws AssertionError
    *           if {@code actualObj} doesn't match the one loaded from
-   *           {@code expectedObjResourceName}.
+   *           {@code expectedObjResourceBasename}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   public void assertEquals(String expectedObjResourceBasename, TMap actualObj,

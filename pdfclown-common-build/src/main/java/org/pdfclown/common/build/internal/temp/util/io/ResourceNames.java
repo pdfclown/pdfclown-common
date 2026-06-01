@@ -142,7 +142,7 @@ public final class ResourceNames {
    * @see #absBased(String, Object)
    */
   public static String localName(String name, Object obj) {
-    return isAbs(name) ? name : name(fromType(obj), name);
+    return isAbs(name) ? normal(name) : name(fromType(obj), name);
   }
 
   /**
@@ -258,12 +258,10 @@ public final class ResourceNames {
    * @return Empty (that is, relative root), if {@code parts} is empty.
    */
   public static String name(String... parts) {
-    switch (parts.length) {
-      case 0:
-        return EMPTY;
-      case 1:
-        return normal(parts[0]);
-      default: {
+    return switch (parts.length) {
+      case 0 -> EMPTY;
+      case 1 -> normal(parts[0]);
+      default -> {
         var b = new StringBuilder();
         for (int i = 0, limit = parts.length - 1; i <= limit; i++) {
           /*
@@ -301,9 +299,9 @@ public final class ResourceNames {
           }
           b.append(part);
         }
-        return b.toString();
+        yield b.toString();
       }
-    }
+    };
   }
 
   /**
