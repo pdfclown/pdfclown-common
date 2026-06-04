@@ -44,9 +44,6 @@ import tech.units.indriya.AbstractUnit;
  * @param <Q>
  *          Quantity type measured by this unit.
  * @author Stefano Chizzolini
- * @implSpec Subclasses are expected NOT to introduce additional semantic fields, as
- *           equivalence-related methods ({@link #equals(Object)} and {@link #hashCode()}) are
- *           sealed to preserve symmetry.
  */
 @Immutable
 @SuppressWarnings("this-escape")

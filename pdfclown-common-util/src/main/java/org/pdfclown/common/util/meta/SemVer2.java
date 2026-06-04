@@ -40,9 +40,6 @@ import org.pdfclown.common.util.annot.Immutable;
  * <a href="https://semver.org/spec/v2.0.0.html">Semantic Version 2.0.0</a>.
  *
  * @author Stefano Chizzolini
- * @implSpec Subclasses are expected NOT to introduce additional semantic fields, as
- *           equivalence-related methods ({@link #equals(Object)} and {@link #hashCode()}) are
- *           sealed to preserve symmetry.
  */
 @Immutable
 @SuppressWarnings("rawtypes")

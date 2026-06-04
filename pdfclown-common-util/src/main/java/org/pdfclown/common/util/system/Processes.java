@@ -203,9 +203,6 @@ public final class Processes {
 
   /**
    * Prepares a command for the current OS.
-   * <p>
-   * Spares users from breaking commands into parts.
-   * </p>
    */
   public static List<String> osCommand(String command) {
     return osCommand(command, false);
@@ -213,9 +210,6 @@ public final class Processes {
 
   /**
    * Prepares a command for the current OS.
-   * <p>
-   * Spares users from breaking commands into parts.
-   * </p>
    *
    * @param interactive
    *          Whether the command has to run in interactive shell (this may load additional
@@ -233,9 +227,6 @@ public final class Processes {
 
   /**
    * Prepares a Unix command (Bash shell).
-   * <p>
-   * Spares users from breaking commands into parts.
-   * </p>
    */
   public static List<String> unixCommand(String command) {
     return unixCommand(command, false);
@@ -243,9 +234,6 @@ public final class Processes {
 
   /**
    * Prepares a Unix command (Bash shell).
-   * <p>
-   * Spares users from breaking commands into parts.
-   * </p>
    */
   public static List<String> unixCommand(String command, boolean interactive) {
     return List.of("bash", interactive ? "-ci" : "-c", command);
@@ -253,9 +241,6 @@ public final class Processes {
 
   /**
    * Prepares a Windows command.
-   * <p>
-   * Spares users from breaking commands into parts.
-   * </p>
    */
   public static List<String> winCommand(String command) {
     return List.of("cmd", "/C", command);
