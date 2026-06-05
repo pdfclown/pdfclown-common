@@ -14,12 +14,15 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.util.stream.Collectors.joining;
 import static org.pdfclown.common.build.internal.temp.util.Objects.literal;
+import static org.pdfclown.common.build.test.assertion.Asserter.SYSTEM_PROPERTY__UPDATE_EXPECTED;
+import static org.pdfclown.common.build.util.system.Runtimes.isDebugging;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
 
 import com.spun.util.logger.SimpleLogger;
 import java.io.File;
@@ -36,10 +39,10 @@ import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.pdfclown.common.build.test.Tests;
 import org.pdfclown.common.build.util.system.Builds;
-import org.pdfclown.common.build.util.system.Runtimes;
 import org.pdfclown.common.util.annot.Immutable;
 import org.pdfclown.common.util.io.ResourceNames;
-import org.pdfclown.common.util.system.Systems;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Verifier for approval testing.
@@ -154,6 +157,15 @@ public abstract class Verifier implements Cloneable {
     }
   }
 
+  private static final Logger log = LoggerFactory.getLogger(Verifier.class);
+
+  public static final String SYSTEM_PROPERTY__REPORTER_ENABLED = "test.reporter.enabled";
+
+  static {
+    log.info("`{}` system property: {}", SYSTEM_PROPERTY__REPORTER_ENABLED,
+        getBooleanProperty(SYSTEM_PROPERTY__REPORTER_ENABLED));
+  }
+
   static {
     /*
      * NOTE: This is necessary to globally align the namer factory to our logic, as namer's
@@ -233,7 +245,7 @@ public abstract class Verifier implements Cloneable {
      * This system property has to be used sparingly, only in case of massive updates due to
      * infrastructural changes such as new formatting.
      */
-    if (Systems.getBooleanProperty(Asserter.SYSTEM_PROPERTY__UPDATE_EXPECTED)) {
+    if (getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED)) {
       ret = ret.withReporter(new AutoApproveReporter() {
         @Override
         public boolean report(String received, String approved) {
@@ -252,7 +264,7 @@ public abstract class Verifier implements Cloneable {
      * test), reporters are disabled by default, unless users explicitly enable them or the test is
      * debugged in an IDE.
      */
-    else if (!Systems.getBooleanProperty("assert.reporter.enabled") && !Runtimes.isDebugging()) {
+    else if (!getBooleanProperty(SYSTEM_PROPERTY__REPORTER_ENABLED) && !isDebugging()) {
       ret = ret.withReporter(new QuietReporter());
     }
     return ret;
