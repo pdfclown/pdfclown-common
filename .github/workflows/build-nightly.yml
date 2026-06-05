@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    uses: pdfclown/.github/.github/workflows/build-nightly.yml@5f6a086ad568b33303206bfca6d746d3f9015e74
+    uses: pdfclown/.github/.github/workflows/build-nightly.yml@0443b2f0dffb509eace4cc5f8c592156df65007a
     permissions:
       contents: read
     secrets: inherit
