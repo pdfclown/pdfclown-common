@@ -23,7 +23,7 @@ on:
 
 jobs:
   release:
-    uses: pdfclown/.github/.github/workflows/release.yml@b04b5e473b6bce73799d816546863412d99fbd1f
+    uses: pdfclown/.github/.github/workflows/release.yml@5f6a086ad568b33303206bfca6d746d3f9015e74
     permissions:
       contents: write
     with:
