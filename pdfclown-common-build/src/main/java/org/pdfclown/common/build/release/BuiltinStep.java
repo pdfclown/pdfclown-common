@@ -16,6 +16,7 @@ import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
 import static org.pdfclown.common.build.internal.util.system.Clis.javaArg;
 import static org.pdfclown.common.build.release.ReleaseManager.SCM_REF__HEAD;
+import static org.pdfclown.common.build.release.ReleaseManager.SYSTEM_PROPERTY__TARGET_JDK_HOME;
 import static org.pdfclown.common.util.Chars.DOLLAR;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
 import static org.pdfclown.common.util.Exceptions.missing;
@@ -175,7 +176,9 @@ public enum BuiltinStep implements Step {
   DEPLOY($ -> executeElseThrow(
       $.getMavenCommand("clean", $.isRemotePushEnabled() ? "deploy" : "install",
           toNonNull($.isRemotePushEnabled() ? $.getDeploymentProfiles()
-              : $.getInstallationProfiles(), $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY)),
+              : $.getInstallationProfiles(), $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY),
+          javaArg(SYSTEM_PROPERTY__TARGET_JDK_HOME,
+              System.getProperty(SYSTEM_PROPERTY__TARGET_JDK_HOME))),
       $.getBaseDir()));
 
   private static final String MAVEN_CONFIG_PARAM__REVISION = "revision";

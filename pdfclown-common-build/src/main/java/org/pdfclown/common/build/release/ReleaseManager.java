@@ -73,6 +73,8 @@ public class ReleaseManager {
 
   static final String SCM_REF__HEAD = "HEAD";
 
+  static final String SYSTEM_PROPERTY__TARGET_JDK_HOME = "target.jdk.home";
+
   private static final String MAVEN_EXEC__GLOBAL = "mvn";
   private static final String MAVEN_EXEC__WRAPPER = "./mvnw";
 

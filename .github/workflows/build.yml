@@ -1,6 +1,6 @@
 #
-# On commit push or pull request events, verifies the project builds successfully on JDK 17, 21, 25.
-# If so, its Dependency Snapshot is submitted.
+# On commit push or pull request events, verifies the project builds successfully, then submits its
+# Dependency Snapshot (commit push only).
 #
 name: Build
 
@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    uses: pdfclown/.github/.github/workflows/build.yml@v1.2.0
+    uses: pdfclown/.github/.github/workflows/build.yml@edf09a273a7e408850468143be99c6009cd0461e
     permissions:
       contents: write
       security-events: write

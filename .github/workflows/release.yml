@@ -1,5 +1,5 @@
 #
-# On demand, publishes the provided release version to Maven Central repository.
+# On demand, publishes a release version to Maven Central repository.
 #
 # Maintainers' post-activities:
 # 1. the RELEASE COMPONENTS are uploaded to Maven Central for validation: verify and publish them.
@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       revision:
-        description: 'Version to release (semver2)'
+        description: '(SemVer2) Version to release'
         type: string
         required: true
       scm_startpoint:
@@ -23,11 +23,11 @@ on:
 
 jobs:
   release:
-    uses: pdfclown/.github/.github/workflows/release.yml@v1.2.0
+    uses: pdfclown/.github/.github/workflows/release.yml@edf09a273a7e408850468143be99c6009cd0461e
     permissions:
       contents: write
     with:
+      repo_title: 'pdfClown Common'
       revision: ${{ inputs.revision }}
       scm_startpoint: ${{ inputs.scm_startpoint }}
-      repo_title: 'pdfClown Common'
     secrets: inherit

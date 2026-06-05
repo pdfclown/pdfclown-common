@@ -65,20 +65,28 @@ pdfclown-common-base instead)</description>
 
   <properties>
     <!--
-      MAIN PROPERTIES
-    -->
-    <!-- Source code compatibility level with Java platform -->
-    <java.version>17</java.version>
-    <!-- JDK to use for toolchains (compiler, Javadoc tool, and so on)
-      NOTE: For simplicity, it should correspond to the java version configured in `.tool-versions`
-      file, so it can be seamlessly set up in CI contexts. -->
-    <jdk.version>21</jdk.version>
-
-    <!--
       ROOT PROJECT-SPECIFIC PROPERTIES
 
       These properties MUST be specified in every root POM inheriting from this one.
     -->
+    <!-- JDK to use for toolchains (compiler, Javadoc tool, and so on) - NOTE: For simplicity, it
+      should correspond to the java version configured in `.tool-versions` file, so it can be
+      seamlessly set up in CI contexts -->
+    <build.jdk>21</build.jdk>
+    <!-- Source code API compatibility with the Java platform, corresponding to the version
+      specified by `release` javac option (or `source`/`target` javac options, if the former is not
+      applicable (e.g., because of exports of JDK internals); in such case, `target.jdk.home`
+      property, here below, MUST be set too) -->
+    <target.jdk>17</target.jdk>
+    <!-- Location of an installed JDK corresponding to the version specified by `source`/`target`
+      javac options, to enforce their API compatibility with the Java platform (see `system` javac
+      option; see also `target.jdk` property here above) - NOTE: By default, this project supports
+      `release` javac option, which doesn't need explicit JDK location; if `release` javac option is
+      not applicable (e.g., because of exports of JDK internals), it is responsibility of the
+      derived project to pass this property as `system` javac option to the compiler, and to define
+      `maven.compiler.source` and `maven.compiler.target` properties instead of
+      `maven.compiler.release` -->
+    <target.jdk.home/>
     <!-- Base URL path of the project's official repository -->
     <projectUrlBasePath>github.com/pdfclown/pdfclown-common</projectUrlBasePath>
 
@@ -100,7 +108,7 @@ pdfclown-common-base instead)</description>
     <!-- Enable modern (9+) `release` javac option (see
       <https://maven.apache.org/plugins/maven-compiler-plugin/examples/set-compiler-release.html>)
       to enforce API compatibility with the corresponding Java platform -->
-    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <maven.compiler.release>${target.jdk}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- Force surefire and failsafe to show the full stack on test failure -->
     <trimStackTrace>false</trimStackTrace>
@@ -114,6 +122,8 @@ pdfclown-common-base instead)</description>
       those resources -->
     <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
     <checkstyleSkip>false</checkstyleSkip>
+    <!-- javac -Xlint warnings selector (comma-separated list) -->
+    <lint.Xwarns/>
     <projectIssuesUrl>${projectRootUrl}/issues</projectIssuesUrl>
     <projectRootUrl>https://${projectUrlBasePath}</projectRootUrl>
     <projectScmUrl>${projectRootUrl}/tree/${project.scm.tag}</projectScmUrl>
@@ -181,6 +191,12 @@ pdfclown-common-base instead)</description>
     <spotless-maven-plugin.eclipseWtp.version>4.21.0</spotless-maven-plugin.eclipseWtp.version>
     <spotless-maven-plugin.prettier.version>3.8.3</spotless-maven-plugin.prettier.version>
     <xml-maven-plugin.version>1.2.1</xml-maven-plugin.version>
+
+    <!--
+      INTERNAL
+    -->
+    <!-- IMPORTANT: DO NOT REMOVE this empty declaration -->
+    <internal.lint.args.Werror/>
   </properties>
 
   <build>
@@ -917,17 +933,16 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
         <configuration>
           <toolchains>
             <jdk>
-              <!--
-                NOTE: maven-toolchains-plugin doesn't match by version prefix (e.g., version "11"
-                doesn't match a toolchain whose version is "11.0.25"), nor the Version Range
+              <!-- NOTE: maven-toolchains-plugin doesn't match by version prefix (e.g., version `11`
+                doesn't match a toolchain whose version is `11.0.25`), nor the Version Range
                 Specification <https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html>
                 provides any primitive way to express the condition "any version within the same
-                major" (e.g., 'any version 11' can only be expressed as "[11,12)", but this implies
+                major" (e.g., "any version 11" can only be expressed as `[11,12)`, but this implies
                 defining also the upper bound major in another property (since the interpolation
-                mechanism doesn't support a transformation to express `${java.version} + 1`); as a
+                mechanism doesn't support a transformation to express `${build.jdk} + 1`); as a
                 workaround, we specify an arbitrarily large minor (9) to cover all the plausible
-                range. -->
-              <version>[${jdk.version},${jdk.version}.9]</version>
+                range -->
+              <version>[${build.jdk},${build.jdk}.9]</version>
             </jdk>
           </toolchains>
         </configuration>
@@ -1118,9 +1133,11 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
         - release execution via ReleaseManager
 
         Usage (IMPORTANT: run at project root):
-          ./mvnw initialize -N -Prelease -Drelease.version=<semver2> \
-              [-Drelease.startpoint=<release branch start-point ref>] \
-              [-DdryRun]
+          ./mvnw initialize -N -Prelease \
+              -Drelease.version=<SemVer2> \
+              [-Drelease.startpoint=<ref: release branch start point>] \
+              [-DdryRun] \
+              -Dtarget.jdk.home="<path: target JAVA_HOME>"
       -->
       <build>
         <plugins>
@@ -1158,24 +1175,24 @@ import org.pdfclown.common.build.release.ReleaseManager
 import org.pdfclown.common.util.meta.SemVer1
 import org.pdfclown.common.util.meta.SemVer2
 
-final var USER_PROPERTY_NAME__DRYRUN = "dryRun"
-final var USER_PROPERTY_NAME__RELEASE_STARTPOINT = "release.startpoint"
-final var USER_PROPERTY_NAME__RELEASE_VERSION = "release.version"
+final var USER_PROPERTY__DRYRUN = "dryRun"
+final var USER_PROPERTY__RELEASE_STARTPOINT = "release.startpoint"
+final var USER_PROPERTY__RELEASE_VERSION = "release.version"
 
-final var releaseVersion = session.userProperties[USER_PROPERTY_NAME__RELEASE_VERSION]
+final var releaseVersion = session.userProperties[USER_PROPERTY__RELEASE_VERSION]
 if (releaseVersion == null)
-  throw wrongState("`{}` user property MISSING", USER_PROPERTY_NAME__RELEASE_VERSION)
+  throw wrongState("`{}` user property MISSING", USER_PROPERTY__RELEASE_VERSION)
 
 var projectDir = project.basedir.toPath()
 
 var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVer1.class)
         .toString())
-    .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY_NAME__RELEASE_STARTPOINT])
+    .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY__RELEASE_STARTPOINT])
     .setDeploymentProfiles("publish")
     .setInstallationProfiles("full")
     /* NOTE: Activates remote push only if GPG signing is configured. */
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
-    .setDryRun(session.userProperties[USER_PROPERTY_NAME__DRYRUN] != null)
+    .setDryRun(session.userProperties[USER_PROPERTY__DRYRUN] != null)
 
 runScript("onRelease", new Binding([manager: manager]), projectDir)
 
@@ -1691,12 +1708,19 @@ manager.execute()
             <configuration>
               <compilerArgs
                   combine.children="append">
-                <arg>-Xlint:all,-cast,-fallthrough,-finally,-processing</arg>
+                <!--
+                  Compiler (javac)
+                -->
+                <!-- NOTE: Some warning specifier (like `-fallthrough` suppression) are hard-coded
+                  as they are applicable to any context:
+                  - `-fallthrough`: excluded because already checked via checkstyle (see
+                    `FallThrough` module in checkstyle-checks.xml) -->
+                <arg>-Xlint:all,-cast,-fallthrough,-finally,-processing,${lint.Xwarns}</arg>
+                <arg>${internal.lint.args.Werror}</arg>
 
                 <!--
                   Error Prone plugin
                 -->
-                <arg>-Xplugin:ErrorProne @${rootdir}/src/conf/errorprone/options</arg>
                 <arg>-XDcompilePolicy=simple</arg>
                 <arg>--should-stop=ifError=FLOW</arg>
                 <!-- JDK21+ (see <https://github.com/google/error-prone/issues/5426>) -->
@@ -1724,9 +1748,54 @@ manager.execute()
                   `-classpath` option) -->
               </annotationProcessorPaths>
             </configuration>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <configuration>
+                  <compilerArgs
+                      combine.children="append">
+                    <!-- Error Prone plugin -->
+                    <arg>-Xplugin:ErrorProne -XepExcludedPaths:.*/target/.* "@${rootdir}/src/conf/errorprone/options"</arg>
+                  </compilerArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>default-testCompile</id>
+                <configuration>
+                  <compilerArgs
+                      combine.children="append">
+                    <!-- Error Prone plugin - NOTE: `test-options` file adds on `options` file, so
+                      users don't need to duplicate options already applied to main code; in fact,
+                      `options` file contains options applied to all the codebase. Some options
+                      (like `MissingSummary` suppression) are hard-coded as they are applicable to
+                      any test context -->
+                    <arg>-Xplugin:ErrorProne -XepExcludedPaths:.*/target/.* -Xep:MissingSummary:OFF "@${rootdir}/src/conf/errorprone/test-options" "@${rootdir}/src/conf/errorprone/options"</arg>
+                  </compilerArgs>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <id>lint-strict</id>
+      <!--
+        STRICT LINT PROFILE
+
+        Applies linting on compilation causing failure if warnings are emitted. By default, this
+        profile is active unless opted-out via `lint.lenient` system property.
+      -->
+      <activation>
+        <property>
+          <name>!lint.lenient</name>
+        </property>
+      </activation>
+      <properties>
+        <!-- Force warnings to be fixed in order to compile -->
+        <internal.lint.args.Werror>-Werror</internal.lint.args.Werror>
+      </properties>
     </profile>
 
     <profile>

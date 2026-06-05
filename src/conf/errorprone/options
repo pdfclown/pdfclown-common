@@ -1,3 +1,5 @@
+-Xep:AnnotateFormatMethod:OFF
 -Xep:AssignmentExpression:OFF
 -Xep:EffectivelyPrivate:OFF
+-Xep:LabelledBreakTarget:OFF
 -XepOpt:Javadoc:customInlineTags=biblio.spec,jada.doc,jada.reuseDoc
