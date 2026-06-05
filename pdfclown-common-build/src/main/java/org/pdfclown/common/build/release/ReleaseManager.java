@@ -18,7 +18,8 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
-import static org.pdfclown.common.util.Conditions.requireNotBlank;
+import static org.pdfclown.common.util.Aggregations.isEmpty;
+import static org.pdfclown.common.util.Aggregations.list;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
@@ -231,12 +232,14 @@ public class ReleaseManager {
   /**
    * Prepares a Maven CI command.
    *
-   * @param params
-   *          Maven parameters (phases, goals, options).
+   * @param args
+   *          Maven arguments (phases, goals, options).
    */
-  public String getMavenCommand(String params) {
-    return "%s %s %s"
-        .formatted(getMavenExec(), requireNotBlank(params, "params"), "--batch-mode --errors");
+  public List<String> getMavenCommand(String... args) {
+    if (isEmpty(args))
+      throw wrongArg("args", null, "MUST be not empty");
+
+    return list(getMavenExec(), "--batch-mode", "--errors").withAll(List.of(args));
   }
 
   /**

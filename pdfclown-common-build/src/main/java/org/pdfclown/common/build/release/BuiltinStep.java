@@ -14,6 +14,7 @@ package org.pdfclown.common.build.release;
 
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
+import static org.pdfclown.common.build.internal.util.system.Clis.javaArg;
 import static org.pdfclown.common.build.release.ReleaseManager.SCM_REF__HEAD;
 import static org.pdfclown.common.util.Chars.DOLLAR;
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
@@ -22,7 +23,7 @@ import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
-import static org.pdfclown.common.util.function.Functions.to;
+import static org.pdfclown.common.util.function.Functions.toNonNull;
 import static org.pdfclown.common.util.system.Processes.executeElseThrow;
 import static org.pdfclown.common.util.system.Processes.executeGetElseThrow;
 import static org.pdfclown.common.util.system.Processes.unixCommand;
@@ -101,16 +102,18 @@ public enum BuiltinStep implements Step {
    * interfere with this check.</span>
    * </p>
    */
-  DEPENDENCY_SNAPSHOTS_CHECK($ -> executeElseThrow(unixCommand(
-      $.getMavenCommand("enforcer:enforce -Denforcer.rules=requireReleaseDeps "
-          + "-Denforcer.failFast=true")),
+  DEPENDENCY_SNAPSHOTS_CHECK($ -> executeElseThrow(
+      $.getMavenCommand("enforcer:enforce",
+          javaArg("enforcer.rules", "requireReleaseDeps"),
+          javaArg("enforcer.failFast", "true")),
       $.getBaseDir()), true),
   /**
    * Updates the changelog file with release version changes.
    */
-  RELEASE_CHANGELOG_UPDATE($ -> executeElseThrow(unixCommand(
-      "cz changelog --unreleased-version %s --incremental"
-          .formatted($.getReleaseTag())),
+  RELEASE_CHANGELOG_UPDATE($ -> executeElseThrow(
+      List.of("cz", "changelog",
+          "--unreleased-version", $.getReleaseTag(),
+          "--incremental"),
       $.getBaseDir())),
   /**
    * Commits to the local SCM repository the changes done to prepare the release, and tags them.
@@ -169,11 +172,10 @@ public enum BuiltinStep implements Step {
    * artifacts are installed locally instead.
    * </p>
    */
-  DEPLOY($ -> executeElseThrow(unixCommand(
-      $.getMavenCommand("clean %s %s"
-          .formatted($.isRemotePushEnabled() ? "deploy" : "install", to(
-              $.isRemotePushEnabled() ? $.getDeploymentProfiles() : $.getInstallationProfiles(),
-              $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY)))),
+  DEPLOY($ -> executeElseThrow(
+      $.getMavenCommand("clean", $.isRemotePushEnabled() ? "deploy" : "install",
+          toNonNull($.isRemotePushEnabled() ? $.getDeploymentProfiles()
+              : $.getInstallationProfiles(), $$ -> !$$.isEmpty() ? "-P" + $$ : EMPTY)),
       $.getBaseDir()));
 
   private static final String MAVEN_CONFIG_PARAM__REVISION = "revision";
@@ -193,12 +195,10 @@ public enum BuiltinStep implements Step {
     requireNotBlank(version, "`version`");
     requireNotBlank(scmTag, "`scmTag`");
 
-    var b = new StringBuilder();
+    var newMavenConfig = new StringBuilder();
     final var mavenConfigFile = manager.getBaseDir().resolve(PATHNAME__MAVEN_CONFIG);
     try {
-      String mavenConfig = readString(mavenConfigFile);
-
-      Matcher m = PATTERN__MAVEN_CONFIG_PARAM.matcher(mavenConfig);
+      Matcher m = PATTERN__MAVEN_CONFIG_PARAM.matcher(readString(mavenConfigFile));
       while (m.find()) {
         String newParamValue;
         switch (m.group(PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__NAME)) {
@@ -214,17 +214,17 @@ public enum BuiltinStep implements Step {
             continue;
           }
         }
-        m.appendReplacement(b, S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN
-            + newParamValue);
+        m.appendReplacement(newMavenConfig,
+            S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN + newParamValue);
       }
       if (version != null)
         throw missing(MAVEN_CONFIG_PARAM__REVISION, "parameter NOT FOUND in {}", mavenConfigFile);
       else if (scmTag != null)
         throw missing(MAVEN_CONFIG_PARAM__SCM_TAG, "parameter NOT FOUND in {}", mavenConfigFile);
 
-      m.appendTail(b);
+      m.appendTail(newMavenConfig);
 
-      writeString(mavenConfigFile, b.toString());
+      writeString(mavenConfigFile, newMavenConfig.toString());
     } catch (Exception ex) {
       throw runtime("{} update FAILED", mavenConfigFile, ex);
     }
@@ -232,10 +232,7 @@ public enum BuiltinStep implements Step {
 
   private static void executeScmCheckout(ReleaseManager manager, String ref) {
     try {
-      executeElseThrow(unixCommand(
-          "git checkout %s"
-              .formatted(ref)),
-          manager.getBaseDir());
+      executeElseThrow(unixCommand("git checkout %s".formatted(ref)), manager.getBaseDir());
     } catch (Exception ex) {
       throw runtime("SCM ref {} checkout FAILED", ref, ex);
     }
@@ -244,8 +241,7 @@ public enum BuiltinStep implements Step {
   private static void executeScmPush(ReleaseManager manager) {
     if (manager.isRemotePushEnabled()) {
       try {
-        executeElseThrow(unixCommand(
-            "git push -u origin HEAD && git push --tags"),
+        executeElseThrow(unixCommand("git push -u origin HEAD && git push --tags"),
             manager.getBaseDir());
       } catch (Exception ex) {
         throw runtime("SCM push FAILED", ex);
@@ -256,9 +252,8 @@ public enum BuiltinStep implements Step {
   private static void executeScmReleaseBranch(ReleaseManager manager) {
     var releaseBranchName = "release/" + manager.getReleaseVersion();
     try {
-      executeElseThrow(unixCommand(
-          "git checkout -b %s %s"
-              .formatted(releaseBranchName, manager.getReleaseBranchStartPoint())),
+      executeElseThrow(unixCommand("git checkout -b %s %s"
+          .formatted(releaseBranchName, manager.getReleaseBranchStartPoint())),
           manager.getBaseDir());
     } catch (Exception ex) {
       throw runtime("SCM branch {} creation FAILED", releaseBranchName, ex);
@@ -270,10 +265,8 @@ public enum BuiltinStep implements Step {
    */
   private static void executeScmReleaseTag(ReleaseManager manager) {
     try {
-      executeElseThrow(unixCommand(
-          "git tag -a %s -m \"Release %s\""
-              .formatted(manager.getReleaseTag(), manager.getReleaseVersion())),
-          manager.getBaseDir());
+      executeElseThrow(unixCommand("git tag -a %s -m \"Release %s\""
+          .formatted(manager.getReleaseTag(), manager.getReleaseVersion())), manager.getBaseDir());
     } catch (Exception ex) {
       throw runtime("SCM tagging FAILED", ex);
     }
@@ -292,10 +285,8 @@ public enum BuiltinStep implements Step {
       default -> throw wrongArgOpt("kind", kind, null, List.of("release", "dev"));
     };
     try {
-      executeElseThrow(unixCommand(
-          "git add . && git commit -m \"bump: %s version %s\""
-              .formatted(kind, version)),
-          manager.getBaseDir());
+      executeElseThrow(unixCommand("git add . && git commit -m \"bump: %s version %s\""
+          .formatted(kind, version)), manager.getBaseDir());
     } catch (Exception ex) {
       throw runtime("SCM commit FAILED", ex);
     }
