@@ -165,6 +165,16 @@
       <artifactId>approvaltests-util</artifactId>
       <scope>compile</scope>
     </dependency>
+
+    <!-- Compile-only annotations -->
+    <dependency>
+      <!-- NOTE: javac lint reports that org.apache.logging.log4j:log4j-core has an issue
+        referencing `org.osgi.annotation.versioning.Version` annotation of
+        org.osgi.annotation.versioning, since that artifact declares its dependency as optional
+        while its retention is runtime; as a consequence, we have to explicitly reference it  -->
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.annotation.versioning</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

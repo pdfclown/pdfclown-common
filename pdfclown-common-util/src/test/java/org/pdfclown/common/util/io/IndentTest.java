@@ -43,7 +43,7 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini (adaptation to pdfclown-common-util)
  */
 public class IndentTest extends BaseTest {
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
   private static <S extends Serializable> S deserialize(byte[] bytes) {
     try (var in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
       return (S) in.readObject();

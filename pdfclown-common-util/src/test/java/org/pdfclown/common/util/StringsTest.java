@@ -25,6 +25,7 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings({ "Convert2MethodRef", "StringConcatToTextBlock", "TextBlockMigration" })
 class StringsTest extends BaseTest {
   @Test
   void abbreviateMultiline() {
@@ -67,6 +68,7 @@ class StringsTest extends BaseTest {
   }
 
   @Test
+  @SuppressWarnings("NullableProblems")
   void stripEmptyLines() {
     COMBINATION.verify(
         (s) -> Strings.stripEmptyLines(s),

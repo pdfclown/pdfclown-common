@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
-import org.pdfclown.common.util.meta.SemVer.Id;
 
 /**
  * @author Stefano Chizzolini
@@ -113,7 +112,7 @@ class SemVer2Test extends BaseTest {
         // value
         VERSION_LITERALS__VALID.stream().map(SemVer2::of).toList(),
         // id
-        List.of(Id.values()));
+        List.of(SemVer2.Id.values()));
   }
 
   @Test
@@ -183,7 +182,7 @@ class SemVer2Test extends BaseTest {
         // ver
         VERSION_LITERALS__VALID.stream().map(SemVer2::of).toList(),
         // id
-        List.of(Id.values()),
+        List.of(SemVer2.Id.values()),
         // value
         List.of(8, "rc"));
   }

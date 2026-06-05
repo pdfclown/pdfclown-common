@@ -14,7 +14,6 @@ package org.pdfclown.common.util;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static java.util.List.of;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
@@ -197,7 +196,7 @@ class ObjectsTest extends BaseTest {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-      return of();
+      return List.of();
     }
   }
 
@@ -323,7 +322,7 @@ class ObjectsTest extends BaseTest {
             Stream.class,
             Strings.class,
             // generic object
-            of("one", "two")));
+            List.of("one", "two")));
   }
 
   @Test
@@ -526,6 +525,7 @@ class ObjectsTest extends BaseTest {
   }
 
   @Test
+  @SuppressWarnings("FloatingPointLiteralPrecision")
   void toStringStable() {
     COMBINATION
         .verify(

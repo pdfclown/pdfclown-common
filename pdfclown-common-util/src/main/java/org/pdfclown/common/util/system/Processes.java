@@ -59,7 +59,6 @@ public final class Processes {
      * Furthermore, remotely debugging maven (`mvnDebug`) causes the execution in IntelliJ IDEA to
      * hang if a maven command (`mvn`) is run via `ProcessBuilder`.
      */
-    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     var builder = new ProcessBuilder(command)
         .directory(to(directory, Path::toFile))
         .inheritIO();

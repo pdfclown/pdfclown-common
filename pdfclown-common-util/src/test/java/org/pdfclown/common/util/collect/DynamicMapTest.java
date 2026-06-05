@@ -109,6 +109,8 @@ class DynamicMapTest extends BaseTest {
     }
 
     /**
+     * Like {@link #put(Object, Object)}, with explicit type priority.
+     *
      * @param priority
      *          {@linkplain #getPriorities() Type priority}.
      */
