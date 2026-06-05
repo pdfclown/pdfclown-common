@@ -39,10 +39,9 @@
       VERSIONS
     -->
     <maven-invoker.version>3.3.0</maven-invoker.version>
-    <!--
-      NOTE: Because of cyclic dependency between pdfclown-common-build and pdfclown-common-util, the
-      latter cannot be referenced by the former within the project build; consequently, the latest
-      already published version MUST be used instead. -->
+    <!-- NOTE: Because of cyclic dependency between pdfclown-common-build and pdfclown-common-util,
+      the latter cannot be referenced by the former within the project build; consequently, the
+      latest already published version MUST be used instead -->
     <pdfclown-common-util.version>0.8.0</pdfclown-common-util.version>
   </properties>
 
@@ -188,9 +187,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <configuration>
-          <!--
-            NOTE: Dependencies are declared for use by consuming artifacts, no matter whether they
-            are locally unused. -->
+          <!-- NOTE: Dependencies are declared for use by consuming artifacts, no matter whether
+            they are locally unused -->
           <ignoredUnusedDeclaredDependencies>*</ignoredUnusedDeclaredDependencies>
         </configuration>
       </plugin>
@@ -244,10 +242,9 @@
           </filters>
           <relocations>
             <relocation>
-              <!--
-                All pdfclown-common-util types used. Those referenced by pdfclown-common-build API,
-                visible in Javadoc, are mapped by Jada post-processing (see [shading] in
-                ScriptExtension.groovy). -->
+              <!-- All pdfclown-common-util types used. Those referenced by pdfclown-common-build
+                API, visible in Javadoc, are mapped by Jada post-processing (see [shading] in
+                ScriptExtension.groovy) -->
               <pattern>org.pdfclown.common.util</pattern>
               <shadedPattern>org.pdfclown.common.build.shaded.util</shadedPattern>
             </relocation>

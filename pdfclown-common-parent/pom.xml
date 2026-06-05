@@ -31,10 +31,7 @@
     <!--
       CUSTOM PROPERTIES
     -->
-    <!--
-      Automatic module name (JPMS).
-
-      NOTE: Each module MUST define its own unique JPMS name. -->
+    <!-- Automatic module name (JPMS) - NOTE: Each module MUST define its own unique JPMS name -->
     <projectJpmsName/>
   </properties>
 

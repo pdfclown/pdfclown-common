@@ -75,10 +75,11 @@ pdfclown-common-base instead)</description>
     <jdk.version>21</jdk.version>
 
     <!--
-      ROOT-PROJECT-SPECIFIC PROPERTIES
+      ROOT PROJECT-SPECIFIC PROPERTIES
 
       These properties MUST be specified in every root POM inheriting from this one.
     -->
+    <!-- Base URL path of the project's official repository -->
     <projectUrlBasePath>github.com/pdfclown/pdfclown-common</projectUrlBasePath>
 
     <!--
@@ -86,32 +87,31 @@ pdfclown-common-base instead)</description>
 
       These properties MUST be specified in every POM inheriting from this one.
     -->
-    <!-- Path to the root project directory.
-      NOTE: This is an ugly workaround to the notorious lack of a standard way to point to the root
-      project directory no matter the current project building in the reactor. -->
+    <!-- Path to the root project directory - NOTE: This is an ugly workaround to the notorious lack
+      of a standard way to point to the root project directory, no matter the current project
+      building in the reactor -->
     <rootdir>${project.basedir}/..</rootdir>
 
     <!--
       THIRD-PARTY PROPERTIES
     -->
-    <!-- [mockito] IMPORTANT: DO NOT REMOVE `argLine` empty declaration (required for later
-      @-reference resolution). -->
+    <!-- [mockito] IMPORTANT: DO NOT REMOVE this empty declaration (required for later resolution) -->
     <argLine/>
-    <!-- Enable modern (9+) javac `release` option (see
+    <!-- Enable modern (9+) `release` javac option (see
       <https://maven.apache.org/plugins/maven-compiler-plugin/examples/set-compiler-release.html>)
-      to enforce code compliance with public JDK API. -->
+      to enforce API compatibility with the corresponding Java platform -->
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- Force surefire and failsafe to show the full stack on test failure. -->
+    <!-- Force surefire and failsafe to show the full stack on test failure -->
     <trimStackTrace>false</trimStackTrace>
 
     <!--
       CUSTOM PROPERTIES
     -->
-    <!-- NOTE: External derived POMs are expected to use pdfclown-common-base as parent; it takes
-      the responsibility to reset this property, so POMs can decide either to specify their own
-      filesystem-based resources path, or declare the build resources artifact (namely,
-      pdfclown-common-build) as dependency of the plugins referencing those resources. -->
+    <!-- Build resources root path - NOTE: External POMs inheriting from this one are expected to
+      decide either to specify their own filesystem-based resources path, or declare the build
+      resources artifact (namely, pdfclown-common-build) as dependency of the plugins referencing
+      those resources -->
     <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
     <checkstyleSkip>false</checkstyleSkip>
     <projectIssuesUrl>${projectRootUrl}/issues</projectIssuesUrl>
@@ -424,9 +424,8 @@ log.info("buildTimestamp: " + buildTimestamp
           <executions>
             <execution>
               <goals>
-                <!--
-                  [mockito] Required by mockito to register its agent in maven-surefire-plugin
-                  execution. -->
+                <!-- [mockito] Required by mockito to register its agent in maven-surefire-plugin
+                  execution -->
                 <goal>properties</goal>
               </goals>
             </execution>
@@ -438,12 +437,10 @@ log.info("buildTimestamp: " + buildTimestamp
               <configuration>
                 <failOnWarning>true</failOnWarning>
                 <ignoreAllNonTestScoped>true</ignoreAllNonTestScoped>
-                <!--
-                  NOTE: Omitting runtime dependencies to avoid false positives. -->
+                <!-- NOTE: Omitting runtime dependencies to avoid false positives -->
                 <ignoreNonCompile>true</ignoreNonCompile>
                 <ignoredUsedUndeclaredDependencies>
-                  <!--
-                    NOTE: Omitting transitive test dependencies. -->
+                  <!-- NOTE: Omitting transitive test dependencies -->
                   <item>com.google.jimfs</item>
                   <item>org.hamcrest</item>
                   <item>org.mockito</item>
@@ -459,8 +456,7 @@ log.info("buildTimestamp: " + buildTimestamp
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
           <configuration>
-            <!--
-              [mockito] Required by mockito to register its agent (see
+            <!-- [mockito] Required by mockito to register its agent (see
               <https://javadoc.io/doc/org.mockito/mockito-core/5.21.0/org.mockito/org/mockito/Mockito.html#0.3>) -->
             <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
@@ -626,9 +622,8 @@ log.info("buildTimestamp: " + buildTimestamp
               <option>--uml-package-deps-exclude
                 +*internal*,org.apache.logging.log4j.core.*</option>
               <option>--uml-package-deps-max-count 0</option>
-              <!--
-                NOTE: maven-javadoc-plugin doesn't accept absolute paths in `addStylesheets`
-                property, so we have to feed it directly. -->
+              <!-- NOTE: maven-javadoc-plugin doesn't accept absolute paths in `addStylesheets`
+                property, so we have to feed it directly -->
               <option>--add-stylesheet "${rootdir}/src/main/javadoc/stylesheet-ext.css"</option>
               <option>--allow-script-in-comments</option>
               <option>-tag "implSpec:a:Implementation Requirements:"</option>
@@ -692,10 +687,9 @@ log.info("buildTimestamp: " + buildTimestamp
             <!--
               CONTENTS (layout and resources)
             -->
-            <!--
-              NOTE: Weirdly enough, projects inheriting from this POM don't retrieve the text of the
-              source overview.html file unless explicitly declared via `overview` parameter, despite
-              its default path should be just this one. -->
+            <!-- NOTE: Weirdly enough, projects inheriting from this POM don't retrieve the text of
+              the source overview.html file unless explicitly declared via `overview` parameter,
+              despite its default path should be just this one -->
             <overview>${basedir}/src/main/javadoc/overview.html</overview>
             <top><![CDATA[
 <link rel="stylesheet" type="text/css" href="{@docRoot}/resources/highlight/prism.css">
@@ -826,10 +820,9 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 <url>https://javadoc.io/doc/tech.units/indriya/${indriya.version}</url>
               </link>
             </dependencyLinks>
-            <!--
-              NOTE: Disabling offline-links detection prevents their automatic synthesis (which is
-              based on the arbitrary construct "{project.url}/apidocs") from interfering with their
-              explicit configuration. -->
+            <!-- NOTE: Disabling offline-links detection prevents their automatic synthesis (which
+              is based on the arbitrary construct "{project.url}/apidocs") from interfering with
+              their explicit configuration -->
             <detectOfflineLinks>false</detectOfflineLinks>
 
             <nohelp>true</nohelp>
@@ -837,11 +830,10 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
             <!-- Suppress hidden timestamp for reproducible build. -->
             <notimestamp>true</notimestamp>
 
-            <!--
-              NOTE: Workaround to `-no-fonts` flag automatically added because of toolchain handling
-              issue (the plugin wrongly evaluates the tool JDK version instead of the build JDK
-              version, despite it's the latter to generate the javadoc - see also
-              <https://github.com/apache/maven-javadoc-plugin/issues/1244>). -->
+            <!-- NOTE: Workaround to `-no-fonts` flag automatically added because of toolchain
+              handling issue (the plugin wrongly evaluates the tool JDK version instead of the build
+              JDK version, despite it's the latter to generate the javadoc - see also
+              <https://github.com/apache/maven-javadoc-plugin/issues/1244>) -->
             <disableNoFonts>true</disableNoFonts>
 
             <archive>
@@ -851,15 +843,14 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
             <!--
               SYSTEM
             -->
-            <!--
+            <!-- NOTE:
               - `-missing`: missing comments are ignored
               - `-html`: HTML 5 check is disabled, as it wrongly prohibits legal data attributes
                 (e.g., `<pre data-line="5"><code>` used by Prism code highlighter) — see also
                 <https://developer.mozilla.org/en-US/docs/Web/HTML/How_to/Use_data_attributes>
               - `-accessibility`: accessibility is disabled, as it weirdly interferes with things
                 like heading tags (<h*>); in particular, after java 11, <h3> is
-                forbidden <https://bugs.openjdk.org/browse/JDK-8223552>
-            -->
+                forbidden <https://bugs.openjdk.org/browse/JDK-8223552> -->
             <doclint>all,-missing,-html,-accessibility</doclint>
             <quiet>true</quiet>
           </configuration>
@@ -1573,7 +1564,7 @@ manager.execute()
         FULL-FORMAT PROFILE
 
         Fully formats the source code. By default, this profile is active unless projects explicit
-        opt-out via marker file.
+        opt-out via `.profile.no-format` marker file.
       -->
       <activation>
         <file>
@@ -1684,7 +1675,7 @@ manager.execute()
         LINT PROFILE
 
         Applies linting on compilation. By default, this profile is active unless opted-out via
-        system property.
+        `skipLint` system property.
       -->
       <activation>
         <property>
@@ -1728,9 +1719,9 @@ manager.execute()
                   <artifactId>error_prone_core</artifactId>
                   <version>${error-prone.version}</version>
                 </path>
-                <!--
-                  NOTE: Other annotation processors go HERE (if `annotationProcessorPaths` element
-                  is set, processors will no longer be discovered on the regular `-classpath`). -->
+                <!-- NOTE: Other annotation processors go HERE (if `annotationProcessorPaths`
+                  element is set, processors will no longer be discovered on the regular
+                  `-classpath` option) -->
               </annotationProcessorPaths>
             </configuration>
           </plugin>
@@ -1740,6 +1731,11 @@ manager.execute()
 
     <profile>
       <id>ci</id>
+      <!--
+        CI PROFILE
+
+        Applies in CI environments.
+      -->
       <activation>
         <property>
           <name>env.CI</name>
@@ -1765,6 +1761,11 @@ manager.execute()
 
     <profile>
       <id>non-ci</id>
+      <!--
+        NON-CI PROFILE
+
+        Applies outside CI environments.
+      -->
       <activation>
         <property>
           <name>!env.CI</name>
