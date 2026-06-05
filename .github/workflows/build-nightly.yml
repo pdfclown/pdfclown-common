@@ -7,6 +7,12 @@ on:
   schedule:
     - cron: '0 4 * * *'  # Once a day, at 4:00 UTC
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Whether to force the build (useful to retry a failed run)'
+        type: boolean
+        default: false
+        required: false
 
 jobs:
   build:
@@ -14,3 +20,5 @@ jobs:
     permissions:
       contents: read
     secrets: inherit
+    with:
+      force: ${{ inputs.force }}
