@@ -53,6 +53,13 @@ This document provides a concise reference to useful commands for pdfClown.org p
       ```shell
       ./mvnw ... -pl .,my-sub -amd
       ```
+### Toolchains
+
+- list **all JDKs available** on the local system:
+
+    ```shell
+    ./mvnw toolchains:display-discovered-jdk-toolchains
+    ```
 
 ### Wrapper
 

@@ -12,11 +12,25 @@ For classic (HTML-based) Javadoc, use `<h4>` or lower tags.
 
 RATIONALE: headings within Javadoc comments are a controversial topic: the [official specification](https://docs.oracle.com/en/java/javase/11/docs/specs/doc-comment-spec.html) discourages their use, as they may interfere with the standard page structure; Javadoc tool's doclint even prohibits certain levels, but [it hasn't been consistent across JDK versions](https://bugs.openjdk.org/browse/JDK-8223552) — the consensus seems to avoid level 3 and higher.
 
+## API
+
+### Equivalence (`equals`+`hashcode`)
+
+The `equals` method is notoriously plagued by semantic ambiguities due to the conflation of conflicting purposes into the same API: besides its general contract specified by [`Object`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html) (stable, strong equivalence tied to the `hashcode` method), [`Collection`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html) specifies a looser contract (unstable, weak equivalence independent of the `hashcode` method) which makes the latter unsuitable for hash-based uses.
+
+Consequently, *`equals` and `hashcode` methods MUST be overridden if and only if the class is immutable and not derived from `Collection`*. If such class is non-final (weakly immutable), it MUST use `instanceof` operator instead of `getClass` method for instance comparison in order to preserve the [Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle); moreover, it MUST enforce equivalence symmetry by declaring both `equals` and `hashcode` as final methods, accompanied for the sake of clarity by the following Javadoc note:
+
+```java
+/**
+ * @implNote Marked as final to enforce equivalence symmetry.
+ */
+```
+
 ## Tests
 
 ### Naming
 
-- **Test packages**:
+- **test packages**:
 
     - **containing primary test code**: `mainCodePackage`
 
@@ -63,7 +77,7 @@ RATIONALE: headings within Javadoc comments are a controversial topic: the [offi
       // test package for public test harness of the project with `org.example.myapp` as root package
       package org.example.myapp.test;</pre>
 
-- **Test classes**:
+- **test classes**:
 
     - **unit tests**: `TestedClassName 'Test'`
 

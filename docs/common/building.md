@@ -6,28 +6,24 @@ This document describes how to set up your development environment to build and 
 
 ## Prerequisites
 
-- **JDK 17+** (Maven execution)
+- **JDK 21** (Maven toolchain)
 
-- **JDK 17** (source code compilation)
-
-- **[Maven toolchains configuration](https://maven.apache.org/guides/mini/guide-using-toolchains.html)** for JDK 17 (source code compilation)
-
-    If the file `${user.home}/.m2/toolchains.xml` is missing, generate it via CLI:
+    Once JDK 21 is installed, the corresponding [Maven toolchain MUST be configured](https://maven.apache.org/guides/mini/guide-using-toolchains.html): if the file `${user.home}/.m2/toolchains.xml` is missing or doesn't include an entry for JDK 21, generate it via CLI:
 
     ```shell
     ./mvnw toolchains:generate-jdk-toolchains-xml
     ```
 
-    It should contain a `toolchain` entry for JDK 17, like this:
+    It should contain a `toolchain` entry for JDK 21, that MUST be included in `${user.home}/.m2/toolchains.xml`, like this:
 
     ```xml
     <toolchain>
       <type>jdk</type>
       <provides>
-        <version>17</version>
+        <version>21</version>
         . . .
     ```
-
+- **JDK 17** (source code target)
 - **[Node.js](https://nodejs.org/en)** [[installation instructions](https://nodejs.org/en/download)]
 
     This is required by the [Prettier](https://prettier.io/) formatter integrated in [Spotless](https://github.com/diffplug/spotless/tree/main/plugin-maven) Maven plugin.
@@ -146,6 +142,22 @@ This document describes how to set up your development environment to build and 
 </tr>
 </table>
 
+> [!IMPORTANT]
+> By default, **linting** (`lint` profile) is active to enforce code quality through static checks, provided at compilation level by javac and [Error Prone](https://errorprone.info/) (a popular javac plugin). Despite its usefulness, in specific circumstances it may become inconvenient:
+>
+> - IDEs like IntelliJ IDEA, which integrate their builds with the underlying Maven configuration, may be disrupted by the `lint` profile and fail to compile with obscure messages like "java: Compilation failed: internal java compiler error": in such cases, disable that profile within the IDE (in IntelliJ IDEA, look under the Profiles node in Maven view)
+> - on CLI, to disable the `lint` profile, use `skipLint` system property, like so:
+>
+>   ```shell
+>   ./mvnw install -DskipLint
+>   ```
+>
+> Moreover, to apply linting so it emits warnings without failing (for example, to test alternative JDK versions on CI), use `lint.lenient`, like so:
+>
+> ```shell
+> ./mvnw install -Dlint.lenient
+> ```
+
 ### Testing
 
 - **basic** (unit tests only):
@@ -222,27 +234,27 @@ This document describes how to set up your development environment to build and 
 > [!TIP]
 > **Test resources** are automatically managed by the testing harness. In case of test failures:
 >
-> - to **manually update expected test resources (via diff dialogs)**, use `assert.reporter.enabled` system property, like so:
+> - to **manually update expected test resources (via diff dialogs)**, use `test.reporter.enabled` system property, like so:
 >
 > ```shell
-> ./mvnw verify -Dassert.reporter.enabled
+> ./mvnw verify -Dtest.reporter.enabled
 > ```
 >
-> - to **automatically update expected test resources**, use `assert.expected.update` system property, like so:
+> - to **automatically update expected test resources**, use `test.expected.update` system property, like so:
 >
 > ```shell
-> ./mvnw verify -Dassert.expected.update
+> ./mvnw verify -Dtest.expected.update
 > ```
 
 ### Other Checks
 
-- verify dependency vulnerabilities:
+- verify **dependency vulnerabilities**:
 
     ```shell
     ./mvnw verify -Pverify-extra
     ```
 
-- verify copyright and licensing declarations compliance (see <https://reuse.software>):
+- verify **copyright and licensing declarations compliance** (see <https://reuse.software>):
 
     ```shell
     reuse lint
