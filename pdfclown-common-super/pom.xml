@@ -69,9 +69,11 @@ pdfclown-common-base instead)</description>
 
       These properties MUST be specified in every root POM inheriting from this one.
     -->
-    <!-- JDK to use for toolchains (compiler, Javadoc tool, and so on) - NOTE: For simplicity, it
-      should correspond to the java version configured in `.tool-versions` file, so it can be
-      seamlessly set up in CI contexts -->
+    <!-- JDK to use for toolchains (compiler, Javadoc tool, and so on) - MUST correspond to the java
+      version configured in `.tool-versions` file, so it can be seamlessly set up in CI contexts (in
+      more sofisticated scenarios currently not supported, `.tool-versions` file would define only
+      the JVM for running Maven, whilst this property would define a toolchain-specific JDK)
+      -->
     <build.jdk>21</build.jdk>
     <!-- Source code API compatibility with the Java platform, corresponding to the version
       specified by `release` javac option (or `source`/`target` javac options, if the former is not
@@ -79,12 +81,12 @@ pdfclown-common-base instead)</description>
       property, here below, MUST be set too) -->
     <target.jdk>17</target.jdk>
     <!-- Location of an installed JDK corresponding to the version specified by `source`/`target`
-      javac options, to enforce their API compatibility with the Java platform (see `system` javac
-      option; see also `target.jdk` property here above) - NOTE: By default, this project supports
+      javac options (see `target.jdk` property here above), to enforce their API compatibility with
+      the Java platform (see `system` javac option) - NOTE: By default, this project supports
       `release` javac option, which doesn't need explicit JDK location; if `release` javac option is
       not applicable (e.g., because of exports of JDK internals), it is responsibility of the
-      derived project to pass this property as `system` javac option to the compiler, and to define
-      `maven.compiler.source` and `maven.compiler.target` properties instead of
+      derived project to pass this property as `system` javac option to the compiler, and to
+      define `maven.compiler.source` and `maven.compiler.target` properties instead of
       `maven.compiler.release` -->
     <target.jdk.home/>
     <!-- Base URL path of the project's official repository -->
