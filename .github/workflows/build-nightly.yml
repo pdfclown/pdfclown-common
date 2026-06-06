@@ -21,4 +21,6 @@ jobs:
       contents: read
     secrets: inherit
     with:
-      force: ${{ inputs.force }}
+      # NOTE: On scheduled runs, `force` is NOT initialized to its default, so we have to explicitly
+      #       provide a fallback.
+      force: ${{ inputs.force || false }}
