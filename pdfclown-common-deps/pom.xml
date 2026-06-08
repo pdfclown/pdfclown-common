@@ -229,6 +229,12 @@
       -->
       <dependency>
         <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.version}</version>
+        <!-- NOTE: No scope, as `test` conflicts with `compile` in pdfclown-common-build -->
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>${junit.version}</version>
         <scope>test</scope>
