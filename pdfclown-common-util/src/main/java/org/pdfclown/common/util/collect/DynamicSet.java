@@ -18,7 +18,7 @@ import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.Cloneable;
+import org.pdfclown.common.util.XtCloneable;
 import org.pdfclown.common.util.collect.DynamicMap.DynamicProvider;
 
 /**
@@ -43,7 +43,7 @@ import org.pdfclown.common.util.collect.DynamicMap.DynamicProvider;
  * @author Stefano Chizzolini
  */
 public class DynamicSet<E> extends AbstractSet<E>
-    implements Set<E>, Cloneable {
+    implements Set<E>, XtCloneable {
   /**
    * Dummy value to associate in {@link #base} with an element of this set.
    */

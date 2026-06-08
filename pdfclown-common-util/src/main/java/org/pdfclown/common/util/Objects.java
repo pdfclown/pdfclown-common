@@ -383,8 +383,8 @@ public final class Objects {
    * </p>
    */
   @SuppressWarnings("unchecked")
-  public static <T extends java.lang.Cloneable> T clone(T obj) {
-    return obj instanceof Cloneable c ? (T) c.clone()
+  public static <T extends Cloneable> T clone(T obj) {
+    return obj instanceof XtCloneable c ? (T) c.clone()
         : ObjectUtils.clone(obj);
   }
 

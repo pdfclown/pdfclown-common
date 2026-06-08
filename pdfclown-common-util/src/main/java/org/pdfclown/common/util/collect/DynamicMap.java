@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.Cloneable;
+import org.pdfclown.common.util.XtCloneable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class DynamicMap<K, V> extends HashMap<K, V> {
    * @author Stefano Chizzolini
    */
   public abstract static class DynamicProvider<E>
-      implements Function<E, Stream<E>>, Cloneable {
+      implements Function<E, Stream<E>>, XtCloneable {
     @Override
     public DynamicProvider<E> clone() {
       try {

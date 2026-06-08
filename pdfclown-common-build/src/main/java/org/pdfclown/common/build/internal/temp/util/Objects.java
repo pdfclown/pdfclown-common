@@ -97,7 +97,6 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.temp.util.collect.Comparators;
 import org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator;
 import org.pdfclown.common.util.ArgumentException;
-import org.pdfclown.common.util.Cloneable;
 import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.PolyNull;
 import org.pdfclown.common.util.regex.Patterns;
@@ -386,8 +385,8 @@ public final class Objects {
    * </p>
    */
   @SuppressWarnings("unchecked")
-  public static <T extends java.lang.Cloneable> T clone(T obj) {
-    return obj instanceof Cloneable c ? (T) c.clone()
+  public static <T extends Cloneable> T clone(T obj) {
+    return obj instanceof XtCloneable c ? (T) c.clone()
         : ObjectUtils.clone(obj);
   }
 

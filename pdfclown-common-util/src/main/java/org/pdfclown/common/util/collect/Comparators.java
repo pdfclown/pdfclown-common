@@ -19,7 +19,7 @@ import static org.pdfclown.common.util.Exceptions.unexpected;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
-import org.pdfclown.common.util.Cloneable;
+import org.pdfclown.common.util.XtCloneable;
 
 /**
  * Comparison utilities.
@@ -45,7 +45,7 @@ public class Comparators {
        *
        * @author Stefano Chizzolini
        */
-      public static class TypePriorityComparator implements Comparator<Class>, Cloneable {
+      public static class TypePriorityComparator implements Comparator<Class>, XtCloneable {
         private int minPriority;
         private int maxPriority;
         private HashMap<Class, Integer> priorities = new HashMap<>();
