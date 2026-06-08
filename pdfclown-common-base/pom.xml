@@ -87,7 +87,7 @@
   <profiles>
     <!-- AUTOMATED PROFILES  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <profile>
-      <id>unselfish</id>
+      <id>@unselfish</id>
       <!--
         UNSELFISH PROFILE
 

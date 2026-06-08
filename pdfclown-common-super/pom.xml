@@ -1270,7 +1270,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     -->
 
     <profile>
-      <id>maven-plugin</id>
+      <id>@maven-plugin</id>
       <!--
         MAVEN PLUGIN PROFILE
       -->
@@ -1299,7 +1299,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>jar</id>
+      <id>@jar</id>
       <!--
         JAR ARTIFACT PROFILE
       -->
@@ -1339,7 +1339,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>pom</id>
+      <id>@pom</id>
       <!--
         GENERIC POM PROFILE
       -->
@@ -1373,7 +1373,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
             destroys ordering, formatting and comments of the original POM.
 
       <profile>
-        <id>full-pom</id>
+        <id>@full-pom</id>
         <activation>
           <property>
             <name>packaging</name>
@@ -1402,7 +1402,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     -->
 
     <profile>
-      <id>test-jar</id>
+      <id>@test-jar</id>
       <!--
         TEST JAR ARTIFACT PROFILE
 
@@ -1474,7 +1474,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>internal-pom</id>
+      <id>@internal-pom</id>
       <!--
         INTERNAL POM PROFILE
 
@@ -1543,7 +1543,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>bom</id>
+      <id>@bom</id>
       <!--
         BOM PROFILE
 
@@ -1580,7 +1580,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>full-format</id>
+      <id>@full-format</id>
       <!--
         FULL-FORMAT PROFILE
 
@@ -1691,7 +1691,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>lint</id>
+      <id>@lint</id>
       <!--
         LINT PROFILE
 
@@ -1784,7 +1784,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>lint-strict</id>
+      <id>@lint-strict</id>
       <!--
         STRICT LINT PROFILE
 
@@ -1803,7 +1803,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>ci</id>
+      <id>@ci</id>
       <!--
         CI PROFILE
 
@@ -1833,7 +1833,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <profile>
-      <id>non-ci</id>
+      <id>@non-ci</id>
       <!--
         NON-CI PROFILE
 

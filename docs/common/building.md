@@ -143,10 +143,10 @@ This document describes how to set up your development environment to build and 
 </table>
 
 > [!IMPORTANT]
-> By default, **linting** (`lint` profile) is active to enforce code quality through static checks, provided at compilation level by javac and [Error Prone](https://errorprone.info/) (a popular javac plugin). Despite its usefulness, in specific circumstances it may become inconvenient:
+> By default, **linting** (`@lint` profile) is active to enforce code quality through static checks, provided at compilation level by javac and [Error Prone](https://errorprone.info/) (a popular javac plugin). Despite its usefulness, in specific circumstances it may become inconvenient:
 >
-> - IDEs like IntelliJ IDEA, which integrate their builds with the underlying Maven configuration, may be disrupted by the `lint` profile and fail to compile with obscure messages like "java: Compilation failed: internal java compiler error": in such cases, disable that profile within the IDE (in IntelliJ IDEA, look under the Profiles node in Maven view)
-> - on CLI, to disable the `lint` profile, use `skipLint` system property, like so:
+> - IDEs like IntelliJ IDEA, which integrate their builds with the underlying Maven configuration, may be disrupted by the `@lint` profile and fail to compile with obscure messages like "java: Compilation failed: internal java compiler error": in such cases, disable both `@lint` and `@lint-strict` profiles within the IDE (in IntelliJ IDEA, look under the Profiles node in Maven view: after unchecking the profiles, click "Reload All Maven Projects" command)
+> - on CLI, to disable the `@lint` profile, use `skipLint` system property, like so:
 >
 >   ```shell
 >   ./mvnw install -DskipLint
