@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  * <p>
  * In case of error, full assertion reports are written to a dedicated log file
- * ({@code target/test-logs/pdfclown/assert.log}).
+ * ({@code target/test-logs/pdfclown/assertion.log}).
  * </p>
  *
  * @author Stefano Chizzolini
@@ -130,13 +130,6 @@ public abstract class Asserter {
      */
     public boolean isEmpty() {
       return base.length() == 0;
-    }
-
-    /**
-     * Begins a new page-related error entry.
-     */
-    public ErrorMessageBuilder pageError(int pageIndex) {
-      return error("Page ").append(pageIndex).append(": ");
     }
 
     @Override
@@ -272,7 +265,7 @@ public abstract class Asserter {
     throw new AssertionError(
         """
             %s
-            (see pdfclown/assert.log for further information)
+            (see pdfclown/assertion.log for further information)
             %s""".formatted(abbreviateMultiline(message, 5, 500), hint));
   }
 

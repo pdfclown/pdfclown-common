@@ -225,25 +225,32 @@ This document describes how to set up your development environment to build and 
 </table>
 
 > [!TIP]
+> **Test resources** are automatically managed by the testing harness ([pdfclown-common-build](https://javadoc.io/doc/org.pdfclown/pdfclown-common-build/0.8.0/org/pdfclown/common/build/test/package-summary.html)). In case of test failures:
+>
+> 1. **evaluate the differences between actual results and expected ones**: besides the standard JUnit messages, several ([`org.pdfclown.common.build.test.assertion.Verifier`](https://javadoc.io/doc/org.pdfclown/pdfclown-common-build/0.8.0/org/pdfclown/common/build/test/assertion/Verifier.html)-based) unit test results can be inspected for comparison via diff dialogs:
+>    ```shell
+>    ./mvnw test -Dtest.reporter.enabled
+>    ```
+>    while several ([`org.pdfclown.common.build.test.assertion.Asserter`](https://javadoc.io/doc/org.pdfclown/pdfclown-common-build/0.8.0/org/pdfclown/common/build/test/assertion/Asserter.html)-based) integration tests report failure details in `%MODULE%/target/test-logs/pdfclown/assertion.log`, along with instructions to resolve them
+> 2. in case of false positive (that is, valid differences caused by actual changes in the codebase), **update expected test resources**:
+>    - **manually**, using diff dialogs in case of `Verifier`-based unit tests (see here above)
+>    - **automatically**, using `test.expected.update` system property, like so:
+>      ```shell
+>      ./mvnw (test|verify) -Dtest.expected.update
+>      ```
+
+> [!TIP]
 > By default, **test logs** (`%MODULE%/target/test-logs`) are filtered at WARN level; to adjust this threshold, use `log.level` system property, like so:
 >
 > ```shell
-> ./mvnw verify -Dlog.level=INFO
+> ./mvnw (test|verify) -Dlog.level=INFO
 > ```
 
 > [!TIP]
-> **Test resources** are automatically managed by the testing harness. In case of test failures:
->
-> - to **manually update expected test resources (via diff dialogs)**, use `test.reporter.enabled` system property, like so:
+> To **debug tests**, attach Maven process to an IDE after entering this:
 >
 > ```shell
-> ./mvnw verify -Dtest.reporter.enabled
-> ```
->
-> - to **automatically update expected test resources**, use `test.expected.update` system property, like so:
->
-> ```shell
-> ./mvnw verify -Dtest.expected.update
+> ./mvnwDebug (test|verify) -DforkCount=0
 > ```
 
 ### Other Checks
