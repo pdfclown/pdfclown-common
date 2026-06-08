@@ -14,7 +14,7 @@ RATIONALE: headings within Javadoc comments are a controversial topic: the [offi
 
 ## API
 
-### Equivalence (`equals`+`hashcode`)
+### Object equivalence (`equals`+`hashcode`)
 
 The `equals` method is notoriously plagued by semantic ambiguities due to the conflation of conflicting purposes into the same API: besides its general contract specified by [`Object`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html) (stable, strong equivalence tied to the `hashcode` method), [`Collection`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html) specifies a looser contract (unstable, weak equivalence independent of the `hashcode` method) which makes the latter unsuitable for hash-based uses.
 
@@ -25,6 +25,25 @@ Consequently, *`equals` and `hashcode` methods MUST be overridden if and only if
  * @implNote Marked as final to enforce equivalence symmetry.
  */
 ```
+
+### Events
+
+- **Observer pattern**, implemented through [`org.pdfclown.common.util.Listener`](https://javadoc.io/doc/org.pdfclown/pdfclown-common-util/0.8.0/org/pdfclown/common/util/Listener.html). Its event methods MUST be prefixed by `on`, and suffixed by `Begin`/`End` in case both the beginning and the ending of an event are to be notified. The observed class MUST implement [`org.pdfclown.common.util.Listenable`](https://javadoc.io/doc/org.pdfclown/pdfclown-common-util/0.8.0/org/pdfclown/common/util/Listenable.html) and define a protected `fire` method to notify events to listeners, like so:
+
+  ```java
+  /**
+   * Notifies listeners of the given event.
+   */
+  protected final void fire(Consumer<Listener> event) {
+    if (Aggregations.isFilled(listeners)) {
+      for (Listener listener : listeners) {
+        event.accept(listener);
+      }
+    }
+  }
+  ```
+
+- **Event Bus pattern**, implemented through [`org.greenrobot:eventbus-java`](https://github.com/greenrobot/EventBus) to decouple publishers from subscribers
 
 ## Tests
 

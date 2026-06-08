@@ -16,4 +16,4 @@ This document describes how to set up your development environment to build and 
 
 ## Building
 
-See [Building](common/building.md#building) < pdfClown.org
+See [Building](common/building.md#building-1) < pdfClown.org
