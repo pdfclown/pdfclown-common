@@ -1196,9 +1196,11 @@ var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVe
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
     .setDryRun(session.userProperties[USER_PROPERTY__DRYRUN] != null)
 
-runScript("onRelease", new Binding([manager: manager]), projectDir)
+runScript("onReleaseBegin", new Binding([manager: manager]), projectDir)
 
 manager.execute()
+
+runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
 ]]></script>
                   </scripts>
                 </configuration>

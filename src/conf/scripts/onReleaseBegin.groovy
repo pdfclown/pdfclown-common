@@ -1,5 +1,6 @@
 /*
-  This script updates project release version references in the documentation.
+  This script updates project release version references in the documentation, so they are aligned
+  to the release underway.
  */
 
 import static java.nio.file.Files.readString
