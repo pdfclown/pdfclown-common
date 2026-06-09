@@ -143,20 +143,27 @@ This document describes how to set up your development environment to build and 
 </table>
 
 > [!IMPORTANT]
-> By default, **linting** (`@lint` profile) is active to enforce code quality through static checks, provided at compilation level by javac and [Error Prone](https://errorprone.info/) (a popular javac plugin). Despite its usefulness, in specific circumstances it may become inconvenient:
+> By default, **compilation linting** (`@lint` profile) is active to enforce code quality through static checks provided by javac and [Error Prone](https://errorprone.info/) (a popular javac plugin). To ensure a thorough validation, force a full rebuild:
 >
-> - IDEs like IntelliJ IDEA, which integrate their builds with the underlying Maven configuration, may be disrupted by the `@lint` profile and fail to compile with obscure messages like "java: Compilation failed: internal java compiler error": in such cases, disable both `@lint` and `@lint-strict` profiles within the IDE (in IntelliJ IDEA, look under the Profiles node in Maven view: after unchecking the profiles, click "Reload All Maven Projects" command)
+> ```shell
+> ./mvnw clean (compile|install)
+> ```
+>
+> Despite its usefulness, in specific circumstances compilation linting may become inconvenient:
+>
+> - IDEs like IntelliJ IDEA, which integrate their builds with the underlying Maven configuration, may be disrupted by the `@lint` profile and fail to compile with obscure messages like "java: Compilation failed: internal java compiler error": in such cases, disable the `@lint` profile within the IDE (in IntelliJ IDEA, look under the Profiles node in Maven view: after unchecking the profile, click "Reload All Maven Projects" command)
 > - on CLI, to disable the `@lint` profile, use `skipLint` system property, like so:
 >
 >   ```shell
->   ./mvnw install -DskipLint
+>   ./mvnw (compile|install) -DskipLint
 >   ```
 >
 > Moreover, to apply linting so it emits warnings without failing (for example, to test alternative JDK versions on CI), use `lint.lenient`, like so:
 >
 > ```shell
-> ./mvnw install -Dlint.lenient
+> ./mvnw (compile|install) -Dlint.lenient
 > ```
+> IMPORTANT: *Disabling lint enforcement on CLI can only be a temporary local trick*, as in any case CI enforces compiler checks on every push to the project repository — before committing PRs, ensure your source code passes compilation linting (along with pre-compilation linting (Spotless formatting and Checkstyle static checks))!
 
 ### Testing
 

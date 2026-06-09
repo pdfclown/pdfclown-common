@@ -124,8 +124,13 @@ pdfclown-common-base instead)</description>
       those resources -->
     <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
     <checkstyleSkip>false</checkstyleSkip>
+    <!-- Javadoc custom inline tags (comma-separated list) -->
+    <lint.javadoc.inlineTags/>
     <!-- javac -Xlint warnings selector (comma-separated list) -->
     <lint.Xwarns/>
+    <!-- Test-specific javac -Xlint warnings selector (comma-separated list) -->
+    <lint.Xwarns.test/>
+
     <projectIssuesUrl>${projectRootUrl}/issues</projectIssuesUrl>
     <projectRootUrl>https://${projectUrlBasePath}</projectRootUrl>
     <projectScmUrl>${projectRootUrl}/tree/${project.scm.tag}</projectScmUrl>
@@ -199,6 +204,15 @@ pdfclown-common-base instead)</description>
     -->
     <!-- IMPORTANT: DO NOT REMOVE this empty declaration -->
     <internal.lint.args.Werror/>
+    <!-- NOTE: Some warning specifiers (like `-fallthrough` suppression) are hard-coded
+      as they are applicable to any context:
+      - `-fallthrough`: excluded because already checked via checkstyle (see
+        `FallThrough` module in checkstyle-checks.xml) -->
+    <internal.lint.args.Xwarns>all,-cast,-fallthrough,-finally,-processing,${lint.Xwarns}</internal.lint.args.Xwarns>
+    <internal.lint.args.Xwarns.test>-dep-ann,${lint.Xwarns.test}</internal.lint.args.Xwarns.test>
+    <!-- TODO: move shared options into reusable resource file bundled in pdfclown-common-build -->
+    <internal.lint.args.errorprone>-XepExcludedPaths:.*/target/.* -XepOpt:Javadoc:customInlineTags=biblio.doc,biblio.ref,biblio.spec,jada.doc,jada.reuseDoc,${lint.javadoc.inlineTags} -Xep:AnnotateFormatMethod:OFF -Xep:AssignmentExpression:OFF -Xep:EffectivelyPrivate:OFF -Xep:LabelledBreakTarget:OFF -Xep:VoidUsed:OFF "@${rootdir}/src/conf/errorprone/options"</internal.lint.args.errorprone>
+    <internal.lint.args.errorprone.test>-Xep:MissingSummary:OFF "@${rootdir}/src/conf/errorprone/test-options"</internal.lint.args.errorprone.test>
   </properties>
 
   <build>
@@ -1715,11 +1729,6 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                 <!--
                   Compiler (javac)
                 -->
-                <!-- NOTE: Some warning specifier (like `-fallthrough` suppression) are hard-coded
-                  as they are applicable to any context:
-                  - `-fallthrough`: excluded because already checked via checkstyle (see
-                    `FallThrough` module in checkstyle-checks.xml) -->
-                <arg>-Xlint:all,-cast,-fallthrough,-finally,-processing,${lint.Xwarns}</arg>
                 <arg>${internal.lint.args.Werror}</arg>
 
                 <!--
@@ -1758,8 +1767,11 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                 <configuration>
                   <compilerArgs
                       combine.children="append">
+                    <!-- Compiler (javac) -->
+                    <arg>-Xlint:${internal.lint.args.Xwarns}</arg>
+
                     <!-- Error Prone plugin -->
-                    <arg>-Xplugin:ErrorProne -XepExcludedPaths:.*/target/.* "@${rootdir}/src/conf/errorprone/options"</arg>
+                    <arg>-Xplugin:ErrorProne ${internal.lint.args.errorprone}</arg>
                   </compilerArgs>
                 </configuration>
               </execution>
@@ -1768,12 +1780,15 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                 <configuration>
                   <compilerArgs
                       combine.children="append">
+                    <!-- Compiler (javac) -->
+                    <arg>-Xlint:${internal.lint.args.Xwarns},${internal.lint.args.Xwarns.test}</arg>
+
                     <!-- Error Prone plugin - NOTE: `test-options` file adds on `options` file, so
                       users don't need to duplicate options already applied to main code; in fact,
                       `options` file contains options applied to all the codebase. Some options
                       (like `MissingSummary` suppression) are hard-coded as they are applicable to
                       any test context -->
-                    <arg>-Xplugin:ErrorProne -XepExcludedPaths:.*/target/.* -Xep:MissingSummary:OFF "@${rootdir}/src/conf/errorprone/test-options" "@${rootdir}/src/conf/errorprone/options"</arg>
+                    <arg>-Xplugin:ErrorProne ${internal.lint.args.errorprone} ${internal.lint.args.errorprone.test}</arg>
                   </compilerArgs>
                 </configuration>
               </execution>
