@@ -31,12 +31,14 @@ import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.function.Failable;
+import org.apache.commons.lang3.function.FailableFunction;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -283,12 +285,45 @@ public abstract class Asserter {
   }
 
   /**
-   * Writes the expected directory resource on both source and target sides.
+   * Reads an expected resource.
+   *
+   * @param resourceName
+   *          Resource to read.
+   * @param reader
+   *          Reads the resource.
+   * @param config
+   *          Assertion configuration.
+   * @param <T>
+   *          Resource object type.
+   */
+  protected <T> T readExpectedFile(String resourceName,
+      FailableFunction<Path, T, IOException> reader,
+      Config config) throws IOException {
+    Path expectedFile = config.getEnv().resourcePath(resourceName);
+    try {
+      return reader.apply(expectedFile);
+    } catch (IOException ex) {
+      var b = new StringBuilder("Expected resource load FAILED at ").append(expectedFile);
+      if (ex instanceof NoSuchFileException) {
+        b.append(" (MISSING)");
+        //noinspection DataFlowIssue,AssignmentToCatchBlockParameter : nullable
+        ex = null /* NOTE: No need of redundant stack-trace for trivial cases */;
+      }
+      throw failedIO(b.toString(), ex);
+    }
+  }
+
+  /**
+   * Writes an expected directory.
+   * <p>
+   * After written to source, the resource is also copied to the target side in order to synchronize
+   * ongoing tests.
+   * </p>
    *
    * @param resourceName
    *          Resource to write.
    * @param writer
-   *          Resource generator.
+   *          Writes the resource.
    * @param config
    *          Assertion configuration.
    */
@@ -318,7 +353,11 @@ public abstract class Asserter {
   }
 
   /**
-   * Writes the expected directory resource on both source and target sides.
+   * Writes an expected directory.
+   * <p>
+   * After written to source, the resource is also copied to the target side in order to synchronize
+   * ongoing tests.
+   * </p>
    *
    * @param resourceName
    *          Resource to write.
@@ -334,12 +373,16 @@ public abstract class Asserter {
   }
 
   /**
-   * Writes the expected resource on both source and target sides.
+   * Writes an expected resource.
+   * <p>
+   * After written to source, the resource is also copied to the target side in order to synchronize
+   * ongoing tests.
+   * </p>
    *
    * @param resourceName
    *          Resource to write.
    * @param writer
-   *          Resource generator.
+   *          Writes the resource.
    * @param config
    *          Assertion configuration.
    */
@@ -369,7 +412,11 @@ public abstract class Asserter {
   }
 
   /**
-   * Writes the expected resource on both source and target sides.
+   * Writes an expected resource.
+   * <p>
+   * After written to source, the resource is also copied to the target side in order to synchronize
+   * ongoing tests.
+   * </p>
    *
    * @param resourceName
    *          Resource to write.
