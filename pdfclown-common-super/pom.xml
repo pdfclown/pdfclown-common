@@ -18,9 +18,8 @@
   <name>${project.artifactId}</name>
   <description>Super build configuration for pdfClown.org projects (DO NOT use directly: use
 pdfclown-common-base instead)</description>
-  <!--
-    NOTE: `url` is project-specific, MUST be explicitly declared in each inheriting project in order
-    to override the default mechanism. -->
+  <!-- NOTE: `url` is project-specific, MUST be explicitly declared in each inheriting project in
+    order to override the default mechanism -->
   <url>${projectRootUrl}</url>
   <inceptionYear>2025</inceptionYear>
 
@@ -205,8 +204,8 @@ pdfclown-common-base instead)</description>
     <!-- IMPORTANT: DO NOT REMOVE this empty declaration -->
     <internal.lint.args.Werror/>
     <!-- NOTE: Some warning specifiers are shared across the projects:
-      - `-fallthrough`: excluded because already checked via checkstyle (see
-        `FallThrough` module in checkstyle-checks.xml) -->
+      - `-fallthrough`: excluded because already checked via checkstyle (see `FallThrough` module in
+        checkstyle-checks.xml) -->
     <internal.lint.args.Xwarns>all,-cast,-fallthrough,-finally,-processing,${lint.Xwarns}</internal.lint.args.Xwarns>
     <internal.lint.args.Xwarns.test>-dep-ann,${lint.Xwarns.test}</internal.lint.args.Xwarns.test>
     <!-- TODO: move shared options into reusable resource file bundled in pdfclown-common-build -->
@@ -265,11 +264,9 @@ pdfclown-common-base instead)</description>
           </configuration>
           <executions>
             <execution>
-              <!--
-                See also:
+              <!-- See also:
                 - available properties (prepended with "git."):
-                  <https://github.com/git-commit-id/git-commit-id-plugin-core/blob/master/src/main/java/pl/project13/core/GitCommitPropertyConstant.java>
-              -->
+                  <https://github.com/git-commit-id/git-commit-id-plugin-core/blob/master/src/main/java/pl/project13/core/GitCommitPropertyConstant.java> -->
               <id>init-git-commit-info</id>
               <goals>
                 <goal>revision</goal>
@@ -361,10 +358,9 @@ log.info("buildTimestamp: " + buildTimestamp
           <artifactId>spotless-maven-plugin</artifactId>
           <version>${spotless-maven-plugin.version}</version>
           <configuration>
-            <!--
-              NOTE: Only POM formatter is enabled on all projects; any other source code formatter
-              is activated by a dedicated profile ("full-format") which can be easily switched off.
-            -->
+            <!-- NOTE: Only POM formatter is enabled on all projects; any other source code
+              formatter is activated by a dedicated profile ("full-format") which can be easily
+              switched off -->
             <pom>
               <sortPom>
                 <expandEmptyElements>false</expandEmptyElements>
@@ -1270,8 +1266,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
           </plugin>
 
           <plugin>
-            <!--
-              NOTE: Transparently manages both public releases and snapshots. -->
+            <!-- NOTE: Transparently manages both public releases and snapshots -->
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
           </plugin>
@@ -1280,9 +1275,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
 
     <!-- AUTOMATED PROFILES  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!--
-      NOTE: Because of definition order, these profiles take precedence over manual ones.
-    -->
+    <!-- NOTE: Because of definition order, these profiles take precedence over manual ones -->
 
     <profile>
       <id>@maven-plugin</id>
@@ -1540,9 +1533,8 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
             </executions>
           </plugin>
 
-          <!--
-            NOTE: `skipPublishing` parameter doesn't work, so we have to force disabling via phase.
-          -->
+          <!-- NOTE: `skipPublishing` parameter doesn't work, so we have to force disabling via
+            phase -->
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
