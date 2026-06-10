@@ -15,10 +15,10 @@ package org.pdfclown.common.util.collect;
 import static java.lang.Math.subtractExact;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Strings.lcase;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Locale;
 import org.pdfclown.common.util.XtCloneable;
 
 /**
@@ -199,8 +199,7 @@ public class Comparators {
 
     @Override
     public int compare(Object c1, Object c2) {
-      return c1.toString().toLowerCase(Locale.ROOT)
-          .compareTo(c2.toString().toLowerCase(Locale.ROOT));
+      return lcase(c1.toString()).compareTo(lcase(c2.toString()));
     }
   }
 

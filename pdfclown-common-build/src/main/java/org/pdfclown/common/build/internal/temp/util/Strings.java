@@ -3,14 +3,14 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Strings.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (Strings.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.build.internal.temp.util;
 
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isLowerCase;
@@ -33,6 +33,8 @@ import java.util.function.IntPredicate;
 import org.apache.commons.io.input.CharSequenceReader;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.Chars;
+import org.pdfclown.common.util.Objects;
 import org.pdfclown.common.util.io.Texts;
 import org.pdfclown.common.util.io.Texts.TextCoords;
 
@@ -192,7 +194,7 @@ public final class Strings {
   /**
    * Gets the index of the first matching character.
    *
-   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value org.pdfclown.common.util.Objects#INDEX__NOT_FOUND}, if no match was found.
    */
   public static int indexOf(String s, IntPredicate condition) {
     return indexOf(s, condition, 0);
@@ -201,7 +203,7 @@ public final class Strings {
   /**
    * Gets the index of the first matching character.
    *
-   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value org.pdfclown.common.util.Objects#INDEX__NOT_FOUND}, if no match was found.
    */
   public static int indexOf(String s, IntPredicate condition, int fromIndex) {
     for (int i = fromIndex, l = s.length(); i < l; i++) {
@@ -402,7 +404,7 @@ public final class Strings {
   /**
    * Gets the index of the last matching character, searched backwards.
    *
-   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value org.pdfclown.common.util.Objects#INDEX__NOT_FOUND}, if no match was found.
    */
   public static int lastIndexOf(String s, IntPredicate condition) {
     return lastIndexOf(s, condition, s.length());
@@ -411,7 +413,7 @@ public final class Strings {
   /**
    * Gets the index of the last matching character, searched backwards.
    *
-   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value org.pdfclown.common.util.Objects#INDEX__NOT_FOUND}, if no match was found.
    */
   public static int lastIndexOf(String s, IntPredicate condition, int fromIndex) {
     for (int i = min(fromIndex, s.length() - 1); i >= 0; i--) {
@@ -440,7 +442,7 @@ public final class Strings {
    *
    * @param fromIndex
    *          (see {@link String#lastIndexOf(int, int)})
-   * @return {@value Objects#INDEX__NOT_FOUND}, if no match was found.
+   * @return {@value org.pdfclown.common.util.Objects#INDEX__NOT_FOUND}, if no match was found.
    * @see StringUtils#indexOfAny(CharSequence, int, char...)
    */
   public static int lastIndexOfAny(final @Nullable String s, final int fromIndex, final int[] cc) {

@@ -22,6 +22,7 @@ import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.indexOfElse;
+import static org.pdfclown.common.util.Strings.lcase;
 import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.io.IOException;
@@ -32,7 +33,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Path;
-import java.util.Locale;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.stream.Streams;
 
@@ -149,7 +149,7 @@ public final class Uris {
    * @return (lower-case)
    */
   public static String scheme(String uri) {
-    return uri.substring(0, indexOfElse(uri, COLON, 0)).toLowerCase(Locale.ROOT);
+    return lcase(uri.substring(0, indexOfElse(uri, COLON, 0)));
   }
 
   /**

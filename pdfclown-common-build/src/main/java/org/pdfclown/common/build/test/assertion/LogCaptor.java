@@ -15,11 +15,11 @@ package org.pdfclown.common.build.test.assertion;
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.OBJ_ARRAY__EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
+import static org.pdfclown.common.build.internal.temp.util.Strings.lcase;
 import static org.pdfclown.common.util.Exceptions.missing;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -117,7 +117,7 @@ public abstract class LogCaptor
 
   private static final Function<String, LogCaptor> logCaptorFactory;
   static {
-    String implName = fqn(LoggerFactory.getILoggerFactory()).toLowerCase(Locale.ROOT);
+    String implName = lcase(fqn(LoggerFactory.getILoggerFactory()));
     logCaptorFactory = ServiceProvider.discover(LogCaptorProvider.class)
         .map($ -> $.getFactory(implName))
         .filter(Objects::nonNull)

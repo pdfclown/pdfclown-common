@@ -12,7 +12,8 @@
  */
 package org.pdfclown.common.util;
 
-import java.util.Locale;
+import static org.pdfclown.common.util.Strings.lcase;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -41,7 +42,7 @@ public final class Booleans {
    */
   public static @Nullable Boolean parseBoolean(@Nullable String s) {
     if (s != null) {
-      s = s.toLowerCase(Locale.ROOT);
+      s = lcase(s);
       if (s.equals("true"))
         return Boolean.TRUE;
       else if (s.equals("false"))
