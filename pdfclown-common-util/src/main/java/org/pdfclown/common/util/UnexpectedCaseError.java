@@ -46,8 +46,6 @@ public class UnexpectedCaseError extends AssertionError {
     this(value, message, null);
   }
 
-  /**
-   */
   public UnexpectedCaseError(@Nullable Object value, @Nullable String message,
       @Nullable Throwable cause) {
     super(buildMessage(value, message), cause);

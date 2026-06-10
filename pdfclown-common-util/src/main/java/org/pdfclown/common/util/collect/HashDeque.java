@@ -38,14 +38,10 @@ public class HashDeque<E> extends ArrayDeque<E> {
 
   private final boolean tracked;
 
-  /**
-   */
   public HashDeque(boolean tracked) {
     this.tracked = tracked;
   }
 
-  /**
-   */
   public HashDeque(boolean tracked, Collection<? extends E> c) {
     this(tracked);
 

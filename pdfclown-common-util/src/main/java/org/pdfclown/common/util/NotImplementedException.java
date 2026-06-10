@@ -38,8 +38,6 @@ public class NotImplementedException extends UnsupportedOperationException {
     this(message, null);
   }
 
-  /**
-   */
   public NotImplementedException(@Nullable String message, @Nullable Throwable cause) {
     super(isBlank(message)
         ? "There's work for you! You reached a code block that hasn't been implemented yet."
