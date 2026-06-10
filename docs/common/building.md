@@ -163,7 +163,7 @@ This document describes how to set up your development environment to build and 
 > ```shell
 > ./mvnw (compile|install) -Dlint.lenient
 > ```
-> IMPORTANT: *Disabling lint enforcement on CLI can only be a temporary local trick*, as in any case CI enforces compiler checks on every push to the project repository — before committing PRs, ensure your source code passes compilation linting (along with pre-compilation linting (Spotless formatting and Checkstyle static checks))!
+> Anyways, *disabling lint enforcement on CLI can only be a temporary local trick*, as in any case CI enforces compiler checks on every push to the project repository — before committing PRs, ensure your source code passes compilation linting (along with pre-compilation linting (Spotless formatting and Checkstyle static checks))!
 
 ### Testing
 
