@@ -204,15 +204,16 @@ pdfclown-common-base instead)</description>
     -->
     <!-- IMPORTANT: DO NOT REMOVE this empty declaration -->
     <internal.lint.args.Werror/>
-    <!-- NOTE: Some warning specifiers (like `-fallthrough` suppression) are hard-coded
-      as they are applicable to any context:
+    <!-- NOTE: Some warning specifiers are shared across the projects:
       - `-fallthrough`: excluded because already checked via checkstyle (see
         `FallThrough` module in checkstyle-checks.xml) -->
     <internal.lint.args.Xwarns>all,-cast,-fallthrough,-finally,-processing,${lint.Xwarns}</internal.lint.args.Xwarns>
     <internal.lint.args.Xwarns.test>-dep-ann,${lint.Xwarns.test}</internal.lint.args.Xwarns.test>
     <!-- TODO: move shared options into reusable resource file bundled in pdfclown-common-build -->
-    <internal.lint.args.errorprone>-XepExcludedPaths:.*/target/.* -XepOpt:Javadoc:customInlineTags=biblio.doc,biblio.ref,biblio.spec,jada.doc,jada.reuseDoc,${lint.javadoc.inlineTags} -Xep:AnnotateFormatMethod:OFF -Xep:AssignmentExpression:OFF -Xep:EffectivelyPrivate:OFF -Xep:LabelledBreakTarget:OFF -Xep:VoidUsed:OFF "@${rootdir}/src/conf/errorprone/options"</internal.lint.args.errorprone>
-    <internal.lint.args.errorprone.test>-Xep:MissingSummary:OFF "@${rootdir}/src/conf/errorprone/test-options"</internal.lint.args.errorprone.test>
+    <!-- NOTE: Some warning specifiers are shared across the projects:
+      - `-Xep:MissingSummary:OFF`: excluded because redundant, already managed by checkstyle -->
+    <internal.lint.args.errorprone>-XepExcludedPaths:.*/target/.* -XepOpt:Javadoc:customInlineTags=biblio.doc,biblio.ref,biblio.spec,jada.doc,jada.reuseDoc,${lint.javadoc.inlineTags} -Xep:AnnotateFormatMethod:OFF -Xep:AssignmentExpression:OFF -Xep:EffectivelyPrivate:OFF -Xep:LabelledBreakTarget:OFF -Xep:MissingSummary:OFF -Xep:VoidUsed:OFF "@${rootdir}/src/conf/errorprone/options"</internal.lint.args.errorprone>
+    <internal.lint.args.errorprone.test>"@${rootdir}/src/conf/errorprone/test-options"</internal.lint.args.errorprone.test>
   </properties>
 
   <build>

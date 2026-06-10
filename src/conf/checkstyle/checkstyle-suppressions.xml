@@ -12,14 +12,6 @@
   <suppress
     checks="AbbreviationAsWordInName"
     message="MCID'"/>
-  <!-- Allow free indentation of formatter-tag comments.
-    This is a temporary fix to the faulty behavior of SuppressionCommentFilter, which currently
-    (checkstyle 10.1) excludes closing tag comment (onComment) from suppression [1].
-
-    [1] https://github.com/checkstyle/checkstyle/issues/11504 -->
-  <suppress
-    checks="CommentsIndentation"
-    message="Comment has incorrect indentation level 0"/>
   <!-- Allow special method names. -->
   <suppress
     checks="AbbreviationAsWordInName|MethodName"
@@ -29,10 +21,6 @@
   <suppress
     checks="PackageName"
     message=".internal."/>
-  <!-- Allow empty javadoc summaries (sometimes they are simply redundant, such as in setters). -->
-  <suppress
-    checks="SummaryJavadoc"
-    message="Summary javadoc is missing"/>
 
   <!-- Allow regular line wrapping indentation on inline variable assignment.
     This is a temporary fix to the faulty behavior of IndentationCheck, which currently
