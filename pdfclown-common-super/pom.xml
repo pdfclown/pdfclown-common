@@ -1024,7 +1024,10 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
   </build>
 
   <profiles>
-    <!-- MANUAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- MANUAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+      These profiles are meant to be explicitly selected by users.
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
 
     <profile>
       <id>full</id>
@@ -1201,7 +1204,7 @@ var projectDir = project.basedir.toPath()
 var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVer1.class)
         .toString())
     .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY__RELEASE_STARTPOINT])
-    .setDeploymentProfiles("publish")
+    .setDeploymentProfiles("__publish")
     .setInstallationProfiles("full")
     /* NOTE: Activates remote push only if GPG signing is configured. */
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
@@ -1222,17 +1225,22 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
       </build>
     </profile>
 
+    <!-- INTERNAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+      These profiles are meant to be used internally only.
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+
     <profile>
-      <id>publish</id>
+      <id>__publish</id>
       <!--
-        (internal use only) DEPLOYMENT EXECUTION PROFILE
+        DEPLOYMENT EXECUTION PROFILE
 
         Activates the following operations:
         - javadoc jar
         - gpg signing
         - maven central publishing
 
-        IMPORTANT: It is caller's responsibiity to prepare the working tree for the deployment, in
+        IMPORTANT: It is caller's responsibility to prepare the working tree for the deployment, in
         particular to check out the corresponding release tag.
       -->
       <build>
@@ -1274,8 +1282,12 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
       </build>
     </profile>
 
-    <!-- AUTOMATED PROFILES  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!-- NOTE: Because of definition order, these profiles take precedence over manual ones -->
+    <!-- AUTOMATED PROFILES  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+      These profiles are meant to be triggered by activation conditions.
+
+      NOTE: Because of definition order, these profiles take precedence over manual ones.
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
 
     <profile>
       <id>@maven-plugin</id>
