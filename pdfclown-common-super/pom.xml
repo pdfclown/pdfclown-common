@@ -1233,7 +1233,7 @@ var projectDir = project.basedir.toPath()
 var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVer1.class)
         .toString())
     .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY__RELEASE_STARTPOINT])
-    .setDeploymentProfiles("__publish")
+    .setDeploymentProfiles("publish")
     .setInstallationProfiles("full")
     /* NOTE: Activates remote push only if GPG signing is configured. */
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
@@ -1254,13 +1254,8 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
       </build>
     </profile>
 
-    <!-- INTERNAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-      These profiles are meant to be used internally only.
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
-
     <profile>
-      <id>__publish</id>
+      <id>publish</id>
       <!--
         DEPLOYMENT EXECUTION PROFILE
 
