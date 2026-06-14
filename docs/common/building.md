@@ -146,7 +146,7 @@ This document describes how to set up your development environment to build and 
 > By default, **compilation linting** (`@lint` profile) is active to enforce code quality through static checks provided by javac and [Error Prone](https://errorprone.info/) (a popular javac plugin). To ensure a thorough validation, force a full rebuild:
 >
 > ```shell
-> ./mvnw clean (compile|install)
+> ./mvnw clean compile
 > ```
 >
 > Despite its usefulness, in specific circumstances compilation linting may become inconvenient:
@@ -155,15 +155,15 @@ This document describes how to set up your development environment to build and 
 > - on CLI, to disable the `@lint` profile, use `skipLint` system property, like so:
 >
 >   ```shell
->   ./mvnw (compile|install) -DskipLint
+>   ./mvnw compile -DskipLint
 >   ```
 >
 > Moreover, to apply linting so it emits warnings without failing (for example, to test alternative JDK versions on CI), use `lint.lenient`, like so:
 >
 > ```shell
-> ./mvnw (compile|install) -Dlint.lenient
+> ./mvnw compile -Dlint.lenient
 > ```
-> Anyways, *disabling lint enforcement on CLI can only be a temporary local trick*, as in any case CI enforces compiler checks on every push to the project repository — before committing PRs, ensure your source code passes compilation linting (along with pre-compilation linting (Spotless formatting and Checkstyle static checks))!
+> Anyways, *disabling lint enforcement on CLI can only be a temporary local trick*, as CI mercilessly enforces compiler checks on every push to the project repository — BEWARE: before submitting PRs, ensure your source code passes compilation linting (along with pre-compilation linting (Spotless formatting and Checkstyle static checks))!
 
 ### Testing
 

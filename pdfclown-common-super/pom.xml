@@ -205,13 +205,19 @@ pdfclown-common-base instead)</description>
     <internal.lint.args.Werror/>
     <!-- NOTE: Some warning specifiers are shared across the projects:
       - `-fallthrough`: excluded because already checked via checkstyle (see `FallThrough` module in
-        checkstyle-checks.xml) -->
-    <internal.lint.args.Xwarns>all,-cast,-fallthrough,-finally,-processing,${lint.Xwarns}</internal.lint.args.Xwarns>
+        checkstyle-checks.xml)
+      - `-unchecked`: excluded because javac apparently ignores certain "unchecked" warning
+        suppressions via `SuppressWarnings` annotations (possibly due to synthetic bridge methods?) -->
+    <internal.lint.args.Xwarns>all,-cast,-fallthrough,-finally,-processing,-unchecked,${lint.Xwarns}</internal.lint.args.Xwarns>
     <internal.lint.args.Xwarns.test>-dep-ann,${lint.Xwarns.test}</internal.lint.args.Xwarns.test>
     <!-- TODO: move shared options into reusable resource file bundled in pdfclown-common-build -->
     <!-- NOTE: Some warning specifiers are shared across the projects:
-      - `-Xep:MissingSummary:OFF`: excluded because redundant, already managed by checkstyle -->
-    <internal.lint.args.errorprone>-XepExcludedPaths:.*/target/.* -XepOpt:Javadoc:customInlineTags=biblio.doc,biblio.ref,biblio.spec,jada.doc,jada.reuseDoc,${lint.javadoc.inlineTags} -Xep:AnnotateFormatMethod:OFF -Xep:AssignmentExpression:OFF -Xep:EffectivelyPrivate:OFF -Xep:LabelledBreakTarget:OFF -Xep:MissingSummary:OFF -Xep:VoidUsed:OFF "@${rootdir}/src/conf/errorprone/options"</internal.lint.args.errorprone>
+      - `-Xep:FallThrough:OFF`: excluded because already checked via checkstyle (see `FallThrough`
+        module in checkstyle-checks.xml)
+      - `-Xep:MissingSummary:OFF`: excluded because redundant, already managed by checkstyle
+      - `-Xep:NotJavadoc:OFF`: excluded because annoyingly requires methods inside local classes to
+        be downgraded to non-Javadoc -->
+    <internal.lint.args.errorprone>-XepExcludedPaths:.*/target/.* -XepOpt:Javadoc:customInlineTags=biblio.doc,biblio.ref,biblio.spec,jada.doc,jada.reuseDoc,${lint.javadoc.inlineTags} -Xep:AnnotateFormatMethod:OFF -Xep:AssignmentExpression:OFF -Xep:EffectivelyPrivate:OFF -Xep:FallThrough:OFF -Xep:LabelledBreakTarget:OFF -Xep:MissingSummary:OFF -Xep:NotJavadoc:OFF -Xep:VoidUsed:OFF "@${rootdir}/src/conf/errorprone/options"</internal.lint.args.errorprone>
     <internal.lint.args.errorprone.test>"@${rootdir}/src/conf/errorprone/test-options"</internal.lint.args.errorprone.test>
   </properties>
 
