@@ -331,6 +331,21 @@ session.userProperties.setProperty('buildTimestamp', buildTimestamp)
 
 log.info("buildTimestamp: " + buildTimestamp
     + " (" + (${git.dirty} ? "DIRTY" : "REPRODUCIBLE") + ")")
+
+/*
+  Metadata-augmented implementation version (SemVer2).
+
+  In case of SNAPSHOT, appends metadata to the revision to fully identify the build it originated
+  from.
+ */
+var revision = "${revision}"
+var implementationVersion = revision + (revision.endsWith("SNAPSHOT") ? "+${git.commit.id.describe}"
+    : "")
+
+// Share the implementation version as property for interpolation!
+session.userProperties.setProperty('implementationVersion', implementationVersion)
+
+log.info("implementationVersion: " + implementationVersion)
 ]]></script>
                 </scripts>
               </configuration>
@@ -565,14 +580,19 @@ log.info("buildTimestamp: " + buildTimestamp
           <configuration>
             <archive>
               <manifest>
+                <addBuildEnvironmentEntries>false</addBuildEnvironmentEntries>
+                <addDefaultEntries>false</addDefaultEntries>
+
                 <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                 <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
               </manifest>
               <manifestEntries>
+                <Implementation-Version>${implementationVersion}</Implementation-Version>
+                <Java-Version>${target.jdk}</Java-Version>
                 <Build-Timestamp>${buildTimestamp}</Build-Timestamp>
+
                 <scm-commit-id>${git.commit.id}</scm-commit-id>
                 <scm-commit-time>${git.commit.time}</scm-commit-time>
-                <scm-describe>${git.commit.id.describe}</scm-describe>
                 <scm-tags>${git.tags}</scm-tags>
                 <scm-url>${projectScmUrl}</scm-url>
               </manifestEntries>
@@ -596,6 +616,9 @@ log.info("buildTimestamp: " + buildTimestamp
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>${maven-source-plugin.version}</version>
+          <configuration>
+            <excludeResources>true</excludeResources>
+          </configuration>
           <executions>
             <execution>
               <id>generate-sources-jar</id>
