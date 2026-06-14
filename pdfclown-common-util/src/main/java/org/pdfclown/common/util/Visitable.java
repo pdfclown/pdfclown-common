@@ -43,8 +43,8 @@ public interface Visitable<V extends Visitor<?, ?>> {
    *          Visiting object.
    * @param data
    *          Supplemental data (depends on {@code visitor} semantics).
-   * @return Result (depends on {@code visitor} semantics).
+   * @return Visit result (depends on {@code visitor} semantics).
    */
-  @SuppressWarnings("TypeParameterUnusedInFormals")
-  <R extends @Nullable Object, D extends @Nullable Object> R accept(V visitor, D data);
+  @Nullable
+  Object accept(V visitor, @Nullable Object data);
 }
