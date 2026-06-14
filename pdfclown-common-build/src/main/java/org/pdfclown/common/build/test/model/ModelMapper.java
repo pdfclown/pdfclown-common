@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Stefano Chizzolini
  */
-@SuppressWarnings("this-escape")
+@SuppressWarnings({ "rawtypes", "this-escape" })
 public class ModelMapper<T> {
   /**
    * Property selector.
@@ -102,7 +102,7 @@ public class ModelMapper<T> {
      * @param level
      *          Exclusion level (that is, selection is applied from this level).
      */
-    public static PropertySelector excludeProperties(Class<?> type, int level,
+    public static PropertySelector excludeProperties(Class type, int level,
         String... properties) {
       return new PropertySelector(type, true, level, properties);
     }
@@ -110,7 +110,7 @@ public class ModelMapper<T> {
     /**
      * Gets the all-but-these-properties selector for the type.
      */
-    public static PropertySelector excludeProperties(Class<?> type, String... properties) {
+    public static PropertySelector excludeProperties(Class type, String... properties) {
       return excludeProperties(type, 0, properties);
     }
 
@@ -120,7 +120,7 @@ public class ModelMapper<T> {
      * @param level
      *          Inclusion level (that is, selection is applied up to this level).
      */
-    public static PropertySelector includeProperties(Class<?> type, int level,
+    public static PropertySelector includeProperties(Class type, int level,
         String... properties) {
       return new PropertySelector(type, false, level, properties);
     }
@@ -128,19 +128,19 @@ public class ModelMapper<T> {
     /**
      * Gets the nothing-but-these-properties selector for the type.
      */
-    public static PropertySelector includeProperties(Class<?> type, String... properties) {
+    public static PropertySelector includeProperties(Class type, String... properties) {
       return includeProperties(type, Integer.MAX_VALUE, properties);
     }
 
     private boolean exclusive;
     private boolean mutable;
     private final List<Rule> rules;
-    private Class<?> type;
+    private Class type;
 
     /**
      * Creates a mutable selector.
      */
-    public PropertySelector(Class<?> type, boolean exclusive) {
+    public PropertySelector(Class type, boolean exclusive) {
       this.type = requireNonNull(type);
       this.exclusive = exclusive;
 
@@ -151,7 +151,7 @@ public class ModelMapper<T> {
     /**
      * Creates an immutable selector.
      */
-    public PropertySelector(Class<?> type, boolean exclusive, int level, Set<String> properties) {
+    public PropertySelector(Class type, boolean exclusive, int level, Set<String> properties) {
       this.type = requireNonNull(type);
       this.exclusive = exclusive;
 
@@ -161,7 +161,7 @@ public class ModelMapper<T> {
     /**
      * Creates an immutable selector.
      */
-    public PropertySelector(Class<?> type, boolean exclusive, int level, String... properties) {
+    public PropertySelector(Class type, boolean exclusive, int level, String... properties) {
       this(type, exclusive, level, Set.of(properties) /* NOTE: Immutable set */);
     }
 
@@ -185,7 +185,7 @@ public class ModelMapper<T> {
     /**
      * Domain type whose properties are selected according to the rules in this selector.
      */
-    public Class<?> getType() {
+    public Class getType() {
       return type;
     }
 
@@ -267,7 +267,6 @@ public class ModelMapper<T> {
    *
    * @author Stefano Chizzolini
    */
-  @SuppressWarnings("rawtypes")
   protected static class ValueMapperMap extends DynamicMap<Class, ValueMapper> {
     private static class DynamicTypeProvider extends DynamicMap.DynamicProvider<Class> {
       /**
@@ -356,7 +355,7 @@ public class ModelMapper<T> {
   private static final Logger log = LoggerFactory.getLogger(ModelMapper.class);
 
   protected @Nullable Comparator<String> keyComparator;
-  protected @Nullable Map<Class<?>, PropertySelector> typeSelectors;
+  protected @Nullable Map<Class, PropertySelector> typeSelectors;
   protected final ValueMapperMap valueMappers = new ValueMapperMap();
   {
     valueMappers.put(Object.class, ($obj, $selectors, $visitedObjs, $level) -> {
@@ -379,7 +378,6 @@ public class ModelMapper<T> {
     valueMappers.put(Map.class, this::map);
 
     valueMappers.put(Map.Entry.class, ($obj, $selectors, $visitedObjs, $level) -> {
-      @SuppressWarnings("rawtypes")
       var entry = (Map.Entry) $obj;
       return entry.getKey() + S + COLON + SPACE
           + mapValue(entry.getValue(), $selectors, $visitedObjs, $level);
