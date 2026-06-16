@@ -18,7 +18,7 @@ import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Objects.fqnd;
-import static org.pdfclown.common.util.Strings.NULL;
+import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.function.Functions.toElse;
 
@@ -42,21 +42,40 @@ public final class Reflects {
       StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
   /**
-   * Calls the method on the target object.
+   * Calls a static method on the target class.
    *
    * @param <T>
    *          Return type.
-   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
-   *         {@code null} is a valid return value, use
-   *         {@link #callOrThrow(Object, String, Class[], Object[])} instead)).
+   * @throws RuntimeException
+   *           if the call fails.
+   * @see #tryCall(Class, String, Class[], Object[])
    */
-  @SuppressWarnings("TypeParameterUnusedInFormals")
-  public static <T> @Nullable T call(final Object obj, final String methodName,
-      Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
+  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
+  public static <T extends @Nullable Object> T call(final Class<?> type,
+      final String methodName, Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
     try {
-      return callOrThrow(obj, methodName, paramTypes, args);
-    } catch (NoSuchMethodException | IllegalAccessException ex) {
-      return null;
+      return (T) MethodUtils.invokeExactStaticMethod(type, methodName, args, paramTypes);
+    } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
+      throw invocationException(type, methodName, paramTypes, ex);
+    }
+  }
+
+  /**
+   * Calls a method on the target object.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws RuntimeException
+   *           if the call fails.
+   * @see #tryCall(Object, String, Class[], Object[])
+   */
+  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
+  public static <T extends @Nullable Object> T call(final Object obj,
+      final String methodName, Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
+    try {
+      return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
+    } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
+      throw invocationException(obj, methodName, paramTypes, ex);
     }
   }
 
@@ -83,47 +102,37 @@ public final class Reflects {
   }
 
   /**
-   * Calls the method on the target object.
-   *
-   * @param <T>
-   *          Return type.
-   * @throws RuntimeException
-   *           if the call fails.
+   * Gets the fully-qualified method name.
    */
-  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
-  public static <T extends @Nullable Object> T callOrThrow(final Object obj,
-      final String methodName, Class<?> @Nullable [] paramTypes, Object @Nullable [] args)
-      throws NoSuchMethodException, IllegalAccessException {
-    try {
-      return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
-    } catch (InvocationTargetException ex) {
-      throw runtime("Call to `{}.{}({})` FAILED", fqnd(obj), methodName, toElse(paramTypes,
-          $ -> Arrays.stream($).map(Objects::literal).collect(joining(S + COMMA + SPACE)), NULL),
-          ex.getCause());
-    }
+  public static String fqn(Method method) {
+    return method.getDeclaringClass().getName() + DOT + method.getName();
   }
 
   /**
-   * Gets a property value from the object.
-   *
-   * @param <T>
-   *          Return type.
-   * @param getter
-   *          Method name of the property getter (for example "getMyProperty").
-   * @throws RuntimeException
-   *           if the call fails.
+   * Gets the fully-qualified method name corresponding to a stack frame.
    */
-  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
-  public static <T> T get(Object obj, String getter) {
-    try {
-      return (T) obj.getClass().getMethod(getter, (Class<?>[]) null).invoke(obj);
-    } catch (Exception ex) {
-      throw runtime(ex);
-    }
+  public static String fqn(StackFrame frame) {
+    return frame.getClassName() + DOT + frame.getMethodName();
   }
 
   /**
-   * Gets the method corresponding to the stack frame.
+   * Gets a property value from an object.
+   *
+   * @param <T>
+   *          Return type.
+   * @param accessorName
+   *          Method name of the property getter (for example, {@code "getMyProperty"}).
+   * @throws RuntimeException
+   *           if the call fails.
+   * @see #tryGet(Object, String)
+   */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
+  public static <T> T get(Object obj, String accessorName) {
+    return call(obj, accessorName, null, null);
+  }
+
+  /**
+   * Gets the method corresponding to a stack frame.
    */
   public static Optional<Method> method(StackFrame frame) {
     try {
@@ -132,13 +141,6 @@ public final class Reflects {
     } catch (NoSuchMethodException ex) {
       return Optional.empty();
     }
-  }
-
-  /**
-   * Gets the fully-qualified method name corresponding to the stack frame.
-   */
-  public static String methodFqn(StackFrame frame) {
-    return frame.getClassName() + DOT + frame.getMethodName();
   }
 
   /**
@@ -173,6 +175,70 @@ public final class Reflects {
         .skip(1)
         .filter(selector)
         .findFirst());
+  }
+
+  /**
+   * Calls a static method on the target class.
+   *
+   * @param <T>
+   *          Return type.
+   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
+   *         {@code null} is a valid return value, use
+   *         {@link #call(Class, String, Class[], Object[])} instead).
+   */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
+  public static <T> @Nullable T tryCall(final Class<?> type, final String methodName,
+      Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
+    try {
+      return call(type, methodName, paramTypes, args);
+    } catch (Exception ex) {
+      return null;
+    }
+  }
+
+  /**
+   * Calls a method on the target object.
+   *
+   * @param <T>
+   *          Return type.
+   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
+   *         {@code null} is a valid return value, use
+   *         {@link #call(Object, String, Class[], Object[])} instead).
+   */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
+  public static <T> @Nullable T tryCall(final Object obj, final String methodName,
+      Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
+    try {
+      return call(obj, methodName, paramTypes, args);
+    } catch (Exception ex) {
+      return null;
+    }
+  }
+
+  /**
+   * Gets a property value from an object.
+   *
+   * @param <T>
+   *          Return type.
+   * @param getter
+   *          Method name of the property getter (for example, {@code "getMyProperty"}).
+   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
+   *         {@code null} is a valid return value, use {@link #get(Object, String)} instead).
+   */
+  @SuppressWarnings("TypeParameterUnusedInFormals")
+  public static <T> @Nullable T tryGet(Object obj, String getter) {
+    try {
+      return get(obj, getter);
+    } catch (Exception ex) {
+      return null;
+    }
+  }
+
+  private static RuntimeException invocationException(Object obj, String methodName,
+      Class<?> @Nullable [] paramTypes, Exception ex) {
+    return runtime("Invocation to `{}.{}({})` FAILED", fqnd(obj), methodName, toElse(paramTypes,
+        $ -> Arrays.stream($).map(Objects::literal).collect(joining(S + COMMA + SPACE)), EMPTY),
+        ex instanceof InvocationTargetException ? ex.getCause() : ex);
   }
 
   private Reflects() {
