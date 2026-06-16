@@ -31,7 +31,6 @@ import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.util.Conditions.requireNormal;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Numbers.parseNumber;
 import static org.pdfclown.common.util.Strings.EMPTY;
@@ -350,8 +349,8 @@ public final class Objects {
   /**
    * Gets the type corresponding to an object.
    * <p>
-   * Same as {@link #typeOf(Object) typeOf(..)}, unless {@code obj} is {@link Class} (in such case,
-   * returns itself).
+   * Same as {@link #type(Object)}, unless {@code obj} is {@link Class} (in such case, returns
+   * itself).
    * </p>
    *
    * @see #asTopLevelType(Object)
@@ -386,13 +385,6 @@ public final class Objects {
   public static <T extends Cloneable> T clone(T obj) {
     return obj instanceof XtCloneable c ? (T) c.clone()
         : ObjectUtils.clone(obj);
-  }
-
-  /**
-   * Quietly closes an object.
-   */
-  public static <T extends AutoCloseable> void closeQuietly(@Nullable T obj) {
-    tryLet(obj, AutoCloseable::close);
   }
 
   /**
@@ -651,69 +643,58 @@ public final class Objects {
   }
 
   /**
-   * Initializes a type.
-   * <p>
-   * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
-   * </p>
-   *
-   * @return Whether the initialization succeeded.
-   */
-  public static boolean init(Class<?> type) {
-    return init(type.getName());
-  }
-
-  /**
-   * Initializes a type.
-   * <p>
-   * Contrary to {@link Class#forName(String)}, it is safe from exceptions.
-   * </p>
-   *
-   * @return Whether the initialization succeeded.
-   * @throws ArgumentException
-   *           if {@code typeName} is blank.
-   */
-  public static boolean init(String typeName) {
-    try {
-      /*
-       * IMPORTANT: `typeName` MUST be explicitly validated, otherwise it would be wrongly swallowed
-       * by regular loading failures; this is not the case for `initElseThrow(..)`, where the
-       * exception is rethrown.
-       */
-      Class.forName(requireNormal(typeName, "typeName"));
-      return true;
-    } catch (ClassNotFoundException ex) {
-      return false;
-    }
-  }
-
-  /**
-   * Initializes a type.
+   * Initializes a class.
    * <p>
    * This is the unchecked equivalent of {@link Class#forName(String)}.
    * </p>
    *
+   * @param type
+   *          Class to initialize.
+   * @return {@code type}
    * @throws RuntimeException
-   *           if class initialization fails.
+   *           if class initialization failed.
+   * @see #tryInit(Class)
    */
-  public static void initElseThrow(Class<?> type) {
-    initElseThrow(type.getName());
+  public static Class<?> init(Class<?> type) {
+    return init(type.getName(), type);
   }
 
   /**
-   * Initializes a type.
+   * Initializes a class.
    * <p>
    * This is the unchecked equivalent of {@link Class#forName(String)}.
    * </p>
    *
+   * @param typeName
+   *          Fully-qualified name of the class to initialize.
+   * @return Initialized class.
    * @throws RuntimeException
-   *           if class initialization fails.
+   *           if class initialization failed.
+   * @see #tryInit(String)
    */
-  public static void initElseThrow(String typeName) {
-    try {
-      Class.forName(typeName);
-    } catch (ClassNotFoundException ex) {
-      throw runtime(ex);
-    }
+  public static Class<?> init(String typeName) {
+    return init(typeName, null);
+  }
+
+  /**
+   * Initializes a class.
+   * <p>
+   * This is the unchecked equivalent of {@link Class#forName(String, boolean, ClassLoader)
+   * Class.forName(typeName, true, classLoader)}.
+   * </p>
+   *
+   * @param typeName
+   *          Fully-qualified name of the class to initialize.
+   * @param loadingHint
+   *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
+   *          resolve with the class loader of the current (that is, calling) class).
+   * @return Initialized class.
+   * @throws RuntimeException
+   *           if class initialization failed.
+   * @see #tryInit(String, Object)
+   */
+  public static Class<?> init(String typeName, @Nullable Object loadingHint) {
+    return nonNull(doLoadType(typeName, true, loadingHint, true));
   }
 
   /**
@@ -735,7 +716,7 @@ public final class Objects {
    * {@jada.reuseDoc END}
    */
   public static boolean isBasic(@Nullable Object obj) {
-    return isBasic(typeOf(obj));
+    return isBasic(type(obj));
   }
 
   /**
@@ -749,7 +730,7 @@ public final class Objects {
    * Gets whether objects belong to exactly the same type.
    */
   public static boolean isSameType(@Nullable Object o1, @Nullable Object o2) {
-    return typeOf(o1) == typeOf(o2);
+    return type(o1) == type(o2);
   }
 
   /**
@@ -864,13 +845,27 @@ public final class Objects {
   }
 
   /**
-   * Gets the class loader of an object.
+   * Gets the class loader associated to an object.
+   *
+   * @param loadingHint
+   *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
+   *          resolve with the class loader of the current (that is, calling) class).
+   * @return
+   *         <ul>
+   *         <li>current class loader (that is, associated to the calling class), if
+   *         {@code loadingHint} is {@code null}</li>
+   *         <li>{@code loadingHint}, if it is a {@link ClassLoader} itself</li>
+   *         <li>class loader of the class {@linkplain #asType(Object) corresponding} to
+   *         {@code loadingHint}, otherwise</li>
+   *         </ul>
    */
-  public static @PolyNull @Nullable ClassLoader loaderOf(@PolyNull @Nullable Object obj) {
+  public static ClassLoader loader(@Nullable Object loadingHint) {
     //noinspection DataFlowIssue : @PolyNull
-    return obj == null ? null
-        : obj instanceof ClassLoader c ? c
-        : asType(obj).getClassLoader();
+    return loadingHint instanceof ClassLoader c ? c
+        : (loadingHint != null ? asType(loadingHint)
+            : stackFrame($ -> $.getDeclaringClass() != Objects.class)
+                .orElseThrow(() -> runtime("Caller NOT FOUND"))
+                .getDeclaringClass()).getClassLoader();
   }
 
   /**
@@ -1772,42 +1767,140 @@ public final class Objects {
   }
 
   /**
-   * Gets the type corresponding to a fully-qualified name, resolved in the loading context of the
-   * current class and initialized.
-   *
-   * @return {@code null}, if no type matched {@code name}.
+   * Quietly closes an object.
    */
-  public static @Nullable Class<?> type(String name) {
-    return type(name, null);
+  public static <T extends AutoCloseable> void tryClose(@Nullable T obj) {
+    tryLet(obj, AutoCloseable::close);
   }
 
   /**
-   * Gets the type corresponding to a fully-qualified name, resolved in the loading context and
-   * initialized.
+   * Initializes a class.
+   * <p>
+   * Contrary to {@link Class#forName(String)}, this is safe from exceptions.
+   * </p>
    *
+   * @param type
+   *          Class to initialize.
+   * @return {@code type} ({@code null}, if class initialization failed).
+   * @see #init(Class)
+   */
+  public static @Nullable Class<?> tryInit(Class<?> type) {
+    return tryInit(type.getName(), type);
+  }
+
+  /**
+   * Initializes a class.
+   * <p>
+   * Contrary to {@link Class#forName(String)}, this is safe from exceptions.
+   * </p>
+   *
+   * @param typeName
+   *          Fully-qualified name of the class to initialize.
+   * @return Initialized class ({@code null}, if class initialization failed).
+   * @see #init(String)
+   */
+  public static @Nullable Class<?> tryInit(String typeName) {
+    return tryInit(typeName, null);
+  }
+
+  /**
+   * Initializes a class.
+   * <p>
+   * Contrary to {@link Class#forName(String, boolean, ClassLoader) Class.forName(typeName, true,
+   * classLoader)}, it is safe from exceptions.
+   * </p>
+   *
+   * @param typeName
+   *          Fully-qualified name of the class to initialize.
    * @param loadingHint
    *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
-   *          resolve with the class loader of the current class).
-   * @return {@code null}, if no type matched {@code name}.
+   *          resolve with the class loader of the current (that is, calling) class).
+   * @return Initialized class ({@code null}, if class initialization failed).
+   * @see #init(String, Object)
    */
-  public static @Nullable Class<?> type(String name, @Nullable Object loadingHint) {
-    try {
-      if (loadingHint != null) {
-        return Class.forName(name, true, loaderOf(loadingHint));
-      } else
-        return Class.forName(name);
-    } catch (ClassNotFoundException ex) {
-      return null;
-    }
+  public static @Nullable Class<?> tryInit(String typeName, @Nullable Object loadingHint) {
+    return doLoadType(typeName, true, loadingHint, false);
   }
 
   /**
-   * Gets the type of an object.
+   * Gets the class corresponding to a name, resolved in the loading context of the current (that
+   * is, calling) class.
+   * <p>
+   * NOTE: The class is NOT initialized.
+   * </p>
+   *
+   * @param typeName
+   *          Fully-qualified name of the class to load.
+   * @return {@code null}, if no class matched {@code name}.
+   * @see #type(String)
+   */
+  public static @Nullable Class<?> tryType(String typeName) {
+    return tryType(typeName, null);
+  }
+
+  /**
+   * Gets the class corresponding to a name, resolved in the given loading context.
+   * <p>
+   * NOTE: The class is NOT initialized.
+   * </p>
+   *
+   * @param typeName
+   *          Fully-qualified name of the class to load.
+   * @param loadingHint
+   *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
+   *          resolve with the class loader of the current (that is, calling) class).
+   * @return {@code null}, if no class matched {@code name}.
+   * @see #type(String, Object)
+   */
+  public static @Nullable Class<?> tryType(String typeName, @Nullable Object loadingHint) {
+    return doLoadType(typeName, false, loadingHint, false);
+  }
+
+  /**
+   * Gets the class of an object.
    *
    * @see #asType(Object)
    */
-  public static @PolyNull @Nullable Class<?> typeOf(@PolyNull @Nullable Object obj) {
+  public static @PolyNull @Nullable Class<?> type(@PolyNull @Nullable Object obj) {
     return obj != null ? obj.getClass() : null;
+  }
+
+  /**
+   * Gets the class corresponding to a name, resolved in the loading context of the current (that
+   * is, calling) class.
+   * <p>
+   * NOTE: The class is NOT initialized.
+   * </p>
+   *
+   * @param typeName
+   *          Fully-qualified name of the class to load.
+   * @return Loaded class.
+   * @throws RuntimeException
+   *           if class loading failed.
+   * @see #tryType(String)
+   */
+  public static Class<?> type(String typeName) {
+    return type(typeName, null);
+  }
+
+  /**
+   * Gets the class corresponding to a name, resolved in the given loading context.
+   * <p>
+   * NOTE: The class is NOT initialized.
+   * </p>
+   *
+   * @param typeName
+   *          Fully-qualified name of the class to load.
+   * @param loadingHint
+   *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
+   *          resolve with the class loader of the current (that is, calling) class).
+   * @return Loaded class.
+   * @throws RuntimeException
+   *           if class loading failed.
+   * @see #tryType(String, Object)
+   */
+  public static Class<?> type(String typeName, @Nullable Object loadingHint) {
+    return nonNull(doLoadType(typeName, false, loadingHint, true));
   }
 
   /**
@@ -2047,6 +2140,19 @@ public final class Objects {
     return typeName;
   }
 
+  private static @Nullable Class<?> doLoadType(String name, boolean initialized,
+      @Nullable Object loadingHint, boolean throwable) {
+    ClassLoader loader = loader(loadingHint);
+    try {
+      return Class.forName(name, initialized, loader);
+    } catch (ClassNotFoundException ex) {
+      if (throwable)
+        throw runtime(ex);
+      else
+        return null;
+    }
+  }
+
   private static String doSqn(@Nullable Object obj, boolean dotted) {
     return doSqn(doFqn(obj, false, false), dotted);
   }
@@ -2102,11 +2208,7 @@ public final class Objects {
     if (obj == null)
       return null;
 
-    ClassLoader targetLoader = loaderOf(loadingHint != null ? loadingHint
-        : stackFrame($ -> $.getDeclaringClass() != Objects.class)
-            .orElseThrow(() -> runtime("Caller NOT FOUND"))
-            .getDeclaringClass());
-    assert targetLoader != null;
+    ClassLoader targetLoader = loader(loadingHint);
 
     if (obj instanceof Class<?> type) {
       if (type.isPrimitive())

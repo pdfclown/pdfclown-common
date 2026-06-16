@@ -14,7 +14,7 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Comparator.comparing;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
-import static org.pdfclown.common.build.internal.temp.util.Objects.typeOf;
+import static org.pdfclown.common.build.internal.temp.util.Objects.type;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__JSON;
 import static org.pdfclown.common.util.Conditions.requireType;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
@@ -203,7 +203,7 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
       JSONAssert.assertEquals(expectedArray,
           requireType(actualContent, JSONArray.class, "actualContent"), true);
     } else
-      throw wrongArgOpt("expectedContent", typeOf(expectedContent), null,
+      throw wrongArgOpt("expectedContent", type(expectedContent), null,
           Set.of(JSONObject.class, JSONArray.class));
   }
 

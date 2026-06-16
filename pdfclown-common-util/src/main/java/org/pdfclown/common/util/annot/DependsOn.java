@@ -15,7 +15,7 @@ package org.pdfclown.common.util.annot;
 import static java.lang.annotation.ElementType.PACKAGE;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.pdfclown.common.util.Objects.init;
+import static org.pdfclown.common.util.Objects.tryInit;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -132,7 +132,7 @@ public @interface DependsOn {
      * Whether this dependency is present in the classpath.
      */
     default boolean isAvailable() {
-      return init(getFqn());
+      return tryInit(getFqn()) != null;
     }
   }
 
