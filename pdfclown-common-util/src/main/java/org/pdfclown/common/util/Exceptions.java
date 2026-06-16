@@ -130,6 +130,7 @@ public final class Exceptions {
    * @return {@link IllegalStateException}, if any item in {@code dependencies} is missing;
    *         otherwise, {@code ex}.
    */
+  @SuppressWarnings("ReferenceEquality")
   public static RuntimeException missingClass(Collection<Dependency> dependencies,
       NoClassDefFoundError ex) {
     Throwable ret = ex;

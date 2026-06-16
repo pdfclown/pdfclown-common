@@ -406,7 +406,7 @@ public final class Objects {
    *          Whether comparison is done on resolved elements only; otherwise, unresolved elements
    *          are required to be of the same type in order to be resolved.
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "ReferenceEquality", "unchecked" })
   public static <R, T> boolean deepEquals(@Nullable T o1, @Nullable T o2, Class<R> baseRefType,
       Function<? super R, @Nullable T> resolver, boolean raw) {
     if (o1 == o2)
@@ -445,6 +445,7 @@ public final class Objects {
    *          Whether comparison is done on resolved elements only; otherwise, unresolved elements
    *          are required to be of the same type in order to be resolved.
    */
+  @SuppressWarnings("ReferenceEquality")
   public static <R, T> boolean deepEqualsRef(@Nullable R ref1, @Nullable R ref2,
       Class<R> baseRefType, Function<? super @Nullable R, @Nullable T> resolver, boolean raw) {
     if (ref1 == ref2)
@@ -722,6 +723,7 @@ public final class Objects {
   /**
    * Gets whether objects are the same instance, or both null.
    */
+  @SuppressWarnings("ReferenceEquality")
   public static boolean isSame(@Nullable Object o1, @Nullable Object o2) {
     return o1 == o2;
   }
@@ -2424,7 +2426,7 @@ public final class Objects {
    *          proxy can implement just that interface — if that's not the case, such subclasses must
    *          be added to the classpath visible to the target class loader).
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "ReferenceEquality", "unchecked" })
   private static <T> T @Nullable [] xcastArray(Object @Nullable [] objs, Object loadingHint,
       Class<?> @Nullable [] targetTypeHints) {
     if (objs == null || objs.length == 0)

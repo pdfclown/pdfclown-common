@@ -109,6 +109,7 @@ public final class Assertions {
    * purpose) to make the evaluation more flexible.
    * </p>
    */
+  @SuppressWarnings("ReferenceEquality")
   public static <T> void assertIterableEquals(Iterable<T> expected, Iterable<T> actual,
       Comparator<T> comparator) {
     if (expected == actual)

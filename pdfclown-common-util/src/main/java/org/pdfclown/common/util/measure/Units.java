@@ -429,6 +429,7 @@ public class Units extends AbstractSystemOfUnits {
    * Gets the <a href="https://en.wikipedia.org/wiki/Conversion_of_units">conversion factor</a>
    * against the target unit, that is how many target units correspond to the unit.
    */
+  @SuppressWarnings("ReferenceEquality")
   public static <Q extends Quantity<Q>> double getFactor(Unit<Q> unit, Unit<Q> target) {
     UnitConverter converter = unit.getConverterTo(target);
     if (converter == AbstractConverter.IDENTITY || converter instanceof AddConverter)
@@ -456,6 +457,7 @@ public class Units extends AbstractSystemOfUnits {
    * against the {@linkplain Unit#getSystemUnit() system unit}, that is distance from system unit at
    * zero.
    */
+  @SuppressWarnings("ReferenceEquality")
   public static <Q extends Quantity<Q>> double getOffset(Unit<Q> unit) {
     UnitConverter converter = unit.getConverterTo(unit.getSystemUnit());
     if (converter instanceof AddConverter addConverter)

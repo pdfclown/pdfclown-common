@@ -362,6 +362,7 @@ public abstract class BaseXnum<K> implements Xnum<K> {
   /**
    * <span class="warning">(For internal use only)</span> Call {@link #get(Class, Object)} instead.
    */
+  @SuppressWarnings("ReferenceEquality")
   protected BaseXnum(K code, Object guard) {
     if (guard != GUARD)
       throw wrongArg("guard", null, "Manual instantiation forbidden: call {}.valueOf(..) instead",

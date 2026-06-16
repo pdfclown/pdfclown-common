@@ -576,6 +576,7 @@ public final class Aggregations {
   /**
    * Gets whether the iterable objects are equal.
    */
+  @SuppressWarnings("ReferenceEquality")
   public static <E extends @Nullable Object> boolean equals(Iterable<E> i1, Iterable<E> i2) {
     if (i1 == i2)
       return true;

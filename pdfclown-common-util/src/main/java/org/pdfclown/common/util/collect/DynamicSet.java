@@ -122,6 +122,7 @@ public class DynamicSet<E> extends AbstractSet<E>
   }
 
   @Override
+  @SuppressWarnings("ReferenceEquality")
   public boolean remove(Object o) {
     return base.remove(o) == VALUE;
   }

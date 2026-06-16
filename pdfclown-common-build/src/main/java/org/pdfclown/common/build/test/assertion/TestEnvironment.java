@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
-import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingInt;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -125,7 +125,7 @@ public interface TestEnvironment {
     return Streams.of(ProjectDirId.values())
         .map($ -> ResourceNames.fromPath(file, dir($)))
         .filter(Objects::nonNull)
-        .min(comparing(String::length) /* Keeps the most specific name */).orElse(null);
+        .min(comparingInt(String::length) /* Keeps the most specific name */).orElse(null);
   }
 
   /**
