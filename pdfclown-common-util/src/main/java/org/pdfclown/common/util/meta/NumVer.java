@@ -31,6 +31,7 @@ public interface NumVer extends Version<NumVer> {
   }
 
   @Override
+  @SuppressWarnings("ReferenceEquality")
   default int precedence(NumVer other) {
     if (this == other)
       return 0;

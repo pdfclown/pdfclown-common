@@ -65,6 +65,7 @@ public final class Patterns {
    * @param matcher
    *          Matcher whose {@link Matcher#find() find()} failed.
    */
+  @SuppressWarnings("JdkObsolete")
   public static int indexOfMatchFailure(Matcher matcher) {
     int ret = 0;
     int low = 0;
