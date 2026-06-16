@@ -123,11 +123,18 @@ pdfclown-common-base instead)</description>
       those resources -->
     <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
     <checkstyleSkip>false</checkstyleSkip>
+    <!-- javac Error Prone options -->
+    <lint.errorprone/>
+    <!-- Test-specific javac Error Prone options - NOTE: They are added on top of `lint.errorprone`
+      property, so users don't need to duplicate options already applied to main code -->
+    <lint.errorprone.test/>
     <!-- Javadoc custom inline tags (comma-separated list) -->
     <lint.javadoc.inlineTags/>
     <!-- javac -Xlint warnings selector (comma-separated list) -->
     <lint.Xwarns/>
-    <!-- Test-specific javac -Xlint warnings selector (comma-separated list) -->
+    <!-- Test-specific javac -Xlint warnings selector (comma-separated list) - NOTE: They are added
+      on top of `lint.Xwarns` property, so users don't need to duplicate options already applied to
+      main code -->
     <lint.Xwarns.test/>
 
     <projectIssuesUrl>${projectRootUrl}/issues</projectIssuesUrl>
@@ -217,8 +224,8 @@ pdfclown-common-base instead)</description>
       - `-Xep:MissingSummary:OFF`: excluded because redundant, already managed by checkstyle
       - `-Xep:NotJavadoc:OFF`: excluded because annoyingly requires methods inside local classes to
         be downgraded to non-Javadoc -->
-    <internal.lint.args.errorprone>-XepExcludedPaths:.*/target/.* -XepOpt:Javadoc:customInlineTags=biblio.doc,biblio.ref,biblio.spec,jada.doc,jada.reuseDoc,${lint.javadoc.inlineTags} -Xep:AnnotateFormatMethod:OFF -Xep:AssignmentExpression:OFF -Xep:EffectivelyPrivate:OFF -Xep:FallThrough:OFF -Xep:LabelledBreakTarget:OFF -Xep:MissingSummary:OFF -Xep:NotJavadoc:OFF -Xep:VoidUsed:OFF "@${rootdir}/src/conf/errorprone/options"</internal.lint.args.errorprone>
-    <internal.lint.args.errorprone.test>"@${rootdir}/src/conf/errorprone/test-options"</internal.lint.args.errorprone.test>
+    <internal.lint.args.errorprone>-XepExcludedPaths:.*/target/.* -XepOpt:Javadoc:customInlineTags=biblio.doc,biblio.ref,biblio.spec,jada.doc,jada.reuseDoc,${lint.javadoc.inlineTags} -Xep:AnnotateFormatMethod:OFF -Xep:AssignmentExpression:OFF -Xep:EffectivelyPrivate:OFF -Xep:FallThrough:OFF -Xep:LabelledBreakTarget:OFF -Xep:MissingSummary:OFF -Xep:NotJavadoc:OFF -Xep:VoidUsed:OFF ${lint.errorprone}</internal.lint.args.errorprone>
+    <internal.lint.args.errorprone.test>${lint.errorprone.test}</internal.lint.args.errorprone.test>
   </properties>
 
   <build>
@@ -1779,13 +1786,15 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                 <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
                 <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
               </compilerArgs>
+
               <annotationProcessorPaths>
                 <path>
                   <groupId>com.google.errorprone</groupId>
                   <artifactId>error_prone_core</artifactId>
                   <version>${error-prone.version}</version>
                 </path>
-                <!-- NOTE: Other annotation processors go HERE (if `annotationProcessorPaths`
+
+                <!-- IMPORTANT: Other annotation processors go HERE (if `annotationProcessorPaths`
                   element is set, processors will no longer be discovered on the regular
                   `-classpath` option) -->
               </annotationProcessorPaths>
@@ -1796,10 +1805,14 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                 <configuration>
                   <compilerArgs
                       combine.children="append">
-                    <!-- Compiler (javac) -->
+                    <!--
+                      Compiler (javac)
+                    -->
                     <arg>-Xlint:${internal.lint.args.Xwarns}</arg>
 
-                    <!-- Error Prone plugin -->
+                    <!--
+                      Error Prone plugin
+                    -->
                     <arg>-Xplugin:ErrorProne ${internal.lint.args.errorprone}</arg>
                   </compilerArgs>
                 </configuration>
@@ -1809,14 +1822,14 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                 <configuration>
                   <compilerArgs
                       combine.children="append">
-                    <!-- Compiler (javac) -->
+                    <!--
+                      Compiler (javac)
+                    -->
                     <arg>-Xlint:${internal.lint.args.Xwarns},${internal.lint.args.Xwarns.test}</arg>
 
-                    <!-- Error Prone plugin - NOTE: `test-options` file adds on `options` file, so
-                      users don't need to duplicate options already applied to main code; in fact,
-                      `options` file contains options applied to all the codebase. Some options
-                      (like `MissingSummary` suppression) are hard-coded as they are applicable to
-                      any test context -->
+                    <!--
+                      Error Prone plugin
+                    -->
                     <arg>-Xplugin:ErrorProne ${internal.lint.args.errorprone} ${internal.lint.args.errorprone.test}</arg>
                   </compilerArgs>
                 </configuration>
