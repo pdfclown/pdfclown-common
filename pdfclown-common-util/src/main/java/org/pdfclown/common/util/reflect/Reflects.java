@@ -47,7 +47,7 @@ public final class Reflects {
    * @param <T>
    *          Return type.
    * @throws RuntimeException
-   *           if the call fails.
+   *           if the call failed.
    * @see #tryCall(Class, String, Class[], Object[])
    */
   @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
@@ -66,7 +66,7 @@ public final class Reflects {
    * @param <T>
    *          Return type.
    * @throws RuntimeException
-   *           if the call fails.
+   *           if the call failed.
    * @see #tryCall(Object, String, Class[], Object[])
    */
   @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
@@ -102,6 +102,38 @@ public final class Reflects {
   }
 
   /**
+   * Instantiates a class.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws RuntimeException
+   *           if the instantiation failed.
+   * @see #tryCreate(Class)
+   */
+  public static <T> T create(final Class<T> type) {
+    return create(type, null, null);
+  }
+
+  /**
+   * Instantiates a class.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws RuntimeException
+   *           if the instantiation failed.
+   * @see #tryCreate(Class, Class[], Object[])
+   */
+  public static <T> T create(final Class<T> type, Class<?> @Nullable [] paramTypes,
+      Object @Nullable [] args) {
+    try {
+      return type.getDeclaredConstructor(paramTypes).newInstance(args);
+    } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException
+        | InstantiationException ex) {
+      throw invocationException(type, "<init>", paramTypes, ex);
+    }
+  }
+
+  /**
    * Gets the fully-qualified method name.
    */
   public static String fqn(Method method) {
@@ -123,7 +155,7 @@ public final class Reflects {
    * @param accessorName
    *          Method name of the property getter (for example, {@code "getMyProperty"}).
    * @throws RuntimeException
-   *           if the call fails.
+   *           if the call failed.
    * @see #tryGet(Object, String)
    */
   @SuppressWarnings("TypeParameterUnusedInFormals")
@@ -210,6 +242,35 @@ public final class Reflects {
       Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
     try {
       return call(obj, methodName, paramTypes, args);
+    } catch (Exception ex) {
+      return null;
+    }
+  }
+
+  /**
+   * Instantiates a class.
+   *
+   * @param <T>
+   *          Return type.
+   * @return {@code null}, if failed.
+   * @see #create(Class)
+   */
+  public static <T> @Nullable T tryCreate(final Class<T> type) {
+    return tryCreate(type, null, null);
+  }
+
+  /**
+   * Instantiates a class.
+   *
+   * @param <T>
+   *          Return type.
+   * @return {@code null}, if failed.
+   * @see #create(Class, Class[], Object[])
+   */
+  public static <T> @Nullable T tryCreate(final Class<T> type, Class<?> @Nullable [] paramTypes,
+      Object @Nullable [] args) {
+    try {
+      return create(type, paramTypes, args);
     } catch (Exception ex) {
       return null;
     }
