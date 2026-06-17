@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util.reflect;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Chars.DOT;
@@ -37,6 +38,7 @@ import org.pdfclown.common.util.Objects;
  *
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("TypeParameterUnusedInFormals")
 public final class Reflects {
   private static final StackWalker STACK_WALKER =
       StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
@@ -44,39 +46,51 @@ public final class Reflects {
   /**
    * Calls a static method on the target class.
    *
-   * @param <T>
-   *          Return type.
    * @throws RuntimeException
    *           if the call failed.
    * @see #tryCall(Class, String, Class[], Object[])
+   * @see #get(Class, String, Class[], Object[])
    */
-  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
-  public static <T extends @Nullable Object> T call(final Class<?> type,
-      final String methodName, Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
-    try {
-      return (T) MethodUtils.invokeExactStaticMethod(type, methodName, args, paramTypes);
-    } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
-      throw invocationException(type, methodName, paramTypes, ex);
-    }
+  public static void call(Class<?> type, String methodName) {
+    call(type, methodName, null, null);
+  }
+
+  /**
+   * Calls a static method on the target class.
+   *
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #tryCall(Class, String, Class[], Object[])
+   * @see #get(Class, String, Class[], Object[])
+   */
+  public static void call(Class<?> type, String methodName, Class<?> @Nullable [] paramTypes,
+      @Nullable Object @Nullable [] args) {
+    getOrNull(type, methodName, paramTypes, args);
   }
 
   /**
    * Calls a method on the target object.
    *
-   * @param <T>
-   *          Return type.
    * @throws RuntimeException
    *           if the call failed.
    * @see #tryCall(Object, String, Class[], Object[])
+   * @see #get(Object, String, Class[], Object[])
    */
-  @SuppressWarnings({ "TypeParameterUnusedInFormals", "unchecked" })
-  public static <T extends @Nullable Object> T call(final Object obj,
-      final String methodName, Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
-    try {
-      return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
-    } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
-      throw invocationException(obj, methodName, paramTypes, ex);
-    }
+  public static void call(Object obj, String methodName) {
+    call(obj, methodName, null, null);
+  }
+
+  /**
+   * Calls a method on the target object.
+   *
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #tryCall(Object, String, Class[], Object[])
+   * @see #get(Object, String, Class[], Object[])
+   */
+  public static void call(Object obj, String methodName, Class<?> @Nullable [] paramTypes,
+      @Nullable Object @Nullable [] args) {
+    getOrNull(obj, methodName, paramTypes, args);
   }
 
   /**
@@ -110,7 +124,7 @@ public final class Reflects {
    *           if the instantiation failed.
    * @see #tryCreate(Class)
    */
-  public static <T> T create(final Class<T> type) {
+  public static <T> T create(Class<T> type) {
     return create(type, null, null);
   }
 
@@ -123,8 +137,8 @@ public final class Reflects {
    *           if the instantiation failed.
    * @see #tryCreate(Class, Class[], Object[])
    */
-  public static <T> T create(final Class<T> type, Class<?> @Nullable [] paramTypes,
-      Object @Nullable [] args) {
+  public static <T> T create(Class<T> type, Class<?> @Nullable [] paramTypes,
+      @Nullable Object @Nullable [] args) {
     try {
       return type.getDeclaredConstructor(paramTypes).newInstance(args);
     } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException
@@ -148,19 +162,157 @@ public final class Reflects {
   }
 
   /**
-   * Gets a property value from an object.
+   * Calls a static method on the target class, returning its result.
    *
    * @param <T>
    *          Return type.
-   * @param accessorName
-   *          Method name of the property getter (for example, {@code "getMyProperty"}).
+   * @throws NullPointerException
+   *           if the call returned {@code null}.
    * @throws RuntimeException
    *           if the call failed.
-   * @see #tryGet(Object, String)
+   * @see #getOrNull(Class, String, Class[], Object[])
+   * @see #tryGet(Class, String, Class[], Object[])
+   * @see #call(Class, String, Class[], Object[])
    */
-  @SuppressWarnings("TypeParameterUnusedInFormals")
-  public static <T> T get(Object obj, String accessorName) {
-    return call(obj, accessorName, null, null);
+  public static <T> T get(Class<?> type, String methodName) {
+    return get(type, methodName, null, null);
+  }
+
+  /**
+   * Calls a static method on the target class, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws NullPointerException
+   *           if the call returned {@code null}.
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #getOrNull(Class, String, Class[], Object[])
+   * @see #tryGet(Class, String, Class[], Object[])
+   * @see #call(Class, String, Class[], Object[])
+   */
+  public static <T> T get(Class<?> type, String methodName, Class<?> @Nullable [] paramTypes,
+      @Nullable Object @Nullable [] args) {
+    return requireNonNull(getOrNull(type, methodName, paramTypes, args));
+  }
+
+  /**
+   * Calls a method on the target object, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws NullPointerException
+   *           if the call returned {@code null}.
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #getOrNull(Object, String, Class[], Object[])
+   * @see #tryGet(Object, String, Class[], Object[])
+   * @see #call(Object, String, Class[], Object[])
+   */
+  public static <T> T get(Object obj, String methodName) {
+    return get(obj, methodName, null, null);
+  }
+
+  /**
+   * Calls a method on the target object, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws NullPointerException
+   *           if the call returned {@code null}.
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #getOrNull(Object, String, Class[], Object[])
+   * @see #tryGet(Object, String, Class[], Object[])
+   * @see #call(Object, String, Class[], Object[])
+   */
+  public static <T> T get(Object obj, String methodName, Class<?> @Nullable [] paramTypes,
+      @Nullable Object @Nullable [] args) {
+    return requireNonNull(getOrNull(obj, methodName, paramTypes, args));
+  }
+
+  /**
+   * Calls a static method on the target class, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #get(Class, String, Class[], Object[])
+   * @see #tryGet(Class, String, Class[], Object[])
+   * @see #call(Class, String, Class[], Object[])
+   */
+  public static <T> @Nullable T getOrNull(Class<?> type, String methodName) {
+    return getOrNull(type, methodName, null, null);
+  }
+
+  /**
+   * Calls a static method on the target class, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #get(Class, String, Class[], Object[])
+   * @see #tryGet(Class, String, Class[], Object[])
+   * @see #call(Class, String, Class[], Object[])
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> @Nullable T getOrNull(Class<?> type, String methodName,
+      Class<?> @Nullable [] paramTypes, @Nullable Object @Nullable [] args) {
+    try {
+      return (T) MethodUtils.invokeExactStaticMethod(type, methodName, args, paramTypes);
+    } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
+      throw invocationException(type, methodName, paramTypes, ex);
+    }
+  }
+
+  /**
+   * Calls a method on the target object, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #get(Object, String, Class[], Object[])
+   * @see #tryGet(Object, String, Class[], Object[])
+   * @see #call(Object, String, Class[], Object[])
+   */
+  public static <T> @Nullable T getOrNull(Object obj, String methodName) {
+    return getOrNull(obj, methodName, null, null);
+  }
+
+  /**
+   * Calls a method on the target object, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @throws RuntimeException
+   *           if the call failed.
+   * @see #get(Object, String, Class[], Object[])
+   * @see #tryGet(Object, String, Class[], Object[])
+   * @see #call(Object, String, Class[], Object[])
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> @Nullable T getOrNull(Object obj, String methodName,
+      Class<?> @Nullable [] paramTypes, @Nullable Object @Nullable [] args) {
+    try {
+      return (T) MethodUtils.invokeExactMethod(obj, methodName, args, paramTypes);
+    } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
+      throw invocationException(obj, methodName, paramTypes, ex);
+    }
+  }
+
+  /**
+   * Gets the method corresponding to a signature.
+   */
+  public static Optional<Method> method(Class<?> type, String methodName,
+      Class<?> @Nullable... paramTypes) {
+    try {
+      return Optional.of(type.getMethod(methodName, paramTypes));
+    } catch (NoSuchMethodException ex) {
+      return Optional.empty();
+    }
   }
 
   /**
@@ -210,65 +362,83 @@ public final class Reflects {
   }
 
   /**
-   * Calls a static method on the target class.
+   * Safely calls a static method on the target class.
    *
-   * @param <T>
-   *          Return type.
-   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
-   *         {@code null} is a valid return value, use
-   *         {@link #call(Class, String, Class[], Object[])} instead).
+   * @return Whether the call succeeded.
+   * @see #call(Class, String, Class[], Object[])
+   * @see #get(Class, String, Class[], Object[])
    */
-  @SuppressWarnings("TypeParameterUnusedInFormals")
-  public static <T> @Nullable T tryCall(final Class<?> type, final String methodName,
-      Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
+  public static boolean tryCall(Class<?> type, String methodName) {
+    return tryCall(type, methodName, null, null);
+  }
+
+  /**
+   * Safely calls a static method on the target class.
+   *
+   * @return Whether the call succeeded.
+   * @see #call(Class, String, Class[], Object[])
+   * @see #get(Class, String, Class[], Object[])
+   */
+  public static boolean tryCall(Class<?> type, String methodName, Class<?> @Nullable [] paramTypes,
+      @Nullable Object @Nullable [] args) {
     try {
-      return call(type, methodName, paramTypes, args);
+      call(type, methodName, paramTypes, args);
+      return true;
     } catch (Exception ex) {
-      return null;
+      return false;
     }
   }
 
   /**
-   * Calls a method on the target object.
+   * Safely calls a method on the target object.
    *
-   * @param <T>
-   *          Return type.
-   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
-   *         {@code null} is a valid return value, use
-   *         {@link #call(Object, String, Class[], Object[])} instead).
+   * @return Whether the call succeeded.
+   * @see #call(Object, String, Class[], Object[])
+   * @see #get(Object, String, Class[], Object[])
    */
-  @SuppressWarnings("TypeParameterUnusedInFormals")
-  public static <T> @Nullable T tryCall(final Object obj, final String methodName,
-      Class<?> @Nullable [] paramTypes, Object @Nullable [] args) {
+  public static boolean tryCall(Object obj, String methodName) {
+    return tryCall(obj, methodName, null, null);
+  }
+
+  /**
+   * Safely calls a method on the target object.
+   *
+   * @return Whether the call succeeded.
+   * @see #call(Object, String, Class[], Object[])
+   * @see #get(Object, String, Class[], Object[])
+   */
+  public static boolean tryCall(Object obj, String methodName, Class<?> @Nullable [] paramTypes,
+      @Nullable Object @Nullable [] args) {
     try {
-      return call(obj, methodName, paramTypes, args);
+      call(obj, methodName, paramTypes, args);
+      return true;
     } catch (Exception ex) {
-      return null;
+      return false;
     }
   }
 
   /**
-   * Instantiates a class.
+   * Safely instantiates a class.
    *
    * @param <T>
    *          Return type.
    * @return {@code null}, if failed.
    * @see #create(Class)
    */
-  public static <T> @Nullable T tryCreate(final Class<T> type) {
+  public static <T> @Nullable T tryCreate(Class<T> type) {
     return tryCreate(type, null, null);
   }
 
   /**
-   * Instantiates a class.
+   * Safely instantiates a class.
    *
    * @param <T>
    *          Return type.
    * @return {@code null}, if failed.
    * @see #create(Class, Class[], Object[])
    */
-  public static <T> @Nullable T tryCreate(final Class<T> type, Class<?> @Nullable [] paramTypes,
-      Object @Nullable [] args) {
+  public static <T> @Nullable T tryCreate(Class<T> type, Class<?> @Nullable [] paramTypes,
+      @Nullable Object @Nullable [] args) {
     try {
       return create(type, paramTypes, args);
     } catch (Exception ex) {
@@ -277,19 +447,60 @@ public final class Reflects {
   }
 
   /**
-   * Gets a property value from an object.
+   * Safely calls a static method on the target class, returning its result.
    *
    * @param <T>
    *          Return type.
-   * @param getter
-   *          Method name of the property getter (for example, {@code "getMyProperty"}).
    * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
-   *         {@code null} is a valid return value, use {@link #get(Object, String)} instead).
+   *         {@code null} is a valid return value, use {@link #getOrNull(Class, String)} instead).
    */
-  @SuppressWarnings("TypeParameterUnusedInFormals")
-  public static <T> @Nullable T tryGet(Object obj, String getter) {
+  public static <T> @Nullable T tryGet(Class<?> type, String methodName) {
+    return tryGet(type, methodName, null, null);
+  }
+
+  /**
+   * Safely calls a static method on the target class, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
+   *         {@code null} is a valid return value, use
+   *         {@link #getOrNull(Class, String, Class[], Object[])} instead).
+   */
+  public static <T> @Nullable T tryGet(Class<?> type, String methodName,
+      Class<?> @Nullable [] paramTypes, @Nullable Object @Nullable [] args) {
     try {
-      return get(obj, getter);
+      return getOrNull(type, methodName, paramTypes, args);
+    } catch (Exception ex) {
+      return null;
+    }
+  }
+
+  /**
+   * Safely calls a method on the target object, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
+   *         {@code null} is a valid return value, use {@link #getOrNull(Object, String)} instead).
+   */
+  public static <T> @Nullable T tryGet(Object obj, String methodName) {
+    return tryGet(obj, methodName, null, null);
+  }
+
+  /**
+   * Safely calls a method on the target object, returning its result.
+   *
+   * @param <T>
+   *          Return type.
+   * @return Value returned by the call ({@code null}, if failed — to disambiguate the case where
+   *         {@code null} is a valid return value, use
+   *         {@link #getOrNull(Object, String, Class[], Object[])} instead).
+   */
+  public static <T> @Nullable T tryGet(Object obj, String methodName,
+      Class<?> @Nullable [] paramTypes, @Nullable Object @Nullable [] args) {
+    try {
+      return getOrNull(obj, methodName, paramTypes, args);
     } catch (Exception ex) {
       return null;
     }

@@ -438,6 +438,19 @@ public final class Aggregations {
   }
 
   /**
+   * Returns an array of the given elements.
+   *
+   * @apiNote This is just syntactic sugar to spare users from explicitly instantiating a reference
+   *          array (for example, <code>arr(MyClass.class)</code> instead of
+   *          <code>new Class[] { MyClass.class }</code>).
+   */
+  @SafeVarargs
+  @SuppressWarnings("varargs")
+  public static <T> T[] arr(T... ee) {
+    return ee;
+  }
+
+  /**
    * Gets the Cartesian product of lists.
    *
    * @return Sequential stream.
