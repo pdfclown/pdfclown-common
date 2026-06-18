@@ -18,6 +18,10 @@ import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.hierarchicalType;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.to;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.toElse;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.tryLet;
 import static org.pdfclown.common.util.Booleans.parseBoolean;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.COMMA;
@@ -38,10 +42,6 @@ import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.NULL;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.lastIndexOfElse;
-import static org.pdfclown.common.util.function.Functions.to;
-import static org.pdfclown.common.util.function.Functions.toElse;
-import static org.pdfclown.common.util.function.Functions.toNonNull;
-import static org.pdfclown.common.util.function.Functions.tryLet;
 import static org.pdfclown.common.util.reflect.Reflects.stackFrame;
 
 import io.github.classgraph.ClassGraph;
@@ -837,7 +837,7 @@ public final class Objects {
     else if (obj instanceof String s)
       return S + DQUOTE + LITERAL_STRING_ESCAPE.translate(s) + DQUOTE;
     else if (obj instanceof Class<?> c)
-      return toNonNull(c, $ -> $.getPackageName().startsWith("java.lang")
+      return to(c, $ -> $.getPackageName().startsWith("java.lang")
           ? $.getSimpleName() /*
                                * NOTE: The names of classes belonging to common packages are
                                * simplified to avoid noise
@@ -2127,7 +2127,7 @@ public final class Objects {
   }
 
   private static String doFqn(@Nullable Object obj, boolean shortened, boolean dotted) {
-    return doFqn(to(asType(obj), Class::getName), shortened, dotted);
+    return doFqn(toOrNull(asType(obj), Class::getName), shortened, dotted);
   }
 
   private static String doFqn(@Nullable String typeName, boolean shortened, boolean dotted) {
@@ -2161,7 +2161,7 @@ public final class Objects {
   }
 
   private static String doSqn(@Nullable String typeName, boolean dotted) {
-    return doFqn(to(typeName, $ -> $.substring($.lastIndexOf(DOT) + 1)), false, dotted);
+    return doFqn(toOrNull(typeName, $ -> $.substring($.lastIndexOf(DOT) + 1)), false, dotted);
   }
 
   @SuppressWarnings("ReturnValueIgnored")

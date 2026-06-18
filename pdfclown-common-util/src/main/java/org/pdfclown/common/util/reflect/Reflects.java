@@ -362,7 +362,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely calls a static method on the target class.
+   * Quietly calls a static method on the target class.
    *
    * @return Whether the call succeeded.
    * @see #call(Class, String, Class[], Object[])
@@ -373,7 +373,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely calls a static method on the target class.
+   * Quietly calls a static method on the target class.
    *
    * @return Whether the call succeeded.
    * @see #call(Class, String, Class[], Object[])
@@ -390,7 +390,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely calls a method on the target object.
+   * Quietly calls a method on the target object.
    *
    * @return Whether the call succeeded.
    * @see #call(Object, String, Class[], Object[])
@@ -401,7 +401,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely calls a method on the target object.
+   * Quietly calls a method on the target object.
    *
    * @return Whether the call succeeded.
    * @see #call(Object, String, Class[], Object[])
@@ -418,7 +418,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely instantiates a class.
+   * Quietly instantiates a class.
    *
    * @param <T>
    *          Return type.
@@ -430,7 +430,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely instantiates a class.
+   * Quietly instantiates a class.
    *
    * @param <T>
    *          Return type.
@@ -447,7 +447,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely calls a static method on the target class, returning its result.
+   * Quietly calls a static method on the target class, returning its result.
    *
    * @param <T>
    *          Return type.
@@ -459,7 +459,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely calls a static method on the target class, returning its result.
+   * Quietly calls a static method on the target class, returning its result.
    *
    * @param <T>
    *          Return type.
@@ -477,7 +477,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely calls a method on the target object, returning its result.
+   * Quietly calls a method on the target object, returning its result.
    *
    * @param <T>
    *          Return type.
@@ -489,7 +489,7 @@ public final class Reflects {
   }
 
   /**
-   * Safely calls a method on the target object, returning its result.
+   * Quietly calls a method on the target object, returning its result.
    *
    * @param <T>
    *          Return type.

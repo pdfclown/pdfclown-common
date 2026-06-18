@@ -1,4 +1,4 @@
-[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => <<NullPointerException: null>>
+[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => null
 [obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$IntSupplier] => 21
 [obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => <<ClassCastException: "class java.lang.String cannot be cast to class java.lang.Integer">>
 [obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$IntSupplier] => <<ClassCastException: "class java.lang.String cannot be cast to class java.lang.Integer">>

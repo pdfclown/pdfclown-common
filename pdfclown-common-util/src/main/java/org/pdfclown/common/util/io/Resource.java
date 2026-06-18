@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.util.io;
 
-import static org.pdfclown.common.util.function.Functions.to;
+import static org.pdfclown.common.util.function.Functions.toOrNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +49,7 @@ public interface Resource {
    * @return Empty, if the resource corresponding to {@code path} does not exist.
    */
   static Optional<PathResource> of(@Nullable Path path) {
-    return path(to(path, Object::toString));
+    return path(toOrNull(path, Object::toString));
   }
 
   /**
@@ -139,7 +139,7 @@ public interface Resource {
    * @return Empty, if the resource corresponding to {@code url} does not exist.
    */
   static Optional<Resource> of(@Nullable URI uri) {
-    return of(to(uri, Object::toString));
+    return of(toOrNull(uri, Object::toString));
   }
 
   /**
@@ -151,7 +151,7 @@ public interface Resource {
    * @return Empty, if the resource corresponding to {@code url} does not exist.
    */
   static Optional<Resource> of(@Nullable URL url) {
-    return of(to(url, Object::toString));
+    return of(toOrNull(url, Object::toString));
   }
 
   /**

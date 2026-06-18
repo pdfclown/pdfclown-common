@@ -21,7 +21,7 @@ import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
-import static org.pdfclown.common.util.function.Functions.to;
+import static org.pdfclown.common.util.function.Functions.toOrNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public final class Processes {
      * hang if a maven command (`mvn`) is run via `ProcessBuilder`.
      */
     var builder = new ProcessBuilder(command)
-        .directory(to(directory, Path::toFile))
+        .directory(toOrNull(directory, Path::toFile))
         .inheritIO();
     Process process = builder.start();
     return process.waitFor();
@@ -82,7 +82,7 @@ public final class Processes {
   public static int execute(List<String> command, @Nullable Path directory,
       Consumer<String> consumer) throws IOException, InterruptedException {
     var builder = new ProcessBuilder(command)
-        .directory(to(directory, Path::toFile));
+        .directory(toOrNull(directory, Path::toFile));
     Process process = builder.start();
     try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), UTF_8))) {
       String line;

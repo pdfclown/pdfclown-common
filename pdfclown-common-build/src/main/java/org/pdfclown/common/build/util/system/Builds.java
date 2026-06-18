@@ -20,6 +20,8 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.opt;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.let;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Conditions.requireDirectory;
@@ -31,8 +33,6 @@ import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongState;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
-import static org.pdfclown.common.util.function.Functions.let;
-import static org.pdfclown.common.util.function.Functions.to;
 import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__GROOVY;
 import static org.pdfclown.common.util.system.Processes.execute;
 import static org.pdfclown.common.util.system.Processes.executeGetElseThrow;
@@ -313,8 +313,8 @@ public final class Builds {
    * @implNote Currently supports Maven only.
    */
   public static @Nullable String projectArtifactId(Path path) {
-    return to(projectDir(path), $ -> projectArtifactIds.computeIfAbsent($,
-        $key -> to($key.resolve(FILENAME__MAVEN_POM), Failable.asFunction(
+    return toOrNull(projectDir(path), $ -> projectArtifactIds.computeIfAbsent($,
+        $key -> toOrNull($key.resolve(FILENAME__MAVEN_POM), Failable.asFunction(
             $$ -> requireState(stripToNull(XPATH__POM.nodeValue(
                 NS_PREFIX__POM + ":project/" + NS_PREFIX__POM + ":artifactId",
                 xml($$))), () -> "`artifactId` NOT FOUND in " + $$)))));

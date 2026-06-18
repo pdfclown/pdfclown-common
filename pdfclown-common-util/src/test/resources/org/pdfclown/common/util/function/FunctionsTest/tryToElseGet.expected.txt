@@ -1,6 +1,6 @@
-[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => null
+[obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => <<NullPointerException: null>>
 [obj: null, supplier: org.pdfclown.common.util.function.FunctionsTest$IntSupplier] => 21
-[obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => null
+[obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => <<NullPointerException: null>>
 [obj: "hello", supplier: org.pdfclown.common.util.function.FunctionsTest$IntSupplier] => 21
 [obj: 42, supplier: org.pdfclown.common.util.function.FunctionsTest$NullSupplier] => 42
 [obj: 42, supplier: org.pdfclown.common.util.function.FunctionsTest$IntSupplier] => 42

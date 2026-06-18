@@ -20,7 +20,7 @@ import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.ParamMessage.ARG;
-import static org.pdfclown.common.util.function.Functions.to;
+import static org.pdfclown.common.util.function.Functions.toOrNull;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
@@ -112,8 +112,8 @@ public final class Exceptions {
    */
   public static NoSuchElementException missing(@Nullable Object value, @Nullable String format,
       @Nullable Object... args) {
-    String valueLiteral = to(value, Objects::textLiteral);
-    String message = to(format, $ -> ParamMessage.of($, args).getDescription());
+    String valueLiteral = toOrNull(value, Objects::textLiteral);
+    String message = toOrNull(format, $ -> ParamMessage.of($, args).getDescription());
     return new NoSuchElementException(
         valueLiteral == null ? message
             : message == null ? valueLiteral

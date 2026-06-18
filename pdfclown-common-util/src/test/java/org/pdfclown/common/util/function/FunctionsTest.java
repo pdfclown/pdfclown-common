@@ -148,9 +148,9 @@ public class FunctionsTest extends BaseTest {
   }
 
   @Test
-  void toElseGetNonNull() {
+  void toElseGetOrNull() {
     COMBINATION.verify(
-        (obj, supplier) -> Functions.toElseGetNonNull(obj, MAPPER, supplier),
+        (obj, supplier) -> Functions.toElseGetOrNull(obj, MAPPER, supplier),
         List.of("obj", "supplier"),
         // obj
         OBJS,
@@ -159,9 +159,9 @@ public class FunctionsTest extends BaseTest {
   }
 
   @Test
-  void toNonNull() {
+  void toOrNull() {
     COMBINATION.verify(
-        (obj) -> Functions.toNonNull(obj, MAPPER),
+        (obj) -> Functions.toOrNull(obj, MAPPER),
         List.of("obj"),
         // obj
         OBJS);
@@ -240,9 +240,9 @@ public class FunctionsTest extends BaseTest {
   }
 
   @Test
-  void tryToElseGetNonNull() {
+  void tryToElseGetOrNull() {
     COMBINATION.verify(
-        (obj, supplier) -> Functions.tryToElseGetNonNull(obj, MAPPER::apply, supplier),
+        (obj, supplier) -> Functions.tryToElseGetOrNull(obj, MAPPER::apply, supplier),
         List.of("obj", "supplier"),
         // obj
         OBJS,

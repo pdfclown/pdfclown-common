@@ -17,8 +17,8 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongState;
-import static org.pdfclown.common.util.function.Functions.to;
 import static org.pdfclown.common.util.function.Functions.toElse;
+import static org.pdfclown.common.util.function.Functions.toOrNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -302,7 +302,7 @@ public abstract class BaseXnum<K> implements Xnum<K> {
    */
   public static <E extends Xnum<K>, K> @Nullable E get(Class<E> type, @Nullable K code) {
     //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
-    return to(get(type), $ -> $.get(code));
+    return toOrNull(get(type), $ -> $.get(code));
   }
 
   /**
@@ -321,7 +321,7 @@ public abstract class BaseXnum<K> implements Xnum<K> {
      * NOTE: The unmodifiable collection guarantees that changes to the backing collections are
      * visible to it too.
      */
-    return to(get(type), $ -> unmodifiableCollection($.constants.values()));
+    return toOrNull(get(type), $ -> unmodifiableCollection($.constants.values()));
   }
 
   /**
