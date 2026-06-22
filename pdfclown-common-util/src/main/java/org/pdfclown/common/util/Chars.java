@@ -39,6 +39,10 @@ public final class Chars {
    */
   public static final char BACKTICK = '`';
   /**
+   * {@code ^}
+   */
+  public static final char CARET = '^';
+  /**
    * {@code :}
    */
   public static final char COLON = ':';
@@ -166,6 +170,10 @@ public final class Chars {
    * Tab character.
    */
   public static final char TAB = '\t';
+  /**
+   * {@code ~}
+   */
+  public static final char TILDE = '~';
   /**
    * {@code _}
    */
