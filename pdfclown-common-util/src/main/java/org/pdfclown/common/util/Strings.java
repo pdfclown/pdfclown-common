@@ -589,6 +589,20 @@ public final class Strings {
   }
 
   /**
+   * Splits the string around matches of the given regular expression, retaining any trailing empty
+   * string.
+   * <p>
+   * Corresponds to {@link String#split(String, int) s.split(regex, -1)}.
+   * </p>
+   *
+   * @apiNote This is a remedy to <a href="https://errorprone.info/bugpattern/StringSplitter">Error
+   *          Prone — Bug Patterns — StringSplitter</a>.
+   */
+  public static String[] splitAll(String s, String regex) {
+    return s.split(regex, -1);
+  }
+
+  /**
    * Strips leading and trailing empty lines.
    * <p>
    * Contrary to {@link String#strip()}, only leading and trailing {@linkplain #isEOL(int)

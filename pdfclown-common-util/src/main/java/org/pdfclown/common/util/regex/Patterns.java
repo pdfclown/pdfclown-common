@@ -99,6 +99,19 @@ public final class Patterns {
   }
 
   /**
+   * Splits the input sequence around matches of this pattern, retaining any trailing empty string.
+   * <p>
+   * Corresponds to {@link Pattern#split(CharSequence, int) p.split(input, -1)}.
+   * </p>
+   *
+   * @apiNote This is a remedy to <a href="https://errorprone.info/bugpattern/StringSplitter">Error
+   *          Prone — Bug Patterns — StringSplitter</a>.
+   */
+  public static String[] splitAll(Pattern p, CharSequence input) {
+    return p.split(input, -1);
+  }
+
+  /**
    * Converts the wildcard pattern to regex.
    *
    * @param wildcard
