@@ -14,8 +14,6 @@ package org.pdfclown.common.util;
 
 import java.time.OffsetDateTime;
 import java.util.GregorianCalendar;
-import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.annot.PolyNull;
 
 /**
  * Time utilities.
@@ -26,17 +24,15 @@ public final class Times {
   /**
    * Converts the time.
    */
-  public static @PolyNull @Nullable GregorianCalendar calendar(
-      @PolyNull @Nullable OffsetDateTime value) {
-    return value != null ? GregorianCalendar.from(value.toZonedDateTime()) : null;
+  public static GregorianCalendar calendar(OffsetDateTime value) {
+    return GregorianCalendar.from(value.toZonedDateTime());
   }
 
   /**
    * Converts the time.
    */
-  public static @PolyNull @Nullable OffsetDateTime offsetDateTime(
-      @PolyNull @Nullable GregorianCalendar value) {
-    return value != null ? OffsetDateTime.from(value.toZonedDateTime()) : null;
+  public static OffsetDateTime offsetDateTime(GregorianCalendar value) {
+    return OffsetDateTime.from(value.toZonedDateTime());
   }
 
   private Times() {
