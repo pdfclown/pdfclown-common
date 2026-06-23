@@ -13,8 +13,9 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.file.Files.exists;
-import static org.apache.commons.codec.binary.Hex.decodeHex;
 import static org.apache.commons.codec.binary.Hex.encodeHexString;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.toElse;
+import static org.pdfclown.common.util.Bytes.BYTE_ARRAY__EMPTY;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.LF;
@@ -46,7 +47,7 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
-import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
 
@@ -121,13 +122,13 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
       this.base = base;
     }
 
+    /**
+     * @return Empty, if undefined.
+     */
     @Override
     public byte[] get(int index) {
-      try {
-        return base[index] != null ? decodeHex(base[index]) : null;
-      } catch (DecoderException ex) {
-        throw runtime(ex);
-      }
+      //noinspection DataFlowIssue : false positive null
+      return toElse(base[index], Failable.asFunction(Hex::decodeHex), BYTE_ARRAY__EMPTY);
     }
 
     /**
