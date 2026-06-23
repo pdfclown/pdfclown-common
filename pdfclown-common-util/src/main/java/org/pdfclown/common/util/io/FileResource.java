@@ -13,7 +13,6 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.Objects.isSameType;
 import static org.pdfclown.common.util.net.Uris.uri;
 
 import java.net.URI;
@@ -40,15 +39,13 @@ public class FileResource extends AbstractResource implements PathResource {
     return path.toString();
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    else if (!isSameType(this, o))
-      return false;
-
-    var that = (FileResource) o;
-    return this.path.equals(that.path);
+  public final boolean equals(Object o) {
+    return this == o || (o instanceof FileResource that
+        && this.path.equals(that.path));
   }
 
   @Override
@@ -61,8 +58,11 @@ public class FileResource extends AbstractResource implements PathResource {
     return uri(path);
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return path.hashCode();
   }
 }

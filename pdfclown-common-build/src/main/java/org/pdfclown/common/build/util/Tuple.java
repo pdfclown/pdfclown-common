@@ -137,9 +137,12 @@ public class Tuple<E extends @Nullable Object> extends AbstractList<E>
     return Integer.compare(thisSize, otherSize);
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
   @SuppressWarnings("unchecked")
-  public boolean equals(Object o) {
+  public final boolean equals(Object o) {
     if (this == o) {
       return true;
     } else if (!(o instanceof Tuple)) {
@@ -164,8 +167,11 @@ public class Tuple<E extends @Nullable Object> extends AbstractList<E>
     return elements[index];
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return Arrays.hashCode(elements);
   }
 

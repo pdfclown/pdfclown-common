@@ -13,7 +13,6 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.Objects.isSameType;
 
 import java.net.URI;
 import org.pdfclown.common.util.annot.Immutable;
@@ -38,15 +37,13 @@ public class WebResource extends AbstractResource {
     return uri.toString();
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    else if (!isSameType(this, o))
-      return false;
-
-    var that = (WebResource) o;
-    return this.uri.equals(that.uri);
+  public final boolean equals(Object o) {
+    return this == o || (o instanceof WebResource that
+        && this.uri.equals(that.uri));
   }
 
   @Override
@@ -54,8 +51,11 @@ public class WebResource extends AbstractResource {
     return uri;
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return uri.hashCode();
   }
 }

@@ -24,7 +24,6 @@ package org.pdfclown.common.util.io;
 import static java.lang.Math.max;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.TAB;
-import static org.pdfclown.common.util.Objects.isSameType;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -150,15 +149,10 @@ public final class Indent implements CharSequence, Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    else if (!isSameType(this, o))
-      return false;
-
-    var that = (Indent) o;
-    return this.width == that.width
+    return this == o || (o instanceof Indent that
+        && this.width == that.width
         && this.symbol == that.symbol
-        && this.level == that.level;
+        && this.level == that.level);
   }
 
   /**

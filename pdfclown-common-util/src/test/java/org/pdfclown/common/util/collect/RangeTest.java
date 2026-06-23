@@ -14,7 +14,6 @@ package org.pdfclown.common.util.collect;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -200,7 +199,7 @@ class RangeTest extends BaseTest {
     var regularRange = Range.closed(0f, 1f);
     var numericRange = Range.numeric(regularRange);
 
-    assertThat(numericRange, not(regularRange));
+    assertThat(numericRange, is(regularRange));
 
     /*
      * Regular ranges fail to evaluate values of numeric types other than their own.

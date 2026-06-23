@@ -20,7 +20,7 @@ import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Conditions.requireEqual;
 import static org.pdfclown.common.util.Conditions.requireState;
-import static org.pdfclown.common.util.Objects.isSameType;
+import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.Comparator;
@@ -31,6 +31,7 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.ArgumentException;
 import org.pdfclown.common.util.Numbers;
 import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.collect.Range.Endpoint;
 
 /**
  * Interval of comparable objects.
@@ -68,25 +69,16 @@ public class Range<T> {
     private final boolean closed;
     private final @Nullable T value;
 
-    /**
-     */
     private Endpoint(@Nullable T value, boolean closed) {
       this.value = value;
       this.closed = closed;
     }
 
     @Override
-    @SuppressWarnings("EqualsDoesntCheckParameterClass")
     public boolean equals(@Nullable Object o) {
-      if (o == this)
-        return true;
-      else if (!isSameType(o, this))
-        return false;
-
-      var that = (Endpoint<?>) o;
-      assert that != null;
-      return that.closed == this.closed
-          && Objects.equals(that.value, this.value);
+      return o == this || (o instanceof Range.Endpoint<?> that
+          && that.closed == this.closed
+          && Objects.equals(that.value, this.value));
     }
 
     /**
@@ -191,8 +183,8 @@ public class Range<T> {
   @SuppressWarnings({ "PatternMatchingInstanceof", "unchecked" })
   public static <T> Range<T> closed(@Nullable T lower, @Nullable T upper) {
     if (lower instanceof Number && upper != null) {
-      var type = (Class<? extends Number>) requireEqual(upper.getClass(), lower.getClass(),
-          "upper.class");
+      var type = (Class<? extends Number>) nonNull(requireEqual(upper.getClass(), lower.getClass(),
+          "upper.class"));
       if (((Number) lower).doubleValue() == 0 && ((Number) upper).doubleValue() == 1)
         return (Range<T>) normal(type);
     }
@@ -271,17 +263,14 @@ public class Range<T> {
     return contains(value, Comparator.naturalOrder());
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public boolean equals(@Nullable Object o) {
-    if (o == this)
-      return true;
-    else if (!isSameType(o, this))
-      return false;
-
-    var that = (Range<?>) o;
-    assert that != null;
-    return Objects.equals(that.lower, this.lower)
-        && Objects.equals(that.upper, this.upper);
+  public final boolean equals(@Nullable Object o) {
+    return o == this || (o instanceof Range<?> that
+        && Objects.equals(that.lower, this.lower)
+        && Objects.equals(that.upper, this.upper));
   }
 
   /**
@@ -298,8 +287,11 @@ public class Range<T> {
     return upper;
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return lower.hashCode() ^ upper.hashCode();
   }
 

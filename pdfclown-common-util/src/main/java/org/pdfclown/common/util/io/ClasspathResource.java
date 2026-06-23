@@ -16,7 +16,6 @@ import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Objects.isSameType;
 import static org.pdfclown.common.util.net.Uris.SCHEME__FILE;
 import static org.pdfclown.common.util.net.Uris.SCHEME__JAR;
 
@@ -108,15 +107,13 @@ public class ClasspathResource extends AbstractResource implements PathResource 
     return uri.toString();
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    else if (!isSameType(this, o))
-      return false;
-
-    var that = (ClasspathResource) o;
-    return this.uri.equals(that.uri);
+  public final boolean equals(Object o) {
+    return this == o || (o instanceof ClasspathResource that
+        && this.uri.equals(that.uri));
   }
 
   @Override
@@ -129,8 +126,11 @@ public class ClasspathResource extends AbstractResource implements PathResource 
     return uri;
   }
 
+  /**
+   * @implNote Marked as final to enforce equivalence symmetry.
+   */
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return uri.hashCode();
   }
 }
