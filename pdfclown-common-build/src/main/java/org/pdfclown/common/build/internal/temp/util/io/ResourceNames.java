@@ -20,13 +20,13 @@ import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.asType;
 import static org.pdfclown.common.util.Objects.found;
 import static org.pdfclown.common.util.Objects.fqn;
+import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.io.Files;
 
 /**
  * Resource name utilities.
@@ -363,10 +363,9 @@ public final class ResourceNames {
    *         </ul>
    */
   public static String relBased(String name, Object base) {
-    //noinspection DataFlowIssue : @PolyNull
     return isAbs(name = normal(name)) ? name
         : name(rel(fromTypeName(requireNonNull(base, "`base`") instanceof String s ? s
-            : asType(base).getPackageName())), name);
+            : nonNull(asType(base)).getPackageName())), name);
   }
 
   /**

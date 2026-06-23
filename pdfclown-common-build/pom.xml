@@ -31,6 +31,8 @@
     <projectJpmsName>org.pdfclown.common.build</projectJpmsName>
     <rootdir>${project.basedir}/..</rootdir>
 
+    <lint.Xwarns>-this-escape</lint.Xwarns>
+
     <!--
       CUSTOM PROPERTIES
     -->

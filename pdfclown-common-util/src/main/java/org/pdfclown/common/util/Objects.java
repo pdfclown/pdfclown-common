@@ -116,15 +116,10 @@ public final class Objects {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-    */
     public ClassXCastException(String message) {
       this(message, null);
     }
 
-    /**
-    */
-    @SuppressWarnings("this-escape")
     public ClassXCastException(String message, @Nullable Throwable cause) {
       super(message);
 
@@ -862,9 +857,8 @@ public final class Objects {
    *         </ul>
    */
   public static ClassLoader loader(@Nullable Object loadingHint) {
-    //noinspection DataFlowIssue : @PolyNull
     return loadingHint instanceof ClassLoader c ? c
-        : (loadingHint != null ? asType(loadingHint)
+        : nonNull(loadingHint != null ? asType(loadingHint)
             : stackFrame($ -> $.getDeclaringClass() != Objects.class)
                 .orElseThrow(() -> runtime("Caller NOT FOUND"))
                 .getDeclaringClass()).getClassLoader();
@@ -895,6 +889,7 @@ public final class Objects {
    * @return {@code obj}
    * @see java.util.Objects#requireNonNull(Object)
    */
+  @SuppressWarnings("NullAway")
   public static <T> T nonNull(@Nullable T obj) {
     assert obj != null;
     return obj;
@@ -2035,13 +2030,13 @@ public final class Objects {
     if (obj == null)
       return false /* Same as regular `instanceof` */;
 
+    requireNonNull(type, "`type`");
+
     // Extract the source object!
-    Object base = xflat(obj);
-    assert base != null;
+    Object base = nonNull(xflat(obj));
 
     // Cross-cast the source type to target type's class loader!
-    Class<?> xbaseType = xcast(base.getClass(), requireNonNull(type, "`type`"));
-    assert xbaseType != null;
+    Class<?> xbaseType = nonNull(xcast(base.getClass(), type));
 
     return type.isAssignableFrom(xbaseType);
   }
@@ -2228,8 +2223,7 @@ public final class Objects {
     }
 
     // Extract the source object in case `obj` is a proxy!
-    obj = xflat(obj);
-    assert obj != null;
+    obj = nonNull(xflat(obj));
 
     final Class<?> objType = obj.getClass();
     // Source object is array?
@@ -2239,7 +2233,7 @@ public final class Objects {
     else if (objType.isEnum())
       return (T) Enum.valueOf((Class<Enum>) (targetTypeHint != null && targetTypeHint.isEnum()
           ? targetTypeHint
-          : nonNull(type(objType.getName(), targetLoader))), ((Enum<?>) obj).name());
+          : type(objType.getName(), targetLoader)), ((Enum<?>) obj).name());
     // Source object is compatible with target?
     else if (objType == type(objType.getName(), targetLoader))
       return (T) obj;

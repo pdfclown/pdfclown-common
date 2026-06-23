@@ -67,8 +67,6 @@ public abstract class Verifier implements Cloneable {
     private final Path targetFilePath;
     private final String testMethodName;
 
-    /**
-    */
     public DefaultNamer() {
       var testFrame = Tests.testFrame().orElseThrow();
 
@@ -124,8 +122,6 @@ public abstract class Verifier implements Cloneable {
 
     private String additionalInformation = EMPTY;
 
-    /**
-    */
     public Namer() {
       try {
         projectPaths = ProjectPathResolver.of(Builds.projectDir());

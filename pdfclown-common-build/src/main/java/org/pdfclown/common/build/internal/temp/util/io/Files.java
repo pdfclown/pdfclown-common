@@ -31,6 +31,7 @@ import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Objects.found;
+import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 
@@ -728,7 +729,7 @@ public final class Files {
    */
   public static Path relativize(Path from, Path to) {
     if (isRegularFile(from = normal(from))) {
-      from = from.getParent();
+      from = nonNull(from.getParent());
     }
     if (!isDirectory(from))
       throw wrongArg("from", from, "MUST be a directory");

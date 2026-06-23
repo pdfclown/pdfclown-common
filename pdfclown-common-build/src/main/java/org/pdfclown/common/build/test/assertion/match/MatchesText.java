@@ -45,8 +45,6 @@ public class MatchesText extends TypeSafeMatcher<String> {
   private int lineStart;
   private int column = 1;
 
-  /**
-  */
   public MatchesText(String expected, boolean caseIgnored) {
     this.expected = requireNonNull(expected, "`expected`");
     this.caseIgnored = caseIgnored;

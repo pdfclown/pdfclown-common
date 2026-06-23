@@ -88,7 +88,7 @@ import org.xml.sax.SAXParseException;
  *
  * @author Stefano Chizzolini
  */
-@SuppressWarnings({ "SameParameterValue", "this-escape", "TypeParameterUnusedInFormals" })
+@SuppressWarnings({ "SameParameterValue", "TypeParameterUnusedInFormals" })
 public final class Xmls {
   /**
    * Document factory profile.

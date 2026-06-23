@@ -14,6 +14,7 @@ package org.pdfclown.common.build.test.model;
 
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
+import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqn;
 import static org.pdfclown.common.build.internal.temp.util.Objects.superTypes;
 import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithProperties;
@@ -66,7 +67,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Stefano Chizzolini
  */
-@SuppressWarnings({ "rawtypes", "this-escape" })
+@SuppressWarnings("rawtypes")
 public class ModelMapper<T> {
   /**
    * Property selector.
@@ -168,7 +169,6 @@ public class ModelMapper<T> {
     /**
      * Creates a mutable selector copying the given one.
      */
-    @SuppressWarnings("this-escape")
     public PropertySelector(PropertySelector source) {
       this(source.getType(), source.isExclusive());
 
@@ -274,7 +274,7 @@ public class ModelMapper<T> {
        */
       private TypePriorityComparator priorities = explicitPriority();
 
-      @SuppressWarnings("NotNullFieldNotInitialized")
+      @SuppressWarnings({ "NotNullFieldNotInitialized", "NullAway" })
       private @InitNonNull Function<Class, Stream<Class>> base;
 
       @Override
@@ -628,11 +628,10 @@ public class ModelMapper<T> {
       log.debug("mapValue(level: {}): {}", level, sqn(value));
     }
 
-    var valueMapper = valueMappers.get(value.getClass());
-    assert valueMapper != null /*
-                                * NOTE: There MUST be a fallback mapper for `Object` class, so, by
-                                * definition, it cannot be null, ever
-                                */;
+    var valueMapper = nonNull(/*
+                               * NOTE: There MUST be a fallback mapper for `Object` class, so, by
+                               * definition, it cannot be null, ever
+                               */ valueMappers.get(value.getClass()));
     return valueMapper.map(value, selectors, visitedObjs, level);
   }
 }

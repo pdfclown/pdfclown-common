@@ -32,7 +32,7 @@ import org.jspecify.annotations.Nullable;
  *          Element type.
  * @author Stefano Chizzolini
  */
-@SuppressWarnings({ "serial" /* serialization is currently not a concern */, "this-escape" })
+@SuppressWarnings("serial")
 public class HashDeque<E> extends ArrayDeque<E> {
   private final Set<E> base = new HashSet<>();
 
@@ -119,6 +119,7 @@ public class HashDeque<E> extends ArrayDeque<E> {
   public Iterator<E> iterator() {
     return new Iterator<>() {
       final Iterator<E> base = HashDeque.super.iterator();
+      @Nullable
       E next;
 
       @Override

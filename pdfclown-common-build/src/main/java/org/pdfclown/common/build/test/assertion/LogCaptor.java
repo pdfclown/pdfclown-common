@@ -56,8 +56,6 @@ public abstract class LogCaptor
     private final String message;
     private final @Nullable Throwable throwable;
 
-    /**
-     */
     public Capture(Level level, String message, @Nullable Throwable throwable) {
       this.level = requireNonNull(level, "`level`");
       this.message = requireNonNull(message, "`message`");

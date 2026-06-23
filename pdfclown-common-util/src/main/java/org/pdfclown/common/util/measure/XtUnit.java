@@ -14,6 +14,7 @@ package org.pdfclown.common.util.measure;
 
 import static org.pdfclown.common.util.Conditions.requireState;
 import static org.pdfclown.common.util.Conditions.requireType;
+import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.measure.Units.unwrap;
 import static org.pdfclown.common.util.measure.Units.wrap;
 
@@ -46,14 +47,13 @@ import tech.units.indriya.AbstractUnit;
  * @author Stefano Chizzolini
  */
 @Immutable
-@SuppressWarnings("this-escape")
 public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
   @Serial
   private static final long serialVersionUID = 1L;
 
-  @SuppressWarnings({ "unchecked", "DataFlowIssue" /* @PolyNull */ })
+  @SuppressWarnings("unchecked")
   public static <Q extends Quantity<Q>> XtUnit<Q> of(Unit<Q> base) {
-    return new XtUnit<Q>(requireType(base, AbstractUnit.class));
+    return new XtUnit<Q>(nonNull(requireType(base, AbstractUnit.class)));
   }
 
   final AbstractUnit<Q> base;

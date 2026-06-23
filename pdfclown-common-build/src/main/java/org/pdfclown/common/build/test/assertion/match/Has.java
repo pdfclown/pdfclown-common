@@ -31,8 +31,6 @@ public class Has<T> extends TypeSafeDiagnosingMatcher<T> {
   private final Function<T, Object> mapper;
   private final Matcher<Object> matcher;
 
-  /**
-  */
   public Has(String mappingDescription, Function<T, Object> mapper,
       Matcher<Object> matcher) {
     this.mappingDescription = mappingDescription;

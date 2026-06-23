@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.system;
 
 import static java.nio.file.Files.isRegularFile;
+import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.Conditions.requireDirectory;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
@@ -55,7 +56,8 @@ public abstract class ProjectPathResolver {
   }
 
   public Path resolve(ProjectDirId id) {
-    return base.computeIfAbsent(id, $k -> base.get(ProjectDirId.BASE).resolve(relativePath($k)));
+    return base.computeIfAbsent(id, $k -> nonNull(base.get(ProjectDirId.BASE))
+        .resolve(relativePath($k)));
   }
 
   public Path resolve(ProjectDirId id, String sub) {

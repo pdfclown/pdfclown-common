@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 
 import java.io.ByteArrayOutputStream;
@@ -180,8 +181,7 @@ public final class Executions {
     } finally {
       if (oldOut != null) {
         try {
-          assert outStream != null;
-          outRef.setValue(outStream.toString(charset));
+          nonNull(outRef).setValue(nonNull(outStream).toString(charset));
         } finally {
           System.setOut(oldOut);
         }
@@ -189,9 +189,7 @@ public final class Executions {
       if (oldErr != null) {
         try {
           if (errRef != null) {
-            assert errStream != null;
-            //noinspection ConstantValue
-            errRef.setValue(merged ? outRef.get() : errStream.toString(charset));
+            errRef.setValue(merged ? nonNull(outRef).get() : nonNull(errStream).toString(charset));
           }
         } finally {
           System.setErr(oldErr);

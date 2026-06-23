@@ -27,8 +27,6 @@ import org.hamcrest.TypeSafeMatcher;
 public class ContainsPattern extends TypeSafeMatcher<String> {
   private final Pattern pattern;
 
-  /**
-  */
   public ContainsPattern(Pattern pattern) {
     this.pattern = requireNonNull(pattern, "`pattern`");
   }

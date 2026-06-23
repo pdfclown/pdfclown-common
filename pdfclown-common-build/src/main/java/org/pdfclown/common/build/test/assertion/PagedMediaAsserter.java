@@ -305,7 +305,7 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
           actualImage.getHeight());
 
     BufferedImage ret = null;
-    byte[] retData = null;
+    byte[] retData = BYTE_ARRAY__EMPTY /* Just to make NullAway happy */;
     int diffExpectedRgb = Color.GREEN.getRGB();
     int diffActualRgb = Color.RED.getRGB();
     int offset = 0;
@@ -323,7 +323,6 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
                 IMAGE_TYPE);
             retData = ((DataBufferByte) ret.getRaster().getDataBuffer()).getData();
           }
-          assert retData != null;
 
           int diffRgb = colorIntensity(expectedRgb) > colorIntensity(actualRgb)
               ? diffActualRgb

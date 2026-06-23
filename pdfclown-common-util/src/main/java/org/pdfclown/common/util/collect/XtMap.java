@@ -132,6 +132,8 @@ public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
    *           abstract way to retrieve a key from a value is to iterate the whole map (O(n)
    *           complexity). It is therefore recommended to override it with an optimized solution.
    */
+  @SuppressWarnings("NullAway" /*- TODO: false positive on `value` parameter which doesn't make
+                                         sense, as the target parameter is nullable too */)
   default @Nullable K getKey(@Nullable V value) {
     return Aggregations.getKey(this, value);
   }

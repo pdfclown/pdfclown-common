@@ -21,6 +21,7 @@ import static org.pdfclown.common.util.Conditions.requireType;
 import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.fqn;
+import static org.pdfclown.common.util.Objects.nonNull;
 import static org.pdfclown.common.util.function.Functions.toOrNull;
 
 import io.github.classgraph.ClassGraph;
@@ -514,9 +515,8 @@ public class Units extends AbstractSystemOfUnits {
   @SuppressWarnings("unchecked")
   protected static <Q extends Quantity<Q>> XtUnit<Q> addBaseUnit(Units unitSystem,
       Class<Q> quantityType, Unit<Q> unit) {
-    //noinspection DataFlowIssue : @PolyNull
-    return defaultUnit(quantityType, addUnit(unitSystem, requireType(unit, BaseUnit.class)),
-        unitSystem);
+    return defaultUnit(quantityType, addUnit(unitSystem,
+        nonNull(requireType(unit, BaseUnit.class))), unitSystem);
   }
 
   /**

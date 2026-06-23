@@ -137,7 +137,7 @@ public final class GraphicsAssertions {
       if (ex.getCause() instanceof AssertionError) {
         fail(ex.getCause());
       } else
-        throw runtime(ex.getCause());
+        throw runtime(ex);
     } catch (InterruptedException ex) {
       throw runtime(ex);
     }

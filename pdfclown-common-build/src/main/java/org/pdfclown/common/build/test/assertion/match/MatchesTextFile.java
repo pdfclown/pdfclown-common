@@ -37,8 +37,7 @@ public class MatchesTextFile extends TypeSafeMatcher<Path> {
   private final Path expectedContentPath;
   private final MatchesText matcher;
 
-  /**
-  */
+  @SuppressWarnings("NullAway")
   public MatchesTextFile(Path expectedContentPath, boolean caseIgnored) {
     try {
       matcher = new MatchesText(readString(this.expectedContentPath = expectedContentPath),
