@@ -15,7 +15,6 @@ package org.pdfclown.common.util;
 import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.nonNull;
-import static org.pdfclown.common.util.Objects.splitFqn;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +27,7 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Enumeration utilities.
+ * Enum utilities.
  * <p>
  * This implementation covers multiple enumeration flavors:
  * </p>
@@ -51,7 +50,7 @@ public final class Enums {
    * @param <K>
    *          Code type.
    * @param type
-   *          Enumeration type.
+   *          Enum type.
    * @param code
    *          Code to match.
    * @param matcher
@@ -78,7 +77,7 @@ public final class Enums {
    * @param <K>
    *          Code type.
    * @param type
-   *          Enumeration type.
+   *          Enum type.
    * @param code
    *          Code to match.
    * @param mapper
@@ -95,7 +94,7 @@ public final class Enums {
    * @param <E>
    *          Constant type.
    * @param type
-   *          Enumeration type.
+   *          Enum type.
    * @param key
    *          Key to match ({@link Enum#name() name} for {@link Enum}, {@link XtEnum#getCode() code}
    *          for {@link XtEnum}).
@@ -110,44 +109,19 @@ public final class Enums {
   }
 
   /**
-   * Gets the constant associated to the fully-qualified name.
-   *
-   * @param <E>
-   *          Constant type.
-   * @param fqn
-   *          Fully qualified name.
-   * @return {@code null}, if no match was found.
-   */
-  @SuppressWarnings({ "unchecked", "rawtypes", "TypeParameterUnusedInFormals" })
-  public static <E extends Enum> @Nullable E get(@Nullable String fqn) {
-    if (fqn == null)
-      return null;
-
-    String[] fqnParts = splitFqn(fqn);
-    if (fqnParts[0].isEmpty())
-      return null;
-
-    try {
-      return (E) Enum.valueOf((Class<E>) Class.forName(fqnParts[0]), fqnParts[1]);
-    } catch (ClassNotFoundException ex) {
-      return null;
-    }
-  }
-
-  /**
    * Gets the constant associated to the key or fails if missing.
    *
    * @param <E>
    *          Constant type.
    * @param type
-   *          Enumeration type.
+   *          Enum type.
    * @param key
    *          Key to match ({@link Enum#name() name} for {@link Enum}, {@link XtEnum#getCode() code}
    *          for {@link XtEnum}).
    * @throws IllegalArgumentException
    *           If there is no constant associated to {@code key}.
    */
-  public static <E> E getOrThrow(Class<E> type, Object key) {
+  public static <E> E getOrThrow(Class<E> type, @Nullable Object key) {
     E value = get(type, key);
     if (value == null)
       throw wrongArg("key", requireNonNull(key), "No matching constant in {}", type);
