@@ -17,6 +17,11 @@ import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.temp.util.Strings.NULL;
+import static org.pdfclown.common.build.internal.temp.util.Strings.S;
+import static org.pdfclown.common.build.internal.temp.util.Strings.lastIndexOfAny;
+import static org.pdfclown.common.build.internal.temp.util.Strings.lastIndexOfElse;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.hierarchicalType;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.to;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toElse;
@@ -38,10 +43,6 @@ import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Numbers.parseNumber;
-import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.NULL;
-import static org.pdfclown.common.util.Strings.S;
-import static org.pdfclown.common.util.Strings.lastIndexOfElse;
 import static org.pdfclown.common.util.reflect.Reflects.stackFrame;
 
 import io.github.classgraph.ClassGraph;
@@ -95,7 +96,6 @@ import org.apache.commons.text.translate.OctalUnescaper;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.temp.util.collect.Comparators;
 import org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator;
-import org.pdfclown.common.util.Strings;
 import org.pdfclown.common.util.annot.PolyNull;
 import org.pdfclown.common.util.regex.Patterns;
 import org.pdfclown.common.util.stream.Streams;
@@ -125,6 +125,28 @@ public final class Objects {
       super(message);
 
       initCause(cause);
+    }
+  }
+
+  /**
+   * Fully-qualified name.
+   *
+   * @author Stefano Chizzolini
+   */
+  public record FQName(String qualifier, String simpleName) {
+    /**
+     * Creates an {@code FQName} from a raw type name.
+     */
+    public static FQName of(String typeName) {
+      String simpleName = Objects.simpleName(requireNonNull(typeName, "typeName"));
+      return simpleName.length() == typeName.length() ? new FQName(EMPTY, typeName)
+          : new FQName(typeName.substring(0, typeName.length() - simpleName.length() - 1),
+              simpleName);
+    }
+
+    @Override
+    public String toString() {
+      return (!qualifier.isEmpty() ? qualifier + DOT : EMPTY) + simpleName;
     }
   }
 
@@ -1099,8 +1121,8 @@ public final class Objects {
   /**
    * Gets the simple class name from a generic class name.
    * <p>
-   * Corresponds to the {@linkplain Class#getSimpleName() simple class name}. No syntactic check is
-   * applied.
+   * Corresponds to the {@linkplain Class#getSimpleName() simple class name}. Supports both binary
+   * (dollar-separated) and plain (dot-separated) names, but no syntactic check is applied.
    * </p>
    *
    * @return {@value Strings#NULL}, if {@code typeName} is undefined.
@@ -1109,21 +1131,8 @@ public final class Objects {
    * @see #sfqn(String)
    */
   public static String simpleName(@Nullable String typeName) {
-    return toElse(typeName,
-        $ -> $.substring(Strings.lastIndexOfAny($, new int[] { DOT, DOLLAR }) + 1), NULL);
-  }
-
-  /**
-   * Splits a fully-qualified name into package and class name parts.
-   *
-   * @return Two-part string array, where the first item is empty if {@code typeName} has no
-   *         package.
-   */
-  public static String[] splitFqn(String typeName) {
-    int pos = typeName.lastIndexOf(DOT);
-    return pos >= 0
-        ? new String[] { typeName.substring(0, pos), typeName.substring(pos + 1) }
-        : new String[] { EMPTY, typeName };
+    return toElse(typeName, $ -> $.substring(lastIndexOfAny($, new int[] { DOT, DOLLAR }) + 1),
+        NULL);
   }
 
   /**
