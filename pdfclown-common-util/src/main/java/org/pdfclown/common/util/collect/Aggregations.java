@@ -775,27 +775,27 @@ public final class Aggregations {
   }
 
   /**
-   * Returns the given list, or empty if undefined.
+   * Returns the given list, or (unmodifiable) empty if undefined.
    */
   @SuppressWarnings("unchecked")
   public static <T extends List<?>> T nullToEmpty(@Nullable T c) {
-    return c != null ? c : (T) Collections.emptyList();
+    return c != null ? c : (T) List.of();
   }
 
   /**
-   * Returns the given set, or empty if undefined.
+   * Returns the given set, or (unmodifiable) empty if undefined.
    */
   @SuppressWarnings("unchecked")
   public static <T extends Set<?>> T nullToEmpty(@Nullable T c) {
-    return c != null ? c : (T) Collections.emptySet();
+    return c != null ? c : (T) Set.of();
   }
 
   /**
-   * Returns the given map, or empty if undefined.
+   * Returns the given map, or (unmodifiable) empty if undefined.
    */
   @SuppressWarnings("unchecked")
   public static <T extends Map<?, ?>> T nullToEmpty(@Nullable T m) {
-    return m != null ? m : (T) Collections.emptyMap();
+    return m != null ? m : (T) Map.of();
   }
 
   /**

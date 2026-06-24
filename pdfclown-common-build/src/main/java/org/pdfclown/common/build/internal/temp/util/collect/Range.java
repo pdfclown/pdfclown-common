@@ -13,15 +13,15 @@
 package org.pdfclown.common.build.internal.temp.util.collect;
 
 import static java.lang.Math.signum;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireEqual;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireState;
+import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
-import static org.pdfclown.common.util.Conditions.requireEqual;
-import static org.pdfclown.common.util.Conditions.requireState;
-import static org.pdfclown.common.util.Objects.nonNull;
-import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.Comparator;
 import java.util.HashMap;

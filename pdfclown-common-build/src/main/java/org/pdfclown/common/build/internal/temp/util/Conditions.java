@@ -275,6 +275,7 @@ public final class Conditions {
    */
   public static <T> @PolyNull @Nullable T requireEqual(@PolyNull @Nullable T value,
       @Nullable T otherValue, @Nullable String name) {
+    //noinspection NullableProblems : false positive
     return requireAmong(value, singletonList(otherValue), name);
   }
 
