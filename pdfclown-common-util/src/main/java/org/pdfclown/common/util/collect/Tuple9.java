@@ -51,67 +51,48 @@ import org.pdfclown.common.util.annot.Unmodifiable;
  * @author Stefano Chizzolini (adaptation to pdfclown-common-util)
  */
 @Unmodifiable
+@SuppressWarnings("unchecked")
 public class Tuple9<E1 extends @Nullable Object, E2 extends @Nullable Object,
     E3 extends @Nullable Object, E4 extends @Nullable Object, E5 extends @Nullable Object,
     E6 extends @Nullable Object, E7 extends @Nullable Object, E8 extends @Nullable Object,
     E9 extends @Nullable Object> extends Tuple<Object> {
-  private final E1 e1;
-  private final E2 e2;
-  private final E3 e3;
-  private final E4 e4;
-  private final E5 e5;
-  private final E6 e6;
-  private final E7 e7;
-  private final E8 e8;
-  private final E9 e9;
-
   Tuple9(E1 e1, E2 e2, E3 e3, E4 e4, E5 e5, E6 e6, E7 e7, E8 e8, E9 e9) {
     super(e1, e2, e3, e4, e5, e6, e7, e8, e9);
-
-    this.e1 = e1;
-    this.e2 = e2;
-    this.e3 = e3;
-    this.e4 = e4;
-    this.e5 = e5;
-    this.e6 = e6;
-    this.e7 = e7;
-    this.e8 = e8;
-    this.e9 = e9;
   }
 
   public E1 getE1() {
-    return e1;
+    return (E1) get(0);
   }
 
   public E2 getE2() {
-    return e2;
+    return (E2) get(1);
   }
 
   public E3 getE3() {
-    return e3;
+    return (E3) get(2);
   }
 
   public E4 getE4() {
-    return e4;
+    return (E4) get(3);
   }
 
   public E5 getE5() {
-    return e5;
+    return (E5) get(4);
   }
 
   public E6 getE6() {
-    return e6;
+    return (E6) get(5);
   }
 
   public E7 getE7() {
-    return e7;
+    return (E7) get(6);
   }
 
   public E8 getE8() {
-    return e8;
+    return (E8) get(7);
   }
 
   public E9 getE9() {
-    return e9;
+    return (E9) get(8);
   }
 }

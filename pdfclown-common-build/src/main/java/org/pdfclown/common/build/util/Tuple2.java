@@ -37,29 +37,18 @@ import org.pdfclown.common.util.annot.Unmodifiable;
  * @author Stefano Chizzolini (adaptation to pdfclown-common-build)
  */
 @Unmodifiable
+@SuppressWarnings("unchecked")
 public class Tuple2<E1 extends @Nullable Object, E2 extends @Nullable Object>
     extends Tuple<Object> {
-  private final E1 e1;
-  private final E2 e2;
-
   Tuple2(E1 e1, E2 e2) {
     super(e1, e2);
-
-    this.e1 = e1;
-    this.e2 = e2;
   }
 
-  /**
-   * Element 1.
-   */
   public E1 getE1() {
-    return e1;
+    return (E1) get(0);
   }
 
-  /**
-   * Element 2.
-   */
   public E2 getE2() {
-    return e2;
+    return (E2) get(1);
   }
 }
