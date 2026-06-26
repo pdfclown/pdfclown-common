@@ -25,13 +25,16 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Enhanced {@link IllegalArgumentException}.
- * <p>
- * NOTE: {@code null} {@link #getArgValue() argValue} means the argument was defined on caller side,
- * but wasn't passed to this exception, for any reason (such as to avoid leaking of sensitive
- * information); conversely, in case of argument undefined on caller side, use
- * {@link NullPointerException} (see {@link java.util.Objects#requireNonNull(Object)}) instead.
- * </p>
  *
+ * @apiNote {@code null} {@link #getArgValue() argValue} means the argument was defined on caller
+ *          side, but wasn't passed to this exception, for any reason (such as to avoid leaking
+ *          sensitive information); conversely, in case of argument undefined on caller side, use
+ *          {@link NullPointerException} (see {@link java.util.Objects#requireNonNull(Object)})
+ *          instead.
+ *          <p>
+ *          <span class="important">IMPORTANT: DO NOT pass {@code argValue} unless in specific,
+ *          non-sensitive cases.</span>
+ *          </p>
  * @author Stefano Chizzolini
  */
 @SuppressWarnings("serial" /* serialization is currently not a concern */)
