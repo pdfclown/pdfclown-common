@@ -37,6 +37,9 @@ import org.jspecify.annotations.Nullable;
  * <li>{@linkplain Xnum augmented enumerations}</li>
  * </ul>
  *
+ * @implNote The lookups are optimized through caching; consequently, {@link #map(Class)} returns
+ *           the same map used on {@link #get(Class, Object)} and {@link #tryGet(Class, Object)}
+ *           calls for a given enum type.
  * @author Stefano Chizzolini
  */
 public final class Enums {
@@ -55,18 +58,16 @@ public final class Enums {
    *          Code to match.
    * @param matcher
    *          Constant-vs-code matcher.
-   * @return {@code null}, if no match was found.
+   * @throws IllegalArgumentException
+   *           if there is no constant matching {@code code}.
    */
-  public static <E, K> @Nullable E get(Class<E> type, @Nullable K code,
-      BiFunction<E, K, Boolean> matcher) {
-    if (code == null)
-      return null;
+  public static <E, K> E get(Class<E> type, @Nullable K code, BiFunction<E, K, Boolean> matcher) {
+    //noinspection DataFlowIssue : false positive
+    var ret = tryGet(type, code, matcher);
+    if (ret == null)
+      throw wrongArg("code", code, "No matching constant in {}", type);
 
-    for (E value : map(type).values()) {
-      if (matcher.apply(value, code))
-        return value;
-    }
-    return null;
+    return ret;
   }
 
   /**
@@ -82,34 +83,20 @@ public final class Enums {
    *          Code to match.
    * @param mapper
    *          Constant-to-code mapper.
-   * @return {@code null}, if no match was found.
+   * @throws IllegalArgumentException
+   *           if there is no constant matching {@code code}.
    */
-  public static <E, K> @Nullable E get(Class<E> type, @Nullable K code, Function<E, K> mapper) {
-    return get(type, code, ($constant, $code) -> Objects.equals($code, mapper.apply($constant)));
+  public static <E, K> E get(Class<E> type, @Nullable K code, Function<E, K> mapper) {
+    //noinspection DataFlowIssue : false positive
+    var ret = tryGet(type, code, mapper);
+    if (ret == null)
+      throw wrongArg("code", code, "No matching constant in {}", type);
+
+    return ret;
   }
 
   /**
-   * Gets the constant associated to the key.
-   *
-   * @param <E>
-   *          Constant type.
-   * @param type
-   *          Enum type.
-   * @param key
-   *          Key to match ({@link Enum#name() name} for {@link Enum}, {@link XtEnum#getCode() code}
-   *          for {@link XtEnum}).
-   * @return {@code null}, if no match was found.
-   * @implNote Lookup is optimized through caching. As a consequence, {@link #map(Class)} returns
-   *           the same map used here.
-   */
-  @SuppressWarnings("unchecked")
-  public static <E> @Nullable E get(Class<E> type, @Nullable Object key) {
-    var typeValues = values.get(type);
-    return (E) (typeValues != null ? typeValues : map(type)).get(key);
-  }
-
-  /**
-   * Gets the constant associated to the key or fails if missing.
+   * Gets the constant matching the key or fails if missing.
    *
    * @param <E>
    *          Constant type.
@@ -119,12 +106,12 @@ public final class Enums {
    *          Key to match ({@link Enum#name() name} for {@link Enum}, {@link XtEnum#getCode() code}
    *          for {@link XtEnum}).
    * @throws IllegalArgumentException
-   *           If there is no constant associated to {@code key}.
+   *           if there is no constant matching {@code key}.
    */
-  public static <E> E getOrThrow(Class<E> type, @Nullable Object key) {
-    E value = get(type, key);
+  public static <E> E get(Class<E> type, @Nullable Object key) {
+    E value = tryGet(type, key);
     if (value == null)
-      throw wrongArg("key", requireNonNull(key), "No matching constant in {}", type);
+      throw wrongArg("key", key, "No matching constant in {}", type);
 
     return value;
   }
@@ -213,6 +200,70 @@ public final class Enums {
    */
   public static <E, K> Map<K, E> map(Class<E> type, Function<? super E, ? extends K> keyMapper) {
     return map(type, Collectors.toMap(keyMapper, Function.identity()));
+  }
+
+  /**
+   * Gets the constant matching the code.
+   *
+   * @param <E>
+   *          Constant type.
+   * @param <K>
+   *          Code type.
+   * @param type
+   *          Enum type.
+   * @param code
+   *          Code to match.
+   * @param matcher
+   *          Constant-vs-code matcher.
+   * @return {@code null}, if no match was found.
+   */
+  public static <E, K> @Nullable E tryGet(Class<E> type, @Nullable K code,
+      BiFunction<E, K, Boolean> matcher) {
+    if (code == null)
+      return null;
+
+    for (E value : map(type).values()) {
+      if (matcher.apply(value, code))
+        return value;
+    }
+    return null;
+  }
+
+  /**
+   * Gets the constant matching the code.
+   *
+   * @param <E>
+   *          Constant type.
+   * @param <K>
+   *          Code type.
+   * @param type
+   *          Enum type.
+   * @param code
+   *          Code to match.
+   * @param mapper
+   *          Constant-to-code mapper.
+   * @return {@code null}, if no match was found.
+   */
+  public static <E, K> @Nullable E tryGet(Class<E> type, @Nullable K code, Function<E, K> mapper) {
+    return tryGet(type, code, ($constant, $code) -> Objects.equals($code, mapper.apply($constant)));
+  }
+
+  /**
+   * Gets the constant matching the key.
+   *
+   * @param <E>
+   *          Constant type.
+   * @param type
+   *          Enum type.
+   * @param key
+   *          Key to match ({@link Enum#name() name} for {@link Enum}, {@link XtEnum#getCode() code}
+   *          for {@link XtEnum}).
+   * @return {@code null}, if no match was found.
+   */
+  @SuppressWarnings("unchecked")
+  public static <E> @Nullable E tryGet(Class<E> type, @Nullable Object key) {
+    var typeValues = values.get(type);
+    return (E) (typeValues != null ? typeValues : map(type)).get(key);
   }
 
   @SuppressWarnings("unchecked")
