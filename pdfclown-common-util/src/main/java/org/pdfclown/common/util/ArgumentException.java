@@ -54,7 +54,6 @@ public class ArgumentException extends IllegalArgumentException {
   }
 
   private final String argName;
-
   private final @Nullable Object argValue;
 
   public ArgumentException(@Nullable String argName, @Nullable Object argValue) {
@@ -66,8 +65,6 @@ public class ArgumentException extends IllegalArgumentException {
     this(argName, argValue, message, null);
   }
 
-  /**
-  */
   public ArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message, @Nullable Throwable cause) {
     super(buildMessage(argName = requireNonNullElse(stripToNull(argName), "value"), argValue,

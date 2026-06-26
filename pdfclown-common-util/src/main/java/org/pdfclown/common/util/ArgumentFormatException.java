@@ -38,8 +38,6 @@ public class ArgumentFormatException extends ArgumentException {
     this(argName, argValue, offset, message, null);
   }
 
-  /**
-  */
   public ArgumentFormatException(@Nullable String argName, @Nullable Object argValue, int offset,
       @Nullable String message, @Nullable Throwable cause) {
     super(argName, argValue, requireNonNullElse(message, "INVALID at index " + offset), cause);
