@@ -15,6 +15,7 @@ package org.pdfclown.common.util.io.charset;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
@@ -30,25 +31,21 @@ import org.jspecify.annotations.Nullable;
  */
 public final class Charsets {
   /**
-   * Encoding result.
+   * Coding result.
    *
    * @author Stefano Chizzolini
    */
-  public sealed interface EncodingResult {
+  public sealed interface CodingResult<R> {
     /**
-     * Encoding failure.
+     * Coding failure.
      */
-    record Failure(boolean malformed, int position, int length) implements EncodingResult {
+    record Failure<R>(boolean malformed, int position, int length) implements CodingResult<R> {
     }
 
     /**
-     * Encoding success.
+     * Coding success.
      */
-    @SuppressWarnings("ArrayRecordComponent" /*
-                                              * Array is meant to be immediately consumed and
-                                              * discarded, no issue from its mutability
-                                              */)
-    record Success(byte[] data) implements EncodingResult {
+    record Success<R>(R value) implements CodingResult<R> {
     }
   }
 
@@ -56,23 +53,49 @@ public final class Charsets {
    * Encodes the given input.
    *
    * @return {@code null}, if the encoding failed.
+   * @see #tryGetBytes(String, Charset)
    */
   @SuppressWarnings("ByteBufferBackingArray" /* ByteBuffer is safe (properly initialized) */)
   public static byte @Nullable [] getBytesOrNull(String input, Charset charset) {
-    return doGetBytes(input, charset, $out -> Arrays.copyOf($out.array(), $out.limit()),
+    return doGetBytes(input, charset,
+        $out -> Arrays.copyOf($out.array(), $out.limit()),
+        ($in, $result) -> null);
+  }
+
+  /**
+   * Decodes the given input.
+   *
+   * @return {@code null}, if the encoding failed.
+   * @see #tryString(byte[], Charset)
+   */
+  public static @Nullable String stringOrNull(byte[] input, Charset charset) {
+    return doString(input, charset,
+        CharBuffer::toString,
         ($in, $result) -> null);
   }
 
   /**
    * Encodes the given input.
    *
-   * @return {@code null}, if the encoding failed.
+   * @see #getBytesOrNull(String, Charset)
    */
   @SuppressWarnings("ByteBufferBackingArray" /* ByteBuffer is safe (properly initialized) */)
-  public static EncodingResult tryGetBytes(String input, Charset charset) {
+  public static CodingResult<byte[]> tryGetBytes(String input, Charset charset) {
     return doGetBytes(input, charset,
-        $out -> new EncodingResult.Success(Arrays.copyOf($out.array(), $out.limit())),
-        ($in, $result) -> new EncodingResult.Failure($result.isMalformed(), $in.position(),
+        $out -> new CodingResult.Success<>(Arrays.copyOf($out.array(), $out.limit())),
+        ($in, $result) -> new CodingResult.Failure<>($result.isMalformed(), $in.position(),
+            $result.length()));
+  }
+
+  /**
+   * Decodes the given input.
+   *
+   * @see #stringOrNull(byte[], Charset)
+   */
+  public static CodingResult<String> tryString(byte[] input, Charset charset) {
+    return doString(input, charset,
+        $out -> new CodingResult.Success<>($out.toString()),
+        ($in, $result) -> new CodingResult.Failure<>($result.isMalformed(), $in.position(),
             $result.length()));
   }
 
@@ -88,6 +111,26 @@ public final class Charsets {
     CoderResult result = encoder.encode(in, out, true);
     if (!result.isError()) {
       result = encoder.flush(out);
+    }
+    if (result.isError())
+      return onFailure.apply(in, result);
+
+    out.flip();
+    return onSuccess.apply(out);
+  }
+
+  private static <R extends @Nullable Object> R doString(byte[] input, Charset charset,
+      Function<CharBuffer, R> onSuccess, BiFunction<ByteBuffer, CoderResult, R> onFailure) {
+    CharsetDecoder decoder = charset.newDecoder()
+        .onMalformedInput(CodingErrorAction.REPORT)
+        .onUnmappableCharacter(CodingErrorAction.REPORT);
+
+    ByteBuffer in = ByteBuffer.wrap(input);
+    CharBuffer out = CharBuffer.allocate((int) (input.length * decoder.maxCharsPerByte()));
+
+    CoderResult result = decoder.decode(in, out, true);
+    if (!result.isError()) {
+      result = decoder.flush(out);
     }
     if (result.isError())
       return onFailure.apply(in, result);
