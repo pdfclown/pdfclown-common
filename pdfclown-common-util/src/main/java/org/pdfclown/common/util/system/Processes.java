@@ -17,10 +17,8 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.OS_NAME;
 import static org.pdfclown.common.util.Chars.LF;
-import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Exceptions.unexpected;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.function.Functions.toOrNull;
 
 import java.io.BufferedReader;
@@ -131,7 +129,7 @@ public final class Processes {
       throws IOException, InterruptedException, ProcessException {
     int exitCode = execute(command, directory);
     if (exitCode != 0)
-      throw new ProcessException(exitCode, String.join(S + SPACE, command), EMPTY);
+      throw new ProcessException(exitCode, EMPTY);
   }
 
   /**
@@ -152,7 +150,7 @@ public final class Processes {
       Consumer<String> consumer) throws IOException, InterruptedException {
     int exitCode = execute(command, directory, consumer);
     if (exitCode != 0)
-      throw new ProcessException(exitCode, String.join(S + SPACE, command), EMPTY);
+      throw new ProcessException(exitCode, EMPTY);
   }
 
   /**
@@ -195,7 +193,7 @@ public final class Processes {
     var outputRef = new Ref<String>();
     int exitCode = execute(command, directory, outputRef);
     if (exitCode != 0)
-      throw new ProcessException(exitCode, String.join(S + SPACE, command), EMPTY);
+      throw new ProcessException(exitCode, EMPTY);
 
     return outputRef.get();
   }

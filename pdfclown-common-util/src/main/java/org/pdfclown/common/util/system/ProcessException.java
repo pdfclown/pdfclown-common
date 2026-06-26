@@ -14,7 +14,6 @@ package org.pdfclown.common.util.system;
 
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
-import static org.pdfclown.common.util.Chars.SEMICOLON;
 import static org.pdfclown.common.util.Chars.SPACE;
 
 import java.io.Serial;
@@ -28,16 +27,12 @@ public class ProcessException extends RuntimeException {
   @Serial
   private static final long serialVersionUID = 1L;
 
-  private static String buildMessage(int exitCode, String command, String message) {
+  private static String buildMessage(int exitCode, String message) {
     var b = new StringBuilder();
     if (!message.isEmpty()) {
       b.append(message).append(SPACE).append(ROUND_BRACKET_OPEN);
     }
     b.append("exitCode:").append(SPACE).append(exitCode);
-    if (!command.isEmpty()) {
-      b.append(SEMICOLON).append(SPACE)
-          .append("command:").append(SPACE).append(command);
-    }
     if (!message.isEmpty()) {
       b.append(ROUND_BRACKET_CLOSE);
     }
@@ -45,19 +40,11 @@ public class ProcessException extends RuntimeException {
   }
 
   private final int exitCode;
-  private final String command;
 
-  /**
-  */
-  public ProcessException(int exitCode, String command, String message) {
-    super(buildMessage(exitCode, command, message));
+  public ProcessException(int exitCode, String message) {
+    super(buildMessage(exitCode, message));
 
-    this.command = command;
     this.exitCode = exitCode;
-  }
-
-  public String getCommand() {
-    return command;
   }
 
   public int getExitCode() {
