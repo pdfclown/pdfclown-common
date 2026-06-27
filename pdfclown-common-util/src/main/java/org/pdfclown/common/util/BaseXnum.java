@@ -22,12 +22,14 @@ import static org.pdfclown.common.util.function.Functions.toOrNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.annot.ThreadSafe;
 import org.pdfclown.common.util.annot.UnmodifiableView;
 import org.pdfclown.common.util.spi.ServiceProvider;
 import org.pdfclown.common.util.spi.XnumProvider;
@@ -84,6 +86,7 @@ import org.pdfclown.common.util.spi.XnumProvider;
  *          Domain-specific identity type.
  * @author Stefano Chizzolini
  */
+@Immutable
 public abstract class BaseXnum<K> implements Xnum<K> {
   /**
    * Augmented enumeration descriptor.
@@ -94,12 +97,13 @@ public abstract class BaseXnum<K> implements Xnum<K> {
    *          Domain-specific identity type.
    * @author Stefano Chizzolini
    */
+  @ThreadSafe
   public static class XnumType<E extends Xnum<K>, K> {
     private final Class<K> codeType;
     private final Predicate<K> codeValidator;
-    private final Map<K, E> constants = new HashMap<>();
+    private final Map<K, E> constants = new ConcurrentHashMap<>();
     private final BiFunction<K, Object, E> constructor;
-    private boolean sealed;
+    private volatile boolean sealed;
     private final Class<E> type;
 
     /**
@@ -141,11 +145,13 @@ public abstract class BaseXnum<K> implements Xnum<K> {
 
       for (E constant : enumType.getEnumConstants()) {
         K code = constant.getCode();
-        if (constants.containsKey(code))
+        /*
+         * NOTE: `ConcurrentHashMap::putIfAbsent` ensures atomicity amid non-synchronized code.
+         */
+        E existingConstant = constants.putIfAbsent(code, constant);
+        if (existingConstant != null)
           throw wrongState("Constant already exists for '{}' code ({}): {}", code, constant,
-              constants.get(code));
-
-        constants.put(code, constant);
+              existingConstant);
       }
       return this;
     }
@@ -173,7 +179,12 @@ public abstract class BaseXnum<K> implements Xnum<K> {
         else if (!codeValidator.test(code))
           throw wrongArg("code", code);
 
-        constants.put(code, ret = constructor.apply(code, GUARD));
+        /*
+         * NOTE: `ConcurrentHashMap::computeIfAbsent` ensures atomicity amid a non-synchronized
+         * branch; such fine-grained locking on rare new-code writes preserves the maximum
+         * throughput on (frequent) reads.
+         */
+        ret = constants.computeIfAbsent(code, $ -> constructor.apply($, GUARD));
       }
       return ret;
     }
@@ -189,7 +200,7 @@ public abstract class BaseXnum<K> implements Xnum<K> {
     /**
      * All the constants associated to this augmented enumeration.
      */
-    public Map<K, E> getConstants() {
+    public @UnmodifiableView Map<K, E> getConstants() {
       return Collections.unmodifiableMap(constants);
     }
 
@@ -232,18 +243,20 @@ public abstract class BaseXnum<K> implements Xnum<K> {
   }
 
   /**
-   * {@linkplain BaseXnum#BaseXnum( Object, Object) Constructor} guard.
+   * {@linkplain BaseXnum#BaseXnum(Object, Object) Constructor} guard.
    * <p>
    * Ensures only internal calls are valid.
    * </p>
    */
   private static final Object GUARD = new Object();
 
-  @SuppressWarnings("rawtypes")
-  private static final Map<Class, BaseXnum.XnumType> types = new HashMap<>();
+  private static final Object LOCK__PROVIDER_LOAD = new Object();
 
-  private static final List<XnumProvider> providers =
-      ServiceProvider.discover(XnumProvider.class).toList();
+  @SuppressWarnings("rawtypes")
+  private static final Map<Class, BaseXnum.XnumType> types = new ConcurrentHashMap<>();
+
+  private static final List<XnumProvider> providers = ServiceProvider.discover(XnumProvider.class)
+      .toList();
 
   /**
    * Gets whether the constant corresponding to the code exists.
@@ -258,7 +271,6 @@ public abstract class BaseXnum<K> implements Xnum<K> {
    *          Domain-specific identity.
    */
   public static <E extends Xnum<K>, K> boolean contains(Class<E> type, @Nullable K code) {
-    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     return toElse(get(type), $ -> $.constants.containsKey(code), false);
   }
 
@@ -277,13 +289,20 @@ public abstract class BaseXnum<K> implements Xnum<K> {
     var ret = types.get(requireNonNull(type));
     if (ret == null) {
       /*
-       * NOTE: Each provider may register additional implementations of the same type, so we have to
-       * call all of them.
+       * NOTE: Classic double-checked locking.
        */
-      for (XnumProvider provider : providers) {
-        provider.load(type);
+      synchronized (LOCK__PROVIDER_LOAD) {
+        if ((ret = types.get(type)) == null) {
+          /*
+           * NOTE: Each provider may register additional implementations of the same type, so we
+           * have to call all of them.
+           */
+          for (XnumProvider provider : providers) {
+            provider.load(type);
+          }
+          ret = types.get(type);
+        }
       }
-      ret = types.get(type);
     }
     return ret;
   }
@@ -301,7 +320,6 @@ public abstract class BaseXnum<K> implements Xnum<K> {
    *          Domain-specific identity.
    */
   public static <E extends Xnum<K>, K> @Nullable E get(Class<E> type, @Nullable K code) {
-    //noinspection DataFlowIssue : False positive (can NEVER cause NPE)
     return toOrNull(get(type), $ -> $.get(code));
   }
 
@@ -349,11 +367,13 @@ public abstract class BaseXnum<K> implements Xnum<K> {
   protected static <E extends Xnum<K>, K> XnumType<E, K> register(Class<E> type,
       Class<K> codeType, @Nullable Predicate<K> codeValidator, BiFunction<K, Object, E> constructor,
       Class<? extends E> enumType) {
-    if (types.containsKey(type))
+    var ret = new XnumType<>(type, codeType, codeValidator, constructor).addAll(enumType);
+    /*
+     * NOTE: `ConcurrentHashMap::putIfAbsent` ensures atomicity amid non-synchronized code.
+     */
+    if (types.putIfAbsent(ret.type, ret) != null)
       throw wrongArg("type", type, "Interface already registered");
 
-    var ret = new XnumType<>(type, codeType, codeValidator, constructor).addAll(enumType);
-    types.put(ret.type, ret);
     return ret;
   }
 
