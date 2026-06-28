@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
  *          Value type.
  * @author Stefano Chizzolini
  */
-public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
+public interface XtMap<K extends @Nullable Object, V>
     extends Aggregation<Entry<K, V>>, Map<K, V> {
   /**
    * Gets whether any of the keys exists.
@@ -133,7 +133,8 @@ public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
    *           complexity). It is therefore recommended to override it with an optimized solution.
    */
   @SuppressWarnings("NullAway" /*- TODO: false positive on `value` parameter which doesn't make
-                                         sense, as the target parameter is nullable too */)
+                                         sense, as the target `V` parameter of
+                                         `Aggregations::getKey` is nullable too */)
   default @Nullable K getKey(@Nullable V value) {
     return Aggregations.getKey(this, value);
   }
@@ -149,6 +150,10 @@ public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
   }
 
   @Override
+  @Nullable
+  V put(K key, @Nullable V value);
+
+  @Override
   default void putAll(Map<? extends K, ? extends V> m) {
     for (var e : m.entrySet()) {
       put(e.getKey(), e.getValue());
@@ -160,7 +165,7 @@ public interface XtMap<K extends @Nullable Object, V extends @Nullable Object>
    *
    * @return Self.
    */
-  default XtMap<K, V> with(K key, V value) {
+  default XtMap<K, V> with(K key, @Nullable V value) {
     put(key, value);
     return this;
   }

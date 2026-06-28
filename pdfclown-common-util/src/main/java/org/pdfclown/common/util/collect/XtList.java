@@ -12,9 +12,11 @@
  */
 package org.pdfclown.common.util.collect;
 
+import static org.pdfclown.common.util.Exceptions.missing;
+
 import java.util.Collection;
-import java.util.Deque;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.ObjIntConsumer;
 import org.jspecify.annotations.Nullable;
@@ -47,7 +49,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   }
 
   /**
-   * {@linkplain #peek(int) Relaxed getter} which, in case of undefined element,
+   * {@linkplain #peek(int) Safe getter} which, in case of undefined element,
    * {@linkplain #place(int, Object) sets} it with the provided one.
    *
    * @param index
@@ -79,22 +81,26 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   /**
    * First element.
    *
-   * @throws IndexOutOfBoundsException
+   * @throws NoSuchElementException
    *           if this list is empty.
-   * @see Deque#getFirst()
    */
   default E getFirst() {
+    if (isEmpty())
+      throw missing();
+
     return get(0);
   }
 
   /**
    * Last element.
    *
-   * @throws IndexOutOfBoundsException
+   * @throws NoSuchElementException
    *           if this list is empty.
-   * @see Deque#getLast()
    */
   default E getLast() {
+    if (isEmpty())
+      throw missing();
+
     return get(size() - 1);
   }
 
@@ -104,7 +110,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   }
 
   /**
-   * Relaxed {@link #get(int) get(..)} (doesn't throw {@link IndexOutOfBoundsException}).
+   * Safe {@link #get(int) get}.
    *
    * @param index
    *          Index of the element to return.
@@ -115,27 +121,25 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   }
 
   /**
-   * Relaxed {@link #getFirst()} (doesn't throw {@link IndexOutOfBoundsException}).
+   * Safe {@link #getFirst() getFirst}.
    *
    * @return {@code null}, if this list is empty.
-   * @see Deque#peekFirst()
    */
   default @Nullable E peekFirst() {
-    return isFilled() ? getFirst() : null;
+    return isEmpty() ? null : getFirst();
   }
 
   /**
-   * Relaxed {@link #getLast()} (doesn't throw {@link IndexOutOfBoundsException}).
+   * Safe {@link #getLast() getLast}.
    *
    * @return {@code null}, if this list is empty.
-   * @see Deque#peekLast()
    */
   default @Nullable E peekLast() {
-    return isFilled() ? getLast() : null;
+    return isEmpty() ? null : getLast();
   }
 
   /**
-   * Relaxed {@link List#set(int, Object) set(..)}.
+   * Sets an element in the list at an unrestricted position.
    * <p>
    * If {@code index} is below the lower or above the upper bound, this method makes room to the new
    * element accordingly (possibly inserting {@code null} elements in the intermediate positions),
@@ -148,16 +152,14 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @param e
    *          New element to be stored at {@code index}.
    * @return Replaced element.
+   * @see #set(int, Object)
    */
-  default E place(int index, E e) {
+  default @Nullable E place(int index, E e) {
     return Aggregations.place(this, index, e);
   }
 
   /**
-   * Relaxed {@link #remove(int) remove(..)}.
-   * <p>
-   * If {@code index} is out of bounds, nothing happens.
-   * </p>
+   * Safe {@link #remove(int) remove}.
    *
    * @param index
    *          Index of the element to remove.
@@ -168,23 +170,21 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   }
 
   /**
-   * Relaxed {@link #removeFirst()} (doesn't throw {@link IndexOutOfBoundsException}).
+   * Safe {@link #removeFirst() removeFirst}.
    *
-   * @return {@code null}, if this list is empty.
-   * @see Deque#pollFirst()
+   * @return Removed element, or {@code null}, if this list is empty.
    */
   default @Nullable E pollFirst() {
-    return isFilled() ? removeFirst() : null;
+    return isEmpty() ? null : removeFirst();
   }
 
   /**
-   * Relaxed {@link #removeLast()} (doesn't throw {@link IndexOutOfBoundsException}).
+   * Safe {@link #removeLast() removeLast}.
    *
-   * @return {@code null}, if this list is empty.
-   * @see Deque#pollLast()
+   * @return Removed element, or {@code null}, if this list is empty.
    */
   default @Nullable E pollLast() {
-    return isFilled() ? removeLast() : null;
+    return isEmpty() ? null : removeLast();
   }
 
   @Override
@@ -206,11 +206,13 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * Removes the first element.
    *
    * @return Removed element.
-   * @throws IndexOutOfBoundsException
+   * @throws NoSuchElementException
    *           if this list is empty.
-   * @see Deque#removeFirst()
    */
   default E removeFirst() {
+    if (isEmpty())
+      throw missing();
+
     return remove(0);
   }
 
@@ -218,11 +220,13 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * Removes the last element.
    *
    * @return Removed element.
-   * @throws IndexOutOfBoundsException
+   * @throws NoSuchElementException
    *           if this list is empty.
-   * @see Deque#removeLast()
    */
   default E removeLast() {
+    if (isEmpty())
+      throw missing();
+
     return remove(size() - 1);
   }
 
@@ -232,7 +236,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   }
 
   /**
-   * Fluent {@link List#add(int, Object) add(..)}.
+   * Fluent {@link #add(int, Object) add}.
    *
    * @return Self.
    */
@@ -246,33 +250,13 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
     return (XtList<E>) XtCollection.super.withAll(c);
   }
 
-  /**
-   * Fluent {@link List#set(int, Object) set(..)}.
-   *
-   * @return Self.
-   */
-  default XtList<E> withElse(int index, E e) {
-    set(index, e);
-    return this;
-  }
-
-  /**
-   * Fluent {@link #place(int, Object) place(..)}.
-   *
-   * @return Self.
-   */
-  default XtList<E> withElseSafe(int index, E e) {
-    place(index, e);
-    return this;
-  }
-
   @Override
   default XtList<E> without(E e) {
     return (XtList<E>) XtCollection.super.without(e);
   }
 
   /**
-   * Fluent {@link List#remove(int) remove(..)}.
+   * Fluent {@link #remove(int) remove}.
    *
    * @return Self.
    */
@@ -292,12 +276,32 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
   }
 
   /**
-   * Fluent {@link #poll(int) poll(..)}.
+   * Fluent {@link #poll(int) poll}.
    *
    * @return Self.
    */
-  default XtList<E> withoutSafe(int index) {
+  default XtList<E> withoutTry(int index) {
     poll(index);
+    return this;
+  }
+
+  /**
+   * Fluent {@link #place(int, Object) place}.
+   *
+   * @return Self.
+   */
+  default XtList<E> withPlace(int index, E e) {
+    place(index, e);
+    return this;
+  }
+
+  /**
+   * Fluent {@link #set(int, Object) set}.
+   *
+   * @return Self.
+   */
+  default XtList<E> withReplace(int index, E e) {
+    set(index, e);
     return this;
   }
 }

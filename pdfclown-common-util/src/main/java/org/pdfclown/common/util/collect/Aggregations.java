@@ -460,7 +460,7 @@ public final class Aggregations {
   }
 
   /**
-   * {@linkplain #peek(List, int) Relaxed getter} which, in case of undefined element,
+   * {@linkplain #peek(List, int) Safe getter} which, in case of undefined element,
    * {@linkplain #place(List, int, Object) sets} it with the provided one.
    *
    * @param target
@@ -799,7 +799,7 @@ public final class Aggregations {
   }
 
   /**
-   * Gets an element in the list without throwing {@link IndexOutOfBoundsException}.
+   * Safely gets an element in the list.
    *
    * @param target
    *          Target list.
@@ -829,7 +829,7 @@ public final class Aggregations {
    *          New element to be stored at {@code index}.
    * @return Element previously at {@code index}.
    */
-  public static <E extends @Nullable Object> E place(List<E> target, int index, E e) {
+  public static <E extends @Nullable Object> @Nullable E place(List<E> target, int index, E e) {
     if (index < 0) {
       size(target, target.size() - index, true);
       index = 0;
