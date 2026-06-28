@@ -457,13 +457,29 @@ public final class Conditions {
    *          Value type.
    * @param value
    *          Value to validate.
+   * @return {@code value}
+   * @throws NoSuchElementException
+   *           if {@code value} is undefined.
+   */
+  public static <T> T requirePresent(@Nullable T value) throws NoSuchElementException {
+    return requirePresent(value, null);
+  }
+
+  /**
+   * Requires the value is not null.
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
    * @param ref
    *          Reference associated to {@code value} (for example, its key).
    * @return {@code value}
    * @throws NoSuchElementException
    *           if {@code value} is undefined.
    */
-  public static <T> T requirePresent(@Nullable T value, Object ref) throws NoSuchElementException {
+  public static <T> T requirePresent(@Nullable T value, @Nullable Object ref)
+      throws NoSuchElementException {
     if (value != null)
       return value;
 
