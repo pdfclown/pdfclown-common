@@ -114,7 +114,7 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
    *         {@code null} with {@code key}, if the implementation supports {@code null} values).
    */
   @Override
-  V put(K key, V value);
+  V put(K key, @Nullable V value);
 
   /**
    * Associates the value with the key in this map at the given position, shifting the entry
