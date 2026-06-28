@@ -12,8 +12,12 @@
  */
 package org.pdfclown.common.util.stream;
 
+import static org.pdfclown.common.util.Exceptions.wrongArg;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -47,6 +51,31 @@ public final class Streams {
    */
   public static IntStream uintStream(byte[] array) {
     return IntStream.range(0, array.length).map($ -> array[$] & 0xFF);
+  }
+
+  /**
+   * Maps the lists to a stream of combinations, each made of an element from each list at a certain
+   * position.
+   *
+   * @param mapper
+   *          Maps an element combination.
+   * @param <T>
+   *          Combination type.
+   * @throws org.pdfclown.common.util.ArgumentException
+   *           if {@code lists} sizes differ one another.
+   */
+  public static <T> Stream<T> zip(Function<Object[], T> mapper, List<?>... lists) {
+    int size = lists[0].size();
+    for (int i = 1; i < lists.length; i++) {
+      if (lists[i].size() != size)
+        throw wrongArg("lists", null,
+            "Size of list {} MISMATCH ({} instead of {} -- all lists must be the same size)",
+            i, lists[i].size(), size);
+    }
+    return IntStream.range(0, size)
+        .mapToObj(i -> mapper.apply(Arrays.stream(lists)
+            .map($ -> $.get(i))
+            .toArray()));
   }
 
   private Streams() {
