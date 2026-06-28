@@ -87,19 +87,29 @@ public final class Exceptions {
     return throwable(IOException::new, format, args);
   }
 
+  /**
+   * Creates an exception for missing element.
+   */
   public static NoSuchElementException missing() {
     return missing(null);
   }
 
-  public static NoSuchElementException missing(@Nullable Object value) {
-    return missing(value, null);
+  /**
+   * Creates an exception for missing element.
+   *
+   * @param ref
+   *          Reference associated to the missing element (for example, its key).
+   */
+  public static NoSuchElementException missing(@Nullable Object ref) {
+    return missing(ref, null);
   }
 
   /**
-   * Creates an exception for missing value.
+   * Creates an exception for missing element.
    *
-   * @param value
-   *          Mismatching value. {@jada.reuseDoc ParamMessage#of(*):params}
+   * @param ref
+   *          Reference associated to the missing element (for example, its key).
+   *          {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
@@ -110,14 +120,14 @@ public final class Exceptions {
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
    *          it is unwrapped). {@jada.reuseDoc END}
    */
-  public static NoSuchElementException missing(@Nullable Object value, @Nullable String format,
+  public static NoSuchElementException missing(@Nullable Object ref, @Nullable String format,
       @Nullable Object... args) {
-    String valueLiteral = toOrNull(value, Objects::textLiteral);
+    String refLiteral = toOrNull(ref, Objects::textLiteral);
     String message = toOrNull(format, $ -> ParamMessage.of($, args).getDescription());
     return new NoSuchElementException(
-        valueLiteral == null ? message
-            : message == null ? valueLiteral
-            : "%s (%s)".formatted(valueLiteral, message));
+        refLiteral == null ? message
+            : message == null ? refLiteral
+            : "%s (%s)".formatted(refLiteral, message));
   }
 
   /**

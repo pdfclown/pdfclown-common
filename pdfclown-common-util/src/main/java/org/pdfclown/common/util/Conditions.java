@@ -13,6 +13,7 @@
 package org.pdfclown.common.util;
 
 import static java.util.Collections.singletonList;
+import static org.pdfclown.common.util.Exceptions.missing;
 import static org.pdfclown.common.util.Exceptions.missingPath;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -446,6 +448,26 @@ public final class Conditions {
       return value;
 
     throw wrongArg(name, value, "MUST NOT be blank");
+  }
+
+  /**
+   * Requires the value is not null.
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @param ref
+   *          Reference associated to {@code value} (for example, its key).
+   * @return {@code value}
+   * @throws NoSuchElementException
+   *           if {@code value} is undefined.
+   */
+  public static <T> T requirePresent(@Nullable T value, Object ref) throws NoSuchElementException {
+    if (value != null)
+      return value;
+
+    throw missing(ref);
   }
 
   /**
