@@ -30,13 +30,13 @@ import org.jspecify.annotations.Nullable;
  *          Map value type.
  * @author Stefano Chizzolini
  */
-public interface IndexedMap<K, V> extends XtMap<K, V> {
+public interface IndexedMap<K extends @Nullable Object, V> extends XtMap<K, V> {
   /**
    * Gets the index of the key in this map.
    *
    * @return {@code -1} if this map does not contain the key.
    */
-  default int indexOfKey(@Nullable K key) {
+  default int indexOfKey(K key) {
     int i = 0;
     for (K k : keySet()) {
       if (Objects.equals(k, key))
@@ -52,7 +52,7 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
    *
    * @return {@code -1} if this map does not contain the value.
    */
-  default int indexOfValue(@Nullable V value) {
+  default int indexOfValue(V value) {
     int i = 0;
     for (K k : keySet()) {
       if (Objects.equals(get(k), value))
@@ -71,7 +71,7 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
    * @throws IndexOutOfBoundsException
    *           if {@code index} is less, or equal, or greater than {@link #size() size}.
    */
-  default @Nullable K keyOfIndex(int index) {
+  default K keyOfIndex(int index) {
     int i = 0;
     for (K k : keySet()) {
       if (i++ == index)
@@ -114,6 +114,7 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
    *         {@code null} with {@code key}, if the implementation supports {@code null} values).
    */
   @Override
+  @Nullable
   V put(K key, @Nullable V value);
 
   /**
@@ -136,5 +137,5 @@ public interface IndexedMap<K, V> extends XtMap<K, V> {
    *           if {@code index} is less or greater than {@link #size() size}.
    */
   @Nullable
-  V put(@Nullable K key, @Nullable V value, int index);
+  V put(K key, @Nullable V value, int index);
 }
