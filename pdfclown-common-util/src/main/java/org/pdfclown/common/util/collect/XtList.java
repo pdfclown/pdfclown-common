@@ -58,7 +58,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    *          Element provider.
    * @return Element at {@code index}, possibly provided by {@code provider} if undefined.
    */
-  default @Nullable E computeIfAbsent(int index, Function<Integer, ? extends E> provider) {
+  default E computeIfAbsent(int index, Function<Integer, ? extends E> provider) {
     return Aggregations.computeIfAbsent(this, index, provider);
   }
 

@@ -471,7 +471,7 @@ public final class Aggregations {
    *          Element provider.
    * @return Element at {@code index}, possibly provided by {@code provider} if undefined.
    */
-  public static <E extends @Nullable Object> @Nullable E computeIfAbsent(List<E> target, int index,
+  public static <E extends @Nullable Object> E computeIfAbsent(List<E> target, int index,
       Function<Integer, ? extends @Nullable E> provider) {
     E ret = peek(target, index);
     if (ret == null) {
