@@ -563,14 +563,14 @@ public final class Aggregations {
    * Returns the given collection, or undefined if empty.
    */
   public static <T extends Collection<?>> @Nullable T emptyToNull(@Nullable T c) {
-    return isFilled(c) ? c : null;
+    return isEmpty(c) ? null : c;
   }
 
   /**
    * Returns the given map, or undefined if empty.
    */
   public static <T extends Map<?, ?>> @Nullable T emptyToNull(@Nullable T m) {
-    return isFilled(m) ? m : null;
+    return isEmpty(m) ? null : m;
   }
 
   /**
@@ -691,27 +691,6 @@ public final class Aggregations {
    */
   public static <T> boolean isEmpty(T @Nullable [] a) {
     return a == null || a.length == 0;
-  }
-
-  /**
-   * Whether the collection is not empty.
-   */
-  public static boolean isFilled(@Nullable Collection<?> c) {
-    return !isEmpty(c);
-  }
-
-  /**
-   * Whether the map is not empty.
-   */
-  public static boolean isFilled(@Nullable Map<?, ?> m) {
-    return !isEmpty(m);
-  }
-
-  /**
-   * Whether the array is not empty.
-   */
-  public static <T> boolean isFilled(T @Nullable [] a) {
-    return !isEmpty(a);
   }
 
   /**

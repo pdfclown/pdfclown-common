@@ -29,9 +29,5 @@ public interface Aggregation<E extends @Nullable Object> extends Iterable<E> {
     return size() == 0;
   }
 
-  default boolean isFilled() {
-    return !isEmpty();
-  }
-
   int size();
 }
