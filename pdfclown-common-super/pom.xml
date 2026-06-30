@@ -301,11 +301,6 @@ pdfclown-common-base instead)</description>
               <version>${groovy.version}</version>
               <scope>runtime</scope>
             </dependency>
-            <dependency>
-              <groupId>org.apache.groovy</groupId>
-              <artifactId>groovy-ant</artifactId>
-              <version>${groovy.version}</version>
-            </dependency>
           </dependencies>
           <executions>
             <execution>
