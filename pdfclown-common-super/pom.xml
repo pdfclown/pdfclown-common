@@ -329,7 +329,7 @@ import java.time.temporal.ChronoUnit
   commit's timestamp is used only if the working tree is clean. In case of dirty working tree, the
   timestamp is generated on the fly, following the volatility of the built code.
  */
-var buildTimestamp = ${git.dirty}
+def buildTimestamp = ${git.dirty}
     ? ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
         .format(DateTimeFormatter.ISO_INSTANT)
     : "${git.commit.time}"
@@ -343,11 +343,11 @@ log.info("buildTimestamp: " + buildTimestamp
 /*
   Metadata-augmented implementation version (SemVer2).
 
-  In case of SNAPSHOT, appends metadata to the revision to fully identify the build it originated
+  In case of SNAPSHOT, appends metadata to the version to fully identify the build it originated
   from.
  */
-var revision = "${revision}"
-var implementationVersion = revision + (revision.endsWith("SNAPSHOT") ? "+${git.commit.id.describe}"
+def version = project.version
+def implementationVersion = version + (version.endsWith("SNAPSHOT") ? "+${git.commit.id.describe}"
     : "")
 
 // Share the implementation version as property for interpolation!
