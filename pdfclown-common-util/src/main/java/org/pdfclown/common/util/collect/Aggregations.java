@@ -347,7 +347,9 @@ public final class Aggregations {
    *
    * @author Stefano Chizzolini
    */
-  private static class XtArrayList<E> extends ArrayList<E> implements XtList<E> {
+  @SuppressWarnings("NullableProblems" /* false positive */)
+  private static class XtArrayList<E extends @Nullable Object> extends ArrayList<E>
+      implements XtList<E> {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -371,8 +373,9 @@ public final class Aggregations {
    *
    * @author Stefano Chizzolini
    */
-  private static class XtHashMap<K extends @Nullable Object, V extends @Nullable Object>
-      extends HashMap<K, V> implements XtMap<K, V> {
+  @SuppressWarnings("NullableProblems" /* false positive */)
+  private static class XtHashMap<K extends @Nullable Object, V> extends HashMap<K, V>
+      implements XtMap<K, V> {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -396,6 +399,7 @@ public final class Aggregations {
    *
    * @author Stefano Chizzolini
    */
+  @SuppressWarnings("NullableProblems" /* false positive */)
   private static class XtHashSet<E extends @Nullable Object> extends HashSet<E>
       implements XtSet<E> {
     @Serial
@@ -435,19 +439,6 @@ public final class Aggregations {
       target.add(index++, e);
     }
     return true;
-  }
-
-  /**
-   * Returns an array of the given elements.
-   *
-   * @apiNote This is just syntactic sugar to spare users from explicitly instantiating a reference
-   *          array (for example, <code>arr(MyClass.class)</code> instead of
-   *          <code>new Class[] { MyClass.class }</code>).
-   */
-  @SafeVarargs
-  @SuppressWarnings("varargs")
-  public static <T> T[] arr(T... ee) {
-    return ee;
   }
 
   /**
@@ -721,7 +712,7 @@ public final class Aggregations {
   /**
    * Creates a new mutable map.
    */
-  public static <K extends @Nullable Object, V extends @Nullable Object> XtMap<K, V> map() {
+  public static <K extends @Nullable Object, V> XtMap<K, V> map() {
     return new XtHashMap<>();
   }
 
@@ -729,8 +720,7 @@ public final class Aggregations {
    * Creates a new mutable map populated with the entries.
    */
   @SafeVarargs
-  public static <K extends @Nullable Object,
-      V extends @Nullable Object> XtMap<K, V> map(Map.Entry<K, V>... ee) {
+  public static <K extends @Nullable Object, V> XtMap<K, V> map(Map.Entry<K, V>... ee) {
     var ret = new XtHashMap<K, V>();
     for (var e : ee) {
       ret.put(e.getKey(), e.getValue());
@@ -741,15 +731,15 @@ public final class Aggregations {
   /**
    * Creates a new mutable map of the given types.
    */
-  public static <K extends @Nullable Object, V extends @Nullable Object> XtMap<K, V> mapOf(
-      Class<K> keyType, Class<V> valueType) {
+  public static <K extends @Nullable Object, V> XtMap<K, V> mapOf(Class<K> keyType,
+      Class<V> valueType) {
     return map();
   }
 
   /**
    * Wraps a map.
    */
-  public static <K, V> XtMap<K, V> mapOn(Map<? super K, ? super V> base) {
+  public static <K extends @Nullable Object, V> XtMap<K, V> mapOn(Map<? super K, ? super V> base) {
     return new MapWrapper<>(base);
   }
 
@@ -810,10 +800,10 @@ public final class Aggregations {
    */
   public static <E extends @Nullable Object> @Nullable E place(List<E> target, int index, E e) {
     if (index < 0) {
-      size(target, target.size() - index, true);
+      size(target, target.size() - index, null, true);
       index = 0;
     } else if (index >= target.size()) {
-      size(target, index + 1, false);
+      size(target, index + 1, null, false);
     }
     return target.set(index, e);
   }
@@ -868,27 +858,8 @@ public final class Aggregations {
    *          New size.
    * @return {@code target}.
    */
-  public static <E extends @Nullable Object> List<E> size(List<E> target, int value) {
-    return size(target, value, false);
-  }
-
-  /**
-   * Sets the {@link List#size() size} of the list, shrinking or expanding it with {@code null}
-   * elements.
-   *
-   * @param target
-   *          Target list.
-   * @param value
-   *          New size.
-   * @param lowerPadding
-   *          Whether, on shrink, existing elements are removed from the beginning rather than the
-   *          end of the list, and, on expansion, {@code null} elements are inserted at the
-   *          beginning rather than appended at the end of the list.
-   * @return {@code target}.
-   */
-  public static <E extends @Nullable Object> List<E> size(List<E> target, int value,
-      boolean lowerPadding) {
-    return size(target, value, lowerPadding, null);
+  public static <T extends List<E>, E extends @Nullable Object> T size(T target, int value) {
+    return size(target, value, null);
   }
 
   /**
@@ -898,16 +869,32 @@ public final class Aggregations {
    *          Target list.
    * @param value
    *          New size.
-   * @param lowerPadding
-   *          Whether, on shrink, existing elements are removed from the beginning rather than the
-   *          end of the list, and, on expansion, {@code element}s are inserted at the beginning
-   *          rather than appended at the end of the list.
    * @param element
    *          Filling element.
    * @return {@code target}.
    */
-  public static <E extends @Nullable Object> List<E> size(List<E> target, int value,
-      boolean lowerPadding, @Nullable E element) {
+  public static <T extends List<E>, E extends @Nullable Object> T size(T target, int value,
+      @Nullable E element) {
+    return size(target, value, element, false);
+  }
+
+  /**
+   * Sets the {@link List#size() size} of the list, shrinking or expanding it with the element.
+   *
+   * @param target
+   *          Target list.
+   * @param value
+   *          New size.
+   * @param element
+   *          Filling element.
+   * @param lowerPadding
+   *          Whether, on shrink, existing elements are removed from the beginning rather than the
+   *          end of the list, and, on expansion, {@code element}s are inserted at the beginning
+   *          rather than appended at the end of the list.
+   * @return {@code target}.
+   */
+  public static <T extends List<E>, E extends @Nullable Object> T size(T target, int value,
+      @Nullable E element, boolean lowerPadding) {
     int size = target.size();
     while (value > size) {
       if (lowerPadding) {
@@ -935,7 +922,7 @@ public final class Aggregations {
    *          Target list.
    * @return {@code target}.
    */
-  public static <E extends @Nullable Object> List<E> trim(List<E> target) {
+  public static <T extends List<E>, E extends @Nullable Object> T trim(T target) {
     int i = target.size();
     while (i-- > 0 && target.get(i) == null) {
       target.remove(i);

@@ -15,6 +15,7 @@ package org.pdfclown.common.util.collect;
 import static org.pdfclown.common.util.Exceptions.missing;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
@@ -60,6 +61,14 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    */
   default E computeIfAbsent(int index, Function<Integer, ? extends E> provider) {
     return Aggregations.computeIfAbsent(this, index, provider);
+  }
+
+  /**
+   * Replaces all the elements of this list with the given one.
+   */
+  default XtList<E> fill(E e) {
+    Collections.fill(this, e);
+    return this;
   }
 
   /**
@@ -228,6 +237,20 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
       throw missing();
 
     return remove(size() - 1);
+  }
+
+  /**
+   * Sets the {@link List#size() size} of this list, shrinking or expanding it with the given
+   * element.
+   *
+   * @param value
+   *          New size.
+   * @param e
+   *          Filling element.
+   * @return Self.
+   */
+  default XtList<E> size(int value, E e) {
+    return Aggregations.size(this, value, e);
   }
 
   @Override

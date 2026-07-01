@@ -20,6 +20,10 @@ import org.jspecify.annotations.Nullable;
 /**
  * Extended map.
  *
+ * @apiNote Values cannot be null; nonetheless, mutator methods accept {@code null} values as a
+ *          shortcut to entry removal (for example, {@code myMap.put(myKey, null)} causes the entry
+ *          associated to {@code myKey} to be removed from the map); this spares users redundant
+ *          conditional branching.
  * @param <K>
  *          Key type.
  * @param <V>
@@ -129,8 +133,8 @@ public interface XtMap<K extends @Nullable Object, V>
    * Gets the key associated to the value.
    *
    * @implNote The default implementation doesn't rely on bidirectional maps, to say that the only
-   *           abstract way to retrieve a key from a value is to iterate the whole map (O(n)
-   *           complexity). It is therefore recommended to override it with an optimized solution.
+   *           generic way to retrieve a key from a value is to iterate the whole map (O(n)
+   *           complexity); it is therefore recommended to override it with an optimized solution.
    */
   @SuppressWarnings("NullAway" /*- TODO: false positive on `value` parameter which doesn't make
                                          sense, as the target `V` parameter of
@@ -149,12 +153,15 @@ public interface XtMap<K extends @Nullable Object, V>
     return entrySet().iterator();
   }
 
+  /**
+   * @implNote {@code value} is purposely nullable (see {@linkplain XtMap API Note}).
+   */
   @Override
   @Nullable
   V put(K key, @Nullable V value);
 
   @Override
-  default void putAll(Map<? extends K, ? extends V> m) {
+  default void putAll(Map<? extends K, ? extends @Nullable V> m) {
     for (var e : m.entrySet()) {
       put(e.getKey(), e.getValue());
     }
