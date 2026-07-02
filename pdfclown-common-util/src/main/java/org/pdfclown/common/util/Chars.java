@@ -39,6 +39,10 @@ public final class Chars {
    */
   public static final char BACKTICK = '`';
   /**
+   * Backspace character.
+   */
+  public static final char BS = '\b';
+  /**
    * {@code ^}
    */
   public static final char CARET = '^';
@@ -78,6 +82,10 @@ public final class Chars {
    * {@code =}
    */
   public static final char EQUAL = '=';
+  /**
+   * Form-feed character.
+   */
+  public static final char FF = '\f';
   /**
    * {@code #}
    */
