@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
-import org.pdfclown.common.util.annot.InitNonNull;
+import org.pdfclown.common.util.annot.Initializer;
 import org.pdfclown.common.util.collect.Comparators.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
 
 /**
@@ -52,7 +52,7 @@ class DynamicMapTest extends BaseTest {
       private TypePriorityComparator priorities = Comparators.HierarchicalTypeComparator.Priorities
           .explicitPriority();
 
-      private @InitNonNull Function<Class, Stream<Class>> base;
+      private Function<Class, Stream<Class>> base;
 
       @Override
       public Stream<Class> apply(Class type) {
@@ -66,6 +66,7 @@ class DynamicMapTest extends BaseTest {
         return ret;
       }
 
+      @Initializer
       void init(Set<Class> keys) {
         base = $ -> superTypes($, hierarchicalType()
             .thenComparing(priorities)

@@ -45,10 +45,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.annot.Initializer;
 import org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
 import org.pdfclown.common.build.internal.temp.util.collect.DynamicMap;
 import org.pdfclown.common.build.internal.util.reflect.Introspections;
-import org.pdfclown.common.util.annot.InitNonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -275,7 +275,7 @@ public class ModelMapper<T> {
       private TypePriorityComparator priorities = explicitPriority();
 
       @SuppressWarnings({ "NotNullFieldNotInitialized", "NullAway" })
-      private @InitNonNull Function<Class, Stream<Class>> base;
+      private Function<Class, Stream<Class>> base;
 
       @Override
       public Stream<Class> apply(Class type) {
@@ -289,6 +289,7 @@ public class ModelMapper<T> {
         return ret;
       }
 
+      @Initializer
       void init(Set<Class> keys) {
         base = $ -> superTypes($, hierarchicalType()
             .thenComparing(priorities)

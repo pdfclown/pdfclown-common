@@ -24,13 +24,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.pdfclown.common.build.__test.BaseTest;
-import org.pdfclown.common.util.annot.InitNonNull;
 
 /**
  * @author Stefano Chizzolini
  */
 class ReleaseManagerTest extends BaseTest {
-  static @InitNonNull MockedStatic<ReleaseManager> releaseManagerMock;
+  static MockedStatic<ReleaseManager> releaseManagerMock;
 
   @AfterAll
   static void onAllAfter() {

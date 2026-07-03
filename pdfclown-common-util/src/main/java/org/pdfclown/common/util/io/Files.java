@@ -53,7 +53,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.file.AccumulatorPathVisitor;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.annot.LazyNonNull;
+import org.pdfclown.common.util.annot.MonotonicNonNull;
 import org.pdfclown.common.util.annot.Unmodifiable;
 
 /**
@@ -97,9 +97,9 @@ public final class Files {
     private final Path dir2;
     private final List<Path> dir2Files;
 
-    private @LazyNonNull @Nullable List<Path> diffFiles;
-    private @LazyNonNull @Nullable List<Path> structureDiffFiles;
-    private @LazyNonNull @Nullable Boolean structureSame;
+    private @MonotonicNonNull @Nullable List<Path> diffFiles;
+    private @MonotonicNonNull @Nullable List<Path> structureDiffFiles;
+    private @MonotonicNonNull @Nullable Boolean structureSame;
 
     Diff(Path dir1, List<Path> dir1Files, Path dir2, List<Path> dir2Files) {
       this.dir1 = dir1;

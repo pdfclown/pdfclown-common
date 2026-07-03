@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.pdfclown.common.build.internal.temp.util.annot.MonotonicNonNull;
 import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.system.LogManager;
 import org.pdfclown.common.build.system.MavenPathResolver;
@@ -37,8 +38,6 @@ import org.pdfclown.common.build.test.assertion.Test;
 import org.pdfclown.common.build.test.assertion.TestEnvironment;
 import org.pdfclown.common.build.test.assertion.Verifier;
 import org.pdfclown.common.build.util.system.Builds;
-import org.pdfclown.common.util.annot.InitNonNull;
-import org.pdfclown.common.util.annot.LazyNonNull;
 
 /**
  * Automated testing unit.
@@ -137,9 +136,9 @@ public abstract class TestUnit implements Test {
     init(Verifier.class);
   }
 
-  private @LazyNonNull @Nullable Environment env;
+  private @MonotonicNonNull @Nullable Environment env;
   @SuppressWarnings("NotNullFieldNotInitialized")
-  private @InitNonNull TestInfo testInfo;
+  private TestInfo testInfo;
 
   protected TestUnit() {
   }

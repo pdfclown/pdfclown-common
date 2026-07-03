@@ -33,7 +33,7 @@ import org.hamcrest.TypeSafeMatcher;
  */
 public class MatchesTextFile extends TypeSafeMatcher<Path> {
   @SuppressWarnings("NotNullFieldNotInitialized")
-  private /* @InitNonNull */ String actual;
+  private String actual;
   private final Path expectedContentPath;
   private final MatchesText matcher;
 
