@@ -17,9 +17,11 @@ import static java.util.Objects.requireNonNullElse;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableFunction;
+import org.apache.commons.lang3.function.FailablePredicate;
 import org.apache.commons.lang3.function.FailableRunnable;
 import org.apache.commons.lang3.function.FailableSupplier;
 import org.jspecify.annotations.Nullable;
@@ -78,6 +80,21 @@ public final class Functions {
         exceptionHandler.accept(ex);
       }
     }
+  }
+
+  /**
+   * Tests an object, if defined.
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to test.
+   * @param predicate
+   *          Predicate to apply.
+   * @see #tryTest(Object, FailablePredicate)
+   */
+  public static <T> boolean test(@Nullable T obj, Predicate<? super T> predicate) {
+    return obj != null && predicate.test(obj);
   }
 
   /**
@@ -233,6 +250,26 @@ public final class Functions {
       }
     }
     return obj;
+  }
+
+  /**
+   * Quietly tests an object, if defined.
+   *
+   * @param obj
+   *          Object to test.
+   * @param predicate
+   *          Predicate to apply.
+   * @see #test(Object, Predicate)
+   */
+  public static <T> boolean tryTest(@Nullable T obj, FailablePredicate<? super T, ?> predicate) {
+    if (obj != null) {
+      try {
+        return predicate.test(obj);
+      } catch (Throwable ex) {
+        //NOP
+      }
+    }
+    return false;
   }
 
   /**
