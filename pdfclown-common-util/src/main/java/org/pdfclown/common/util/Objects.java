@@ -302,13 +302,14 @@ public final class Objects {
    * @implNote Because of the limited expressiveness of varargs, in order to force the caller to
    *           specify at least another object, we have to declare a corresponding parameter
    *           ({@code other1}) in the signature — despite its inherent ugliness, this is the
-   *           standard way Java API itself deals with such cases.
+   *           standard way Java API itself deals with such case.
    */
   @SafeVarargs
   public static <T extends @Nullable Object, U extends @Nullable Object> boolean anyThat(T obj,
       BiPredicate<T, U> predicate, U other1, U... others) {
     if (predicate.test(obj, other1))
       return true;
+
     for (var other : others) {
       if (predicate.test(obj, other))
         return true;
@@ -572,33 +573,62 @@ public final class Objects {
   }
 
   /**
-   * (Same as {@link java.util.Objects#equals(Object, Object)}, but applies
-   * {@link String#equalsIgnoreCase(String)} instead of {@link Object#equals(Object)})
+   * Gets whether an object matches any of the others.
    */
-  @SuppressWarnings({ "ReferenceEquality", "StringEquality" })
-  public static boolean equalsIgnoreCase(@Nullable String s1, @Nullable String s2) {
-    return (s1 != null && s1.equalsIgnoreCase(s2))
-        || (s1 == s2 /* Checks whether they are both null */);
+  public static boolean equalsAny(Object obj, Object other1, Object other2) {
+    return java.util.Objects.equals(obj, other1)
+        || java.util.Objects.equals(obj, other2);
   }
 
   /**
-   * Gets whether an object is equal to or contains the other one.
-   * <p>
-   * Containment is verified via {@link Collection#contains(Object)} and
-   * {@link Map#containsValue(Object)}.
-   * </p>
+   * Gets whether an object matches any of the others.
+   *
+   * @implNote Because of the limited expressiveness of varargs, in order to force the caller to
+   *           specify at least another object, we have to declare a corresponding parameter
+   *           ({@code other1}) in the signature — despite its inherent ugliness, this is the
+   *           standard way Java API itself deals with such case.
    */
-  public static boolean equalsOrContains(@Nullable Object obj, @Nullable Object other) {
-    return java.util.Objects.equals(obj, other)
-        || (obj instanceof Collection<?> collection && collection.contains(other))
-        || (obj instanceof Map<?, ?> map && map.containsValue(other));
+  public static boolean equalsAny(Object obj, Object other1, Object... others) {
+    if (java.util.Objects.equals(obj, other1))
+      return true;
+
+    for (var other : others) {
+      if (java.util.Objects.equals(obj, other))
+        return true;
+    }
+    return false;
   }
 
   /**
-   * Gets whether an object is equal to the other one or undefined.
+   * Gets whether an object matches any of the others.
    */
-  public static boolean equalsOrNull(@Nullable Object obj, @Nullable Object other) {
-    return obj == null || java.util.Objects.equals(obj, other);
+  public static boolean equalsAny(Object obj, Object other1, Object other2, Object other3) {
+    return java.util.Objects.equals(obj, other1)
+        || java.util.Objects.equals(obj, other2)
+        || java.util.Objects.equals(obj, other3);
+  }
+
+  /**
+   * Gets whether an object matches any of the others.
+   */
+  public static boolean equalsAny(Object obj, Object other1, Object other2, Object other3,
+      Object other4) {
+    return java.util.Objects.equals(obj, other1)
+        || java.util.Objects.equals(obj, other2)
+        || java.util.Objects.equals(obj, other3)
+        || java.util.Objects.equals(obj, other4);
+  }
+
+  /**
+   * Gets whether an object matches any of the others.
+   */
+  public static boolean equalsAny(Object obj, Object other1, Object other2, Object other3,
+      Object other4, Object other5) {
+    return java.util.Objects.equals(obj, other1)
+        || java.util.Objects.equals(obj, other2)
+        || java.util.Objects.equals(obj, other3)
+        || java.util.Objects.equals(obj, other4)
+        || java.util.Objects.equals(obj, other5);
   }
 
   /**

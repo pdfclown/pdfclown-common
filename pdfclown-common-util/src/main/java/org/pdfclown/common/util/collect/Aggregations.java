@@ -595,6 +595,22 @@ public final class Aggregations {
   }
 
   /**
+   * Gets whether an object is equal to or contains the other one.
+   * <p>
+   * Containment is verified via {@link Collection#contains(Object)} and
+   * {@link Map#containsValue(Object)}, respectively.
+   * </p>
+   *
+   * @apiNote Useful when {@code obj} represents a dual mode (an aggregation which can degrade to a
+   *          single element).
+   */
+  public static boolean equalsOrContains(@Nullable Object obj, @Nullable Object other) {
+    return Objects.equals(obj, other)
+        || (obj instanceof Collection<?> c && c.contains(other))
+        || (obj instanceof Map<?, ?> m && m.containsValue(other));
+  }
+
+  /**
    * Creates a set backed by a {@link HashSet}, safe for concurrent modifications.
    */
   public static <E extends @Nullable Object> Set<E> failSafeSet() {
