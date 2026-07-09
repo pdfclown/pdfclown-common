@@ -79,11 +79,6 @@ public final class Strings {
   public static final String ELLIPSIS__CHICAGO = S + DOT + NBSP + DOT + NBSP + DOT;
 
   /**
-   * Empty string array.
-   */
-  public static final String[] STR_ARRAY__EMPTY = new String[0];
-
-  /**
    * Special value representing the string length in related methods.
    */
   public static final int STR_LENGTH = Integer.MAX_VALUE;

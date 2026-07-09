@@ -163,11 +163,6 @@ public final class Objects {
   }
 
   /**
-   * Empty object array.
-   */
-  public static final Object[] OBJ_ARRAY__EMPTY = new Object[0];
-
-  /**
    * Flag value used to represent the absence of occurrences searched across zero-based sequences.
    * <p>
    * Use {@link #found(int)} to check search results.

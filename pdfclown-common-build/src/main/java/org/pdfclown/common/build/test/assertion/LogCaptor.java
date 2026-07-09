@@ -13,7 +13,7 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.build.internal.temp.util.Objects.OBJ_ARRAY__EMPTY;
+import static org.apache.commons.lang3.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.temp.util.Strings.lcase;
 import static org.pdfclown.common.util.Exceptions.missing;
@@ -64,7 +64,7 @@ public abstract class LogCaptor
 
     @Override
     public Object[] getArgumentArray() {
-      return OBJ_ARRAY__EMPTY;
+      return EMPTY_OBJECT_ARRAY;
     }
 
     @Override
