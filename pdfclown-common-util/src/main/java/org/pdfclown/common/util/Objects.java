@@ -575,7 +575,8 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others.
    */
-  public static boolean equalsAny(Object obj, Object other1, Object other2) {
+  public static boolean equalsAny(@Nullable Object obj, @Nullable Object other1,
+      @Nullable Object other2) {
     return java.util.Objects.equals(obj, other1)
         || java.util.Objects.equals(obj, other2);
   }
@@ -588,7 +589,8 @@ public final class Objects {
    *           ({@code other1}) in the signature — despite its inherent ugliness, this is the
    *           standard way Java API itself deals with such case.
    */
-  public static boolean equalsAny(Object obj, Object other1, Object... others) {
+  public static boolean equalsAny(@Nullable Object obj, @Nullable Object other1,
+      @Nullable Object... others) {
     if (java.util.Objects.equals(obj, other1))
       return true;
 
@@ -602,7 +604,8 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others.
    */
-  public static boolean equalsAny(Object obj, Object other1, Object other2, Object other3) {
+  public static boolean equalsAny(@Nullable Object obj, @Nullable Object other1,
+      @Nullable Object other2, @Nullable Object other3) {
     return java.util.Objects.equals(obj, other1)
         || java.util.Objects.equals(obj, other2)
         || java.util.Objects.equals(obj, other3);
@@ -611,8 +614,8 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others.
    */
-  public static boolean equalsAny(Object obj, Object other1, Object other2, Object other3,
-      Object other4) {
+  public static boolean equalsAny(@Nullable Object obj, @Nullable Object other1,
+      @Nullable Object other2, @Nullable Object other3, @Nullable Object other4) {
     return java.util.Objects.equals(obj, other1)
         || java.util.Objects.equals(obj, other2)
         || java.util.Objects.equals(obj, other3)
@@ -622,8 +625,9 @@ public final class Objects {
   /**
    * Gets whether an object matches any of the others.
    */
-  public static boolean equalsAny(Object obj, Object other1, Object other2, Object other3,
-      Object other4, Object other5) {
+  public static boolean equalsAny(@Nullable Object obj, @Nullable Object other1,
+      @Nullable Object other2, @Nullable Object other3, @Nullable Object other4,
+      @Nullable Object other5) {
     return java.util.Objects.equals(obj, other1)
         || java.util.Objects.equals(obj, other2)
         || java.util.Objects.equals(obj, other3)
