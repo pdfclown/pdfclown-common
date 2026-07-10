@@ -196,7 +196,7 @@ public final class Aggregations {
     }
   }
 
-  @SuppressWarnings({ "NullAway", "unchecked" })
+  @SuppressWarnings({ "ClassCanBeRecord", "NullAway", "unchecked" })
   private static class MapWrapper<K, V> implements XtMap<K, V> {
     private final Map<? super K, ? super V> base;
 

@@ -10,7 +10,7 @@ import static org.pdfclown.common.util.Exceptions.runtime
 import static org.pdfclown.common.util.Exceptions.wrongState
 import static org.pdfclown.common.util.Objects.found
 import static org.pdfclown.common.util.system.Processes.executeGetElseThrow
-import static org.pdfclown.common.util.system.Processes.osCommand;
+import static org.pdfclown.common.util.system.Processes.osCommand
 
 import java.nio.file.FileVisitResult
 import java.nio.file.Path
@@ -63,9 +63,9 @@ manager.steps.add(++stepIndex, new Step() {
         FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attr)
             throws IOException {
           if (dirNameExcludeFilter.test(dir.getFileName().toString()))
-            return FileVisitResult.SKIP_SUBTREE;
+            return FileVisitResult.SKIP_SUBTREE
           else
-            return FileVisitResult.CONTINUE;
+            return FileVisitResult.CONTINUE
         }
 
         @Override
@@ -86,9 +86,9 @@ manager.steps.add(++stepIndex, new Step() {
               throw runtime("Project release version references update in {} FAILED", file, ex)
             }
           }
-          return FileVisitResult.CONTINUE;
+          return FileVisitResult.CONTINUE
         }
-      });
+      })
     /*
       NOTE: The assumption here is that, due to required Javadoc references such as badges, in the
       project there MUST be release version references to update; if no file was updated, there has

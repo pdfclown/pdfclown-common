@@ -67,6 +67,7 @@ public abstract class Asserter {
    *
    * @author Stefano Chizzolini
    */
+  @SuppressWarnings("ClassCanBeRecord")
   public static class Config implements Cloneable {
     final org.pdfclown.common.build.test.assertion.Test test;
 
@@ -121,7 +122,7 @@ public abstract class Asserter {
      * Begins a new error entry.
      */
     public ErrorMessageBuilder error(String text) {
-      if (base.length() > 0) {
+      if (!base.isEmpty()) {
         base.append("\n");
       }
       return append(text);
@@ -131,7 +132,7 @@ public abstract class Asserter {
      * Whether this message is empty.
      */
     public boolean isEmpty() {
-      return base.length() == 0;
+      return base.isEmpty();
     }
 
     @Override

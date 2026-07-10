@@ -28,7 +28,7 @@ public class Matches<T> extends BaseMatcher<T> {
   private final @Nullable T expectedValue;
   private final BiPredicate<T, T> predicate;
 
-  public Matches(T expectedValue, BiPredicate<T, T> predicate) {
+  public Matches(@Nullable T expectedValue, BiPredicate<T, T> predicate) {
     this.expectedValue = expectedValue;
     this.predicate = predicate;
   }

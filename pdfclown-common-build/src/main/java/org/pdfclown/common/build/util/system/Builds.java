@@ -196,7 +196,7 @@ public final class Builds {
               new ByteArrayInputStream(
                   new byte[0]) /* Just to avoid interactive mode complaining */);
         }));
-        if (error.length() > 0)
+        if (!error.isEmpty())
           throw runtime("Classpath retrieval from {} FAILED: {}",
               pathResolver.resolve(ProjectDirId.BASE), error);
 

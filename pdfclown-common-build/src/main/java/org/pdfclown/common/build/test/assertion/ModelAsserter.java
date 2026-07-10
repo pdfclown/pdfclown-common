@@ -59,9 +59,9 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
 
   private static final String FILE_EXTENSION__JSON_ZIP = FILE_EXTENSION__JSON + FILE_EXTENSION__ZIP;
 
-  protected Supplier<ModelDiffer<TDiff, ? extends TMapDiff>> modelDifferSupplier;
-  protected Supplier<ModelMapper<TMapDiff>> modelDiffMapperSupplier;
-  protected Supplier<ModelMapper<TMap>> modelMapperSupplier;
+  protected final Supplier<ModelDiffer<TDiff, ? extends TMapDiff>> modelDifferSupplier;
+  protected final Supplier<ModelMapper<TMapDiff>> modelDiffMapperSupplier;
+  protected final Supplier<ModelMapper<TMap>> modelMapperSupplier;
 
   /**
    * @param modelMapperSupplier

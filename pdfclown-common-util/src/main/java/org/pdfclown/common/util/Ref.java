@@ -26,7 +26,7 @@ import org.jspecify.annotations.Nullable;
  *          Value type.
  * @author Stefano Chizzolini
  */
-public final class Ref<T> extends MutableObject<T> {
+public final class Ref<T> extends MutableObject<@Nullable T> {
   @Serial
   private static final long serialVersionUID = 1L;
 
@@ -60,9 +60,6 @@ public final class Ref<T> extends MutableObject<T> {
 
   /**
    * Sets {@link #get() value}.
-   *
-   * @implNote Weirdly enough, {@link org.apache.commons.lang3.mutable.Mutable Mutable} deprecated
-   *           {@link #getValue() getValue} but kept {@link #setValue(Object) setValue}.
    */
   public void set(@Nullable T value) {
     setValue(value);

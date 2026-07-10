@@ -324,6 +324,7 @@ public final class Xmls {
      * Comprises {@link #secureBasic(FeatureSetter)}.
      * </p>
      */
+    @SuppressWarnings("HttpUrlsUsage")
     public static void secureParsing(Object obj, FeatureSetter<Boolean> setter,
         ParsingSecuritySettings settings) {
       var b = secureBasic(setter);
@@ -1000,6 +1001,7 @@ public final class Xmls {
    * @param style
    *          XSLT document to use ({@code null} for identity transformation).
    */
+  @SuppressWarnings("HttpUrlsUsage")
   public static Transformer transformer(@Nullable Source style)
       throws TransformerConfigurationException, TransformerFactoryConfigurationError {
     var ret = newTransformer(style);

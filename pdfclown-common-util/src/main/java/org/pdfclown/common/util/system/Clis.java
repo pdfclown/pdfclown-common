@@ -380,7 +380,7 @@ public final class Clis {
             b.append(c);
           } else if (Character.isWhitespace(c)) {
             // Argument ended?
-            if (b.length() > 0) {
+            if (!b.isEmpty()) {
               ret.add(b.toString());
 
               b.setLength(0);
@@ -392,7 +392,7 @@ public final class Clis {
       }
     }
     // End last argument!
-    if (b.length() > 0) {
+    if (!b.isEmpty()) {
       ret.add(b.toString());
     }
     return ret;

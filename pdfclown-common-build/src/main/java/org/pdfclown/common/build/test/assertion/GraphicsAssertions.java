@@ -90,11 +90,9 @@ public final class GraphicsAssertions {
    * {@code delta}.
    */
   public static void assertPathEquals(PathIterator expected, PathIterator actual, double delta) {
-    class Segment {
-      final int kind;
-      final double[] coords;
-
-      public Segment(int kind, double[] coords) {
+    @SuppressWarnings("ArrayRecordComponent")
+    record Segment(int kind, double[] coords) {
+      Segment(int kind, double[] coords) {
         this.kind = kind;
         this.coords = coords.clone();
       }

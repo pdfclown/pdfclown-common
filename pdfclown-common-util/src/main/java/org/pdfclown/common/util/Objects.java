@@ -434,10 +434,8 @@ public final class Objects {
     else if (o1 instanceof Collection && o2 instanceof Collection)
       return deepEqualsCollection((Collection<R>) o1, (Collection<R>) o2, baseRefType, resolver,
           raw);
-    else if (o1.equals(o2))
-      return true;
     else
-      return false;
+      return o1.equals(o2);
   }
 
   /**

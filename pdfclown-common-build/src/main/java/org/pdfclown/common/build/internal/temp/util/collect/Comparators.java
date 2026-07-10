@@ -184,7 +184,6 @@ public class Comparators {
     }
 
     @Override
-    @SuppressWarnings("NullableProblems" /* false positive */)
     public HierarchicalTypeComparator thenComparing(Comparator<? super Class> other) {
       return new HierarchicalTypeComparator(base.thenComparing(other));
     }

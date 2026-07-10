@@ -487,6 +487,7 @@ public class ModelMapper<T> {
    *           transformation ordering is enforced (properties are therefore sorted before being
    *           processed).
    */
+  @SuppressWarnings("unchecked")
   protected JsonObject map(Object obj, List<PropertySelector> selectors, Set<Object> visitedObjs,
       int level) {
     if (visitedObjs.contains(obj))
