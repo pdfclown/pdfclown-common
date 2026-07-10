@@ -80,25 +80,25 @@ This document describes how to set up your development environment to build and 
 
 ### Installation
 
-- basic (without javadoc):
+- basic (without Javadoc):
 
     ```shell
     ./mvnw install
     ```
 
-- full (with javadoc):
+- full (with Javadoc):
 
     ```shell
     ./mvnw install -Pfull
     ```
 
-- fast (without javadoc and integration tests):
+- fast (without Javadoc and integration tests):
 
     ```shell
     ./mvnw install -Pfast
     ```
 
-- fastest (without javadoc, integration tests and unit tests):
+- fastest (without Javadoc, integration tests and unit tests):
 
     ```shell
     ./mvnw install -Pfast+
@@ -163,7 +163,7 @@ This document describes how to set up your development environment to build and 
 > ```shell
 > ./mvnw compile -Dlint.lenient
 > ```
-> Anyways, *disabling lint enforcement on CLI can only be a temporary local trick*, as CI mercilessly enforces compiler checks on every push to the project repository — BEWARE: before submitting PRs, ensure your source code passes compilation linting (along with pre-compilation linting (Spotless formatting and Checkstyle static checks))!
+> Anyway, *disabling lint enforcement on CLI can only be a temporary local trick*, as CI mercilessly enforces compiler checks on every push to the project repository — BEWARE: before submitting PRs, ensure your source code passes compilation linting (along with pre-compilation linting (Spotless formatting and Checkstyle static checks))!
 
 ### Testing
 

@@ -314,7 +314,7 @@ public class ReleaseManager {
    */
   public void log(Level level, String message, Object... args) {
     /*
-     * NOTE: Modern `Logger::atLevel` method may not be supported by slf4j implementations like
+     * NOTE: Modern `Logger::atLevel` method may not be supported by SLF4J implementations like
      * `MavenSimpleLogger`, so we have to fall back to legacy specialized methods.
      */
     switch (level) {

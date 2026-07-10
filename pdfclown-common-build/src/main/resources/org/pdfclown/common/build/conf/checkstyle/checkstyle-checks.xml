@@ -60,7 +60,7 @@
 
   <!--
     [CUSTOM] Hack to suppress checks (such as JavadocTagContinuationIndentation) from PRE and CODE
-    tag blocks in javadoc (hoping they are not nested, otherwise we are gonna be caught by the
+    tag blocks in Javadoc (hoping they are not nested, otherwise we are gonna be caught by the
     infamous Chomsky hierarchy trap... - BTW, here it is a popular little gem of humor on the topic:
     https://stackoverflow.com/a/1732454 (best quip: "regex-infection wil​l devour your HT​ML parser,
     application and existence for all time like Visual Basic only worse" - cannot imagine a grimmer

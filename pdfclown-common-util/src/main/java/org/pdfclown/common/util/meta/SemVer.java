@@ -211,7 +211,7 @@ public abstract class SemVer<T extends SemVer<T>> implements Version<T>, Compara
      * [RULE 11.4.3] Numeric identifiers always have lower precedence than non-numeric identifiers.
      *
      * [RULE 11.4.4] A larger set of pre-release fields has a higher precedence than a smaller set,
-     * if all of the preceding identifiers are equal.
+     * if all the preceding identifiers are equal.
      */
     var thisPrereleaseFields = this.getPrereleaseFields();
     var oPrereleaseFields = o.getPrereleaseFields();

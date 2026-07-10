@@ -893,7 +893,7 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
 
             <!-- NOTE: Workaround to `-no-fonts` flag automatically added because of toolchain
               handling issue (the plugin wrongly evaluates the tool JDK version instead of the build
-              JDK version, despite it's the latter to generate the javadoc - see also
+              JDK version, despite it's the latter to generate the Javadoc - see also
               <https://github.com/apache/maven-javadoc-plugin/issues/1244>) -->
             <disableNoFonts>true</disableNoFonts>
 
@@ -1067,7 +1067,7 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
         FULL EXECUTION PROFILE
 
         Activates the following operations:
-        - javadoc jar
+        - Javadoc jar
       -->
       <build>
         <plugins>
@@ -1263,8 +1263,8 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
         DEPLOYMENT EXECUTION PROFILE
 
         Activates the following operations:
-        - javadoc jar
-        - gpg signing
+        - Javadoc jar
+        - GPG signing
         - maven central publishing
 
         IMPORTANT: It is caller's responsibility to prepare the working tree for the deployment, in
