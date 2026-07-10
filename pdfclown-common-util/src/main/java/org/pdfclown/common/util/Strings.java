@@ -34,7 +34,7 @@ import org.apache.commons.io.input.CharSequenceReader;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.io.Texts;
-import org.pdfclown.common.util.io.Texts.TextCoords;
+import org.pdfclown.common.util.io.Texts.TextPosition;
 
 /**
  * String utilities.
@@ -148,12 +148,13 @@ public final class Strings {
   }
 
   /**
-   * Gets the 1-based coordinates corresponding to a position in the string.
+   * Gets the coordinates corresponding to a position in the string.
    *
    * @param index
    *          Position.
+   * @implNote Line terminators are defined according to {@link java.io.LineNumberReader}.
    */
-  public static Optional<TextCoords> coords(CharSequence s, int index) {
+  public static Optional<TextPosition> coords(CharSequence s, int index) {
     try {
       return Texts.textCoords(new CharSequenceReader(s), index);
     } catch (IOException ex) {
