@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
  * Indicates that the annotated type or type use is immutable.
  * <p>
  * <b>Immutability</b> is about the <i>stability of the externally-observable object state,
- * referenced objects inclusive</i>; it is stricter than {@linkplain UnmodifiableView view
- * unmodifiability} and {@linkplain Unmodifiable real unmodifiability}.
+ * referenced objects inclusive</i> (deep immutability); it is stricter than
+ * {@linkplain Unmodifiable unmodifiability} and {@linkplain ReadOnly readonly-ness}.
  * </p>
  * <p>
  * <b>Externally-observable state</b> comprises values and object references directly associated to
@@ -36,16 +36,16 @@ import java.lang.annotation.Target;
  * externally-observable state).
  * </p>
  * <p>
- * Due to the intrinsic flexibility of interfaces, <i>the semantics of annotated interfaces are much
- * weaker than annotated classes</i>: whilst the latter extend their immutability to derived classes
- * (any additional state MUST be immutable itself), the former are limited to their own definition
- * (derived interfaces and implementing classes may declare additional state as mutable).
- * Consequently, <span class="important">an object referenced as an immutable interface isn't itself
- * immutable, unless the class exposing that reference is immutable or marks its use as
- * immutable</span>: in such case, the class MUST guarantee that the underlying referenced class is
- * immutable itself (that is, the object MUST be <i>effectively immutable</i> — for example, it may
- * declare a {@link java.util.List List} whose actual class is an immutable list from
- * {@link java.util.List#of(Object[]) List.of(...)}). All considered, immutable interfaces are
+ * Due to the intrinsic flexibility of <b>interfaces</b>, <i>the semantics of annotated interfaces
+ * are much weaker than annotated classes</i>: whilst the latter extend their immutability to
+ * derived classes (any additional state MUST be immutable itself), the former are limited to their
+ * own definition (derived interfaces and implementing classes may declare additional members with
+ * mutation semantics). Consequently, <span class="important">an object referenced as an immutable
+ * interface isn't immutable itself, unless the class exposing that reference is immutable or marks
+ * its use as immutable</span>: in such case, the class MUST guarantee that the underlying
+ * referenced class is immutable itself (that is, the object MUST be <i>effectively immutable</i> —
+ * for example, it may declare a {@link java.util.List List} whose actual class is an immutable list
+ * from {@link java.util.List#of(Object[]) List.of(...)}). All considered, immutable interfaces are
  * mostly relevant to implementers rather than users, since immutable classes are required to
  * implement only (effectively) immutable interfaces.
  * </p>
@@ -89,27 +89,28 @@ import java.lang.annotation.Target;
  * <ul>
  * <li>class:
  * <ul>
- * <li>the annotated class has only immutable state (inherited state is also effectively immutable),
- * whose types are themselves immutable</li>
+ * <li>the annotated class MUST have only immutable state (inherited state is also effectively
+ * immutable), whose referenced objects are immutable themselves</li>
  * <li>the annotated class may be final (<b>strong immutability</b>), or not (<b>weak
- * immutability</b>); in the latter case, derived classes MUST honour the immutability
+ * immutability</b>); in the latter case, derived classes MUST honor the immutability
  * themselves</li>
  * </ul>
  * </li>
  * <li>interface:
  * <ul>
- * <li>the annotated interface declares only immutable state, whose types are themselves
- * immutable</li>
- * <li>the parents of the annotated interface are themselves immutable</li>
- * <li>the children of the annotated interface MUST honour the immutability of the inherited
- * interface, but can add mutable state of their own</li>
+ * <li>the annotated interface MUST declare no member with mutation semantics (that is, any mutator
+ * or other method with side effects), and reference types returned by accessors MUST be immutable
+ * themselves</li>
+ * <li>the parents of the annotated interface MUST be immutable themselves</li>
+ * <li>the children of the annotated interface MUST honor the immutability of the inherited
+ * interface, but can add members with mutation semantics</li>
  * </ul>
  * </li>
  * </ul>
  *
  * @author Stefano Chizzolini
  * @see Unmodifiable
- * @see UnmodifiableView
+ * @see ReadOnly
  * @see <a href="https://docs.oracle.com/javase/tutorial/essential/concurrency/imstrat.html">A
  *      Strategy for Defining Immutable Objects</a>
  */
