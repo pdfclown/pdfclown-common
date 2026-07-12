@@ -179,9 +179,9 @@ This document describes how to set up your development environment to build and 
     ./mvnw verify
     ```
 
-- **selective**:
+- **selective** (specified tests only):
 
-  - unit tests (specified tests only):
+  - unit tests:
 
       ```shell
       ./mvnw test -pl %MODULE% -Dtest=%TEST%
@@ -190,11 +190,11 @@ This document describes how to set up your development environment to build and 
       where:
 
       - %MODULE% is the project module containing the tests (e.g., `pdfclown-common-util`)
-      - %TEST% is the unit test selector, a single identifier or a comma-separated list of identifiers, each expressed in any of the following alternatives:
+      - %TEST% is the unit test selector, that is, a single identifier or a comma-separated list of identifiers, each expressed in any of the following alternatives:
           - test class (e.g., `StringsTest`) — to run all its tests
           - test method (e.g., `StringsTest#replaceString`) — to run only the specified test
 
-  - integration tests (specified tests only):
+  - integration tests:
 
       ```shell
       ./mvnw verify -pl %MODULE% -Dtest=%IT%
@@ -203,7 +203,7 @@ This document describes how to set up your development environment to build and 
       where:
 
       - %MODULE% is the project module containing the tests (e.g., `pdfclown-common-util`)
-      - %IT% is the integration test selector, a single identifier or a comma-separated list of identifiers, each expressed in any of the following alternatives:
+      - %IT% is the integration test selector, that is, a single identifier or a comma-separated list of identifiers, each expressed in any of the following alternatives:
         - test class (e.g., `LayoutIT`) — to run all its tests
         - test method (e.g., `LayoutIT#createDocument`) — to run only the specified test
 
