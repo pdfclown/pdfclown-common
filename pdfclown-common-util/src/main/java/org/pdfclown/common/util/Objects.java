@@ -293,15 +293,18 @@ public final class Objects {
 
   /**
    * Gets whether an object matches any of the others according to the predicate.
-   *
-   * @implNote Because of the limited expressiveness of varargs, in order to force the caller to
-   *           specify at least another object, we have to declare a corresponding parameter
-   *           ({@code other1}) in the signature — despite its inherent ugliness, this is the
-   *           standard way Java API itself deals with such case.
    */
   @SafeVarargs
   public static <T extends @Nullable Object, U extends @Nullable Object> boolean anyThat(T obj,
       BiPredicate<T, U> predicate, U other1, U... others) {
+    /*
+     * NOTE: Because of the limited expressiveness of varargs, in order to force the callers to
+     * specify enough arguments, we have to declare additional parameters (`other1`) in the
+     * signature; this way, the static call resolution hits the other overloads unless exceeding
+     * arguments cause it to fall back to this one -- despite its inherent ugliness, this is the
+     * standard way Java API itself deals with such case.
+     */
+
     if (predicate.test(obj, other1))
       return true;
 
@@ -361,13 +364,14 @@ public final class Objects {
   }
 
   /**
-   * Gets the type corresponding to an object.
+   * Gets the class corresponding to an object.
    * <p>
    * Same as {@link #type(Object)}, unless {@code obj} is {@link Class} (in such case, returns
    * itself).
    * </p>
    *
    * @see #asTopLevelType(Object)
+   * @see #type(Object)
    */
   public static @PolyNull @Nullable Class<?> asType(@PolyNull @Nullable Object obj) {
     return obj != null ? (obj instanceof Class<?> c ? c : obj.getClass()) : null;
@@ -576,15 +580,19 @@ public final class Objects {
 
   /**
    * Gets whether an object matches any of the others.
-   *
-   * @implNote Because of the limited expressiveness of varargs, in order to force the caller to
-   *           specify at least another object, we have to declare a corresponding parameter
-   *           ({@code other1}) in the signature — despite its inherent ugliness, this is the
-   *           standard way Java API itself deals with such case.
    */
   public static boolean equalsAny(@Nullable Object obj, @Nullable Object other1,
-      @Nullable Object... others) {
-    if (java.util.Objects.equals(obj, other1))
+      @Nullable Object other2, @Nullable Object... others) {
+    /*
+     * NOTE: Because of the limited expressiveness of varargs, in order to force the callers to
+     * specify enough arguments, we have to declare additional parameters (`other1`, `other2`) in
+     * the signature; this way, the static call resolution hits the other overloads unless exceeding
+     * arguments cause it to fall back to this one -- despite its inherent ugliness, this is the
+     * standard way Java API itself deals with such case.
+     */
+
+    if (java.util.Objects.equals(obj, other1)
+        || java.util.Objects.equals(obj, other2))
       return true;
 
     for (var other : others) {
@@ -717,6 +725,7 @@ public final class Objects {
    * @throws RuntimeException
    *           if class initialization failed.
    * @see #tryInit(String)
+   * @see #type(String)
    */
   public static Class<?> init(String typeName) {
     return init(typeName, null);
@@ -738,6 +747,7 @@ public final class Objects {
    * @throws RuntimeException
    *           if class initialization failed.
    * @see #tryInit(String, Object)
+   * @see #type(String, Object)
    */
   public static Class<?> init(String typeName, @Nullable Object loadingHint) {
     return nonNull(doLoadType(typeName, true, loadingHint, true));
@@ -1832,6 +1842,7 @@ public final class Objects {
    *          Fully-qualified name of the class to initialize.
    * @return Initialized class ({@code null}, if class initialization failed).
    * @see #init(String)
+   * @see #tryType(String)
    */
   public static @Nullable Class<?> tryInit(String typeName) {
     return tryInit(typeName, null);
@@ -1851,6 +1862,7 @@ public final class Objects {
    *          resolve with the class loader of the current (that is, calling) class).
    * @return Initialized class ({@code null}, if class initialization failed).
    * @see #init(String, Object)
+   * @see #tryType(String, Object)
    */
   public static @Nullable Class<?> tryInit(String typeName, @Nullable Object loadingHint) {
     return doLoadType(typeName, true, loadingHint, false);
@@ -1867,6 +1879,7 @@ public final class Objects {
    *          Fully-qualified name of the class to load.
    * @return {@code null}, if no class matched {@code name}.
    * @see #type(String)
+   * @see #tryInit(String)
    */
   public static @Nullable Class<?> tryType(String typeName) {
     return tryType(typeName, null);
@@ -1885,6 +1898,7 @@ public final class Objects {
    *          resolve with the class loader of the current (that is, calling) class).
    * @return {@code null}, if no class matched {@code name}.
    * @see #type(String, Object)
+   * @see #tryInit(String, Object)
    */
   public static @Nullable Class<?> tryType(String typeName, @Nullable Object loadingHint) {
     return doLoadType(typeName, false, loadingHint, false);
@@ -1912,6 +1926,7 @@ public final class Objects {
    * @throws RuntimeException
    *           if class loading failed.
    * @see #tryType(String)
+   * @see #init(String)
    */
   public static Class<?> type(String typeName) {
     return type(typeName, null);
@@ -1932,6 +1947,7 @@ public final class Objects {
    * @throws RuntimeException
    *           if class loading failed.
    * @see #tryType(String, Object)
+   * @see #init(String, Object)
    */
   public static Class<?> type(String typeName, @Nullable Object loadingHint) {
     return nonNull(doLoadType(typeName, false, loadingHint, true));
