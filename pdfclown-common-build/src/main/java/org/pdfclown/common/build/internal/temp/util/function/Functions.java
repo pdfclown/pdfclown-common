@@ -17,13 +17,14 @@ import static java.util.Objects.requireNonNullElse;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.apache.commons.lang3.function.FailableFunction;
+import org.apache.commons.lang3.function.FailablePredicate;
 import org.apache.commons.lang3.function.FailableRunnable;
 import org.apache.commons.lang3.function.FailableSupplier;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.annot.PolyNull;
 
 /**
  * Function utilities.
@@ -32,21 +33,103 @@ import org.pdfclown.common.util.annot.PolyNull;
  */
 public final class Functions {
   /**
-   * Applies an operation to an object, if defined.
+   * Performs an action on an object, if defined.
    *
    * @param <T>
    *          Object type.
    * @param obj
    *          Object to consume.
-   * @param operation
-   *          Operation to apply.
+   * @param action
+   *          Action to perform.
    * @return {@code obj}
-   * @see #tryLet(Object, FailableConsumer)
+   * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
+   *          applying {@code action}; same as {@link java.util.Optional#ifPresent(Consumer)}.
+   * @see #ifPresentTry(Object, FailableConsumer)
+   * @see #peek(Object, Consumer)
    */
-  public static <T> @PolyNull @Nullable T let(@PolyNull @Nullable T obj,
-      Consumer<? super T> operation) {
+  public static <T> @Nullable T ifPresent(@Nullable T obj, Consumer<? super T> action) {
     if (obj != null) {
-      operation.accept(obj);
+      action.accept(obj);
+    }
+    return obj;
+  }
+
+  /**
+   * Quietly performs an action on an object, if defined.
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to consume.
+   * @param action
+   *          Action to perform.
+   * @return {@code obj}
+   * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
+   *          applying {@code action}; same as {@link java.util.Optional#ifPresent(Consumer)},
+   *          except {@code action} exceptions are muted.
+   * @see #ifPresent(Object, Consumer)
+   * @see #peekQuietly(Object, FailableConsumer)
+   */
+  public static <T> @Nullable T ifPresentTry(@Nullable T obj, FailableConsumer<T, ?> action) {
+    if (obj != null) {
+      try {
+        action.accept(obj);
+      } catch (Throwable ex) {
+        //NOP
+      }
+    }
+    return obj;
+  }
+
+  /**
+   * Performs an action on an object.
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to consume.
+   * @param action
+   *          Action to perform.
+   * @return {@code obj}
+   * @throws NullPointerException
+   *           if {@code obj} is undefined (to avoid it, use {@link #ifPresent(Object, Consumer)}
+   *           instead).
+   * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
+   *          applying {@code action}; same as {@link java.util.stream.Stream#peek(Consumer)},
+   *          except {@code action} is executed immediately and unconditionally.
+   * @see #peekQuietly(Object, FailableConsumer)
+   * @see #ifPresent(Object, Consumer)
+   */
+  public static <T> T peek(T obj, Consumer<? super T> action) {
+    action.accept(requireNonNull(obj, "obj"));
+    return obj;
+  }
+
+  /**
+   * Quietly performs an action on an object.
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to consume.
+   * @param action
+   *          Action to perform.
+   * @return {@code obj}
+   * @throws NullPointerException
+   *           if {@code obj} is undefined (to avoid it, use
+   *           {@link #ifPresentTry(Object, FailableConsumer)} instead).
+   * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
+   *          applying {@code action}; same as {@link java.util.stream.Stream#peek(Consumer)},
+   *          except {@code action} is executed immediately and its exceptions are muted.
+   * @see #peek(Object, Consumer)
+   * @see #ifPresentTry(Object, FailableConsumer)
+   */
+  public static <T> T peekQuietly(T obj, FailableConsumer<T, ?> action) {
+    requireNonNull(obj, "obj");
+    try {
+      action.accept(obj);
+    } catch (Throwable ex) {
+      //NOP
     }
     return obj;
   }
@@ -81,6 +164,21 @@ public final class Functions {
   }
 
   /**
+   * Tests an object, if defined.
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to test.
+   * @param predicate
+   *          Predicate to apply.
+   * @see #tryTest(Object, FailablePredicate)
+   */
+  public static <T> boolean test(@Nullable T obj, Predicate<? super T> predicate) {
+    return obj != null && predicate.test(obj);
+  }
+
+  /**
    * Maps an object.
    *
    * @param <T>
@@ -91,6 +189,9 @@ public final class Functions {
    *          Object to map.
    * @param mapper
    *          Object mapping function.
+   * @throws NullPointerException
+   *           if the mapping is undefined (to avoid it, use {@link #toOrNull(Object, Function)}
+   *           instead).
    * @see #toOrNull(Object, Function)
    */
   public static <T, R> R to(T obj, Function<? super T, ? extends R> mapper) {
@@ -130,6 +231,9 @@ public final class Functions {
    *          Object mapping function.
    * @param defaultSupplier
    *          Result supplier if {@code obj} or {@code mapper}'s result are undefined.
+   * @throws NullPointerException
+   *           if the mapping is undefined (to avoid it, use
+   *           {@link #toElseGetOrNull(Object, Function, Supplier)} instead).
    * @see #toElseGetOrNull(Object, Function, Supplier)
    * @see #tryToElseGet(Object, FailableFunction, Supplier)
    */
@@ -214,25 +318,23 @@ public final class Functions {
   }
 
   /**
-   * Quietly applies an operation to an object, if defined.
+   * Quietly tests an object, if defined.
    *
    * @param obj
-   *          Object to consume.
-   * @param operation
-   *          Operation to apply.
-   * @return {@code obj}
-   * @see #let(Object, Consumer)
+   *          Object to test.
+   * @param predicate
+   *          Predicate to apply.
+   * @see #test(Object, Predicate)
    */
-  public static <T> @PolyNull @Nullable T tryLet(@PolyNull @Nullable T obj,
-      FailableConsumer<T, ?> operation) {
+  public static <T> boolean tryTest(@Nullable T obj, FailablePredicate<? super T, ?> predicate) {
     if (obj != null) {
       try {
-        operation.accept(obj);
+        return predicate.test(obj);
       } catch (Throwable ex) {
         //NOP
       }
     }
-    return obj;
+    return false;
   }
 
   /**
@@ -293,6 +395,9 @@ public final class Functions {
    *          Object mapping function.
    * @param defaultSupplier
    *          Result supplier if {@code obj} or {@code mapper}'s result are undefined.
+   * @throws NullPointerException
+   *           if the mapping is undefined (to avoid it, use
+   *           {@link #tryToElseGetOrNull(Object, FailableFunction, Supplier)} instead).
    * @see #tryToElseGetOrNull(Object, FailableFunction, Supplier)
    * @see #toElseGet(Object, Function, Supplier)
    */

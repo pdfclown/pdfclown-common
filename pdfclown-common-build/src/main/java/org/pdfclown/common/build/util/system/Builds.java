@@ -20,7 +20,7 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.opt;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
-import static org.pdfclown.common.build.internal.temp.util.function.Functions.let;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.peek;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
@@ -155,7 +155,7 @@ public final class Builds {
         // 2. Dependencies.
         var error = new StringBuilder();
         var invoker = new DefaultInvoker();
-        invoker.execute(let(new DefaultInvocationRequest(), $ -> {
+        invoker.execute(peek(new DefaultInvocationRequest(), $ -> {
           $.setMavenHome(mavenHomeOf(mavenExecAt(projectDir)
               .orElseThrow(() -> wrongState("Maven executable NOT FOUND at {}", projectDir)))
                   .orElseThrow(() -> wrongState("""

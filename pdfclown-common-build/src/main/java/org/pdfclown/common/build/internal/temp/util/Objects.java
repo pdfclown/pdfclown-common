@@ -23,10 +23,10 @@ import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.build.internal.temp.util.Strings.lastIndexOfAny;
 import static org.pdfclown.common.build.internal.temp.util.Strings.lastIndexOfElse;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.hierarchicalType;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.ifPresentTry;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.to;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toElse;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
-import static org.pdfclown.common.build.internal.temp.util.function.Functions.tryLet;
 import static org.pdfclown.common.util.Booleans.parseBoolean;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.COMMA;
@@ -1814,7 +1814,7 @@ public final class Objects {
    * Quietly closes an object.
    */
   public static <T extends AutoCloseable> void tryClose(@Nullable T obj) {
-    tryLet(obj, AutoCloseable::close);
+    ifPresentTry(obj, AutoCloseable::close);
   }
 
   /**

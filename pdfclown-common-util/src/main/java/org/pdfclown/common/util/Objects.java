@@ -39,10 +39,10 @@ import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.lastIndexOfAny;
 import static org.pdfclown.common.util.Strings.lastIndexOfElse;
 import static org.pdfclown.common.util.collect.Comparators.hierarchicalType;
+import static org.pdfclown.common.util.function.Functions.ifPresentTry;
 import static org.pdfclown.common.util.function.Functions.to;
 import static org.pdfclown.common.util.function.Functions.toElse;
 import static org.pdfclown.common.util.function.Functions.toOrNull;
-import static org.pdfclown.common.util.function.Functions.tryLet;
 import static org.pdfclown.common.util.reflect.Reflects.stackFrame;
 
 import io.github.classgraph.ClassGraph;
@@ -1814,7 +1814,7 @@ public final class Objects {
    * Quietly closes an object.
    */
   public static <T extends AutoCloseable> void tryClose(@Nullable T obj) {
-    tryLet(obj, AutoCloseable::close);
+    ifPresentTry(obj, AutoCloseable::close);
   }
 
   /**

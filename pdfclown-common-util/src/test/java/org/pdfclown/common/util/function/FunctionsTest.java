@@ -78,9 +78,36 @@ public class FunctionsTest extends BaseTest {
   public static final List<Supplier<?>> SUPPLIERS = asList(new NullSupplier(), new IntSupplier());
 
   @Test
-  void let() {
+  void ifPresent() {
     COMBINATION.verify(
-        (obj) -> Functions.let(obj, CONSUMER),
+        (obj) -> Functions.ifPresent(obj, CONSUMER),
+        List.of("obj"),
+        // obj
+        OBJS);
+  }
+
+  @Test
+  void ifPresentTry() {
+    COMBINATION.verify(
+        (obj) -> Functions.ifPresentTry(obj, CONSUMER::accept),
+        List.of("obj"),
+        // obj
+        OBJS);
+  }
+
+  @Test
+  void peek() {
+    COMBINATION.verify(
+        (obj) -> Functions.peek(obj, CONSUMER),
+        List.of("obj"),
+        // obj
+        OBJS);
+  }
+
+  @Test
+  void peekQuietly() {
+    COMBINATION.verify(
+        (obj) -> Functions.peekQuietly(obj, CONSUMER::accept),
         List.of("obj"),
         // obj
         OBJS);
@@ -197,15 +224,6 @@ public class FunctionsTest extends BaseTest {
     var ret = Functions.tryGetElse(() -> "RESULT", "ALT");
 
     assertThat(ret, is("RESULT"));
-  }
-
-  @Test
-  void tryLet() {
-    COMBINATION.verify(
-        (obj) -> Functions.tryLet(obj, CONSUMER::accept),
-        List.of("obj"),
-        // obj
-        OBJS);
   }
 
   @Test
