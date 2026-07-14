@@ -551,17 +551,27 @@ public final class Aggregations {
   }
 
   /**
-   * Returns the given collection, or undefined if empty.
+   * Returns the given list, or (unmodifiable) empty if undefined.
    */
-  public static <T extends Collection<?>> @Nullable T emptyToNull(@Nullable T c) {
-    return isEmpty(c) ? null : c;
+  @SuppressWarnings("unchecked")
+  public static <T extends List<?>> T emptyIfNull(@Nullable T c) {
+    return c == null ? (T) List.of() : c;
   }
 
   /**
-   * Returns the given map, or undefined if empty.
+   * Returns the given set, or (unmodifiable) empty if undefined.
    */
-  public static <T extends Map<?, ?>> @Nullable T emptyToNull(@Nullable T m) {
-    return isEmpty(m) ? null : m;
+  @SuppressWarnings("unchecked")
+  public static <T extends Set<?>> T emptyIfNull(@Nullable T c) {
+    return c == null ? (T) Set.of() : c;
+  }
+
+  /**
+   * Returns the given map, or (unmodifiable) empty if undefined.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends Map<?, ?>> T emptyIfNull(@Nullable T m) {
+    return m == null ? (T) Map.of() : m;
   }
 
   /**
@@ -760,27 +770,17 @@ public final class Aggregations {
   }
 
   /**
-   * Returns the given list, or (unmodifiable) empty if undefined.
+   * Returns the given collection, or undefined if empty.
    */
-  @SuppressWarnings("unchecked")
-  public static <T extends List<?>> T nullToEmpty(@Nullable T c) {
-    return c != null ? c : (T) List.of();
+  public static <T extends Collection<?>> @Nullable T nullIfEmpty(@Nullable T c) {
+    return isEmpty(c) ? null : c;
   }
 
   /**
-   * Returns the given set, or (unmodifiable) empty if undefined.
+   * Returns the given map, or undefined if empty.
    */
-  @SuppressWarnings("unchecked")
-  public static <T extends Set<?>> T nullToEmpty(@Nullable T c) {
-    return c != null ? c : (T) Set.of();
-  }
-
-  /**
-   * Returns the given map, or (unmodifiable) empty if undefined.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T extends Map<?, ?>> T nullToEmpty(@Nullable T m) {
-    return m != null ? m : (T) Map.of();
+  public static <T extends Map<?, ?>> @Nullable T nullIfEmpty(@Nullable T m) {
+    return isEmpty(m) ? null : m;
   }
 
   /**

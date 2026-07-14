@@ -180,10 +180,10 @@ public final class Strings {
   }
 
   /**
-   * Ensures a string is undefined if empty.
+   * Ensures a string is defined, returning empty if undefined.
    */
-  public static @Nullable String emptyToNull(@Nullable String s) {
-    return s != null && !s.isEmpty() ? s : null;
+  public static String emptyIfNull(@Nullable String s) {
+    return s == null ? EMPTY : s;
   }
 
   /**
@@ -555,10 +555,10 @@ public final class Strings {
   }
 
   /**
-   * Ensures a string is defined, returning empty if undefined.
+   * Ensures a string is undefined if empty.
    */
-  public static String nullToEmpty(@Nullable String s) {
-    return s != null ? s : EMPTY;
+  public static @Nullable String nullIfEmpty(@Nullable String s) {
+    return s == null || s.isEmpty() ? null : s;
   }
 
   /**
