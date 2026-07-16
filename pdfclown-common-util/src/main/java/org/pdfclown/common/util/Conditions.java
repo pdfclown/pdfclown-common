@@ -245,6 +245,62 @@ public final class Conditions {
   }
 
   /**
+   * Requires the value is not null.
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws NoSuchElementException
+   *           if {@code value} is undefined.
+   */
+  public static <T> T requireElement(@Nullable T value) throws NoSuchElementException {
+    return requireElement(value, null, null);
+  }
+
+  /**
+   * Requires the value is not null.
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @param ref
+   *          Reference associated to {@code value} (for example, its key).
+   * @return {@code value}
+   * @throws NoSuchElementException
+   *           if {@code value} is undefined.
+   */
+  public static <T> T requireElement(@Nullable T value, @Nullable Object ref) {
+    return requireElement(value, ref, null);
+  }
+
+  /**
+   * Requires the value is not null.
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @param ref
+   *          Reference associated to {@code value} (for example, its key).
+   * @param description
+   *          Value description (for example, its meaning as an element, such as the name of the
+   *          aggregation it belongs to).
+   * @return {@code value}
+   * @throws NoSuchElementException
+   *           if {@code value} is undefined.
+   */
+  public static <T> T requireElement(@Nullable T value, @Nullable Object ref,
+      @Nullable String description) throws NoSuchElementException {
+    if (value != null)
+      return value;
+
+    throw missing(ref, description);
+  }
+
+  /**
    * Requires the value matches the other one.
    *
    * @param value
@@ -448,42 +504,6 @@ public final class Conditions {
       return value;
 
     throw wrongArg(name, value, "MUST NOT be blank");
-  }
-
-  /**
-   * Requires the value is not null.
-   *
-   * @param <T>
-   *          Value type.
-   * @param value
-   *          Value to validate.
-   * @return {@code value}
-   * @throws NoSuchElementException
-   *           if {@code value} is undefined.
-   */
-  public static <T> T requirePresent(@Nullable T value) throws NoSuchElementException {
-    return requirePresent(value, null);
-  }
-
-  /**
-   * Requires the value is not null.
-   *
-   * @param <T>
-   *          Value type.
-   * @param value
-   *          Value to validate.
-   * @param ref
-   *          Reference associated to {@code value} (for example, its key).
-   * @return {@code value}
-   * @throws NoSuchElementException
-   *           if {@code value} is undefined.
-   */
-  public static <T> T requirePresent(@Nullable T value, @Nullable Object ref)
-      throws NoSuchElementException {
-    if (value != null)
-      return value;
-
-    throw missing(ref);
   }
 
   /**

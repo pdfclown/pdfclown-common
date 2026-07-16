@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.internal.temp.util;
 
 import static java.util.Collections.singletonList;
+import static org.pdfclown.common.util.Exceptions.missing;
 import static org.pdfclown.common.util.Exceptions.missingPath;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -245,6 +247,62 @@ public final class Conditions {
   }
 
   /**
+   * Requires the value is not null.
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws NoSuchElementException
+   *           if {@code value} is undefined.
+   */
+  public static <T> T requireElement(@Nullable T value) throws NoSuchElementException {
+    return requireElement(value, null, null);
+  }
+
+  /**
+   * Requires the value is not null.
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @param ref
+   *          Reference associated to {@code value} (for example, its key).
+   * @return {@code value}
+   * @throws NoSuchElementException
+   *           if {@code value} is undefined.
+   */
+  public static <T> T requireElement(@Nullable T value, @Nullable Object ref) {
+    return requireElement(value, ref, null);
+  }
+
+  /**
+   * Requires the value is not null.
+   *
+   * @param <T>
+   *          Value type.
+   * @param value
+   *          Value to validate.
+   * @param ref
+   *          Reference associated to {@code value} (for example, its key).
+   * @param description
+   *          Value description (for example, its meaning as an element, such as the name of the
+   *          aggregation it belongs to).
+   * @return {@code value}
+   * @throws NoSuchElementException
+   *           if {@code value} is undefined.
+   */
+  public static <T> T requireElement(@Nullable T value, @Nullable Object ref,
+      @Nullable String description) throws NoSuchElementException {
+    if (value != null)
+      return value;
+
+    throw missing(ref, description);
+  }
+
+  /**
    * Requires the value matches the other one.
    *
    * @param value
@@ -453,9 +511,9 @@ public final class Conditions {
   /**
    * Requires the value is not null.
    * <p>
-   * This method is the state counterpart of {@link Objects#requireNonNull(Object)}: contrary to the
-   * latter (which is primarily for input validation), it is designed for doing <b>output
-   * validation</b> in accessors, as demonstrated below:
+   * This method is the state counterpart of {@link java.util.Objects#requireNonNull(Object)}:
+   * contrary to the latter (which is primarily for input validation), it is designed for doing
+   * <b>output validation</b> in accessors, as demonstrated below:
    * </p>
    * <pre class="lang-java"><code>
    * public Bar getBar() {
@@ -471,7 +529,7 @@ public final class Conditions {
    * @return {@code value}
    * @throws IllegalStateException
    *           if {@code value} is {@code null}.
-   * @see Objects#requireNonNull(Object)
+   * @see java.util.Objects#requireNonNull(Object)
    */
   public static <T> T requireState(@Nullable T value) {
     if (value == null)
