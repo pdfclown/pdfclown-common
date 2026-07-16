@@ -22,6 +22,7 @@ import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
@@ -67,7 +68,9 @@ public class FunctionsTest extends BaseTest {
       // Non-null, invalid
       "hello",
       // Non-null, valid
-      42);;
+      42);
+  public static final Predicate<Object> PREDICATE =
+      $ -> (Integer) $ /* Fails if type mismatch */ > 0;
   /**
    * Suppliers covering both non-null and null return values.
    *
@@ -141,6 +144,24 @@ public class FunctionsTest extends BaseTest {
 
     assertThat(exceptionRef.get(), instanceOf(IllegalStateException.class));
     assertThat(exceptionRef.get().getMessage(), is("FAILED"));
+  }
+
+  @Test
+  void test() {
+    COMBINATION.verify(
+        (obj) -> Functions.test(obj, PREDICATE),
+        List.of("obj"),
+        // obj
+        OBJS);
+  }
+
+  @Test
+  void testElseTrue() {
+    COMBINATION.verify(
+        (obj) -> Functions.testElseTrue(obj, PREDICATE),
+        List.of("obj"),
+        // obj
+        OBJS);
   }
 
   @Test
@@ -224,6 +245,24 @@ public class FunctionsTest extends BaseTest {
     var ret = Functions.tryGetElse(() -> "RESULT", "ALT");
 
     assertThat(ret, is("RESULT"));
+  }
+
+  @Test
+  void tryTest() {
+    COMBINATION.verify(
+        (obj) -> Functions.tryTest(obj, PREDICATE::test),
+        List.of("obj"),
+        // obj
+        OBJS);
+  }
+
+  @Test
+  void tryTestElseTrue() {
+    COMBINATION.verify(
+        (obj) -> Functions.tryTestElseTrue(obj, PREDICATE::test),
+        List.of("obj"),
+        // obj
+        OBJS);
   }
 
   @Test

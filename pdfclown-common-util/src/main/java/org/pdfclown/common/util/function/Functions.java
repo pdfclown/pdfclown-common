@@ -165,6 +165,9 @@ public final class Functions {
 
   /**
    * Tests an object, if defined.
+   * <p>
+   * Complementary to {@link #testElseTrue(Object, Predicate)}.
+   * </p>
    *
    * @param <T>
    *          Object type.
@@ -172,10 +175,30 @@ public final class Functions {
    *          Object to test.
    * @param predicate
    *          Predicate to apply.
+   * @return {@code true}, if {@code obj} is defined and {@code predicate} is true itself.
    * @see #tryTest(Object, FailablePredicate)
    */
   public static <T> boolean test(@Nullable T obj, Predicate<? super T> predicate) {
     return obj != null && predicate.test(obj);
+  }
+
+  /**
+   * Tests an object, if defined.
+   * <p>
+   * Complementary to {@link #test(Object, Predicate)}.
+   * </p>
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to test.
+   * @param predicate
+   *          Predicate to apply.
+   * @return {@code true}, if {@code obj} is undefined or {@code predicate} is true itself.
+   * @see #tryTestElseTrue(Object, FailablePredicate)
+   */
+  public static <T> boolean testElseTrue(@Nullable T obj, Predicate<? super T> predicate) {
+    return obj == null || predicate.test(obj);
   }
 
   /**
@@ -319,22 +342,37 @@ public final class Functions {
 
   /**
    * Quietly tests an object, if defined.
+   * <p>
+   * Complementary to {@link #tryTestElseTrue(Object, FailablePredicate)}.
+   * </p>
    *
    * @param obj
    *          Object to test.
    * @param predicate
    *          Predicate to apply.
+   * @return {@code true}, if {@code obj} is defined and {@code predicate} is true itself.
    * @see #test(Object, Predicate)
    */
   public static <T> boolean tryTest(@Nullable T obj, FailablePredicate<? super T, ?> predicate) {
-    if (obj != null) {
-      try {
-        return predicate.test(obj);
-      } catch (Throwable ex) {
-        //NOP
-      }
-    }
-    return false;
+    return doTryTestElse(obj, predicate, false);
+  }
+
+  /**
+   * Quietly tests an object, if defined.
+   * <p>
+   * Complementary to {@link #tryTest(Object, FailablePredicate)}.
+   * </p>
+   *
+   * @param obj
+   *          Object to test.
+   * @param predicate
+   *          Predicate to apply.
+   * @return {@code true}, if {@code obj} is undefined or {@code predicate} is true itself.
+   * @see #testElseTrue(Object, Predicate)
+   */
+  public static <T> boolean tryTestElseTrue(@Nullable T obj,
+      FailablePredicate<? super T, ?> predicate) {
+    return doTryTestElse(obj, predicate, true);
   }
 
   /**
@@ -428,6 +466,18 @@ public final class Functions {
       Supplier<? extends @Nullable R> defaultSupplier) {
     R ret;
     return (ret = tryTo(obj, mapper)) != null ? ret : defaultSupplier.get();
+  }
+
+  private static <T> boolean doTryTestElse(@Nullable T obj,
+      FailablePredicate<? super T, ?> predicate, boolean defaultResult) {
+    if (obj != null) {
+      try {
+        return predicate.test(obj);
+      } catch (Throwable ex) {
+        return false;
+      }
+    }
+    return defaultResult;
   }
 
   private Functions() {
