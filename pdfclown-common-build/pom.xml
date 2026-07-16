@@ -138,6 +138,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <!-- Support to legacy (JUnit 4) tests -->
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
@@ -191,6 +196,31 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>default-compile</id>
+              <configuration>
+                <compilerArgs
+                    combine.children="append">
+                  <arg>-Alog4j.graalvm.groupId=${project.groupId}</arg>
+                  <arg>-Alog4j.graalvm.artifactId=${project.artifactId}</arg>
+                </compilerArgs>
+
+                <annotationProcessorPaths
+                    combine.children="append">
+                  <path>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                  </path>
+                </annotationProcessorPaths>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
           <configuration>

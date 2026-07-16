@@ -42,6 +42,7 @@ import org.apache.commons.lang3.function.FailableFunction;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.pdfclown.common.build.system.LogManager;
 import org.pdfclown.common.build.util.system.Builds;
 import org.pdfclown.common.util.ParamMessage;
 import org.slf4j.Logger;
@@ -254,22 +255,22 @@ public abstract class Asserter {
             To retry, enter this command:
               mvn verify -pl {} -Dtest={}
             To confirm the actual changes as expected, enter this command:
-              mvn verify -pl {} -D{} -Dtest={}
+              mvn verify -pl {} -Dtest={} -D{}
             """,
         expectedFile + (exists(expectedFile) ? EMPTY : " (MISSING)"),
         actualFile + (exists(actualFile) ? EMPTY : " (MISSING)"),
         projectArtifactId, textLiteral(testName),
-        projectArtifactId, SYSTEM_PROPERTY__UPDATE_EXPECTED, textLiteral(testName));
+        projectArtifactId, textLiteral(testName), SYSTEM_PROPERTY__UPDATE_EXPECTED);
 
     // Log (full message).
     getLog().error(MARKER__VERBOSE, "{}" + LF + "{}", message, hint);
 
     // Exception (shortened message).
-    throw new AssertionError(
-        """
-            %s
-            (see pdfclown/assertion.log for further information)
-            %s""".formatted(abbreviateMultiline(message, 5, 500), hint));
+    throw new AssertionError("""
+        %s
+        (see '%s' for further information)
+        %s""".formatted(abbreviateMultiline(message, 5, 500),
+        LogManager.getLogFiles().get(LogManager.APPENDER_NAME__ASSERTION), hint));
   }
 
   /**

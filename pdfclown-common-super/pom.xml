@@ -1495,7 +1495,11 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                   <goal>test-jar</goal>
                 </goals>
                 <configuration>
-                  <includes>${testJarFiles},${testJarResources}</includes>
+                  <includes>
+                    <include>${testJarFiles}</include>
+                    <include>META-INF/**</include>
+                    <include>${testJarResources}</include>
+                  </includes>
                 </configuration>
               </execution>
             </executions>
@@ -1511,7 +1515,9 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                   <goal>test-jar-no-fork</goal>
                 </goals>
                 <configuration>
-                  <includes>${testJarFiles}</includes>
+                  <includes>
+                    <include>${testJarFiles}</include>
+                  </includes>
                 </configuration>
               </execution>
             </executions>
