@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Aggregation.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (Collective.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -15,7 +15,7 @@ package org.pdfclown.common.util.collect;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Element aggregation.
+ * A plurality of elements.
  * <p>
  * Common interface bridging collections with maps.
  * </p>
@@ -24,10 +24,36 @@ import org.jspecify.annotations.Nullable;
  *          Element type.
  * @author Stefano Chizzolini
  */
-public interface Aggregation<E extends @Nullable Object> extends Iterable<E> {
+public interface Collective<E extends @Nullable Object> extends Iterable<E> {
+  /**
+   * Removes all the elements from this collective.
+   *
+   * @throws UnsupportedOperationException
+   *           if this operation is not supported.
+   */
+  void clear();
+
+  /**
+   * Whether this collective contains no element.
+   */
   default boolean isEmpty() {
     return size() == 0;
   }
 
+  /**
+   * Fluent {@link #clear() clear}.
+   *
+   * @return Self.
+   * @throws UnsupportedOperationException
+   *           if this operation is not supported.
+   */
+  default Collective<E> none() {
+    clear();
+    return this;
+  }
+
+  /**
+   * Number of elements in this collective.
+   */
   int size();
 }

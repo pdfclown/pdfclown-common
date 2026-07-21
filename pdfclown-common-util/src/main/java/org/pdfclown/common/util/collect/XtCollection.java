@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
  *          Element type.
  * @author Stefano Chizzolini
  */
-public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>, Collection<E> {
+public interface XtCollection<E extends @Nullable Object> extends Collective<E>, Collection<E> {
   /**
    * Appends an array of elements.
    *
@@ -33,6 +33,46 @@ public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>
    */
   default boolean addAll(E[] a) {
     return Collections.addAll(this, a);
+  }
+
+  /**
+   * Fluent {@link #add(Object) add}.
+   *
+   * @return Self.
+   */
+  default XtCollection<E> and(E e) {
+    add(e);
+    return this;
+  }
+
+  /**
+   * Fluent {@link #addAll(Collection) addAll}.
+   *
+   * @return Self.
+   */
+  default XtCollection<E> andAll(Collection<? extends E> c) {
+    addAll(c);
+    return this;
+  }
+
+  /**
+   * Fluent {@link #remove(Object) remove}.
+   *
+   * @return Self.
+   */
+  default XtCollection<E> but(E e) {
+    remove(e);
+    return this;
+  }
+
+  /**
+   * Fluent {@link #removeAll(Collection) removeAll}.
+   *
+   * @return Self.
+   */
+  default XtCollection<E> butAll(Collection<?> c) {
+    removeAll(c);
+    return this;
   }
 
   /**
@@ -63,7 +103,22 @@ public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>
 
   @Override
   default boolean isEmpty() {
-    return Aggregation.super.isEmpty();
+    return Collective.super.isEmpty();
+  }
+
+  @Override
+  default XtCollection<E> none() {
+    return (XtCollection<E>) Collective.super.none();
+  }
+
+  /**
+   * Fluent {@link #retainAll(Collection) retainAll}.
+   *
+   * @return Self.
+   */
+  default XtCollection<E> onlyAll(Collection<?> c) {
+    retainAll(c);
+    return this;
   }
 
   @Override
@@ -75,55 +130,5 @@ public interface XtCollection<E extends @Nullable Object> extends Aggregation<E>
       }
     }
     return ret;
-  }
-
-  /**
-   * Fluent {@link #add(Object) add}.
-   *
-   * @return Self.
-   */
-  default XtCollection<E> with(E e) {
-    add(e);
-    return this;
-  }
-
-  /**
-   * Fluent {@link #addAll(Collection) addAll}.
-   *
-   * @return Self.
-   */
-  default XtCollection<E> withAll(Collection<? extends E> c) {
-    addAll(c);
-    return this;
-  }
-
-  /**
-   * Fluent {@link #remove(Object) remove}.
-   *
-   * @return Self.
-   */
-  default XtCollection<E> without(E e) {
-    remove(e);
-    return this;
-  }
-
-  /**
-   * Fluent {@link #removeAll(Collection) removeAll}.
-   *
-   * @return Self.
-   */
-  default XtCollection<E> withoutAll(Collection<?> c) {
-    removeAll(c);
-    return this;
-  }
-
-  /**
-   * Fluent {@link #clear() clear}.
-   *
-   * @return Self.
-   */
-  default XtCollection<E> withoutAny() {
-    clear();
-    return this;
   }
 }

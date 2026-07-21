@@ -22,7 +22,7 @@ import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import static org.pdfclown.common.build.test.assertion.Verifiers.TUPLE;
 import static org.pdfclown.common.build.util.Tuple.tuple;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.collect.Aggregations.map;
+import static org.pdfclown.common.util.collect.Collectives.map;
 import static org.pdfclown.common.util.collect.Comparators.hierarchicalType;
 
 import java.io.Serial;
@@ -565,14 +565,14 @@ class ObjectsTest extends BaseTest {
                 Set.of("yellow", "green", "blue", "red", "pink", "magenta"),
                 // map
                 map()
-                    .with("yellow", null)
-                    .with("green", 1)
-                    .with("blue", -0.123456789)
-                    .with("black", Double.POSITIVE_INFINITY)
-                    .with("white", Float.NaN)
-                    .with("red", '2')
-                    .with("pink", true)
-                    .with("magenta", Set.of("yellow", "green", "blue", "red", "pink", "magenta")),
+                    .and("yellow", null)
+                    .and("green", 1)
+                    .and("blue", -0.123456789)
+                    .and("black", Double.POSITIVE_INFINITY)
+                    .and("white", Float.NaN)
+                    .and("red", '2')
+                    .and("pink", true)
+                    .and("magenta", Set.of("yellow", "green", "blue", "red", "pink", "magenta")),
                 // any other object (hexadecimal hash code suffix)
                 new ToStringObject("MyObject@16fdec90")));
   }

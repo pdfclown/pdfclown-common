@@ -25,37 +25,37 @@ import org.jspecify.annotations.Nullable;
  */
 public interface XtSet<E extends @Nullable Object> extends Set<E>, XtCollection<E> {
   @Override
+  default XtSet<E> and(E e) {
+    return (XtSet<E>) XtCollection.super.and(e);
+  }
+
+  @Override
+  default XtSet<E> andAll(Collection<? extends E> c) {
+    return (XtSet<E>) XtCollection.super.andAll(c);
+  }
+
+  @Override
+  default XtSet<E> but(E e) {
+    return (XtSet<E>) XtCollection.super.but(e);
+  }
+
+  @Override
+  default XtSet<E> butAll(Collection<?> c) {
+    return (XtSet<E>) XtCollection.super.butAll(c);
+  }
+
+  @Override
   default boolean isEmpty() {
     return XtCollection.super.isEmpty();
   }
 
   @Override
+  default XtSet<E> none() {
+    return (XtSet<E>) XtCollection.super.none();
+  }
+
+  @Override
   default boolean removeAll(Collection<?> c) {
     return XtCollection.super.removeAll(c);
-  }
-
-  @Override
-  default XtSet<E> with(E e) {
-    return (XtSet<E>) XtCollection.super.with(e);
-  }
-
-  @Override
-  default XtSet<E> withAll(Collection<? extends E> c) {
-    return (XtSet<E>) XtCollection.super.withAll(c);
-  }
-
-  @Override
-  default XtSet<E> without(E e) {
-    return (XtSet<E>) XtCollection.super.without(e);
-  }
-
-  @Override
-  default XtSet<E> withoutAll(Collection<?> c) {
-    return (XtSet<E>) XtCollection.super.withoutAll(c);
-  }
-
-  @Override
-  default XtSet<E> withoutAny() {
-    return (XtSet<E>) XtCollection.super.withoutAny();
   }
 }

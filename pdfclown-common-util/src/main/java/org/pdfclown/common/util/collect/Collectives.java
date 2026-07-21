@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Aggregations.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (Collectives.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -41,11 +41,11 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Unmodifiable;
 
 /**
- * Aggregation (that is, collection or map) utilities.
+ * Plurality (that is, collection or map) utilities.
  *
  * @author Stefano Chizzolini
  */
-public final class Aggregations {
+public final class Collectives {
   /**
    * Map-backed delegation set, safe for concurrent modifications.
    * <p>
@@ -987,6 +987,6 @@ public final class Aggregations {
             }));
   }
 
-  private Aggregations() {
+  private Collectives() {
   }
 }

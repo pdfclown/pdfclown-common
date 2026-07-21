@@ -49,18 +49,94 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
     return !c.isEmpty();
   }
 
+  @Override
+  default XtList<E> and(E e) {
+    return (XtList<E>) XtCollection.super.and(e);
+  }
+
+  /**
+   * Fluent {@link #add(int, Object) add}.
+   *
+   * @return Self.
+   */
+  default XtList<E> and(int index, E e) {
+    add(index, e);
+    return this;
+  }
+
+  @Override
+  default XtList<E> andAll(Collection<? extends E> c) {
+    return (XtList<E>) XtCollection.super.andAll(c);
+  }
+
+  /**
+   * Fluent {@link #place(int, Object) place}.
+   *
+   * @return Self.
+   */
+  default XtList<E> anyway(int index, E e) {
+    place(index, e);
+    return this;
+  }
+
+  @Override
+  default XtList<E> but(E e) {
+    return (XtList<E>) XtCollection.super.but(e);
+  }
+
+  /**
+   * Fluent {@link #remove(int) remove}.
+   *
+   * @return Self.
+   */
+  default XtList<E> but(int index) {
+    remove(index);
+    return this;
+  }
+
+  @Override
+  default XtList<E> butAll(Collection<?> c) {
+    return (XtList<E>) XtCollection.super.butAll(c);
+  }
+
+  /**
+   * Fluent {@link #removeFirst() removeFirst}.
+   *
+   * @return Self.
+   */
+  default XtList<E> butFirst() {
+    removeFirst();
+    return this;
+  }
+
+  /**
+   * Fluent {@link #removeLast() removeLast}.
+   *
+   * @return Self.
+   */
+  default XtList<E> butLast() {
+    removeLast();
+    return this;
+  }
+
+  /**
+   * Fluent {@link #poll(int) poll}.
+   *
+   * @return Self.
+   */
+  default XtList<E> butMaybe(int index) {
+    poll(index);
+    return this;
+  }
+
   /**
    * {@linkplain #peek(int) Safe getter} which, in case of undefined element,
    * {@linkplain #place(int, Object) sets} it with the provided one.
    *
-   * @param index
-   *          Index of the element to return.
-   * @param provider
-   *          Element provider.
    * @return Element at {@code index}, possibly provided by {@code provider} if undefined.
    */
   default E computeIfAbsent(int index, Function<Integer, ? extends E> provider) {
-    return Aggregations.computeIfAbsent(this, index, provider);
+    return Collectives.computeIfAbsent(this, index, provider);
   }
 
   /**
@@ -84,7 +160,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    *          The action to be performed for each element.
    */
   default void forEach(ObjIntConsumer<E> action) {
-    Aggregations.forEach(this, action);
+    Collectives.forEach(this, action);
   }
 
   /**
@@ -113,9 +189,24 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
     return get(size() - 1);
   }
 
+  /**
+   * Fluent {@link #set(int, Object) set}.
+   *
+   * @return Self.
+   */
+  default XtList<E> instead(int index, E e) {
+    set(index, e);
+    return this;
+  }
+
   @Override
   default boolean isEmpty() {
     return XtCollection.super.isEmpty();
+  }
+
+  @Override
+  default XtList<E> none() {
+    return (XtList<E>) XtCollection.super.none();
   }
 
   /**
@@ -126,7 +217,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @return Element at {@code index}, or {@code null}, if index is out of bounds.
    */
   default @Nullable E peek(int index) {
-    return Aggregations.peek(this, index);
+    return Collectives.peek(this, index);
   }
 
   /**
@@ -164,7 +255,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @see #set(int, Object)
    */
   default @Nullable E place(int index, E e) {
-    return Aggregations.place(this, index, e);
+    return Collectives.place(this, index, e);
   }
 
   /**
@@ -175,7 +266,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @return Removed element, or {@code null}, if {@code index} is out of bounds.
    */
   default @Nullable E poll(int index) {
-    return Aggregations.poll(this, index);
+    return Collectives.poll(this, index);
   }
 
   /**
@@ -250,81 +341,6 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @return Self.
    */
   default XtList<E> size(int value, E e) {
-    return Aggregations.size(this, value, e);
-  }
-
-  @Override
-  default XtList<E> with(E e) {
-    return (XtList<E>) XtCollection.super.with(e);
-  }
-
-  /**
-   * Fluent {@link #add(int, Object) add}.
-   *
-   * @return Self.
-   */
-  default XtList<E> with(int index, E e) {
-    add(index, e);
-    return this;
-  }
-
-  @Override
-  default XtList<E> withAll(Collection<? extends E> c) {
-    return (XtList<E>) XtCollection.super.withAll(c);
-  }
-
-  @Override
-  default XtList<E> without(E e) {
-    return (XtList<E>) XtCollection.super.without(e);
-  }
-
-  /**
-   * Fluent {@link #remove(int) remove}.
-   *
-   * @return Self.
-   */
-  default XtList<E> without(int index) {
-    remove(index);
-    return this;
-  }
-
-  @Override
-  default XtList<E> withoutAll(Collection<?> c) {
-    return (XtList<E>) XtCollection.super.withoutAll(c);
-  }
-
-  @Override
-  default XtList<E> withoutAny() {
-    return (XtList<E>) XtCollection.super.withoutAny();
-  }
-
-  /**
-   * Fluent {@link #poll(int) poll}.
-   *
-   * @return Self.
-   */
-  default XtList<E> withoutTry(int index) {
-    poll(index);
-    return this;
-  }
-
-  /**
-   * Fluent {@link #place(int, Object) place}.
-   *
-   * @return Self.
-   */
-  default XtList<E> withPlace(int index, E e) {
-    place(index, e);
-    return this;
-  }
-
-  /**
-   * Fluent {@link #set(int, Object) set}.
-   *
-   * @return Self.
-   */
-  default XtList<E> withReplace(int index, E e) {
-    set(index, e);
-    return this;
+    return Collectives.size(this, value, e);
   }
 }

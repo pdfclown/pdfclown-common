@@ -31,7 +31,37 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public interface XtMap<K extends @Nullable Object, V>
-    extends Aggregation<Entry<K, V>>, Map<K, V> {
+    extends Collective<Entry<K, V>>, Map<K, V> {
+  /**
+   * Fluent {@link #put(Object, Object) put}.
+   *
+   * @return Self.
+   */
+  default XtMap<K, V> and(K key, @Nullable V value) {
+    put(key, value);
+    return this;
+  }
+
+  /**
+   * Fluent {@link #putAll(Map) putAll}.
+   *
+   * @return Self.
+   */
+  default XtMap<K, V> andAll(Map<? extends K, ? extends @Nullable V> m) {
+    putAll(m);
+    return this;
+  }
+
+  /**
+   * Fluent {@link #remove(Object) remove}.
+   *
+   * @return Self.
+   */
+  default XtMap<K, V> but(K key) {
+    remove(key);
+    return this;
+  }
+
   /**
    * Gets whether any of the keys exists.
    *
@@ -140,17 +170,22 @@ public interface XtMap<K extends @Nullable Object, V>
                                          sense, as the target `V` parameter of
                                          `Aggregations::getKey` is nullable too */)
   default @Nullable K getKey(V value) {
-    return Aggregations.getKey(this, value);
+    return Collectives.getKey(this, value);
   }
 
   @Override
   default boolean isEmpty() {
-    return Aggregation.super.isEmpty();
+    return Collective.super.isEmpty();
   }
 
   @Override
   default Iterator<Map.Entry<K, V>> iterator() {
     return entrySet().iterator();
+  }
+
+  @Override
+  default XtMap<K, V> none() {
+    return (XtMap<K, V>) Collective.super.none();
   }
 
   /**
@@ -165,25 +200,5 @@ public interface XtMap<K extends @Nullable Object, V>
     for (var e : m.entrySet()) {
       put(e.getKey(), e.getValue());
     }
-  }
-
-  /**
-   * Fluent {@link #put(Object, Object) put}.
-   *
-   * @return Self.
-   */
-  default XtMap<K, V> with(K key, @Nullable V value) {
-    put(key, value);
-    return this;
-  }
-
-  /**
-   * Fluent {@link #remove(Object) remove}.
-   *
-   * @return Self.
-   */
-  default XtMap<K, V> without(K key) {
-    remove(key);
-    return this;
   }
 }

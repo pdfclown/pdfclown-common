@@ -23,14 +23,14 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
-class AggregationsTest extends BaseTest {
+class CollectivesTest extends BaseTest {
   @Test
   void addAll_array() {
     var obj = new ArrayList<>();
     obj.add("A");
     obj.add("B");
 
-    Aggregations.addAll(obj, 1, new Object[] { "C", "D", "E" });
+    Collectives.addAll(obj, 1, new Object[] { "C", "D", "E" });
     assertThat(obj.size(), is(5));
     assertThat(obj.get(0), is("A"));
     assertThat(obj.get(1), is("C"));
@@ -50,7 +50,7 @@ class AggregationsTest extends BaseTest {
     /*
      * List upper-bound expansion.
      */
-    Aggregations.place(obj, 4, "D");
+    Collectives.place(obj, 4, "D");
     assertThat(obj.size(), is(5));
     assertThat(obj.get(3), is(nullValue()));
     assertThat(obj.get(4), is("D"));
@@ -58,7 +58,7 @@ class AggregationsTest extends BaseTest {
     /*
      * List lower-bound expansion.
      */
-    Aggregations.place(obj, -2, "E");
+    Collectives.place(obj, -2, "E");
     assertThat(obj.size(), is(7));
     assertThat(obj.get(0), is("E"));
     assertThat(obj.get(1), is(nullValue()));

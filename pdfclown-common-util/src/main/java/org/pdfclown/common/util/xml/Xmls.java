@@ -65,7 +65,7 @@ import javax.xml.xpath.XPathVariableResolver;
 import org.apache.commons.lang3.function.FailableBiConsumer;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Immutable;
-import org.pdfclown.common.util.collect.Aggregations;
+import org.pdfclown.common.util.collect.Collectives;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -497,7 +497,7 @@ public final class Xmls {
 
       @Override
       public @Nullable String getPrefix(String namespaceURI) {
-        return Aggregations.getKey(base, requireNonNull(namespaceURI));
+        return Collectives.getKey(base, requireNonNull(namespaceURI));
       }
 
       @Override
