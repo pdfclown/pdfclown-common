@@ -296,6 +296,8 @@ public final class Files {
   private static final Pattern PATTERN__FULL_EXTENSION = Pattern.compile("(\\.\\D[^.\\\\/]+)+$");
 
   public static final String FILE_EXTENSION__CSS = DOT + "css";
+  public static final String FILE_EXTENSION__CSV = DOT + "csv";
+  public static final String FILE_EXTENSION__DAT = DOT + "dat";
   public static final String FILE_EXTENSION__GROOVY = DOT + "groovy";
   public static final String FILE_EXTENSION__HTML = DOT + "html";
   public static final String FILE_EXTENSION__JAVA = DOT + "java";
@@ -304,7 +306,9 @@ public final class Files {
   public static final String FILE_EXTENSION__JSON = DOT + "json";
   public static final String FILE_EXTENSION__PDF = DOT + "pdf";
   public static final String FILE_EXTENSION__PNG = DOT + "png";
+  public static final String FILE_EXTENSION__PROPERTIES = DOT + "properties";
   public static final String FILE_EXTENSION__SVG = DOT + "svg";
+  public static final String FILE_EXTENSION__TMP = DOT + "tmp";
   public static final String FILE_EXTENSION__TXT = DOT + "txt";
   public static final String FILE_EXTENSION__XML = DOT + "xml";
   public static final String FILE_EXTENSION__XSD = DOT + "xsd";

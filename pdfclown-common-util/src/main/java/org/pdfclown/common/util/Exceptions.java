@@ -16,6 +16,7 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.asRuntimeExcepti
 import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Chars.CURLY_BRACE_CLOSE;
 import static org.pdfclown.common.util.Chars.CURLY_BRACE_OPEN;
+import static org.pdfclown.common.util.Chars.DQUOTE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
@@ -27,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -35,6 +37,7 @@ import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.DependsOn.Dependency;
 import org.pdfclown.common.util.annot.PolyNull;
+import org.pdfclown.common.util.io.ResourceNotFoundException;
 
 /**
  * Exception utilities.
@@ -173,7 +176,61 @@ public final class Exceptions {
    *          Missing path.
    */
   public static FileNotFoundException missingPath(Path path) {
-    return new FileNotFoundException(ParamMessage.format("{} MISSING", path));
+    return missingPath(path, null);
+  }
+
+  /**
+   * Creates an exception for path not found.
+   *
+   * @param path
+   *          Missing path.
+   * @param description
+   *          Path description.
+   */
+  public static FileNotFoundException missingPath(Path path, @Nullable String description) {
+    var b = new StringBuilder();
+    if (description != null) {
+      b.append(description).append(SPACE).append(ROUND_BRACKET_OPEN);
+    } else {
+      b.append(DQUOTE);
+    }
+    b.append(path);
+    if (description != null) {
+      b.append(ROUND_BRACKET_CLOSE);
+    } else {
+      b.append(DQUOTE);
+    }
+    b.append(SPACE).append("NOT FOUND");
+    return new FileNotFoundException(b.toString());
+  }
+
+  /**
+   * Creates an exception for resource not found.
+   *
+   * @param uri
+   *          Missing resource.
+   */
+  public static ResourceNotFoundException missingResource(URI uri) {
+    return new ResourceNotFoundException(uri);
+  }
+
+  /**
+   * Creates an exception for resource not found.
+   *
+   * @param uri
+   *          Missing resource.
+   */
+  public static ResourceNotFoundException missingResource(URI uri, @Nullable String description) {
+    var b = new StringBuilder();
+    if (description != null) {
+      b.append(description).append(SPACE).append(ROUND_BRACKET_OPEN);
+    }
+    b.append(uri);
+    if (description != null) {
+      b.append(ROUND_BRACKET_CLOSE);
+    }
+    b.append(SPACE).append("NOT FOUND");
+    return new ResourceNotFoundException(uri, b.toString());
   }
 
   /**
