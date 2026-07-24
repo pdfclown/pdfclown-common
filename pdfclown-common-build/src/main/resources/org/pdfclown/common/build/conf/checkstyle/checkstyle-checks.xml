@@ -471,9 +471,13 @@
         value="Class type name ''{0}'' must match pattern ''{1}''."/>
     </module>
     <module name="RecordComponentName">
+      <!-- [CUSTOM] Allow any non-capitalized name. -->
       <property
         name="format"
-        value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>
+        value="^[a-z][a-zA-Z0-9]*$"/>
+<!--
+      <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>
+-->
       <message
         key="name.invalidPattern"
         value="Record component name ''{0}'' must match pattern ''{1}''."/>
