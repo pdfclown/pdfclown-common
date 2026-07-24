@@ -22,10 +22,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Indicates that the annotated method provides delayed initialization to non-null fields.
- * <p>
- * Useful for field initialization outside the constructor — for example [*]:
- * </p>
- * <pre class="lang-java"><code>
+ *
+ * @apiNote Useful for field initialization outside the constructor — for example [*]:
+ *          <pre class="lang-java"><code>
  * &#64;NullMarked
  * class MyClass {
  *   Object object;
@@ -39,11 +38,11 @@ import org.jspecify.annotations.Nullable;
  *     object = . . .;
  *   }
  * }</code></pre>
- * <p>
- * [*] NOTE: Since the support to this annotation by static analyzers is uneven, its semantics may
- * be ignored; consequently, corresponding nullness warnings have to be suppressed.
- * </p>
- *
+ *          <p>
+ *          [*] NOTE: Since the support to this annotation by static analyzers is uneven, its
+ *          semantics may be ignored; consequently, corresponding nullness warnings have to be
+ *          suppressed.
+ *          </p>
  * @author Stefano Chizzolini
  * @see MonotonicNonNull
  * @see Nullable

@@ -42,13 +42,11 @@ public interface ServiceProvider {
   /**
    * Retrieves all the providers of the type, whatever their {@link #isAvailable() availability},
    * sorted by {@link #getPriority() priority}.
-   * <p>
-   * Useful to reveal unavailable providers for diagnostic purposes.
-   * </p>
    *
    * @param <T>
    *          Provider type.
    * @return Stream sorted by ascending priority (the lower the priority, the better).
+   * @apiNote Useful to reveal unavailable providers for diagnostic purposes.
    */
   static <T extends ServiceProvider> Stream<T> discoverAll(Class<T> providerType) {
     return doDiscover(providerType);

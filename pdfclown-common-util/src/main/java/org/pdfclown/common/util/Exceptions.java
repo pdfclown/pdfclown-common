@@ -135,13 +135,11 @@ public final class Exceptions {
 
   /**
    * Verifies whether any dependency caused the given missing class exception.
-   * <p>
-   * Useful to gracefully notify the lack of optional dependencies the called element
-   * {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
-   * </p>
    *
    * @return {@link IllegalStateException}, if any item in {@code dependencies} is missing;
    *         otherwise, {@code ex}.
+   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
+   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
    */
   @SuppressWarnings("ReferenceEquality")
   public static RuntimeException missingClass(Collection<Dependency> dependencies,
@@ -157,12 +155,10 @@ public final class Exceptions {
 
   /**
    * Verifies whether the dependency caused the given missing class exception.
-   * <p>
-   * Useful to gracefully notify the lack of optional dependencies the called element
-   * {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
-   * </p>
    *
    * @return {@link IllegalStateException}, if {@code dependency} is missing; otherwise, {@code ex}.
+   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
+   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
    */
   public static RuntimeException missingClass(Dependency dependency, NoClassDefFoundError ex) {
     return asRuntimeException(dependency.isAvailable() ? ex
@@ -272,9 +268,6 @@ public final class Exceptions {
 
   /**
    * Creates an exception via factory.
-   * <p>
-   * Useful to leverage {@link ParamMessage} instead of explicitly formatting the exception message.
-   * </p>
    *
    * @param factory
    *          Instantiates the exception. Its input parameters are the standard ones supported by
@@ -290,6 +283,8 @@ public final class Exceptions {
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
    *          it is unwrapped). {@jada.reuseDoc END}
+   * @apiNote Useful to leverage {@link ParamMessage} instead of explicitly formatting the exception
+   *          message.
    */
   public static <T extends Throwable> T throwable(
       BiFunction<String, @Nullable Throwable, T> factory, @Nullable String format,

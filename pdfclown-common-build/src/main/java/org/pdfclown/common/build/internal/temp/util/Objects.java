@@ -1064,11 +1064,9 @@ public final class Objects {
    * {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
    * {@code "o.p.c.u.Objects$ClassXCastException"}).
    * </p>
-   * <p>
-   * Useful for repetitive messaging, like logs, where lengthy names become noisy.
-   * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @apiNote Useful for repetitive messaging, like logs, where lengthy names become noisy.
    * @see #sfqnd(Object)
    * @see #fqn(Object)
    * @see #sqn(Object)
@@ -1084,11 +1082,9 @@ public final class Objects {
    * {@code "org.pdfclown.common.util.Objects$ClassXCastException"} returns
    * {@code "o.p.c.u.Objects$ClassXCastException"}). No syntactic check is applied.
    * </p>
-   * <p>
-   * Useful for repetitive messaging, like logs, where lengthy names become noisy.
-   * </p>
    *
    * @return {@value Strings#NULL}, if {@code typeName} is undefined.
+   * @apiNote Useful for repetitive messaging, like logs, where lengthy names become noisy.
    * @see #sfqnd(String)
    * @see #sqn(String)
    */
@@ -1104,11 +1100,9 @@ public final class Objects {
    * with dots (for example, {@code org.pdfclown.common.util.Objects$ClassXCastException} returns
    * {@code "o.p.c.u.Objects.ClassXCastException"}).
    * </p>
-   * <p>
-   * Useful for repetitive messaging, like logs, where lengthy names become noisy.
-   * </p>
    *
    * @return {@value Strings#NULL}, if {@code obj} is undefined.
+   * @apiNote Useful for repetitive messaging, like logs, where lengthy names become noisy.
    * @see #sfqn(Object)
    * @see #fqnd(Object)
    * @see #sqnd(Object)
@@ -1125,11 +1119,9 @@ public final class Objects {
    * {@code "org.pdfclown.common.util.Objects$ClassXCastException"} returns
    * {@code "o.p.c.u.Objects.ClassXCastException"}). No syntactic check is applied.
    * </p>
-   * <p>
-   * Useful for repetitive messaging, like logs, where lengthy names become noisy.
-   * </p>
    *
    * @return {@value Strings#NULL}, if {@code typeName} is undefined.
+   * @apiNote Useful for repetitive messaging, like logs, where lengthy names become noisy.
    * @see #sfqn(String)
    * @see #fqnd(String)
    * @see #sqnd(String)
@@ -1248,9 +1240,6 @@ public final class Objects {
    * string representation, elements inclusive (in case of array, {@linkplain Collection collection}
    * or {@linkplain Map map}), normalized to ensure stability across executions and systems.
    * <p>
-   * Useful for test reproducibility.
-   * </p>
-   * <p>
    * Supported cases:
    * </p>
    * <ul>
@@ -1266,6 +1255,7 @@ public final class Objects {
    * </ul>
    *
    * @return Same as {@link #deepLiteral(Object)}, except stability.
+   * @apiNote Useful for test reproducibility.
    */
   public static String stableLiteral(@Nullable Object obj) {
     if (obj instanceof Float f) {
@@ -1459,9 +1449,6 @@ public final class Objects {
    * Gets the string representation of an object, normalized to ensure stability across executions
    * and systems.
    * <p>
-   * Useful for test reproducibility.
-   * </p>
-   * <p>
    * Supported cases:
    * </p>
    * <ul>
@@ -1475,6 +1462,8 @@ public final class Objects {
    * <li>any other object: the hexadecimal representation of the object's hash code
    * (<code>"@[0-9a-fA-F]+$"</code>, see {@link Object#toString()}) is removed</li>
    * </ul>
+   *
+   * @apiNote Useful for test reproducibility.
    */
   public static String toStringStable(@Nullable Object obj) {
     if (obj == null)

@@ -40,20 +40,18 @@ import org.slf4j.LoggerFactory;
  * Keys {@linkplain #put(Object, Object) explicitly defined} by users are <b>root keys</b>, whilst
  * <b>dynamic keys</b> are associated to the respective root keys through a chain of parent keys.
  * </p>
- * <p>
- * Useful, for example, in case of maps keyed hierarchically, like {@link Class}: adding an entry
- * for a certain class, all its subclasses will match the same entry value — an ordinary map would
- * match only the class explicitly associated to the entry.
- * </p>
  *
  * @param <K>
  *          Key type.
  * @param <V>
  *          Value type.
- * @author Stefano Chizzolini
+ * @apiNote Useful, for example, in case of maps keyed hierarchically, like {@link Class}: adding an
+ *          entry for a certain class, all its subclasses will match the same entry value — an
+ *          ordinary map would match only the class explicitly associated to the entry.
  * @implSpec Implementers MUST keep {@linkplain #putDynamic(Object, Object, Object) dynamic entries}
  *           apart from {@linkplain #put(Object, Object) user-defined ones}, in order to trace them
  *           back to their respective {@linkplain #getRootKey(Object) roots}.
+ * @author Stefano Chizzolini
  */
 @SuppressWarnings({ "serial" /* serialization is currently not a concern */, "unchecked" })
 public class DynamicMap<K, V> extends HashMap<K, V> {

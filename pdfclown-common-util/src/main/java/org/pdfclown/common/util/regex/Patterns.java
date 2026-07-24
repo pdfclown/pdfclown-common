@@ -58,12 +58,10 @@ public final class Patterns {
 
   /**
    * Gets the position where the match failed.
-   * <p>
-   * Useful to identify the failing point of single-match, format-constrained text.
-   * </p>
    *
    * @param matcher
    *          Matcher whose {@link Matcher#find() find()} failed.
+   * @apiNote Useful to identify the failing point of single-match, format-constrained text.
    */
   @SuppressWarnings("JdkObsolete")
   public static int indexOfMatchFailure(Matcher matcher) {

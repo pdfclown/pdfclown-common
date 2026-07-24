@@ -131,16 +131,17 @@ public final class Assertions {
   /**
    * Gets the absolute floating-point error tolerance with the minimum order of magnitude, enough to
    * pass the assertion.
-   * <p>
-   * Useful to quickly tune assertions in a robust manner, wherever
-   * {@linkplain Double#compare(double, double) exact} floating-point comparison is unsuitable.
-   * </p>
    *
    * @param assertWrap
    *          Lambda wrapping the assertion to probe.
-   * @apiNote To use it, wrap your assertion inside {@code assertWrap}, wiring its argument as the
-   *          delta of your assertion; for example, if the assertion
-   *          is:<pre class="lang-java"><code>
+   * @apiNote Useful to quickly tune assertions in a robust manner, wherever
+   *          {@linkplain Double#compare(double, double) exact} floating-point comparison is
+   *          unsuitable.
+   *          <p>
+   *          To use it, wrap your assertion inside {@code assertWrap}, wiring its argument as the
+   *          delta of your assertion; for example, if the assertion is:
+   *          </p>
+   *          <pre class="lang-java"><code>
    * assertEquals(myExpected, myActual, myDelta);</code></pre>
    *          <p>
    *          wrap it this way:

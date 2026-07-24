@@ -112,10 +112,6 @@ public final class Builds {
    * <p>
    * The first element is the build directory containing the compiled classes of the project.
    * </p>
-   * <p>
-   * Useful for debugging purposes, to run a project through its bare compiled classes, without
-   * packaging nor installation.
-   * </p>
    *
    * @param projectDir
    *          Base directory of the project.
@@ -134,6 +130,8 @@ public final class Builds {
    *           if {@code projectDir} does not exist.
    * @throws RuntimeException
    *           if the execution failed.
+   * @apiNote Useful for debugging purposes, to run a project through its bare compiled classes,
+   *          without packaging nor installation.
    */
   public static List<Path> classpath(Path projectDir, @Nullable String scope)
       throws FileNotFoundException {

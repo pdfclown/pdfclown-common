@@ -33,12 +33,11 @@ public final class Tests {
   /**
    * Gets the stack frame of the currently executing test.
    * <p>
-   * Useful to detect which test is currently executing.
-   * </p>
-   * <p>
    * Test detection is based on JUnit 5 annotations (see <b>test method</b> definition in
    * {@link Test @Test}).
    * </p>
+   *
+   * @apiNote Useful to detect which test is currently executing.
    */
   public static Optional<StackFrame> testFrame() {
     return Reflects.stackFrame($ -> Reflects.method($)

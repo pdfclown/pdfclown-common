@@ -32,14 +32,12 @@ import org.pdfclown.common.util.collect.DynamicMap.DynamicProvider;
  * Elements {@linkplain #add(Object) explicitly defined} by users are <b>root elements</b>, whilst
  * <b>dynamic elements</b> are associated to the respective roots through a chain of parents.
  * </p>
- * <p>
- * Useful, for example, in case of hierarchical sets, like {@link Class}: adding a certain class,
- * all its subclasses will be matched — an ordinary set would match only the class explicitly added
- * to the set.
- * </p>
  *
  * @param <E>
  *          Element type.
+ * @apiNote Useful, for example, in case of hierarchical sets, like {@link Class}: adding a certain
+ *          class, all its subclasses will be matched — an ordinary set would match only the class
+ *          explicitly added to the set.
  * @author Stefano Chizzolini
  */
 public class DynamicSet<E> extends AbstractSet<E>

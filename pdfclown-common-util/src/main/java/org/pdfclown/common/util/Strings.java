@@ -530,9 +530,8 @@ public final class Strings {
 
   /**
    * Converts the string to lower case using {@linkplain Locale#ROOT neutral} locale.
-   * <p>
-   * Useful for stable, context-insensitive conversion.
-   * </p>
+   *
+   * @apiNote Useful for stable, context-insensitive conversion.
    */
   public static String lcase(String s) {
     return s.toLowerCase(Locale.ROOT);
@@ -616,9 +615,8 @@ public final class Strings {
 
   /**
    * Converts the string to upper case using {@linkplain Locale#ROOT neutral} locale.
-   * <p>
-   * Useful for stable, context-insensitive conversion.
-   * </p>
+   *
+   * @apiNote Useful for stable, context-insensitive conversion.
    */
   public static String ucase(String s) {
     return s.toUpperCase(Locale.ROOT);

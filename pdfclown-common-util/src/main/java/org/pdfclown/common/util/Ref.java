@@ -18,12 +18,10 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Mutable wrapper.
- * <p>
- * Useful to mimic by-reference argument semantics.
- * </p>
  *
  * @param <T>
  *          Value type.
+ * @apiNote Useful to mimic by-reference argument semantics.
  * @author Stefano Chizzolini
  */
 public final class Ref<T> extends MutableObject<@Nullable T> {

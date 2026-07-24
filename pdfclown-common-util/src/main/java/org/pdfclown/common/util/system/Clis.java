@@ -400,12 +400,10 @@ public final class Clis {
 
   /**
    * Parses a directory.
-   * <p>
-   * Useful to convert textual references to filesystem resources (such as those coming from
-   * configuration files or command-line options) to their normalized absolute form.
-   * </p>
    *
    * @return {@code null}, if the directory does not exist.
+   * @apiNote Useful to convert textual references to filesystem resources (such as those coming
+   *          from configuration files or command-line options) to their normalized absolute form.
    * @see #parsePath(String)
    */
   public static @Nullable Path parseDir(String s) {
@@ -416,15 +414,13 @@ public final class Clis {
   /**
    * Parses a string as a stream of values.
    * <p>
-   * Useful to convert textual lists of references (such as those coming from configuration files or
-   * command-line options) to be transformed through {@link Stream}.
-   * </p>
-   * <p>
    * Values are trimmed and filtered out if empty.
    * </p>
    *
    * @param s
    *          String of comma- (or semicolon-) separated argument values.
+   * @apiNote Useful to convert textual lists of references (such as those coming from configuration
+   *          files or command-line options) to be transformed through {@link Stream}.
    * @see #parseListIncremental(String, Function, Collection)
    * @see #listArg(Iterable, Function)
    */
@@ -443,11 +439,6 @@ public final class Clis {
    * from the argument values are, respectively, appended or removed to/from {@code target};
    * otherwise, the elements replace the whole {@code target} contents.
    * </p>
-   * <p>
-   * Useful to convert textual lists of references (such as those coming from configuration files or
-   * command-line options) providing the flexibility to either modify the existing state or redefine
-   * it from scratch.
-   * </p>
    *
    * @param s
    *          String of comma- (or semicolon-) separated argument values. It can be prefixed by a
@@ -463,6 +454,9 @@ public final class Clis {
    * @param <C>
    *          Target collection type.
    * @return {@code target}
+   * @apiNote Useful to convert textual lists of references (such as those coming from configuration
+   *          files or command-line options) providing the flexibility to either modify the existing
+   *          state or redefine it from scratch.
    * @see #parseList(String)
    * @see #listArg(Iterable, Function)
    */
@@ -500,11 +494,9 @@ public final class Clis {
 
   /**
    * Parses a path, no matter whether it exists.
-   * <p>
-   * Useful to convert textual references to filesystem resources (such as those coming from
-   * configuration files or command-line options) to their normalized absolute form.
-   * </p>
    *
+   * @apiNote Useful to convert textual references to filesystem resources (such as those coming
+   *          from configuration files or command-line options) to their normalized absolute form.
    * @see #parseDir(String)
    */
   public static Path parsePath(String s) {
@@ -513,10 +505,6 @@ public final class Clis {
 
   /**
    * {@jada.reuseDoc} Parses the resource corresponding to the name.
-   * <p>
-   * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options).
-   * </p>
    * <p>
    * Supported sources:
    * </p>
@@ -532,6 +520,8 @@ public final class Clis {
    * @param name
    *          Resource name.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   * @apiNote Useful to convert textual references to resources (such as those coming from
+   *          configuration files or command-line options).
    */
   public static @Nullable Resource parseResource(String name) {
     return parseResource(name, null, null);
@@ -539,10 +529,6 @@ public final class Clis {
 
   /**
    * {@jada.reuseDoc} Parses the resource corresponding to the name.
-   * <p>
-   * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options).
-   * </p>
    * <p>
    * Supported sources:
    * </p>
@@ -560,6 +546,8 @@ public final class Clis {
    * @param cl
    *          Class loader for resource lookup. If undefined, the caller's class loader is used.
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   * @apiNote Useful to convert textual references to resources (such as those coming from
+   *          configuration files or command-line options).
    */
   public static @Nullable Resource parseResource(String name, ClassLoader cl) {
     return parseResource(name, cl, null);
@@ -567,10 +555,6 @@ public final class Clis {
 
   /**
    * {@jada.doc} Parses the resource corresponding to the name.
-   * <p>
-   * Useful to convert textual references to resources (such as those coming from configuration
-   * files or command-line options).
-   * </p>
    * <p>
    * Supported sources:
    * </p>
@@ -592,6 +576,8 @@ public final class Clis {
    *          they are resolved against the filesystem default directory (current working
    *          directory).
    * @return {@code null}, if the resource corresponding to {@code name} does not exist.
+   * @apiNote Useful to convert textual references to resources (such as those coming from
+   *          configuration files or command-line options).
    */
   public static @Nullable Resource parseResource(String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver) {

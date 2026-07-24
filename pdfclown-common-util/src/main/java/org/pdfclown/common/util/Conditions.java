@@ -43,10 +43,6 @@ import org.pdfclown.common.util.collect.Range;
 public final class Conditions {
   /**
    * Requires the value matches the validator.
-   * <p>
-   * Useful wherever inline code is syntactically impossible and calling a full-fledged validation
-   * method is inconvenient.
-   * </p>
    *
    * @param <T>
    *          Value type.
@@ -57,6 +53,8 @@ public final class Conditions {
    * @return {@code value}
    * @throws RuntimeException
    *           if {@code value} is invalid.
+   * @apiNote Useful wherever inline code is syntactically impossible and calling a full-fledged
+   *          validation method is inconvenient.
    */
   public static <T> @PolyNull @Nullable T require(@PolyNull @Nullable T value,
       Consumer<@Nullable T> validator) {
@@ -65,10 +63,6 @@ public final class Conditions {
 
   /**
    * Requires the value matches the validator.
-   * <p>
-   * Useful wherever inline code is syntactically impossible and calling a full-fledged validation
-   * method is inconvenient.
-   * </p>
    *
    * @param <T>
    *          Value type.
@@ -79,6 +73,8 @@ public final class Conditions {
    * @return {@code value}
    * @throws RuntimeException
    *           if {@code value} is invalid.
+   * @apiNote Useful wherever inline code is syntactically impossible and calling a full-fledged
+   *          validation method is inconvenient.
    */
   public static <T> @PolyNull @Nullable T require(@PolyNull @Nullable T value,
       Consumer<@Nullable T> validator, @Nullable String name) {
@@ -517,16 +513,14 @@ public final class Conditions {
    * public Bar getBar() {
    *   return requireState((Bar)getExternalResource("bar"));
    * }</code></pre>
-   * <p>
-   * Useful in case an accessor is expected to return a non-null reference, but depends on external
-   * state beyond its control, or on internal state available in specific phases of its containing
-   * object: if the caller tries to access it in a wrong moment, an {@link IllegalStateException} is
-   * thrown.
-   * </p>
    *
    * @return {@code value}
    * @throws IllegalStateException
    *           if {@code value} is {@code null}.
+   * @apiNote Useful in case an accessor is expected to return a non-null reference, but depends on
+   *          external state beyond its control, or on internal state available in specific phases
+   *          of its containing object: if the caller tries to access it in a wrong moment, an
+   *          {@link IllegalStateException} is thrown.
    * @see java.util.Objects#requireNonNull(Object)
    */
   public static <T> T requireState(@Nullable T value) {
@@ -558,10 +552,6 @@ public final class Conditions {
 
   /**
    * Requires the value is an instance of the type (or undefined), and casts it accordingly.
-   * <p>
-   * Useful anytime an argument is required to be cast to a subtype in spite of its declaration,
-   * such as in case of a specialized implementation of an interface.
-   * </p>
    *
    * @param <T>
    *          Value type.
@@ -574,6 +564,8 @@ public final class Conditions {
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
+   * @apiNote Useful anytime an argument is required to be cast to a subtype in spite of its
+   *          declaration, such as in case of a specialized implementation of an interface.
    * @implNote Undefined {@code value} is allowed in accordance with the {@code instanceof}
    *           operator.
    */
@@ -584,10 +576,6 @@ public final class Conditions {
 
   /**
    * Requires the value is an instance of the type (or undefined), and casts it accordingly.
-   * <p>
-   * Useful anytime an argument is required to be cast to a subtype in spite of its declaration,
-   * such as in case of a specialized implementation of an interface.
-   * </p>
    *
    * @param <T>
    *          Value type.
@@ -602,6 +590,8 @@ public final class Conditions {
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
+   * @apiNote Useful anytime an argument is required to be cast to a subtype in spite of its
+   *          declaration, such as in case of a specialized implementation of an interface.
    * @implNote Undefined {@code value} is allowed in accordance with the {@code instanceof}
    *           operator.
    */

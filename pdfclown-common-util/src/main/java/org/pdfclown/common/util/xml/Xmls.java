@@ -92,10 +92,8 @@ import org.xml.sax.SAXParseException;
 public final class Xmls {
   /**
    * Document factory profile.
-   * <p>
-   * Useful for common parsing configurations.
-   * </p>
    *
+   * @apiNote Useful for common parsing configurations.
    * @author Stefano Chizzolini
    */
   @SuppressWarnings("ImmutableEnumChecker")
@@ -655,9 +653,9 @@ public final class Xmls {
 
   /**
    * Default XPath.
-   * <p>
-   * Useful for simple evaluations, when neither namespaces nor custom functionalities are required.
-   * </p>
+   *
+   * @apiNote Useful for simple evaluations, when neither namespaces nor custom functionalities are
+   *          required.
    */
   @Immutable
   public static final XPath XPATH = new XPath(new javax.xml.xpath.XPath() {

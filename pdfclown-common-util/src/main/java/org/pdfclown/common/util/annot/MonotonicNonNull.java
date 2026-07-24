@@ -31,10 +31,8 @@ import org.jspecify.annotations.Nullable;
  * consequence, <i>the annotated field should NEVER be accessed directly until its accessor method
  * is called</i>.</span>
  * </p>
- * <p>
- * Useful for lazy field initialization — for example [*]:
- * </p>
- * <pre class="lang-java"><code>
+ *
+ * @apiNote Useful for lazy field initialization — for example [*]: <pre class="lang-java"><code>
  * &#64;NullMarked
  * class MyClass {
  *   &#64;MonotonicNonNull &#64;Nullable Object object;
@@ -54,12 +52,11 @@ import org.jspecify.annotations.Nullable;
  *     object = requireNonNull(value);
  *   }
  * }</code></pre>
- * <p>
- * <span class="important">[*] IMPORTANT: Since the support to this annotation by static analyzers
- * is uneven, its semantics may be ignored; consequently, <i>it MUST be accompanied by
- * {@link Nullable @Nullable}</i>.</span>
- * </p>
- *
+ *          <p>
+ *          <span class="important">[*] IMPORTANT: Since the support to this annotation by static
+ *          analyzers is uneven, its semantics may be ignored; consequently, <i>it MUST be
+ *          accompanied by {@link Nullable @Nullable}</i>.</span>
+ *          </p>
  * @author Stefano Chizzolini
  * @see Initializer
  * @see Nullable
