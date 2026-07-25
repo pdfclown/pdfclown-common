@@ -17,6 +17,7 @@ import static org.apache.commons.lang3.StringUtils.countMatches;
 import static org.apache.commons.lang3.StringUtils.indexOfDifference;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.SLASH;
+import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Strings.EMPTY;
@@ -27,11 +28,13 @@ import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.stream.Streams;
@@ -51,14 +54,34 @@ public final class Uris {
    */
   public static final String SCHEME__FILE = "file";
   /**
+   * Unencrypted <a href="https://en.wikipedia.org/wiki/HTTP">Hypertext Transfer Protocol
+   * ({@code HTTP})</a> scheme.
+   */
+  public static final String SCHEME__HTTP = "http";
+  /**
    * <a href="https://en.wikipedia.org/wiki/HTTPS">Hypertext Transfer Protocol Secure
-   * ({@code https})</a> scheme.
+   * ({@code HTTPS})</a> scheme.
    */
   public static final String SCHEME__HTTPS = "https";
   /**
    * {@link java.net.JarURLConnection jar} resource protocol.
    */
   public static final String SCHEME__JAR = "jar";
+
+  /**
+   * Gets the effective port number of the URI.
+   *
+   * @return {@link URI#getPort()} if defined, otherwise {@link URL#getDefaultPort()}.
+   * @throws RuntimeException
+   *           if {@code uri} is malformed.
+   */
+  public static int effectivePort(URI uri) {
+    try {
+      return uri.getPort() >= 0 ? uri.getPort() : uri.toURL().getDefaultPort();
+    } catch (MalformedURLException ex) {
+      throw runtime(ex);
+    }
+  }
 
   /**
    * Checks whether the resource exists.
@@ -77,6 +100,34 @@ public final class Uris {
       // NOP
     }
     return false;
+  }
+
+  /**
+   * Gets whether the port number of the URI is the default of its scheme.
+   *
+   * @throws RuntimeException
+   *           if {@code uri} is malformed.
+   */
+  public static boolean isPortDefault(URI uri) {
+    try {
+      return uri.getPort() < 0 || uri.getPort() == uri.toURL().getDefaultPort();
+    } catch (MalformedURLException ex) {
+      throw runtime(ex);
+    }
+  }
+
+  /**
+   * Gets whether the URI belongs to a {@linkplain Inets#isPrivate(InetAddress) private} address.
+   * <p>
+   * NOTE: Address resolution may cause DNS queries.
+   * </p>
+   */
+  public static boolean isPrivate(URI uri) {
+    try {
+      return Inets.isPrivate(InetAddress.getByName(uri.getHost()));
+    } catch (UnknownHostException ex) {
+      throw runtime("Host resolution of {} FAILED", uri, ex);
+    }
   }
 
   /**
