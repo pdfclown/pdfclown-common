@@ -48,7 +48,7 @@ public interface JsonElement {
   static @Nullable Object normValue(@Nullable Object value) {
     if ((value instanceof JSONArray || value instanceof JSONObject)
         && !(value instanceof JsonElement))
-      throw wrongArg("JSON values MUST implement {}", JsonElement.class);
+      throw wrongArg("value", null, "MUST implement {}", JsonElement.class);
 
     if (value instanceof JsonElement)
       return value;

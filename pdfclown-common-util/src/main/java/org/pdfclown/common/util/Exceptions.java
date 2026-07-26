@@ -369,11 +369,6 @@ public final class Exceptions {
     return wrongArg(name, value, null);
   }
 
-  public static IllegalArgumentException wrongArg(@Nullable String format,
-      @Nullable Object... args) {
-    return throwable(IllegalArgumentException::new, format, args);
-  }
-
   /**
    * Creates an argument exception for an invalid value.
    *

@@ -13,6 +13,7 @@
 package org.pdfclown.common.util;
 
 import static java.util.Objects.requireNonNullElse;
+import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.util.Chars.BACKTICK;
 import static org.pdfclown.common.util.Chars.COLON;
@@ -42,10 +43,14 @@ public class ArgumentException extends IllegalArgumentException {
   private static String buildMessage(String argName,
       @Nullable Object argValue, @Nullable String message) {
     var b = new StringBuilder();
-    b.append(BACKTICK).append(argName).append(BACKTICK);
+    if (!argName.isEmpty()) {
+      b.append(BACKTICK).append(argName).append(BACKTICK);
+    }
     if (argValue != null) {
-      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(basicLiteral(argValue))
-          .append(ROUND_BRACKET_CLOSE);
+      if (!b.isEmpty()) {
+        b.append(SPACE);
+      }
+      b.append(ROUND_BRACKET_OPEN).append(basicLiteral(argValue)).append(ROUND_BRACKET_CLOSE);
     }
     if (!b.isEmpty()) {
       b.append(COLON).append(SPACE);
@@ -67,8 +72,7 @@ public class ArgumentException extends IllegalArgumentException {
 
   public ArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message, @Nullable Throwable cause) {
-    super(buildMessage(argName = requireNonNullElse(stripToNull(argName), "value"), argValue,
-        message), cause);
+    super(buildMessage(argName = stripToEmpty(argName), argValue, message), cause);
 
     this.argName = argName;
     this.argValue = argValue;

@@ -132,7 +132,7 @@ public class SemVer1 extends SemVer<SemVer1> {
   public static SemVer1 of(String value) {
     Matcher m = PATTERN__SEM_VER.matcher(value);
     if (!m.find())
-      throw new ArgumentFormatException(null, value, indexOfMatchFailure(m));
+      throw new ArgumentFormatException("value", value, indexOfMatchFailure(m));
 
     return new SemVer1(
         parseInt(m.group(PATTERN_GROUP__MAJOR)),

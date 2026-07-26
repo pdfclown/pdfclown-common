@@ -85,7 +85,7 @@ public class ReleaseManager {
 
   private static String checkProfiles(String value) {
     if (containsWhitespace(requireNonNull(value)))
-      throw wrongArg(null, value, "MUST NOT contain whitespace");
+      throw wrongArg("value", value, "MUST NOT contain whitespace");
 
     return value;
   }

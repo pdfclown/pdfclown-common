@@ -85,7 +85,7 @@ class ConditionsTest extends BaseTest {
     var exception = assertThrows(IllegalArgumentException.class, () -> {
       Conditions.requireType(value, Boolean.class);
     });
-    assertEquals("`value` (1L): MUST be Boolean", exception.getMessage());
+    assertEquals("(1L): MUST be Boolean", exception.getMessage());
   }
 
   @Test
