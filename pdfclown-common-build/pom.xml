@@ -203,12 +203,22 @@
             <execution>
               <id>default-compile</id>
               <configuration>
-                <compilerArgs
-                    combine.children="append">
-                  <arg>-Alog4j.graalvm.groupId=${project.groupId}</arg>
-                  <arg>-Alog4j.graalvm.artifactId=${project.artifactId}</arg>
-                </compilerArgs>
+                <!-- Log4j annotation processing.
 
+                  NOTE: Because of enforced failure on compilation warnings (`-Werror`), even issues
+                  in the options of annotation processors may affect the compilation, with the
+                  severe peculiarity that they cannot be muted with `-Xlint:...-processing`.
+
+                  The current Log4j plugin processor emits a warning if its `GraalVmProcessor` is
+                  not configured, forcing additional options to be specified; the problem is that
+                  javac's lazy processor discovery doesn't activate processors whose annotations
+                  aren't inside stale source files, causing warnings to be emitted in case of
+                  incremental compilation because those additional options are unused.
+
+                  To temporarily fix this conundrum until hopefully solved, an ancillary script
+                  (`ensure-log4j-plugin-processor-activation`) touches the plugin source file, thus
+                  ensuring the `GraalVmProcessor` is activated and wired to its options, preventing
+                  any warning. -->
                 <annotationProcessorPaths
                     combine.children="append">
                   <path>
@@ -216,6 +226,12 @@
                     <artifactId>log4j-core</artifactId>
                   </path>
                 </annotationProcessorPaths>
+
+                <compilerArgs
+                    combine.children="append">
+                  <arg>-Alog4j.graalvm.groupId=${project.groupId}</arg>
+                  <arg>-Alog4j.graalvm.artifactId=${project.artifactId}</arg>
+                </compilerArgs>
               </configuration>
             </execution>
           </executions>
@@ -234,6 +250,36 @@
     </pluginManagement>
 
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <executions>
+          <execution>
+            <!--
+              Forces Log4j annotation processing.
+
+              NOTE: This script is a hack to force Log4j annotation processing (see `default-compile`
+              execution here above for further information): the compilation unit containing a Log4j
+              plugin (`LogManager.java`) is touched so `GraalVmProcessor` is activated and the
+              compiler stops failing.
+            -->
+            <id>ensure-log4j-plugin-processor-activation</id>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <phase>process-sources</phase>
+            <configuration>
+              <scripts>
+                <script><![CDATA[
+new File(project.basedir, 'src/main/java/org/pdfclown/common/build/system/LogManager.java')
+  .setLastModified(System.currentTimeMillis())
+]]></script>
+              </scripts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
