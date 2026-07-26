@@ -118,9 +118,9 @@ public final class Uris {
 
   /**
    * Gets whether the URI belongs to a {@linkplain Inets#isPrivate(InetAddress) private} address.
-   * <p>
-   * NOTE: Address resolution may cause DNS queries.
-   * </p>
+   *
+   * @throws RuntimeException
+   *           if DNS resolution failed.
    */
   public static boolean isPrivate(URI uri) {
     try {
