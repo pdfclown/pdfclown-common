@@ -57,10 +57,9 @@ public class Range<T> {
    */
   @Immutable
   public static final class Endpoint<T> {
-    @SuppressWarnings({ "rawtypes" })
-    static final Endpoint UNBOUND = new Endpoint<>(null, false);
+    static final Endpoint<Object> UNBOUND = new Endpoint<>(null, false);
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "NullableProblems" /* false positive */, "unchecked" })
     public static <T> Endpoint<T> of(@Nullable T value, boolean closed) {
       return value != null ? new Endpoint<>(value, closed) : (Endpoint<T>) UNBOUND;
     }
@@ -92,10 +91,8 @@ public class Range<T> {
 
     @Override
     public int hashCode() {
-      var ret = Boolean.hashCode(closed);
-      if (value != null) {
-        ret ^= value.hashCode();
-      }
+      int ret = Boolean.hashCode(closed);
+      ret = 31 * ret + Objects.hashCode(value);
       return ret;
     }
 
@@ -179,7 +176,8 @@ public class Range<T> {
    *           if arguments are numbers of different types (allowing them would cause ambiguities on
    *           value comparison — see also the observations in {@link #numeric(Range)}).
    */
-  @SuppressWarnings({ "PatternMatchingInstanceof", "unchecked" })
+  @SuppressWarnings({ "NullableProblems" /* false positive */, "PatternMatchingInstanceof",
+      "unchecked" })
   public static <T> Range<T> closed(@Nullable T lower, @Nullable T upper) {
     if (lower instanceof Number && upper != null) {
       var type = (Class<? extends Number>) nonNull(requireEqual(upper.getClass(), lower.getClass(),
@@ -243,6 +241,7 @@ public class Range<T> {
    * @param upper
    *          ({@code null}, for unbounded endpoint)
    */
+  @SuppressWarnings("NullableProblems" /* false positive */)
   public static <T> Range<T> open(@Nullable T lower, @Nullable T upper) {
     return new Range<>(Endpoint.of(lower, false), Endpoint.of(upper, false));
   }
@@ -291,7 +290,9 @@ public class Range<T> {
    */
   @Override
   public final int hashCode() {
-    return lower.hashCode() ^ upper.hashCode();
+    int ret = lower.hashCode();
+    ret = 31 * ret + upper.hashCode();
+    return ret;
   }
 
   @Override

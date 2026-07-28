@@ -28,7 +28,6 @@ import static org.pdfclown.common.util.Chars.TAB;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Objects;
 import org.pdfclown.common.util.annot.Immutable;
 
 // SourceName: nl.talsmasoftware.umldoclet.rendering.indent.Indentation
@@ -121,6 +120,9 @@ public final class Indent implements CharSequence, Serializable {
   private final char symbol;
   private final int width;
 
+  /*
+   * DERIVED FIELDS
+   */
   private final transient String value;
 
   private Indent(final int width, final char symbol, final int level) {
@@ -149,6 +151,9 @@ public final class Indent implements CharSequence, Serializable {
 
   @Override
   public boolean equals(Object o) {
+    /*
+     * NOTE: Derived fields (`value`) are purposely ignored.
+     */
     return this == o || (o instanceof Indent that
         && this.width == that.width
         && this.symbol == that.symbol
@@ -178,7 +183,13 @@ public final class Indent implements CharSequence, Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(width, symbol, level);
+    /*
+     * NOTE: Derived fields (`value`) are purposely ignored.
+     */
+    int ret = level;
+    ret = 31 * ret + symbol;
+    ret = 31 * ret + width;
+    return ret;
   }
 
   /**

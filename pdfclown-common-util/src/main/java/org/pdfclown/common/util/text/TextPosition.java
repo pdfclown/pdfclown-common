@@ -70,6 +70,7 @@ public final class TextPosition implements Comparable<TextPosition> {
 
   private final int column;
   private final int line;
+
   private final int offset;
 
   private TextPosition(int offset, int line, int column) {
@@ -90,9 +91,26 @@ public final class TextPosition implements Comparable<TextPosition> {
     }
   }
 
+  @Override
+  public boolean equals(Object o) {
+    return this == o || (o instanceof TextPosition that
+        && this.offset == that.offset
+        && this.line == that.line
+        && this.column == that.column);
+  }
+
+  @Override
+  public int hashCode() {
+    int ret = offset;
+    ret = 31 * ret + line;
+    ret = 31 * ret + column;
+    return ret;
+  }
+
   /**
    * Whether this position is defined.
    */
+  @SuppressWarnings("ReferenceEquality")
   public boolean isPresent() {
     return this != ABSENT;
   }

@@ -135,10 +135,7 @@ public class XtUnit<Q extends Quantity<Q>> extends AbstractUnit<Q> {
    */
   @Override
   public final int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + base.hashCode();
-    return result;
+    return base.hashCode();
   }
 
   @Override
