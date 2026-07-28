@@ -611,7 +611,7 @@ public final class Collectives {
    * {@link Map#containsValue(Object)}, respectively.
    * </p>
    *
-   * @apiNote Useful when {@code obj} represents a dual mode (an aggregation which can degrade to a
+   * @apiNote Useful when {@code obj} represents a dual mode (a collective which can degrade to a
    *          single element).
    */
   public static boolean equalsOrContains(@Nullable Object obj, @Nullable Object other) {

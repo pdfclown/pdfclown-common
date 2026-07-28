@@ -136,7 +136,7 @@ public abstract class CallVerifier extends Verifier {
    * Verifies the call responses as a whole.
    *
    * @param response
-   *          Multi-line aggregation of {@linkplain #getResponse(Supplier, List, Object[]) call
+   *          Multi-line combination of {@linkplain #getResponse(Supplier, List, Object[]) call
    *          responses}.
    */
   protected void verifyResponse(String response) {
