@@ -14,17 +14,17 @@ package org.pdfclown.common.build.release;
 
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNotBlank;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.missing;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArgOpt;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.to;
 import static org.pdfclown.common.build.internal.util.system.Clis.javaArg;
 import static org.pdfclown.common.build.release.ReleaseManager.SCM_REF__HEAD;
 import static org.pdfclown.common.build.release.ReleaseManager.SYSTEM_PROPERTY__TARGET_JDK_HOME;
 import static org.pdfclown.common.util.Chars.DOLLAR;
-import static org.pdfclown.common.util.Conditions.requireNotBlank;
-import static org.pdfclown.common.util.Exceptions.missing;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
-import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.system.Processes.executeElseThrow;
 import static org.pdfclown.common.util.system.Processes.executeGetElseThrow;
 import static org.pdfclown.common.util.system.Processes.unixCommand;
@@ -221,9 +221,9 @@ public enum BuiltinStep implements Step {
             S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN + newParamValue);
       }
       if (version != null)
-        throw missing(MAVEN_CONFIG_PARAM__REVISION, "parameter NOT FOUND in {}", mavenConfigFile);
+        throw missing(MAVEN_CONFIG_PARAM__REVISION, "parameter in {}", mavenConfigFile);
       else if (scmTag != null)
-        throw missing(MAVEN_CONFIG_PARAM__SCM_TAG, "parameter NOT FOUND in {}", mavenConfigFile);
+        throw missing(MAVEN_CONFIG_PARAM__SCM_TAG, "parameter in {}", mavenConfigFile);
 
       m.appendTail(newMavenConfig);
 

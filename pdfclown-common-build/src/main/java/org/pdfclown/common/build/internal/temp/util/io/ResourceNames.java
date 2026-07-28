@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.internal.temp.util.io;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.temp.util.Objects.asType;
 import static org.pdfclown.common.build.internal.temp.util.Objects.found;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
@@ -23,7 +24,6 @@ import static org.pdfclown.common.build.internal.temp.util.io.Files.PATH_SUPER;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.SLASH;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;

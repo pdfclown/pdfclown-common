@@ -13,11 +13,12 @@
 package org.pdfclown.common.build.internal.temp.util;
 
 import static java.util.Collections.singletonList;
-import static org.pdfclown.common.util.Exceptions.missing;
-import static org.pdfclown.common.util.Exceptions.missingPath;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
-import static org.pdfclown.common.util.Exceptions.wrongState;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.missing;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.missingPath;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.missingSuch;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArgOpt;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongState;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
@@ -32,8 +33,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.temp.util.collect.Range;
-import org.pdfclown.common.util.ArgumentException;
-import org.pdfclown.common.util.Exceptions;
 import org.pdfclown.common.util.annot.PolyNull;
 
 /**
@@ -175,7 +174,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireAtLeast(T value, T otherValue) {
+  public static <T extends Comparable<T>> T requireAtLeast(T value, T otherValue) {
     return requireAtLeast(value, otherValue, null);
   }
 
@@ -190,9 +189,9 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireAtLeast(T value, T otherValue,
+  public static <T extends Comparable<T>> T requireAtLeast(T value, T otherValue,
       @Nullable String name) {
-    if (value.floatValue() >= otherValue.floatValue())
+    if (value.compareTo(otherValue) >= 0)
       return value;
 
     throw wrongArg(name, value, "MUST be at least {}", otherValue);
@@ -207,7 +206,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireAtMost(T value, T otherValue) {
+  public static <T extends Comparable<T>> T requireAtMost(T value, T otherValue) {
     return requireAtMost(value, otherValue, null);
   }
 
@@ -222,9 +221,9 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireAtMost(T value, T otherValue,
+  public static <T extends Comparable<T>> T requireAtMost(T value, T otherValue,
       @Nullable String name) {
-    if (value.floatValue() <= otherValue.floatValue())
+    if (value.compareTo(otherValue) <= 0)
       return value;
 
     throw wrongArg(name, value, "MUST be at most {}", otherValue);
@@ -243,57 +242,42 @@ public final class Conditions {
   }
 
   /**
-   * Requires the value is not null.
+   * Requires the element is not null.
    *
    * @param <T>
-   *          Value type.
-   * @param value
-   *          Value to validate.
-   * @return {@code value}
-   * @throws NoSuchElementException
-   *           if {@code value} is undefined.
+   *          Element type.
+   * @param element
+   *          Element to validate.
+   * @param ref
+   *          Reference associated to {@code element} (for example, its key).
+   * @return {@code element}
+   * @throws ElementNotFoundException
+   *           if {@code element} is undefined.
    */
-  public static <T> T requireElement(@Nullable T value) throws NoSuchElementException {
-    return requireElement(value, null, null);
+  public static <T> T requireElement(@Nullable T element, Object ref) {
+    return requireElement(element, ref, null);
   }
 
   /**
-   * Requires the value is not null.
+   * Requires the element is not null.
    *
    * @param <T>
-   *          Value type.
-   * @param value
-   *          Value to validate.
+   *          Element type.
+   * @param element
+   *          Element to validate.
    * @param ref
-   *          Reference associated to {@code value} (for example, its key).
-   * @return {@code value}
-   * @throws NoSuchElementException
-   *           if {@code value} is undefined.
-   */
-  public static <T> T requireElement(@Nullable T value, @Nullable Object ref) {
-    return requireElement(value, ref, null);
-  }
-
-  /**
-   * Requires the value is not null.
-   *
-   * @param <T>
-   *          Value type.
-   * @param value
-   *          Value to validate.
-   * @param ref
-   *          Reference associated to {@code value} (for example, its key).
+   *          Reference associated to {@code element} (for example, its key).
    * @param description
-   *          Value description (for example, its meaning as an element, such as the name of the
-   *          aggregation it belongs to).
-   * @return {@code value}
-   * @throws NoSuchElementException
-   *           if {@code value} is undefined.
+   *          Element description (for example, its meaning, such as the name of the collective it
+   *          belongs to).
+   * @return {@code element}
+   * @throws ElementNotFoundException
+   *           if {@code element} is undefined.
    */
-  public static <T> T requireElement(@Nullable T value, @Nullable Object ref,
-      @Nullable String description) throws NoSuchElementException {
-    if (value != null)
-      return value;
+  public static <T> T requireElement(@Nullable T element, Object ref,
+      @Nullable String description) {
+    if (element != null)
+      return element;
 
     throw missing(ref, description);
   }
@@ -329,8 +313,10 @@ public final class Conditions {
    */
   public static <T> @PolyNull @Nullable T requireEqual(@PolyNull @Nullable T value,
       @Nullable T otherValue, @Nullable String name) {
-    //noinspection NullableProblems : false positive
-    return requireAmong(value, singletonList(otherValue), name);
+    if (Objects.equals(value, otherValue))
+      return value;
+
+    throw wrongArgOpt(name, value, null, singletonList(otherValue));
   }
 
   /**
@@ -354,7 +340,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireGreaterThan(T value, T otherValue) {
+  public static <T extends Comparable<T>> T requireGreaterThan(T value, T otherValue) {
     return requireGreaterThan(value, otherValue, null);
   }
 
@@ -369,9 +355,9 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireGreaterThan(T value, T otherValue,
+  public static <T extends Comparable<T>> T requireGreaterThan(T value, T otherValue,
       @Nullable String name) {
-    if (value.floatValue() > otherValue.floatValue())
+    if (value.compareTo(otherValue) > 0)
       return value;
 
     throw wrongArg(name, value, "MUST be greater than {}", otherValue);
@@ -386,7 +372,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireLessThan(T value, T otherValue) {
+  public static <T extends Comparable<T>> T requireLessThan(T value, T otherValue) {
     return requireLessThan(value, otherValue, null);
   }
 
@@ -401,9 +387,9 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireLessThan(T value, T otherValue,
+  public static <T extends Comparable<T>> T requireLessThan(T value, T otherValue,
       @Nullable String name) {
-    if (value.floatValue() < otherValue.floatValue())
+    if (value.compareTo(otherValue) < 0)
       return value;
 
     throw wrongArg(name, value, "MUST be less than {}", otherValue);
@@ -493,15 +479,11 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static String requireNotBlank(String value, @Nullable String name) {
-    /*
-     * NOTE: Explicit null check to avoid possible NPE, which would bypass the intended exception.
-     */
-    //noinspection ConstantValue
+  public static String requireNotBlank(@Nullable String value, @Nullable String name) {
     if (value != null && !value.isBlank())
       return value;
 
-    throw wrongArg(name, value, "MUST NOT be blank");
+    throw wrongArg(name, value, "MUST be NOT blank");
   }
 
   /**
@@ -550,6 +532,24 @@ public final class Conditions {
       throw wrongState(messageSupplier.get());
 
     return value;
+  }
+
+  /**
+   * Requires the accessor element is not null.
+   *
+   * @param <T>
+   *          Element type.
+   * @param element
+   *          Element to validate.
+   * @return {@code element}
+   * @throws NoSuchElementException
+   *           if {@code element} is undefined.
+   */
+  public static <T> T requireSuch(@Nullable T element) {
+    if (element != null)
+      return element;
+
+    throw missingSuch();
   }
 
   /**

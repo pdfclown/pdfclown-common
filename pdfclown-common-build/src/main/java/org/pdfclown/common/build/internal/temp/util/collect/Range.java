@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.ArgumentException;
+import org.pdfclown.common.build.internal.temp.util.ArgumentException;
 import org.pdfclown.common.util.Numbers;
 import org.pdfclown.common.util.annot.Immutable;
 

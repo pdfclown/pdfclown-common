@@ -13,17 +13,17 @@
 package org.pdfclown.common.build.system;
 
 import static java.nio.file.Files.isRegularFile;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireDirectory;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithValues;
-import static org.pdfclown.common.util.Conditions.requireDirectory;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.io.Files.normal;
+import static org.pdfclown.common.build.internal.temp.util.io.Files.normal;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import org.pdfclown.common.util.io.ResourceNames;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 
 /**
  * Project directory resolver.

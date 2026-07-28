@@ -12,10 +12,10 @@
 [value: "1.0.0+20130313144700"] => 1.0.0+20130313144700
 [value: "1.0.0-beta+exp.sha.5114f85"] => 1.0.0-beta+exp.sha.5114f85
 [value: "1.0.0+21AF26D3----117B344092BD"] => 1.0.0+21AF26D3----117B344092BD
-[value: "1.11.0.99"] => <<ArgumentFormatException: "`value` (\"1.11.0.99\"): INVALID at index 6">>
-[value: "1.0.0.5-alpha"] => <<ArgumentFormatException: "`value` (\"1.0.0.5-alpha\"): INVALID at index 5">>
-[value: "1.-11.0"] => <<ArgumentFormatException: "`value` (\"1.-11.0\"): INVALID at index 2">>
-[value: "1.01.0"] => <<ArgumentFormatException: "`value` (\"1.01.0\"): INVALID at index 3">>
-[value: "1.0.0-00.3.7"] => <<ArgumentFormatException: "`value` (\"1.0.0-00.3.7\"): INVALID at index 8">>
-[value: "1.0.0_alpha"] => <<ArgumentFormatException: "`value` (\"1.0.0_alpha\"): INVALID at index 5">>
-[value: "1.0.0-beta+exp.sha.5114f_85"] => <<ArgumentFormatException: "`value` (\"1.0.0-beta+exp.sha.5114f_85\"): INVALID at index 24">>
+[value: "1.11.0.99"] => <<ArgumentFormatException: "`value` (\"1.11.0.99\"): INVALID at position 6">>
+[value: "1.0.0.5-alpha"] => <<ArgumentFormatException: "`value` (\"1.0.0.5-alpha\"): INVALID at position 5">>
+[value: "1.-11.0"] => <<ArgumentFormatException: "`value` (\"1.-11.0\"): INVALID at position 2">>
+[value: "1.01.0"] => <<ArgumentFormatException: "`value` (\"1.01.0\"): INVALID at position 3">>
+[value: "1.0.0-00.3.7"] => <<ArgumentFormatException: "`value` (\"1.0.0-00.3.7\"): INVALID at position 8">>
+[value: "1.0.0_alpha"] => <<ArgumentFormatException: "`value` (\"1.0.0_alpha\"): INVALID at position 5">>
+[value: "1.0.0-beta+exp.sha.5114f_85"] => <<ArgumentFormatException: "`value` (\"1.0.0-beta+exp.sha.5114f_85\"): INVALID at position 24">>

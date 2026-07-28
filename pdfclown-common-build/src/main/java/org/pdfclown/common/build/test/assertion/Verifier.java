@@ -13,15 +13,15 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.stream.Collectors.joining;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.temp.util.Objects.literal;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.build.test.assertion.Asserter.SYSTEM_PROPERTY__UPDATE_EXPECTED;
 import static org.pdfclown.common.build.util.system.Runtimes.isDebugging;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.LF;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
 
 import com.spun.util.logger.SimpleLogger;
@@ -35,12 +35,12 @@ import org.approvaltests.namer.ApprovalNamer;
 import org.approvaltests.reporters.AutoApproveReporter;
 import org.approvaltests.reporters.QuietReporter;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.pdfclown.common.build.test.Tests;
 import org.pdfclown.common.build.util.system.Builds;
 import org.pdfclown.common.util.annot.Immutable;
-import org.pdfclown.common.util.io.ResourceNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

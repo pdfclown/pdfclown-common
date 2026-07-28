@@ -13,20 +13,20 @@
 package org.pdfclown.common.build.test.model;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongState;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqn;
 import static org.pdfclown.common.build.internal.temp.util.Objects.superTypes;
 import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithProperties;
+import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator.Priorities.explicitPriority;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator.Priorities.interfacePriority;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.hierarchicalType;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.SPACE;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.Exceptions.wrongState;
-import static org.pdfclown.common.util.Strings.S;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * <ul>
  * <li><b>compositions</b> (complex objects), mapped by {@link #map(Object, List, Set, int)} as
  * full-fledged JSON objects</li>
- * <li><b>components</b> (either properties or aggregations (maps or collections) of compositions),
+ * <li><b>components</b> (either properties or collectives (maps or collections) of compositions),
  * mapped by {@link #mapValue(Object, List, Set, int)} as either simple values (such as
  * {@code String}) or compositions themselves.</li>
  * </ul>

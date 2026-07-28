@@ -14,10 +14,10 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.ArrayUtils.EMPTY_OBJECT_ARRAY;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.missing;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Strings.lcase;
-import static org.pdfclown.common.util.Exceptions.missing;
-import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
 import java.util.Objects;
@@ -120,7 +120,7 @@ public abstract class LogCaptor
         .map($ -> $.getFactory(implName))
         .filter(Objects::nonNull)
         .findFirst().orElseThrow(() -> missing(implName,
-            "{} for the given logging implementation NOT FOUND", LogCaptorProvider.class));
+            "{} for the specified logging implementation", LogCaptorProvider.class));
   }
 
   /**

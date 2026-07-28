@@ -3,14 +3,14 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Exceptions.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (Exceptions.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.build.internal.temp.util;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.asRuntimeException;
 import static org.pdfclown.common.util.Chars.COMMA;
@@ -34,9 +34,11 @@ import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.net.ResourceNotFoundException;
+import org.pdfclown.common.util.NotImplementedException;
+import org.pdfclown.common.util.UnexpectedCaseError;
 import org.pdfclown.common.util.annot.DependsOn.Dependency;
 import org.pdfclown.common.util.annot.PolyNull;
-import org.pdfclown.common.util.net.ResourceNotFoundException;
 
 /**
  * Exception utilities.
@@ -79,7 +81,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -109,7 +112,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -207,7 +211,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -233,7 +238,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -275,7 +281,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -301,7 +308,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -324,7 +332,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -351,7 +360,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -377,7 +387,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
@@ -450,7 +461,8 @@ public final class Exceptions {
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
    *          Message arguments. In case last argument is {@link Throwable Throwable}, it is
-   *          assigned to {@link org.pdfclown.common.util.ParamMessage#getCause() cause} (if
+   *          assigned to
+   *          {@link org.pdfclown.common.build.internal.temp.util.ParamMessage#getCause() cause} (if
    *          {@link java.io.UncheckedIOException UncheckedIOException},
    *          {@link org.apache.commons.lang3.exception.UncheckedException UncheckedException}, or
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},

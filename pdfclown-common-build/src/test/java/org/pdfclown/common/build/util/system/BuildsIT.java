@@ -19,8 +19,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.util.system.Processes.execute;
 import static org.pdfclown.common.util.system.Processes.osCommand;
 
@@ -74,7 +74,7 @@ class BuildsIT extends BaseIT {
   void classpath__failure_baseDir() {
     var throwable = assertThrows(FileNotFoundException.class,
         () -> Builds.classpath(Path.of("gibberish"), null));
-    assertThat(throwable.getMessage(), is("\"gibberish\" MISSING"));
+    assertThat(throwable.getMessage(), is("\"gibberish\" NOT FOUND"));
   }
 
   @Test

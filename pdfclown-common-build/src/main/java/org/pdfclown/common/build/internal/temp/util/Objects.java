@@ -17,6 +17,7 @@ import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Strings.NULL;
 import static org.pdfclown.common.build.internal.temp.util.Strings.S;
@@ -41,7 +42,6 @@ import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
-import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Numbers.parseNumber;
 import static org.pdfclown.common.util.reflect.Reflects.stackFrame;
 

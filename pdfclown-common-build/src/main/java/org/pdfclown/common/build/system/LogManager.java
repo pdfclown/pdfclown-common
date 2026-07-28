@@ -14,10 +14,10 @@ package org.pdfclown.common.build.system;
 
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireState;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.unexpected;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongState;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
 import static org.pdfclown.common.build.system.BootstrapLog.info;
-import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Exceptions.wrongState;
 
 import java.io.IOException;
 import java.io.InputStream;

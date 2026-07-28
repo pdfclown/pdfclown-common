@@ -12,7 +12,10 @@
  */
 package org.pdfclown.common.util;
 
-import static java.util.Objects.requireNonNullElse;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.io.Serial;
 import org.jspecify.annotations.Nullable;
@@ -28,8 +31,7 @@ public class ArgumentFormatException extends ArgumentException {
 
   private final int offset;
 
-  public ArgumentFormatException(@Nullable String argName, @Nullable Object argValue,
-      int offset) {
+  public ArgumentFormatException(@Nullable String argName, @Nullable Object argValue, int offset) {
     this(argName, argValue, offset, null);
   }
 
@@ -40,7 +42,9 @@ public class ArgumentFormatException extends ArgumentException {
 
   public ArgumentFormatException(@Nullable String argName, @Nullable Object argValue, int offset,
       @Nullable String message, @Nullable Throwable cause) {
-    super(argName, argValue, requireNonNullElse(message, "INVALID at index " + offset), cause);
+    super(argName, argValue, "INVALID at position %s%s".formatted(offset,
+        message != null ? SPACE + ROUND_BRACKET_OPEN + message + ROUND_BRACKET_CLOSE : EMPTY),
+        cause);
 
     this.offset = offset;
   }

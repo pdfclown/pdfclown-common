@@ -13,9 +13,9 @@
 package org.pdfclown.common.build.internal.temp.util.collect;
 
 import static java.lang.Math.subtractExact;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.temp.util.Strings.lcase;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.unexpected;
 
 import java.util.Comparator;
 import java.util.HashMap;

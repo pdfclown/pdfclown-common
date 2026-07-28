@@ -13,9 +13,9 @@
 package org.pdfclown.common.build.test.assertion.match;
 
 import static java.nio.file.Files.readString;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.util.Chars.SPACE;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Strings.S;
 
 import java.io.IOException;
 import java.nio.file.Path;

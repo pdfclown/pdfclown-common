@@ -14,20 +14,20 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.file.Files.exists;
 import static org.apache.commons.codec.binary.Hex.encodeHexString;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.failedIO;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.unsupported;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toElse;
+import static org.pdfclown.common.build.internal.temp.util.io.Files.cognateFile;
 import static org.pdfclown.common.util.Bytes.BYTE_ARRAY__EMPTY;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.UNDERSCORE;
-import static org.pdfclown.common.util.Exceptions.failedIO;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.unsupported;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.Strings.S;
-import static org.pdfclown.common.util.io.Files.cognateFile;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

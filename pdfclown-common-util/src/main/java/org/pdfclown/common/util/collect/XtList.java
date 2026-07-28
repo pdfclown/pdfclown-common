@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.util.collect;
 
-import static org.pdfclown.common.util.Exceptions.missing;
+import static org.pdfclown.common.util.Exceptions.missingSuch;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -171,7 +171,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    */
   default E getFirst() {
     if (isEmpty())
-      throw missing();
+      throw missingSuch();
 
     return get(0);
   }
@@ -184,7 +184,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    */
   default E getLast() {
     if (isEmpty())
-      throw missing();
+      throw missingSuch();
 
     return get(size() - 1);
   }
@@ -311,7 +311,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    */
   default E removeFirst() {
     if (isEmpty())
-      throw missing();
+      throw missingSuch();
 
     return remove(0);
   }
@@ -325,7 +325,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    */
   default E removeLast() {
     if (isEmpty())
-      throw missing();
+      throw missingSuch();
 
     return remove(size() - 1);
   }

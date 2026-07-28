@@ -13,12 +13,12 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Comparator.comparing;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireType;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.temp.util.Objects.type;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__JSON;
-import static org.pdfclown.common.util.Conditions.requireType;
-import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
-import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__ZIP;
+import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__ZIP;
 
 import java.io.IOException;
 import java.nio.file.Path;

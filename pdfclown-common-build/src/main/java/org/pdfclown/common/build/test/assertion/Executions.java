@@ -13,8 +13,8 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

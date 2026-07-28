@@ -1,11 +1,11 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static org.apache.commons.lang3.StringUtils.substringBefore;
-import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.unsupported;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.io.Files.extension;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.unsupported;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.temp.util.io.Files.extension;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -23,9 +23,9 @@ import org.approvaltests.internal.logs.FailedFileLog;
 import org.approvaltests.reporters.ReporterWithApprovalPower;
 import org.jspecify.annotations.Nullable;
 import org.lambda.functions.Function2;
+import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.util.annot.Immutable;
-import org.pdfclown.common.util.io.ResourceNames;
 
 /**
  * Verifier for approval testing of files.

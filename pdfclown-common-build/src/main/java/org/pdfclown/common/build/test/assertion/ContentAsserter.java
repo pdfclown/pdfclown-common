@@ -18,14 +18,14 @@ import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.temp.util.Objects.textLiteral;
+import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__ZIP;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.basename;
+import static org.pdfclown.common.build.internal.temp.util.io.Files.isExtension;
 import static org.pdfclown.common.build.test.assertion.Verifier.Namer.FILE_QUALIFIER__APPROVED;
 import static org.pdfclown.common.util.Chars.DOT;
-import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
-import static org.pdfclown.common.util.io.Files.FILE_EXTENSION__ZIP;
-import static org.pdfclown.common.util.io.Files.isExtension;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -40,8 +40,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.internal.temp.util.Exceptions;
 import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
-import org.pdfclown.common.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +176,7 @@ public abstract class ContentAsserter<T> extends Asserter {
    * </p>
    */
   protected String doReadStringContent(Path file) throws IOException {
-    return requireNonNullElseThrow(doReadStringContent(file, null), Exceptions::missing);
+    return requireNonNullElseThrow(doReadStringContent(file, null), Exceptions::missingSuch);
   }
 
   /**

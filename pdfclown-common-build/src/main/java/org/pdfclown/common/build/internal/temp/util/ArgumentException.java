@@ -3,27 +3,27 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (ArgumentException.java) is part of pdfclown-common-util module in pdfClown Common
+  This file (ArgumentException.java) is part of pdfclown-common-build module in pdfClown Common
   project <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.util;
+package org.pdfclown.common.build.internal.temp.util;
 
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
+import static org.pdfclown.common.build.internal.temp.util.Objects.basicLiteral;
+import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.to;
+import static org.pdfclown.common.build.util.Tuple.tuple;
 import static org.pdfclown.common.util.Chars.BACKTICK;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
-import static org.pdfclown.common.util.Objects.basicLiteral;
-import static org.pdfclown.common.util.Objects.nonNull;
-import static org.pdfclown.common.util.collect.Tuple.tuple;
-import static org.pdfclown.common.util.function.Functions.to;
 
 import org.jspecify.annotations.Nullable;
 

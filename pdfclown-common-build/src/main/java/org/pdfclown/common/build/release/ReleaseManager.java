@@ -18,13 +18,13 @@ import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.containsWhitespace;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.unexpected;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongState;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Aggregations.isEmpty;
 import static org.pdfclown.common.util.Aggregations.list;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.unexpected;
-import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.Exceptions.wrongState;
-import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

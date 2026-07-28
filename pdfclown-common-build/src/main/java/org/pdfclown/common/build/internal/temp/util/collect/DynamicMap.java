@@ -13,8 +13,8 @@
 package org.pdfclown.common.build.internal.temp.util.collect;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqn;
-import static org.pdfclown.common.util.Exceptions.runtime;
 
 import java.util.HashMap;
 import java.util.HashSet;
