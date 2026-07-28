@@ -15,8 +15,8 @@ package org.pdfclown.common.build.release;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
-import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;

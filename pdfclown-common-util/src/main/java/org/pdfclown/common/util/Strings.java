@@ -24,17 +24,15 @@ import static org.pdfclown.common.util.Chars.NBSP;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
 import static org.pdfclown.common.util.Objects.found;
-import static org.pdfclown.common.util.Objects.opt;
 
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.function.IntPredicate;
 import org.apache.commons.io.input.CharSequenceReader;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.io.Texts;
-import org.pdfclown.common.util.io.Texts.TextPosition;
+import org.pdfclown.common.util.text.TextPosition;
 
 /**
  * String utilities.
@@ -148,17 +146,35 @@ public final class Strings {
   }
 
   /**
-   * Gets the coordinates corresponding to a position in the string.
+   * Gets the coordinates corresponding to a position in the character sequence.
    *
    * @param index
    *          Position.
-   * @implNote Line terminators are defined according to {@link java.io.LineNumberReader}.
+   * @implNote
+   *           <ul>
+   *           <li>Line terminators from {@code reader} are recognized according to
+   *           {@link LineNumberReader}</li>
+   *           <li>{@code index} can be undefined (that is, less than zero) in order to accommodate
+   *           any result from expressions like {@link String#indexOf(int)}</li>
+   *           </ul>
    */
-  public static Optional<TextPosition> coords(CharSequence s, int index) {
-    try {
-      return Texts.textCoords(new CharSequenceReader(s), index);
+  public static TextPosition coords(CharSequence s, int index) {
+    try (var r = new LineNumberReader(new CharSequenceReader(s))) {
+      int i = 0;
+      int start = -1;
+      int lastLineNumber = -1;
+      r.setLineNumber(1) /* 1-based line numbering */;
+      while (r.read() != -1 && i < index) {
+        if (lastLineNumber != r.getLineNumber()) {
+          start = i;
+          lastLineNumber = r.getLineNumber();
+        }
+        i++;
+      }
+      return i == index ? TextPosition.of(index, r.getLineNumber(), i - start)
+          : TextPosition.absent();
     } catch (IOException ex) {
-      return opt(null);
+      return TextPosition.absent();
     }
   }
 

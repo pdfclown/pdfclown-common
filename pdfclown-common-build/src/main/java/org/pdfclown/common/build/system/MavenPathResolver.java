@@ -12,7 +12,7 @@
  */
 package org.pdfclown.common.build.system;
 
-import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 
 import java.nio.file.Path;
 

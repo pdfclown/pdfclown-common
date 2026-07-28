@@ -15,7 +15,7 @@ package org.pdfclown.common.build.test.assertion;
 import static org.pdfclown.common.build.internal.temp.util.Objects.literal;
 import static org.pdfclown.common.build.internal.temp.util.Objects.simpleName;
 import static org.pdfclown.common.build.internal.temp.util.Objects.stableLiteral;
-import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.util.net.Uris.uri;
 
 import java.nio.file.Path;

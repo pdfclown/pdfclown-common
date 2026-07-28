@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static org.approvaltests.combinations.CombinationsHelper.filterEmpty;
+import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.test.assertion.Verifiers.FORMATTER__BASIC;
 import static org.pdfclown.common.build.test.assertion.Verifiers.FORMATTER__EXCEPTION__BASIC;
 import static org.pdfclown.common.util.Chars.COLON;
@@ -20,7 +21,6 @@ import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
-import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.util.List;
 import java.util.function.Function;
