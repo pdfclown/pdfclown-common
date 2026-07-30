@@ -164,14 +164,14 @@ public abstract class Asserter {
    * mvn verify ... -Dtest.expected.update</code></pre></li>
    *          <li>to regenerate the mismatching resources belonging to specific test classes (for
    *          example, "MyObjectIT"): <pre class="lang-shell"><code>
-   * mvn verify ... -Dtest.expected.update -Dtest=MyObjectIT</code></pre></li>
+   * mvn verify ... -Dtest.expected.update -Dit.test=MyObjectIT</code></pre></li>
    *          <li>to regenerate the mismatching resources belonging to specific test cases (for
    *          example, "MyObjectIT.myTest"): <pre class="lang-shell"><code>
-   * mvn verify ... -Dtest.expected.update -Dtest=MyObjectIT#myTest</code></pre></li>
+   * mvn verify ... -Dtest.expected.update -Dit.test=MyObjectIT#myTest</code></pre></li>
    *          <li>to regenerate the mismatching resources belonging to multiple test classes (for
    *          example, MyObjectIT and MyOtherObjectIT), they can be specified as a comma-separated
    *          list: <pre class="lang-shell"><code>
-   * mvn verify ... -Dtest.expected.update -Dtest=MyObjectIT,MyOtherObjectIT</code></pre></li>
+   * mvn verify ... -Dtest.expected.update -Dit.test=MyObjectIT,MyOtherObjectIT</code></pre></li>
    *          </ul>
    *          <p>
    *          NOTE: {@code test} CLI parameter is typically mapped by Maven plugins (such as
@@ -253,9 +253,9 @@ public abstract class Asserter {
              * EXPECTED: {}
              * ACTUAL: {}
             To retry, enter this command:
-              mvn verify -pl {} -Dtest={}
+              mvn verify -pl {} -Dit.test={}
             To confirm the actual changes as expected, enter this command:
-              mvn verify -pl {} -Dtest={} -D{}
+              mvn verify -pl {} -Dit.test={} -D{}
             """,
         expectedFile + (exists(expectedFile) ? EMPTY : " (MISSING)"),
         actualFile + (exists(actualFile) ? EMPTY : " (MISSING)"),

@@ -197,7 +197,7 @@ This document describes how to set up your development environment to build and 
   - integration tests:
 
       ```shell
-      ./mvnw verify -pl %MODULE% -Dtest=%IT%
+      ./mvnw verify -pl %MODULE% -Dit.test=%IT%
       ```
 
       where:
