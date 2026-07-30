@@ -355,7 +355,7 @@ public class ModelMapper<T> {
 
   private static final Logger log = LoggerFactory.getLogger(ModelMapper.class);
 
-  protected @Nullable Comparator<String> keyComparator;
+  protected Comparator<String> keyComparator;
   protected @Nullable Map<Class, PropertySelector> typeSelectors;
   protected final ValueMapperMap valueMappers = new ValueMapperMap();
   {
@@ -395,7 +395,7 @@ public class ModelMapper<T> {
     if (propertyMapping) {
       typeSelectors = new HashMap<>();
     }
-    this.keyComparator = keyComparator;
+    this.keyComparator = keyComparator != null ? keyComparator : Comparator.naturalOrder();
   }
 
   /**
@@ -528,11 +528,19 @@ public class ModelMapper<T> {
     // Custom properties.
     mapCustomProperties(obj, objSelector, ret, level);
 
-    // Aggregation properties.
+    // Collective properties.
     if (obj instanceof Map<?, ?> map) {
       if (objSelector == null || objSelector.isSelected("entries", level)) {
+        /*
+         * NOTE: Both the source key set and the target JSON object MUST be sorted: the former to
+         * ensure reproducible transformation (only the first visit to an object is represented
+         * as-is, the following ones are typically replaced by a handle such as an identifying
+         * reference), the latter to ensure reproducible serialization.
+         */
         var jsonEntries = new JsonObject(keyComparator);
-        for (var entry : map.entrySet()) {
+        for (var entry : map.entrySet().stream()
+            .sorted(Comparator.comparing($ -> Objects.toString($.getKey()), keyComparator))
+            .toArray(Map.Entry[]::new)) {
           jsonEntries.put(Objects.toString(entry.getKey()),
               mapValue(entry.getValue(), selectors, visitedObjs, innerLevel));
         }

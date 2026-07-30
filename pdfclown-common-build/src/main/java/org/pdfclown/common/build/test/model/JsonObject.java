@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.build.test.model;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
@@ -113,8 +115,8 @@ public class JsonObject extends JSONObject implements JsonElement {
 
   private final Comparator<String> keyComparator;
 
-  JsonObject(@Nullable Comparator<String> keyComparator) {
-    this.keyComparator = keyComparator != null ? keyComparator : Comparator.naturalOrder();
+  JsonObject(Comparator<String> keyComparator) {
+    this.keyComparator = requireNonNull(keyComparator, "keyComparator");
   }
 
   @Override
