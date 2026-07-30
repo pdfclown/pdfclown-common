@@ -186,7 +186,8 @@ public final class Indent implements CharSequence, Serializable {
     /*
      * NOTE: Derived fields (`value`) are purposely ignored.
      */
-    int ret = level;
+    int ret = 17;
+    ret = 31 * ret + level;
     ret = 31 * ret + symbol;
     ret = 31 * ret + width;
     return ret;

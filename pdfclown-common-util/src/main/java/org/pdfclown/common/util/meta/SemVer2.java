@@ -214,7 +214,8 @@ public class SemVer2 extends SemVer<SemVer2> {
    */
   @Override
   public final int hashCode() {
-    int ret = major;
+    int ret = 17;
+    ret = 31 * ret + major;
     ret = 31 * ret + minor;
     ret = 31 * ret + patch;
     ret = 31 * ret + prerelease.hashCode();

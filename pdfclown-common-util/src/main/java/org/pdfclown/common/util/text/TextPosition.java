@@ -70,7 +70,6 @@ public final class TextPosition implements Comparable<TextPosition> {
 
   private final int column;
   private final int line;
-
   private final int offset;
 
   private TextPosition(int offset, int line, int column) {
@@ -101,7 +100,8 @@ public final class TextPosition implements Comparable<TextPosition> {
 
   @Override
   public int hashCode() {
-    int ret = offset;
+    int ret = 17;
+    ret = 31 * ret + offset;
     ret = 31 * ret + line;
     ret = 31 * ret + column;
     return ret;

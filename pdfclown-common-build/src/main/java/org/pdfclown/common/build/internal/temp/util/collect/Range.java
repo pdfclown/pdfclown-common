@@ -91,7 +91,8 @@ public class Range<T> {
 
     @Override
     public int hashCode() {
-      int ret = Boolean.hashCode(closed);
+      int ret = 17;
+      ret = 31 * ret + Boolean.hashCode(closed);
       ret = 31 * ret + Objects.hashCode(value);
       return ret;
     }
@@ -290,7 +291,8 @@ public class Range<T> {
    */
   @Override
   public final int hashCode() {
-    int ret = lower.hashCode();
+    int ret = 17;
+    ret = 31 * ret + lower.hashCode();
     ret = 31 * ret + upper.hashCode();
     return ret;
   }
