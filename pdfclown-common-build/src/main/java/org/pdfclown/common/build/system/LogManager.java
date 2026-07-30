@@ -16,7 +16,6 @@ import static java.util.stream.Collectors.toUnmodifiableMap;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireState;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongState;
-import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
 import static org.pdfclown.common.build.system.BootstrapLog.info;
 
 import java.io.IOException;
@@ -233,14 +232,6 @@ public final class LogManager {
   public static final String SYSTEM_PROPERTY__LOG_LEVEL = "log.level";
 
   private static @Nullable Level defaultLevel;
-  private static boolean levelOverridden;
-  static {
-    Level systemLevel = toOrNull(System.getProperty(SYSTEM_PROPERTY__LOG_LEVEL), Level::valueOf);
-    if (systemLevel != null) {
-      setLevel(systemLevel);
-      levelOverridden = true;
-    }
-  }
 
   /**
    * Applies a logging profile.
@@ -267,32 +258,13 @@ public final class LogManager {
   }
 
   /**
-   * Whether the {@linkplain #getLevel() root logging level} was set via
-   * {@link #SYSTEM_PROPERTY__LOG_LEVEL}.
-   * <p>
-   * As a consequence, calls to {@link #setLevel(Level)} are ineffective — this is useful to
-   * manually force logging to a certain level, without being subsequently altered by existing
-   * automated configurations.
-   * </p>
-   */
-  public static boolean isLevelOverridden() {
-    return levelOverridden;
-  }
-
-  /**
    * Sets the {@linkplain #getLevel() root logging level}.
-   * <p>
-   * NOTE: If level setting was {@linkplain #isLevelOverridden() overridden}, calls to this setter
-   * are ignored.
-   * </p>
    *
    * @param value
    *          ({@code null}, to restore the default level)
    */
   public static void setLevel(@Nullable Level value) {
-    if (levelOverridden)
-      return;
-    else if (value == null) {
+    if (value == null) {
       if (defaultLevel == null)
         // NOP
         return;

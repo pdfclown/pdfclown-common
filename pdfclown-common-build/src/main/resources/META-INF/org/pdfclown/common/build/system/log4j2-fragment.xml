@@ -8,21 +8,21 @@
         marker="VERBOSE"
         onMatch="DENY"
         onMismatch="ACCEPT"/>
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %c{1.} |%p| %m%n"/>
+      <PatternLayout pattern="%d{HH:mm:ss.SSS}  %highlight{%-5p} [%t] %c{1.} %m%n"/>
     </Console>
     <File
       name="Assertion"
       fileName="target/test-logs/pdfclown/assertion.log">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %c{1.} |%p| %m%n"/>
+      <PatternLayout pattern="%d{HH:mm:ss.SSS}  %-5p [%t] %c{1.} %m%n"/>
     </File>
   </Appenders>
   <Loggers>
-    <Root level="warn">
+    <Root level="${sys:log.level:-WARN}">
       <AppenderRef ref="Console"/>
     </Root>
     <Logger
       name="org.pdfclown.common.build.test.assertion"
-      level="info">
+      level="INFO">
       <!--
         Appends assertion-related entries to a dedicated file that is cleared at each session.
         These entries (excluding VERBOSE-marked ones) are also propagated to console via root.

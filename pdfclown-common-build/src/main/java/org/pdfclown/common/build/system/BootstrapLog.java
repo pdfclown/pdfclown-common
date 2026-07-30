@@ -12,9 +12,15 @@
  */
 package org.pdfclown.common.build.system;
 
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.tryToElse;
+import static org.pdfclown.common.build.system.LogManager.SYSTEM_PROPERTY__LOG_LEVEL;
+import static org.pdfclown.common.util.Chars.DOLLAR;
+import static org.pdfclown.common.util.Chars.DOT;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.apache.commons.lang3.ClassUtils;
+import org.slf4j.event.Level;
 
 /**
  * Minimalist logger.
@@ -28,27 +34,33 @@ import org.apache.commons.lang3.ClassUtils;
  * @author Stefano Chizzolini
  */
 public final class BootstrapLog {
-  private static final DateTimeFormatter FORMATTER__DATETIME =
+  private static final DateTimeFormatter FORMAT__DATETIME =
       DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
+  private static final Level THRESHOLD = tryToElse(System.getProperty(SYSTEM_PROPERTY__LOG_LEVEL),
+      Level::valueOf, Level.INFO);
+
   public static void error(Class<?> caller, String msg, Object... args) {
-    log(caller, "ERROR", msg, args);
+    log(caller, Level.ERROR, msg, args);
   }
 
   public static void info(Class<?> caller, String msg, Object... args) {
-    log(caller, "INFO", msg, args);
+    log(caller, Level.INFO, msg, args);
   }
 
   public static void warn(Class<?> caller, String msg, Object... args) {
-    log(caller, "WARN", msg, args);
+    log(caller, Level.WARN, msg, args);
   }
 
   @SuppressWarnings("JavaTimeDefaultTimeZone")
-  private static void log(Class<?> caller, String level, String msg, Object... args) {
+  private static void log(Class<?> caller, Level level, String msg, Object... args) {
+    if (level.toInt() < THRESHOLD.toInt())
+      return;
+
     // Message.
-    System.err.printf("%s %s |%s| %s%n", LocalDateTime.now().format(FORMATTER__DATETIME),
-        ClassUtils.getAbbreviatedName(caller.getName(), 1).replace('$', '.'),
-        level, args.length > 0 ? String.format(msg, args) : msg);
+    System.err.printf("%s  %-5s %s %s%n", LocalDateTime.now().format(FORMAT__DATETIME), level,
+        ClassUtils.getAbbreviatedName(caller.getName(), 1).replace(DOLLAR, DOT),
+        args.length > 0 ? String.format(msg, args) : msg);
 
     // Stack trace.
     if (args.length > 0 && args[args.length - 1] instanceof Throwable t) {
