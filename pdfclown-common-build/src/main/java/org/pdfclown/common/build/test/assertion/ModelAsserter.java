@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.test.model.JsonArray;
 import org.pdfclown.common.build.test.model.ModelDiffer;
 import org.pdfclown.common.build.test.model.ModelMapper;
@@ -82,31 +83,33 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
   /**
    * Asserts that the difference between objects matches the expected one.
    *
-   * @param expectedDiffResourceBasename
+   * @param expectedObjResourceBasename
    *          Resource basename of the expected object difference in serialized (JSON) form. If
    *          relative, it is resolved on the local name of {@link Config#getTest()
-   *          config.getTest()}.
-   * @param inputObj
-   *          Input object.
-   * @param outputObj
-   *          Output object.
+   *          config.getTest()}. Its filename will be defined concatenating the
+   *          {@code _diff.json.zip} suffix.
+   * @param fromObj
+   *          Initial object.
+   * @param toObj
+   *          Modified object.
    * @param config
    *          Assertion configuration.
    * @throws AssertionError
-   *           if the difference between {@code inputObj} and {@code outputObj} doesn't match that
-   *           from {@code expectedDiffResourceBasename}.
+   *           if the difference between {@code fromObj} and {@code toObj} doesn't match the
+   *           expected one (resolved from {@code expectedObjResourceBasename}).
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
-  public void assertDiffEquals(String expectedDiffResourceBasename, TDiff inputObj, TDiff outputObj,
-      Config config) {
+  public void assertDiffEquals(String expectedObjResourceBasename, @Nullable TDiff fromObj,
+      @Nullable TDiff toObj, Config config) {
     // Collect the differences between the objects!
-    List<? extends TMapDiff> diffs = modelDifferSupplier.get().diff(inputObj, outputObj);
+    List<? extends TMapDiff> diffs = modelDifferSupplier.get().diff(fromObj, toObj);
 
     // Map the differences to JSON!
     JsonArray actualJsonArray = modelDiffMapperSupplier.get().mapAll(diffs);
 
     // Check consistency with expected differences!
-    doAssertEquals(expectedDiffResourceBasename, FILE_EXTENSION__JSON_ZIP, actualJsonArray, config);
+    doAssertEquals(expectedObjResourceBasename + "_diff", FILE_EXTENSION__JSON_ZIP, actualJsonArray,
+        config);
   }
 
   /**
@@ -114,14 +117,15 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    *
    * @param expectedObjResourceBasename
    *          Resource basename of the expected object in serialized (JSON) form. If relative, it is
-   *          resolved on the local name of {@link Config#getTest() config.getTest()}.
+   *          resolved on the local name of {@link Config#getTest() config.getTest()}. Its filename
+   *          will be defined concatenating the {@code .json.zip} suffix.
    * @param actualObj
    *          Actual object.
    * @param config
    *          Assertion configuration.
    * @throws AssertionError
-   *           if {@code actualObj} doesn't match the one loaded from
-   *           {@code expectedObjResourceBasename}.
+   *           if {@code actualObj} doesn't match the expected one (resolved from
+   *           {@code expectedObjResourceBasename}).
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   public void assertEquals(String expectedObjResourceBasename, TMap actualObj, Config config) {
@@ -133,7 +137,8 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
    *
    * @param expectedObjResourceBasename
    *          Resource basename of the expected object in serialized (JSON) form. If relative, it is
-   *          resolved on the local name of {@link Config#getTest() config.getTest()}.
+   *          resolved on the local name of {@link Config#getTest() config.getTest()}. Its filename
+   *          will be defined concatenating the {@code .json.zip} suffix.
    * @param actualObj
    *          Actual object.
    * @param objSelectors

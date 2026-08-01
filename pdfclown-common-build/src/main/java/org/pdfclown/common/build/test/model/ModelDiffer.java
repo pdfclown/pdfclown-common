@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.test.model;
 
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Domain object difference collector.
@@ -27,5 +28,5 @@ public abstract class ModelDiffer<TModel, TDiff> {
   /**
    * Gets the differences between objects.
    */
-  public abstract List<TDiff> diff(TModel obj1, TModel obj2);
+  public abstract List<TDiff> diff(@Nullable TModel obj1, @Nullable TModel obj2);
 }
