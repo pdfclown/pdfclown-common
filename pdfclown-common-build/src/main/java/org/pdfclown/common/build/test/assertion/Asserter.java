@@ -15,7 +15,6 @@ package org.pdfclown.common.build.test.assertion;
 import static java.nio.file.Files.exists;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.failedIO;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
@@ -29,19 +28,13 @@ import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 import org.apache.commons.lang3.function.Failable;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.pdfclown.common.build.internal.temp.util.ParamMessage;
 import org.pdfclown.common.build.system.LogManager;
 import org.pdfclown.common.build.util.system.Builds;
@@ -51,15 +44,29 @@ import org.slf4j.LoggerFactory;
 /**
  * Support for assertions based on automatically managed state.
  * <p>
- * The expected state (typically persisted as resource file) is automatically managed to ensure easy
- * and robust test maintenance, providing testers with CLI hints to fix unexpected output and update
- * the corresponding resources.
+ * The expected state (typically persisted as resource files) is automatically managed to ensure
+ * convenient test maintenance, providing testers with CLI hints to fix unexpected output and
+ * {@linkplain #SYSTEM_PROPERTY__UPDATE_EXPECTED update} the corresponding resources.
  * </p>
  * <p>
- * In case of error, full assertion reports are written to a dedicated log file
+ * <i>Only the resources belonging to a single assertion per test can be updated during an
+ * execution</i>; this prevents unintended changes to other resources in the same test from sneaking
+ * through, potentially corrupting the expected state — each mismatching set of files MUST be
+ * evaluated separately with the respective assertion.
+ * </p>
+ * <p>
+ * For the same reason, missing resources (for example, in case of new tests added to the test
+ * suite) are treated as failed assertions — silently updating them would be dangerous, as they
+ * could introduce invalid content in the expected state.
+ * </p>
+ * <p>
+ * In case of error, full reports are written to a dedicated log file
  * ({@code target/test-logs/pdfclown/assertion.log}).
  * </p>
  *
+ * @implSpec Each assertion implementation MUST query {@link #isUpdatable(Config)} to decide whether
+ *           the expected state can be updated instead of emitting a
+ *           {@linkplain #evalAssertionResult (String, Path, Path, Config) mismatch error}.
  * @author Stefano Chizzolini
  */
 public abstract class Asserter {
@@ -145,7 +152,7 @@ public abstract class Asserter {
   private static final Logger log = LoggerFactory.getLogger(Asserter.class);
 
   /**
-   * System property specifying whether {@linkplain Asserter assertion} resource building is enabled
+   * System property specifying whether {@linkplain Asserter assertion} resource update is enabled
    * for executed tests.
    * <p>
    * <b>Assertion resources</b> represent the expected state against which the corresponding actual
@@ -189,62 +196,49 @@ public abstract class Asserter {
         getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED));
   }
 
+  private static @Nullable String lastUpdatedTestQName;
+
+  /**
+   * {@linkplain Test#getTestQName() Qualified name} of the last test whose resources have been
+   * updated.
+   */
+  protected static @Nullable String getLastUpdatedTestQName() {
+    return lastUpdatedTestQName;
+  }
+
   /**
    * Evaluates the assertion result and throws an assertion error in case of failure.
    * <p>
-   * This method is expected to be invoked at the end of the assertion, after all the detected
-   * errors were combined in the message:
+   * This method MUST be invoked at the end of the assertion, after all the detected errors were
+   * combined in the message:
    * </p>
    * <ul>
-   * <li>if {@code message} is empty, the assertion succeeded: this method quietly returns</li>
-   * <li>if {@code message} is not empty, the assertion failed: this method enters the full content
-   * of {@code message} into the assertion log, then throws its shortened version as
+   * <li>if {@code errorMessage} is empty, the assertion succeeded: this method quietly returns</li>
+   * <li>if {@code errorMessage} is not empty, the assertion failed: this method enters the full
+   * content of {@code errorMessage} into the assertion log, then throws its shortened version as
    * {@link AssertionError}</li>
    * </ul>
    *
-   * @param message
-   *          Assertion error message (if empty, no error is thrown).
+   * @param errorMessage
+   *          Assertion error message.
    * @param expectedFile
    *          Expected test result (resource file).
    * @param actualFile
    *          Actual test result (output file).
    * @throws AssertionError
-   *           If {@code message} is not empty.
+   *           If {@code errorMessage} is not empty.
    */
-  protected void evalAssertionError(@Nullable String message, Path expectedFile, Path actualFile)
-      throws AssertionError {
-    if (isBlank(message))
+  protected void evalAssertionResult(@Nullable String errorMessage, Path expectedFile,
+      Path actualFile,
+      Config config) throws AssertionError {
+    if (isBlank(errorMessage))
       return;
 
-    var testAnnotationTypes = Set.of(Test.class, ParameterizedTest.class);
-    String testName = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-        .walk($frames -> $frames
-            .skip(2)
-            .<Optional<Method>>map($ -> {
-              try {
-                return Optional.of($.getDeclaringClass().getDeclaredMethod($.getMethodName(),
-                    $.getMethodType().parameterArray()));
-              } catch (NoSuchMethodException e) {
-                return Optional.empty();
-              }
-            })
-            .filter($ -> $
-                .map($$ -> Stream.of($$.getDeclaredAnnotations())
-                    .anyMatch($$$ -> testAnnotationTypes.contains($$$.annotationType())))
-                .orElse(false))
-            .findFirst()
-            .map($ -> $
-                .map($$ -> $$.getDeclaringClass().getSimpleName() + "#" + $$.getName())
-                .orElseThrow())
-            .orElse(EMPTY));
-    if (testName.isEmpty())
-      throw runtime("""
-          Failed test method NOT FOUND on call stack (should be marked with any of these \
-          annotations: {})""", testAnnotationTypes.stream().map(Class::getName).collect(toList()));
+    String testQName = config.getTest().getTestQName();
 
-    message = """
+    errorMessage = """
         Test %s FAILED:
-        %s""".formatted(textLiteral(testName), message);
+        %s""".formatted(textLiteral(testQName), errorMessage);
     String projectArtifactId = Builds.projectArtifactId(expectedFile);
     String hint = ParamMessage.format(
         """
@@ -259,17 +253,17 @@ public abstract class Asserter {
             """,
         expectedFile + (exists(expectedFile) ? EMPTY : " (MISSING)"),
         actualFile + (exists(actualFile) ? EMPTY : " (MISSING)"),
-        projectArtifactId, textLiteral(testName),
-        projectArtifactId, textLiteral(testName), SYSTEM_PROPERTY__UPDATE_EXPECTED);
+        projectArtifactId, textLiteral(testQName),
+        projectArtifactId, textLiteral(testQName), SYSTEM_PROPERTY__UPDATE_EXPECTED);
 
     // Log (full message).
-    getLog().error(MARKER__VERBOSE, "{}" + LF + "{}", message, hint);
+    getLog().error(MARKER__VERBOSE, "{}" + LF + "{}", errorMessage, hint);
 
     // Exception (shortened message).
     throw new AssertionError("""
         %s
         (see '%s' for further information)
-        %s""".formatted(abbreviateMultiline(message, 5, 500),
+        %s""".formatted(abbreviateMultiline(errorMessage, 5, 500),
         LogManager.getLogFiles().get(LogManager.APPENDER_NAME__ASSERTION), hint));
   }
 
@@ -281,9 +275,23 @@ public abstract class Asserter {
   /**
    * Gets whether the expected resources can be overwritten in case of mismatch with their actual
    * counterparts.
+   * <p>
+   * <span class="warning">WARNING: once at least one resource is updated, this method returns
+   * {@code false} for the same test; therefore, it should be assigned to a variable at the
+   * beginning of the assertion in order to apply consistently across the set of resources belonging
+   * to the assertion.</span>
+   * </p>
    */
-  protected boolean isUpdatable() {
-    return getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED);
+  protected boolean isUpdatable(Config config) {
+    return getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED)
+        && !config.getTest().getTestQName().equals(lastUpdatedTestQName);
+  }
+
+  /**
+   * Notifies a resource was written on filesystem, changing the expected state.
+   */
+  protected void onExpectedResourceUpdated(String resourceName, Config config) {
+    lastUpdatedTestQName = config.getTest().getTestQName();
   }
 
   /**
@@ -352,6 +360,8 @@ public abstract class Asserter {
           targetDir, ex);
     }
     getLog().info("Expected directory resource COPIED to target at {}", textLiteral(targetDir));
+
+    onExpectedResourceUpdated(resourceName, config);
   }
 
   /**
@@ -367,8 +377,9 @@ public abstract class Asserter {
    *          Actual directory to overwrite the expected resource.
    * @param config
    *          Assertion configuration.
+   * @implNote Marked as final to enforce overloads consistency.
    */
-  protected void writeExpectedDirectory(String resourceName, Path actualDir, Config config)
+  protected final void writeExpectedDirectory(String resourceName, Path actualDir, Config config)
       throws IOException {
     writeExpectedDirectory(resourceName, Failable.asConsumer($ -> copyDirectory(actualDir, $)),
         config);
@@ -411,6 +422,8 @@ public abstract class Asserter {
           targetFile, ex);
     }
     getLog().info("Expected resource COPIED to target at {}", textLiteral(targetFile));
+
+    onExpectedResourceUpdated(resourceName, config);
   }
 
   /**
@@ -426,8 +439,9 @@ public abstract class Asserter {
    *          Actual file to overwrite the expected resource.
    * @param config
    *          Assertion configuration.
+   * @implNote Marked as final to enforce overloads consistency.
    */
-  protected void writeExpectedFile(String resourceName, Path actualFile, Config config)
+  protected final void writeExpectedFile(String resourceName, Path actualFile, Config config)
       throws IOException {
     writeExpectedFile(resourceName, Failable.asConsumer(
         $ -> Files.copy(actualFile, $, REPLACE_EXISTING)), config);

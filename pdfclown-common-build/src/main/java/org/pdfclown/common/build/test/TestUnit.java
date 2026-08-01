@@ -154,19 +154,14 @@ public abstract class TestUnit implements Test {
   /**
    * Label of the current test.
    * <p>
-   * Corresponds to JUnit's {@linkplain TestInfo#getDisplayName() display name}.
+   * Corresponds to its {@linkplain TestInfo#getDisplayName() display name}.
    * </p>
    */
   public String getTestLabel() {
     return testInfo.getDisplayName();
   }
 
-  /**
-   * Name of the current test.
-   * <p>
-   * Corresponds to JUnit's {@linkplain TestInfo#getTestMethod() method name}.
-   * </p>
-   */
+  @Override
   public String getTestName() {
     return testInfo.getTestMethod().orElseThrow().getName();
   }

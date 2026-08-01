@@ -100,13 +100,11 @@ public abstract class ContentAsserter<T> extends Asserter {
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
   protected final void doAssertEquals(final String expectedResourceBasename, String fileExtension,
-      final T actualContent,
-      final Config config) {
+      final T actualContent, final Config config) {
     final String expectedResourceFqn = ResourceNames.localName(expectedResourceBasename
         + FILE_QUALIFIER__APPROVED + fileExtension, config.getTest());
     final Path expectedFile = config.getEnv().resourcePath(expectedResourceFqn);
     try {
-      var built = false;
       while (true) {
         try {
           T expectedContent = readContent(expectedFile);
@@ -115,8 +113,22 @@ public abstract class ContentAsserter<T> extends Asserter {
 
           break;
         } catch (AssertionError | FileNotFoundException | NoSuchFileException ex) {
-          // Unrecoverable?
-          if (built || !isUpdatable()) {
+          /*
+           * Assertion content update?
+           *
+           * NOTE: In case of explicit content update request, the actual content is saved into the
+           * (either mismatching or missing) expected resource (at both source and target
+           * locations).
+           */
+          if (isUpdatable(config)) {
+            log.info("REBUILDING assertion content {} because of {}",
+                textLiteral(expectedResourceFqn), sqnd(ex));
+
+            writeExpectedFile(expectedResourceFqn,
+                Failable.asConsumer($ -> writeContent($, actualContent)), config);
+          }
+          // Unrecoverable error.
+          else {
             Path actualFile = config.getEnv().outputPath(substringBefore(expectedResourceFqn,
                 FILE_QUALIFIER__APPROVED) + FILE_QUALIFIER__UNEXPECTED + fileExtension);
             try {
@@ -132,24 +144,8 @@ public abstract class ContentAsserter<T> extends Asserter {
                   textLiteral(expectedResourceFqn), textLiteral(actualFile), ex1);
             }
 
-            evalAssertionError(ex.getMessage(), expectedFile, actualFile);
-          }
-
-          /*
-           * Assertion content rebuilding.
-           *
-           * NOTE: In case of explicit content build request, the actual content is saved into the
-           * (either mismatching or missing) expected resource (at both source and target
-           * locations).
-           */
-          {
-            built = true;
-
-            log.info("REBUILDING assertion content {} because of {}",
-                textLiteral(expectedResourceFqn), sqnd(ex));
-
-            writeExpectedFile(expectedResourceFqn,
-                Failable.asConsumer($ -> writeContent($, actualContent)), config);
+            evalAssertionResult(ex.getMessage(), expectedFile, actualFile, config);
+            break;
           }
         }
       }

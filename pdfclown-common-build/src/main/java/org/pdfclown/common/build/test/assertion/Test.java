@@ -12,6 +12,10 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static org.apache.commons.lang3.StringUtils.stripToNull;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireState;
+import static org.pdfclown.common.util.Chars.HASH;
+
 /**
  * Test unit.
  *
@@ -22,4 +26,24 @@ public interface Test {
    * Test environment.
    */
   TestEnvironment getEnv();
+
+  /**
+   * Name of the current test.
+   * <p>
+   * Corresponds to its {@linkplain org.junit.jupiter.api.TestInfo#getTestMethod() method name}.
+   * </p>
+   */
+  String getTestName();
+
+  /**
+   * Qualified name of the current test.
+   *
+   * @return ({@code this.getClass().getSimpleName() + '#' + this.}{@link #getTestName()})
+   * @apiNote Useful for referencing the test, such as to select specific tests for execution (see
+   *          {@code -Dtest} and {@code -Dit.test} Maven CLI arguments).
+   */
+  default String getTestQName() {
+    return getClass().getSimpleName() + HASH
+        + requireState(stripToNull(getTestName()), "`testName`");
+  }
 }

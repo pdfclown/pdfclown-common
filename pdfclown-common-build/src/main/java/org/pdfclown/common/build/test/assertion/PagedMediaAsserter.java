@@ -200,7 +200,7 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
    * Gets the ancillary image file corresponding to the given document page.
    *
    * @param baseFile
-   *          Base file path to derive the image file path from.
+   *          Base file path to derive the image file path from, in the same directory.
    */
   protected static Path imageFile(Path baseFile, int pageIndex, String qualifier) {
     return cognateFile(baseFile, S + UNDERSCORE + UNDERSCORE + pageIndex
@@ -400,7 +400,8 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
    * @param pageIndex
    *          Index of the mismatching page in {@code actualDocumentFile}.
    * @param actualDocumentFile
-   *          Actual document file, used by this method to derive image file paths.
+   *          Actual document file, used by this method to derive image file paths in the same
+   *          directory.
    */
   protected void writePageMismatch(int pageIndex, Path actualDocumentFile, BufferedImage diffImage,
       BufferedImage expectedPageImage, BufferedImage actualPageImage, ErrorMessageBuilder errors) {

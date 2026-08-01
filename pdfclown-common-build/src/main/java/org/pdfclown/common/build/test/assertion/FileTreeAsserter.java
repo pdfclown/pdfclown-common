@@ -61,7 +61,6 @@ public class FileTreeAsserter extends Asserter {
         config.getTest());
     final Path expectedDir = config.getEnv().resourcePath(expectedDirResourceFqn);
     try {
-      var built = false;
       while (true) {
         try {
           Diff diff = diff(expectedDir, actualDir);
@@ -80,30 +79,28 @@ public class FileTreeAsserter extends Asserter {
           }
           fail(b.toString());
         } catch (AssertionError | FileNotFoundException | NoSuchFileException ex) {
-          // Unrecoverable?
-          if (built || !isUpdatable()) {
+          /*
+           * Assertion resource update?
+           *
+           * NOTE: In case of explicit resource update request, the actual directory is saved into
+           * the (either mismatching or missing) expected directory resource (at both source and
+           * target locations).
+           */
+          if (isUpdatable(config)) {
+            log.info("REBUILDING assertion directory resource {} because of {}",
+                textLiteral(expectedDirResourceFqn), sqnd(ex));
+
+            writeExpectedDirectory(expectedDirResourceFqn, actualDir, config);
+          }
+          // Unrecoverable error.
+          else {
             log.info("""
                 Test resource {}: unexpected actual file tree saved to {} (expected file tree \
                 is at {})""", textLiteral(expectedDirResourceFqn), textLiteral(actualDir),
                 textLiteral(expectedDir));
 
-            evalAssertionError(ex.getMessage(), expectedDir, actualDir);
-          }
-
-          /*
-           * Assertion resource rebuilding.
-           *
-           * NOTE: In case of explicit resource build request, the actual directory is saved into
-           * the (either mismatching or missing) expected directory resource (at both source and
-           * target locations).
-           */
-          {
-            built = true;
-
-            log.info("REBUILDING assertion directory resource {} because of {}",
-                textLiteral(expectedDirResourceFqn), sqnd(ex));
-
-            writeExpectedDirectory(expectedDirResourceFqn, actualDir, config);
+            evalAssertionResult(ex.getMessage(), expectedDir, actualDir, config);
+            break;
           }
         }
       }
