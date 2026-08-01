@@ -25,8 +25,11 @@ import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator.Priorities.explicitPriority;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.HierarchicalTypeComparator.Priorities.interfacePriority;
 import static org.pdfclown.common.build.internal.temp.util.collect.Comparators.hierarchicalType;
-import static org.pdfclown.common.util.Chars.COLON;
+import static org.pdfclown.common.util.Chars.COMMA;
+import static org.pdfclown.common.util.Chars.EQUAL;
 import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -361,15 +364,15 @@ public class ModelMapper<T> {
   {
     valueMappers.put(Object.class, ($obj, $selectors, $visitedObjs, $level) -> {
       if ($obj.getClass().isArray()) {
-        var b = new StringBuilder("[");
+        var b = new StringBuilder().append(SQUARE_BRACKET_OPEN);
         $level++;
         for (int i = 0; i < Array.getLength($obj); i++) {
           if (i > 0) {
-            b.append(", ");
+            b.append(COMMA).append(SPACE);
           }
           b.append(mapValue(Array.get($obj, i), $selectors, $visitedObjs, $level));
         }
-        return b.append("]").toString();
+        return b.append(SQUARE_BRACKET_CLOSE).toString();
       } else
         return $obj.toString();
     });
@@ -380,8 +383,8 @@ public class ModelMapper<T> {
 
     valueMappers.put(Map.Entry.class, ($obj, $selectors, $visitedObjs, $level) -> {
       var entry = (Map.Entry) $obj;
-      return entry.getKey() + S + COLON + SPACE
-          + mapValue(entry.getValue(), $selectors, $visitedObjs, $level);
+      return S + entry.getKey() + EQUAL + mapValue(entry.getValue(), $selectors, $visitedObjs,
+          $level);
     });
   }
 
