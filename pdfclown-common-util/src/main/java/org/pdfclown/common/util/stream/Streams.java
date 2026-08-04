@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.util.stream;
 
+import static org.pdfclown.common.util.ArgumentException.ARG_VALUE__OMITTED;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 
 import java.lang.reflect.Array;
@@ -68,7 +69,7 @@ public final class Streams {
     int size = lists[0].size();
     for (int i = 1; i < lists.length; i++) {
       if (lists[i].size() != size)
-        throw wrongArg("lists", null,
+        throw wrongArg("lists", ARG_VALUE__OMITTED,
             "Size of list {} MISMATCH ({} instead of {} -- all lists must be the same size)",
             i, lists[i].size(), size);
     }

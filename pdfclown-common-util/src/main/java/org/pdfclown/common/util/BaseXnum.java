@@ -15,6 +15,7 @@ package org.pdfclown.common.util;
 import static java.util.Collections.unmodifiableCollection;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
+import static org.pdfclown.common.util.ArgumentException.ARG_VALUE__OMITTED;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongState;
 import static org.pdfclown.common.util.function.Functions.toElse;
@@ -385,8 +386,8 @@ public abstract class BaseXnum<K> implements Xnum<K> {
   @SuppressWarnings("ReferenceEquality")
   protected BaseXnum(K code, Object guard) {
     if (guard != GUARD)
-      throw wrongArg("guard", null, "Manual instantiation forbidden: call {}.valueOf(..) instead",
-          getClass());
+      throw wrongArg("guard", ARG_VALUE__OMITTED,
+          "Manual instantiation NOT ALLOWED: call `{}.valueOf` instead", getClass());
 
     this.code = requireNonNull(code);
   }

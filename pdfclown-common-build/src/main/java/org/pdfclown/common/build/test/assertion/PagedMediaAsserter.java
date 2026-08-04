@@ -14,6 +14,7 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.nio.file.Files.exists;
 import static org.apache.commons.codec.binary.Hex.encodeHexString;
+import static org.pdfclown.common.build.internal.temp.util.ArgumentException.ARG_VALUE__OMITTED;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.failedIO;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.unsupported;
@@ -300,7 +301,7 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
     int imageWidth = expectedImage.getWidth();
     int imageHeight = expectedImage.getHeight();
     if (actualImage.getWidth() != imageWidth || actualImage.getHeight() != imageHeight)
-      throw wrongArg("actualImage", null, "MUST have the same size as expectedImage "
+      throw wrongArg("actualImage", ARG_VALUE__OMITTED, "MUST have the same size as expectedImage "
           + "({}x{} instead of {}x{})", imageWidth, imageHeight, actualImage.getWidth(),
           actualImage.getHeight());
 

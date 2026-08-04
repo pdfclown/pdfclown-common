@@ -239,7 +239,7 @@ public class ReleaseManager {
    */
   public List<String> getMavenCommand(String... args) {
     if (isEmpty(args))
-      throw wrongArg("args", null, "MUST be not empty");
+      throw wrongArg("args", null, "MUST be NOT empty");
 
     return list(getMavenExec(), "--batch-mode", "--errors").withAll(List.of(args));
   }

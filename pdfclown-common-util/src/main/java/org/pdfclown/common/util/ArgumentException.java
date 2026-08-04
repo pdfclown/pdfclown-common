@@ -29,33 +29,48 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Enhanced {@link IllegalArgumentException}.
+ * <p>
+ * Anytime {@link #getArgValue() argValue} is omitted (for example, due to sensitive content),
+ * {@link #ARG_VALUE__OMITTED} should be used as replacement; {@link #hasArgValue()} allows to check
+ * whether the actual value is available.
+ * </p>
  *
- * @apiNote {@code null} {@link #getArgValue() argValue} means the argument was defined on caller
- *          side, but wasn't passed to this exception, for any reason (such as to avoid leaking
- *          sensitive information); conversely, in case of argument undefined on caller side, use
- *          {@link NullPointerException} (see {@link java.util.Objects#requireNonNull(Object)})
- *          instead.
- *          <p>
- *          <span class="important">IMPORTANT: DO NOT pass {@code argValue} unless in specific,
- *          non-sensitive cases.</span>
- *          </p>
  * @author Stefano Chizzolini
  */
 @SuppressWarnings("serial" /* serialization is currently not a concern */)
 public class ArgumentException extends IllegalArgumentException {
+  public static final Object ARG_VALUE__OMITTED = new Object() {
+    @Override
+    public String toString() {
+      return "**OMITTED**";
+    }
+  };
+
   private final String argName;
   private final @Nullable Object argValue;
 
+  /**
+   * @param argValue
+   *          ({@link #ARG_VALUE__OMITTED}, if not specified)
+   */
   public ArgumentException(@Nullable String argName, @Nullable Object argValue) {
     this(argName, argValue, null);
   }
 
+  /**
+   * @param argValue
+   *          ({@link #ARG_VALUE__OMITTED}, if not specified)
+   */
   public ArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message) {
     this(argName, argValue, message, null);
   }
 
-  @SuppressWarnings("NullAway" /* false positive */)
+  /**
+   * @param argValue
+   *          ({@link #ARG_VALUE__OMITTED}, if not specified)
+   */
+  @SuppressWarnings({ "NullAway" /* false positive */, "ReferenceEquality" })
   public ArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message, @Nullable Throwable cause) {
     super(to(tuple(message, argName = stripToEmpty(argName), argValue), $ -> {
@@ -63,7 +78,7 @@ public class ArgumentException extends IllegalArgumentException {
       if (!nonNull($.getE2()).isEmpty()) {
         b.append(BACKTICK).append($.getE2()).append(BACKTICK);
       }
-      if ($.getE3() != null) {
+      if ($.getE3() != ARG_VALUE__OMITTED) {
         if (!b.isEmpty()) {
           b.append(SPACE);
         }
@@ -89,9 +104,17 @@ public class ArgumentException extends IllegalArgumentException {
   /**
    * Argument value.
    *
-   * @return {@code null}, if omitted.
+   * @return {@link #ARG_VALUE__OMITTED}, if not {@linkplain #hasArgValue() specified}.
    */
   public @Nullable Object getArgValue() {
     return argValue;
+  }
+
+  /**
+   * Whether {@link #getArgValue()} is specified.
+   */
+  @SuppressWarnings("ReferenceEquality")
+  public boolean hasArgValue() {
+    return argValue != ARG_VALUE__OMITTED;
   }
 }

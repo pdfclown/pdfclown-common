@@ -151,7 +151,8 @@ public final class Executions {
       boolean merged) {
     if (outRef == null) {
       if (errRef == null)
-        throw wrongArg(null, null, "At least one between `outRef` and `errRef` MUST be defined");
+        throw wrongArg("outRef", null,
+            "At least one between `outRef` and `errRef` MUST be defined");
       else if (merged) {
         outRef = new MutableObject<>();
       }

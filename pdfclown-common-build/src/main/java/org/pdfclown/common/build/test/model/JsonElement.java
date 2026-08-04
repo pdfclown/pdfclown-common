@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.test.model;
 
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
+import static org.pdfclown.common.build.internal.temp.util.Objects.type;
 import static org.pdfclown.common.build.internal.util.Objects.PATTERN_GROUP__CLASS_FQN;
 import static org.pdfclown.common.build.internal.util.Objects.PATTERN__TO_STRING__DEFAULT;
 
@@ -48,7 +49,7 @@ public interface JsonElement {
   static @Nullable Object normValue(@Nullable Object value) {
     if ((value instanceof JSONArray || value instanceof JSONObject)
         && !(value instanceof JsonElement))
-      throw wrongArg("value", null, "MUST implement {}", JsonElement.class);
+      throw wrongArg("value", type(value), "MUST implement {}", JsonElement.class);
 
     if (value instanceof JsonElement)
       return value;

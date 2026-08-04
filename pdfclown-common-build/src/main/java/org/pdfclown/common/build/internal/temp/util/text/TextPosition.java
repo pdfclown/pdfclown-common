@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.internal.temp.util.text;
 
 import static java.lang.Math.max;
+import static org.pdfclown.common.build.internal.temp.util.ArgumentException.ARG_VALUE__OMITTED;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 
 import org.pdfclown.common.util.annot.Immutable;
@@ -63,7 +64,8 @@ public final class TextPosition implements Comparable<TextPosition> {
       line = COORDINATE__UNDEFINED;
       column = COORDINATE__UNDEFINED;
     } else if (line <= COORDINATE__UNDEFINED || column <= COORDINATE__UNDEFINED)
-      throw wrongArg(null, null, "Both `line` and `column` MUST be 1-based, or undefined");
+      throw wrongArg(null, ARG_VALUE__OMITTED,
+          "Both `line` and `column` MUST be 1-based, or undefined");
 
     return new TextPosition(offset, line, column);
   }
