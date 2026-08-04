@@ -98,11 +98,9 @@ public final class ResourceNames {
    *         {@value Files#PATH_SUPER}): converted to absolute resource name</li>
    *         <li>if {@code file} is outside {@code baseDir}: {@code null}</li>
    *         </ul>
-   * @throws NullPointerException
-   *           if {@code file} is absolute and {@code baseDir} is undefined.
    */
-  public static @Nullable String fromPath(Path file, @Nullable Path baseDir) {
-    file = file.normalize();
+  public static @Nullable String fromPath(Path file, Path baseDir) {
+    file = requireNonNull(file, "`file`").normalize();
     if (file.isAbsolute()) {
       baseDir = requireNonNull(baseDir, "`baseDir`").toAbsolutePath().normalize();
       // Absolute file outside `baseDir`?
