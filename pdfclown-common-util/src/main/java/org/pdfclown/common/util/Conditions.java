@@ -156,6 +156,37 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
+  public static int requireAtLeast(int value, int otherValue) {
+    return requireAtLeast(value, otherValue, null);
+  }
+
+  /**
+   * Requires the value is at least the other one.
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireAtLeast(int value, int otherValue, @Nullable String name) {
+    if (value < otherValue)
+      throw wrongArg(name, value, "MUST be at least {}", otherValue);
+
+    return value;
+  }
+
+  /**
+   * Requires the value is at least the other one.
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
   public static <T extends Comparable<T>> T requireAtLeast(T value, T otherValue) {
     return requireAtLeast(value, otherValue, null);
   }
@@ -175,6 +206,37 @@ public final class Conditions {
       @Nullable String name) {
     if (value == null || value.compareTo(otherValue) < 0)
       throw wrongArg(name, value, "MUST be at least {}", otherValue);
+
+    return value;
+  }
+
+  /**
+   * Requires the value is at most the other one.
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireAtMost(int value, int otherValue) {
+    return requireAtMost(value, otherValue, null);
+  }
+
+  /**
+   * Requires the value is at most the other one.
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireAtMost(int value, int otherValue, @Nullable String name) {
+    if (value > otherValue)
+      throw wrongArg(name, value, "MUST be at most {}", otherValue);
 
     return value;
   }
@@ -322,6 +384,37 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
+  public static int requireGreaterThan(int value, int otherValue) {
+    return requireGreaterThan(value, otherValue, null);
+  }
+
+  /**
+   * Requires the value is greater than the other one.
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireGreaterThan(int value, int otherValue, @Nullable String name) {
+    if (value <= otherValue)
+      throw wrongArg(name, value, "MUST be greater than {}", otherValue);
+
+    return value;
+  }
+
+  /**
+   * Requires the value is greater than the other one.
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
   public static <T extends Comparable<T>> T requireGreaterThan(T value, T otherValue) {
     return requireGreaterThan(value, otherValue, null);
   }
@@ -341,6 +434,37 @@ public final class Conditions {
       @Nullable String name) {
     if (value == null || value.compareTo(otherValue) <= 0)
       throw wrongArg(name, value, "MUST be greater than {}", otherValue);
+
+    return value;
+  }
+
+  /**
+   * Requires the value is less than the other one.
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireLessThan(int value, int otherValue) {
+    return requireLessThan(value, otherValue, null);
+  }
+
+  /**
+   * Requires the value is less than the other one.
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireLessThan(int value, int otherValue, @Nullable String name) {
+    if (value >= otherValue)
+      throw wrongArg(name, value, "MUST be less than {}", otherValue);
 
     return value;
   }
@@ -787,6 +911,36 @@ public final class Conditions {
       throw wrongArg(name, value, "MUST be between {} and {}", min, max);
 
     return value;
+  }
+
+  /**
+   * Requires the value is within unsigned-byte range, that is between {@code 0} and {@code 255}
+   * (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireWithinByte(int value) {
+    return requireWithinByte(value, null);
+  }
+
+  /**
+   * Requires the value is within unsigned-byte range, that is between {@code 0} and {@code 255}
+   * (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireWithinByte(int value, @Nullable String name) {
+    return requireWithin(value, 0x00, 0xFF, name);
   }
 
   /**
