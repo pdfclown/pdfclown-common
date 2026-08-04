@@ -13,6 +13,7 @@
 package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireType;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
@@ -160,7 +161,8 @@ public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object
      * submitting.
      */
     {
-      var targetObjSelectors = new ArrayList<>(objSelectors) /* NOTE: Preserves original order */;
+      var targetObjSelectors = new ArrayList<>(requireNonNull(objSelectors,
+          "objSelectors")) /* NOTE: Preserves original order */;
       var prevRef = new PropertySelector[1];
       objSelectors.stream()
           .sorted(comparing($ -> $.getType().getName()))
