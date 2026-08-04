@@ -406,6 +406,13 @@ public final class Objects {
   }
 
   /**
+   * Quietly closes an object.
+   */
+  public static <T extends AutoCloseable> void closeQuietly(@Nullable T obj) {
+    ifPresentTry(obj, AutoCloseable::close);
+  }
+
+  /**
    * Gets whether the two resolved elements are equal.
    *
    * @param <R>
@@ -1797,13 +1804,6 @@ public final class Objects {
   @SuppressWarnings("unchecked")
   public static <T, R extends T> @Nullable R tryCast(@Nullable T obj, Class<R> type) {
     return type.isInstance(obj) ? (R) obj : null;
-  }
-
-  /**
-   * Quietly closes an object.
-   */
-  public static <T extends AutoCloseable> void tryClose(@Nullable T obj) {
-    ifPresentTry(obj, AutoCloseable::close);
   }
 
   /**
