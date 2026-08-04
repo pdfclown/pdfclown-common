@@ -4,7 +4,7 @@
 [value: "", name: "myArg"] => <<ArgumentException: "`myArg` (\"\"): MUST be NOT blank">>
 [value: " \t \n \r ", name: null] => <<ArgumentException: "(\" \\t \\n \\r \"): MUST be NOT blank">>
 [value: " \t \n \r ", name: "myArg"] => <<ArgumentException: "`myArg` (\" \\t \\n \\r \"): MUST be NOT blank">>
-[value: " non blank ", name: null] => " non blank "
-[value: " non blank ", name: "myArg"] => " non blank "
+[value: " non blank ", name: null] => "non blank"
+[value: " non blank ", name: "myArg"] => "non blank"
 [value: "normal", name: null] => "normal"
 [value: "normal", name: "myArg"] => "normal"

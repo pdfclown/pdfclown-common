@@ -111,24 +111,6 @@ public final class Conditions {
   }
 
   /**
-   * Requires the insertion index is between 0 and {@code length}, inclusive.
-   *
-   * @param value
-   *          Insertion index.
-   * @param length
-   *          Upper bound.
-   * @throws IndexOutOfBoundsException
-   *           if {@code value} is invalid.
-   * @see Objects#checkIndex(int, int)
-   */
-  public static int requireAddIndexRange(int value, int length) {
-    if (0 <= value && value <= length)
-      return value;
-
-    throw new IndexOutOfBoundsException(value);
-  }
-
-  /**
    * Requires the value is among the options.
    *
    * @param value
@@ -159,10 +141,10 @@ public final class Conditions {
    */
   public static <T> @PolyNull @Nullable T requireAmong(@PolyNull @Nullable T value,
       Collection<T> options, @Nullable String name) {
-    if (options.contains(value))
-      return value;
+    if (!options.contains(value))
+      throw wrongArgOpt(name, value, null, options);
 
-    throw wrongArgOpt(name, value, null, options);
+    return value;
   }
 
   /**
@@ -191,10 +173,10 @@ public final class Conditions {
    */
   public static <T extends Comparable<T>> T requireAtLeast(T value, T otherValue,
       @Nullable String name) {
-    if (value.compareTo(otherValue) >= 0)
-      return value;
+    if (value == null || value.compareTo(otherValue) < 0)
+      throw wrongArg(name, value, "MUST be at least {}", otherValue);
 
-    throw wrongArg(name, value, "MUST be at least {}", otherValue);
+    return value;
   }
 
   /**
@@ -223,10 +205,10 @@ public final class Conditions {
    */
   public static <T extends Comparable<T>> T requireAtMost(T value, T otherValue,
       @Nullable String name) {
-    if (value.compareTo(otherValue) <= 0)
-      return value;
+    if (value == null || value.compareTo(otherValue) > 0)
+      throw wrongArg(name, value, "MUST be at most {}", otherValue);
 
-    throw wrongArg(name, value, "MUST be at most {}", otherValue);
+    return value;
   }
 
   /**
@@ -235,10 +217,10 @@ public final class Conditions {
    * @return {@code dir}
    */
   public static Path requireDirectory(Path dir) throws FileNotFoundException {
-    if (Files.isDirectory(dir))
-      return dir;
+    if (!Files.isDirectory(dir))
+      throw missingPath(dir);
 
-    throw missingPath(dir);
+    return dir;
   }
 
   /**
@@ -276,10 +258,10 @@ public final class Conditions {
    */
   public static <T> T requireElement(@Nullable T element, Object ref,
       @Nullable String description) {
-    if (element != null)
-      return element;
+    if (element == null)
+      throw missing(ref, description);
 
-    throw missing(ref, description);
+    return element;
   }
 
   /**
@@ -313,10 +295,10 @@ public final class Conditions {
    */
   public static <T> @PolyNull @Nullable T requireEqual(@PolyNull @Nullable T value,
       @Nullable T otherValue, @Nullable String name) {
-    if (Objects.equals(value, otherValue))
-      return value;
+    if (!Objects.equals(value, otherValue))
+      throw wrongArgOpt(name, value, null, singletonList(otherValue));
 
-    throw wrongArgOpt(name, value, null, singletonList(otherValue));
+    return value;
   }
 
   /**
@@ -325,10 +307,10 @@ public final class Conditions {
    * @return {@code file}
    */
   public static Path requireFile(Path file) throws FileNotFoundException {
-    if (Files.isRegularFile(file))
-      return file;
+    if (!Files.isRegularFile(file))
+      throw missingPath(file);
 
-    throw missingPath(file);
+    return file;
   }
 
   /**
@@ -357,10 +339,10 @@ public final class Conditions {
    */
   public static <T extends Comparable<T>> T requireGreaterThan(T value, T otherValue,
       @Nullable String name) {
-    if (value.compareTo(otherValue) > 0)
-      return value;
+    if (value == null || value.compareTo(otherValue) <= 0)
+      throw wrongArg(name, value, "MUST be greater than {}", otherValue);
 
-    throw wrongArg(name, value, "MUST be greater than {}", otherValue);
+    return value;
   }
 
   /**
@@ -389,10 +371,10 @@ public final class Conditions {
    */
   public static <T extends Comparable<T>> T requireLessThan(T value, T otherValue,
       @Nullable String name) {
-    if (value.compareTo(otherValue) < 0)
-      return value;
+    if (value == null || value.compareTo(otherValue) >= 0)
+      throw wrongArg(name, value, "MUST be less than {}", otherValue);
 
-    throw wrongArg(name, value, "MUST be less than {}", otherValue);
+    return value;
   }
 
   /**
@@ -412,47 +394,10 @@ public final class Conditions {
    */
   public static <T, X extends Throwable> T requireNonNullElseThrow(@Nullable T value,
       Supplier<? extends X> exceptionSupplier) throws X {
-    if (value != null)
-      return value;
+    if (value == null)
+      throw exceptionSupplier.get();
 
-    throw exceptionSupplier.get();
-  }
-
-  /**
-   * Requires the value is {@linkplain String#strip() stripped} and not {@linkplain String#isEmpty()
-   * empty}.
-   *
-   * @param value
-   *          Value to validate.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static String requireNormal(String value) {
-    return requireNormal(value, null);
-  }
-
-  /**
-   * Requires the value is {@linkplain String#strip() stripped} and not {@linkplain String#isEmpty()
-   * empty}.
-   *
-   * @param value
-   *          Value to validate.
-   * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
-   * @return {@code value}
-   * @throws ArgumentException
-   *           if {@code value} is invalid.
-   */
-  public static String requireNormal(String value, @Nullable String name) {
-    /*
-     * NOTE: Explicit null check to avoid possible NPE, which would bypass the intended exception.
-     */
-    //noinspection ConstantValue
-    if (value != null && !value.isEmpty() && value.strip().equals(value))
-      return value;
-
-    throw wrongArg(name, value, "MUST be stripped and NOT empty");
+    return value;
   }
 
   /**
@@ -463,8 +408,9 @@ public final class Conditions {
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
+   * @see Normalizations#normalizeToNonEmpty(String)
    */
-  public static String requireNotBlank(String value) {
+  public static String requireNotBlank(@Nullable String value) {
     return requireNotBlank(value, null);
   }
 
@@ -478,12 +424,13 @@ public final class Conditions {
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
+   * @see Normalizations#normalizeToNonEmpty(String, String)
    */
   public static String requireNotBlank(@Nullable String value, @Nullable String name) {
-    if (value != null && !value.isBlank())
-      return value;
+    if (value == null || value.isBlank())
+      throw wrongArg(name, value, "MUST be NOT blank");
 
-    throw wrongArg(name, value, "MUST be NOT blank");
+    return value;
   }
 
   /**
@@ -546,10 +493,10 @@ public final class Conditions {
    *           if {@code element} is undefined.
    */
   public static <T> T requireSuch(@Nullable T element) {
-    if (element != null)
-      return element;
+    if (element == null)
+      throw missingSuch();
 
-    throw missingSuch();
+    return element;
   }
 
   /**
@@ -651,9 +598,6 @@ public final class Conditions {
 
   /**
    * Requires the value is within the range (inclusive).
-   * <p>
-   * For arbitrary bounds, use {@link #requireWithin(Number, Range, String)} instead.
-   * </p>
    *
    * @param value
    *          Value to validate.
@@ -665,15 +609,12 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireWithin(T value, int min, int max) {
+  public static double requireWithin(double value, int min, int max) {
     return requireWithin(value, min, max, null);
   }
 
   /**
    * Requires the value is within the range (inclusive).
-   * <p>
-   * For arbitrary bounds, use {@link #requireWithin(Number, Range, String)} instead.
-   * </p>
    *
    * @param value
    *          Value to validate.
@@ -687,10 +628,86 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireWithin(T value, int min, int max,
-      @Nullable String name) {
-    if (value.floatValue() < min
-        || value.floatValue() > max)
+  public static double requireWithin(double value, int min, int max, @Nullable String name) {
+    if (value < min || value > max)
+      throw wrongArg(name, value, "MUST be between {} and {}", min, max);
+
+    return value;
+  }
+
+  /**
+   * Requires the value is within the range (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @param min
+   *          Lower bound.
+   * @param max
+   *          Higher bound.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static float requireWithin(float value, int min, int max) {
+    return requireWithin(value, min, max, null);
+  }
+
+  /**
+   * Requires the value is within the range (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @param min
+   *          Lower bound.
+   * @param max
+   *          Higher bound.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static float requireWithin(float value, int min, int max, @Nullable String name) {
+    if (value < min || value > max)
+      throw wrongArg(name, value, "MUST be between {} and {}", min, max);
+
+    return value;
+  }
+
+  /**
+   * Requires the value is within the range (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @param min
+   *          Lower bound.
+   * @param max
+   *          Higher bound.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireWithin(int value, int min, int max) {
+    return requireWithin(value, min, max, null);
+  }
+
+  /**
+   * Requires the value is within the range (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @param min
+   *          Lower bound.
+   * @param max
+   *          Higher bound.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static int requireWithin(int value, int min, int max, @Nullable String name) {
+    if (value < min || value > max)
       throw wrongArg(name, value, "MUST be between {} and {}", min, max);
 
     return value;
@@ -707,7 +724,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireWithin(T value, Range<T> range) {
+  public static <T extends Comparable<T>> T requireWithin(T value, Range<T> range) {
     return requireWithin(value, range, null);
   }
 
@@ -724,61 +741,70 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireWithin(T value, Range<T> range, @Nullable String name) {
-    if (range.contains(value))
-      return value;
+  public static <T extends Comparable<T>> T requireWithin(T value, Range<T> range,
+      @Nullable String name) {
+    if (!range.contains(value))
+      throw wrongArg(name, value, "MUST be within {} range", range);
 
-    throw wrongArg(name, value, "MUST be within {} range", range);
+    return value;
   }
 
   /**
-   * Requires the value is within unsigned-byte range, that is between 0 and 255 (inclusive).
+   * Requires the value is within the range (inclusive).
    *
    * @param value
    *          Value to validate.
+   * @param min
+   *          Lower bound.
+   * @param max
+   *          Higher bound.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireWithinByte(int value) {
-    return requireWithinByte(value, null);
+  public static <T extends Comparable<T>> T requireWithin(T value, T min, T max) {
+    return requireWithin(value, min, max, null);
   }
 
   /**
-   * Requires the value is within unsigned-byte range, that is between 0 and 255 (inclusive).
+   * Requires the value is within the range (inclusive).
    *
    * @param value
    *          Value to validate.
+   * @param min
+   *          Lower bound.
+   * @param max
+   *          Higher bound.
    * @param name
    *          Name of the parameter, variable, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireWithinByte(int value, @Nullable String name) {
-    return requireWithin(value, 0, 255, name);
+  public static <T extends Comparable<T>> T requireWithin(T value, T min, T max,
+      @Nullable String name) {
+    if (value == null || value.compareTo(min) < 0 || value.compareTo(max) > 0)
+      throw wrongArg(name, value, "MUST be between {} and {}", min, max);
+
+    return value;
   }
 
   /**
    * Requires the value is within normal range, that is between 0 and 1 (inclusive).
    *
-   * @param <T>
-   *          Value type.
    * @param value
    *          Value to validate.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireWithinNormal(T value) {
+  public static double requireWithinNormal(double value) {
     return requireWithinNormal(value, null);
   }
 
   /**
    * Requires the value is within normal range, that is between 0 and 1 (inclusive).
    *
-   * @param <T>
-   *          Value type.
    * @param value
    *          Value to validate.
    * @param name
@@ -787,7 +813,35 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Number> T requireWithinNormal(T value, @Nullable String name) {
+  public static double requireWithinNormal(double value, @Nullable String name) {
+    return requireWithin(value, 0, 1, name);
+  }
+
+  /**
+   * Requires the value is within normal range, that is between 0 and 1 (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static float requireWithinNormal(float value) {
+    return requireWithinNormal(value, null);
+  }
+
+  /**
+   * Requires the value is within normal range, that is between 0 and 1 (inclusive).
+   *
+   * @param value
+   *          Value to validate.
+   * @param name
+   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   * @return {@code value}
+   * @throws ArgumentException
+   *           if {@code value} is invalid.
+   */
+  public static float requireWithinNormal(float value, @Nullable String name) {
     return requireWithin(value, 0, 1, name);
   }
 

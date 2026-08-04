@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (ChecksTest.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (ConditionsTest.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -28,12 +28,13 @@ import org.pdfclown.common.util.collect.Range;
  */
 @SuppressWarnings({ "CodeBlock2Expr", "Convert2MethodRef" })
 class ConditionsTest extends BaseTest {
-  private static final List<@Nullable String> STRING_NAMES = asList(
+  static final List<@Nullable String> STRING_NAMES = asList(
       null,
       "myArg");
-  private static final List<@Nullable String> STRING_VALUES = asList(
+  static final List<@Nullable String> STRING_VALUES = asList(
       null,
       "",
+      " \t \n \r ",
       " non blank ",
       "normal");
 
@@ -52,18 +53,6 @@ class ConditionsTest extends BaseTest {
     final int value = 42;
 
     assertEquals(value, Conditions.requireEqual(value, 42));
-  }
-
-  @Test
-  void requireNormal() {
-    //noinspection DataFlowIssue : null intended
-    COMBINATION.verify(
-        (value, name) -> Conditions.requireNormal(value, name),
-        List.of("value", "name"),
-        // value
-        STRING_VALUES,
-        // name
-        STRING_NAMES);
   }
 
   @Test

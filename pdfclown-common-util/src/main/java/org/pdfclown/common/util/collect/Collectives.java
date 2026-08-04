@@ -451,6 +451,26 @@ public final class Collectives {
   }
 
   /**
+   * Checks if the insertion index is within the bounds of the range from {@code 0} to
+   * {@code length} (inclusive).
+   *
+   * @param index
+   *          Insertion index.
+   * @param length
+   *          Upper bound.
+   * @throws IndexOutOfBoundsException
+   *           if {@code index} is out of bounds.
+   * @see java.util.Objects#checkIndex(int, int)
+   */
+  public static int checkIndexForAdd(int index, int length) {
+    if (index < 0 || index > length)
+      throw new IndexOutOfBoundsException("Index %s out of bounds for length %s (inclusive)"
+          .formatted(index, length));
+
+    return index;
+  }
+
+  /**
    * {@linkplain #peek(List, int) Safe getter} which, in case of undefined element,
    * {@linkplain #place(List, int, Object) sets} it with the provided one.
    *
