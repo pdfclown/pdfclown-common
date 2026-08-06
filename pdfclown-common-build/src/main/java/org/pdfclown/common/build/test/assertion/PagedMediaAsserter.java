@@ -51,9 +51,9 @@ import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Paged-media rendering asserter.
+ * Automated paged-media rendering assertions.
  * <p>
- * Checks the pages of a document rendered as raster images.
+ * This class enables checks over the pages of a document rendered as raster images.
  * </p>
  * <p>
  * For efficiency, comparison between actual and expected pages is primarily done through page image
@@ -66,10 +66,7 @@ import org.jspecify.annotations.Nullable;
  * {@value Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED} system property.
  * </p>
  * <p>
- * During a comparison, assertion errors are progressively appended to a single message; in the end,
- * if the message is not empty, it is logged as a
- * {@link org.pdfclown.common.build.system.LogManager#MARKER__VERBOSE verbose} error entry, then
- * wrapped into an {@link AssertionError} in shortened form and thrown.
+ * See {@link Asserter} for further information.
  * </p>
  *
  * @author Stefano Chizzolini

@@ -46,10 +46,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Automated content assertions for integration testing.
+ * Automated content assertions.
  * <p>
  * This class enables checks over data (actual content) against a resource (expected content) which
  * can be {@linkplain Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED automatically updated}.
+ * </p>
+ * <p>
+ * See {@link Asserter} for further information.
  * </p>
  *
  * @param <T>

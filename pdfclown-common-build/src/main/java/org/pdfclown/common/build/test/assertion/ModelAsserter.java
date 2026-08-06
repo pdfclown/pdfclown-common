@@ -40,12 +40,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Automated model assertions for integration testing.
+ * Automated model assertions.
  * <p>
- * This class enables massive checks over a domain model (actual object) against a resource
- * (expected object) which can be {@linkplain Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
- * automatically updated}. Comparisons are performed through an {@linkplain ModelMapper abstract
- * model}.
+ * This class enables checks over a domain model (actual object) against a resource (expected
+ * object) which can be {@linkplain Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED automatically
+ * updated}. Comparisons are performed through an {@linkplain ModelMapper abstract model}.
+ * </p>
+ * <p>
+ * See {@link Asserter} for further information.
  * </p>
  *
  * @param <TMap>

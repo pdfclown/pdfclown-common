@@ -30,11 +30,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Automated file tree assertions for integration testing.
+ * Automated file tree assertions.
  * <p>
- * This class enables massive checks over a directory of arbitrary depth (actual file tree) against
- * a resource (expected file tree) which can be
- * {@linkplain Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED automatically updated}.
+ * This class enables checks over a directory of arbitrary depth (actual file tree) against a
+ * resource (expected file tree) which can be {@linkplain Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
+ * automatically updated}.
+ * </p>
+ * <p>
+ * See {@link Asserter} for further information.
  * </p>
  *
  * @author Stefano Chizzolini
