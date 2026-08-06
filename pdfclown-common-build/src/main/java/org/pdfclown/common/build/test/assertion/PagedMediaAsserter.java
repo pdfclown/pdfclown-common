@@ -22,13 +22,11 @@ import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toElse;
-import static org.pdfclown.common.build.internal.temp.util.io.Files.cognateFile;
 import static org.pdfclown.common.util.Bytes.BYTE_ARRAY__EMPTY;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SPACE;
-import static org.pdfclown.common.util.Chars.UNDERSCORE;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -197,50 +195,6 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
 
   private static final String IMAGE_FORMAT = "png";
 
-  /**
-   * Gets the ancillary image file corresponding to the given document page.
-   *
-   * @param baseFile
-   *          Base file path to derive the image file path from, in the same directory.
-   */
-  protected static Path imageFile(Path baseFile, int pageIndex, String qualifier) {
-    return cognateFile(baseFile, S + UNDERSCORE + UNDERSCORE + pageIndex
-        + (!qualifier.isEmpty() ? S + DOT + qualifier : EMPTY)
-        + DOT + IMAGE_FORMAT);
-  }
-
-  /**
-   * Loads main image from the given file.
-   *
-   * @return {@code null} if {@code file} doesn't exist.
-   */
-  protected static @Nullable BufferedImage readImage(Path file) throws IOException {
-    if (!exists(file))
-      return null;
-
-    try (ImageInputStream in = ImageIO.createImageInputStream(
-        file.toFile() /*
-                       * IMPORTANT: ImageIO supports only `java.io.File`, NOT `java.nio.file.Path`
-                       */)) {
-      Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
-      if (!readers.hasNext())
-        throw failedIO("Reader MISSING: {}", file);
-
-      var reader = readers.next();
-      try {
-        reader.setInput(in, true, true);
-
-        ImageReadParam param = reader.getDefaultReadParam();
-        {
-          param.setDestinationType(ImageTypeSpecifier.createFromBufferedImageType(IMAGE_TYPE));
-        }
-        return reader.read(0, param);
-      } finally {
-        reader.dispose();
-      }
-    }
-  }
-
   private static int colorIntensity(int rgb) {
     return ((rgb >> 16 & 0x0ff) + (rgb >> 8 & 0x0ff) + (rgb & 0x0ff)) / 3;
   }
@@ -340,6 +294,18 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
   }
 
   /**
+   * Gets the ancillary image file corresponding to the given document page.
+   *
+   * @param baseFile
+   *          Base file path to derive the image file path from, in the same directory.
+   */
+  protected Path getImageFile(Path baseFile, int pageIndex, String qualifier) {
+    return baseFile.resolveSibling(baseFile.getFileName().toString() + DOT + pageIndex
+        + (!qualifier.isEmpty() ? S + DOT + qualifier : EMPTY)
+        + DOT + IMAGE_FORMAT);
+  }
+
+  /**
    * Loads the paged media from a file.
    */
   protected A loadDocument(Path file) {
@@ -359,6 +325,38 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
       throws IOException {
     return readExpectedFile(documentResourceName + FILE_EXTENSION__CHECKSUMS,
         $ -> new ChecksumList(Files.readString($).split("\\n")), config);
+  }
+
+  /**
+   * Loads main image from the given file.
+   *
+   * @return {@code null} if {@code file} doesn't exist.
+   */
+  protected @Nullable BufferedImage readImage(Path file) throws IOException {
+    if (!exists(file))
+      return null;
+
+    try (ImageInputStream in = ImageIO.createImageInputStream(
+        file.toFile() /*
+                       * IMPORTANT: ImageIO supports only `java.io.File`, NOT `java.nio.file.Path`
+                       */)) {
+      Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+      if (!readers.hasNext())
+        throw failedIO("Reader MISSING: {}", file);
+
+      var reader = readers.next();
+      try {
+        reader.setInput(in, true, true);
+
+        ImageReadParam param = reader.getDefaultReadParam();
+        {
+          param.setDestinationType(ImageTypeSpecifier.createFromBufferedImageType(IMAGE_TYPE));
+        }
+        return reader.read(0, param);
+      } finally {
+        reader.dispose();
+      }
+    }
   }
 
   /**
@@ -410,19 +408,19 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
 
     try {
       // Save diff image!
-      writeImage(imageFile(actualDocumentFile, pageIndex, "DIFF"), diffImage);
+      writeImage(getImageFile(actualDocumentFile, pageIndex, "DIFF"), diffImage);
 
       // Save expected page image!
-      writeImage(imageFile(actualDocumentFile, pageIndex, "EXPECTED"), expectedPageImage);
+      writeImage(getImageFile(actualDocumentFile, pageIndex, "EXPECTED"), expectedPageImage);
 
       // Save actual page image!
-      writeImage(imageFile(actualDocumentFile, pageIndex, "ACTUAL"), actualPageImage);
+      writeImage(getImageFile(actualDocumentFile, pageIndex, "ACTUAL"), actualPageImage);
 
       getLog().info("Unexpected page image {} saved to {}", pageIndex,
-          imageFile(actualDocumentFile, pageIndex, "*"));
+          getImageFile(actualDocumentFile, pageIndex, "*"));
     } catch (Exception ex1) {
       getLog().warn("Unexpected page image {} save FAILED at {}", pageIndex,
-          imageFile(actualDocumentFile, pageIndex, "*"), ex1);
+          getImageFile(actualDocumentFile, pageIndex, "*"), ex1);
     }
   }
 }
