@@ -134,7 +134,7 @@ public final class Conditions {
    * @param options
    *          Valid values.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -166,7 +166,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -197,7 +197,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -229,7 +229,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -260,7 +260,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -350,7 +350,7 @@ public final class Conditions {
    * @param otherValue
    *          Valid value.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -394,7 +394,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -425,7 +425,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -457,7 +457,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -488,7 +488,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -543,7 +543,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -657,7 +657,7 @@ public final class Conditions {
    * @param type
    *          Type which {@code value} is expected to match as an instance.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -698,7 +698,7 @@ public final class Conditions {
    * @param types
    *          Valid types.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -745,7 +745,7 @@ public final class Conditions {
    * @param max
    *          Higher bound.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -784,7 +784,7 @@ public final class Conditions {
    * @param max
    *          Higher bound.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -823,7 +823,7 @@ public final class Conditions {
    * @param max
    *          Higher bound.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -858,7 +858,7 @@ public final class Conditions {
    * @param range
    *          Range.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -898,7 +898,7 @@ public final class Conditions {
    * @param max
    *          Higher bound.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -932,7 +932,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -960,7 +960,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
@@ -988,7 +988,7 @@ public final class Conditions {
    * @param value
    *          Value to validate.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.

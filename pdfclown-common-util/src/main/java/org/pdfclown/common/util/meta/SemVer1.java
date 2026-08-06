@@ -119,7 +119,7 @@ public class SemVer1 extends SemVer<SemVer1> {
           }
         }
       }
-      throw unexpected("Invalid offset not matched");
+      throw unexpected("ex.offset", ex.getOffset(), "Invalid offset NOT MATCHED");
     }
   }
 

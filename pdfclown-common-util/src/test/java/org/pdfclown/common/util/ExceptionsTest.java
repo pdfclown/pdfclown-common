@@ -12,9 +12,13 @@
  */
 package org.pdfclown.common.util;
 
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.pdfclown.common.util.Objects.nonNull;
+import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
+import static org.pdfclown.common.util.ConditionsTest.STRING_NAMES;
 
+import java.util.List;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.util.__test.BaseTest;
 
@@ -22,11 +26,63 @@ import org.pdfclown.common.util.__test.BaseTest;
  * @author Stefano Chizzolini
  */
 class ExceptionsTest extends BaseTest {
+  static final List<@Nullable String> STRING_VALUES = asList(
+      null,
+      "my value");
+
   @Test
+  @SuppressWarnings("NullableProblems")
+  void unexpected() {
+    COMBINATION.verify(
+        (name, value, message, arg1, arg2) -> {
+          var ret = Exceptions.unexpected(name, value, message, arg1, arg2);
+          assertEquals(arg2, ret.getCause());
+          return ret;
+        },
+        List.of("name", "value", "message", "arg1", "arg2"),
+        // name
+        STRING_NAMES,
+        // value
+        STRING_VALUES,
+        // message
+        asList(
+            null,
+            "MUST be otherwise -- ref: {}"),
+        // arg1
+        asList(
+            null,
+            123),
+        // arg2
+        asList(
+            null,
+            new NullPointerException()));
+  }
+
+  @Test
+  @SuppressWarnings("NullableProblems")
   void wrongArg() {
-    IllegalArgumentException exception = Exceptions.wrongArg("myArg", 99, "{}! Maybe {}{} or {}",
-        "that's it", "not so good", ',', "relevant", new NullPointerException());
-    assertEquals("`myArg` (99): that's it! Maybe not so good, or relevant", exception.getMessage());
-    assertEquals(NullPointerException.class, nonNull(exception.getCause()).getClass());
+    COMBINATION.verify(
+        (name, value, message, arg1, arg2) -> {
+          var ret = Exceptions.wrongArg(name, value, message, arg1, arg2);
+          assertEquals(arg2, ret.getCause());
+          return ret;
+        },
+        List.of("name", "value", "message", "arg1", "arg2"),
+        // name
+        STRING_NAMES,
+        // value
+        STRING_VALUES,
+        // message
+        asList(
+            null,
+            "MUST be otherwise -- ref: {}"),
+        // arg1
+        asList(
+            null,
+            123),
+        // arg2
+        asList(
+            null,
+            new NullPointerException()));
   }
 }

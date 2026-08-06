@@ -219,7 +219,7 @@ public final class Processes {
     else if (IS_OS_WINDOWS)
       return winCommand(command);
     else
-      throw unexpected(OS_NAME);
+      throw unexpected("os", OS_NAME);
   }
 
   /**

@@ -36,7 +36,6 @@ import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.temp.util.net.ResourceNotFoundException;
 import org.pdfclown.common.util.NotImplementedException;
-import org.pdfclown.common.util.UnexpectedCaseError;
 import org.pdfclown.common.util.annot.DependsOn.Dependency;
 import org.pdfclown.common.util.annot.PolyNull;
 
@@ -70,12 +69,15 @@ public final class Exceptions {
       return throwable;
   }
 
+  /**
+   * Creates an end of file exception.
+   */
   public static EOFException EOF() {
     return new EOFException();
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage#of(*):params}
+   * Creates an I/O exception. {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -232,7 +234,7 @@ public final class Exceptions {
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage#of(*):params}
+   * Creates a runtime exception. {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -297,12 +299,15 @@ public final class Exceptions {
     return factory.apply(message.getDescription(), message.getCause());
   }
 
+  /**
+   * Creates an exception for missing implementation.
+   */
   public static NotImplementedException TODO() {
     return new NotImplementedException();
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage#of(*):params}
+   * Creates an exception for missing implementation. {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -319,15 +324,35 @@ public final class Exceptions {
     return throwable(NotImplementedException::new, format, args);
   }
 
+  /**
+   * Creates an error for an unexpected value.
+   *
+   * @param value
+   *          Unexpected value.
+   */
   public static UnexpectedCaseError unexpected(@Nullable Object value) {
-    return new UnexpectedCaseError(value);
+    return new UnexpectedCaseError(null, value);
   }
 
   /**
    * Creates an error for an unexpected value.
    *
+   * @param name
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @param value
-   *          Invalid value. {@jada.reuseDoc ParamMessage#of(*):params}
+   *          Unexpected value.
+   */
+  public static UnexpectedCaseError unexpected(@Nullable String name, @Nullable Object value) {
+    return new UnexpectedCaseError(name, value);
+  }
+
+  /**
+   * Creates an error for an unexpected value.
+   *
+   * @param name
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
+   * @param value
+   *          Unexpected value. {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
    * @param args
@@ -339,22 +364,21 @@ public final class Exceptions {
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
    *          it is unwrapped). {@jada.reuseDoc END}
    */
-  public static UnexpectedCaseError unexpected(@Nullable Object value, @Nullable String format,
-      @Nullable Object... args) {
+  public static UnexpectedCaseError unexpected(@Nullable String name, @Nullable Object value,
+      @Nullable String format, @Nullable Object... args) {
     var message = ParamMessage.of(format, args);
-    return new UnexpectedCaseError(value, message.getDescription(), message.getCause());
+    return new UnexpectedCaseError(name, value, message.getDescription(), message.getCause());
   }
 
-  public static UnexpectedCaseError unexpected(@Nullable String name, @Nullable Object value) {
-    return unexpected(value, name);
-  }
-
+  /**
+   * Creates an exception for an unsupported operation.
+   */
   public static UnsupportedOperationException unsupported() {
     return new UnsupportedOperationException();
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage#of(*):params}
+   * Creates an exception for an unsupported operation. {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -372,15 +396,23 @@ public final class Exceptions {
     return throwable(UnsupportedOperationException::new, format, args);
   }
 
+  /**
+   * Creates an exception for an invalid argument value.
+   *
+   * @param name
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
+   * @param value
+   *          Invalid value.
+   */
   public static ArgumentException wrongArg(@Nullable String name, @Nullable Object value) {
-    return wrongArg(name, value, null);
+    return new ArgumentException(name, value);
   }
 
   /**
-   * Creates an argument exception for an invalid value.
+   * Creates an exception for an invalid argument value.
    *
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @param value
    *          Invalid value. {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
@@ -401,17 +433,20 @@ public final class Exceptions {
         message.getCause());
   }
 
+  /**
+   * Creates an exception for an argument value outside the acceptable options.
+   */
   public static <T> ArgumentException wrongArgOpt(Collection<T> options) {
     return wrongArgOpt(null, null, null, options);
   }
 
   /**
-   * Creates an argument exception for value outside the acceptable options.
+   * Creates an exception for an argument value outside the acceptable options.
    *
    * @param <T>
    *          Value type.
    * @param name
-   *          Name of the parameter, variable, or expression {@code value} was resolved from.
+   *          Name of the parameter, variable, field, or expression {@code value} was resolved from.
    * @param value
    *          Invalid value.
    * @param description
@@ -455,7 +490,7 @@ public final class Exceptions {
   }
 
   /**
-   * {@jada.reuseDoc ParamMessage#of(*):params}
+   * Creates an exception for an invalid state. {@jada.reuseDoc ParamMessage#of(*):params}
    *
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -473,6 +508,9 @@ public final class Exceptions {
     return throwable(IllegalStateException::new, format, args);
   }
 
+  /**
+   * Creates an exception for an invalid state.
+   */
   public static IllegalStateException wrongState(Throwable cause) {
     return cause instanceof IllegalStateException ex ? ex : new IllegalStateException(cause);
   }

@@ -178,7 +178,8 @@ public class Comparators {
 
       int ret = base.compare(o1, o2);
       if (ret == 0)
-        throw unexpected(ret, "unable to decide over type priority between `{}` and `{}`", o1, o2);
+        throw unexpected("base.compare", ret, "unable to decide over type priority between {} "
+            + "and {}", o1, o2);
 
       return ret;
     }

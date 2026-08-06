@@ -12,15 +12,9 @@
  */
 package org.pdfclown.common.build.internal.temp.util;
 
-import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
-import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.basicLiteral;
-import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
-import static org.pdfclown.common.build.internal.temp.util.function.Functions.to;
-import static org.pdfclown.common.build.util.Tuple.tuple;
 import static org.pdfclown.common.util.Chars.BACKTICK;
-import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
@@ -46,6 +40,28 @@ public class ArgumentException extends IllegalArgumentException {
     }
   };
 
+  @SuppressWarnings("ReferenceEquality")
+  private static String buildMessage(String argName, @Nullable Object argValue,
+      @Nullable String message) {
+    var b = new StringBuilder();
+    if (!argName.isEmpty()) {
+      b.append(BACKTICK).append(argName)
+          .append(BACKTICK);
+    } else {
+      b.append("Argument");
+    }
+    if (argValue != ARG_VALUE__OMITTED) {
+      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(basicLiteral(argValue))
+          .append(ROUND_BRACKET_CLOSE);
+    }
+    b.append(SPACE).append("INVALID");
+    if (!(message = stripToEmpty(message)).isEmpty()) {
+      b.append(SPACE).append(ROUND_BRACKET_OPEN).append(message)
+          .append(ROUND_BRACKET_CLOSE);
+    }
+    return b.toString();
+  }
+
   private final String argName;
   private final @Nullable Object argValue;
 
@@ -54,7 +70,7 @@ public class ArgumentException extends IllegalArgumentException {
    *          ({@link #ARG_VALUE__OMITTED}, if not specified)
    */
   public ArgumentException(@Nullable String argName, @Nullable Object argValue) {
-    this(argName, argValue, null);
+    this(argName, argValue, null, null);
   }
 
   /**
@@ -70,25 +86,9 @@ public class ArgumentException extends IllegalArgumentException {
    * @param argValue
    *          ({@link #ARG_VALUE__OMITTED}, if not specified)
    */
-  @SuppressWarnings({ "NullAway" /* false positive */, "ReferenceEquality" })
   public ArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message, @Nullable Throwable cause) {
-    super(to(tuple(message, argName = stripToEmpty(argName), argValue), $ -> {
-      var b = new StringBuilder();
-      if (!nonNull($.getE2()).isEmpty()) {
-        b.append(BACKTICK).append($.getE2()).append(BACKTICK);
-      }
-      if ($.getE3() != ARG_VALUE__OMITTED) {
-        if (!b.isEmpty()) {
-          b.append(SPACE);
-        }
-        b.append(ROUND_BRACKET_OPEN).append(basicLiteral($.getE3())).append(ROUND_BRACKET_CLOSE);
-      }
-      if (!b.isEmpty()) {
-        b.append(COLON).append(SPACE);
-      }
-      return b.append(requireNonNullElse(stripToNull($.getE1()), "INVALID")).toString();
-    }), cause);
+    super(buildMessage(argName = stripToEmpty(argName), argValue, message), cause);
 
     this.argName = argName;
     this.argValue = argValue;
@@ -111,7 +111,7 @@ public class ArgumentException extends IllegalArgumentException {
   }
 
   /**
-   * Whether {@link #getArgValue()} is specified.
+   * Gets whether {@link #getArgValue() argValue} is specified.
    */
   @SuppressWarnings("ReferenceEquality")
   public boolean hasArgValue() {

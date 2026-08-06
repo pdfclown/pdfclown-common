@@ -246,7 +246,7 @@ public abstract class Verifier implements Cloneable {
         @Override
         public boolean report(String received, String approved) {
           if (!super.report(received, approved))
-            throw unexpected(false, "Auto approval not handled");
+            throw unexpected("super::report", false, "Auto-approval NOT HANDLED");
 
           SimpleLogger.message("%s automatically UPDATED".formatted(literal(approved)));
           return true;

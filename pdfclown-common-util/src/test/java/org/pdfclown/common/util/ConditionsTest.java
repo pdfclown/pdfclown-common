@@ -45,7 +45,7 @@ class ConditionsTest extends BaseTest {
     var exception = assertThrows(IllegalArgumentException.class, () -> {
       Conditions.requireEqual(value, 41, "myIntParam");
     });
-    assertEquals("`myIntParam` (42): MUST be 41", exception.getMessage());
+    assertEquals("`myIntParam` (42) INVALID (MUST be 41)", exception.getMessage());
   }
 
   @Test
@@ -74,7 +74,7 @@ class ConditionsTest extends BaseTest {
     var exception = assertThrows(IllegalArgumentException.class, () -> {
       Conditions.requireType(value, Boolean.class);
     });
-    assertEquals("(1L): MUST be Boolean", exception.getMessage());
+    assertEquals("Argument (1L) INVALID (MUST be Boolean)", exception.getMessage());
   }
 
   @Test
@@ -94,9 +94,8 @@ class ConditionsTest extends BaseTest {
       Conditions.requireType(value, List.of(Boolean.class, Integer.class, Range.class),
           "myParam");
     });
-    assertEquals(
-        "`myParam` (1L): MUST be one of { Boolean, Integer, org.pdfclown.common.util.collect.Range }",
-        exception.getMessage());
+    assertEquals("`myParam` (1L) INVALID (MUST be one of { Boolean, Integer, "
+        + "org.pdfclown.common.util.collect.Range })", exception.getMessage());
   }
 
   @Test
@@ -115,7 +114,7 @@ class ConditionsTest extends BaseTest {
     var exception = assertThrows(IllegalArgumentException.class, () -> {
       Conditions.requireWithin(value, 40, 41, "myIntParam");
     });
-    assertEquals("`myIntParam` (42): MUST be between 40 and 41", exception.getMessage());
+    assertEquals("`myIntParam` (42) INVALID (MUST be between 40 and 41)", exception.getMessage());
   }
 
   @Test

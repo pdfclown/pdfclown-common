@@ -1,7 +1,7 @@
 [name: "/"] => ""
 [name: "\\"] => ""
 [name: "/my/absolute/Resource.txt"] => "my.absolute.Resource"
-[name: "/my/absolute.sub/Resource.txt"] => <<ArgumentException: "`name` (\"my/absolute.sub/Resource.txt\"): Dots NOT allowed inside folder parts">>
+[name: "/my/absolute.sub/Resource.txt"] => <<ArgumentException: "`name` (\"my/absolute.sub/Resource.txt\") INVALID (Dots NOT allowed inside folder parts)">>
 [name: "/my/absolute/resource/"] => "my.absolute.resource."
 [name: "//my/\\\\other\\/\\deep//absolute\\resource/"] => "my.other.deep.absolute.resource."
 [name: ""] => ""

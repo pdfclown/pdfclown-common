@@ -1,9 +1,9 @@
-[value: null, name: null] => <<ArgumentException: "(null): MUST be NOT blank">>
-[value: null, name: "myArg"] => <<ArgumentException: "`myArg` (null): MUST be NOT blank">>
-[value: "", name: null] => <<ArgumentException: "(\"\"): MUST be NOT blank">>
-[value: "", name: "myArg"] => <<ArgumentException: "`myArg` (\"\"): MUST be NOT blank">>
-[value: " \t \n \r ", name: null] => <<ArgumentException: "(\" \\t \\n \\r \"): MUST be NOT blank">>
-[value: " \t \n \r ", name: "myArg"] => <<ArgumentException: "`myArg` (\" \\t \\n \\r \"): MUST be NOT blank">>
+[value: null, name: null] => <<ArgumentException: "Argument (null) INVALID (MUST be NOT blank)">>
+[value: null, name: "myArg"] => <<ArgumentException: "`myArg` (null) INVALID (MUST be NOT blank)">>
+[value: "", name: null] => <<ArgumentException: "Argument (\"\") INVALID (MUST be NOT blank)">>
+[value: "", name: "myArg"] => <<ArgumentException: "`myArg` (\"\") INVALID (MUST be NOT blank)">>
+[value: " \t \n \r ", name: null] => <<ArgumentException: "Argument (\" \\t \\n \\r \") INVALID (MUST be NOT blank)">>
+[value: " \t \n \r ", name: "myArg"] => <<ArgumentException: "`myArg` (\" \\t \\n \\r \") INVALID (MUST be NOT blank)">>
 [value: " non blank ", name: null] => " non blank "
 [value: " non blank ", name: "myArg"] => " non blank "
 [value: "normal", name: null] => "normal"

@@ -12,9 +12,6 @@
  */
 package org.pdfclown.common.util;
 
-import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
-import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
-import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
 import java.io.Serial;
@@ -42,9 +39,8 @@ public class ArgumentFormatException extends ArgumentException {
 
   public ArgumentFormatException(@Nullable String argName, @Nullable Object argValue, int offset,
       @Nullable String message, @Nullable Throwable cause) {
-    super(argName, argValue, "INVALID at position %s%s".formatted(offset,
-        message != null ? SPACE + ROUND_BRACKET_OPEN + message + ROUND_BRACKET_CLOSE : EMPTY),
-        cause);
+    super(argName, argValue, "at position %s%s".formatted(offset,
+        message != null ? " -- " + message : EMPTY), cause);
 
     this.offset = offset;
   }
