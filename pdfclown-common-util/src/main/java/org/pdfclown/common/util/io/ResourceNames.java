@@ -72,7 +72,7 @@ public final class ResourceNames {
    * @return
    *         <ul>
    *         <li>if {@code name} is absolute: {@code name}</li>
-   *         <li>if {@code name} is relative: {@code /%BASE_PACKAGE_NAME%/name}, where
+   *         <li>if {@code name} is relative: {@code "/%BASE_PACKAGE_NAME%/%name%"}, where
    *         {@code BASE_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
    *         fully-qualified class package name} of {@code base}</li>
    *         </ul>
@@ -123,7 +123,7 @@ public final class ResourceNames {
   /**
    * Gets the absolute abstract resource name of an object.
    * <p>
-   * This is a <i>purely syntactic conversion from class to resource namespaces</i>, where dot
+   * This is a <i>purely syntactic conversion from class to resource namespace</i>, where dot
    * separators are replaced by slashes, and a slash is prefixed; consequently, the result does NOT
    * make any assumption on its actual resource type and no file extension is included (for example,
    * {@code fromType("")} returns {@code "/java/util/String"}, NEITHER
@@ -139,7 +139,7 @@ public final class ResourceNames {
   /**
    * Gets the absolute abstract resource name corresponding to a type name.
    * <p>
-   * This is a <i>purely syntactic conversion from class to resource namespaces</i>, where dot
+   * This is a <i>purely syntactic conversion from class to resource namespace</i>, where dot
    * separators are replaced by slashes, and a slash is prefixed; consequently, the result does NOT
    * make any assumption on its actual resource type and no file extension is included (for example,
    * {@code fromTypeName("java.util.String")} returns {@code "/java/util/String"}, NEITHER
@@ -355,10 +355,11 @@ public final class ResourceNames {
    * @return
    *         <ul>
    *         <li>if {@code name} is absolute: {@code name}</li>
-   *         <li>if {@code name} is relative: {@code %BASE_PACKAGE_NAME%/name}, where
+   *         <li>if {@code name} is relative: {@code "%BASE_PACKAGE_NAME%/%name%"}, where
    *         {@code BASE_PACKAGE_NAME} is the slash-separated {@linkplain Class#getPackageName()
    *         fully-qualified class package name} of {@code base}</li>
    *         </ul>
+   * @see #absBased(String, Object)
    */
   public static String relBased(String name, Object base) {
     return isAbs(name = normal(name)) ? name
