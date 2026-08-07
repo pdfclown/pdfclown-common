@@ -37,16 +37,16 @@ import org.pdfclown.common.util.ArgumentFormatException;
  * <p>
  * <b>Resource names</b>, according to Java syntax, are <i>concatenations of slash-separated
  * segments</i>; for the purposes of this class, a resource name with leading slash is
- * <b>absolute</b>, otherwise <b>relative</b> — NOTE: The documentation for
- * {@link Class#getResource(String)} is misleading, as it states that an absolute resource name "is
- * the portion of the name following the [leading slash]": such definition doesn't make sense (other
- * than reconciling itself with the archive-based semantics of
+ * <b>absolute</b>, otherwise <b>relative</b> — NOTE: The documentation of
+ * {@link Class#getResource(String)} is misleading, as it states that an absolute resource name
+ * <cite>"is the portion of the name following the [leading slash]"</cite>: such definition doesn't
+ * make sense (other than reconciling itself with the archive-based semantics of
  * {@link ClassLoader#getResource(String)}), as the lack of leading slash causes the name to be
  * prefixed by a package name (typical behavior of <i>relative</i> names, NOT absolute ones!). The
  * documentation of internal {@code Class.resolveName(String)} (OpenJDK 17) itself falls in
- * contradiction when it says "Add a package name prefix if the name is not absolute. Remove leading
- * [slash] if name is absolute". A non-ambiguous term to express "absolute resource name (without
- * leading slash)" could have been <i>full resource name</i>.
+ * contradiction when it says <cite>"Add a package name prefix if the name is not absolute. Remove
+ * leading [slash] if name is absolute"</cite>. A non-ambiguous term to express "absolute resource
+ * name (without leading slash)" could have been <i>full resource name</i>.
  * </p>
  * <p>
  * All the methods within this class return normalized resource names.
