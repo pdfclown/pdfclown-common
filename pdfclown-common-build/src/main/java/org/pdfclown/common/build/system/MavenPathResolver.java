@@ -12,9 +12,12 @@
  */
 package org.pdfclown.common.build.system;
 
+import static java.nio.file.Files.isRegularFile;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 
 import java.nio.file.Path;
+import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.spi.ProjectPathResolverProvider;
 
 /**
  * Filesystem mapping for <a href=
@@ -24,6 +27,33 @@ import java.nio.file.Path;
  * @author Stefano Chizzolini
  */
 public class MavenPathResolver extends ProjectPathResolver {
+  /**
+   * {@link MavenPathResolver} provider.
+   *
+   * @author Stefano Chizzolini
+   */
+  public static class Provider implements ProjectPathResolverProvider {
+    @Override
+    public int getPriority() {
+      return 0;
+    }
+
+    @Override
+    public @Nullable ProjectPathResolver getResolver(Path baseDir) {
+      return isRegularFile(baseDir.resolve("pom.xml")) ? new MavenPathResolver(baseDir) : null;
+    }
+
+    @Override
+    public boolean isAvailable() {
+      return true;
+    }
+  }
+
+  /**
+   * Maven project filename.
+   */
+  public static final String FILENAME__POM = "pom.xml";
+
   public MavenPathResolver(Path baseDir) {
     super(baseDir);
   }

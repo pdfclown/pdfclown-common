@@ -32,6 +32,7 @@ import static org.pdfclown.common.build.internal.temp.util.Strings.S;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.peek;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__GROOVY;
+import static org.pdfclown.common.build.system.MavenPathResolver.FILENAME__POM;
 import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.system.Processes.execute;
@@ -99,8 +100,6 @@ public final class Builds {
   public static final XPath XPATH__POM = xpath(XPath.Namespaces.of()
       .register(NS_PREFIX__POM, NS__POM));
 
-  private static final String FILENAME__MAVEN_POM = "pom.xml";
-
   private static final Pattern PATTERN__MAVEN_LOG_LINE = Pattern.compile("\\[(\\w+?)] (.*)");
 
   private static @Nullable Path mavenExec;
@@ -145,7 +144,7 @@ public final class Builds {
          */
         var ret = new ArrayList<Path>();
 
-        Path pomFile = requireFile(pathResolver.resolve(ProjectDirId.BASE, FILENAME__MAVEN_POM));
+        Path pomFile = requireFile(pathResolver.resolve(ProjectDirId.BASE, FILENAME__POM));
 
         // 1. Build directory.
         ret.add(requireDirectory(pathResolver.resolve(ProjectDirId.MAIN_TARGET)));
@@ -312,7 +311,7 @@ public final class Builds {
    */
   public static @Nullable String projectArtifactId(Path path) {
     return toOrNull(projectDir(path), $ -> projectArtifactIds.computeIfAbsent($,
-        $key -> toOrNull($key.resolve(FILENAME__MAVEN_POM), Failable.asFunction(
+        $key -> toOrNull($key.resolve(FILENAME__POM), Failable.asFunction(
             $$ -> requireState(stripToNull(XPATH__POM.nodeValue(
                 NS_PREFIX__POM + ":project/" + NS_PREFIX__POM + ":artifactId",
                 xml($$))), () -> "`artifactId` NOT FOUND in " + $$)))));
@@ -342,7 +341,7 @@ public final class Builds {
   public static @Nullable Path projectDir(Path path) {
     Path dir = isDirectory(path) ? path : path.getParent();
     while (dir != null) {
-      var pomFile = dir.resolve(FILENAME__MAVEN_POM);
+      var pomFile = dir.resolve(FILENAME__POM);
       if (exists(pomFile))
         return dir;
 

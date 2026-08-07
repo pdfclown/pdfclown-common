@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.system;
 
-import static java.nio.file.Files.isRegularFile;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireDirectory;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
@@ -22,8 +21,11 @@ import static org.pdfclown.common.build.internal.temp.util.io.Files.normal;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
+import org.pdfclown.common.build.spi.ProjectPathResolverProvider;
+import org.pdfclown.common.util.spi.ServiceProvider;
 
 /**
  * Project directory resolver.
@@ -31,22 +33,26 @@ import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
  * @author Stefano Chizzolini
  */
 public abstract class ProjectPathResolver {
+  private static final List<ProjectPathResolverProvider> providers =
+      ServiceProvider.discover(ProjectPathResolverProvider.class).toList();
+
   /**
    * Gets the path resolver for a project.
    *
    * @param baseDir
    *          Project base directory.
+   * @throws FileNotFoundException
+   *           if {@code baseDir} does not exist.
    */
   public static ProjectPathResolver of(Path baseDir) throws FileNotFoundException {
     requireDirectory(baseDir);
-    /*
-     * TODO: implement `org.pdfclown.common.util.spi.ServiceProvider` to support additional project
-     * types
-     */
-    if (isRegularFile(baseDir.resolve("pom.xml")))
-      return new MavenPathResolver(baseDir);
-    else
-      throw wrongArg("baseDir", baseDir, "Project type UNKNOWN");
+
+    for (var provider : providers) {
+      var ret = provider.getResolver(baseDir);
+      if (ret != null)
+        return ret;
+    }
+    throw wrongArg("baseDir", baseDir, "Project type UNKNOWN");
   }
 
   private final Map<ProjectDirId, Path> base = new HashMap<>();
