@@ -267,7 +267,7 @@ public final class Uris {
    *
    * @return Normalized {@code uri}.
    */
-  public static URI normalize(URI uri) {
+  public static URI normal(URI uri) {
     uri = uri.normalize();
     String scheme = toOrNull(uri.getScheme(), Strings::lcase);
     String host = toOrNull(uri.getHost(), Strings::lcase);
@@ -281,17 +281,18 @@ public final class Uris {
   }
 
   /**
-   * Gets the relative URI from the URI to the other one.
+   * Gets the URI relative to a base.
    * <p>
    * This method remedies {@link URI#relativize(URI)} limitations, since the latter cannot
-   * relativize a target path if the source is a subpath (<cite>"if the path of this URI is not a
-   * prefix of the path of the given URI, then the given URI is returned."</cite>) — for example,
+   * relativize a target path if the source is a divergent subpath (<cite>"if the path of this URI
+   * is not a prefix of the path of the given URI, then the given URI is returned."</cite>) — for
+   * example,
    * </p>
    * <pre class="lang-java"><code>
-   * URI.create("https://example.io/path/from.html")
-   *     .relativize(URI.create("https://example.io/path/way/longer/to.html"))</code></pre>
+   * URI.create("https://example.io/path/from.html" &#47;* base *&#47;)
+   *     .relativize(URI.create("https://example.io/path/way/longer/to.html" &#47;* uri *&#47;))</code></pre>
    * <p>
-   * weirdly returns
+   * returns
    * </p>
    * <pre>
    * https://example.io/path/way/longer/to.html</pre>
@@ -301,25 +302,25 @@ public final class Uris {
    * <pre>
    * way/longer/to.html</pre>
    */
-  public static URI relativize(URI from, URI to) {
+  public static URI relativize(URI uri, URI base) {
     // Not hierarchical?
-    if (from.isOpaque() || to.isOpaque())
-      return to;
+    if (uri.isOpaque() || base.isOpaque())
+      return uri;
 
     // Normalize schemes, hosts and paths!
-    from = normalize(from);
-    to = normalize(to);
+    uri = normal(uri);
+    base = normal(base);
 
     // Not the same resource context?
-    if (!Objects.equals(from.getScheme(), to.getScheme())
-        || !Objects.equals(from.getAuthority(), to.getAuthority()))
-      return to;
+    if (!Objects.equals(uri.getScheme(), base.getScheme())
+        || !Objects.equals(uri.getAuthority(), base.getAuthority()))
+      return uri;
 
-    String fromPath = from.getPath();
-    String toPath = to.getPath();
+    String uriPath = uri.getPath();
+    String basePath = base.getPath();
 
     // Find raw common path segment!
-    int index = indexOfDifference(fromPath, toPath);
+    int index = indexOfDifference(basePath, uriPath);
     // Same URI?
     if (index == INDEX__NOT_FOUND)
       /*
@@ -327,22 +328,21 @@ public final class Uris {
        */
       return URI.create(EMPTY);
     // Both relative URIs, without common chunk?
-    else if (index == 0 && from.getScheme() == null) {
+    else if (index == 0 && base.getScheme() == null) {
       /*
        * Mutually-incompatible relative URIs (one of them is rooted)?
        *
        * NOTE: If one of the relative URIs is rooted (that is, with a leading slash, kinda local
-       * absolute), then they cannot be related to each other, and `to` must be returned as-is.
+       * absolute), then they cannot be related to each other, and `uri` must be returned as-is.
        */
-      if (fromPath.charAt(index) == SLASH || toPath.charAt(index) == SLASH)
-        return to;
+      if (basePath.charAt(index) == SLASH || uriPath.charAt(index) == SLASH)
+        return uri;
     }
 
     // Get distinct subpath start at last common directory!
-    index = fromPath.lastIndexOf(SLASH, index) + 1;
-    return URI.create(
-        (PATH_SUPER + SLASH).repeat(countMatches(fromPath.substring(index), SLASH))
-            + toPath.substring(index));
+    index = basePath.lastIndexOf(SLASH, index) + 1;
+    return URI.create((PATH_SUPER + SLASH).repeat(countMatches(basePath.substring(index), SLASH))
+        + uriPath.substring(index));
   }
 
   /**

@@ -26,10 +26,11 @@ import org.pdfclown.common.util.__test.BaseTest;
 /**
  * @author Stefano Chizzolini
  */
+@SuppressWarnings("Convert2MethodRef")
 class UrisTest extends BaseTest {
   @Test
   void relativize() {
-    var from = asList(
+    var base = asList(
         URI.create("my/sub/same.html"),
         URI.create("my/another/sub/from.html"),
         URI.create("another/my/sub/from.html"),
@@ -40,7 +41,7 @@ class UrisTest extends BaseTest {
         URI.create("file://host/absolute/uri.html"),
         URI.create("https://example.io/my/sub/from.html"),
         URI.create("https://example.io/another/deeper/sub/from.html"));
-    var to = from.stream()
+    var uri = base.stream()
         .map($ -> URI.create(
             ($.getScheme() != null ? $.getScheme() + ":" : EMPTY)
                 + ($.getAuthority() != null ? "//" + $.getAuthority() : EMPTY)
@@ -48,11 +49,11 @@ class UrisTest extends BaseTest {
         .collect(Collectors.toCollection(ArrayList::new));
 
     COMBINATION.verify(
-        ($from, $to) -> Uris.relativize($from, $to),
-        List.of("from", "to"),
-        // from
-        from,
-        // to
-        to);
+        ($uri, $base) -> Uris.relativize($uri, $base),
+        List.of("uri", "base"),
+        // uri
+        uri,
+        // base
+        base);
   }
 }

@@ -721,24 +721,24 @@ public final class Files {
   }
 
   /**
-   * Gets the relative path from a file to the other one.
+   * Gets the path relative to a base.
    * <p>
-   * Contrary to {@link Path#relativize(Path)}, this method relativizes {@code to} according to the
-   * directory of {@code from} (that is, if {@code from} is a file, its parent is picked instead).
-   * Consequently, {@code from} MUST exist.
+   * Contrary to {@link Path#relativize(Path)}, this method relativizes {@code path} according to
+   * the directory of {@code base} (that is, if {@code base} is a file, its parent is picked
+   * instead). Consequently, {@code base} MUST exist.
    * </p>
    *
    * @throws IllegalArgumentException
-   *           if {@code from} does not exist.
+   *           if {@code base} does not exist.
    */
-  public static Path relativize(Path from, Path to) {
-    if (isRegularFile(from = normal(from))) {
-      from = nonNull(from.getParent());
+  public static Path relativize(Path path, Path base) {
+    if (isRegularFile(base = normal(base))) {
+      base = nonNull(base.getParent());
     }
-    if (!isDirectory(from))
-      throw wrongArg("from", from, "MUST be a directory");
+    if (!isDirectory(base))
+      throw wrongArg("base", base, "MUST be a directory");
 
-    return from.relativize(normal(to));
+    return base.relativize(normal(path));
   }
 
   /**
