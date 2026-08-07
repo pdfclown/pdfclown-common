@@ -13,7 +13,6 @@
 package org.pdfclown.common.build.system;
 
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireDirectory;
-import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithValues;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.normal;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
+import org.pdfclown.common.build.internal.temp.util.spi.ServiceProviderNotFoundException;
 import org.pdfclown.common.build.spi.ProjectPathResolverProvider;
 import org.pdfclown.common.util.spi.ServiceProvider;
 
@@ -52,7 +52,8 @@ public abstract class ProjectPathResolver {
       if (ret != null)
         return ret;
     }
-    throw wrongArg("baseDir", baseDir, "Project type UNKNOWN");
+    throw new ServiceProviderNotFoundException(baseDir, ProjectPathResolverProvider.class,
+        "Project type at the given directory UNKNOWN", null);
   }
 
   private final Map<ProjectDirId, Path> base = new HashMap<>();

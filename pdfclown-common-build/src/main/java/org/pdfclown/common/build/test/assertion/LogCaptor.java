@@ -14,7 +14,6 @@ package org.pdfclown.common.build.test.assertion;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.ArrayUtils.EMPTY_OBJECT_ARRAY;
-import static org.pdfclown.common.build.internal.temp.util.Exceptions.missing;
 import static org.pdfclown.common.build.internal.temp.util.Objects.fqn;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Strings.lcase;
@@ -30,6 +29,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.pdfclown.common.build.internal.temp.util.spi.ServiceProviderNotFoundException;
 import org.pdfclown.common.build.spi.LogCaptorProvider;
 import org.pdfclown.common.util.spi.ServiceProvider;
 import org.slf4j.LoggerFactory;
@@ -119,8 +119,8 @@ public abstract class LogCaptor
     logCaptorFactory = ServiceProvider.discover(LogCaptorProvider.class)
         .map($ -> $.getFactory(implName))
         .filter(Objects::nonNull)
-        .findFirst().orElseThrow(() -> missing(implName,
-            "{} for the specified logging implementation", LogCaptorProvider.class));
+        .findFirst().orElseThrow(() -> new ServiceProviderNotFoundException(implName,
+            LogCaptorProvider.class, "Logging implementation UNKNOWN", null));
   }
 
   /**

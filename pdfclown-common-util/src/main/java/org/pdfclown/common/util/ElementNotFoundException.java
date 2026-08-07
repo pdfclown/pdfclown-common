@@ -17,6 +17,7 @@ import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.S;
 
 import org.jspecify.annotations.Nullable;
 
@@ -39,8 +40,8 @@ public class ElementNotFoundException extends RuntimeException {
   }
 
   public ElementNotFoundException(Object ref, @Nullable String message, @Nullable Throwable cause) {
-    super("%s NOT FOUND%s".formatted(textLiteral(ref),
-        message != null ? SPACE + ROUND_BRACKET_OPEN + message + ROUND_BRACKET_CLOSE : EMPTY),
+    super("No element associated to %s%s".formatted(textLiteral(ref),
+        message != null ? S + SPACE + ROUND_BRACKET_OPEN + message + ROUND_BRACKET_CLOSE : EMPTY),
         cause);
 
     this.ref = ref;

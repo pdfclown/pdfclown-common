@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.util.spi;
 
-import static java.util.Comparator.comparingInt;
 import static org.pdfclown.common.util.Objects.fqn;
 
 import java.util.List;
@@ -27,7 +26,7 @@ import org.pdfclown.common.util.annot.Immutable;
  * @author Stefano Chizzolini
  */
 @Immutable
-public interface ServiceProvider {
+public interface ServiceProvider extends Comparable<ServiceProvider> {
   /**
    * Retrieves available providers of the type, sorted by {@link #getPriority() priority}.
    *
@@ -65,7 +64,7 @@ public interface ServiceProvider {
   private static <T extends ServiceProvider> Stream<T> doDiscover(Class<T> providerType) {
     var ret = ServiceLoader.load(providerType).stream()
         .map(ServiceLoader.Provider::get)
-        .sorted(comparingInt(ServiceProvider::getPriority));
+        .sorted();
 
     if (Util.serviceProviderLog.isInfoEnabled()) {
       List<T> providers = ret.toList();
@@ -88,6 +87,11 @@ public interface ServiceProvider {
     return ret;
   }
 
+  @Override
+  default int compareTo(ServiceProvider o) {
+    return this.getPriority() - o.getPriority();
+  }
+
   /**
    * Implementation priority, that is a capability index used to rank available implementations (the
    * lesser, the better — zero means full capability).
@@ -97,7 +101,7 @@ public interface ServiceProvider {
    * return their level of graphical inaccuracy (a ZXing-based renderer is, despite equivalent
    * encoding accuracy, less refined than an Okapi-based renderer as only the latter differentiates
    * bar lengths in 1D labels and adjusts the placement of human-readable symbols at character
-   * level, making for a more professionally-looking rendering)
+   * level, making for a more professionally-looking rendering).
    * </p>
    */
   int getPriority();
