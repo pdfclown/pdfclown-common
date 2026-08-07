@@ -82,42 +82,59 @@ class ResourceTest extends BaseTest {
 
       var names = asList(
           null,
+          // CLASSPATH resource --------------------------------------------------------------------
           // explicit classpath resource, mocked to resolve to JAR URL
-          SCHEME__CLASSPATH + COLON + NAME_PART__CLASSPATH__PACKAGE
-              + "/" + NAME_PART__CLASSPATH__JAR_PACKAGE + "/conf/checkstyle/checkstyle-checks.xml",
+          SCHEME__CLASSPATH + COLON + NAME_PART__CLASSPATH__PACKAGE + SLASH
+              + NAME_PART__CLASSPATH__JAR_PACKAGE + SLASH
+              + "conf/checkstyle/checkstyle-checks.xml",
           // explicit classpath resource, mocked to resolve to JAR URL, nonexistent
-          SCHEME__CLASSPATH + COLON + NAME_PART__CLASSPATH__PACKAGE
-              + "/" + NAME_PART__CLASSPATH__JAR_PACKAGE + "/" + NAME_PART__NON_EXISTENT
-              + "/conf/checkstyle/checkstyle-checks.xml",
+          SCHEME__CLASSPATH + COLON + NAME_PART__CLASSPATH__PACKAGE + SLASH
+              + NAME_PART__CLASSPATH__JAR_PACKAGE + SLASH
+              + NAME_PART__NON_EXISTENT + SLASH
+              + "conf/checkstyle/checkstyle-checks.xml",
           // implicit classpath resource, mocked to resolve to JAR URL
-          NAME_PART__CLASSPATH__PACKAGE + "/" + NAME_PART__CLASSPATH__JAR_PACKAGE
-              + "/conf/checkstyle/checkstyle-checks.xml",
+          NAME_PART__CLASSPATH__PACKAGE + SLASH
+              + NAME_PART__CLASSPATH__JAR_PACKAGE + SLASH
+              + "conf/checkstyle/checkstyle-checks.xml",
           // implicit classpath resource, mocked to resolve to JAR URL, nonexistent
-          NAME_PART__CLASSPATH__PACKAGE + "/" + NAME_PART__CLASSPATH__JAR_PACKAGE + "/"
-              + NAME_PART__NON_EXISTENT + "/conf/checkstyle/checkstyle-checks.xml",
+          NAME_PART__CLASSPATH__PACKAGE + SLASH
+              + NAME_PART__CLASSPATH__JAR_PACKAGE + SLASH
+              + NAME_PART__NON_EXISTENT + SLASH
+              + "conf/checkstyle/checkstyle-checks.xml",
           // explicit classpath resource, mocked to resolve to FILE URL
           SCHEME__CLASSPATH + COLON + NAME_PART__CLASSPATH__PACKAGE
-              + "/util/conf/checkstyle/checkstyle-checks.xml",
+              + "/util/"
+              + "conf/checkstyle/checkstyle-checks.xml",
           // explicit classpath resource, mocked to resolve to FILE URL, nonexistent
           SCHEME__CLASSPATH + COLON + NAME_PART__CLASSPATH__PACKAGE
-              + "/util/" + NAME_PART__NON_EXISTENT + "/conf/checkstyle/checkstyle-checks.xml",
+              + "/util/" + NAME_PART__NON_EXISTENT + SLASH
+              + "conf/checkstyle/checkstyle-checks.xml",
           // implicit classpath resource, mocked to resolve to FILE URL
-          NAME_PART__CLASSPATH__PACKAGE + "/util/conf/checkstyle/checkstyle-checks.xml",
+          NAME_PART__CLASSPATH__PACKAGE
+              + "/util/"
+              + "conf/checkstyle/checkstyle-checks.xml",
           // implicit classpath resource, mocked to resolve to FILE URL, nonexistent
-          NAME_PART__CLASSPATH__PACKAGE + "/util/" + NAME_PART__NON_EXISTENT
-              + "/conf/checkstyle/checkstyle-checks.xml",
+          NAME_PART__CLASSPATH__PACKAGE
+              + "/util/" + NAME_PART__NON_EXISTENT + SLASH
+              + "conf/checkstyle/checkstyle-checks.xml",
+          // FILESYSTEM resource -------------------------------------------------------------------
           // filesystem resource, absolute
-          "/home/myuser/conf/checkstyle/checkstyle-checks.xml",
+          "/home/myuser/"
+              + "conf/checkstyle/checkstyle-checks.xml",
           // filesystem resource, relative
-          NAME_PART__FILE__RELATIVE + "checkstyle/checkstyle-checks.xml",
+          NAME_PART__FILE__RELATIVE
+              + "checkstyle/checkstyle-checks.xml",
           // filesystem resource, absolute, as URL
-          SCHEME__FILE + COLON + SLASH + "/home/myuser/conf/checkstyle/checkstyle-checks.xml",
-          // generic URL resource
-          SCHEME__HTTPS + COLON
-              + "//www.example.io/conf/checkstyle/checkstyle-checks.xml",
-          // generic URL resource, nonexistent
+          SCHEME__FILE + COLON + SLASH + "/home/myuser/"
+              + "conf/checkstyle/checkstyle-checks.xml",
+          // WEB resource --------------------------------------------------------------------------
+          // web resource
           SCHEME__HTTPS + COLON + "//www.example.io/"
-              + NAME_PART__NON_EXISTENT + "/conf/checkstyle/checkstyle-checks.xml");
+              + "conf/checkstyle/checkstyle-checks.xml",
+          // web resource, nonexistent
+          SCHEME__HTTPS + COLON + "//www.example.io/"
+              + NAME_PART__NON_EXISTENT + SLASH
+              + "conf/checkstyle/checkstyle-checks.xml");
 
       // Ensure files existence in mocked filesystem!
       for (var name : names) {
@@ -145,9 +162,8 @@ class ResourceTest extends BaseTest {
         // NOP: empty file.
       }
 
-      //noinspection DataFlowIssue : false positive (result is nullable by contract!)
       COMBINATION.verify(
-          (name) -> AbstractResource.of(name, ofClassLoaderMock, fileResolver, fs).orElse(null),
+          (name) -> AbstractResource.of(name, ofClassLoaderMock, fileResolver, fs),
           List.of("name"),
           // name
           names);

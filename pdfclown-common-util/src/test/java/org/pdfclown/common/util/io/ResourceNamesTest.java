@@ -49,16 +49,20 @@ public class ResourceNamesTest extends BaseTest {
       "/my/absolute.sub/Resource.txt",
       // Slash-trailing absolute name
       "/my/absolute/resource/",
-      // Slash- and backslash-ridden absolute name
-      "//my/\\\\other\\/\\deep//absolute\\resource/",
+      // Slash- and backslash-ridden absolute name with dangerous path traversal
+      "//my/\\\\other\\/\\deep//../absolute\\resource/",
+      // Slash- and backslash-ridden absolute name with dangerous symbols
+      "//my/\\\\other\\/\\deep//absolute!\\resource/",
       // Relative root
       "",
       // Normal relative name with extension
       "my/relative/Resource.txt",
       // Slash-trailing relative name
       "my/relative/resource/",
-      // Slash- and backslash-ridden relative name
-      "my/\\\\other\\/\\deep//relative\\resource/");
+      // Slash- and backslash-ridden relative name with dangerous path traversal
+      "my/\\\\other\\/\\deep//../relative\\resource/",
+      // Slash- and backslash-ridden relative name with dangerous symbols
+      "my/\\\\other\\/\\deep//relative!\\resource/");
 
   @Test
   void abs() {
@@ -78,6 +82,24 @@ public class ResourceNamesTest extends BaseTest {
         NAMES,
         // base
         BASES);
+  }
+
+  @Test
+  void forClass() {
+    COMBINATION.verify(
+        (name) -> ResourceNames.forClass(name),
+        List.of("name"),
+        // name
+        NAMES);
+  }
+
+  @Test
+  void forClassLoader() {
+    COMBINATION.verify(
+        (name) -> ResourceNames.forClassLoader(name),
+        List.of("name"),
+        // name
+        NAMES);
   }
 
   @Test

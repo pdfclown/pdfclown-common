@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Immutable;
@@ -48,7 +47,7 @@ public interface Resource {
    *          Path.
    * @return Empty, if the resource corresponding to {@code path} does not exist.
    */
-  static Optional<PathResource> of(@Nullable Path path) {
+  static @Nullable PathResource of(@Nullable Path path) {
     return path(toOrNull(path, Object::toString));
   }
 
@@ -62,7 +61,7 @@ public interface Resource {
    *          Resource name.
    * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static Optional<Resource> of(@Nullable String name) {
+  static @Nullable Resource of(@Nullable String name) {
     return of(name, null, null);
   }
 
@@ -78,7 +77,7 @@ public interface Resource {
    *          Class loader for resource lookup.
    * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static Optional<Resource> of(@Nullable String name, ClassLoader cl) {
+  static @Nullable Resource of(@Nullable String name, ClassLoader cl) {
     return of(name, cl, null);
   }
 
@@ -125,7 +124,7 @@ public interface Resource {
    *           <p>
    *           </p>
    */
-  static Optional<Resource> of(@Nullable String name, @Nullable ClassLoader cl,
+  static @Nullable Resource of(@Nullable String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver) {
     return AbstractResource.of(name, cl, fileResolver, null);
   }
@@ -138,7 +137,7 @@ public interface Resource {
    *
    * @return Empty, if the resource corresponding to {@code url} does not exist.
    */
-  static Optional<Resource> of(@Nullable URI uri) {
+  static @Nullable Resource of(@Nullable URI uri) {
     return of(toOrNull(uri, Object::toString));
   }
 
@@ -150,7 +149,7 @@ public interface Resource {
    *
    * @return Empty, if the resource corresponding to {@code url} does not exist.
    */
-  static Optional<Resource> of(@Nullable URL url) {
+  static @Nullable Resource of(@Nullable URL url) {
     return of(toOrNull(url, Object::toString));
   }
 
@@ -164,7 +163,7 @@ public interface Resource {
    *          Resource name.
    * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static Optional<PathResource> path(@Nullable String name) {
+  static @Nullable PathResource path(@Nullable String name) {
     return path(name, null, null);
   }
 
@@ -180,13 +179,13 @@ public interface Resource {
    *          Class loader for resource lookup.
    * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static Optional<PathResource> path(@Nullable String name, ClassLoader cl) {
+  static @Nullable PathResource path(@Nullable String name, ClassLoader cl) {
     return path(name, cl, null);
   }
 
-  static Optional<PathResource> path(@Nullable String name, @Nullable ClassLoader cl,
+  static @Nullable PathResource path(@Nullable String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver) {
-    return of(name, cl, fileResolver).map(PathResource.class::cast);
+    return (PathResource) of(name, cl, fileResolver);
   }
 
   /**

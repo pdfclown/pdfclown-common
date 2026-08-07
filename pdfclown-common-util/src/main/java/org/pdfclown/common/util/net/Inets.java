@@ -18,6 +18,8 @@ import static org.pdfclown.common.util.Objects.type;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 
 /**
  * Internet Protocol-related utilities.
@@ -25,6 +27,22 @@ import java.net.InetAddress;
  * @author Stefano Chizzolini
  */
 public final class Inets {
+  /**
+   * Gets whether an address belongs to the local machine.
+   */
+  public static boolean isLocal(InetAddress address) {
+    // Loop back?
+    if (address.isLoopbackAddress())
+      return true;
+
+    // Any of this machine's own network interfaces?
+    try {
+      return NetworkInterface.getByInetAddress(address) != null;
+    } catch (SocketException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
   /**
    * Gets whether an address belongs to a private range.
    * <p>

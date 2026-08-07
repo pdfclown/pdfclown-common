@@ -24,24 +24,29 @@ import static org.pdfclown.common.build.internal.temp.util.io.Files.PATH_SUPER;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.SLASH;
+import static org.pdfclown.common.util.regex.Patterns.indexOfMatchFailure;
 
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.ArgumentFormatException;
 
 /**
  * Resource name utilities.
  * <p>
- * Within this class, <b>resource names</b> follow the Java resource name syntax: they are
- * <i>concatenations of slash-separated segments</i>. A resource name without leading slash is
- * <b>relative</b>, whilst with it is <b>absolute</b> — NOTE: the
- * {@linkplain Class#getResource(String) official Java documentation} is misleading, as it states
- * that an absolute resource name "is the portion of the name following the [leading slash]": such
- * definition doesn't make sense, as the lack of leading slash causes the name to be prefixed by a
- * package name (typical behavior of <i>relative</i> names, NOT absolute ones!). The documentation
- * of {@code Class.resolveName(String)} itself falls in contradiction when it says "Add a package
- * name prefix if the name is not absolute. Remove leading [slash] if name is absolute". What the
- * original Java author was evidently intending with the initial expression "absolute resource name"
- * is the <i>full resource name</i>, NOT the absolute one.
+ * <b>Resource names</b>, according to Java syntax, are <i>concatenations of slash-separated
+ * segments</i>; for the purposes of this class, a resource name with leading slash is
+ * <b>absolute</b>, otherwise <b>relative</b> — NOTE: The documentation for
+ * {@link Class#getResource(String)} is misleading, as it states that an absolute resource name "is
+ * the portion of the name following the [leading slash]": such definition doesn't make sense (other
+ * than reconciling itself with the archive-based semantics of
+ * {@link ClassLoader#getResource(String)}), as the lack of leading slash causes the name to be
+ * prefixed by a package name (typical behavior of <i>relative</i> names, NOT absolute ones!). The
+ * documentation of internal {@code Class.resolveName(String)} (OpenJDK 17) itself falls in
+ * contradiction when it says "Add a package name prefix if the name is not absolute. Remove leading
+ * [slash] if name is absolute". A non-ambiguous term to express "absolute resource name (without
+ * leading slash)" could have been <i>full resource name</i>.
  * </p>
  * <p>
  * All the methods within this class return normalized resource names.
@@ -50,6 +55,9 @@ import org.jspecify.annotations.Nullable;
  * @author Stefano Chizzolini
  */
 public final class ResourceNames {
+  private static final Pattern PATTERN__NAME =
+      Pattern.compile("^/?[A-Za-z0-9._-][A-Za-z0-9._/-]+$");
+
   /**
    * Ensures the resource name is absolute.
    *
@@ -81,6 +89,61 @@ public final class ResourceNames {
    */
   public static String absBased(String name, Object base) {
     return abs(relBased(name, base));
+  }
+
+  /**
+   * Ensures a resource name is syntactically safe for {@linkplain Class#getResource(String)
+   * class-based resolution}.
+   * <ol>
+   * <li>{@linkplain #normal(String) normalizes} the name</li>
+   * <li>checks the name against path traversal ({@value Files#PATH_SUPER})</li>
+   * <li>checks all characters in the name</li>
+   * </ol>
+   *
+   * @return Sanitized {@code name}.
+   * @throws ArgumentFormatException
+   *           if {@code name} is invalid.
+   */
+  public static String forClass(String name) {
+    // 1. Normalize!
+    name = normal(name);
+
+    /*
+     * 2. Check against path traversal ("..")!
+     *
+     * NOTE: The resolution through `ClassLoader::getResource` may vary according to the class
+     * loader implementation (`URLClassLoader` reportedly does path joining that can behave
+     * surprisingly with ".." on some platforms/JDK versions).
+     */
+    int i = name.indexOf(PATH_SUPER);
+    if (found(i))
+      throw new ArgumentFormatException("name", name, i,
+          "path traversal segment (" + PATH_SUPER + ") NOT ALLOWED");
+
+    // 3. Check characters!
+    Matcher m = PATTERN__NAME.matcher(name);
+    if (!m.find())
+      throw new ArgumentFormatException("name", name, indexOfMatchFailure(m));
+
+    return name;
+  }
+
+  /**
+   * Ensures a resource name is syntactically safe for {@linkplain ClassLoader#getResource(String)
+   * class loader-based resolution}.
+   * <ol>
+   * <li>{@linkplain #normal(String) normalizes} the name and {@linkplain #rel(String) strips its
+   * leading slash}</li>
+   * <li>checks the name against path traversal ({@value Files#PATH_SUPER})</li>
+   * <li>checks all characters in the name</li>
+   * </ol>
+   *
+   * @return Sanitized {@code name}.
+   * @throws ArgumentFormatException
+   *           if {@code name} is invalid.
+   */
+  public static String forClassLoader(String name) {
+    return forClass(rel(name));
   }
 
   /**
@@ -248,13 +311,10 @@ public final class ResourceNames {
 
   /**
    * Normalizes a name.
-   * <p>
-   * Transformations applied to {@code name}:
-   * </p>
    * <ul>
    * <li>backslashes are converted to slashes</li>
-   * <li>resulting contiguous slashes are collapsed to single slashes</li>
-   * <li>resulting trailing slash is suppressed if non-root</li>
+   * <li>contiguous slashes are collapsed to single slashes</li>
+   * <li>trailing slash is suppressed if non-root</li>
    * </ul>
    */
   public static String normal(String name) {

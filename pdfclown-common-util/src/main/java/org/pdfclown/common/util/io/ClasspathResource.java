@@ -12,15 +12,14 @@
  */
 package org.pdfclown.common.util.io;
 
-import static java.util.Objects.requireNonNull;
-import static org.pdfclown.common.util.Chars.COLON;
-import static org.pdfclown.common.util.Exceptions.runtime;
-import static org.pdfclown.common.util.Exceptions.unexpected;
+import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.net.Uris.SCHEME__FILE;
 import static org.pdfclown.common.util.net.Uris.SCHEME__JAR;
+import static org.pdfclown.common.util.net.Uris.isLocalFileSystem;
+import static org.pdfclown.common.util.net.Uris.scheme;
+import static org.pdfclown.common.util.net.Uris.uri;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -31,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.function.Failable;
 import org.pdfclown.common.util.annot.Immutable;
+import org.pdfclown.common.util.net.Uris;
+import org.pdfclown.common.util.net.Uris.JarUrl;
 
 /**
  * Classpath resource.
@@ -52,14 +53,6 @@ import org.pdfclown.common.util.annot.Immutable;
  */
 @Immutable
 public class ClasspathResource extends AbstractResource implements PathResource {
-  /**
-   * JAR URL separator (see {@link java.net.JarURLConnection}).
-   */
-  private static final String JAR_URL_SEPARATOR = "!/";
-
-  /*
-   * TODO: cache soft refs!
-   */
   private static final Map<String, FileSystem> fileSystems = new HashMap<>();
 
   private static FileSystem asFileSystem(Path path) {
@@ -67,38 +60,38 @@ public class ClasspathResource extends AbstractResource implements PathResource 
         Failable.asFunction($k -> FileSystems.newFileSystem(path, (ClassLoader) null)));
   }
 
-  private static String jarEntryName(String path) {
-    return path.substring(path.indexOf(JAR_URL_SEPARATOR) + JAR_URL_SEPARATOR.length());
-  }
-
-  private static String jarFileName(String path) {
-    return path.substring((SCHEME__FILE + COLON).length(), path.indexOf(JAR_URL_SEPARATOR));
-  }
-
   private final Path path;
   private final URI uri;
 
+  /**
+   * @throws org.pdfclown.common.util.ArgumentException
+   *           if {@code url} is not local or its scheme is incompatible (supported:
+   *           {@value Uris#SCHEME__FILE}, {@value Uris#SCHEME__JAR}).
+   */
   protected ClasspathResource(String name, URL url, FileSystem fs) {
     super(name);
 
-    try {
-      this.uri = requireNonNull(url, "`url`").toURI();
-    } catch (URISyntaxException ex) {
-      throw runtime(ex);
-    }
+    this.uri = uri(url);
 
-    switch (uri.getScheme()) {
+    if (!isLocalFileSystem(uri))
+      /*
+       * NOTE: A `jar:` URL (for example, returned via `URLClassLoader`) may be remote
+       * ("jar:https://...!/...") even though the `classpath:` syntax it was resolved from looks
+       * purely local.
+       */
+      throw wrongArg("url", url, "only local filesystem allowed");
+
+    switch (scheme(uri)) {
       case SCHEME__JAR -> {
-        /*
-         * NOTE: We have to access `URL.path` instead of `URI.path`, as the latter returns `null`
-         * since URI treats JAR protocol as opaque (that is, non-hierarchical).
-         */
-        Path jarFile = fs.getPath(jarFileName(url.getPath()));
-        String jarEntryName = jarEntryName(url.getPath());
-        path = asFileSystem(jarFile).getPath(jarEntryName);
+        var jarUrl = JarUrl.of(url);
+        Path jarFile = fs.getPath(jarUrl.jarFileUrl().getPath());
+        FileSystem jarFS = asFileSystem(jarFile);
+        path = jarUrl.entryName() != null
+            ? jarFS.getPath(jarUrl.entryName())
+            : jarFS.getRootDirectories().iterator().next();
       }
       case SCHEME__FILE -> path = fs.getPath(url.getPath());
-      default -> throw unexpected("uri.scheme", uri.getScheme());
+      default -> throw wrongArg("uri.scheme", uri.getScheme());
     }
   }
 

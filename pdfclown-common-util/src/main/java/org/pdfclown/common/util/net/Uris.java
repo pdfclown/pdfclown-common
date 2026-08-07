@@ -20,15 +20,18 @@ import static org.pdfclown.common.util.Chars.SLASH;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
+import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.Strings.indexOfElse;
 import static org.pdfclown.common.util.Strings.lcase;
+import static org.pdfclown.common.util.function.Functions.toOrNull;
 import static org.pdfclown.common.util.io.Files.PATH_SUPER;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,8 +39,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
-import org.apache.commons.lang3.Strings;
+import java.util.Objects;
 import org.apache.commons.lang3.stream.Streams;
+import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.util.Strings;
 
 /**
  * URI-related utilities.
@@ -45,6 +50,36 @@ import org.apache.commons.lang3.stream.Streams;
  * @author Stefano Chizzolini
  */
 public final class Uris {
+  /**
+   * {@linkplain #SCHEME__JAR JAR} URL.
+   * <p>
+   * Syntax: <code>jar:{jarFileUri}!/{entryName}</code>
+   * </p>
+   *
+   * @param url
+   *          Full URL.
+   * @param jarFileUrl
+   *          Jar file component.
+   * @param entryName
+   *          Entry component.
+   * @author Stefano Chizzolini
+   */
+  public record JarUrl(URL url, URL jarFileUrl, @Nullable String entryName) {
+    public static JarUrl of(URL url) {
+      if (!scheme(url).equals(SCHEME__JAR))
+        throw wrongArg("url", url, "scheme MUST be `{}`", SCHEME__JAR);
+
+      JarURLConnection jarUrl;
+      try {
+        jarUrl = (JarURLConnection) url.openConnection();
+      } catch (IOException ex) {
+        throw runtime(ex);
+      }
+
+      return new JarUrl(url, jarUrl.getJarFileURL(), jarUrl.getEntryName());
+    }
+  }
+
   /**
    * {@code classpath} resource protocol.
    */
@@ -63,6 +98,7 @@ public final class Uris {
    * ({@code HTTPS})</a> scheme.
    */
   public static final String SCHEME__HTTPS = "https";
+
   /**
    * {@link java.net.JarURLConnection jar} resource protocol.
    */
@@ -103,6 +139,101 @@ public final class Uris {
   }
 
   /**
+   * Ensures the URI is flattened to its bare form.
+   * <p>
+   * Supported schemes: {@value #SCHEME__CLASSPATH}, {@value #SCHEME__FILE}, {@value #SCHEME__HTTP},
+   * {@value #SCHEME__HTTPS}, {@value #SCHEME__JAR}. <span class="important">Any other scheme is
+   * rejected</span>.
+   * </p>
+   *
+   * @return Flattened {@code uri}.
+   * @throws org.pdfclown.common.util.ArgumentException
+   *           if the scheme of {@code uri} is not supported.
+   * @apiNote Useful to uncover opaque URIs.
+   */
+  @SuppressWarnings("ReferenceEquality")
+  public static URI flatten(final URI uri) {
+    var ret = uri;
+    while (true) {
+      String scheme = scheme(ret);
+      switch (scheme) {
+        case //
+            SCHEME__CLASSPATH, //
+            SCHEME__FILE, //
+            SCHEME__HTTP, //
+            SCHEME__HTTPS -> {
+          return ret;
+        }
+        case SCHEME__JAR -> {
+          if (ret != uri)
+            throw wrongArg("uri", uri, "nested JAR URLs NOT SUPPORTED");
+
+          ret = uri(JarUrl.of(url(ret)).jarFileUrl());
+        }
+        default -> throw wrongArg("uri", uri, "{} scheme NOT SUPPORTED", textLiteral(scheme));
+      }
+    }
+  }
+
+  /**
+   * Gets the host of a URI.
+   *
+   * @return (lower-case) Empty, if no host is specified.
+   * @implNote Contrary to {@link URI#getHost()}, this method returns empty on undefined host to
+   *           ease handling.
+   */
+  public static String host(URI uri) {
+    return normalComponent(uri.getHost());
+  }
+
+  /**
+   * Gets the host of a URL.
+   *
+   * @return (lower-case) Empty, if no host is specified.
+   */
+  public static String host(URL url) {
+    return normalComponent(url.getHost());
+  }
+
+  /**
+   * Gets whether a URI belongs to the local machine.
+   */
+  public static boolean isLocal(final URI uri) {
+    URI realUri = flatten(uri);
+
+    InetAddress[] addresses;
+    try {
+      addresses = InetAddress.getAllByName(realUri.getHost());
+    } catch (UnknownHostException ex) {
+      throw runtime("Host resolution of {} FAILED", realUri, ex);
+    }
+    for (var address : addresses) {
+      if (!Inets.isLocal(address))
+        return false;
+    }
+    return addresses.length > 0;
+  }
+
+  /**
+   * Gets whether a URI belongs to the local filesystem.
+   * <p>
+   * The local filesystem comprises resources accessed in the local machine directly (via
+   * {@value #SCHEME__FILE} scheme) or through the classpath (via {@value #SCHEME__CLASSPATH}
+   * scheme); <span class="important">in the latter case, it is caller's responsibility to verify
+   * the actual {@link ClassLoader} the path is resolved against</span>.
+   * </p>
+   */
+  public static boolean isLocalFileSystem(final URI uri) {
+    URI realUri = flatten(uri);
+    return switch (scheme(realUri)) {
+      case //
+          SCHEME__CLASSPATH, //
+          SCHEME__FILE -> isLocal(realUri);
+      default -> false;
+    };
+  }
+
+  /**
    * Gets whether the port number of the URI is the default of its scheme.
    *
    * @throws RuntimeException
@@ -122,11 +253,30 @@ public final class Uris {
    * @throws RuntimeException
    *           if DNS resolution failed.
    */
-  public static boolean isPrivate(URI uri) {
+  public static boolean isPrivate(final URI uri) {
+    URI realUri = flatten(uri);
     try {
-      return Inets.isPrivate(InetAddress.getByName(uri.getHost()));
+      return Inets.isPrivate(InetAddress.getByName(realUri.getHost()));
     } catch (UnknownHostException ex) {
-      throw runtime("Host resolution of {} FAILED", uri, ex);
+      throw runtime("Host resolution of {} FAILED", realUri, ex);
+    }
+  }
+
+  /**
+   * Normalizes a URI, converting to lower case its case-insensitive components.
+   *
+   * @return Normalized {@code uri}.
+   */
+  public static URI normalize(URI uri) {
+    uri = uri.normalize();
+    String scheme = toOrNull(uri.getScheme(), Strings::lcase);
+    String host = toOrNull(uri.getHost(), Strings::lcase);
+    try {
+      return Objects.equals(scheme, uri.getScheme()) && Objects.equals(host, uri.getHost()) ? uri
+          : new URI(scheme, uri.getUserInfo(), host, uri.getPort(), uri.getPath(), uri.getQuery(),
+              uri.getFragment());
+    } catch (URISyntaxException ex) {
+      throw runtime(ex);
     }
   }
 
@@ -152,14 +302,18 @@ public final class Uris {
    * way/longer/to.html</pre>
    */
   public static URI relativize(URI from, URI to) {
-    if (from.isOpaque() || to.isOpaque()
-        || !Strings.CI.equals(from.getScheme(), to.getScheme())
-        || !Strings.CI.equals(from.getAuthority(), to.getAuthority()))
+    // Not hierarchical?
+    if (from.isOpaque() || to.isOpaque())
       return to;
 
-    // Normalize paths!
-    from = from.normalize();
-    to = to.normalize();
+    // Normalize schemes, hosts and paths!
+    from = normalize(from);
+    to = normalize(to);
+
+    // Not the same resource context?
+    if (!Objects.equals(from.getScheme(), to.getScheme())
+        || !Objects.equals(from.getAuthority(), to.getAuthority()))
+      return to;
 
     String fromPath = from.getPath();
     String toPath = to.getPath();
@@ -197,10 +351,30 @@ public final class Uris {
    * No syntactic check is applied to {@code uri}.
    * </p>
    *
-   * @return (lower-case)
+   * @return (lower-case) Empty, if no scheme is specified.
    */
   public static String scheme(String uri) {
     return lcase(uri.substring(0, indexOfElse(uri, COLON, 0)));
+  }
+
+  /**
+   * Gets the scheme of a URI.
+   *
+   * @return (lower-case) Empty, if no scheme is specified.
+   * @implNote Contrary to {@link URI#getScheme()}, this method returns empty on undefined scheme to
+   *           ease handling.
+   */
+  public static String scheme(URI uri) {
+    return normalComponent(uri.getScheme());
+  }
+
+  /**
+   * Gets the scheme of a URL.
+   *
+   * @return (lower-case) Empty, if no scheme is specified.
+   */
+  public static String scheme(URL url) {
+    return normalComponent(url.getProtocol());
   }
 
   /**
@@ -279,6 +453,10 @@ public final class Uris {
     } catch (MalformedURLException ex) {
       throw wrongArg("uri", uri, null, ex);
     }
+  }
+
+  private static String normalComponent(@Nullable String value) {
+    return value != null ? lcase(value) : EMPTY;
   }
 
   private Uris() {

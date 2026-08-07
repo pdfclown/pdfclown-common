@@ -581,7 +581,7 @@ public final class Clis {
    */
   public static @Nullable Resource parseResource(String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver) {
-    return Resource.of(name, cl, fileResolver).orElse(null);
+    return Resource.of(name, cl, fileResolver);
   }
 
   private Clis() {

@@ -1,0 +1,12 @@
+[name: "/"] => <<ArgumentFormatException: "`name` (\"/\") INVALID (at position 1)">>
+[name: "\\"] => <<ArgumentFormatException: "`name` (\"/\") INVALID (at position 1)">>
+[name: "/my/absolute/Resource.txt"] => "/my/absolute/Resource.txt"
+[name: "/my/absolute.sub/Resource.txt"] => "/my/absolute.sub/Resource.txt"
+[name: "/my/absolute/resource/"] => "/my/absolute/resource/"
+[name: "//my/\\\\other\\/\\deep//../absolute\\resource/"] => <<ArgumentFormatException: "`name` (\"/my/other/deep/../absolute/resource/\") INVALID (at position 15 -- path traversal segment (..) NOT ALLOWED)">>
+[name: "//my/\\\\other\\/\\deep//absolute!\\resource/"] => <<ArgumentFormatException: "`name` (\"/my/other/deep/absolute!/resource/\") INVALID (at position 23)">>
+[name: ""] => <<ArgumentFormatException: "`name` (\"\") INVALID (at position 0)">>
+[name: "my/relative/Resource.txt"] => "my/relative/Resource.txt"
+[name: "my/relative/resource/"] => "my/relative/resource/"
+[name: "my/\\\\other\\/\\deep//../relative\\resource/"] => <<ArgumentFormatException: "`name` (\"my/other/deep/../relative/resource/\") INVALID (at position 14 -- path traversal segment (..) NOT ALLOWED)">>
+[name: "my/\\\\other\\/\\deep//relative!\\resource/"] => <<ArgumentFormatException: "`name` (\"my/other/deep/relative!/resource/\") INVALID (at position 22)">>
