@@ -12,12 +12,14 @@
  */
 package org.pdfclown.common.util;
 
+import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.function.Functions.toElse;
 
 import org.jspecify.annotations.Nullable;
 
@@ -40,9 +42,8 @@ public class ElementNotFoundException extends RuntimeException {
   }
 
   public ElementNotFoundException(Object ref, @Nullable String message, @Nullable Throwable cause) {
-    super("No element associated to %s%s".formatted(textLiteral(ref),
-        message != null ? S + SPACE + ROUND_BRACKET_OPEN + message + ROUND_BRACKET_CLOSE : EMPTY),
-        cause);
+    super("No element associated to %s%s".formatted(textLiteral(ref), toElse(stripToNull(message),
+        $ -> S + SPACE + ROUND_BRACKET_OPEN + $ + ROUND_BRACKET_CLOSE, EMPTY)), cause);
 
     this.ref = ref;
   }

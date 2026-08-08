@@ -12,7 +12,9 @@
  */
 package org.pdfclown.common.util;
 
+import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.function.Functions.toElse;
 
 import java.io.Serial;
 import org.jspecify.annotations.Nullable;
@@ -39,8 +41,8 @@ public class ArgumentFormatException extends ArgumentException {
 
   public ArgumentFormatException(@Nullable String argName, @Nullable Object argValue, int offset,
       @Nullable String message, @Nullable Throwable cause) {
-    super(argName, argValue, "at position %s%s".formatted(offset,
-        message != null ? " -- " + message : EMPTY), cause);
+    super(argName, argValue, "at position %s%s".formatted(offset, toElse(stripToNull(message),
+        $ -> " -- " + $, EMPTY)), cause);
 
     this.offset = offset;
   }

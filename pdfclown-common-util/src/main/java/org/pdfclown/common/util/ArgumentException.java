@@ -13,6 +13,7 @@
 package org.pdfclown.common.util;
 
 import static org.apache.commons.lang3.StringUtils.stripToEmpty;
+import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.util.Chars.BACKTICK;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
@@ -55,7 +56,7 @@ public class ArgumentException extends IllegalArgumentException {
           .append(ROUND_BRACKET_CLOSE);
     }
     b.append(SPACE).append("INVALID");
-    if (!(message = stripToEmpty(message)).isEmpty()) {
+    if (message != null) {
       b.append(SPACE).append(ROUND_BRACKET_OPEN).append(message)
           .append(ROUND_BRACKET_CLOSE);
     }
@@ -88,7 +89,7 @@ public class ArgumentException extends IllegalArgumentException {
    */
   public ArgumentException(@Nullable String argName, @Nullable Object argValue,
       @Nullable String message, @Nullable Throwable cause) {
-    super(buildMessage(argName = stripToEmpty(argName), argValue, message), cause);
+    super(buildMessage(argName = stripToEmpty(argName), argValue, stripToNull(message)), cause);
 
     this.argName = argName;
     this.argValue = argValue;
