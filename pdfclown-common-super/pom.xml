@@ -164,7 +164,7 @@ pdfclown-common-base instead)</description>
             org.json:json dependency.
     -->
     <jsonassert.version>2.0-rc1</jsonassert.version>
-    <jsoup.version>1.22.2</jsoup.version>
+    <jsoup.version>1.23.1</jsoup.version>
     <jspecify.version>1.0.1</jspecify.version>
     <junit.version>6.1.2</junit.version>
     <log4j.version>2.26.1</log4j.version>
