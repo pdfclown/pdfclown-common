@@ -111,8 +111,8 @@ public class DynamicMap<K, V> extends HashMap<K, V> {
     if (ret == null && key != null) {
       final var k = (K) key;
 
-      if (log.isDebugEnabled()) {
-        log.debug("Related key SEARCH for {}", sqn(k));
+      if (log.isTraceEnabled()) {
+        log.trace("Related key SEARCH for {}", sqn(k));
       }
 
       // Looking for implicit mapping...
@@ -120,14 +120,14 @@ public class DynamicMap<K, V> extends HashMap<K, V> {
       while (relatedKeysItr.hasNext()) {
         var relatedKey = relatedKeysItr.next();
 
-        if (log.isDebugEnabled()) {
-          log.debug("Related key: {}", sqn(relatedKey));
+        if (log.isTraceEnabled()) {
+          log.trace("Related key: {}", sqn(relatedKey));
         }
 
         // Implicit mapping found?
         if ((ret = super.get(relatedKey)) != null) {
-          if (log.isDebugEnabled()) {
-            log.debug("Related key MATCH for {}: {}", sqn(k), sqn(relatedKey));
+          if (log.isTraceEnabled()) {
+            log.trace("Related key MATCH for {}: {}", sqn(k), sqn(relatedKey));
           }
 
           // Make explicit the existing implicit mapping!

@@ -8,7 +8,7 @@
         marker="VERBOSE"
         onMatch="DENY"
         onMismatch="ACCEPT"/>
-      <PatternLayout pattern="%d{HH:mm:ss.SSS}  %highlight{%-5p} [%t] %c{1.} %m%n"/>
+      <PatternLayout pattern="%d{HH:mm:ss.SSS}  %-5p [%t] %c{1.} %m%n"/>
     </Console>
     <File
       name="Assertion"

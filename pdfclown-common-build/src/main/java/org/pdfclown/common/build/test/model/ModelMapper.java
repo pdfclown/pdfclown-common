@@ -637,8 +637,8 @@ public class ModelMapper<T> {
     if (value == null || (value instanceof CharSequence seq && seq.isEmpty()))
       return null;
 
-    if (log.isDebugEnabled()) {
-      log.debug("mapValue(level: {}): {}", level, sqn(value));
+    if (log.isTraceEnabled()) {
+      log.trace("mapValue(level: {}): {}", level, sqn(value));
     }
 
     var valueMapper = nonNull(/*
