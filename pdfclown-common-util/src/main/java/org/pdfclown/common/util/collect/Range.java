@@ -31,7 +31,6 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.ArgumentException;
 import org.pdfclown.common.util.Numbers;
 import org.pdfclown.common.util.annot.Immutable;
-import org.pdfclown.common.util.collect.Range.Endpoint;
 
 /**
  * Interval of comparable objects.
@@ -75,9 +74,9 @@ public class Range<T> {
 
     @Override
     public boolean equals(@Nullable Object o) {
-      return o == this || (o instanceof Range.Endpoint<?> that
-          && that.closed == this.closed
-          && Objects.equals(that.value, this.value));
+      return this == o || (o instanceof Range.Endpoint<?> that
+          && this.closed == that.closed
+          && Objects.equals(this.value, that.value));
     }
 
     /**
@@ -268,9 +267,9 @@ public class Range<T> {
    */
   @Override
   public final boolean equals(@Nullable Object o) {
-    return o == this || (o instanceof Range<?> that
-        && Objects.equals(that.lower, this.lower)
-        && Objects.equals(that.upper, this.upper));
+    return this == o || (o instanceof Range<?> that
+        && Objects.equals(this.lower, that.lower)
+        && Objects.equals(this.upper, that.upper));
   }
 
   /**
