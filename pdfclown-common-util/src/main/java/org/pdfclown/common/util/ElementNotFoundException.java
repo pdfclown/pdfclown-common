@@ -31,17 +31,18 @@ import org.jspecify.annotations.Nullable;
  */
 @SuppressWarnings("serial")
 public class ElementNotFoundException extends RuntimeException {
-  private final Object ref;
+  private final @Nullable Object ref;
 
-  public ElementNotFoundException(Object ref) {
+  public ElementNotFoundException(@Nullable Object ref) {
     this(ref, null, null);
   }
 
-  public ElementNotFoundException(Object ref, @Nullable String message) {
+  public ElementNotFoundException(@Nullable Object ref, @Nullable String message) {
     this(ref, message, null);
   }
 
-  public ElementNotFoundException(Object ref, @Nullable String message, @Nullable Throwable cause) {
+  public ElementNotFoundException(@Nullable Object ref, @Nullable String message,
+      @Nullable Throwable cause) {
     super("No element associated to %s%s".formatted(textLiteral(ref), toElse(stripToNull(message),
         $ -> S + SPACE + ROUND_BRACKET_OPEN + $ + ROUND_BRACKET_CLOSE, EMPTY)), cause);
 
@@ -51,7 +52,7 @@ public class ElementNotFoundException extends RuntimeException {
   /**
    * Reference associated to the missing element (for example, its lookup identifier).
    */
-  public Object getRef() {
+  public @Nullable Object getRef() {
     return ref;
   }
 }

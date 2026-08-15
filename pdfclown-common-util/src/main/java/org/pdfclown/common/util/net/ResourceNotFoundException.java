@@ -12,6 +12,9 @@
  */
 package org.pdfclown.common.util.net;
 
+import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.util.Conditions.requireState;
+
 import java.io.IOException;
 import java.io.Serial;
 import java.net.URI;
@@ -41,7 +44,7 @@ public class ResourceNotFoundException extends ElementNotFoundException {
 
   public ResourceNotFoundException(URI uri, @Nullable String message,
       @Nullable Throwable cause) {
-    super(uri, message, cause);
+    super(requireNonNull(uri, "uri"), message, cause);
   }
 
   public ResourceNotFoundException(URI uri, @Nullable Throwable cause) {
@@ -53,6 +56,6 @@ public class ResourceNotFoundException extends ElementNotFoundException {
    */
   @Override
   public URI getRef() {
-    return (URI) super.getRef();
+    return (URI) requireState(super.getRef());
   }
 }
