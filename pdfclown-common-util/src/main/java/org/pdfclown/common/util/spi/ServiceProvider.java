@@ -87,9 +87,15 @@ public interface ServiceProvider extends Comparable<ServiceProvider> {
     return ret;
   }
 
+  /**
+   * @implNote By default, provider comparison is performed between {@linkplain #getPriority()
+   *           priorities}, falling back to class names as last resort in case of equal priorities.
+   */
   @Override
   default int compareTo(ServiceProvider o) {
-    return this.getPriority() - o.getPriority();
+    int ret;
+    return (ret = this.getPriority() - o.getPriority()) != 0 ? ret
+        : this.getClass().getName().compareTo(o.getClass().getName());
   }
 
   /**
