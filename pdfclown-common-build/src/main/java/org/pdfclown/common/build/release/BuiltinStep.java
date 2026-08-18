@@ -221,9 +221,9 @@ public enum BuiltinStep implements Step {
             S + DOLLAR + PATTERN_GROUP_INDEX__MAVEN_CONFIG_PARAM__ASSIGN + newParamValue);
       }
       if (version != null)
-        throw missing(MAVEN_CONFIG_PARAM__REVISION, "parameter in {}", mavenConfigFile);
+        throw missing(MAVEN_CONFIG_PARAM__REVISION, "parameter", mavenConfigFile.toString());
       else if (scmTag != null)
-        throw missing(MAVEN_CONFIG_PARAM__SCM_TAG, "parameter in {}", mavenConfigFile);
+        throw missing(MAVEN_CONFIG_PARAM__SCM_TAG, "parameter", mavenConfigFile.toString());
 
       m.appendTail(newMavenConfig);
 

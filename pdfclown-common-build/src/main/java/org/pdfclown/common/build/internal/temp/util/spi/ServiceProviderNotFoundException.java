@@ -12,10 +12,7 @@
  */
 package org.pdfclown.common.build.internal.temp.util.spi;
 
-import static org.apache.commons.lang3.StringUtils.stripToNull;
-import static org.pdfclown.common.build.internal.temp.util.function.Functions.toElse;
 import static org.pdfclown.common.util.Objects.fqn;
-import static org.pdfclown.common.util.Strings.EMPTY;
 
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.temp.util.ElementNotFoundException;
@@ -33,8 +30,7 @@ public class ServiceProviderNotFoundException extends ElementNotFoundException {
 
   public ServiceProviderNotFoundException(Object ref, Class<? extends ServiceProvider> providerType,
       @Nullable String message, @Nullable Throwable cause) {
-    super(ref, "SPI: %s%s".formatted(fqn(providerType), toElse(stripToNull(message),
-        $ -> " -- " + $, EMPTY)), cause);
+    super(ref, fqn(providerType) + " implementation", message, cause);
 
     this.providerType = providerType;
   }

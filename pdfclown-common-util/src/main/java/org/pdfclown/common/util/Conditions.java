@@ -311,17 +311,16 @@ public final class Conditions {
    *          Element to validate.
    * @param ref
    *          Reference associated to {@code element} (for example, its key).
-   * @param description
-   *          Element description (for example, its meaning, such as the name of the collective it
-   *          belongs to).
+   * @param typeDescription
+   *          Textual description of the element type (default: {@code "element"}).
    * @return {@code element}
    * @throws ElementNotFoundException
    *           if {@code element} is undefined.
    */
   public static <T> T requireElement(@Nullable T element, Object ref,
-      @Nullable String description) {
+      @Nullable String typeDescription) {
     if (element == null)
-      throw missing(ref, description);
+      throw missing(ref, typeDescription);
 
     return element;
   }

@@ -12,6 +12,7 @@
  */
 package org.pdfclown.common.build.internal.temp.util;
 
+import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
@@ -34,17 +35,25 @@ public class ElementNotFoundException extends RuntimeException {
   private final @Nullable Object ref;
 
   public ElementNotFoundException(@Nullable Object ref) {
-    this(ref, null, null);
+    this(ref, null, null, null);
   }
 
-  public ElementNotFoundException(@Nullable Object ref, @Nullable String message) {
-    this(ref, message, null);
+  public ElementNotFoundException(@Nullable Object ref, @Nullable String typeDescription) {
+    this(ref, typeDescription, null, null);
   }
 
-  public ElementNotFoundException(@Nullable Object ref, @Nullable String message,
-      @Nullable Throwable cause) {
-    super("No element associated to %s%s".formatted(textLiteral(ref), toElse(stripToNull(message),
-        $ -> S + SPACE + ROUND_BRACKET_OPEN + $ + ROUND_BRACKET_CLOSE, EMPTY)), cause);
+  /**
+   * @param ref
+   *          Element reference.
+   * @param typeDescription
+   *          Textual description of the element type (default: {@code "element"}).
+   */
+  public ElementNotFoundException(@Nullable Object ref, @Nullable String typeDescription,
+      @Nullable String message, @Nullable Throwable cause) {
+    super("No %s associated to %s%s".formatted(requireNonNullElse(typeDescription, "element"),
+        textLiteral(ref), toElse(stripToNull(message),
+            $ -> S + SPACE + ROUND_BRACKET_OPEN + $ + ROUND_BRACKET_CLOSE, EMPTY)),
+        cause);
 
     this.ref = ref;
   }

@@ -101,7 +101,20 @@ public final class Exceptions {
    *          Reference associated to the missing element (for example, its key).
    */
   public static ElementNotFoundException missing(@Nullable Object ref) {
-    return missing(ref, null);
+    return missing(ref, null, null);
+  }
+
+  /**
+   * Creates an exception for missing element.
+   *
+   * @param ref
+   *          Reference associated to the missing element (for example, its key).
+   * @param typeDescription
+   *          Textual description of the element type (default: {@code "element"}).
+   */
+  public static ElementNotFoundException missing(@Nullable Object ref,
+      @Nullable String typeDescription) {
+    return missing(ref, typeDescription, null);
   }
 
   /**
@@ -121,10 +134,11 @@ public final class Exceptions {
    *          {@link java.lang.reflect.UndeclaredThrowableException UndeclaredThrowableException},
    *          it is unwrapped). {@jada.reuseDoc END}
    */
-  public static ElementNotFoundException missing(@Nullable Object ref, @Nullable String format,
-      @Nullable Object... args) {
+  public static ElementNotFoundException missing(@Nullable Object ref,
+      @Nullable String typeDescription, @Nullable String format, @Nullable Object... args) {
     var message = ParamMessage.of(format, args);
-    return new ElementNotFoundException(ref, message.getDescription(), message.getCause());
+    return new ElementNotFoundException(ref, typeDescription, message.getDescription(),
+        message.getCause());
   }
 
   /**

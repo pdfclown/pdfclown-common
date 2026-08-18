@@ -44,7 +44,7 @@ public class ResourceNotFoundException extends ElementNotFoundException {
 
   public ResourceNotFoundException(URI uri, @Nullable String message,
       @Nullable Throwable cause) {
-    super(requireNonNull(uri, "uri"), message, cause);
+    super(requireNonNull(uri, "uri"), "resource", message, cause);
   }
 
   public ResourceNotFoundException(URI uri, @Nullable Throwable cause) {
