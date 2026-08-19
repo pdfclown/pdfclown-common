@@ -129,11 +129,6 @@
 
       <!-- Code manipulation (reflection and generation) -->
       <dependency>
-        <groupId>org.reflections</groupId>
-        <artifactId>reflections</artifactId>
-        <version>${reflections.version}</version>
-      </dependency>
-      <dependency>
         <groupId>io.github.classgraph</groupId>
         <artifactId>classgraph</artifactId>
         <version>${classgraph.version}</version>
@@ -142,6 +137,11 @@
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
         <version>${bytebuddy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>joor</artifactId>
+        <version>${joor.version}</version>
       </dependency>
 
       <!-- Source processing -->

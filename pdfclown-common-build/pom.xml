@@ -98,6 +98,10 @@
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>joor</artifactId>
+    </dependency>
 
     <!-- Build -->
     <dependency>
