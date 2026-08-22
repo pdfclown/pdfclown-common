@@ -149,7 +149,7 @@ pdfclown-common-base instead)</description>
     -->
     <approvaltests.version>31.0.0</approvaltests.version>
     <assertj.version>3.27.7</assertj.version>
-    <bytebuddy.version>1.18.11</bytebuddy.version>
+    <bytebuddy.version>1.18.12</bytebuddy.version>
     <classgraph.version>4.8.192</classgraph.version>
     <eventbus.version>3.3.1</eventbus.version>
     <groovy.version>5.1.0</groovy.version>
