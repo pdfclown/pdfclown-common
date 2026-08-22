@@ -12,33 +12,26 @@
  */
 package org.pdfclown.common.build.test.assertion;
 
+import static java.lang.Math.cbrt;
+import static java.lang.Math.pow;
 import static java.nio.file.Files.exists;
-import static org.apache.commons.codec.binary.Hex.encodeHexString;
+import static org.apache.commons.lang3.ArrayUtils.EMPTY_INT_ARRAY;
 import static org.pdfclown.common.build.internal.temp.util.ArgumentException.ARG_VALUE__OMITTED;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireWithinNormal;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.failedIO;
-import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.temp.util.Exceptions.unsupported;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Strings.S;
-import static org.pdfclown.common.build.internal.temp.util.function.Functions.toElse;
-import static org.pdfclown.common.util.Bytes.BYTE_ARRAY__EMPTY;
 import static org.pdfclown.common.util.Chars.COLON;
 import static org.pdfclown.common.util.Chars.DOT;
-import static org.pdfclown.common.util.Chars.LF;
 import static org.pdfclown.common.util.Chars.SPACE;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.function.Function;
 import javax.imageio.ImageIO;
@@ -46,8 +39,6 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang3.function.Failable;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -56,14 +47,15 @@ import org.jspecify.annotations.Nullable;
  * This class enables checks over the pages of a document rendered as raster images.
  * </p>
  * <p>
- * For efficiency, comparison between actual and expected pages is primarily done through page image
- * checksums; in case of mismatch, a pixel-level comparison is applied and the resulting
- * {@linkplain #buildDiffImage(BufferedImage, BufferedImage) diff image} is saved to the same
- * directory as the actual document, along with the corresponding page images. Expected checksums
- * are permanently stored among test resources as a list of hexadecimal values in a textual file
- * (whose name extension is {@code ".page-checksums"}), along with the corresponding expected
- * document. Both expected checksums and expected page images are rebuilt only if enabled via
- * {@value Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED} system property.
+ * {@linkplain #diff(BufferedImage, BufferedImage) Comparison} between actual and expected pages is
+ * performed in two stages: pixel-level {@linkplain #getSampleDiffer() Euclidean distance}
+ * {@linkplain #getSampleDiffTolerance() thresholding} to spot raw differences, then cluster density
+ * check to weed out noise due to isolated, random rendering artifacts. The resulting diff image is
+ * saved to the same directory as the actual document, along with the corresponding page images for
+ * manual evaluation. Expected page images are permanently stored as PNG files among test resources,
+ * along with the corresponding expected document. An expected document and its expected page images
+ * are updated only if enabled via {@value Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED} system
+ * property.
  * </p>
  * <p>
  * See {@link Asserter} for further information.
@@ -103,42 +95,206 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
   }
 
   /**
-   * List of page checksums.
+   * Color sample difference algorithm.
    *
    * @author Stefano Chizzolini
    */
-  protected static class ChecksumList extends AbstractList<byte[]> {
-    private final @Nullable String[] base;
-
-    public ChecksumList(int size) {
-      this(new String[size]);
-    }
-
-    ChecksumList(@Nullable String[] base) {
-      this.base = base;
-    }
+  public interface SampleDiffer {
+    /**
+     * Calculates the squared Euclidean distance between two color samples.
+     *
+     * @param rgb1
+     *          Sample 1.
+     * @param rgb2
+     *          Sample 2.
+     * @return Squared Euclidean distance.
+     */
+    double diff(int rgb1, int rgb2);
 
     /**
-     * @return Empty, if undefined.
+     * Gets the squared scaled distance corresponding to the given normal.
+     *
+     * @param normal
+     *          Normal distance ({@code [0,1]}).
+     * @return Squared scaled distance.
+     * @implNote Each color distance algorithm has its own range; this method provides a convenient
+     *           transformation to even out implementation details.
      */
-    @Override
-    public byte[] get(int index) {
-      //noinspection DataFlowIssue : false positive null
-      return toElse(base[index], Failable.asFunction(Hex::decodeHex), BYTE_ARRAY__EMPTY);
-    }
+    double resolve(double normal);
+  }
+
+  /**
+   * {@linkplain SampleDiffer Color sample difference algorithm}s.
+   *
+   * @author Stefano Chizzolini
+   */
+  public static final class SampleDiffers {
+    /**
+     * Oklab Euclidean distance.
+     * <p>
+     * Oklab color space provides superior perceptual uniformity compared to YIQ and older spaces
+     * like CIELAB.
+     * </p>
+     * <p>
+     * Slower than {@linkplain #YIQ YIQ-weighted perceptual distance}, but more accurate.
+     * </p>
+     *
+     * @see <a href="https://bottosson.github.io/posts/oklab/">Oklab, a perceptual color space for
+     *      image processing — Björn Ottosson</a>
+     */
+    public static final SampleDiffer OKLAB = new SampleDiffer() {
+      // SPDX-SnippetBegin
+      // SPDX-SnippetCopyrightText: 2020 Björn Ottosson
+      // SPDX-License-Identifier: MIT
+      //
+      // Source: https://bottosson.github.io/posts/oklab/#converting-from-linear-srgb-to-oklab
+      // SourceName: linear_srgb_to_oklab
+      // Changes: integrates convertion to linear sRGB (`sRgbToLinear`)
+      /**
+       * Converts an sRGB sample to Oklab color space.
+       *
+       * @see <a href=
+       *      "https://bottosson.github.io/posts/oklab/#converting-from-linear-srgb-to-oklab">Converting
+       *      from linear sRGB to Oklab — Björn Ottosson</a>
+       */
+      private static double[] rgbToOklab(int rgb) {
+        // sRGB -> Linear sRGB (undo sRGB gamma encoding)
+        double lr = sRgbToLinear(((rgb >> 16) & 0xFF) / 255d);
+        double lg = sRgbToLinear(((rgb >> 8) & 0xFF) / 255d);
+        double lb = sRgbToLinear((rgb & 0xFF) / 255d);
+
+        // Linear sRGB -> LMS' (non-linear cone space)
+        double l_ = cbrt(0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb);
+        double m_ = cbrt(0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb);
+        double s_ = cbrt(0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb);
+
+        // LMS' -> Oklab
+        return new double[] {
+            0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_,
+            1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_,
+            0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_
+        };
+      }
+      // SPDX-SnippetEnd
+
+      // SPDX-SnippetBegin
+      // SPDX-SnippetCopyrightText: 2020 Björn Ottosson
+      // SPDX-License-Identifier: MIT
+      //
+      // Source: https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
+      // SourceName: f_inv
+      /**
+       * Converts an sRGB channel value to linear.
+       *
+       * @param c
+       *          ({@code [0,1]}) Normal sRGB channel value.
+       * @see <a href="https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F">Linear
+       *      version of sRGB by applying the inverse of the sRGB nonlinear transform function —
+       *      Björn Ottosson</a>
+       */
+      private static double sRgbToLinear(double c) {
+        return c >= 0.04045 ? pow((c + 0.055) / 1.055, 2.4) : c / 12.92;
+      }
+      // SPDX-SnippetEnd
+
+      @Override
+      public double diff(int rgb1, int rgb2) {
+        // Convert sRGB to Oklab!
+        double[] lab1 = rgbToOklab(rgb1);
+        double[] lab2 = rgbToOklab(rgb2);
+
+        // Calculate deltas across Oklab channels!
+        double dL = lab1[0] - lab2[0];
+        double dA = lab1[1] - lab2[1];
+        double dB = lab1[2] - lab2[2];
+
+        return dL * dL + dA * dA + dB * dB;
+      }
+
+      /**
+       * @implNote Pass-through: Oklab range corresponds to normal for standard sRGB gamut.
+       */
+      @Override
+      public double resolve(double normal) {
+        return normal;
+      }
+    };
 
     /**
-     * @return {@code null} (old value is ignored)
+     * YIQ-weighted perceptual distance.
+     * <p>
+     * Faster than {@linkplain #OKLAB Oklab Euclidean distance}, but less accurate.
+     * </p>
+     *
+     * @see <a href=
+     *      "https://riaa.uaem.mx/xmlui/bitstream/handle/20.500.12055/91/progmat222010Measuring.pdf?sequence=1">Measuring
+     *      perceived color difference using YIQ NTSC transmission color space in mobile
+     *      applications — Yuriy Kotsarenko, Fernando Ramos</a>
      */
-    @Override
-    public byte @Nullable [] set(int index, byte[] element) {
-      base[index] = encodeHexString(element, false);
-      return null;
-    }
+    public static final SampleDiffer YIQ = new SampleDiffer() {
+      @Override
+      public double diff(int rgb1, int rgb2) {
+        // Calculate deltas across RGB channels!
+        int dR = ((rgb1 >> 16) & 0xFF) - ((rgb2 >> 16) & 0xFF);
+        int dG = ((rgb1 >> 8) & 0xFF) - ((rgb2 >> 8) & 0xFF);
+        int dB = (rgb1 & 0xFF) - (rgb2 & 0xFF);
 
-    @Override
-    public int size() {
-      return base.length;
+        /*
+         * Convert RGB deltas to YIQ!
+         *
+         * NOTE: Standard NTSC transmission coefficients.
+         */
+        double dY = dR * 0.2989 + dG * 0.5870 + dB * 0.1140;
+        double dI = dR * 0.5959 - dG * 0.2744 - dB * 0.3216;
+        double dQ = dR * 0.2115 - dG * 0.5229 + dB * 0.3114;
+
+        /*
+         * Calculate weighted Euclidean distance!
+         *
+         * NOTE: Y (Luminance) is heavily weighted (~0.5) because human contrast sensitivity depends
+         * mostly on brightness.
+         */
+        return dY * dY * 0.5053 + dI * dI * 0.3558 + dQ * dQ * 0.1389;
+      }
+
+      @Override
+      public double resolve(double normal) {
+        return 35215 /*-
+                      * Maximum squared YIQ distance (as implemented in
+                      * <https://github.com/mapbox/pixelmatch/blob/9faed09302aaecec130b4ce0e8505d5ed5221393/index.js#L58>)
+                      */
+            * normal * normal /* Squared normal distance */;
+      }
+    };
+
+    /**
+     * Raw, non-perceptual distance.
+     * <p>
+     * Very fast, but fragile.
+     * </p>
+     */
+    public static final SampleDiffer RAW = new SampleDiffer() {
+      @Override
+      public double diff(int rgb1, int rgb2) {
+        // Calculate deltas across RGB channels!
+        int dR = ((rgb1 >> 16) & 0xFF) - ((rgb2 >> 16) & 0xFF);
+        int dG = ((rgb1 >> 8) & 0xFF) - ((rgb2 >> 8) & 0xFF);
+        int dB = (rgb1 & 0xFF) - (rgb2 & 0xFF);
+
+        return dR * dR + dG * dG + dB * dB;
+      }
+
+      @Override
+      public double resolve(double normal) {
+        return 0xFF * 0xFF * 3 /*
+                                * Maximum squared raw distance (squared component magnitude times
+                                * component count)
+                                */
+            * normal * normal /* Squared normal distance */;
+      }
+    };
+
+    private SampleDiffers() {
     }
   }
 
@@ -179,115 +335,204 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
   }
 
   /**
-   * Image type used to represent page images in memory (each pixel is represented by a
-   * little-endian 3-byte word — no alpha channel).
+   * Image type used to represent page images in memory.
+   * <p>
+   * Each pixel is represented by a {@linkplain BufferedImage#TYPE_INT_RGB packed big-endian integer
+   * word without alpha component}.
+   * </p>
    * <p>
    * <span class="important">IMPORTANT: In order to provide robust and stable image comparison, all
    * codec operations MUST stick to this data layout</span>.
    * </p>
    */
-  protected static final int IMAGE_TYPE = BufferedImage.TYPE_3BYTE_BGR;
-
-  private static final String FILE_EXTENSION__CHECKSUMS = DOT + "page-checksums";
+  protected static final int IMAGE_TYPE = BufferedImage.TYPE_INT_RGB;
 
   private static final String IMAGE_FORMAT = "png";
 
+  private static final int DIFF_NEIGHBOR_THRESHOLD = 4;
+
+  /**
+   * Color to mark unexpected new pixel (that is, present in the actual image only).
+   */
+  private static final int SAMPLE_DIFF_COLOR__ADDED = Color.GREEN.getRGB();
+  /**
+   * Color to mark missing old pixel (that is, absent in the actual image).
+   */
+  private static final int SAMPLE_DIFF_COLOR__REMOVED = Color.RED.getRGB();
+
+  /**
+   * Gets the raw, non-weighted intensity of the given RGB color.
+   *
+   * @return {@code [0, 255 * 3]}
+   */
   private static int colorIntensity(int rgb) {
-    return ((rgb >> 16 & 0x0ff) + (rgb >> 8 & 0x0ff) + (rgb & 0x0ff)) / 3;
+    return ((rgb >> 16) & 0xFF) + ((rgb >> 8) & 0xFF) + (rgb & 0xFF);
   }
 
+  private double diffTolerance = 0;
   private final Function<Path, ? extends A> documentLoader;
-
-  private final ThreadLocal<MessageDigest> digest = ThreadLocal.withInitial(
-      () -> {
-        try {
-          return MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException ex) {
-          throw runtime(ex);
-        }
-      });
+  private SampleDiffer sampleDiffer = SampleDiffers.OKLAB;
+  private double sampleDiffTolerance = .02;
 
   protected PagedMediaAsserter(Function<Path, ? extends A> documentLoader) {
     this.documentLoader = documentLoader;
   }
 
   /**
-   * New instance inheriting the document loader from another one.
+   * Maximum overall divergence acceptable.
+   * <p>
+   * Represents the {@linkplain #getSampleDiffTolerance() divergent samples} count threshold beyond
+   * which images are considered different.
+   * </p>
+   *
+   * @return {@code [0,1]}
    */
-  protected PagedMediaAsserter(PagedMediaAsserter<? extends A> base) {
-    this(base.documentLoader);
+  public double getDiffTolerance() {
+    return diffTolerance;
   }
 
   /**
-   * Generates the checksum of an image.
-   *
-   * @implNote MD5 is used as hashing algorithm for its balance between file corruption detection
-   *           and speed.
+   * Sample difference algorithm to {@linkplain #diff(BufferedImage, BufferedImage) use}.
    */
-  protected byte[] buildChecksum(BufferedImage image) {
-    MessageDigest digest = this.digest.get();
-    digest.reset();
+  public SampleDiffer getSampleDiffer() {
+    return sampleDiffer;
+  }
 
-    DataBuffer dataBuffer = image.getRaster().getDataBuffer();
-    if (!(dataBuffer instanceof DataBufferByte d))
-      throw unsupported("Wrong DataBuffer type: {} (should be {})", dataBuffer.getClass(),
-          DataBufferByte.class);
+  /**
+   * Maximum sample divergence acceptable.
+   * <p>
+   * Represents the normalized color distance threshold beyond which samples are considered
+   * different.
+   * </p>
+   *
+   * @return {@code [0,1]}
+   */
+  public double getSampleDiffTolerance() {
+    return sampleDiffTolerance;
+  }
 
-    return digest.digest(d.getData());
+  /**
+   * Sets {@link #getDiffTolerance() diffTolerance}.
+   */
+  public PagedMediaAsserter<A> setDiffTolerance(double value) {
+    diffTolerance = requireWithinNormal(value);
+    return this;
+  }
+
+  /**
+   * Sets {@link #getSampleDiffer() sampleDiffer}.
+   */
+  public PagedMediaAsserter<A> setSampleDiffer(SampleDiffer value) {
+    sampleDiffer = value;
+    return this;
+  }
+
+  /**
+   * Sets {@link #getSampleDiffTolerance() sampleDiffTolerance}.
+   */
+  public PagedMediaAsserter<A> setSampleDiffTolerance(double value) {
+    sampleDiffTolerance = requireWithinNormal(value);
+    return this;
   }
 
   /**
    * Builds the diff image of the given ones.
    * <p>
    * The resulting image shows only the mismatching pixels, based on their relative intensity (green
-   * if expected-pixel prevalence, otherwise red), against a black background.
+   * if unexpected new pixel, red if missing old pixel), against a black background.
    * </p>
    *
    * @return {@code null}, if no difference is found.
    * @throws org.pdfclown.common.util.ArgumentException
-   *           if {@code expectedImage} and {@code actualImage} have mismatching sizes.
+   *           if either {@code expectedImage} or {@code actualImage} are incompatible.
    */
-  protected @Nullable BufferedImage buildDiffImage(BufferedImage expectedImage,
-      BufferedImage actualImage) {
+  protected @Nullable BufferedImage diff(BufferedImage actualImage,
+      BufferedImage expectedImage) {
+    if (actualImage.getType() != IMAGE_TYPE || expectedImage.getType() != IMAGE_TYPE)
+      throw wrongArg(actualImage.getType() != IMAGE_TYPE ? "actualImage" : "expectedImage",
+          ARG_VALUE__OMITTED, "type MUST be {} -- see `BufferedImage.TYPE_*`", IMAGE_TYPE);
+
     int imageWidth = expectedImage.getWidth();
     int imageHeight = expectedImage.getHeight();
     if (actualImage.getWidth() != imageWidth || actualImage.getHeight() != imageHeight)
-      throw wrongArg("actualImage", ARG_VALUE__OMITTED, "MUST have the same size as expectedImage "
-          + "({}x{} instead of {}x{})", imageWidth, imageHeight, actualImage.getWidth(),
-          actualImage.getHeight());
+      throw wrongArg("actualImage", ARG_VALUE__OMITTED, "size MUST be the same as `expectedImage` "
+          + "-- {}x{}", imageWidth, imageHeight);
 
     BufferedImage ret = null;
-    byte[] retData = BYTE_ARRAY__EMPTY /* Just to make NullAway happy */;
-    int diffExpectedRgb = Color.GREEN.getRGB();
-    int diffActualRgb = Color.RED.getRGB();
-    int offset = 0;
-    for (int y = 0; y < imageHeight; y++) {
-      for (int x = 0; x < imageWidth; x++) {
-        int actualRgb = actualImage.getRGB(x, y);
-        int expectedRgb = expectedImage.getRGB(x, y);
-        if (actualRgb != expectedRgb) {
-          /*
-           * NOTE: IMAGE_TYPE is 3BYTE_BGR (each pixel is represented by a little-endian 3-byte
-           * word).
-           */
-          if (ret == null) {
-            ret = new BufferedImage(expectedImage.getWidth(), expectedImage.getHeight(),
-                IMAGE_TYPE);
-            retData = ((DataBufferByte) ret.getRaster().getDataBuffer()).getData();
-          }
+    int sampleDiffCount = 0;
+    {
+      int[] retData = EMPTY_INT_ARRAY /* Just to make NullAway happy */;
 
-          int diffRgb = colorIntensity(expectedRgb) > colorIntensity(actualRgb)
-              ? diffActualRgb
-              : diffExpectedRgb;
-          retData[offset++] = (byte) (diffRgb & 0x0ff);
-          retData[offset++] = (byte) (diffRgb >> 8 & 0x0ff);
-          retData[offset++] = (byte) (diffRgb >> 16 & 0x0ff);
-        } else {
-          offset += 3;
+      /*
+       * 1. Building the diff mask...
+       *
+       * NOTE: Each sample is evaluated for divergence with the diffing algorithm against the noise
+       * threshold.
+       */
+      {
+        final Raster actualRaster = actualImage.getRaster();
+        final Raster expectedRaster = expectedImage.getRaster();
+        final var actualRowData = new int[imageWidth];
+        final var expectedRowData = new int[imageWidth];
+        final double sampleDiffThreshold = sampleDiffer.resolve(sampleDiffTolerance);
+        int retOffset = 0;
+        for (int y = 0; y < imageHeight; y++) {
+          actualRaster.getDataElements(0, y, imageWidth, 1, actualRowData);
+          expectedRaster.getDataElements(0, y, imageWidth, 1, expectedRowData);
+          for (int i = 0; i < imageWidth; i++) {
+            // Actual sample diverges?
+            if (sampleDiffer.diff(actualRowData[i], expectedRowData[i]) > sampleDiffThreshold) {
+              if (ret == null) {
+                ret = new BufferedImage(imageWidth, imageHeight, IMAGE_TYPE);
+                retData = ((DataBufferInt) ret.getRaster().getDataBuffer()).getData();
+              }
+
+              /*
+               * NOTE: Mimicking a subtractive-color surface, brighter colors approximate to the
+               * white of a blank page, whilst dimmer colors approximate to the black of an
+               * impressed page. Therefore, an actual sample dimmer than expected is considered
+               * added information; conversely, an actual sample brighter than expected is
+               * considered removed information.
+               */
+              retData[retOffset] =
+                  colorIntensity(actualRowData[i]) < colorIntensity(expectedRowData[i])
+                      ? SAMPLE_DIFF_COLOR__ADDED
+                      : SAMPLE_DIFF_COLOR__REMOVED;
+            }
+            retOffset++;
+          }
+        }
+      }
+      /*
+       * 2. Filtering noise out of the diff mask...
+       *
+       * NOTE: Each diff sample is evaluated against its neighbors, to weed out random, isolated,
+       * noisy samples (false positives).
+       */
+      if (ret != null) {
+        for (int y = 2; y < imageHeight - 2; y++) {
+          for (int x = 2, limit = imageWidth - 2; x < limit; x++) {
+            if (retData[y * imageWidth + x] == 0) {
+              continue;
+            }
+
+            // Evaluating diff density over a 5x5 cluster...
+            int diffNeighborCount = 0;
+            neighborhoodLoop: for (int ny = -2; ny <= 2; ny++) {
+              for (int nx = -2, nLimit = 2; nx <= nLimit; nx++) {
+                // Diff density beyond noise level?
+                if (retData[(y + ny) * imageWidth + (x + nx)] != 0
+                    && ++diffNeighborCount >= DIFF_NEIGHBOR_THRESHOLD) {
+                  sampleDiffCount++;
+                  break neighborhoodLoop;
+                }
+              }
+            }
+          }
         }
       }
     }
-    return ret;
+    return sampleDiffCount / (double) (imageWidth * imageHeight) > diffTolerance ? ret : null;
   }
 
   /**
@@ -310,24 +555,9 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
   }
 
   /**
-   * Reads an expected checksums resource.
-   *
-   * @param documentResourceName
-   *          Document resource whose checksums file (named appending {@code ".page-checksums"} to
-   *          it) is to read.
-   * @param config
-   *          Assertion configuration.
-   */
-  protected ChecksumList readExpectedChecksums(String documentResourceName, Config config)
-      throws IOException {
-    return readExpectedFile(documentResourceName + FILE_EXTENSION__CHECKSUMS,
-        $ -> new ChecksumList(Files.readString($).split("\\n")), config);
-  }
-
-  /**
    * Loads main image from the given file.
    *
-   * @return {@code null} if {@code file} doesn't exist.
+   * @return {@code null}, if {@code file} doesn't exist.
    */
   protected @Nullable BufferedImage readImage(Path file) throws IOException {
     if (!exists(file))
@@ -354,27 +584,6 @@ public abstract class PagedMediaAsserter<A extends PagedMediaAsserter.PagedMedia
         reader.dispose();
       }
     }
-  }
-
-  /**
-   * Writes an expected checksums resource.
-   * <p>
-   * After written to source, the resource is also copied to the target side in order to synchronize
-   * ongoing tests.
-   * </p>
-   *
-   * @param documentResourceName
-   *          Document resource whose checksums file (named appending {@code ".page-checksums"} to
-   *          it) is to write.
-   * @param config
-   *          Assertion configuration.
-   */
-  protected void writeExpectedChecksums(String documentResourceName, ChecksumList checksums,
-      Config config) throws IOException {
-    writeExpectedFile(documentResourceName + FILE_EXTENSION__CHECKSUMS, Failable.asConsumer(
-        $ -> Files.writeString($, String.join(S + LF, checksums.base),
-            exists($) ? StandardOpenOption.TRUNCATE_EXISTING : StandardOpenOption.CREATE)),
-        config);
   }
 
   /**

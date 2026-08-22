@@ -49,15 +49,9 @@ import org.slf4j.LoggerFactory;
  * {@linkplain #SYSTEM_PROPERTY__UPDATE_EXPECTED update} the corresponding resources.
  * </p>
  * <p>
- * <i>Only the resources belonging to a single assertion per test can be updated during an
- * execution</i>; this prevents unintended changes to other resources in the same test from sneaking
- * through, potentially corrupting the expected state — each mismatching set of files MUST be
- * evaluated separately with the respective assertion.
- * </p>
- * <p>
- * For the same reason, missing resources (for example, in case of new tests added to the test
- * suite) are treated as failed assertions — silently updating them would be dangerous, as they
- * could introduce invalid content in the expected state, completely unnoticed.
+ * Missing resources (for example, in case of new tests added to the suite) are treated as failed
+ * assertions — silently updating them would be dangerous, as they could inadvertently sneak invalid
+ * content in the expected state.
  * </p>
  * <p>
  * During a comparison between actual and expected states, assertion errors are incrementally
@@ -68,8 +62,8 @@ import org.slf4j.LoggerFactory;
  * {@link AssertionError} in shortened form and thrown.
  * </p>
  *
- * @implSpec Each assertion implementation MUST query {@link #isUpdatable(Config)} to decide whether
- *           the expected state can be updated instead of emitting a
+ * @implSpec Implementations MUST query {@link #isUpdatable(Config)} to decide whether the expected
+ *           state can be updated instead of emitting a
  *           {@linkplain #evalAssertionResult(String, Path, Path, Config) mismatch error}.
  * @author Stefano Chizzolini
  */
@@ -184,30 +178,11 @@ public abstract class Asserter {
    *          list: <pre class="lang-shell"><code>
    * mvn verify ... -Dtest.expected.update -Dit.test=MyObjectIT,MyOtherObjectIT</code></pre></li>
    *          </ul>
-   *          <p>
-   *          NOTE: {@code it.test} CLI parameter is typically mapped by Maven plugins (such as
-   *          <a href="https://maven.apache.org/surefire/maven-failsafe-plugin/">Failsafe</a>) to
-   *          the corresponding JUnit system property which allows fine-grained test selection (see
-   *          the relevant documentation); if your build system doesn't support it, adjust your
-   *          commands accordingly. Furthermore, if the names of your test cases are overridden
-   *          (that is, their names are different from the corresponding test methods), it's up to
-   *          you to use their actual names, as they are internally resolved by JUnit.
-   *          </p>
    */
   public static final String SYSTEM_PROPERTY__UPDATE_EXPECTED = "test.expected.update";
   static {
     log.info("`{}` system property: {}", SYSTEM_PROPERTY__UPDATE_EXPECTED,
         getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED));
-  }
-
-  private static @Nullable String lastUpdatedTestQName;
-
-  /**
-   * {@linkplain Test#getTestQName() Qualified name} of the last test whose resources have been
-   * updated.
-   */
-  protected static @Nullable String getLastUpdatedTestQName() {
-    return lastUpdatedTestQName;
   }
 
   /**
@@ -233,8 +208,7 @@ public abstract class Asserter {
    *           If {@code errorMessage} is not empty.
    */
   protected void evalAssertionResult(@Nullable String errorMessage, Path expectedFile,
-      Path actualFile,
-      Config config) throws AssertionError {
+      Path actualFile, Config config) throws AssertionError {
     if (isBlank(errorMessage))
       return;
 
@@ -279,23 +253,15 @@ public abstract class Asserter {
   /**
    * Gets whether the expected resources can be overwritten in case of mismatch with their actual
    * counterparts.
-   * <p>
-   * <span class="warning">WARNING: once at least one resource is updated, this method returns
-   * {@code false} for the same test; therefore, it should be assigned to a variable at the
-   * beginning of the assertion in order to apply consistently across the set of resources belonging
-   * to the assertion.</span>
-   * </p>
    */
   protected boolean isUpdatable(Config config) {
-    return getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED)
-        && !config.getTest().getTestQName().equals(lastUpdatedTestQName);
+    return getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED);
   }
 
   /**
    * Notifies a resource was written on filesystem, changing the expected state.
    */
   protected void onExpectedResourceUpdated(String resourceName, Config config) {
-    lastUpdatedTestQName = config.getTest().getTestQName();
   }
 
   /**
