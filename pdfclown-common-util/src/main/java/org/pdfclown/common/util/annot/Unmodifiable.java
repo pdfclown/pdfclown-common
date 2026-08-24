@@ -89,6 +89,7 @@ import java.lang.annotation.Target;
  * @author Stefano Chizzolini
  * @see Immutable
  * @see ReadOnly
+ * @see Snapshot
  */
 @Documented
 @Retention(CLASS)

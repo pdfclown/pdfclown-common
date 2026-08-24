@@ -111,6 +111,7 @@ import java.lang.annotation.Target;
  * @author Stefano Chizzolini
  * @see Unmodifiable
  * @see ReadOnly
+ * @see Snapshot
  * @see <a href="https://docs.oracle.com/javase/tutorial/essential/concurrency/imstrat.html">A
  *      Strategy for Defining Immutable Objects</a>
  */

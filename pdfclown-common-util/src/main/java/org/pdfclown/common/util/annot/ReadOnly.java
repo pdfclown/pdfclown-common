@@ -102,6 +102,7 @@ import java.lang.annotation.Target;
  * @author Stefano Chizzolini
  * @see Unmodifiable
  * @see Immutable
+ * @see Snapshot
  */
 @Documented
 @Retention(CLASS)
