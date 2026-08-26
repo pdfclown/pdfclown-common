@@ -29,9 +29,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.test.model.JsonArray;
-import org.pdfclown.common.build.test.model.ModelDiffer;
 import org.pdfclown.common.build.test.model.ModelMapper;
 import org.pdfclown.common.build.test.model.ModelMapper.PropertySelector;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -40,11 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Automated model assertions.
+ * Model asserter.
  * <p>
- * This class enables checks over a domain model (actual object) against a resource (expected
- * object) which can be {@linkplain Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED automatically
- * updated}. Comparisons are performed through an {@linkplain ModelMapper abstract model}.
+ * Checks a domain model (actual object) against an
+ * {@linkplain Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED automatically updatable} resource (expected
+ * object), performing comparisons through an {@linkplain ModelMapper abstract model}.
  * </p>
  * <p>
  * See {@link Asserter} for further information.
@@ -52,67 +49,21 @@ import org.slf4j.LoggerFactory;
  *
  * @param <TMap>
  *          Model mapping type.
- * @param <TMapDiff>
- *          Model difference mapping type.
- * @param <TDiff>
- *          Model difference type.
  * @author Stefano Chizzolini
  */
-public class ModelAsserter<TMap, TMapDiff, TDiff> extends ContentAsserter<Object> {
+public class ModelAsserter<TMap> extends ContentAsserter<Object> {
   private static final Logger log = LoggerFactory.getLogger(ModelAsserter.class);
 
   private static final String FILE_EXTENSION__JSON_ZIP = FILE_EXTENSION__JSON + FILE_EXTENSION__ZIP;
 
-  protected final Supplier<ModelDiffer<TDiff, ? extends TMapDiff>> modelDifferSupplier;
-  protected final Supplier<ModelMapper<TMapDiff>> modelDiffMapperSupplier;
   protected final Supplier<ModelMapper<TMap>> modelMapperSupplier;
 
   /**
    * @param modelMapperSupplier
    *          Model mapper factory.
-   * @param modelDiffMapperSupplier
-   *          Model difference mapper factory.
-   * @param modelDifferSupplier
-   *          Model difference collector factory.
    */
-  public ModelAsserter(Supplier<ModelMapper<TMap>> modelMapperSupplier,
-      Supplier<ModelMapper<TMapDiff>> modelDiffMapperSupplier,
-      Supplier<ModelDiffer<TDiff, ? extends TMapDiff>> modelDifferSupplier) {
+  public ModelAsserter(Supplier<ModelMapper<TMap>> modelMapperSupplier) {
     this.modelMapperSupplier = modelMapperSupplier;
-    this.modelDiffMapperSupplier = modelDiffMapperSupplier;
-    this.modelDifferSupplier = modelDifferSupplier;
-  }
-
-  /**
-   * Asserts that the difference between objects matches the expected one.
-   *
-   * @param expectedObjResourceBasename
-   *          Resource basename of the expected object difference in serialized (JSON) form. If
-   *          relative, it is resolved on the local name of {@link Config#getTest()
-   *          config.getTest()}. Its filename will be defined concatenating the
-   *          {@code _diff.json.zip} suffix.
-   * @param fromObj
-   *          Initial object.
-   * @param toObj
-   *          Modified object.
-   * @param config
-   *          Assertion configuration.
-   * @throws AssertionError
-   *           if the difference between {@code fromObj} and {@code toObj} doesn't match the
-   *           expected one (resolved from {@code expectedObjResourceBasename}).
-   * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
-   */
-  public void assertDiffEquals(String expectedObjResourceBasename, @Nullable TDiff fromObj,
-      @Nullable TDiff toObj, Config config) {
-    // Collect the differences between the objects!
-    List<? extends TMapDiff> diffs = modelDifferSupplier.get().diff(fromObj, toObj);
-
-    // Map the differences to JSON!
-    JsonArray actualJsonArray = modelDiffMapperSupplier.get().mapAll(diffs);
-
-    // Check consistency with expected differences!
-    doAssertEquals(expectedObjResourceBasename + "_diff", FILE_EXTENSION__JSON_ZIP, actualJsonArray,
-        config);
   }
 
   /**

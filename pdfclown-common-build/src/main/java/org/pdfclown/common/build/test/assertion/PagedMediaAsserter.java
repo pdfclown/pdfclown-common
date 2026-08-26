@@ -42,9 +42,9 @@ import javax.imageio.stream.ImageInputStream;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Automated paged-media rendering assertions.
+ * Paged-media rendering asserter.
  * <p>
- * This class enables checks over the pages of a document rendered as raster images.
+ * Checks the pages of a document rendered as raster images.
  * </p>
  * <p>
  * {@linkplain #diff(BufferedImage, BufferedImage) Comparison} between actual and expected pages is
