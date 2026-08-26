@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toUnmodifiableMap;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireState;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.unexpected;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongState;
-import static org.pdfclown.common.build.system.BootstrapLog.info;
+import static org.pdfclown.common.build.system.BootstrapLog.debug;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,7 +84,7 @@ public final class LogManager {
     @SuppressWarnings("ReferenceEquality")
     public @Nullable Configuration getConfiguration(LoggerContext ctx, String name,
         @Nullable URI configLocation) {
-      info(getClass(), "Log configuration discovery BEGIN");
+      debug(getClass(), "Log configuration discovery BEGIN");
 
       try {
         var configs = new ArrayList<AbstractConfiguration>();
@@ -97,7 +97,7 @@ public final class LogManager {
           while (fragments.hasMoreElements()) {
             URL url = fragments.nextElement();
             try (InputStream in = url.openStream()) {
-              info(getClass(), "Log configuration fragment FOUND: '%s'", url);
+              debug(getClass(), "Log configuration fragment FOUND: '%s'", url);
 
               configs.add((AbstractConfiguration) xmlFactory.getConfiguration(ctx,
                   new ConfigurationSource(in, url)));
@@ -119,7 +119,7 @@ public final class LogManager {
           }
 
           try (InputStream in = url.openStream()) {
-            info(getClass(), "Log configuration full file FOUND: '%s'", url);
+            debug(getClass(), "Log configuration full file FOUND: '%s'", url);
 
             configs.add((AbstractConfiguration) xmlFactory.getConfiguration(ctx,
                 new ConfigurationSource(in, url)));
@@ -127,7 +127,7 @@ public final class LogManager {
           break;
         }
 
-        info(getClass(), "Log configuration discovery END (%s files found)", configs.size());
+        debug(getClass(), "Log configuration discovery END (%s files found)", configs.size());
 
         return !configs.isEmpty() ? new CompositeConfiguration(configs) : null;
       } catch (IOException ex) {
@@ -161,7 +161,7 @@ public final class LogManager {
   public static class TestPlatformListener implements LauncherSessionListener {
     @Override
     public void launcherSessionOpened(LauncherSession session) {
-      info(getClass(), "Log files initialization BEGIN");
+      debug(getClass(), "Log files initialization BEGIN");
 
       LoggerContext context = getContext();
       try {
@@ -174,7 +174,7 @@ public final class LogManager {
                         * later real logging starts clean
                         */;
 
-        info(getClass(), "Log files initialization END");
+        debug(getClass(), "Log files initialization END");
       }
     }
 
@@ -183,7 +183,7 @@ public final class LogManager {
         try {
           Files.deleteIfExists($);
 
-          info(getClass(), "Log file CLEANED: '%s'", $);
+          debug(getClass(), "Log file CLEANED: '%s'", $);
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
@@ -194,7 +194,7 @@ public final class LogManager {
       return config.getAppenders().values().stream()
           .filter($ -> {
             if ($ instanceof FileAppender f) {
-              info(getClass(), "Log file FOUND: '%s' ('%s' appender)", f.getFileName(),
+              debug(getClass(), "Log file FOUND: '%s' ('%s' appender)", f.getFileName(),
                   f.getName());
 
               return true;
