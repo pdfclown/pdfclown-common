@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.internal.temp.util.spi.ServiceProviderNotFoundException;
 import org.pdfclown.common.build.spi.ProjectPathResolverProvider;
@@ -47,13 +48,12 @@ public abstract class ProjectPathResolver {
   public static ProjectPathResolver of(Path baseDir) throws FileNotFoundException {
     requireDirectory(baseDir);
 
-    for (var provider : providers) {
-      var ret = provider.getResolver(baseDir);
-      if (ret != null)
-        return ret;
-    }
-    throw new ServiceProviderNotFoundException(baseDir, ProjectPathResolverProvider.class,
-        "Project type at the given directory UNKNOWN", null);
+    return providers.stream()
+        .map($ -> $.getResolver(baseDir))
+        .filter(Objects::nonNull)
+        .findFirst().orElseThrow(() -> new ServiceProviderNotFoundException(baseDir,
+            ProjectPathResolverProvider.class, "Project type at the given directory UNKNOWN",
+            null));
   }
 
   private final Map<ProjectDirId, Path> base = new HashMap<>();
