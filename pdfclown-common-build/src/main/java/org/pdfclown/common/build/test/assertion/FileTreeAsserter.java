@@ -58,8 +58,8 @@ public class FileTreeAsserter extends Asserter {
    *           if {@code actualDir} doesn't match the one at {@code expectedDirResourceName}.
    * @see Asserter#SYSTEM_PROPERTY__UPDATE_EXPECTED
    */
-  public void assertEquals(final String expectedDirResourceName,
-      final Path actualDir, final Config config) {
+  public void assertEquals(final String expectedDirResourceName, final Path actualDir,
+      final Config config) {
     final String expectedDirResourceFqn = ResourceNames.localName(expectedDirResourceName,
         config.getTest());
     final Path expectedDir = config.getEnv().resourcePath(expectedDirResourceFqn);

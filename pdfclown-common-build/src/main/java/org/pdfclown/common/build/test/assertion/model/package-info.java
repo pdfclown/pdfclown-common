@@ -17,6 +17,6 @@
  * @see org.pdfclown.common.build.test.assertion.ModelAsserter
  */
 @NullMarked
-package org.pdfclown.common.build.test.model;
+package org.pdfclown.common.build.test.assertion.model;
 
 import org.jspecify.annotations.NullMarked;

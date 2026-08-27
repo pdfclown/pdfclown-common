@@ -32,6 +32,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.pdfclown.common.build.test.assertion.model.ModelMapper;
 import org.pdfclown.common.util.__test.BaseTest;
 import org.pdfclown.common.util.annot.Initializer;
 import org.pdfclown.common.util.collect.Comparators.HierarchicalTypeComparator.Priorities.TypePriorityComparator;
@@ -41,7 +42,7 @@ import org.pdfclown.common.util.collect.Comparators.HierarchicalTypeComparator.P
  */
 class DynamicMapTest extends BaseTest {
   /**
-   * Based on {@link org.pdfclown.common.build.test.model.ModelMapper}.{@code ValueMapperMap}.
+   * Based on {@link ModelMapper}.{@code ValueMapperMap}.
    */
   @SuppressWarnings("rawtypes")
   static class ClassMap extends DynamicMap<Class, Object> {
