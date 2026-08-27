@@ -348,9 +348,11 @@ new File(project.basedir, 'src/main/java/org/pdfclown/common/build/system/LogMan
           </filters>
           <relocations>
             <relocation>
-              <!-- All pdfclown-common-util types used. Those referenced by pdfclown-common-build
-                API, visible in Javadoc, are mapped by Jada post-processing (see [shading] in
-                ScriptExtension.groovy) -->
+              <!-- All pdfclown-common-util types used.
+
+                NOTE: The types referenced by pdfclown-common-build API, visible in Javadoc, are
+                mapped by Jada post-processing (see [shading] in
+                src/main/javadoc/jada/scripts/onMainProcess.groovy) -->
               <pattern>org.pdfclown.common.util</pattern>
               <shadedPattern>org.pdfclown.common.build.shaded.util</shadedPattern>
             </relocation>
