@@ -29,7 +29,7 @@ import javax.measure.quantity.ElectricPotential;
 import org.junit.jupiter.api.Test;
 import org.pdfclown.common.build.util.Tuple2;
 import org.pdfclown.common.util.__test.BaseTest;
-import org.pdfclown.common.util.collect.Collectives;
+import org.pdfclown.common.util.collect.Collects;
 import tech.units.indriya.format.SimpleQuantityFormat;
 import tech.units.indriya.format.SimpleUnitFormat;
 
@@ -86,7 +86,7 @@ class UnitsTest extends BaseTest {
         (unit) -> Units.getFactor(unit),
         List.of("unit"),
         // unit
-        Collectives.<Unit>list()
+        Collects.<Unit>list()
             .andAll(UNITS)
             .and(tech.units.indriya.unit.Units.WEEK)
             .and(tech.units.indriya.unit.Units.AMPERE));

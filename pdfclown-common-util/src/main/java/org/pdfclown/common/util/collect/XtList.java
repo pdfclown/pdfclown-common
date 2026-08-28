@@ -136,7 +136,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @return Element at {@code index}, possibly provided by {@code provider} if undefined.
    */
   default E computeIfAbsent(int index, Function<Integer, ? extends E> provider) {
-    return Collectives.computeIfAbsent(this, index, provider);
+    return Collects.computeIfAbsent(this, index, provider);
   }
 
   /**
@@ -160,7 +160,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    *          The action to be performed for each element.
    */
   default void forEach(ObjIntConsumer<E> action) {
-    Collectives.forEach(this, action);
+    Collects.forEach(this, action);
   }
 
   /**
@@ -217,7 +217,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @return Element at {@code index}, or {@code null}, if index is out of bounds.
    */
   default @Nullable E peek(int index) {
-    return Collectives.peek(this, index);
+    return Collects.peek(this, index);
   }
 
   /**
@@ -255,7 +255,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @see #set(int, Object)
    */
   default @Nullable E place(int index, E e) {
-    return Collectives.place(this, index, e);
+    return Collects.place(this, index, e);
   }
 
   /**
@@ -266,7 +266,7 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @return Removed element, or {@code null}, if {@code index} is out of bounds.
    */
   default @Nullable E poll(int index) {
-    return Collectives.poll(this, index);
+    return Collects.poll(this, index);
   }
 
   /**
@@ -341,6 +341,6 @@ public interface XtList<E extends @Nullable Object> extends List<E>, XtCollectio
    * @return Self.
    */
   default XtList<E> size(int value, E e) {
-    return Collectives.size(this, value, e);
+    return Collects.size(this, value, e);
   }
 }

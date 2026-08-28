@@ -22,7 +22,7 @@ import static org.pdfclown.common.build.test.assertion.Verifiers.COMBINATION;
 import static org.pdfclown.common.build.test.assertion.Verifiers.TUPLE;
 import static org.pdfclown.common.build.util.Tuple.tuple;
 import static org.pdfclown.common.util.Strings.EMPTY;
-import static org.pdfclown.common.util.collect.Collectives.map;
+import static org.pdfclown.common.util.collect.Collects.map;
 import static org.pdfclown.common.util.collect.Comparators.hierarchicalType;
 
 import java.io.Serial;
