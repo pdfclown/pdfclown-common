@@ -73,4 +73,13 @@ For the purpose:
    </dependency>
    ```
 
+> [!TIP]
+> Snapshot artifacts sometimes are managed less robustly than stable ones by IDEs (for example, IntelliJ IDEA may miss the Javadoc jar when asked to download the dependency sources); to remedy such annoyances, go to the command line and force Maven to download the missing artifact:
+>
+> ```shell
+> ./mvnw dependency:get -Dclassifier=javadoc -Dartifact=org.pdfclown:%ARTIFACT_ID%:%VERSION%
+> ```
+>
+> Once downloaded, it should be just a matter of refreshing the Maven projects inside your IDE.
+
 Alternatively, you can build the SNAPSHOT artifacts by yourself: see ["Building"](building.md) (in such case, you obviously don't need the Maven Central Portal Snapshots repository).
