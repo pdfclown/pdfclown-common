@@ -69,10 +69,17 @@ public final class Exceptions {
   }
 
   /**
-   * Creates an end of file exception.
+   * Creates an end-of-file exception.
    */
   public static EOFException EOF() {
     return new EOFException();
+  }
+
+  /**
+   * Creates an end-of-file exception.
+   */
+  public static EOFException EOF(@Nullable String format, @Nullable Object... args) {
+    return new EOFException(ParamMessage.format(format, args));
   }
 
   /**
