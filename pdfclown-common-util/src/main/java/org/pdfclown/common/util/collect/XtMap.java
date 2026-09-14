@@ -29,6 +29,7 @@ import org.jspecify.annotations.Nullable;
  * @param <V>
  *          Value type.
  * @author Stefano Chizzolini
+ * @see Collects#map()
  */
 public interface XtMap<K extends @Nullable Object, V>
     extends Collective<Entry<K, V>>, Map<K, V> {

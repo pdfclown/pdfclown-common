@@ -562,6 +562,24 @@ public final class Collects {
   }
 
   /**
+   * Gets whether a collection fully contains the other object.
+   * <p>
+   * {@code other} is evaluated as-is, then as {@link Collection} or {@link Map#values()}, according
+   * to its type.
+   * </p>
+   *
+   * @apiNote Useful when {@code other} represents a dual mode (a collective which can degrade to a
+   *          single element).
+   * @see #equalsOrContains(Object, Object)
+   */
+  @SuppressWarnings("SuspiciousMethodCalls")
+  public static boolean containsFully(Collection<?> objs, @Nullable Object other) {
+    return objs.contains(other)
+        || (other instanceof Collection<?> c && objs.containsAll(c))
+        || (other instanceof Map<?, ?> m && objs.containsAll(m.values()));
+  }
+
+  /**
    * Counts the elements within an iterable.
    */
   public static <E extends @Nullable Object> int count(Iterable<E> iterable) {
@@ -627,12 +645,13 @@ public final class Collects {
   /**
    * Gets whether an object is equal to or contains the other one.
    * <p>
-   * Containment is verified via {@link Collection#contains(Object)} and
-   * {@link Map#containsValue(Object)}, respectively.
+   * Containment is verified via {@link Collection#contains(Object)} or
+   * {@link Map#containsValue(Object)}, according to {@code obj} type.
    * </p>
    *
    * @apiNote Useful when {@code obj} represents a dual mode (a collective which can degrade to a
    *          single element).
+   * @see #containsFully(Collection, Object)
    */
   public static boolean equalsOrContains(@Nullable Object obj, @Nullable Object other) {
     return Objects.equals(obj, other)
@@ -691,6 +710,50 @@ public final class Collects {
     for (int i = 0, l = target.size(); i < l; i++) {
       action.accept(target.get(i), i);
     }
+  }
+
+  /**
+   * Gets the first non-null value associated to a key in the sequence.
+   */
+  @SafeVarargs
+  public static <K extends @Nullable Object,
+      V extends @Nullable Object> @Nullable V getFirst(Map<K, V> m, K... kk) {
+    for (K k : kk) {
+      V ret = m.get(k);
+      if (ret != null)
+        return ret;
+    }
+    return null;
+  }
+
+  /**
+   * Gets the first non-null value associated to a key in the sequence.
+   */
+  public static <K extends @Nullable Object,
+      V extends @Nullable Object> @Nullable V getFirst(Map<K, V> m, K k1, K k2) {
+    V ret;
+    ret = m.get(k1);
+    if (ret != null)
+      return ret;
+
+    return m.get(k2);
+  }
+
+  /**
+   * Gets the first non-null value associated to a key in the sequence.
+   */
+  public static <K extends @Nullable Object,
+      V extends @Nullable Object> @Nullable V getFirst(Map<K, V> m, K k1, K k2, K k3) {
+    V ret;
+    ret = m.get(k1);
+    if (ret != null)
+      return ret;
+
+    ret = m.get(k2);
+    if (ret != null)
+      return ret;
+
+    return m.get(k3);
   }
 
   /**

@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
  * @param <E>
  *          Element type.
  * @author Stefano Chizzolini
+ * @see Collects#set()
  */
 public interface XtSet<E extends @Nullable Object> extends Set<E>, XtCollection<E> {
   @Override
