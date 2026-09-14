@@ -100,6 +100,13 @@ public final class Exceptions {
   }
 
   /**
+   * Creates an exception for missing accessor element.
+   */
+  public static NoSuchElementException missing() {
+    return new NoSuchElementException();
+  }
+
+  /**
    * Creates an exception for missing element.
    *
    * @param ref
@@ -127,6 +134,8 @@ public final class Exceptions {
    *
    * @param ref
    *          Reference associated to the missing element (for example, its key).
+   * @param typeDescription
+   *          Textual description of the element type (default: {@code "element"}).
    *          {@jada.reuseDoc ParamMessage#of(*):params}
    * @param format
    *          Parameterized message (use {@value ParamMessage#ARG} as argument placeholder).
@@ -241,13 +250,6 @@ public final class Exceptions {
       @Nullable Object... args) {
     var message = ParamMessage.of(format, args);
     return new ResourceNotFoundException(uri, message.getDescription(), message.getCause());
-  }
-
-  /**
-   * Creates an exception for missing accessor element.
-   */
-  public static NoSuchElementException missingSuch() {
-    return new NoSuchElementException();
   }
 
   /**

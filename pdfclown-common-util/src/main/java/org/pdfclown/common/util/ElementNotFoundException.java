@@ -22,6 +22,7 @@ import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
 import static org.pdfclown.common.util.function.Functions.toElse;
 
+import java.util.NoSuchElementException;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -31,7 +32,7 @@ import org.jspecify.annotations.Nullable;
  * @apiNote Useful for any kind of lookup.
  */
 @SuppressWarnings("serial")
-public class ElementNotFoundException extends RuntimeException {
+public class ElementNotFoundException extends NoSuchElementException {
   private final @Nullable Object ref;
 
   public ElementNotFoundException(@Nullable Object ref) {

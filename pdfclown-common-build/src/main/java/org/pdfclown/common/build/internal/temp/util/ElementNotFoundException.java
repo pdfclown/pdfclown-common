@@ -22,6 +22,7 @@ import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
 
+import java.util.NoSuchElementException;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -31,7 +32,7 @@ import org.jspecify.annotations.Nullable;
  * @apiNote Useful for any kind of lookup.
  */
 @SuppressWarnings("serial")
-public class ElementNotFoundException extends RuntimeException {
+public class ElementNotFoundException extends NoSuchElementException {
   private final @Nullable Object ref;
 
   public ElementNotFoundException(@Nullable Object ref) {

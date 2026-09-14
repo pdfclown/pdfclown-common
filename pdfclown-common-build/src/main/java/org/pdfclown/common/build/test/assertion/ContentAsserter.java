@@ -175,7 +175,7 @@ public abstract class ContentAsserter<T> extends Asserter {
    * </p>
    */
   protected String doReadStringContent(Path file) throws IOException {
-    return requireNonNullElseThrow(doReadStringContent(file, null), Exceptions::missingSuch);
+    return requireNonNullElseThrow(doReadStringContent(file, null), Exceptions::missing);
   }
 
   /**

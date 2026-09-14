@@ -15,7 +15,6 @@ package org.pdfclown.common.build.internal.temp.util;
 import static java.util.Collections.singletonList;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.missing;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.missingPath;
-import static org.pdfclown.common.build.internal.temp.util.Exceptions.missingSuch;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArg;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongState;
@@ -58,7 +57,7 @@ public final class Conditions {
    *          validation method is inconvenient.
    */
   public static <T> @PolyNull @Nullable T require(@PolyNull @Nullable T value,
-      Consumer<@Nullable T> validator) {
+      Consumer<@Nullable T> validator) throws RuntimeException {
     return require(value, validator, null);
   }
 
@@ -78,7 +77,7 @@ public final class Conditions {
    *          validation method is inconvenient.
    */
   public static <T> @PolyNull @Nullable T require(@PolyNull @Nullable T value,
-      Consumer<@Nullable T> validator, @Nullable String name) {
+      Consumer<@Nullable T> validator, @Nullable String name) throws RuntimeException {
     try {
       validator.accept(value);
     } catch (RuntimeException ex) {
@@ -103,7 +102,8 @@ public final class Conditions {
    *           (supplied by {@code exceptionSupplier}) if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T require(@PolyNull @Nullable T value,
-      Predicate<@Nullable T> condition, Function<@Nullable T, RuntimeException> exceptionSupplier) {
+      Predicate<@Nullable T> condition, Function<@Nullable T, RuntimeException> exceptionSupplier)
+      throws RuntimeException {
     if (!condition.test(value))
       throw exceptionSupplier.apply(value);
 
@@ -122,7 +122,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T requireAmong(@PolyNull @Nullable T value,
-      Collection<T> options) {
+      Collection<T> options) throws ArgumentException {
     return requireAmong(value, options, null);
   }
 
@@ -140,7 +140,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T requireAmong(@PolyNull @Nullable T value,
-      Collection<T> options, @Nullable String name) {
+      Collection<T> options, @Nullable String name) throws ArgumentException {
     if (!options.contains(value))
       throw wrongArgOpt(name, value, null, options);
 
@@ -156,7 +156,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireAtLeast(int value, int otherValue) {
+  public static int requireAtLeast(int value, int otherValue) throws ArgumentException {
     return requireAtLeast(value, otherValue, null);
   }
 
@@ -171,7 +171,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireAtLeast(int value, int otherValue, @Nullable String name) {
+  public static int requireAtLeast(int value, int otherValue, @Nullable String name)
+      throws ArgumentException {
     if (value < otherValue)
       throw wrongArg(name, value, "MUST be at least {}", otherValue);
 
@@ -187,7 +188,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Comparable<T>> T requireAtLeast(T value, T otherValue) {
+  public static <T extends Comparable<T>> T requireAtLeast(T value, T otherValue)
+      throws ArgumentException {
     return requireAtLeast(value, otherValue, null);
   }
 
@@ -203,7 +205,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T extends Comparable<T>> T requireAtLeast(T value, T otherValue,
-      @Nullable String name) {
+      @Nullable String name) throws ArgumentException {
     if (value == null || value.compareTo(otherValue) < 0)
       throw wrongArg(name, value, "MUST be at least {}", otherValue);
 
@@ -219,7 +221,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireAtMost(int value, int otherValue) {
+  public static int requireAtMost(int value, int otherValue) throws ArgumentException {
     return requireAtMost(value, otherValue, null);
   }
 
@@ -234,7 +236,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireAtMost(int value, int otherValue, @Nullable String name) {
+  public static int requireAtMost(int value, int otherValue, @Nullable String name)
+      throws ArgumentException {
     if (value > otherValue)
       throw wrongArg(name, value, "MUST be at most {}", otherValue);
 
@@ -250,7 +253,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Comparable<T>> T requireAtMost(T value, T otherValue) {
+  public static <T extends Comparable<T>> T requireAtMost(T value, T otherValue)
+      throws ArgumentException {
     return requireAtMost(value, otherValue, null);
   }
 
@@ -266,7 +270,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T extends Comparable<T>> T requireAtMost(T value, T otherValue,
-      @Nullable String name) {
+      @Nullable String name) throws ArgumentException {
     if (value == null || value.compareTo(otherValue) > 0)
       throw wrongArg(name, value, "MUST be at most {}", otherValue);
 
@@ -292,13 +296,32 @@ public final class Conditions {
    *          Element type.
    * @param element
    *          Element to validate.
+   * @return {@code element}
+   * @throws NoSuchElementException
+   *           if {@code element} is undefined.
+   */
+  public static <T> T requireElement(@Nullable T element) throws NoSuchElementException {
+    if (element == null)
+      throw missing();
+
+    return element;
+  }
+
+  /**
+   * Requires the element is not null.
+   *
+   * @param <T>
+   *          Element type.
+   * @param element
+   *          Element to validate.
    * @param ref
    *          Reference associated to {@code element} (for example, its key).
    * @return {@code element}
    * @throws ElementNotFoundException
    *           if {@code element} is undefined.
    */
-  public static <T> T requireElement(@Nullable T element, Object ref) {
+  public static <T> T requireElement(@Nullable T element, Object ref)
+      throws ElementNotFoundException {
     return requireElement(element, ref, null);
   }
 
@@ -318,7 +341,7 @@ public final class Conditions {
    *           if {@code element} is undefined.
    */
   public static <T> T requireElement(@Nullable T element, Object ref,
-      @Nullable String typeDescription) {
+      @Nullable String typeDescription) throws ElementNotFoundException {
     if (element == null)
       throw missing(ref, typeDescription);
 
@@ -337,7 +360,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T requireEqual(@PolyNull @Nullable T value,
-      @Nullable T otherValue) {
+      @Nullable T otherValue) throws ArgumentException {
     return requireEqual(value, otherValue, null);
   }
 
@@ -355,7 +378,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T> @PolyNull @Nullable T requireEqual(@PolyNull @Nullable T value,
-      @Nullable T otherValue, @Nullable String name) {
+      @Nullable T otherValue, @Nullable String name) throws ArgumentException {
     if (!Objects.equals(value, otherValue))
       throw wrongArgOpt(name, value, null, singletonList(otherValue));
 
@@ -383,7 +406,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireGreaterThan(int value, int otherValue) {
+  public static int requireGreaterThan(int value, int otherValue) throws ArgumentException {
     return requireGreaterThan(value, otherValue, null);
   }
 
@@ -398,7 +421,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireGreaterThan(int value, int otherValue, @Nullable String name) {
+  public static int requireGreaterThan(int value, int otherValue, @Nullable String name)
+      throws ArgumentException {
     if (value <= otherValue)
       throw wrongArg(name, value, "MUST be greater than {}", otherValue);
 
@@ -414,7 +438,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Comparable<T>> T requireGreaterThan(T value, T otherValue) {
+  public static <T extends Comparable<T>> T requireGreaterThan(T value, T otherValue)
+      throws ArgumentException {
     return requireGreaterThan(value, otherValue, null);
   }
 
@@ -430,7 +455,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T extends Comparable<T>> T requireGreaterThan(T value, T otherValue,
-      @Nullable String name) {
+      @Nullable String name) throws ArgumentException {
     if (value == null || value.compareTo(otherValue) <= 0)
       throw wrongArg(name, value, "MUST be greater than {}", otherValue);
 
@@ -446,7 +471,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireLessThan(int value, int otherValue) {
+  public static int requireLessThan(int value, int otherValue) throws ArgumentException {
     return requireLessThan(value, otherValue, null);
   }
 
@@ -461,7 +486,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireLessThan(int value, int otherValue, @Nullable String name) {
+  public static int requireLessThan(int value, int otherValue, @Nullable String name)
+      throws ArgumentException {
     if (value >= otherValue)
       throw wrongArg(name, value, "MUST be less than {}", otherValue);
 
@@ -477,7 +503,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Comparable<T>> T requireLessThan(T value, T otherValue) {
+  public static <T extends Comparable<T>> T requireLessThan(T value, T otherValue)
+      throws ArgumentException {
     return requireLessThan(value, otherValue, null);
   }
 
@@ -493,7 +520,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T extends Comparable<T>> T requireLessThan(T value, T otherValue,
-      @Nullable String name) {
+      @Nullable String name) throws ArgumentException {
     if (value == null || value.compareTo(otherValue) >= 0)
       throw wrongArg(name, value, "MUST be less than {}", otherValue);
 
@@ -532,7 +559,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static String requireNotBlank(@Nullable String value) {
+  public static String requireNotBlank(@Nullable String value) throws ArgumentException {
     return requireNotBlank(value, null);
   }
 
@@ -547,7 +574,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static String requireNotBlank(@Nullable String value, @Nullable String name) {
+  public static String requireNotBlank(@Nullable String value, @Nullable String name)
+      throws ArgumentException {
     if (value == null || value.isBlank())
       throw wrongArg(name, value, "MUST be NOT blank");
 
@@ -575,7 +603,7 @@ public final class Conditions {
    *          {@link IllegalStateException} is thrown.
    * @see java.util.Objects#requireNonNull(Object)
    */
-  public static <T> T requireState(@Nullable T value) {
+  public static <T> T requireState(@Nullable T value) throws IllegalStateException {
     if (value == null)
       throw wrongState("State UNDEFINED");
 
@@ -585,7 +613,7 @@ public final class Conditions {
   /**
    * (see {@link #requireState(Object)})
    */
-  public static <T> T requireState(@Nullable T value, String message) {
+  public static <T> T requireState(@Nullable T value, String message) throws IllegalStateException {
     if (value == null)
       throw wrongState(message);
 
@@ -595,29 +623,12 @@ public final class Conditions {
   /**
    * (see {@link #requireState(Object)})
    */
-  public static <T> T requireState(@Nullable T value, Supplier<String> messageSupplier) {
+  public static <T> T requireState(@Nullable T value, Supplier<String> messageSupplier)
+      throws IllegalStateException {
     if (value == null)
       throw wrongState(messageSupplier.get());
 
     return value;
-  }
-
-  /**
-   * Requires the accessor element is not null.
-   *
-   * @param <T>
-   *          Element type.
-   * @param element
-   *          Element to validate.
-   * @return {@code element}
-   * @throws NoSuchElementException
-   *           if {@code element} is undefined.
-   */
-  public static <T> T requireSuch(@Nullable T element) {
-    if (element == null)
-      throw missingSuch();
-
-    return element;
   }
 
   /**
@@ -640,7 +651,7 @@ public final class Conditions {
    *           operator.
    */
   public static <T, U extends T> @PolyNull @Nullable U requireType(@PolyNull @Nullable T value,
-      Class<U> type) {
+      Class<U> type) throws ArgumentException {
     return requireType(value, type, null);
   }
 
@@ -667,7 +678,7 @@ public final class Conditions {
    */
   @SuppressWarnings("unchecked")
   public static <T, U extends T> @PolyNull @Nullable U requireType(@PolyNull @Nullable T value,
-      Class<U> type, @Nullable String name) {
+      Class<U> type, @Nullable String name) throws ArgumentException {
     return (U) requireType(value, List.of(type), name);
   }
 
@@ -685,7 +696,7 @@ public final class Conditions {
    *           operator.
    */
   public static <T> @PolyNull @Nullable T requireType(@PolyNull @Nullable T value,
-      Collection<Class<?>> types) {
+      Collection<Class<?>> types) throws ArgumentException {
     return requireType(value, types, null);
   }
 
@@ -705,7 +716,7 @@ public final class Conditions {
    *           operator.
    */
   public static <T> @PolyNull @Nullable T requireType(@PolyNull @Nullable T value,
-      Collection<Class<?>> types, @Nullable String name) {
+      Collection<Class<?>> types, @Nullable String name) throws ArgumentException {
     if (value == null)
       return value;
 
@@ -730,7 +741,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static double requireWithin(double value, int min, int max) {
+  public static double requireWithin(double value, int min, int max) throws ArgumentException {
     return requireWithin(value, min, max, null);
   }
 
@@ -749,7 +760,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static double requireWithin(double value, int min, int max, @Nullable String name) {
+  public static double requireWithin(double value, int min, int max, @Nullable String name)
+      throws ArgumentException {
     if (value < min || value > max)
       throw wrongArg(name, value, "MUST be between {} and {}", min, max);
 
@@ -769,7 +781,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static float requireWithin(float value, int min, int max) {
+  public static float requireWithin(float value, int min, int max) throws ArgumentException {
     return requireWithin(value, min, max, null);
   }
 
@@ -788,7 +800,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static float requireWithin(float value, int min, int max, @Nullable String name) {
+  public static float requireWithin(float value, int min, int max, @Nullable String name)
+      throws ArgumentException {
     if (value < min || value > max)
       throw wrongArg(name, value, "MUST be between {} and {}", min, max);
 
@@ -808,7 +821,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireWithin(int value, int min, int max) {
+  public static int requireWithin(int value, int min, int max) throws ArgumentException {
     return requireWithin(value, min, max, null);
   }
 
@@ -827,7 +840,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireWithin(int value, int min, int max, @Nullable String name) {
+  public static int requireWithin(int value, int min, int max, @Nullable String name)
+      throws ArgumentException {
     if (value < min || value > max)
       throw wrongArg(name, value, "MUST be between {} and {}", min, max);
 
@@ -845,7 +859,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Comparable<T>> T requireWithin(T value, Range<T> range) {
+  public static <T extends Comparable<T>> T requireWithin(T value, Range<T> range)
+      throws ArgumentException {
     return requireWithin(value, range, null);
   }
 
@@ -863,7 +878,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T extends Comparable<T>> T requireWithin(T value, Range<T> range,
-      @Nullable String name) {
+      @Nullable String name) throws ArgumentException {
     if (!range.contains(value))
       throw wrongArg(name, value, "MUST be within {} range", range);
 
@@ -883,7 +898,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static <T extends Comparable<T>> T requireWithin(T value, T min, T max) {
+  public static <T extends Comparable<T>> T requireWithin(T value, T min, T max)
+      throws ArgumentException {
     return requireWithin(value, min, max, null);
   }
 
@@ -903,7 +919,7 @@ public final class Conditions {
    *           if {@code value} is invalid.
    */
   public static <T extends Comparable<T>> T requireWithin(T value, T min, T max,
-      @Nullable String name) {
+      @Nullable String name) throws ArgumentException {
     if (value == null || value.compareTo(min) < 0 || value.compareTo(max) > 0)
       throw wrongArg(name, value, "MUST be between {} and {}", min, max);
 
@@ -920,7 +936,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireWithinByte(int value) {
+  public static int requireWithinByte(int value) throws ArgumentException {
     return requireWithinByte(value, null);
   }
 
@@ -936,7 +952,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static int requireWithinByte(int value, @Nullable String name) {
+  public static int requireWithinByte(int value, @Nullable String name) throws ArgumentException {
     return requireWithin(value, 0x00, 0xFF, name);
   }
 
@@ -949,7 +965,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static double requireWithinNormal(double value) {
+  public static double requireWithinNormal(double value) throws ArgumentException {
     return requireWithinNormal(value, null);
   }
 
@@ -964,7 +980,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static double requireWithinNormal(double value, @Nullable String name) {
+  public static double requireWithinNormal(double value, @Nullable String name)
+      throws ArgumentException {
     return requireWithin(value, 0, 1, name);
   }
 
@@ -977,7 +994,7 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static float requireWithinNormal(float value) {
+  public static float requireWithinNormal(float value) throws ArgumentException {
     return requireWithinNormal(value, null);
   }
 
@@ -992,7 +1009,8 @@ public final class Conditions {
    * @throws ArgumentException
    *           if {@code value} is invalid.
    */
-  public static float requireWithinNormal(float value, @Nullable String name) {
+  public static float requireWithinNormal(float value, @Nullable String name)
+      throws ArgumentException {
     return requireWithin(value, 0, 1, name);
   }
 
