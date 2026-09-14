@@ -714,6 +714,8 @@ public final class Collects {
 
   /**
    * Gets the first non-null value associated to a key in the sequence.
+   *
+   * @return {@code null}, if no match was found.
    */
   @SafeVarargs
   public static <K extends @Nullable Object,
@@ -728,6 +730,8 @@ public final class Collects {
 
   /**
    * Gets the first non-null value associated to a key in the sequence.
+   *
+   * @return {@code null}, if no match was found.
    */
   public static <K extends @Nullable Object,
       V extends @Nullable Object> @Nullable V getFirst(Map<K, V> m, K k1, K k2) {
@@ -741,6 +745,8 @@ public final class Collects {
 
   /**
    * Gets the first non-null value associated to a key in the sequence.
+   *
+   * @return {@code null}, if no match was found.
    */
   public static <K extends @Nullable Object,
       V extends @Nullable Object> @Nullable V getFirst(Map<K, V> m, K k1, K k2, K k3) {

@@ -71,7 +71,7 @@ public interface XtMap<K extends @Nullable Object, V>
    */
   @SuppressWarnings("unchecked")
   default boolean containsAnyKey(K... keys) {
-    return getAny(keys) != null;
+    return Collects.containsAnyKey(this, keys);
   }
 
   /**
@@ -83,7 +83,7 @@ public interface XtMap<K extends @Nullable Object, V>
    *          Second key to evaluate.
    */
   default boolean containsAnyKey(K key1, K key2) {
-    return getAny(key1, key2) != null;
+    return Collects.containsAnyKey(this, key1, key2);
   }
 
   /**
@@ -97,67 +97,35 @@ public interface XtMap<K extends @Nullable Object, V>
    *          Third key to evaluate.
    */
   default boolean containsAnyKey(K key1, K key2, K key3) {
-    return getAny(key1, key2, key3) != null;
+    return Collects.containsAnyKey(this, key1, key2, key3);
   }
 
   /**
-   * Gets the value corresponding to one of the keys. Keys are evaluated sequentially until a
-   * matching entry is found.
+   * Gets the first non-null value associated to a key in the sequence.
    *
-   * @param keys
-   *          Keys to evaluate.
-   * @return {@code null}, if no match to {@code keys} was found.
+   * @return {@code null}, if no match was found.
    */
   @SuppressWarnings("unchecked")
-  default @Nullable V getAny(K... keys) {
-    for (K key : keys) {
-      V value = get(key);
-      if (value != null)
-        return value;
-    }
-    return null;
+  default @Nullable V getFirst(K... keys) {
+    return Collects.getFirst(this, keys);
   }
 
   /**
-   * Gets the value corresponding to one of the keys. Keys are evaluated sequentially until a
-   * matching entry is found.
+   * Gets the first non-null value associated to a key in the sequence.
    *
-   * @param key1
-   *          First key to evaluate.
-   * @param key2
-   *          Second key to evaluate.
-   * @return {@code null}, if no match to the keys was found.
+   * @return {@code null}, if no match was found.
    */
-  default @Nullable V getAny(K key1, K key2) {
-    V value = get(key1);
-    if (value != null)
-      return value;
-
-    return get(key2);
+  default @Nullable V getFirst(K key1, K key2) {
+    return Collects.getFirst(this, key1, key2);
   }
 
   /**
-   * Gets the value corresponding to one of the keys. Keys are evaluated sequentially until a
-   * matching entry is found.
+   * Gets the first non-null value associated to a key in the sequence.
    *
-   * @param key1
-   *          First key to evaluate.
-   * @param key2
-   *          Second key to evaluate.
-   * @param key3
-   *          Third key to evaluate.
-   * @return {@code null}, if no match to the keys was found.
+   * @return {@code null}, if no match was found.
    */
-  default @Nullable V getAny(K key1, K key2, K key3) {
-    V value = get(key1);
-    if (value != null)
-      return value;
-
-    value = get(key2);
-    if (value != null)
-      return value;
-
-    return get(key3);
+  default @Nullable V getFirst(K key1, K key2, K key3) {
+    return Collects.getFirst(this, key1, key2, key3);
   }
 
   /**
