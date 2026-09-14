@@ -24,7 +24,8 @@ import org.jspecify.annotations.Nullable;
  * Indicates that once the annotated field becomes non-null, it never becomes null again.
  * <p>
  * Similar to <a href=
- * "https://checkerframework.org/api/org/checkerframework/checker/nullness/qual/MonotonicNonNull.html">MonotonicNonNull</a>.
+ * "https://checkerframework.org/api/org/checkerframework/checker/nullness/qual/MonotonicNonNull.html">@MonotonicNonNull
+ * (Checker Framework)</a>.
  * </p>
  * <p>
  * <span class="important">IMPORTANT: Field assignment typically occurs in its accessor; as a

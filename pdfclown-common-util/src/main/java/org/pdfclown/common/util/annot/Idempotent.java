@@ -23,13 +23,13 @@ import java.lang.annotation.Target;
  * Indicates that the annotated method is
  * <a href="https://en.wikipedia.org/wiki/Idempotence">idempotent</a>.
  * <p>
- * Means that an operation can be repeated as often as necessary, without causing unintended effects
- * (with non-idempotent operations, the algorithm may have to keep track of whether the operation
- * was already performed or not).
+ * This annotation implies that the method can be called repeatedly without changing its result
+ * beyond the initial call (non-idempotent methods, on the contrary, require callers to keep track
+ * whether they had already been called or not).
  * </p>
  * <p>
- * In order for a method to be annotated, its implementation must call only idempotent methods
- * itself.
+ * <span class="important">IMPORTANT: In order for a method to be annotated, its implementation must
+ * call only idempotent methods itself.</span>
  * </p>
  *
  * @author Stefano Chizzolini

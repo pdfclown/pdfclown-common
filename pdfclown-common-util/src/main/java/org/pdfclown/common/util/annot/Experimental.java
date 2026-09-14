@@ -25,15 +25,20 @@ import java.lang.annotation.Target;
 /**
  * Indicates that the annotated element, member of the public API, is unstable.
  * <p>
- * Implies that, since the feature is still evolving, the API may be subject to incompatible changes
- * (even removal) in a future release.
+ * This annotation implies that, since the feature is still evolving, the API may be subject to
+ * incompatible changes (even removal) in a future release.
+ * </p>
+ * <p>
+ * Similar to <a href=
+ * "https://guava.dev/releases/snapshot-jre/api/docs/com/google/common/annotations/Beta.html">@Beta
+ * (Guava)</a>.
  * </p>
  *
  * @author Stefano Chizzolini
  */
 @Documented
 @Retention(CLASS)
-@Target({ TYPE, METHOD, FIELD, CONSTRUCTOR })
+@Target({ TYPE, FIELD, CONSTRUCTOR, METHOD })
 public @interface Experimental {
   /**
    * Description.

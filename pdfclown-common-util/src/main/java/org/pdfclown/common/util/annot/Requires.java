@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RUNTIME)
-@Target({ PACKAGE, TYPE, METHOD, CONSTRUCTOR })
+@Target({ PACKAGE, TYPE, CONSTRUCTOR, METHOD })
 public @interface Requires {
   /**
    * Optional dependencies.
