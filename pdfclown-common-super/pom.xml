@@ -205,7 +205,7 @@ pdfclown-common-base instead)</description>
     <spotless-maven-plugin.eclipseJdt.version>4.37</spotless-maven-plugin.eclipseJdt.version>
     <spotless-maven-plugin.eclipseWtp.version>4.21.0</spotless-maven-plugin.eclipseWtp.version>
     <spotless-maven-plugin.prettier.version>3.8.3</spotless-maven-plugin.prettier.version>
-    <xml-maven-plugin.version>1.2.1</xml-maven-plugin.version>
+    <xml-maven-plugin.version>1.2.2</xml-maven-plugin.version>
 
     <!--
       INTERNAL
