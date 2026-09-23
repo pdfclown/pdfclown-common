@@ -12,7 +12,13 @@
  */
 package org.pdfclown.common.util;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.stripToNull;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
+import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.util.Chars.SPACE;
+import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.Strings.S;
+import static org.pdfclown.common.util.function.Functions.toElse;
 
 import java.io.Serial;
 import org.jspecify.annotations.Nullable;
@@ -39,8 +45,9 @@ public class NotImplementedException extends UnsupportedOperationException {
   }
 
   public NotImplementedException(@Nullable String message, @Nullable Throwable cause) {
-    super(isBlank(message)
-        ? "There's work for you! You reached a code block that hasn't been implemented yet."
-        : message, cause);
+    super("There's work for you! You reached a code block that hasn't been implemented yet"
+        + toElse(stripToNull(message),
+            $ -> S + SPACE + ROUND_BRACKET_OPEN + $ + ROUND_BRACKET_CLOSE, EMPTY),
+        cause);
   }
 }
