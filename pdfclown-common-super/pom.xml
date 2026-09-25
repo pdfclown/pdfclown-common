@@ -1108,6 +1108,10 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
         - integration tests
       -->
       <properties>
+        <!-- NOTE: maven-failsafe-plugin 3.6.0 decoupled parameters `skipITs` and `skipTests`,
+          so the former now MUST be explicit specified (see
+          <https://maven.apache.org/surefire/maven-failsafe-plugin/examples/skipping-tests.html>). -->
+        <skipITs>true</skipITs>
         <skipTests>true</skipTests>
       </properties>
     </profile>
