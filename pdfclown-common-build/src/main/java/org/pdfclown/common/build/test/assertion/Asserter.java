@@ -154,6 +154,9 @@ public abstract class Asserter {
    * @author Stefano Chizzolini
    */
   public enum UpdateMode {
+    /**
+     * Never updates the expected resource, even if the test against it fails.
+     */
     NONE,
     /**
      * Updates the expected resource only in case the test against it fails.
