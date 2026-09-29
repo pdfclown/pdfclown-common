@@ -18,11 +18,11 @@ import static org.pdfclown.common.build.internal.temp.util.Exceptions.unexpected
 import static org.pdfclown.common.build.internal.temp.util.Objects.literal;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Strings.S;
+import static org.pdfclown.common.build.internal.temp.util.system.Systems.getBooleanProperty;
 import static org.pdfclown.common.build.test.assertion.Asserter.SYSTEM_PROPERTY__UPDATE_EXPECTED;
 import static org.pdfclown.common.build.util.system.Runtimes.isDebugging;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.LF;
-import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
 
 import com.spun.util.logger.SimpleLogger;
 import java.io.File;

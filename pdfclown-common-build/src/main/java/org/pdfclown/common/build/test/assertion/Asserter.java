@@ -21,11 +21,12 @@ import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.temp.util.Objects.textLiteral;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Strings.abbreviateMultiline;
+import static org.pdfclown.common.build.internal.temp.util.Strings.ucase;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.copyDirectory;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.resetDirectory;
+import static org.pdfclown.common.build.internal.temp.util.system.Systems.getProperty;
 import static org.pdfclown.common.build.system.LogManager.MARKER__VERBOSE;
 import static org.pdfclown.common.util.Chars.LF;
-import static org.pdfclown.common.util.system.Systems.getBooleanProperty;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,8 +63,8 @@ import org.slf4j.LoggerFactory;
  * {@link AssertionError} in shortened form and thrown.
  * </p>
  *
- * @implSpec Implementations MUST query {@link #isUpdatable(Config)} to decide whether the expected
- *           state can be updated instead of emitting a
+ * @implSpec Implementations MUST query {@link #getUpdateMode(Config)} to decide whether the
+ *           expected state has to be updated, thus excluding the emission of a
  *           {@linkplain #evalAssertionResult(String, Path, Path, Config) mismatch error}.
  * @author Stefano Chizzolini
  */
@@ -147,6 +148,23 @@ public abstract class Asserter {
     }
   }
 
+  /**
+   * Expected state update mode.
+   *
+   * @author Stefano Chizzolini
+   */
+  public enum UpdateMode {
+    NONE,
+    /**
+     * Updates the expected resource only in case the test against it fails.
+     */
+    AUTO,
+    /**
+     * Always updates the expected resource, even if the test against it succeeds.
+     */
+    FORCE
+  }
+
   private static final Logger log = LoggerFactory.getLogger(Asserter.class);
 
   /**
@@ -159,7 +177,8 @@ public abstract class Asserter {
    * expected state, {@linkplain Asserter asserters} can regenerate it through this property.
    * </p>
    * <p>
-   * The value of this property is a boolean which can be omitted (default: {@code true}).
+   * The value type of this property is {@link UpdateMode} (case-insensitive; default:
+   * {@link UpdateMode#AUTO auto}).
    * </p>
    *
    * @apiNote Common usage examples (Maven build system):
@@ -181,8 +200,12 @@ public abstract class Asserter {
    */
   public static final String SYSTEM_PROPERTY__UPDATE_EXPECTED = "test.expected.update";
   static {
-    log.info("`{}` system property: {}", SYSTEM_PROPERTY__UPDATE_EXPECTED,
-        getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED));
+    log.info("`{}` system property: {}", SYSTEM_PROPERTY__UPDATE_EXPECTED, getUpdateMode());
+  }
+
+  private static UpdateMode getUpdateMode() {
+    return getProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED, UpdateMode.NONE, UpdateMode.AUTO,
+        $ -> Enum.valueOf(UpdateMode.class, ucase($)));
   }
 
   /**
@@ -251,11 +274,11 @@ public abstract class Asserter {
   protected abstract Logger getLog();
 
   /**
-   * Gets whether the expected resources can be overwritten in case of mismatch with their actual
+   * Gets how the expected resources can be overwritten in case of mismatch with their actual
    * counterparts.
    */
-  protected boolean isUpdatable(Config config) {
-    return getBooleanProperty(SYSTEM_PROPERTY__UPDATE_EXPECTED);
+  protected UpdateMode getUpdateMode(Config config) {
+    return getUpdateMode();
   }
 
   /**

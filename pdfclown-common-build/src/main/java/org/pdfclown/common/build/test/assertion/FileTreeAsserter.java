@@ -68,6 +68,13 @@ public class FileTreeAsserter extends Asserter {
         try {
           Diff diff = diff(expectedDir, actualDir);
           if (diff.isSame()) {
+            if (getUpdateMode(config) == UpdateMode.FORCE) {
+              log.info("FORCIBLY REBUILDING assertion directory resource {}",
+                  textLiteral(expectedDirResourceFqn));
+
+              writeExpectedDirectory(expectedDirResourceFqn, actualDir, config);
+            }
+
             break;
           }
 
@@ -89,7 +96,7 @@ public class FileTreeAsserter extends Asserter {
            * the (either mismatching or missing) expected directory resource (at both source and
            * target locations).
            */
-          if (isUpdatable(config)) {
+          if (getUpdateMode(config) != UpdateMode.NONE) {
             log.info("REBUILDING assertion directory resource {} because of {}",
                 textLiteral(expectedDirResourceFqn), sqnd(ex));
 

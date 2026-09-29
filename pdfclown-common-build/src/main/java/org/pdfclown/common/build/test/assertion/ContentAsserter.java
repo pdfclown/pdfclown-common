@@ -114,6 +114,12 @@ public abstract class ContentAsserter<T> extends Asserter {
 
           doAssertEquals(expectedContent, actualContent);
 
+          if (getUpdateMode(config) == UpdateMode.FORCE) {
+            log.info("FORCIBLY REBUILDING assertion content {}", textLiteral(expectedResourceFqn));
+
+            writeExpectedFile(expectedResourceFqn,
+                Failable.asConsumer($ -> writeContent($, actualContent)), config);
+          }
           break;
         } catch (AssertionError | FileNotFoundException | NoSuchFileException ex) {
           /*
@@ -123,7 +129,7 @@ public abstract class ContentAsserter<T> extends Asserter {
            * (either mismatching or missing) expected resource (at both source and target
            * locations).
            */
-          if (isUpdatable(config)) {
+          if (getUpdateMode(config) != UpdateMode.NONE) {
             log.info("REBUILDING assertion content {} because of {}",
                 textLiteral(expectedResourceFqn), sqnd(ex));
 
