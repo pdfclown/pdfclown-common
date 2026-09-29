@@ -11,7 +11,7 @@
   header, listing the main changes you applied to the original source.
  */
 /*
-  SPDX-FileCopyrightText: Copyright 2003-2026 The Apache Software Foundation
+  SPDX-FileCopyrightText: 2003-2026 The Apache Software Foundation
 
   SPDX-License-Identifier: Apache-2.0
 
