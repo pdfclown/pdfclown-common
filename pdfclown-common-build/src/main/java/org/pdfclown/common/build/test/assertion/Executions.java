@@ -130,7 +130,7 @@ public final class Executions {
   //
   // Source: https://github.com/talsma-ict/umldoclet/blob/a1776aa4b3c9af1b073c31969721e867233fe727/src/test/java/nl/talsmasoftware/umldoclet/issues/Issue267Test.java
   // SourceName: nl.talsmasoftware.umldoclet.issues.Issue267Test.interceptSystemOut
-  // Changes: adaptation to pdfClown
+  // Changes: Adaptation to pdfclown-common-build.
   /**
    * Executes a task, intercepting the output from the standard streams.
    *

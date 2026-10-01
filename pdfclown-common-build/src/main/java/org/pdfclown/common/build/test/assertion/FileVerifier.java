@@ -118,7 +118,7 @@ public class FileVerifier extends Verifier {
   }
 
   // SPDX-SnippetBegin
-  // SPDX-SnippetCopyrightText: ?-2026 Llewellyn Falco
+  // SPDX-SnippetCopyrightText: 2008-2026 Llewellyn Falco
   // SPDX-License-Identifier: Apache-2.0
   //
   // Source: https://github.com/approvals/ApprovalTests.Java/blob/e3ac34f79e430e4dc44c1ecfd70499467d9e96d5/approvaltests/src/main/java/org/approvaltests/approvers/FileApprover.java

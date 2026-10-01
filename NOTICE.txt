@@ -1,37 +1,39 @@
 pdfClown Common <https://github.com/pdfclown/pdfclown-common>
 Copyright 2025-2026 Stefano Chizzolini and others
-License LGPL-3.0-only <https://spdx.org/licenses/LGPL-3.0-only>
 
+This product includes software developed by third parties, as listed
+below. Each section reproduces the attribution notices supplied by the
+respective upstream project, pruned of parts unrelated to this product
+("Only bundled bits matter.").
 
-This product reuses source code from third-party projects [1]:
+-----------------------------------------------------------------------
 
 Apache Commons Lang <https://github.com/apache/commons-lang>
 Copyright 2001-2025 Apache Software Foundation (ASF)
-License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
+
+This product includes software developed at
+The Apache Software Foundation (https://www.apache.org/).
+
+-----------------------------------------------------------------------
 
 Apache Groovy <https://github.com/apache/groovy>
 Copyright 2003-2026 The Apache Software Foundation
-License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+-----------------------------------------------------------------------
 
 ApprovalTests.Java <https://github.com/approvals/ApprovalTests.Java>
-Copyright ?-2026 Llewellyn Falco
-License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
+Copyright 2008-2026 Llewellyn Falco
 
-JSON-java (org.json) <https://github.com/stleary/JSON-java>
-Copyright none
-License CC0-1.0 <https://spdx.org/licenses/CC0-1.0>
+[no NOTICE]
 
-Oklab, a perceptual color space for image processing <https://bottosson.github.io/posts/oklab/>
-Copyright 2020 Björn Ottosson
-License MIT <https://spdx.org/licenses/MIT>
-
-Open HTML to PDF <https://github.com/danfickle/openhtmltopdf>
-Copyright 2015-2022 Daniel Fickling, 2015 Patrick Wright
-License LGPL-3.0-only <https://spdx.org/licenses/LGPL-3.0-only>
+-----------------------------------------------------------------------
 
 UMLDoclet <https://github.com/talsma-ict/umldoclet>
 Copyright 2016-2022 Talsma ICT
-License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
 
----
-[1] Traceable via SPDX tags (glob: SPDX-*CopyrightText:*)
+[no NOTICE]
+
+-----------------------------------------------------------------------

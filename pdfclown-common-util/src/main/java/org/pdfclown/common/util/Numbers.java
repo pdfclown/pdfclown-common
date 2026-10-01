@@ -34,7 +34,7 @@ public final class Numbers {
   //
   // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/layout/CounterLanguage.java#L18
   // SourceName: com.openhtmltopdf.layout.CounterLanguage.toLatin
-  // Changes: adaptation to pdfClown
+  // Changes: Adaptation to pdfclown-common-util.
   /**
    * Converts the number to latin-alphabet numeral.
    *
@@ -58,7 +58,7 @@ public final class Numbers {
   //
   // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/layout/CounterLanguage.java#L4
   // SourceName: com.openhtmltopdf.layout.CounterLanguage.toRoman
-  // Changes: adaptation to pdfClown
+  // Changes: Adaptation to pdfclown-common-util.
   /**
    * Converts the number to roman numeral.
    *

@@ -20,7 +20,7 @@ SPDX-License-Identifier = "MIT-0"
 # NOTE: The override avoids textual copyright information inside the file from
 # interfering with actual licensing metadata.
 [[annotations]]
-path = ["NOTICE.txt"]
+path = ["CREDITS.txt", "NOTICE.txt"]
 precedence = "override"
 SPDX-FileCopyrightText = "2025-2026 Stefano Chizzolini and contributors"
 SPDX-License-Identifier = "CC0-1.0"
