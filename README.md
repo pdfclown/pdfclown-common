@@ -31,7 +31,7 @@ See [Documentation](docs/README.md) for further information about this project.
 
 This project is licensed under **[GNU Lesser General Public License (LGPL), version 3.0](LICENSE.txt)**.
 
-See [NOTICE](NOTICE.txt) for attributions.
+See [CREDITS](CREDITS.txt) for attributions.
 
 See [REUSE compliance report](https://api.reuse.software/info/github.com/pdfclown/pdfclown-common) for detailed licensing and copyright information.
 
