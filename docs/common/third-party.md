@@ -26,7 +26,7 @@ Whenever any source code from third-party projects is incorporated, it MUST be d
 2. in the source file reusing the third-party code, add a **licensing notice** formatted in accordance with the extent of the incorporation, accompanied by additional information (such as `Source`, `SourceName` and `Changes` tags — see here below) whenever appropriate:
 
     - **third-party file** (as a new project file):
-        1. if the third-party file contains a copyright notice with traditional license boilerplate, insert the corresponding **`SPDX-License-Identifier` tag** just below the copyright statement and leave the original text unaltered — for example:
+        1. if the third-party file contains a copyright notice with traditional license boilerplate, insert the corresponding **`SPDX-License-Identifier` tag** just below the copyright statement, and leave the original text unaltered — for example:
              ```java
              . . . file header . . .
              /*
@@ -99,6 +99,6 @@ Whenever any source code from third-party projects is incorporated, it MUST be d
 
    - `Changes`: specifies *relevant differences between the local file and its source*.
 
-3. run `reuse lint` to check the license metadata of the project is valid.
+3. run `reuse lint` to check whether the license metadata of the project is valid.
 
 <!-- REUSE-IgnoreEnd -->
