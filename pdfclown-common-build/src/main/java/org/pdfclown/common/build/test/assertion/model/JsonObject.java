@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
 public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: NONE
-  // SPDX-License-Identifier: MIT-0
+  // SPDX-License-Identifier: CC-PDM-1.0
   //
   // Source: https://github.com/stleary/JSON-java/blob/82a02d879e9177105bb248a10cad1f18844b7964/src/main/java/org/json/JSONObject.java
   // SourceName: org.json.JSONObject.NUMBER_PATTERN
@@ -49,7 +49,7 @@ public class JsonObject extends JSONObject implements JsonElement {
 
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: NONE
-  // SPDX-License-Identifier: MIT-0
+  // SPDX-License-Identifier: CC-PDM-1.0
   //
   // Source: ibid.
   // SourceName: org.json.JSONObject.indent(Writer, int)
@@ -62,7 +62,7 @@ public class JsonObject extends JSONObject implements JsonElement {
 
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: NONE
-  // SPDX-License-Identifier: MIT-0
+  // SPDX-License-Identifier: CC-PDM-1.0
   //
   // Source: ibid.
   // SourceName: org.json.JSONObject.writeValue(Writer, Object, int, int)
@@ -126,7 +126,7 @@ public class JsonObject extends JSONObject implements JsonElement {
 
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: NONE
-  // SPDX-License-Identifier: MIT-0
+  // SPDX-License-Identifier: CC-PDM-1.0
   //
   // Source: ibid.
   // SourceName: org.json.JSONObject.write(Writer, int, int)

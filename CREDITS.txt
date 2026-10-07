@@ -4,9 +4,15 @@ License LGPL-3.0-only <https://spdx.org/licenses/LGPL-3.0-only>
 
 -----------------------------------------------------------------------
 
-This file is an informal list of all the third-party projects whose
-source code has been reused by this product; module-level README files
-may provide further details whenever appropriate.
+THIRD-PARTY SOURCE CODE AND RESOURCES
+
+This project reuses source code from third-party projects listed here
+below; module-level README files may provide further details whenever
+appropriate.
+
+This project contains resources from third parties for testing
+purposes. Their use is regulated by their respective licenses and does
+NOT imply any endorsement to this project by their copyright holders.
 
 For full SBOM, run `reuse spdx` on the command line.
 
@@ -25,8 +31,8 @@ Copyright 2008-2026 Llewellyn Falco
 License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
 
 JSON-java (org.json) <https://github.com/stleary/JSON-java>
-Copyright none
-License CC0-1.0 <https://spdx.org/licenses/CC0-1.0>
+Copyright NONE
+License CC-PDM-1.0 <https://spdx.org/licenses/CC-PDM-1.0>
 
 Oklab, a perceptual color space for image processing <https://bottosson.github.io/posts/oklab/>
 Copyright 2020 Björn Ottosson
