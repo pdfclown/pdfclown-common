@@ -39,4 +39,4 @@ This project adheres to the following best practices:
 
 ## [Coding Conventions](coding.md)
 
-## [Third-Party Code Reuse](third-party.md)
+## [Third-Party Content Reuse](third-party.md)
