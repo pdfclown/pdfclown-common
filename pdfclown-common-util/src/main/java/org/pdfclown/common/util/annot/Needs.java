@@ -3,7 +3,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  This file (Requires.java) is part of pdfclown-common-util module in pdfClown Common project
+  This file (Needs.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
@@ -27,8 +27,8 @@ import java.lang.annotation.Target;
  * {@linkplain org.pdfclown.common.util.annot.DependsOn.Dependency optional dependencies}.
  * <p>
  * Callers can safely invoke the element, as the responsibility to handle missing dependencies is
- * upon the latter. <span class="important">Since callers become transitively dependent on those
- * dependencies, they MUST in turn annotate themselves with the same annotation, in order to
+ * upon the latter. <span class="important">Since callers are themselves transitively dependent on
+ * those dependencies, they MUST in turn annotate themselves with the same annotation, in order to
  * document their own dependencies.</span>
  * </p>
  *
@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RUNTIME)
 @Target({ PACKAGE, TYPE, CONSTRUCTOR, METHOD })
-public @interface Requires {
+public @interface Needs {
   /**
    * Optional dependencies.
    *

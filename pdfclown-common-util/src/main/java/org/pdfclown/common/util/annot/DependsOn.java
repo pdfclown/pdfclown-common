@@ -25,20 +25,23 @@ import java.util.Collection;
 /**
  * Indicates that the annotated element depends on {@linkplain Dependency optional dependencies}.
  * <p>
- * Callers MUST catch {@link NoClassDefFoundError} and pass it to
- * {@link org.pdfclown.common.util.Exceptions#missingClass(Collection, NoClassDefFoundError)}, along
- * with the dependencies of the called element. <span class="important">Since callers become
- * transitively dependent on those dependencies, they MUST annotate themselves with
- * {@link Requires}, in order to document their own dependencies.</span>
+ * Callers should catch {@link LinkageError} and pass it to
+ * {@link org.pdfclown.common.util.Exceptions#brokenDependency(Collection, LinkageError)}, along
+ * with the dependencies of the called element; consequently, <span class="important">since callers
+ * are transitively dependent on those dependencies, they MUST annotate themselves with
+ * {@link Needs}, in order to document their own dependencies. Conversely, if they don't catch
+ * {@link LinkageError}, they MUST in turn annotate themselves with {@code DependsOn}
+ * instead</span>, to shift the responsibility to handle missing dependencies up the stack to their
+ * own callers.
  * </p>
  *
  * @author Stefano Chizzolini
- * @see Requires
+ * @see Needs
  * @apiNote Usage example:
  *          <ol>
  *          <li>define an enum declaring the optional dependencies:<pre class="lang-java"><code>
  * public enum Dependency implements DependsOn.Dependency {
- *   JAVACV("org.bytedeco:javacv-platform", "org.bytedeco.javacv.Frame");
+ *   JAVACV(Dependency.ID__JAVACV, "org.bytedeco.javacv.Frame");
  *
  *   public static final String ID__JAVACV = "org.bytedeco:javacv-platform";
  *
@@ -61,8 +64,8 @@ import java.util.Collection;
  *   }
  * }</code></pre>
  *          <p>
- *          NOTE: The dependency ID ({@code "org.bytedeco:javacv-platform"}) has to be declared
- *          twice because annotations allow only compile-time field types.
+ *          NOTE: The dependency ID ({@code "org.bytedeco:javacv-platform"}) has to be declared as a
+ *          static constant because annotations allow only compile-time field types as values.
  *          </p>
  *          </li>
  *          <li>associate the optional dependencies to dependent
@@ -77,9 +80,9 @@ import java.util.Collection;
  *     }
  *   }
  * }</code></pre></li>
- *          <li>handle thrown {@link NoClassDefFoundError} on
+ *          <li>handle thrown {@link LinkageError} on
  *          call:<pre class="lang-java" data-line="6,12"><code>
- * import static org.pdfclown.common.util.Exceptions.missingClass;
+ * import static org.pdfclown.common.util.Exceptions.brokenDependency;
  *
 * public class Appearances {
 *   <span style="background-color:yellow;color:black;">&#64;Requires(Dependency.ID__JAVACV)</span>
@@ -87,9 +90,9 @@ import java.util.Collection;
 *     try {
 *       var frameImage = Image.of(Videos.frameImage(videoStream, frameTime));
 *       . . .
-*     } catch (NoClassDefFoundError ex) {
+*     } catch (LinkageError ex) {
 *       <span style=
-"background-color:yellow;color:black;">throw missingClass(Dependency.JAVACV, ex);</span>
+"background-color:yellow;color:black;">throw brokenDependency(Dependency.JAVACV, ex);</span>
 *     }
 *   }
 * }</code></pre></li>

@@ -69,6 +69,38 @@ public final class Exceptions {
   }
 
   /**
+   * Verifies whether any dependency caused the given linkage error.
+   *
+   * @return {@link IllegalStateException}, if any item in {@code dependencies} is missing;
+   *         otherwise, {@code ex}.
+   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
+   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
+   */
+  @SuppressWarnings("ReferenceEquality")
+  public static RuntimeException brokenDependency(Collection<Dependency> dependencies,
+      LinkageError ex) {
+    Throwable ret = ex;
+    for (var dependency : dependencies) {
+      if ((ret = brokenDependency(dependency, ex)) != ex) {
+        break;
+      }
+    }
+    return asRuntimeException(ret);
+  }
+
+  /**
+   * Verifies whether the dependency caused the given linkage error.
+   *
+   * @return {@link IllegalStateException}, if {@code dependency} is missing; otherwise, {@code ex}.
+   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
+   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
+   */
+  public static RuntimeException brokenDependency(Dependency dependency, LinkageError ex) {
+    return asRuntimeException(dependency.isAvailable() ? ex
+        : wrongState("`{}` dependency REQUIRED", dependency.getId(), ex));
+  }
+
+  /**
    * Creates an end-of-file exception.
    */
   public static EOFException EOF() {
@@ -152,38 +184,6 @@ public final class Exceptions {
     var message = ParamMessage.of(format, args);
     return new ElementNotFoundException(ref, typeDescription, message.getDescription(),
         message.getCause());
-  }
-
-  /**
-   * Verifies whether any dependency caused the given missing class exception.
-   *
-   * @return {@link IllegalStateException}, if any item in {@code dependencies} is missing;
-   *         otherwise, {@code ex}.
-   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
-   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
-   */
-  @SuppressWarnings("ReferenceEquality")
-  public static RuntimeException missingClass(Collection<Dependency> dependencies,
-      NoClassDefFoundError ex) {
-    Throwable ret = ex;
-    for (var dependency : dependencies) {
-      if ((ret = missingClass(dependency, ex)) != ex) {
-        break;
-      }
-    }
-    return asRuntimeException(ret);
-  }
-
-  /**
-   * Verifies whether the dependency caused the given missing class exception.
-   *
-   * @return {@link IllegalStateException}, if {@code dependency} is missing; otherwise, {@code ex}.
-   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
-   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
-   */
-  public static RuntimeException missingClass(Dependency dependency, NoClassDefFoundError ex) {
-    return asRuntimeException(dependency.isAvailable() ? ex
-        : wrongState("`{}` dependency REQUIRED", dependency.getId(), ex));
   }
 
   /**
