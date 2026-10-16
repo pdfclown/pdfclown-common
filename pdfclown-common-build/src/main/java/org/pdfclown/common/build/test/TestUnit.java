@@ -12,14 +12,10 @@
  */
 package org.pdfclown.common.build.test;
 
-import static java.nio.file.Files.exists;
-import static java.util.Objects.requireNonNull;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
-import static org.pdfclown.common.build.internal.temp.util.Objects.asTopLevelType;
 import static org.pdfclown.common.build.internal.temp.util.Objects.init;
 import static org.pdfclown.common.build.internal.temp.util.Objects.toStringWithValues;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
-import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__JAVA;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.resetDirectory;
 
 import java.nio.file.Path;
@@ -29,7 +25,6 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.pdfclown.common.build.internal.temp.util.annot.MonotonicNonNull;
-import org.pdfclown.common.build.internal.temp.util.io.ResourceNames;
 import org.pdfclown.common.build.system.LogManager;
 import org.pdfclown.common.build.system.MavenPathResolver;
 import org.pdfclown.common.build.system.ProjectDirId;
@@ -61,27 +56,24 @@ public abstract class TestUnit implements Test {
    *
    * @author Stefano Chizzolini
    */
-  public class Environment implements TestEnvironment {
+  public class Environment extends TestEnvironment {
     private final ProjectPathResolver pathResolver;
 
-    private boolean outputDirInitialized;
+    private transient boolean outputDirInitialized;
 
     public Environment() {
       this(new MavenPathResolver(Builds.projectDir()));
     }
 
     public Environment(ProjectPathResolver pathResolver) {
+      super(TestUnit.this);
+
       this.pathResolver = pathResolver;
     }
 
     @Override
     public Path dir(ProjectDirId id) {
       return pathResolver.resolve(id);
-    }
-
-    @Override
-    public String localName(String name) {
-      return ResourceNames.localName(name, TestUnit.this);
     }
 
     @Override
@@ -96,35 +88,22 @@ public abstract class TestUnit implements Test {
          */
         try {
           outputDirInitialized = true;
-          resetDirectory(outputPath(EMPTY));
+          resetDirectory(super.outputPath(EMPTY));
         } catch (Exception ex) {
           /*
-           * NOTE: We catch any exception to ensure the initialization flag is reverted.
+           * NOTE: We catch any exception to ensure the initialization flag is reverted, so users
+           * have a chance to fix it and retry.
            */
           outputDirInitialized = false;
           throw runtime(ex);
         }
       }
-      return TestEnvironment.super.outputPath(name);
+      return super.outputPath(name);
     }
 
     @Override
     public String toString() {
       return toStringWithValues(this, pathResolver);
-    }
-
-    @Override
-    public Path typeSrcPath(Class<?> type) {
-      var name = ResourceNames.absBased(
-          requireNonNull(asTopLevelType(type), "`type`").getSimpleName() + FILE_EXTENSION__JAVA,
-          type);
-      Path ret;
-      if (exists(ret = ResourceNames.toPath(name, dir(ProjectDirId.TEST_TYPE_SOURCE)))
-          || exists(ret = ResourceNames.toPath(name, dir(ProjectDirId.MAIN_TYPE_SOURCE))))
-        return ret;
-      else
-        throw runtime("Source file corresponding to {} NOT FOUND (search paths: {}, {})", type,
-            dir(ProjectDirId.TEST_TYPE_SOURCE), dir(ProjectDirId.MAIN_TYPE_SOURCE));
     }
   }
 

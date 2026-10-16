@@ -103,7 +103,9 @@ class TestUnitTest extends BaseTest {
       // Relative root
       "",
       // Relative name
-      "my/relative/resource.html");
+      "my/relative/resource.html",
+      // Shared name
+      "@/my/shared/resource.html");
 
   @Test
   @DisplayName("getTestLabel!")

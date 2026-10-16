@@ -67,6 +67,7 @@ import org.pdfclown.common.build.system.MavenPathResolver;
 import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.pdfclown.common.util.Ref;
+import org.pdfclown.common.util.annot.PolyNull;
 import org.pdfclown.common.util.xml.Xmls.XPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -285,10 +286,10 @@ public final class Builds {
   public static Optional<Path> mavenHomeOf(Path exec) {
     try {
       Optional<Path> ret;
-      if ((ret = mavenHomeOf(exec, false)).isPresent())
+      if ((ret = doMavenHomeOf(exec, false)).isPresent())
         return ret;
 
-      return mavenHomeOf(exec, true);
+      return doMavenHomeOf(exec, true);
     } catch (IOException ex) {
       throw runtime(ex);
     } catch (InterruptedException ex) {
@@ -318,7 +319,7 @@ public final class Builds {
   }
 
   /**
-   * Gets the current project directory.
+   * Gets the current project's base directory.
    *
    * @implNote The project directory is detected starting from the current resource directory.
    * @throws IllegalStateException
@@ -332,22 +333,43 @@ public final class Builds {
   }
 
   /**
-   * Gets the project directory a path belongs to.
+   * Gets the project's base directory a path belongs to.
    *
    * @param path
    *          An arbitrary position within a project.
    * @return {@code null}, if {@code path} is outside any project.
    */
   public static @Nullable Path projectDir(Path path) {
-    Path dir = isDirectory(path) ? path : path.getParent();
-    while (dir != null) {
-      var pomFile = dir.resolve(FILENAME__POM);
-      if (exists(pomFile))
-        return dir;
+    var ret = isDirectory(path) ? path : path.getParent();
+    while (ret != null) {
+      if (exists(ret.resolve(FILENAME__POM)))
+        return ret;
 
-      dir = dir.getParent();
+      ret = ret.getParent();
     }
     return null;
+  }
+
+  /**
+   * Gets the current project's root directory.
+   *
+   * @implNote The project directory is detected starting from the current resource directory.
+   * @throws IllegalStateException
+   *           if the current resource directory is outside any project.
+   */
+  public static Path projectRootDir() {
+    return nonNull(doProjectRootDir(projectDir()));
+  }
+
+  /**
+   * Gets the project's root directory a path belongs to.
+   *
+   * @param path
+   *          An arbitrary position within a project.
+   * @return {@code null}, if {@code path} is outside any project.
+   */
+  public static @Nullable Path projectRootDir(Path path) {
+    return doProjectRootDir(projectDir(path));
   }
 
   /**
@@ -449,7 +471,7 @@ public final class Builds {
    * @param interactive
    *          Whether the executable has to run in interactive shell.
    */
-  private static Optional<Path> mavenHomeOf(Path exec, boolean interactive)
+  private static Optional<Path> doMavenHomeOf(Path exec, boolean interactive)
       throws IOException, InterruptedException {
     /*
      * Query Maven executable!
@@ -471,6 +493,19 @@ public final class Builds {
       }
     });
     return opt(retRef.get());
+  }
+
+  private static @PolyNull @Nullable Path doProjectRootDir(@PolyNull @Nullable Path projectDir) {
+    var ret = projectDir;
+    while (ret != null) {
+      Path parent = ret.getParent();
+      if (parent == null || !exists(parent.resolve(FILENAME__POM))) {
+        break;
+      }
+
+      ret = parent;
+    }
+    return ret;
   }
 
   private Builds() {

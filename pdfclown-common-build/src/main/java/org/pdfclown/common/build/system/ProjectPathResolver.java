@@ -62,11 +62,31 @@ public abstract class ProjectPathResolver {
     base.put(ProjectDirId.BASE, normal(baseDir));
   }
 
-  public Path resolve(ProjectDirId id) {
-    return base.computeIfAbsent(id, $k -> nonNull(base.get(ProjectDirId.BASE))
-        .resolve(relativePath($k)));
+  /**
+   * Resolves the path corresponding to the given identifier.
+   */
+  public synchronized Path resolve(ProjectDirId id) {
+    /*
+     * WARNING: DO NOT use `Map.computeIfAbsent`, as it may throw `ConcurrentModificationException`
+     * due to recursive resolution (certain `ProjectDirId` are dependent on other ones).
+     */
+    Path ret = base.get(id);
+    if (ret == null) {
+      base.put(id, ret = nonNull(base.get(ProjectDirId.BASE)).resolve(relativePath(id)));
+    }
+    return ret;
   }
 
+  /**
+   * Resolves the subpath under the given base directory.
+   */
+  public Path resolve(ProjectDirId id, Path sub) {
+    return resolve(id).resolve(sub);
+  }
+
+  /**
+   * Resolves the subpath under the given base directory.
+   */
   public Path resolve(ProjectDirId id, String sub) {
     return resolve(id).resolve(ResourceNames.rel(sub));
   }

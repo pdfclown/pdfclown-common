@@ -2,3 +2,4 @@
 [name: "/my/absolute/resource.html"] => "/my/absolute/resource.html"
 [name: ""] => "/org/pdfclown/common/build/test/TestUnitTest$SampleTest"
 [name: "my/relative/resource.html"] => "/org/pdfclown/common/build/test/TestUnitTest$SampleTest/my/relative/resource.html"
+[name: "@/my/shared/resource.html"] => <<ArgumentException: "`name` (\"@/my/shared/resource.html\") INVALID (Shared resource name NOT allowed in this kind of path)">>

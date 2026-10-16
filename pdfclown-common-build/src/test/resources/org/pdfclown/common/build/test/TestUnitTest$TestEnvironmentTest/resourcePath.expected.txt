@@ -2,3 +2,4 @@
 [name: "/my/absolute/resource.html"] => "target/test-classes/my/absolute/resource.html"
 [name: ""] => "target/test-classes/org/pdfclown/common/build/test/TestUnitTest$SampleTest"
 [name: "my/relative/resource.html"] => "target/test-classes/org/pdfclown/common/build/test/TestUnitTest$SampleTest/my/relative/resource.html"
+[name: "@/my/shared/resource.html"] => "../src/test/shared-resources/my/shared/resource.html"

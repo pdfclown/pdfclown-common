@@ -19,35 +19,50 @@ package org.pdfclown.common.build.system;
  */
 public enum ProjectDirId {
   /**
+   * Root directory of the project.
+   */
+  ROOT,
+  /**
    * Base directory of the project.
    */
   BASE,
   /**
-   * Base directory of test output (typically, {@code "target/test-output"}).
+   * Test output directory ({@code target/test-output} in Maven's Standard Directory Layout).
    */
   TEST_OUTPUT,
   /**
-   * Test build directory (typically, {@code "target/test-classes"}).
+   * Test build directory ({@code target/test-classes} in Maven's Standard Directory Layout).
    */
   TEST_TARGET,
   /**
-   * Source directory of test resources (typically, {@code "src/test/resources"}).
+   * Directory of shared test resources (for example, {@code %ROOT%/src/test/shared-resources} in
+   * Maven, where {@code %ROOT%} is the {@linkplain #ROOT root directory of the project}).
+   *
+   * @apiNote Useful when packaging shared resources in test artifacts is inconvenient, because they
+   *          are large and consumed only locally to the project.
+   */
+  TEST_RESOURCE_SHARED,
+  /**
+   * Source directory of test resources ({@code src/test/resources} in Maven's Standard Directory
+   * Layout).
    */
   TEST_RESOURCE_SOURCE,
   /**
-   * Source directory of test types (typically, {@code "src/test/java"}).
+   * Source directory of test types ({@code src/test/java} in Maven's Standard Directory Layout).
    */
   TEST_TYPE_SOURCE,
   /**
-   * Main build directory (typically, {@code "target/classes"}).
+   * Production build directory ({@code target/classes} in Maven's Standard Directory Layout).
    */
   MAIN_TARGET,
   /**
-   * Source directory of main resources (typically, {@code "src/main/resources"}).
+   * Source directory of production resources ({@code src/main/resources} in Maven's Standard
+   * Directory Layout).
    */
   MAIN_RESOURCE_SOURCE,
   /**
-   * Source directory of main types (typically, {@code "src/main/java"}).
+   * Source directory of production types ({@code src/main/java} in Maven's Standard Directory
+   * Layout).
    */
   MAIN_TYPE_SOURCE
 }

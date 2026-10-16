@@ -13,7 +13,9 @@
 package org.pdfclown.common.build.system;
 
 import static java.nio.file.Files.isRegularFile;
+import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
+import static org.pdfclown.common.build.util.system.Builds.projectRootDir;
 
 import java.nio.file.Path;
 import org.jspecify.annotations.Nullable;
@@ -62,13 +64,22 @@ public class MavenPathResolver extends ProjectPathResolver {
   protected String relativePath(ProjectDirId id) {
     return switch (id) {
       case BASE -> EMPTY;
+      case MAIN_RESOURCE_SOURCE -> "src/main/resources";
       case MAIN_TARGET -> "target/classes";
       case MAIN_TYPE_SOURCE -> "src/main/java";
-      case MAIN_RESOURCE_SOURCE -> "src/main/resources";
+      /*
+       * TODO: The call to `projectRootDir` causes a circular dependence with
+       * `org.pdfclown.common.build.util.system.Builds`; at the moment this benign design flaw is
+       * not worth the pain of refactoring, but should be fixed in the future as the library
+       * matures.
+       */
+      case ROOT -> nonNull(projectRootDir(resolve(ProjectDirId.BASE))).toString();
       case TEST_OUTPUT -> "target/test-output";
+      case TEST_RESOURCE_SHARED -> resolve(ProjectDirId.ROOT, "src/test/shared-resources")
+          .toString();
+      case TEST_RESOURCE_SOURCE -> "src/test/resources";
       case TEST_TARGET -> "target/test-classes";
       case TEST_TYPE_SOURCE -> "src/test/java";
-      case TEST_RESOURCE_SOURCE -> "src/test/resources";
     };
   }
 }
