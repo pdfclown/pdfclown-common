@@ -66,47 +66,47 @@ import org.pdfclown.common.build.system.ProjectDirId;
  * </tr>
  * <tr>
  * <td>Absolute root</td>
- * <td>/</td>
- * <td>{@linkplain #resourcePath(String) target/test-classes}</td>
- * <td rowspan="7">org.myproject.system.MyObjectTest</td>
- * <td>target/test-classes</td>
+ * <td><code>/</code></td>
+ * <td>{@link #resourcePath(String) target/test-classes}</td>
+ * <td rowspan="7"><code>org.myproject.system.MyObjectTest</code></td>
+ * <td><code>target/test-classes</code></td>
  * </tr>
  * <tr>
  * <td>Absolute</td>
- * <td>/images/myresource.jpg</td>
- * <td>{@linkplain #resourcePath(String) target/test-classes}</td>
- * <td>target/test-classes/images/myresource.jpg</td>
+ * <td><code>/images/myresource.jpg</code></td>
+ * <td>{@link #resourcePath(String) target/test-classes}</td>
+ * <td><code>target/test-classes/images/myresource.jpg</code></td>
  * </tr>
  * <tr>
  * <td rowspan="2">Relative root</td>
  * <td rowspan="2">(empty)</td>
- * <td>{@linkplain #resourcePath(String) target/test-classes}</td>
- * <td>target/test-classes/org/myproject/system/MyObjectTest</td>
+ * <td>{@link #resourcePath(String) target/test-classes}</td>
+ * <td><code>target/test-classes/org/myproject/system/MyObjectTest</code></td>
  * </tr>
  * <tr>
- * <td>{@linkplain #outputPath(String) target/test-output}</td>
- * <td>target/test-output/org/myproject/system/MyObjectTest</td>
+ * <td>{@link #outputPath(String) target/test-output}</td>
+ * <td><code>target/test-output/org/myproject/system/MyObjectTest</code></td>
  * </tr>
  * <tr>
  * <td rowspan="2">Relative</td>
- * <td rowspan="2">images/myresource.jpg</td>
- * <td>{@linkplain #resourcePath(String) target/test-classes}</td>
- * <td>target/test-classes/org/myproject/system/MyObjectTest/images/myresource.jpg</td>
+ * <td rowspan="2"><code>images/myresource.jpg</code></td>
+ * <td>{@link #resourcePath(String) target/test-classes}</td>
+ * <td><code>target/test-classes/org/myproject/system/MyObjectTest/images/myresource.jpg</code></td>
  * </tr>
  * <tr>
- * <td>{@linkplain #outputPath(String) target/test-output}</td>
- * <td>target/test-output/org/myproject/system/MyObjectTest/images/myresource.jpg</td>
+ * <td>{@link #outputPath(String) target/test-output}</td>
+ * <td><code>target/test-output/org/myproject/system/MyObjectTest/images/myresource.jpg</code></td>
  * </tr>
  * <tr>
  * <td>Shared</td>
- * <td>@/images/myresource.jpg</td>
- * <td>{@linkplain #resourcePath(String) %ROOT%/src/test/shared-resources}</td>
- * <td>%ROOT%/src/test/shared-resources/images/myresource.jpg</td>
+ * <td><code>@/images/myresource.jpg</code></td>
+ * <td>{@link #resourcePath(String) %ROOT%/src/test/shared-resources}</td>
+ * <td><code>%ROOT%/src/test/shared-resources/images/myresource.jpg</code></td>
  * </tr>
  * </table>
  * <p>
  * [*] The actual <b>project directory layout</b> is implementation-specific (see also
- * {@linkplain org.pdfclown.common.build.system.ProjectPathResolver}).
+ * {@link org.pdfclown.common.build.system.ProjectPathResolver}).
  * </p>
  *
  * @author Stefano Chizzolini
