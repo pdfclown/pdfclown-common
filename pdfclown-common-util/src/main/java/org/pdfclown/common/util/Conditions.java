@@ -14,10 +14,13 @@ package org.pdfclown.common.util;
 
 import static java.util.Collections.singletonList;
 import static org.pdfclown.common.util.Exceptions.missing;
+import static org.pdfclown.common.util.Exceptions.missingDependencies;
 import static org.pdfclown.common.util.Exceptions.missingPath;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.util.Exceptions.wrongState;
+import static org.pdfclown.common.util.annot.RequiresDependencies.Support.dependencies;
+import static org.pdfclown.common.util.reflect.Reflects.callerFrame;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
@@ -32,6 +35,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.PolyNull;
+import org.pdfclown.common.util.annot.RequiresDependencies.Dependency;
 import org.pdfclown.common.util.collect.Range;
 
 /**
@@ -275,6 +279,31 @@ public final class Conditions {
       throw wrongArg(name, value, "MUST be at most {}", otherValue);
 
     return value;
+  }
+
+  /**
+   * Requires the dependencies of the caller method.
+   *
+   * @throws IllegalStateException
+   *           if any required dependency is missing.
+   */
+  public static void requireDependencies() throws IllegalStateException {
+    requireDependencies(dependencies(callerFrame()));
+  }
+
+  /**
+   * Requires the given dependencies.
+   *
+   * @throws IllegalStateException
+   *           if any required dependency is missing.
+   */
+  public static void requireDependencies(Collection<Dependency> dependencies)
+      throws IllegalStateException {
+    var missingDependencies = dependencies.stream()
+        .filter(Predicate.not(Dependency::isAvailable))
+        .toList();
+    if (!missingDependencies.isEmpty())
+      throw missingDependencies(missingDependencies, null);
   }
 
   /**

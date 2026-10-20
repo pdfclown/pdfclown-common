@@ -21,6 +21,7 @@ import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.ParamMessage.ARG;
+import static org.pdfclown.common.util.annot.RequiresDependencies.Support.missingDependencies;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
@@ -32,10 +33,12 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.util.annot.DependsOn.Dependency;
 import org.pdfclown.common.util.annot.PolyNull;
+import org.pdfclown.common.util.annot.RequiresDependencies;
+import org.pdfclown.common.util.annot.RequiresDependencies.Dependency;
 import org.pdfclown.common.util.net.ResourceNotFoundException;
 
 /**
@@ -66,38 +69,6 @@ public final class Exceptions {
       return undeclared.getUndeclaredThrowable();
     } else
       return throwable;
-  }
-
-  /**
-   * Verifies whether any dependency caused the given linkage error.
-   *
-   * @return {@link IllegalStateException}, if any item in {@code dependencies} is missing;
-   *         otherwise, {@code ex}.
-   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
-   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
-   */
-  @SuppressWarnings("ReferenceEquality")
-  public static RuntimeException brokenDependency(Collection<Dependency> dependencies,
-      LinkageError ex) {
-    Throwable ret = ex;
-    for (var dependency : dependencies) {
-      if ((ret = brokenDependency(dependency, ex)) != ex) {
-        break;
-      }
-    }
-    return asRuntimeException(ret);
-  }
-
-  /**
-   * Verifies whether the dependency caused the given linkage error.
-   *
-   * @return {@link IllegalStateException}, if {@code dependency} is missing; otherwise, {@code ex}.
-   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
-   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
-   */
-  public static RuntimeException brokenDependency(Dependency dependency, LinkageError ex) {
-    return asRuntimeException(dependency.isAvailable() ? ex
-        : wrongState("`{}` dependency REQUIRED", dependency.getId(), ex));
   }
 
   /**
@@ -184,6 +155,21 @@ public final class Exceptions {
     var message = ParamMessage.of(format, args);
     return new ElementNotFoundException(ref, typeDescription, message.getDescription(),
         message.getCause());
+  }
+
+  /**
+   * Verifies whether any missing {@linkplain Dependency optional dependency} caused the given
+   * linkage error.
+   *
+   * @return {@link IllegalStateException}, if any required optional dependency is missing;
+   *         otherwise, {@code ex}.
+   * @apiNote Useful to notify the lack of optional dependencies the called element
+   *          {@linkplain RequiresDependencies requires}.
+   */
+  public static RuntimeException missingDependencies(LinkageError ex) {
+    var missingDependencies = RequiresDependencies.Support.missingDependencies(ex);
+    return missingDependencies.isEmpty() ? asRuntimeException(ex)
+        : missingDependencies(missingDependencies, ex);
   }
 
   /**
@@ -525,6 +511,17 @@ public final class Exceptions {
    */
   public static IllegalStateException wrongState(Throwable cause) {
     return cause instanceof IllegalStateException ex ? ex : new IllegalStateException(cause);
+  }
+
+  static IllegalStateException missingDependencies(Collection<Dependency> dependencies,
+      @Nullable LinkageError ex) {
+    return wrongState(
+        "[{}] dependencies BROKEN (themselves or their transitive dependencies may be missing "
+            + "or invalid)",
+        dependencies.stream()
+            .map(Dependency::getId)
+            .collect(Collectors.joining(", ")),
+        ex);
   }
 
   private Exceptions() {

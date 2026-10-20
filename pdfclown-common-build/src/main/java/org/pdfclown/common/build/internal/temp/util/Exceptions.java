@@ -12,7 +12,6 @@
  */
 package org.pdfclown.common.build.internal.temp.util;
 
-import static org.apache.commons.lang3.exception.ExceptionUtils.asRuntimeException;
 import static org.pdfclown.common.util.Chars.COMMA;
 import static org.pdfclown.common.util.Chars.CURLY_BRACE_CLOSE;
 import static org.pdfclown.common.util.Chars.CURLY_BRACE_OPEN;
@@ -36,7 +35,6 @@ import org.apache.commons.lang3.exception.UncheckedException;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.build.internal.temp.util.net.ResourceNotFoundException;
 import org.pdfclown.common.util.NotImplementedException;
-import org.pdfclown.common.util.annot.DependsOn.Dependency;
 import org.pdfclown.common.util.annot.PolyNull;
 
 /**
@@ -67,38 +65,6 @@ public final class Exceptions {
       return undeclared.getUndeclaredThrowable();
     } else
       return throwable;
-  }
-
-  /**
-   * Verifies whether any dependency caused the given linkage error.
-   *
-   * @return {@link IllegalStateException}, if any item in {@code dependencies} is missing;
-   *         otherwise, {@code ex}.
-   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
-   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
-   */
-  @SuppressWarnings("ReferenceEquality")
-  public static RuntimeException brokenDependency(Collection<Dependency> dependencies,
-      LinkageError ex) {
-    Throwable ret = ex;
-    for (var dependency : dependencies) {
-      if ((ret = brokenDependency(dependency, ex)) != ex) {
-        break;
-      }
-    }
-    return asRuntimeException(ret);
-  }
-
-  /**
-   * Verifies whether the dependency caused the given linkage error.
-   *
-   * @return {@link IllegalStateException}, if {@code dependency} is missing; otherwise, {@code ex}.
-   * @apiNote Useful to gracefully notify the lack of optional dependencies the called element
-   *          {@linkplain org.pdfclown.common.util.annot.DependsOn depends on}.
-   */
-  public static RuntimeException brokenDependency(Dependency dependency, LinkageError ex) {
-    return asRuntimeException(dependency.isAvailable() ? ex
-        : wrongState("`{}` dependency REQUIRED", dependency.getId(), ex));
   }
 
   /**
