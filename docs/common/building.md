@@ -243,21 +243,21 @@ This document describes how to set up your development environment to build and 
 >    - **manually**, using diff dialogs in case of `Verifier`-based unit tests (see here above)
 >    - **automatically**, using `test.expected.update` system property, like so:
 >      ```shell
->      ./mvnw (test|verify) -Dtest.expected.update
+>      ./mvnw {test|verify} -Dtest.expected.update
 >      ```
 
 > [!TIP]
 > By default, **test logs** (`%MODULE%/target/test-logs`) are filtered at WARN level; to adjust this threshold, use `log.level` system property, like so:
 >
 > ```shell
-> ./mvnw (test|verify) -Dlog.level=INFO
+> ./mvnw {test|verify} -Dlog.level=INFO
 > ```
 
 > [!TIP]
 > To **debug tests**, attach Maven process to an IDE after entering this:
 >
 > ```shell
-> ./mvnwDebug (test|verify) -DforkCount=0
+> ./mvnwDebug {test|verify} -DforkCount=0
 > ```
 
 ### Other Checks
