@@ -10,14 +10,13 @@
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
  */
-package org.pdfclown.common.build.test.assertion;
+package org.pdfclown.common.build.internal.test.assertion;
 
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -26,7 +25,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.Property;
 import org.jspecify.annotations.Nullable;
-import org.pdfclown.common.build.spi.LogCaptorProvider;
+import org.pdfclown.common.build.test.assertion.LogCaptor;
 import org.slf4j.event.Level;
 import org.slf4j.event.LoggingEvent;
 
@@ -35,29 +34,7 @@ import org.slf4j.event.LoggingEvent;
  *
  * @author Stefano Chizzolini
  */
-public class Log4jCaptor extends LogCaptor {
-  /**
-   * {@link Log4jCaptor} provider.
-   *
-   * @author Stefano Chizzolini
-   */
-  public static class Provider implements LogCaptorProvider {
-    @Override
-    public @Nullable Function<String, LogCaptor> getFactory(String implName) {
-      return implName.contains("log4j") ? Log4jCaptor::new : null;
-    }
-
-    @Override
-    public int getPriority() {
-      return 0;
-    }
-
-    @Override
-    public boolean isAvailable() {
-      return true;
-    }
-  }
-
+class Log4jCaptor extends LogCaptor {
   private static class CaptureAppender extends AbstractAppender {
     private final List<LoggingEvent> events = new ArrayList<>();
 

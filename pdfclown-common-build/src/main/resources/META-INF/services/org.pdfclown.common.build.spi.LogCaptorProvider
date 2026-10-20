@@ -1,1 +1,1 @@
-org.pdfclown.common.build.test.assertion.Log4jCaptor$Provider
+org.pdfclown.common.build.internal.test.assertion.Log4jCaptorProvider
