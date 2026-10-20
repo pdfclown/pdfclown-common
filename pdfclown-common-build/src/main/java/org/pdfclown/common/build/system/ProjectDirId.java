@@ -27,13 +27,19 @@ public enum ProjectDirId {
    */
   BASE,
   /**
-   * Test output directory ({@code target/test-output} in Maven's Standard Directory Layout).
+   * Source directory of production resources ({@code src/main/resources} in Maven's Standard
+   * Directory Layout).
    */
-  TEST_OUTPUT,
+  MAIN_RESOURCE_SOURCE,
   /**
-   * Test build directory ({@code target/test-classes} in Maven's Standard Directory Layout).
+   * Source directory of production types ({@code src/main/java} in Maven's Standard Directory
+   * Layout).
    */
-  TEST_TARGET,
+  MAIN_TYPE_SOURCE,
+  /**
+   * Production build directory ({@code target/classes} in Maven's Standard Directory Layout).
+   */
+  MAIN_TARGET,
   /**
    * Directory of shared test resources (for example, {@code %ROOT%/src/test/shared-resources} in
    * Maven, where {@code %ROOT%} is the {@linkplain #ROOT root directory of the project}).
@@ -52,17 +58,11 @@ public enum ProjectDirId {
    */
   TEST_TYPE_SOURCE,
   /**
-   * Production build directory ({@code target/classes} in Maven's Standard Directory Layout).
+   * Test build directory ({@code target/test-classes} in Maven's Standard Directory Layout).
    */
-  MAIN_TARGET,
+  TEST_TARGET,
   /**
-   * Source directory of production resources ({@code src/main/resources} in Maven's Standard
-   * Directory Layout).
+   * Test output directory ({@code target/test-output} in Maven's Standard Directory Layout).
    */
-  MAIN_RESOURCE_SOURCE,
-  /**
-   * Source directory of production types ({@code src/main/java} in Maven's Standard Directory
-   * Layout).
-   */
-  MAIN_TYPE_SOURCE
+  TEST_OUTPUT,
 }
