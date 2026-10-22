@@ -19,7 +19,7 @@ import static org.pdfclown.common.util.Objects.nonNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -61,9 +61,8 @@ public final class Enums {
    * @throws IllegalArgumentException
    *           if there is no constant matching {@code code}.
    */
-  public static <E, K> E get(Class<E> type, @Nullable K code, BiFunction<E, K, Boolean> matcher) {
-    //noinspection DataFlowIssue : false positive
-    var ret = tryGet(type, code, matcher);
+  public static <E, K> E get(Class<E> type, @Nullable K code, BiPredicate<E, K> matcher) {
+    E ret = tryGet(type, code, matcher);
     if (ret == null)
       throw wrongArg("code", code, "No matching constant in {}", type);
 
@@ -87,8 +86,7 @@ public final class Enums {
    *           if there is no constant matching {@code code}.
    */
   public static <E, K> E get(Class<E> type, @Nullable K code, Function<E, K> mapper) {
-    //noinspection DataFlowIssue : false positive
-    var ret = tryGet(type, code, mapper);
+    E ret = tryGet(type, code, mapper);
     if (ret == null)
       throw wrongArg("code", code, "No matching constant in {}", type);
 
@@ -218,12 +216,12 @@ public final class Enums {
    * @return {@code null}, if no match was found.
    */
   public static <E, K> @Nullable E tryGet(Class<E> type, @Nullable K code,
-      BiFunction<E, K, Boolean> matcher) {
+      BiPredicate<E, K> matcher) {
     if (code == null)
       return null;
 
     for (E value : map(type).values()) {
-      if (matcher.apply(value, code))
+      if (matcher.test(value, code))
         return value;
     }
     return null;
@@ -267,8 +265,7 @@ public final class Enums {
   }
 
   @SuppressWarnings("unchecked")
-  private static <E, K> Map<K, E> map(Class<E> type,
-      Collector<E, ?, Map<K, E>> collector) {
+  private static <E, K> Map<K, E> map(Class<E> type, Collector<E, ?, Map<K, E>> collector) {
     Stream<E> stream;
     if (Xnum.class.isAssignableFrom(type) && type.isInterface()) {
       stream = (Stream<E>) nonNull(BaseXnum.values((Class<Xnum<K>>) type)).stream();
