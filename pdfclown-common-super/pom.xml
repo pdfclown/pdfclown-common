@@ -1332,10 +1332,12 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
     <profile>
       <id>release</id>
       <!--
-        DEPLOYMENT PROFILE
+        RELEASE PROFILE
+
+        Performs artifact release to public repository (namely, Maven Central).
 
         Activates the following operations:
-        - release execution via ReleaseManager
+        - release execution via `ReleaseManager`
 
         Usage (IMPORTANT: run at project root):
           ./mvnw initialize -N -Prelease \
@@ -1343,6 +1345,9 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
               [-Drelease.startpoint=<ref: release branch start point>] \
               [-DdryRun] \
               -Dtarget.jdk.home="<path: target JAVA_HOME>"
+
+        NOTE: This profile is for release versions only; for development versions (SNAPSHOT), see
+        `publish` profile instead.
       -->
       <build>
         <plugins>
@@ -1393,7 +1398,7 @@ var projectDir = project.basedir.toPath()
 var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVer1.class)
         .toString())
     .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY__RELEASE_STARTPOINT])
-    .setDeploymentProfiles("__publish,reuse")
+    .setDeploymentProfiles("publish,reuse")
     .setInstallationProfiles("full,reuse")
     /* NOTE: Activates remote push only if GPG signing is configured. */
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
@@ -1414,26 +1419,23 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
       </build>
     </profile>
 
-    <!--============================================================================================
-      TOOL PROFILES
-
-      These (`__xxxxxxx`) profiles are meant to be triggered by tooling.
-
-      NOTE: Because of definition order, the configuration settings in these profiles take
-      precedence over MANUAL ones.
-    =============================================================================================-->
-
     <profile>
-      <id>__publish</id>
+      <id>publish</id>
       <!--
-        DEPLOYMENT EXECUTION PROFILE
+        DEPLOYMENT PROFILE
+
+        Performs artifact deployment to public repository (namely, Maven Central).
 
         Activates the following operations:
-        - Javadoc artifacts building
-        - Artifacts signing
-        - Artifacts publishing on Maven Central
+        - Javadoc artifact building
+        - Artifact signing
+        - Artifact publishing to Maven Central
 
-        IMPORTANT: It is caller's responsibility to prepare the working tree for the deployment, in
+        Usage differs by artifact version type:
+        - development (SNAPSHOT): this profile is activated directly on `mvn deploy` command
+        - release: this profile is activated indirectly via `ReleaseManager` (see `release` profile)
+
+        IMPORTANT: It is user's responsibility to prepare the working tree for the deployment, in
         particular to check out the corresponding release tag.
       -->
       <properties>
@@ -1475,6 +1477,15 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
         </plugins>
       </build>
     </profile>
+
+    <!--============================================================================================
+      TOOL PROFILES
+
+      These (`__xxxxxxx`) profiles are meant to be triggered by tooling only.
+
+      NOTE: Because of definition order, the configuration settings in these profiles take
+      precedence over MANUAL ones.
+    =============================================================================================-->
 
     <!--============================================================================================
       STATE PROFILES
