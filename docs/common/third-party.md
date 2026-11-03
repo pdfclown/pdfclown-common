@@ -119,15 +119,5 @@ Whenever any content from third-party projects is incorporated, it MUST be docum
 
    - `Changes`: specifies *relevant differences between the local file and its source*.
 
-3. **validate** the copyright and licensing information of the project:
-
-    ```shell
-    ./mvnw validate -N -Preuse
-    ```
-
-    Satisfy any REUSE coverage requirement, and fix any missing or dead entry in `THIRD-PARTY-NOTICES.txt` file; to exclude redundant entries from that file (such as related to the project's own copyright holder, or to build tools):
-
-    ```
-    ./mvnw validate -N -Preuse -Dtest.expected.update
-    ```
+3. [**verify copyright and licensing declaration compliance**](building.md#other-checks)
 <!-- REUSE-IgnoreEnd -->

@@ -262,14 +262,20 @@ This document describes how to set up your development environment to build and 
 
 ### Other Checks
 
-- verify **dependency vulnerabilities**:
+- **verify copyright and licensing declaration compliance** (see <https://reuse.software>):
+
+    ```shell
+    ./mvnw validate -N -Preuse
+    ```
+
+  Satisfy any REUSE coverage requirement, and fix any missing or dead entry in `THIRD-PARTY-NOTICES.txt` file; to exclude redundant entries from that file (such as related to the project's own copyright holder, or to build tools):
+
+    ```
+    ./mvnw validate -N -Preuse -Dtest.expected.update
+    ```
+
+- **verify dependency vulnerabilities**:
 
     ```shell
     ./mvnw verify -Pverify-extra
-    ```
-
-- verify **copyright and licensing declarations compliance** (see <https://reuse.software>):
-
-    ```shell
-    reuse lint
     ```
