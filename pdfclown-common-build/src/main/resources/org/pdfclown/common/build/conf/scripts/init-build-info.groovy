@@ -32,8 +32,6 @@ if (commitTime.isEmpty())
   throw new IllegalStateException("Required property 'commitTime' is not set")
 
 String commitIdMetadata = binding.variables['commitIdMetadata']?.trim() ?: ''
-if (commitIdMetadata.isEmpty())
-  throw new IllegalStateException("Required property 'commitIdMetadata' is not set")
 
 boolean commitDirty = binding.variables['commitDirty']?.trim()?.equalsIgnoreCase('true')
 
@@ -53,8 +51,8 @@ def buildTimestamp = commitDirty
 // Share the build timestamp as property for interpolation!
 session.userProperties.setProperty('buildTimestamp', buildTimestamp)
 
-log.info("* buildTimestamp: " + buildTimestamp
-    + " (" + (commitDirty ? "DIRTY" : "REPRODUCIBLE") + ")")
+log.info("* buildTimestamp: " + buildTimestamp +
+    " (" + (commitDirty ? "DIRTY" : "REPRODUCIBLE") + ")")
 
 /*
   Metadata-augmented implementation version (SemVer2).
@@ -62,8 +60,13 @@ log.info("* buildTimestamp: " + buildTimestamp
   In case of SNAPSHOT, appends metadata to the version to fully identify the build it originated
   from.
  */
-def version = project.version
-def implementationVersion = version + (version.endsWith("SNAPSHOT") ? "+${commitIdMetadata}" : "")
+def implementationVersion = project.version
+if (implementationVersion.endsWith("SNAPSHOT")) {
+  if (commitIdMetadata.isEmpty())
+    throw new IllegalStateException("Required property 'commitIdMetadata' is not set")
+
+  implementationVersion += "+" + commitIdMetadata
+}
 
 // Share the implementation version as property for interpolation!
 session.userProperties.setProperty('implementationVersion', implementationVersion)
