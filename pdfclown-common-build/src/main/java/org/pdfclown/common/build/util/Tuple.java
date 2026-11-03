@@ -1,24 +1,4 @@
 /*
-  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
-
-  SPDX-License-Identifier: LGPL-3.0-only
-
-  This file (Tuple.java) is part of pdfclown-common-build module in pdfClown Common project
-  <https://github.com/pdfclown/pdfclown-common>
-
-  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
-  this file, you MUST add your own copyright notice in a separate comment block above this file
-  header, listing the main changes you applied to the original source.
- */
-/*
-  Source: https://github.com/apache/groovy/blob/7831e9cf9e66f20c1b7fdd8f7dfff480db7cbe18/src/main/java/groovy/lang/Tuple.java
-
-  Changes:
-  - factory methods reduced to 9 elements maximum
-  - constructor visibility reduced to package
-  - equality comparison simplified
- */
-/*
  *  Copyright 2003-2026 The Apache Software Foundation
  *
  *  SPDX-License-Identifier: Apache-2.0
@@ -39,6 +19,27 @@
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
  *  under the License.
+ */
+/*
+  CHANGES TO THE ORIGINAL FILE
+
+  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-only
+
+  This file (Tuple.java) is part of pdfclown-common-build module in pdfClown Common project
+  <https://github.com/pdfclown/pdfclown-common>
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block above this file
+  header, listing the main changes you applied to the original source.
+
+  Source: https://github.com/apache/groovy/blob/7831e9cf9e66f20c1b7fdd8f7dfff480db7cbe18/src/main/java/groovy/lang/Tuple.java
+
+  Changes:
+  - factory methods reduced to 9 elements maximum
+  - constructor visibility reduced to package
+  - equality comparison simplified
  */
 package org.pdfclown.common.build.util;
 
@@ -62,35 +63,53 @@ import org.pdfclown.common.util.annot.Unmodifiable;
 @Unmodifiable
 public class Tuple<E extends @Nullable Object> extends AbstractList<E>
     implements Comparable<Tuple<E>>, RandomAccess {
+  /**
+   * Creates a tuple from elements.
+   */
   @SafeVarargs
   @SuppressWarnings("varargs")
   public static <E extends @Nullable Object> Tuple<E> tuple(E... elements) {
     return new Tuple<>(elements);
   }
 
+  /**
+   * Creates a tuple from elements.
+   */
   public static <E1 extends @Nullable Object, E2 extends @Nullable Object> //
       Tuple2<E1, E2> tuple(E1 e1, E2 e2) {
     return new Tuple2<>(e1, e2);
   }
 
+  /**
+   * Creates a tuple from elements.
+   */
   public static <E1 extends @Nullable Object, E2 extends @Nullable Object,
       E3 extends @Nullable Object> //
       Tuple3<E1, E2, E3> tuple(E1 e1, E2 e2, E3 e3) {
     return new Tuple3<>(e1, e2, e3);
   }
 
+  /**
+   * Creates a tuple from elements.
+   */
   public static <E1 extends @Nullable Object, E2 extends @Nullable Object,
       E3 extends @Nullable Object, E4 extends @Nullable Object> //
       Tuple4<E1, E2, E3, E4> tuple(E1 e1, E2 e2, E3 e3, E4 e4) {
     return new Tuple4<>(e1, e2, e3, e4);
   }
 
+  /**
+   * Creates a tuple from elements.
+   */
   public static <E1 extends @Nullable Object, E2 extends @Nullable Object,
       E3 extends @Nullable Object, E4 extends @Nullable Object, E5 extends @Nullable Object> //
       Tuple5<E1, E2, E3, E4, E5> tuple(E1 e1, E2 e2, E3 e3, E4 e4, E5 e5) {
     return new Tuple5<>(e1, e2, e3, e4, e5);
   }
 
+  /**
+   * Creates a tuple from elements.
+   */
   public static <E1 extends @Nullable Object, E2 extends @Nullable Object,
       E3 extends @Nullable Object, E4 extends @Nullable Object, E5 extends @Nullable Object,
       E6 extends @Nullable Object> //
@@ -98,6 +117,9 @@ public class Tuple<E extends @Nullable Object> extends AbstractList<E>
     return new Tuple6<>(e1, e2, e3, e4, e5, e6);
   }
 
+  /**
+   * Creates a tuple from elements.
+   */
   public static <E1 extends @Nullable Object, E2 extends @Nullable Object,
       E3 extends @Nullable Object, E4 extends @Nullable Object, E5 extends @Nullable Object,
       E6 extends @Nullable Object, E7 extends @Nullable Object> //
@@ -105,6 +127,9 @@ public class Tuple<E extends @Nullable Object> extends AbstractList<E>
     return new Tuple7<>(e1, e2, e3, e4, e5, e6, e7);
   }
 
+  /**
+   * Creates a tuple from elements.
+   */
   public static <E1 extends @Nullable Object, E2 extends @Nullable Object,
       E3 extends @Nullable Object, E4 extends @Nullable Object, E5 extends @Nullable Object,
       E6 extends @Nullable Object, E7 extends @Nullable Object, E8 extends @Nullable Object> //
@@ -113,6 +138,9 @@ public class Tuple<E extends @Nullable Object> extends AbstractList<E>
     return new Tuple8<>(e1, e2, e3, e4, e5, e6, e7, e8);
   }
 
+  /**
+   * Creates a tuple from elements.
+   */
   public static <E1 extends @Nullable Object, E2 extends @Nullable Object,
       E3 extends @Nullable Object, E4 extends @Nullable Object, E5 extends @Nullable Object,
       E6 extends @Nullable Object, E7 extends @Nullable Object, E8 extends @Nullable Object,

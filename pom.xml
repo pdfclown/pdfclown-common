@@ -37,6 +37,8 @@
     <!--
       OVERRIDDEN PROPERTIES
     -->
+    <copyrightHolder>Stefano Chizzolini and contributors</copyrightHolder>
+    <projectUrlBasePath>github.com/pdfclown/pdfclown-common</projectUrlBasePath>
     <rootdir>${project.basedir}</rootdir>
 
     <!--

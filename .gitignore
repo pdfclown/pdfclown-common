@@ -16,5 +16,8 @@ ignore/
 target/
 dependency-reduced-pom.xml
 
+### Python ###
+venv/
+
 ### VS Code ###
 .vscode/

@@ -13,6 +13,7 @@
 package org.pdfclown.common.util;
 
 import static org.pdfclown.common.util.Conditions.requireNotBlank;
+import static org.pdfclown.common.util.Strings.EMPTY;
 
 import org.jspecify.annotations.Nullable;
 
@@ -28,10 +29,22 @@ public final class Normalizations {
   /**
    * Normalizes a string stripping its leading and trailing whitespace.
    *
-   * @throws ArgumentException
-   *           if {@code s} is blank.
+   * @return Empty, if {@code s} is undefined.
+   * @see #normalizeToNonEmpty(String)
    */
-  public static String normalizeToNonEmpty(String s) {
+  public static String normalizeToEmpty(@Nullable String s) {
+    return s != null ? s.strip() : EMPTY;
+  }
+
+  /**
+   * Normalizes a string stripping its leading and trailing whitespace.
+   *
+   * @throws ArgumentException
+   *           if {@code s} is blank or undefined.
+   * @implNote {@code s} is nullable to allow uncertain values, such as those resolved from maps.
+   * @see #normalizeToEmpty(String)
+   */
+  public static String normalizeToNonEmpty(@Nullable String s) {
     return normalizeToNonEmpty(s, null);
   }
 
@@ -39,9 +52,11 @@ public final class Normalizations {
    * Normalizes a string stripping its leading and trailing whitespace.
    *
    * @throws ArgumentException
-   *           if {@code s} is blank.
+   *           if {@code s} is blank or undefined.
+   * @implNote {@code s} is nullable to allow uncertain values, such as those resolved from maps.
+   * @see #normalizeToEmpty(String)
    */
-  public static String normalizeToNonEmpty(String s, @Nullable String name) {
+  public static String normalizeToNonEmpty(@Nullable String s, @Nullable String name) {
     return requireNotBlank(s, name).strip();
   }
 

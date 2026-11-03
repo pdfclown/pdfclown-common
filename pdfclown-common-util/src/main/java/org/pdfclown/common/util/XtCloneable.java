@@ -18,5 +18,8 @@ package org.pdfclown.common.util;
  * @author Stefano Chizzolini
  */
 public interface XtCloneable extends Cloneable {
+  /**
+   * @see Object#clone()
+   */
   Object clone();
 }

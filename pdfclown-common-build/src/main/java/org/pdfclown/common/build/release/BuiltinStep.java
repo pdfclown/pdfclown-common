@@ -43,7 +43,7 @@ import org.apache.commons.lang3.function.FailableConsumer;
  * default release sequence.
  * </p>
  * <p>
- * This implementation assumes Unix (Bash shell) as OS, and Git as SCM.
+ * REQUIRES Unix (Bash shell) as OS, and Git 2.43+ as SCM.
  * </p>
  *
  * @author Stefano Chizzolini
@@ -110,6 +110,9 @@ public enum BuiltinStep implements Step {
       $.getBaseDir()), true),
   /**
    * Updates the changelog file with release version changes.
+   * <p>
+   * REQUIRES Python 3.13+ and {@code commitizen} 4.10+ package.
+   * </p>
    */
   RELEASE_CHANGELOG_UPDATE($ -> executeElseThrow(
       List.of("cz", "changelog",

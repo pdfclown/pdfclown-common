@@ -4,6 +4,7 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 -->
+<!-- REUSE-IgnoreStart -->
 <project
     xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -88,8 +89,11 @@ pdfclown-common-base instead)</description>
       define `maven.compiler.source` and `maven.compiler.target` properties instead of
       `maven.compiler.release` -->
     <target.jdk.home/>
-    <!-- Base URL path of the project's official repository -->
-    <projectUrlBasePath>github.com/pdfclown/pdfclown-common</projectUrlBasePath>
+    <!-- Base URL path of the project's official repository - for example,
+      `github.com/pdfclown/pdfclown-common` -->
+    <projectUrlBasePath/>
+    <!-- Copyright holder -->
+    <copyrightHolder/>
 
     <!--
       PROJECT-SPECIFIC PROPERTIES
@@ -117,11 +121,12 @@ pdfclown-common-base instead)</description>
     <!--
       CUSTOM PROPERTIES
     -->
+    <assembliesDir>${internal.assemblies.basedir}/${internal.assemblies.resource.base}</assembliesDir>
     <!-- Build resources root path - NOTE: External POMs inheriting from this one are expected to
       decide either to specify their own filesystem-based resources path, or declare the build
       resources artifact (namely, pdfclown-common-build) as dependency of the plugins referencing
       those resources -->
-    <buildResourcesRootPath>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesRootPath>
+    <buildResourcesDir>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesDir>
     <checkstyleSkip>false</checkstyleSkip>
     <!-- javac Error Prone options -->
     <lint.errorprone/>
@@ -160,10 +165,6 @@ pdfclown-common-base instead)</description>
     <jimfs.version>1.3.2</jimfs.version>
     <joor.version>0.9.16</joor.version>
     <json.version>20260814</json.version>
-    <!--
-      TODO: Whenever this version is updated, `json.version` MUST be aligned to its transitive
-            org.json:json dependency.
-    -->
     <jsonassert.version>2.0-rc1</jsonassert.version>
     <jsoup.version>1.23.2</jsoup.version>
     <jspecify.version>1.0.1</jspecify.version>
@@ -171,6 +172,12 @@ pdfclown-common-base instead)</description>
     <log4j.version>2.26.1</log4j.version>
     <mockito.version>5.24.0</mockito.version>
     <pdfclown-common-util.version>${revision}</pdfclown-common-util.version>
+    <!-- NOTE: Because of cyclic dependency between `pdfclown-common-util` module and its own build
+      toolchain, the former cannot be referenced directly by the latter; as a workaround, the
+      latest already published version MUST be used instead.
+      WARNING: In order to provide user projects a consistent build environment, this version MUST
+      NOT be overridden. -->
+    <pdfclown-common.version>0.8.0</pdfclown-common.version>
     <slf4j.version>2.0.20</slf4j.version>
 
     <!--
@@ -184,6 +191,7 @@ pdfclown-common-base instead)</description>
     <gmavenplus-plugin.version>5.1.0</gmavenplus-plugin.version>
     <jada.version>0.4.1</jada.version>
     <maven.version>3.10.0</maven.version>
+    <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <maven-checkstyle-plugin.puppycrawl.version>14.3.0</maven-checkstyle-plugin.puppycrawl.version>
     <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
@@ -196,7 +204,6 @@ pdfclown-common-base instead)</description>
     <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
     <maven-plugin-plugin.version>3.16.0</maven-plugin-plugin.version>
     <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
-    <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
     <maven-toolchains-plugin.version>3.3.0</maven-toolchains-plugin.version>
     <nullaway.version>0.14.3</nullaway.version>
@@ -210,11 +217,15 @@ pdfclown-common-base instead)</description>
     <!--
       INTERNAL
     -->
+    <internal.assemblies.basedir>${rootdir}/pdfclown-common-build/src/main/resources</internal.assemblies.basedir>
+    <internal.assemblies.resource.base>org/pdfclown/common/build/conf/assemblies</internal.assemblies.resource.base>
+    <internal.assemblies.unpack.skip>true</internal.assemblies.unpack.skip>
+    <internal.javadoc.phase>none</internal.javadoc.phase>
     <!-- IMPORTANT: DO NOT REMOVE this empty declaration -->
     <internal.lint.args.Werror/>
     <!-- NOTE: Some warning specifiers are shared across the projects:
       - `-fallthrough`: excluded because already checked via checkstyle (see `FallThrough` module in
-        checkstyle-checks.xml)
+        `checkstyle-checks.xml` file)
       - `-unchecked`: excluded because javac apparently ignores certain "unchecked" warning
         suppressions via `SuppressWarnings` annotations (possibly due to synthetic bridge methods?) -->
     <internal.lint.args.Xwarns>all,-cast,-fallthrough,-finally,-processing,-unchecked,${lint.Xwarns}</internal.lint.args.Xwarns>
@@ -222,7 +233,7 @@ pdfclown-common-base instead)</description>
     <!-- TODO: move shared options into reusable resource file bundled in pdfclown-common-build -->
     <!-- NOTE: Some warning specifiers are shared across the projects:
       - `-Xep:FallThrough:OFF`: excluded because already checked via checkstyle (see `FallThrough`
-        module in checkstyle-checks.xml)
+        module in `checkstyle-checks.xml` file)
       - `-Xep:MissingSummary:OFF`: excluded because redundant, already managed by checkstyle
       - `-Xep:NotJavadoc:OFF`: excluded because annoyingly requires methods inside local classes to
         be downgraded to non-Javadoc -->
@@ -242,9 +253,24 @@ pdfclown-common-base instead)</description>
         <includes>
           <include>LICENSE.txt</include>
           <include>NOTICE.txt</include>
+          <include>THIRD-PARTY-NOTICES.txt</include>
         </includes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <targetPath>META-INF</targetPath>
+        <directory>${rootdir}</directory>
+        <includes>
+          <include>LICENSE.txt</include>
+          <include>NOTICE.txt</include>
+          <include>THIRD-PARTY-NOTICES.txt</include>
+        </includes>
+      </testResource>
+    </testResources>
 
     <pluginManagement>
       <plugins>
@@ -295,6 +321,10 @@ pdfclown-common-base instead)</description>
           <groupId>org.codehaus.gmavenplus</groupId>
           <artifactId>gmavenplus-plugin</artifactId>
           <version>${gmavenplus-plugin.version}</version>
+          <configuration>
+            <!-- Prevents current module's classpath from interfering with scripts execution -->
+            <includeClasspath>PLUGIN_ONLY</includeClasspath>
+          </configuration>
           <dependencies>
             <dependency>
               <groupId>org.apache.groovy</groupId>
@@ -302,54 +332,43 @@ pdfclown-common-base instead)</description>
               <version>${groovy.version}</version>
               <scope>runtime</scope>
             </dependency>
+            <dependency>
+              <groupId>org.apache.groovy</groupId>
+              <artifactId>groovy-json</artifactId>
+              <version>${groovy.version}</version>
+              <scope>runtime</scope>
+            </dependency>
+            <dependency>
+              <groupId>org.pdfclown</groupId>
+              <artifactId>pdfclown-common-build</artifactId>
+              <version>${pdfclown-common.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.pdfclown</groupId>
+              <artifactId>pdfclown-common-util</artifactId>
+              <version>${pdfclown-common.version}</version>
+            </dependency>
           </dependencies>
           <executions>
             <execution>
-              <id>init-build-info</id>
+              <!--
+                Processes the generated jars for the following tasks:
+                - copy of the aggregate `NOTICE` file generated by maven-shade-plugin to ancillary
+                  artifacts (namely, sources and javadoc jars)
+              -->
+              <id>validate-build</id>
               <goals>
                 <goal>execute</goal>
               </goals>
+              <phase>validate</phase>
               <configuration>
                 <scripts>
                   <script><![CDATA[
-import java.time.ZonedDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-
-/*
-  Timestamp for reproducible builds (see
-  <https://maven.apache.org/guides/mini/guide-reproducible-builds.html>).
-
-  NOTE: Reproducible builds are meaningful for SCM-traceable code only; therefore, the current
-  commit's timestamp is used only if the working tree is clean. In case of dirty working tree, the
-  timestamp is generated on the fly, following the volatility of the built code.
- */
-def buildTimestamp = ${git.dirty}
-    ? ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-        .format(DateTimeFormatter.ISO_INSTANT)
-    : "${git.commit.time}"
-
-// Share the build timestamp as property for interpolation!
-session.userProperties.setProperty('buildTimestamp', buildTimestamp)
-
-log.info("buildTimestamp: " + buildTimestamp
-    + " (" + (${git.dirty} ? "DIRTY" : "REPRODUCIBLE") + ")")
-
-/*
-  Metadata-augmented implementation version (SemVer2).
-
-  In case of SNAPSHOT, appends metadata to the version to fully identify the build it originated
-  from.
- */
-def version = project.version
-def implementationVersion = version + (version.endsWith("SNAPSHOT") ? "+${git.commit.id.describe}"
-    : "")
-
-// Share the implementation version as property for interpolation!
-session.userProperties.setProperty('implementationVersion', implementationVersion)
-
-log.info("implementationVersion: " + implementationVersion)
+try(def in = org.pdfclown.common.util.io.Resource.of(
+    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/validate-build.groovy")
+    .openStream()) {
+  new GroovyShell(binding).evaluate(new InputStreamReader(in))
+}
 ]]></script>
                 </scripts>
               </configuration>
@@ -416,7 +435,7 @@ log.info("implementationVersion: " + implementationVersion)
             <linkXRef>false</linkXRef>
             <propertiesLocation>${rootdir}/src/conf/checkstyle/checkstyle.properties</propertiesLocation>
             <suppressionsLocation>${rootdir}/src/conf/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
-            <configLocation>${buildResourcesRootPath}/org/pdfclown/common/build/conf/checkstyle/checkstyle-checks.xml</configLocation>
+            <configLocation>${rootdir}/target/checkstyle-checks.xml</configLocation>
             <skip>${checkstyleSkip}</skip>
           </configuration>
           <dependencies>
@@ -501,6 +520,25 @@ log.info("implementationVersion: " + implementationVersion)
                   <item>org.opentest4j:opentest4j</item>
                   <item>*junit*</item>
                 </ignoredUsedUndeclaredDependencies>
+              </configuration>
+            </execution>
+            <execution>
+              <id>unpack-assemblies</id>
+              <goals>
+                <goal>unpack</goal>
+              </goals>
+              <phase>generate-resources</phase>
+              <configuration>
+                <skip>${internal.assemblies.unpack.skip}</skip>
+                <artifactItems>
+                  <artifactItem>
+                    <groupId>org.pdfclown</groupId>
+                    <artifactId>pdfclown-common-build</artifactId>
+                    <version>${pdfclown-common.version}</version>
+                    <includes>${internal.assemblies.resource.base}/*.xml</includes>
+                    <outputDirectory>${internal.assemblies.basedir}</outputDirectory>
+                  </artifactItem>
+                </artifactItems>
               </configuration>
             </execution>
           </executions>
@@ -608,29 +646,51 @@ log.info("implementationVersion: " + implementationVersion)
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
           <version>${maven-shade-plugin.version}</version>
+          <configuration>
+            <!--
+              NOTE: Shade plugin's awkward resource deduplication sucks badly: AFAIK, filters
+              can't express "every artifact except the current project", whilst transformers like
+              `ApacheNoticeResourceTransformer` tend to muddle the merged contents. Consequently:
+              - `NOTICE` files propagation is performed by simply appending them to the current
+                project's own file
+              - service descriptors are merged via `ServicesResourceTransformer`
+              - residual noisy-yet-harmless warnings about overlapping resources (such as
+                `META-INF/LICENSE.txt`, `META-INF/MANIFEST.MF`) are left as-is, since what matters
+                is just that the current project's resources win (it is up to user projects to
+                possibly exclude them via explicit artifact-specific filters)
+            -->
+            <transformers>
+              <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                <resource>META-INF/NOTICE</resource>
+              </transformer>
+              <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                <resource>META-INF/NOTICE.txt</resource>
+              </transformer>
+              <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+            </transformers>
+            <filters>
+              <filter>
+                <artifact>*:*</artifact>
+                <excludes>
+                  <exclude>META-INF/*.SF</exclude>
+                  <exclude>META-INF/*.DSA</exclude>
+                  <exclude>META-INF/*.RSA</exclude>
+                  <!-- Excludes LICENSE files alternative to the canonical one (LICENSE.txt) -->
+                  <exclude>META-INF/LICENSE</exclude>
+                  <exclude>META-INF/LICENSE.md</exclude>
+                </excludes>
+              </filter>
+            </filters>
+          </configuration>
         </plugin>
 
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>xml-maven-plugin</artifactId>
           <version>${xml-maven-plugin.version}</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>${maven-source-plugin.version}</version>
-          <configuration>
-            <excludeResources>true</excludeResources>
-          </configuration>
-          <executions>
-            <execution>
-              <id>generate-sources-jar</id>
-              <goals>
-                <goal>jar-no-fork</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
 
         <plugin>
@@ -676,7 +736,7 @@ log.info("implementationVersion: " + implementationVersion)
             </additionalJOptions>
             <additionalOptions>
               <option>--jada-dir
-                "${buildResourcesRootPath}/org/pdfclown/common/build/conf/javadoc/jada"</option>
+                "${buildResourcesDir}/org/pdfclown/common/build/conf/javadoc/jada"</option>
               <option>--jada-dir "${rootdir}/src/main/javadoc/jada"</option>
               <option>--jada-exts JadaBiblio,JadaUML</option>
               <option>--jada-file-optimize-filter "**.css,/resources/**.js"</option>
@@ -760,7 +820,7 @@ log.info("implementationVersion: " + implementationVersion)
             <bottom><![CDATA[
 <span class="footer-right"><a href="https://search.maven.org/artifact/${project.groupId}/${project.artifactId}/${project.version}/jar">${project.groupId}:${project.artifactId}:${project.version}</a><br>
 ${buildTimestamp} (${git.commit.id.describe})</span>
-<span class="footer-left">Copyright &#169; {inceptionYear}&#x2013;{currentYear} {organizationName}. All rights reserved.<br>
+<span class="footer-left">Copyright &#169; {inceptionYear}&#x2013;{currentYear} ${copyrightHolder}<br>
 <a href="${project.url}">Project Home</a> | <a href="${projectScmUrl}">Source Repository</a> | <a href="${projectIssuesUrl}">Report a bug or suggest an enhancement</a></span>
 ]]></bottom>
 
@@ -923,10 +983,47 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
           </configuration>
           <executions>
             <execution>
+              <id>generate-javadoc</id>
+              <goals>
+                <goal>javadoc-no-fork</goal>
+              </goals>
+              <phase>${internal.javadoc.phase}</phase>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${maven-assembly-plugin.version}</version>
+          <!--
+            WARNING: This plugin MUST be declred AFTER `maven-javadoc-plugin`, as their executions
+            are activated on the same phase (declaration order matters!).
+          -->
+          <executions>
+            <execution>
+              <id>generate-sources-jar</id>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <phase>package</phase>
+              <configuration>
+                <descriptors>
+                  <descriptor>${assembliesDir}/sources.xml</descriptor>
+                </descriptors>
+              </configuration>
+            </execution>
+            <execution>
               <id>generate-javadoc-jar</id>
               <goals>
-                <goal>jar</goal>
+                <goal>single</goal>
               </goals>
+              <phase>${internal.javadoc.phase}</phase>
+              <configuration>
+                <descriptors>
+                  <descriptor>${assembliesDir}/javadoc.xml</descriptor>
+                </descriptors>
+              </configuration>
             </execution>
           </executions>
         </plugin>
@@ -968,17 +1065,31 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
     </pluginManagement>
 
     <plugins>
-      <!--
-        TOOLCHAIN
-
-        Isolates the JDK used to build the project from the one Maven is running under, similarly to
-        how JDK versions can be set in IDEs like IDEA, NetBeans and Eclipse (see
-        <https://maven.apache.org/guides/mini/guide-using-toolchains.html>).
-
-        IMPORTANT: In order to work, `toolchains.xml` configuration file MUST contain the JDK
-        version corresponding to the one referenced here below.
-      -->
       <plugin>
+        <!--
+          WARNING: In order to resolve commit properties before other plugins reference them, this
+          plugin declaration MUST precede all the other ones.
+        -->
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <!--
+          TOOLCHAIN
+
+          Isolates the JDK used to build the project from the one Maven is running under, similarly
+          to how JDK versions can be set in IDEs like IDEA, NetBeans and Eclipse (see
+          <https://maven.apache.org/guides/mini/guide-using-toolchains.html>).
+
+          IMPORTANT: In order to work, `toolchains.xml` configuration file MUST contain the JDK
+          version corresponding to the one referenced here below.
+        -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-toolchains-plugin</artifactId>
         <configuration>
@@ -1006,11 +1117,6 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>io.github.git-commit-id</groupId>
-        <artifactId>git-commit-id-maven-plugin</artifactId>
-      </plugin>
-
       <!-- Code formatting -->
       <plugin>
         <groupId>org.pdfclown</groupId>
@@ -1028,18 +1134,22 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
       <!-- Packaging -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
       </plugin>
 
       <!-- Testing -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -1062,10 +1172,11 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
   </build>
 
   <profiles>
-    <!-- MANUAL PROFILES - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    <!--============================================================================================
+      MANUAL PROFILES
 
       These profiles are meant to be explicitly selected by users.
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+    =============================================================================================-->
 
     <profile>
       <id>full</id>
@@ -1075,14 +1186,9 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
         Activates the following operations:
         - Javadoc jar
       -->
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
+      <properties>
+        <internal.javadoc.phase>package</internal.javadoc.phase>
+      </properties>
     </profile>
 
     <profile>
@@ -1114,6 +1220,47 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
         <skipITs>true</skipITs>
         <skipTests>true</skipTests>
       </properties>
+    </profile>
+
+    <profile>
+      <id>reuse</id>
+      <!--
+        COPYRIGHT ATTRIBUTIONS CHECK PROFILE
+      -->
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.gmavenplus</groupId>
+            <artifactId>gmavenplus-plugin</artifactId>
+            <executions>
+              <execution>
+                <!--
+                  Checks that the copyright attributions are complete, both at file and project
+                  levels.
+
+                  REQUIRES Python 3.13+ and `reuse` 6.2+ package.
+                -->
+                <id>check-reuse</id>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <phase>validate</phase>
+                <configuration>
+                  <scripts>
+                    <script><![CDATA[
+try(def in = org.pdfclown.common.util.io.Resource.of(
+    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/check-reuse.groovy")
+    .openStream()) {
+  new GroovyShell(this.class.classLoader, binding).evaluate(new InputStreamReader(in))
+}
+]]></script>
+                  </scripts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <profile>
@@ -1246,8 +1393,8 @@ var projectDir = project.basedir.toPath()
 var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVer1.class)
         .toString())
     .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY__RELEASE_STARTPOINT])
-    .setDeploymentProfiles("publish")
-    .setInstallationProfiles("full")
+    .setDeploymentProfiles("__publish,reuse")
+    .setInstallationProfiles("full,reuse")
     /* NOTE: Activates remote push only if GPG signing is configured. */
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
     .setDryRun(session.userProperties[USER_PROPERTY__DRYRUN] != null)
@@ -1267,26 +1414,35 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
       </build>
     </profile>
 
+    <!--============================================================================================
+      TOOL PROFILES
+
+      These (`__xxxxxxx`) profiles are meant to be triggered by tooling.
+
+      NOTE: Because of definition order, the configuration settings in these profiles take
+      precedence over MANUAL ones.
+    =============================================================================================-->
+
     <profile>
-      <id>publish</id>
+      <id>__publish</id>
       <!--
         DEPLOYMENT EXECUTION PROFILE
 
         Activates the following operations:
-        - Javadoc jar
-        - GPG signing
-        - maven central publishing
+        - Javadoc artifacts building
+        - Artifacts signing
+        - Artifacts publishing on Maven Central
 
         IMPORTANT: It is caller's responsibility to prepare the working tree for the deployment, in
         particular to check out the corresponding release tag.
       -->
+      <properties>
+        <!-- Javadoc artifacts building -->
+        <internal.javadoc.phase>package</internal.javadoc.phase>
+      </properties>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-          </plugin>
-
+          <!-- Artifacts signing -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
@@ -1310,6 +1466,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
             </executions>
           </plugin>
 
+          <!-- Artifacts publishing on Maven Central -->
           <plugin>
             <!-- NOTE: Transparently manages both public releases and snapshots -->
             <groupId>org.sonatype.central</groupId>
@@ -1319,12 +1476,15 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
       </build>
     </profile>
 
-    <!-- AUTOMATED PROFILES  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    <!--============================================================================================
+      STATE PROFILES
 
-      These profiles are meant to be triggered by activation conditions.
+      These (`@xxxxxxx`) profiles are meant to be triggered by activation conditions (project or
+      environment state).
 
-      NOTE: Because of definition order, these profiles take precedence over manual ones.
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  -->
+      NOTE: Because of definition order, the configuration settings in these profiles take
+      precedence over MANUAL and TOOL ones.
+    =============================================================================================-->
 
     <profile>
       <id>@maven-plugin</id>
@@ -1371,10 +1531,97 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
           <plugin>
             <groupId>org.codehaus.gmavenplus</groupId>
             <artifactId>gmavenplus-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>com.puppycrawl.tools</groupId>
+                <artifactId>checkstyle</artifactId>
+                <version>${maven-checkstyle-plugin.puppycrawl.version}</version>
+              </dependency>
+            </dependencies>
             <executions>
               <execution>
-                <id>init-build-info</id>
+                <id>init-jar-build</id>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
                 <phase>initialize</phase>
+                <configuration>
+                  <properties>
+                    <commitDirty>${git.dirty}</commitDirty>
+                    <commitTime>${git.commit.time}</commitTime>
+                    <commitIdMetadata>${git.commit.id.describe}</commitIdMetadata>
+                    <resourcesDir>${buildResourcesDir}</resourcesDir>
+                  </properties>
+                  <scripts>
+                    <script><![CDATA[
+try(def in = org.pdfclown.common.util.io.Resource.of(
+    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/init-build-info.groovy")
+    .openStream()) {
+  new GroovyShell(this.class.classLoader, binding).evaluate(new InputStreamReader(in))
+}
+try(def in = org.pdfclown.common.util.io.Resource.of(
+    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/init-checkstyle.groovy")
+    .openStream()) {
+  new GroovyShell(this.class.classLoader, binding).evaluate(new InputStreamReader(in))
+}
+]]></script>
+                  </scripts>
+                </configuration>
+              </execution>
+              <execution>
+                <!--
+                  Picks the licenses attributed to the production code of the current module and puts
+                  them under the output directory at `META-INF/LICENSES`.
+
+                  REQUIRES Python 3.13+ and `reuse` 6.2+ package.
+
+                  WARNING: License picking is based on a temporary SPDX report generated on the fly if
+                  missing; as it could become inadvertently stale, it is recommended to clean the
+                  build whenever the codebase may have changed.
+                -->
+                <id>pick-jar-licenses</id>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <properties>
+                    <outputDir>${project.build.outputDirectory}</outputDir>
+                    <sourceDir>${project.basedir}/src/main</sourceDir>
+                  </properties>
+                  <scripts>
+                    <script><![CDATA[
+try(def in = org.pdfclown.common.util.io.Resource.of(
+    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/pick-jar-licenses.groovy")
+    .openStream()) {
+  new GroovyShell(this.class.classLoader, binding).evaluate(new InputStreamReader(in))
+}
+]]></script>
+                  </scripts>
+                </configuration>
+              </execution>
+              <execution>
+                <!--
+                  Processes the generated jars for the following tasks:
+                  - copy of the aggregate `NOTICE` file generated by maven-shade-plugin to ancillary
+                    artifacts (namely, sources and javadoc jars)
+                -->
+                <id>postprocess-jar</id>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <scripts>
+                    <script><![CDATA[
+try(def in = org.pdfclown.common.util.io.Resource.of(
+    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/pack-shaded-notice.groovy")
+    .openStream()) {
+  new GroovyShell(binding).evaluate(new InputStreamReader(in))
+}
+]]></script>
+                  </scripts>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -1407,6 +1654,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
         </property>
       </activation>
       <properties>
+        <assembly.skipAssembly>true</assembly.skipAssembly>
         <checkstyleSkip>true</checkstyleSkip>
       </properties>
       <build>
@@ -1471,30 +1719,47 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
         </file>
       </activation>
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>generate-test-javadoc-jar</id>
-                  <goals>
-                    <goal>test-jar</goal>
-                  </goals>
-                  <configuration>
-                    <sourcepath>src/test/java</sourcepath>
-                    <subpackages>${testJarPackages}</subpackages>
-
-                    <overview>src/test/javadoc/overview.html</overview>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-
         <plugins>
+          <plugin>
+            <groupId>org.codehaus.gmavenplus</groupId>
+            <artifactId>gmavenplus-plugin</artifactId>
+            <executions>
+              <execution>
+                <!--
+                  Picks the licenses attributed to the test code of the current module and puts them
+                  under the test output directory at `META-INF/LICENSES`.
+
+                  REQUIRES Python 3.13+ and `reuse` 6.2+ package.
+
+                  WARNING: License picking is based on a temporary SPDX report generated on the fly
+                  if missing; as it could become inadvertently stale, it is recommended to clean the
+                  build whenever the codebase may have changed.
+                -->
+                <id>pick-test-jar-licenses</id>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <properties>
+                    <outputDir>${project.build.testOutputDirectory}</outputDir>
+                    <sourceDir>${project.basedir}/src/test</sourceDir>
+                    <includes>${testJarFiles}</includes>
+                  </properties>
+                  <scripts>
+                    <script><![CDATA[
+try(def in = org.pdfclown.common.util.io.Resource.of(
+    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/pick-jar-licenses.groovy")
+    .openStream()) {
+  new GroovyShell(this.class.classLoader, binding).evaluate(new InputStreamReader(in))
+}
+]]></script>
+                  </scripts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
@@ -1505,11 +1770,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                   <goal>test-jar</goal>
                 </goals>
                 <configuration>
-                  <includes>
-                    <include>${testJarFiles}</include>
-                    <include>META-INF/**</include>
-                    <include>${testJarResources}</include>
-                  </includes>
+                  <includes>META-INF/**,${testJarFiles}</includes>
                 </configuration>
               </execution>
             </executions>
@@ -1517,17 +1778,50 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
 
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-test-javadoc</id>
+                <goals>
+                  <goal>test-javadoc-no-fork</goal>
+                </goals>
+                <phase>${internal.javadoc.phase}</phase>
+                <configuration>
+                  <sourcepath>src/test/java</sourcepath>
+                  <subpackages>${testJarPackages}</subpackages>
+
+                  <overview>src/test/javadoc/overview.html</overview>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
             <executions>
               <execution>
                 <id>generate-test-sources-jar</id>
                 <goals>
-                  <goal>test-jar-no-fork</goal>
+                  <goal>single</goal>
                 </goals>
+                <phase>package</phase>
                 <configuration>
-                  <includes>
-                    <include>${testJarFiles}</include>
-                  </includes>
+                  <descriptors>
+                    <descriptor>${assembliesDir}/test-sources.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+              <execution>
+                <id>generate-test-javadoc-jar</id>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <phase>${internal.javadoc.phase}</phase>
+                <configuration>
+                  <descriptors>
+                    <descriptor>${assembliesDir}/test-javadoc.xml</descriptor>
+                  </descriptors>
                 </configuration>
               </execution>
             </executions>
@@ -1539,7 +1833,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     <profile>
       <id>@internal-pom</id>
       <!--
-        INTERNAL POM PROFILE
+        INTERNAL-POM PROFILE
 
         Internal POMs are NOT published (as a consequence, their processed contents are not packaged
         either). Within a reactor, they are ancestors of other internal POMs or jar artifacts only;
@@ -1553,31 +1847,13 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
       </activation>
       <properties>
         <gpg.skip>true</gpg.skip>
+        <internal.javadoc.phase>none</internal.javadoc.phase>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.install.skip>true</maven.install.skip>
       </properties>
       <build>
         <plugins>
-          <plugin>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>generate-sources-jar</id>
-                <phase>none</phase>
-              </execution>
-            </executions>
-          </plugin>
-
-          <plugin>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>generate-javadoc-jar</id>
-                <phase>none</phase>
-              </execution>
-            </executions>
-          </plugin>
-
+          <!-- Artifacts building DISABLED -->
           <plugin>
             <artifactId>maven-jar-plugin</artifactId>
             <executions>
@@ -1587,15 +1863,25 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
               </execution>
             </executions>
           </plugin>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-sources-jar</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
 
-          <!-- NOTE: `skipPublishing` parameter doesn't work, so we have to force disabling via
-            phase -->
+          <!-- Artifacts publishing on Maven Central DISABLED -->
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
             <executions>
               <execution>
                 <id>injected-central-publishing</id>
+                <!-- NOTE: `skipPublishing` parameter doesn't work, so we have to force disabling
+                  via phase -->
                 <phase>none</phase>
               </execution>
             </executions>
@@ -1708,7 +1994,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                     <version>${spotless-maven-plugin.eclipseWtp.version}</version>
                     <type>XML</type>
                     <files>
-                      <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/org.eclipse.wst.xml.core.prefs</file>
+                      <file>${buildResourcesDir}/org/pdfclown/common/build/conf/eclipse/org.eclipse.wst.xml.core.prefs</file>
                     </files>
                   </eclipseWtp>
                 </format>
@@ -1717,7 +2003,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
               <java>
                 <eclipse>
                   <version>${spotless-maven-plugin.eclipseJdt.version}</version>
-                  <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/java-style.xml</file>
+                  <file>${buildResourcesDir}/org/pdfclown/common/build/conf/eclipse/java-style.xml</file>
                   <sortMembersEnabled>true</sortMembersEnabled>
                   <!-- Sort order of the member categories:
                   - T: (Nested) Types
@@ -1742,7 +2028,7 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
 
                 <removeUnusedImports/>
                 <importOrder>
-                  <file>${buildResourcesRootPath}/org/pdfclown/common/build/conf/eclipse/java.importorder</file>
+                  <file>${buildResourcesDir}/org/pdfclown/common/build/conf/eclipse/java.importorder</file>
                 </importOrder>
                 <trimTrailingWhitespace/>
               </java>
@@ -1937,3 +2223,4 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
     </profile>
   </profiles>
 </project>
+<!-- REUSE-IgnoreEnd -->

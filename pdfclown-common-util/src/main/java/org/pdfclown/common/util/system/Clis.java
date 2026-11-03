@@ -235,6 +235,9 @@ public final class Clis {
       return toStringWithProperties(this, "includes", includes, "excludes", excludes);
     }
 
+    /**
+     * Converts this filter to predicate.
+     */
     protected abstract Predicate<String> toPredicate(List<String> filter, boolean defaultResult);
   }
 

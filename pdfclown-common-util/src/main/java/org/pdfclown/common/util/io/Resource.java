@@ -183,6 +183,22 @@ public interface Resource {
     return path(name, cl, null);
   }
 
+  /**
+   * Gets the resource corresponding to a name.
+   * <p>
+   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * </p>
+   *
+   * @param name
+   *          Resource name.
+   * @param cl
+   *          Class loader for resource lookup.
+   * @param fileResolver
+   *          Resolves relative filesystem paths to their absolute representation. If undefined,
+   *          they are resolved against the filesystem default directory (current working
+   *          directory).
+   * @return Empty, if the resource corresponding to {@code name} does not exist.
+   */
   static @Nullable PathResource path(@Nullable String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver) {
     return (PathResource) of(name, cl, fileResolver);

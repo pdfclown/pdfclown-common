@@ -41,17 +41,13 @@
       VERSIONS
     -->
     <maven-invoker.version>3.3.0</maven-invoker.version>
-    <!-- NOTE: Because of cyclic dependency between pdfclown-common-build and pdfclown-common-util,
-      the latter cannot be referenced by the former within the project build; consequently, the
-      latest already published version MUST be used instead -->
-    <pdfclown-common-util.version>0.8.0</pdfclown-common-util.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.pdfclown</groupId>
       <artifactId>pdfclown-common-util</artifactId>
-      <version>${pdfclown-common-util.version}</version>
+      <version>${pdfclown-common.version}</version>
     </dependency>
 
     <!-- Language -->
@@ -73,6 +69,8 @@
       <groupId>org.apache.groovy</groupId>
       <artifactId>groovy</artifactId>
       <version>${groovy.version}</version>
+      <!-- NOTE: Groovy is provided by `gmavenplus-plugin` during Maven execution -->
+      <scope>provided</scope>
     </dependency>
 
     <!-- I/O -->
@@ -212,9 +210,10 @@
             <execution>
               <id>default-compile</id>
               <configuration>
-                <!-- Log4j annotation processing.
+                <!--
+                  [GRAALVM-HACK] Log4j annotation processing.
 
-                  NOTE: Because of enforced failure on compilation warnings (`-Werror`), even issues
+                  HACK: Because of enforced failure on compilation warnings (`-Werror`), even issues
                   in the options of annotation processors may affect the compilation, with the
                   severe peculiarity that they cannot be muted with `-Xlint:...-processing`.
 
@@ -227,7 +226,11 @@
                   To temporarily fix this conundrum until hopefully solved, an ancillary script
                   (`ensure-log4j-plugin-processor-activation`) touches the plugin source file, thus
                   ensuring the `GraalVmProcessor` is activated and wired to its options, preventing
-                  any warning. -->
+                  any warning.
+
+                  TODO: remove this hack once <https://github.com/apache/logging-log4j2/issues/4225>
+                  makes it into Log4j release.
+                -->
                 <annotationProcessorPaths
                     combine.children="append">
                   <path>
@@ -265,9 +268,9 @@
         <executions>
           <execution>
             <!--
-              Forces Log4j annotation processing.
+              [GRAALVM-HACK] Forces Log4j annotation processing.
 
-              NOTE: This script is a hack to force Log4j annotation processing (see `default-compile`
+              HACK: This script is a hack to force Log4j annotation processing (see `default-compile`
               execution here above for further information): the compilation unit containing a Log4j
               plugin (`LogManager.java`) is touched so `GraalVmProcessor` is activated and the
               compiler stops failing.
@@ -337,11 +340,13 @@ new File(project.basedir, 'src/main/java/org/pdfclown/common/build/system/LogMan
               <include>org.pdfclown:pdfclown-common-util</include>
             </includes>
           </artifactSet>
-          <filters>
+          <filters
+              combine.children="append">
             <filter>
               <artifact>org.pdfclown:pdfclown-common-util</artifact>
               <excludes>
-                <exclude>META-INF/**</exclude>
+                <exclude>META-INF/LICENSE.txt</exclude>
+                <exclude>META-INF/MANIFEST.MF</exclude>
                 <exclude>**/package-info.class</exclude>
               </excludes>
             </filter>
@@ -352,7 +357,7 @@ new File(project.basedir, 'src/main/java/org/pdfclown/common/build/system/LogMan
 
                 NOTE: The types referenced by pdfclown-common-build API, visible in Javadoc, are
                 mapped by Jada post-processing (see [shading] in
-                src/main/javadoc/jada/scripts/onMainProcess.groovy) -->
+                `src/main/javadoc/jada/scripts/onMainProcess.groovy`) -->
               <pattern>org.pdfclown.common.util</pattern>
               <shadedPattern>org.pdfclown.common.build.shaded.util</shadedPattern>
             </relocation>

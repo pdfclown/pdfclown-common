@@ -35,7 +35,7 @@ This project adheres to the following best practices:
 
 ## [Project Structure](structure.md)
 
-## [Project Maintenance](maintenance.md)
+## [Source Code Management](scm.md)
 
 ## [Coding Conventions](coding.md)
 

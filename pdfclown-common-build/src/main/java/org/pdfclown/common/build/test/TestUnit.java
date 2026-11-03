@@ -145,6 +145,9 @@ public abstract class TestUnit implements Test {
     return testInfo.getTestMethod().orElseThrow().getName();
   }
 
+  /**
+   * Creates the environment for this test unit.
+   */
   protected Environment __createEnv() {
     return new Environment();
   }

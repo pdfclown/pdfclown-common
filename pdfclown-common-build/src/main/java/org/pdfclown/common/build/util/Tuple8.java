@@ -1,24 +1,4 @@
 /*
-  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
-
-  SPDX-License-Identifier: LGPL-3.0-only
-
-  This file (Tuple8.java) is part of pdfclown-common-build module in pdfClown Common project
-  <https://github.com/pdfclown/pdfclown-common>
-
-  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
-  this file, you MUST add your own copyright notice in a separate comment block above this file
-  header, listing the main changes you applied to the original source.
- */
-/*
-  Source: https://github.com/apache/groovy/blob/7831e9cf9e66f20c1b7fdd8f7dfff480db7cbe18/src/main/java/groovy/lang/Tuple8.java
-
-  Changes:
-  - constructor visibility reduced to package
-  - elements `v*` renamed as `e*`
-  - deprecated getters deleted
- */
-/*
  *  Copyright 2003-2026 The Apache Software Foundation
  *
  *  SPDX-License-Identifier: Apache-2.0
@@ -39,6 +19,27 @@
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
  *  under the License.
+ */
+/*
+  CHANGES TO THE ORIGINAL FILE
+
+  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-only
+
+  This file (Tuple8.java) is part of pdfclown-common-build module in pdfClown Common project
+  <https://github.com/pdfclown/pdfclown-common>
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block above this file
+  header, listing the main changes you applied to the original source.
+
+  Source: https://github.com/apache/groovy/blob/7831e9cf9e66f20c1b7fdd8f7dfff480db7cbe18/src/main/java/groovy/lang/Tuple8.java
+
+  Changes:
+  - constructor visibility reduced to package
+  - elements `v*` renamed as `e*`
+  - deprecated getters deleted
  */
 package org.pdfclown.common.build.util;
 

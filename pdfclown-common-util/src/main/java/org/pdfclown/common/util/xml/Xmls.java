@@ -305,7 +305,7 @@ public final class Xmls {
     }
 
     // SPDX-SnippetBegin
-    // SPDX-SnippetCopyrightText: 2015-2022 Daniel Fickling, 2015 Patrick Wright
+    // SPDX-SnippetCopyrightText: 2016 Patrick Wright and others
     // SPDX-License-Identifier: LGPL-3.0-only
     //
     // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/resource/XMLResource.java#L150
@@ -474,6 +474,9 @@ public final class Xmls {
      * @author Stefano Chizzolini
      */
     public static class Namespaces implements NamespaceContext {
+      /**
+       * Creates a new mapping.
+       */
       public static Namespaces of() {
         return new Namespaces();
       }
@@ -731,7 +734,7 @@ public final class Xmls {
   });
 
   // SPDX-SnippetBegin
-  // SPDX-SnippetCopyrightText: 2015-2022 Daniel Fickling, 2015 Patrick Wright
+  // SPDX-SnippetCopyrightText: 2016 Patrick Wright and others
   // SPDX-License-Identifier: LGPL-3.0-only
   //
   // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/resource/XMLResource.java#L131

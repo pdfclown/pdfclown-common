@@ -2,6 +2,10 @@ pdfClown.org > [Documentation](README.md) > [Project Conventions](conventions.md
 
 # Coding Conventions
 
+## Third-Party Code
+
+In case of code reused from third-party projects, see [Third-Party Content Reuse](third-party.md).
+
 ## Comments
 
 ### Javadoc

@@ -40,18 +40,30 @@ public final class BootstrapLog {
   private static final Level THRESHOLD = tryToElse(System.getProperty(SYSTEM_PROPERTY__LOG_LEVEL),
       Level::valueOf, Level.INFO);
 
+  /**
+   * Log a debug information.
+   */
   public static void debug(Class<?> caller, String msg, Object... args) {
     log(caller, Level.DEBUG, msg, args);
   }
 
+  /**
+   * Log an error.
+   */
   public static void error(Class<?> caller, String msg, Object... args) {
     log(caller, Level.ERROR, msg, args);
   }
 
+  /**
+   * Log an information.
+   */
   public static void info(Class<?> caller, String msg, Object... args) {
     log(caller, Level.INFO, msg, args);
   }
 
+  /**
+   * Log a warning.
+   */
   public static void warn(Class<?> caller, String msg, Object... args) {
     log(caller, Level.WARN, msg, args);
   }

@@ -11,25 +11,30 @@ Contents from third-party projects are incorporated according to [REUSE 3.3](htt
 
 They may be incorporated either keeping track of their original repository (fork), or not (detached).
 
+> [!WARNING]
+> *DO NOT incorporate code covered by licenses incompatible with the project's own license!*
+
 Whenever any content from third-party projects is incorporated, it MUST be documented as follows:
 
 1. in case of **files from a new third-party project**:
-   1. verify its **license requirements** and comply with them — for example, Apache License 2.0 [requires](https://infra.apache.org/licensing-howto.html) to propagate copyright notices through the `NOTICE` file: in such case, add a corresponding entry to the `NOTICE.txt` file in the root directory.
-   2. add an **entry to the `CREDITS.txt` file** in the root directory — for example:
+   1. **verify its license requirements** and comply with them — for example, Apache License 2.0 [requires](https://infra.apache.org/licensing-howto.html) to propagate copyright notices through the `NOTICE` file: in such case, add a corresponding entry to the `NOTICE.txt` file in the root directory.
 
-      ```
-      JSONassert <https://github.com/skyscreamer/JSONassert>
-      Copyright 2012-2022 Skyscreamer
-      License Apache-2.0 <https://spdx.org/licenses/Apache-2.0>
-      ```
+   2. **add an entry to the `THIRD-PARTY-NOTICES.txt` file** in the root directory — for example:
 
-2. mark third-party content with appropriate **copyright and licensing information**:
+       ```
+       Component:  Apache Groovy
+       Copyright:  2003-2026 The Apache Software Foundation
+       License:    Apache-2.0
+       Homepage:   https://github.com/apache/groovy
+       ```
+       Each entry can have multiple `Copyright` fields, according to the actual attributions from third-party source files incorporated in the project.
+
+2. **mark third-party content** with appropriate copyright and licensing information:
    - in case of source file reusing **third-party code**, add copyright and licensing information formatted in accordance with the extent of the incorporation, accompanied by additional information (such as `Source`, `SourceName` and `Changes` tags — see here below) whenever appropriate:
 
        - **third-party file** (as a new project file):
-           1. if the third-party file contains a copyright notice with traditional license boilerplate, insert the corresponding **`SPDX-License-Identifier` tag** just below the copyright statement, and leave the original text unaltered — for example:
+           1. **original copyright notice**: if the third-party file contains a copyright notice with traditional license boilerplate, insert the corresponding **`SPDX-License-Identifier` tag** just below the copyright statement, and *leave the original text unaltered* — for example:
                 ```java
-                . . . file header . . .
                 /*
                 *  Copyright 2003-2026 The Apache Software Foundation
                 *
@@ -52,31 +57,38 @@ Whenever any content from third-party projects is incorporated, it MUST be docum
                 *  specific language governing permissions and limitations
                 *  under the License.
                 */
+                . . . derivative copyright notice . . .
                 ```
-           2. prepend to the original copyright notice a new comment block specifying the **additional information** (NOTE: `SourceName` tag is always adjacent to the corresponding code element) — for example:
+              2. **derivative copyright notice**: append after the original copyright notice a new comment block specifying copyright and licensing information of the derivative project, along with additional information (NOTE: `SourceName` tag is always adjacent to the corresponding code element) — for example:
 
-                 ```java
-                 . . . file header . . .
-                 /*
-                   Source: https://github.com/skyscreamer/JSONassert/blob/e81c16c59ce0860f97a65d871589ab2337370c4b/src/main/java/org/skyscreamer/jsonassert/comparator/AbstractComparator.java
+                    ```java
+                    . . . original copyright notice . . .
+                    /*
+                      CHANGES TO THE ORIGINAL FILE
 
-                   Changes: `recursivelyCompareJSONArray(..)` modified to handle also X Y Z.
-                  */
-                 /*
-                  *  Copyright 2003-2026 The Apache Software Foundation
-                  *
-                  *  SPDX-License-Identifier: Apache-2.0
-                  *
-                  *  Licensed to the Apache Software Foundation (ASF) under one
-                  *  or more contributor license agreements.  See the NOTICE file
-                  *  distributed with this work for additional information
-                  *  . . .
-                  */
+                      SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
-                 // SourceName: org.skyscreamer.jsonassert.comparator.AbstractComparator
-                 class AbstractComparator {
-                   . . .
-                 ```
+                      SPDX-License-Identifier: LGPL-3.0-only
+
+                      This file (Tuple.java) is part of pdfclown-common-util module in pdfClown Common project
+                      <https://github.com/pdfclown/pdfclown-common>
+
+                      DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+                      this file, you MUST add your own copyright notice in a separate comment block below this file
+                      header, listing the main changes you applied to the original source.
+
+                      Source: https://github.com/apache/groovy/blob/7831e9cf9e66f20c1b7fdd8f7dfff480db7cbe18/src/main/java/groovy/lang/Tuple.java
+
+                      Changes:
+                      - factory methods reduced to 9 elements maximum
+                      - constructor visibility reduced to package
+                      - equality comparison simplified
+                    */
+
+                    // SourceName: groovy.lang.Tuple
+                    public class Tuple<E extends @Nullable Object> extends AbstractList<E> implements Comparable<Tuple<E>>, RandomAccess {
+                      . . .
+                    ```
 
         - **third-party code fragment** (into an existing project file): wrap the fragment as an SPDX snippet — for example:
 
@@ -107,6 +119,15 @@ Whenever any content from third-party projects is incorporated, it MUST be docum
 
    - `Changes`: specifies *relevant differences between the local file and its source*.
 
-3. run `reuse lint` to check whether the license metadata of the project is valid.
+3. **validate** the copyright and licensing information of the project:
 
+    ```shell
+    ./mvnw validate -N -Preuse
+    ```
+
+    Satisfy any REUSE coverage requirement, and fix any missing or dead entry in `THIRD-PARTY-NOTICES.txt` file; to exclude redundant entries from that file (such as related to the project's own copyright holder, or to build tools):
+
+    ```
+    ./mvnw validate -N -Preuse -Dtest.expected.update
+    ```
 <!-- REUSE-IgnoreEnd -->

@@ -3,7 +3,7 @@
 # <https://github.com/commit-check/commit-check>
 #
 [branch]
-# See <docs/maintenance.md#branches> for more information.
+# See <docs/common/scm.md#branches> for more information.
 conventional_branch = true
 allow_branch_types = [
     "build", "bump",

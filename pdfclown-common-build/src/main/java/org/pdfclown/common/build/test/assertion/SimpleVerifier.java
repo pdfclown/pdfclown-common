@@ -22,6 +22,9 @@ import org.pdfclown.common.util.annot.Immutable;
  */
 @Immutable
 public class SimpleVerifier extends Verifier {
+  /**
+   * Verifies a result.
+   */
   public void verify(String value) {
     Approvals.verify(value, prepareOptions(null));
   }

@@ -59,6 +59,9 @@ public class Range<T> {
   public static final class Endpoint<T> {
     static final Endpoint<Object> UNBOUND = new Endpoint<>(null, false);
 
+    /**
+     * Creates an interval endpoint.
+     */
     @SuppressWarnings({ "NullableProblems" /* false positive */, "unchecked" })
     public static <T> Endpoint<T> of(@Nullable T value, boolean closed) {
       return value != null ? new Endpoint<>(value, closed) : (Endpoint<T>) UNBOUND;

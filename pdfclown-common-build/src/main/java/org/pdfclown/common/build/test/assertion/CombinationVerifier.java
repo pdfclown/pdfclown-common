@@ -1,4 +1,11 @@
 /*
+  SPDX-FileCopyrightText: original ApprovalTests.Java authors and contributors
+
+  SPDX-License-Identifier: Apache-2.0
+ */
+/*
+  CHANGES TO THE ORIGINAL FILE
+
   SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
   SPDX-License-Identifier: LGPL-3.0-only
@@ -9,8 +16,7 @@
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block above this file
   header, listing the main changes you applied to the original source.
- */
-/*
+
   Source: https://github.com/approvals/ApprovalTests.Java/blob/8452841b8bc430fe069f93bb413ccc913213087a/approvaltests/src/main/java/org/approvaltests/combinations/CombinationApprovals.java
   Source: https://github.com/approvals/ApprovalTests.Java/blob/8452841b8bc430fe069f93bb413ccc913213087a/approvaltests/src/main/java/org/approvaltests/combinations/CombinationsHelper.java
 
@@ -20,11 +26,6 @@
   - array parameters replaced with `java.util.List`
   - `options` parameter redefined as field
   - customizable formatters added
- */
-/*
-  SPDX-FileCopyrightText: 2008-2026 Llewellyn Falco
-
-  SPDX-License-Identifier: Apache-2.0
  */
 package org.pdfclown.common.build.test.assertion;
 

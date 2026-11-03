@@ -246,7 +246,13 @@ public abstract class ContentAsserter<T> extends Asserter {
     return log;
   }
 
+  /**
+   * Reads the content from file.
+   */
   protected abstract T readContent(Path file) throws IOException;
 
+  /**
+   * Writes the content to file.
+   */
   protected abstract void writeContent(Path file, T content) throws IOException;
 }
