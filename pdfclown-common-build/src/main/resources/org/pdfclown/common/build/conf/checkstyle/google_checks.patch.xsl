@@ -4,12 +4,20 @@
 
   SPDX-License-Identifier: LGPL-3.0-only
 
-  BaseFile: https://github.com/checkstyle/checkstyle/blob/bc58fc62478af80aa8490ffb6aea212988c5e2a2/src/main/resources/google_checks.xml
+  This file (google_checks.patch.xsl) is part of pdfclown-common-build module in pdfClown Common
+  project <https://github.com/pdfclown/pdfclown-common>
 
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block above this file
+  header, listing the main changes you applied to the original source.
+-->
+<!--
   Transformer to patch `google_checks.xml` resource from `com.puppycrawl.tools:checkstyle`
   dependency with custom settings.
 
   Nodes from the dependency resource are simply copied, unless they match a patch template.
+
+  BaseFile: https://github.com/checkstyle/checkstyle/blob/bc58fc62478af80aa8490ffb6aea212988c5e2a2/src/main/resources/google_checks.xml
 
   HISTORY (format: <`BaseFile` commit SHA> (<`com.puppycrawl.tools:checkstyle` version>, <year>)):
   - bc58fc6 (14.3.0, 2026): current patch
