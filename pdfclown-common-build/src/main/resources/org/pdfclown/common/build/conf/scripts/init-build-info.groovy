@@ -35,7 +35,7 @@ String commitIdMetadata = binding.variables['commitIdMetadata']?.trim() ?: ''
 if (commitIdMetadata.isEmpty())
   throw new IllegalStateException("Required property 'commitIdMetadata' is not set")
 
-String commitDirty = binding.variables['commitDirty']?.trim() ?: ''
+boolean commitDirty = binding.variables['commitDirty']?.trim()?.equalsIgnoreCase('true')
 
 /*
   Timestamp for reproducible builds (see
