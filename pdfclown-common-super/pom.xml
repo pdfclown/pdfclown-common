@@ -171,12 +171,12 @@ pdfclown-common-base instead)</description>
     <junit.version>6.1.3</junit.version>
     <log4j.version>2.26.1</log4j.version>
     <mockito.version>5.24.0</mockito.version>
-    <pdfclown-common-util.version>${revision}</pdfclown-common-util.version>
-    <!-- NOTE: Because of cyclic dependency between `pdfclown-common-util` module and its own build
+    <org.osgi.annotation.versioning.version>1.1.2</org.osgi.annotation.versioning.version>
+    <!-- NOTE: Because of cyclic dependency between `pdfclown-common-*` modules and their own build
       toolchain, the former cannot be referenced directly by the latter; as a workaround, the
-      latest already published version MUST be used instead.
-      WARNING: In order to provide user projects a consistent build environment, this version MUST
-      NOT be overridden. -->
+      latest published version (that is, the version previous to the one under construction) MUST be
+      used instead. Conversely, downstream projects, which reference `pdfclown-common-base`, shall
+      see this property overridden by the current version, as intended. -->
     <pdfclown-common.version>0.8.0</pdfclown-common.version>
     <slf4j.version>2.0.20</slf4j.version>
 
@@ -849,7 +849,7 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
               <link>
                 <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy</artifactId>
-                <url>https://docs.groovy-lang.org/${groovy.version}/html/api/</url>
+                <url>https://docs.groovy-lang.org/docs/groovy-${groovy.version}/html/api/</url>
               </link>
               <link>
                 <groupId>io.github.classgraph</groupId>
@@ -872,6 +872,11 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-core</url>
               </link>
               <link>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-api</url>
+              </link>
+              <link>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <url>https://javadoc.io/doc/org.assertj/assertj-core/${assertj.version}</url>
@@ -885,6 +890,11 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest</artifactId>
                 <url>https://javadoc.io/doc/org.hamcrest/hamcrest/${hamcrest.version}</url>
+              </link>
+              <link>
+                <groupId>org.jooq</groupId>
+                <artifactId>joor</artifactId>
+                <url>https://javadoc.io/doc/org.jooq/joor/${joor.version}</url>
               </link>
               <link>
                 <groupId>org.json</groupId>
@@ -903,23 +913,28 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
               </link>
               <link>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
+                <artifactId>junit-jupiter-api</artifactId>
                 <url>https://docs.junit.org/${junit.version}/api/</url>
               </link>
               <link>
                 <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <url>https://docs.junit.org/${junit.version}/api/org.junit.jupiter.api/module-summary.html</url>
-              </link>
-              <link>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <url>https://docs.junit.org/${junit.version}/api/org.junit.jupiter.engine/module-summary.html</url>
-              </link>
-              <link>
-                <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
-                <url>https://docs.junit.org/${junit.version}/api/org.junit.jupiter.params/module-summary.html</url>
+                <url>https://docs.junit.org/${junit.version}/api/</url>
+              </link>
+              <link>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-engine</artifactId>
+                <url>https://docs.junit.org/${junit.version}/api/</url>
+              </link>
+              <link>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <url>https://docs.junit.org/${junit.version}/api/</url>
+              </link>
+              <link>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <url>https://docs.junit.org/${junit.version}/api/</url>
               </link>
               <link>
                 <groupId>org.mockito</groupId>
@@ -927,9 +942,14 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 <url>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}</url>
               </link>
               <link>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.annotation.versioning</artifactId>
+                <url>https://javadoc.io/doc/org.mockito/mockito-core/${org.osgi.annotation.versioning.version}</url>
+              </link>
+              <link>
                 <groupId>org.pdfclown</groupId>
                 <artifactId>pdfclown-common-util</artifactId>
-                <url>https://javadoc.io/doc/org.pdfclown/pdfclown-common-util/${pdfclown-common-util.version}</url>
+                <url>https://javadoc.io/doc/org.pdfclown/pdfclown-common-util/${pdfclown-common.version}</url>
               </link>
               <link>
                 <groupId>org.skyscreamer</groupId>

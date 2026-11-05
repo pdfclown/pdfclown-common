@@ -337,6 +337,9 @@ new File(project.basedir, 'src/main/java/org/pdfclown/common/build/system/LogMan
         <configuration>
           <artifactSet>
             <includes>
+              <!-- NOTE: Since, due to cyclic dependency, `pdfclown-common-util` must be pinned to
+                the previous version, we have to shade it in order not to clash on the classpath
+                with the current version used by builds downstream -->
               <include>org.pdfclown:pdfclown-common-util</include>
             </includes>
           </artifactSet>
