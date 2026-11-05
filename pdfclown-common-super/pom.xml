@@ -1396,7 +1396,7 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
                 <configuration>
                   <scripts>
                     <script><![CDATA[
-import static org.pdfclown.common.build.util.system.Builds.runScript
+import static org.pdfclown.common.build.util.system.Builds.runHook
 import static org.pdfclown.common.util.Exceptions.wrongState
 
 import groovy.lang.Binding
@@ -1424,11 +1424,11 @@ var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVe
     .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
     .setDryRun(session.userProperties[USER_PROPERTY__DRYRUN] != null)
 
-runScript("onReleaseBegin", new Binding([manager: manager]), projectDir)
+runHook("onReleaseBegin", new Binding([manager: manager]), projectDir)
 
 manager.execute()
 
-runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
+runHook("onReleaseEnd", new Binding([manager: manager]), projectDir)
 ]]></script>
                   </scripts>
                 </configuration>
@@ -1585,15 +1585,24 @@ runScript("onReleaseEnd", new Binding([manager: manager]), projectDir)
                   </properties>
                   <scripts>
                     <script><![CDATA[
-try(def in = org.pdfclown.common.util.io.Resource.of(
-    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/init-build-info.groovy")
-    .openStream()) {
-  new GroovyShell(this.class.classLoader, binding).evaluate(new InputStreamReader(in))
+import org.pdfclown.common.build.util.system.Builds
+
+/*
+  TODO: remove 'Bootstrap' conditional branch when next (after 0.8.0) pdfclown-common version is
+  bumped, and replace all other explicit `GroovyShell` invocations with new `Builds.runScript`.
+ */
+if (Builds.respondsTo('runHook')) {
+  Builds.runScript("${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/" +
+      "init-build-info.groovy", binding)
+  Builds.runScript("${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/" +
+      "init-checkstyle.groovy", binding)
 }
-try(def in = org.pdfclown.common.util.io.Resource.of(
-    "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/init-checkstyle.groovy")
-    .openStream()) {
-  new GroovyShell(this.class.classLoader, binding).evaluate(new InputStreamReader(in))
+// Bootstrap (0.8.0).
+else {
+  new GroovyShell(this.class.classLoader, binding).evaluate(new File(
+      "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/init-build-info.groovy"))
+  new GroovyShell(this.class.classLoader, binding).evaluate(new File(
+      "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/init-checkstyle.groovy"))
 }
 ]]></script>
                   </scripts>

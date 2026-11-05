@@ -12,18 +12,20 @@
  */
 package org.pdfclown.common.build.util.system;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
 import static org.apache.commons.lang3.StringUtils.stripToNull;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireDirectory;
+import static org.pdfclown.common.build.internal.temp.util.Conditions.requireElement;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireFile;
 import static org.pdfclown.common.build.internal.temp.util.Conditions.requireState;
-import static org.pdfclown.common.build.internal.temp.util.Exceptions.missingPath;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.unsupported;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongState;
+import static org.pdfclown.common.build.internal.temp.util.Objects.loader;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Objects.opt;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
@@ -43,11 +45,12 @@ import static org.pdfclown.common.util.xml.Xmls.xpath;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -68,6 +71,7 @@ import org.pdfclown.common.build.system.ProjectDirId;
 import org.pdfclown.common.build.system.ProjectPathResolver;
 import org.pdfclown.common.util.Ref;
 import org.pdfclown.common.util.annot.PolyNull;
+import org.pdfclown.common.util.io.Resource;
 import org.pdfclown.common.util.xml.Xmls.XPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -394,40 +398,105 @@ public final class Builds {
   }
 
   /**
-   * Executes a build script.
-   * <p>
-   * The script runs under the same {@link ClassLoader} as this library.
-   * </p>
+   * Executes a build hook.
    *
-   * @param scriptBaseName
+   * @param scriptBasename
    *          Base name of the script file to execute (its full path is resolved as
-   *          <code>${projectDir}/src/conf/scripts/${scriptBaseName}.groovy</code>).
+   *          <code>${projectDir}/src/conf/hooks/${scriptBasename}.groovy</code>).
    * @param binding
    *          Script variable bindings.
    * @param projectDir
-   *          Base directory of the project.
+   *          Base directory.
    * @return Whether the script was executed ({@code false}, if it does not exist).
-   * @throws FileNotFoundException
-   *           if {@code projectDir} does not exist.
    * @throws IOException
    *           if script loading failed.
+   * @implNote As common practice, missing hooks do not cause exceptions.
    */
-  public static boolean runScript(String scriptBaseName, Binding binding, Path projectDir)
+  public static boolean runHook(String scriptBasename, Binding binding, Path projectDir)
       throws IOException {
-    if (!isDirectory(projectDir))
-      throw missingPath(projectDir);
-
-    var scriptFile = projectDir.resolve("src/conf/scripts/" + scriptBaseName
+    var scriptFile = projectDir.resolve("src/conf/hooks/" + scriptBasename
         + FILE_EXTENSION__GROOVY);
+
     if (!isRegularFile(scriptFile))
       return false;
 
     binding.setVariable("projectDir", projectDir);
 
-    var groovy = new GroovyShell(Builds.class.getClassLoader(), binding);
-    Script script = groovy.parse(scriptFile.toFile());
-    script.run();
+    runScript(requireElement(Resource.of(scriptFile), scriptFile), binding);
     return true;
+  }
+
+  /**
+   * Executes a build script.
+   * <p>
+   * The script runs under the {@link ClassLoader} of {@code scriptResource}.
+   * </p>
+   *
+   * @param scriptResource
+   *          Script resource.
+   * @param binding
+   *          Script variable bindings.
+   * @throws IOException
+   *           if script loading failed.
+   */
+  public static void runScript(Resource scriptResource, Binding binding) throws IOException {
+    runScript(scriptResource, binding, loader(scriptResource));
+  }
+
+  /**
+   * Executes a build script.
+   *
+   * @param scriptResource
+   *          Script resource.
+   * @param binding
+   *          Script variable bindings.
+   * @param loader
+   *          Class loader the script runs under.
+   * @throws IOException
+   *           if script loading failed.
+   */
+  public static void runScript(Resource scriptResource, Binding binding, ClassLoader loader)
+      throws IOException {
+    try (InputStream in = scriptResource.openStream()) {
+      new GroovyShell(loader, binding)
+          .evaluate(new InputStreamReader(in, UTF_8));
+    }
+  }
+
+  /**
+   * Executes a build script.
+   * <p>
+   * The script runs under the same {@link ClassLoader} as this class.
+   * </p>
+   *
+   * @param scriptResourceName
+   *          Script {@linkplain Resource resource} name.
+   * @param binding
+   *          Script variable bindings.
+   * @throws IOException
+   *           if script loading failed.
+   */
+  public static void runScript(String scriptResourceName, Binding binding) throws IOException {
+    runScript(scriptResourceName, binding, Builds.class.getClassLoader());
+  }
+
+  /**
+   * Executes a build script.
+   *
+   * @param scriptResourceName
+   *          Script {@linkplain Resource resource} name.
+   * @param binding
+   *          Script variable bindings.
+   * @param loader
+   *          Class loader the script runs under.
+   * @throws IOException
+   *           if script loading failed.
+   */
+  public static void runScript(String scriptResourceName, Binding binding, ClassLoader loader)
+      throws IOException {
+    runScript(
+        requireElement(Resource.of(scriptResourceName, loader), scriptResourceName, "resource"),
+        binding);
   }
 
   /**
