@@ -631,6 +631,17 @@ public final class Strings {
   }
 
   /**
+   * Strips a string and turns it to {@code null} if empty.
+   */
+  public static @Nullable String stripToNull(@Nullable String s) {
+    if (s == null)
+      return null;
+
+    s = s.strip();
+    return s.isEmpty() ? null : s;
+  }
+
+  /**
    * Converts the string to upper case using {@linkplain Locale#ROOT neutral} locale.
    *
    * @apiNote Useful for stable, context-insensitive conversion.
