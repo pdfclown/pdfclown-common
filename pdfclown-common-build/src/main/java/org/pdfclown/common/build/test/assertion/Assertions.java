@@ -14,7 +14,6 @@ package org.pdfclown.common.build.test.assertion;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNotBlank;
 import static org.pdfclown.common.build.internal.temp.util.Objects.textLiteral;
 
 import java.nio.file.Path;
@@ -48,7 +47,7 @@ public final class Assertions {
      * @see Named#named(String, Object)
      */
     public static <T extends @Nullable Object> Named<T> qnamed(String name, T payload) {
-      return Named.of(toString(requireNotBlank(name, "name"), payload), payload);
+      return Named.of(toString(name, payload), payload);
     }
 
     private static String toString(String name, @Nullable Object payload) {

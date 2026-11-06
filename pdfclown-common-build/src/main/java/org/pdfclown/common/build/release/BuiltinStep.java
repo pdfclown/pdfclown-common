@@ -14,7 +14,6 @@ package org.pdfclown.common.build.release;
 
 import static java.nio.file.Files.readString;
 import static java.nio.file.Files.writeString;
-import static org.pdfclown.common.build.internal.temp.util.Conditions.requireNotBlank;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.missing;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.runtime;
 import static org.pdfclown.common.build.internal.temp.util.Exceptions.wrongArgOpt;
@@ -198,9 +197,6 @@ public enum BuiltinStep implements Step {
    * Updates the project version as defined in {@code .mvn/maven.config} file.
    */
   private static void executePomUpdate(ReleaseManager manager, String version, String scmTag) {
-    requireNotBlank(version, "`version`");
-    requireNotBlank(scmTag, "`scmTag`");
-
     var newMavenConfig = new StringBuilder();
     final var mavenConfigFile = manager.getBaseDir().resolve(PATHNAME__MAVEN_CONFIG);
     try {
