@@ -1388,7 +1388,7 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
             </dependencies>
             <executions>
               <execution>
-                <id>execute-release</id>
+                <id>release</id>
                 <goals>
                   <goal>execute</goal>
                 </goals>
@@ -1396,39 +1396,7 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
                 <configuration>
                   <scripts>
                     <script><![CDATA[
-import static org.pdfclown.common.build.util.system.Builds.runHook
-import static org.pdfclown.common.util.Exceptions.wrongState
-
-import groovy.lang.Binding
-import java.util.Map
-import org.pdfclown.common.build.release.ReleaseManager
-import org.pdfclown.common.util.meta.SemVer1
-import org.pdfclown.common.util.meta.SemVer2
-
-final var USER_PROPERTY__DRYRUN = "dryRun"
-final var USER_PROPERTY__RELEASE_STARTPOINT = "release.startpoint"
-final var USER_PROPERTY__RELEASE_VERSION = "release.version"
-
-final var releaseVersion = session.userProperties[USER_PROPERTY__RELEASE_VERSION]
-if (releaseVersion == null)
-  throw wrongState("`{}` user property MISSING", USER_PROPERTY__RELEASE_VERSION)
-
-var projectDir = project.basedir.toPath()
-
-var manager = new ReleaseManager(projectDir, SemVer2.of(releaseVersion).to(SemVer1.class)
-        .toString())
-    .setReleaseBranchStartPoint(session.userProperties[USER_PROPERTY__RELEASE_STARTPOINT])
-    .setDeploymentProfiles("publish,reuse")
-    .setInstallationProfiles("full,reuse")
-    /* NOTE: Activates remote push only if GPG signing is configured. */
-    .setRemotePushEnabled(System.getenv("MAVEN_GPG_PASSPHRASE") != null)
-    .setDryRun(session.userProperties[USER_PROPERTY__DRYRUN] != null)
-
-runHook("onReleaseBegin", new Binding([manager: manager]), projectDir)
-
-manager.execute()
-
-runHook("onReleaseEnd", new Binding([manager: manager]), projectDir)
+org.pdfclown.common.build.util.system.Builds.runScript("/org/pdfclown/common/build/conf/scripts/release.groovy", binding)
 ]]></script>
                   </scripts>
                 </configuration>
@@ -1588,8 +1556,8 @@ runHook("onReleaseEnd", new Binding([manager: manager]), projectDir)
 import org.pdfclown.common.build.util.system.Builds
 
 /*
-  TODO: remove 'Bootstrap' conditional branch when next (after 0.8.0) pdfclown-common version is
-  bumped, and replace all other explicit `GroovyShell` invocations with new `Builds.runScript`.
+  TODO: remove 'Bootstrap' conditional branch when next (0.9.0) pdfclown-common version is bumped,
+  and replace all other explicit `GroovyShell` invocations with new `Builds.runScript`.
  */
 if (Builds.respondsTo('runHook')) {
   Builds.runScript("${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/" +
