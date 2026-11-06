@@ -14,7 +14,7 @@
   This script launches the project release to public artifact repository.
  */
 
-import static org.pdfclown.common.build.util.system.Builds.runHook
+import static org.pdfclown.common.build.Builds.runHook
 import static org.pdfclown.common.util.Conditions.requireState
 import static org.pdfclown.common.util.Strings.stripToNull
 

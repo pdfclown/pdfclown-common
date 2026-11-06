@@ -1396,7 +1396,7 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
                 <configuration>
                   <scripts>
                     <script><![CDATA[
-org.pdfclown.common.build.util.system.Builds.runScript("/org/pdfclown/common/build/conf/scripts/release.groovy", binding)
+org.pdfclown.common.build.Builds.runScript("/org/pdfclown/common/build/conf/scripts/release.groovy", binding)
 ]]></script>
                   </scripts>
                 </configuration>
@@ -1553,17 +1553,15 @@ org.pdfclown.common.build.util.system.Builds.runScript("/org/pdfclown/common/bui
                   </properties>
                   <scripts>
                     <script><![CDATA[
-import org.pdfclown.common.build.util.system.Builds
-
 /*
   TODO: remove 'Bootstrap' conditional branch when next (0.9.0) pdfclown-common version is bumped,
   and replace all other explicit `GroovyShell` invocations with new `Builds.runScript`.
  */
-if (Builds.respondsTo('runHook')) {
-  Builds.runScript("${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/" +
-      "init-build-info.groovy", binding)
-  Builds.runScript("${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/" +
-      "init-checkstyle.groovy", binding)
+if (org.pdfclown.common.util.Objects.respondsTo('tryType')) {
+  org.pdfclown.common.build.Builds.runScript(
+      "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/init-build-info.groovy", binding)
+  org.pdfclown.common.build.Builds.runScript(
+      "${buildResourcesDir}/org/pdfclown/common/build/conf/scripts/init-checkstyle.groovy", binding)
 }
 // Bootstrap (0.8.0).
 else {

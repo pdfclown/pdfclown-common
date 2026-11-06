@@ -36,9 +36,9 @@ import java.util.function.Consumer;
 import org.apache.commons.lang3.function.Failable;
 import org.apache.commons.lang3.function.FailableFunction;
 import org.jspecify.annotations.Nullable;
+import org.pdfclown.common.build.Builds;
 import org.pdfclown.common.build.internal.temp.util.ParamMessage;
 import org.pdfclown.common.build.system.LogManager;
-import org.pdfclown.common.build.util.system.Builds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

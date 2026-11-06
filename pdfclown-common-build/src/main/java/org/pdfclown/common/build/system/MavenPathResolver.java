@@ -12,9 +12,9 @@
  */
 package org.pdfclown.common.build.system;
 
+import static org.pdfclown.common.build.Builds.projectRootDir;
 import static org.pdfclown.common.build.internal.temp.util.Objects.nonNull;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
-import static org.pdfclown.common.build.util.system.Builds.projectRootDir;
 
 import java.nio.file.Path;
 
@@ -44,9 +44,8 @@ public class MavenPathResolver extends ProjectPathResolver {
       case MAIN_TYPE_SOURCE -> "src/main/java";
       /*
        * TODO: The call to `projectRootDir` causes a circular dependence with
-       * `org.pdfclown.common.build.util.system.Builds`; at the moment this benign design flaw is
-       * not worth the pain of refactoring, but should be fixed in the future as the library
-       * matures.
+       * `org.pdfclown.common.build.Builds`; at the moment this benign design flaw is not worth the
+       * pain of refactoring, but should be fixed in the future as the library matures.
        */
       case ROOT -> nonNull(projectRootDir(resolve(ProjectDirId.BASE))).toString();
       case TEST_OUTPUT -> "target/test-output";
