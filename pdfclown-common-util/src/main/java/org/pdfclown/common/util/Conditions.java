@@ -587,7 +587,6 @@ public final class Conditions {
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
-   * @see Normalizations#normalizeToNonEmpty(String)
    */
   public static String requireNotBlank(@Nullable String value) throws ArgumentException {
     return requireNotBlank(value, null);
@@ -603,7 +602,6 @@ public final class Conditions {
    * @return {@code value}
    * @throws ArgumentException
    *           if {@code value} is invalid.
-   * @see Normalizations#normalizeToNonEmpty(String, String)
    */
   public static String requireNotBlank(@Nullable String value, @Nullable String name)
       throws ArgumentException {
