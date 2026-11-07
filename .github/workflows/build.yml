@@ -15,8 +15,6 @@ on:
 jobs:
   build:
     uses: pdfclown/.github/.github/workflows/build.yml@v2
-    with:
-      java_matrix: "[ '17', '21' ]"
     permissions:
       contents: write
       security-events: write
