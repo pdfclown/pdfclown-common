@@ -19,7 +19,6 @@ import static org.pdfclown.common.util.Conditions.requireState;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
-import static org.pdfclown.common.util.Objects.fqn;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
 
@@ -267,11 +266,9 @@ public final class Xmls {
      * </p>
      */
     public static SchemaFactory secure(SchemaFactory obj) {
-      var b = true;
-      b &= secureBasic(obj::setFeature);
-      b &= applyFeature(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY, obj::setProperty);
-      b &= applyFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, EMPTY, obj::setProperty);
-      checkStatus(b, obj);
+      secureBasic(obj::setFeature);
+      applyFeature(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY, obj::setProperty);
+      applyFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, EMPTY, obj::setProperty);
       return obj;
     }
 
@@ -284,11 +281,9 @@ public final class Xmls {
      * </p>
      */
     public static TransformerFactory secure(TransformerFactory obj) {
-      var b = true;
-      b &= secureBasic(obj::setFeature);
-      b &= applyFeature(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY, obj::setAttribute);
-      b &= applyFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, EMPTY, obj::setAttribute);
-      checkStatus(b, obj);
+      secureBasic(obj::setFeature);
+      applyFeature(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY, obj::setAttribute);
+      applyFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, EMPTY, obj::setAttribute);
       return obj;
     }
 
@@ -300,8 +295,8 @@ public final class Xmls {
      * - XML External Entity Prevention Cheat Sheet</a>.
      * </p>
      */
-    public static boolean secureBasic(FeatureSetter<Boolean> setter) {
-      return applyFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true, setter);
+    public static void secureBasic(FeatureSetter<Boolean> setter) {
+      applyFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true, setter);
     }
 
     // SPDX-SnippetBegin
@@ -310,7 +305,9 @@ public final class Xmls {
     //
     // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/resource/XMLResource.java#L150
     // SourceName: com.openhtmltopdf.resource.XMLResource.setSaxParserRequestedFeatures(..)
-    // Changes: `settings` parameter to tune DTD surface.
+    // Changes:
+    // - `settings` parameter to tune DTD surface
+    // - in case of unsupported feature, fails fast instead of logging
     /**
      * Applies parsing security settings.
      * <p>
@@ -325,23 +322,15 @@ public final class Xmls {
     @SuppressWarnings("HttpUrlsUsage")
     public static void secureParsing(Object obj, FeatureSetter<Boolean> setter,
         ParsingSecuritySettings settings) {
-      var b = secureBasic(setter);
-      b &= applyFeature("http://apache.org/xml/features/disallow-doctype-decl",
+      secureBasic(setter);
+      applyFeature("http://apache.org/xml/features/disallow-doctype-decl",
           settings.externalEntityMode == ExternalEntityMode.NONE, setter);
-      b &= applyFeature("http://xml.org/sax/features/external-general-entities", false, setter);
-      b &= applyFeature("http://xml.org/sax/features/external-parameter-entities", false, setter);
-      b &= applyFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
+      applyFeature("http://xml.org/sax/features/external-general-entities", false, setter);
+      applyFeature("http://xml.org/sax/features/external-parameter-entities", false, setter);
+      applyFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
           settings.externalEntityMode == ExternalEntityMode.EXTERNAL_DTD, setter);
-      checkStatus(b, obj);
     }
     // SPDX-SnippetEnd
-
-    private static void checkStatus(boolean status, Object obj) {
-      if (!status) {
-        log.error("XML External Entities (XXE) disablement FAILED for {} "
-            + "-- the application may be vulnerable to XXE attacks", fqn(obj));
-      }
-    }
 
     private Security() {
     }
@@ -739,7 +728,9 @@ public final class Xmls {
   //
   // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/resource/XMLResource.java#L131
   // SourceName: com.openhtmltopdf.resource.XMLResource.trySetFeature(..)
-  // Changes: `SetFeature` parameter type replaced by `FeatureSetter`.
+  // Changes:
+  // - `SetFeature` parameter type replaced by `FeatureSetter`
+  // - in case of unsupported feature, fails fast instead of logging
   /**
    * Applies a feature via setter.
    *
@@ -749,15 +740,14 @@ public final class Xmls {
    *          Feature value.
    * @param setter
    *          Applies the feature to the target XML object.
-   * @return Whether the operation succeeded.
+   * @throws RuntimeException
+   *           if the feature is not supported by the XML processor.
    */
-  public static <T> boolean applyFeature(String name, T value, FeatureSetter<T> setter) {
+  public static <T> void applyFeature(String name, T value, FeatureSetter<T> setter) {
     try {
       setter.accept(name, value);
-      return true;
     } catch (Exception ex) {
-      log.warn("Feature '{}' NOT supported by XML processor ({})", name, ex.getMessage());
-      return false;
+      throw runtime("Feature '{}' NOT supported by XML processor", name, ex);
     }
   }
   // SPDX-SnippetEnd
@@ -807,13 +797,8 @@ public final class Xmls {
    *           if the factory class cannot be created.
    */
   public static DocumentBuilderFactory documentFactory(@Nullable String className) {
-    /*
-     * NOTE: Unfortunately, `newInstance(..)` overloads have inconsistent semantics (`newInstance()`
-     * isn't equivalent to `newInstance(null, null)` as one might reasonably expect), so we have to
-     * branch our call.
-     */
     var ret = className != null ? DocumentBuilderFactory.newInstance(className, null)
-        : DocumentBuilderFactory.newInstance();
+        : DocumentBuilderFactory.newDefaultInstance();
     ret.setNamespaceAware(true);
     return Security.secure(ret);
   }
@@ -927,7 +912,7 @@ public final class Xmls {
    * </p>
    */
   public static SAXParserFactory saxParserFactory() {
-    var ret = SAXParserFactory.newInstance();
+    var ret = SAXParserFactory.newDefaultInstance();
     ret.setNamespaceAware(true);
     return Security.secure(ret);
   }
@@ -939,7 +924,7 @@ public final class Xmls {
    * </p>
    */
   public static SchemaFactory schemaFactory() {
-    var ret = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    var ret = SchemaFactory.newDefaultInstance();
     return Security.secure(ret);
   }
 
@@ -1032,13 +1017,8 @@ public final class Xmls {
    * </p>
    */
   public static TransformerFactory transformerFactory(@Nullable String className) {
-    /*
-     * NOTE: Unfortunately, `newInstance(..)` overloads have inconsistent semantics (`newInstance()`
-     * isn't equivalent to `newInstance(null, null)` as one might reasonably expect), so we have to
-     * branch our call.
-     */
     var ret = className != null ? TransformerFactory.newInstance(className, null)
-        : TransformerFactory.newInstance();
+        : TransformerFactory.newDefaultInstance();
     return Security.secure(ret);
   }
 
@@ -1206,7 +1186,7 @@ public final class Xmls {
    * </p>
    */
   public static XPathFactory xpathFactory() {
-    var ret = XPathFactory.newInstance();
+    var ret = XPathFactory.newDefaultInstance();
     Security.secureBasic(ret::setFeature);
     return ret;
   }
