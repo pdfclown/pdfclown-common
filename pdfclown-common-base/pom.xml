@@ -23,73 +23,6 @@
   <name>${project.artifactId}</name>
   <description>Common build configuration for pdfClown.org projects</description>
 
-  <properties>
-    <!--
-      OVERRIDDEN PROPERTIES
-    -->
-    <internal.assemblies.basedir>${rootdir}/target/assemblies</internal.assemblies.basedir>
-    <internal.assemblies.unpack.skip>false</internal.assemblies.unpack.skip>
-
-    <!--
-      VERSIONS
-    -->
-    <pdfclown-common.version>${revision}</pdfclown-common.version>
-  </properties>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <!--
-          WARNING: DO NOT move the `pdfclown-common-build` dependency declarations here below, up to
-          the parent POM hierarchy, as they must be activated only outside the pdfclown-common
-          project.
-        -->
-
-        <plugin>
-          <groupId>com.diffplug.spotless</groupId>
-          <artifactId>spotless-maven-plugin</artifactId>
-          <dependencies>
-            <!-- Common resources from classpath (configuration files) -->
-            <dependency>
-              <groupId>org.pdfclown</groupId>
-              <artifactId>pdfclown-common-build</artifactId>
-              <version>${revision}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <dependencies>
-            <!-- Common resources from classpath (configuration files) -->
-            <dependency>
-              <groupId>org.pdfclown</groupId>
-              <artifactId>pdfclown-common-build</artifactId>
-              <version>${revision}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <configuration>
-            <docletArtifacts
-                combine.children="append">
-              <!-- Common resources from classpath (stylesheets, scripts, etc.) -->
-              <artifact>
-                <groupId>org.pdfclown</groupId>
-                <artifactId>pdfclown-common-build</artifactId>
-                <version>${revision}</version>
-              </artifact>
-            </docletArtifacts>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-
   <profiles>
     <!--============================================================================================
       STATE PROFILES
@@ -99,11 +32,14 @@
     =============================================================================================-->
 
     <profile>
-      <id>@unselfish</id>
+      <id>@base</id>
       <!--
-        UNSELFISH PROFILE
+        BASE PROFILE
 
-        Switches from self-build POM to base POM.
+        Activates the base POM.
+
+        NOTE: The public definitions of this POM are isolated into this profile in order to be
+        available to inheriting projects without affecting its own build.
       -->
       <activation>
         <file>
@@ -111,12 +47,75 @@
         </file>
       </activation>
       <properties>
+        <!--
+          OVERRIDDEN PROPERTIES
+        -->
         <!-- Common resources from classpath -->
         <buildResourcesDir
             combine.self="override"/>
+        <internal.assemblies.basedir>${rootdir}/target/assemblies</internal.assemblies.basedir>
+        <internal.assemblies.unpack.skip>false</internal.assemblies.unpack.skip>
         <!-- Root POM context, by default -->
         <rootdir>${project.basedir}</rootdir>
+
+        <!--
+          VERSIONS
+        -->
+        <pdfclown-common.version>${revision}</pdfclown-common.version>
       </properties>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <!--
+              WARNING: DO NOT move the `pdfclown-common-build` dependency declarations here below, up to
+              the parent POM hierarchy, as they must be activated only outside the pdfclown-common
+              project.
+            -->
+
+            <plugin>
+              <groupId>com.diffplug.spotless</groupId>
+              <artifactId>spotless-maven-plugin</artifactId>
+              <dependencies>
+                <!-- Common resources from classpath (configuration files) -->
+                <dependency>
+                  <groupId>org.pdfclown</groupId>
+                  <artifactId>pdfclown-common-build</artifactId>
+                  <version>${revision}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-checkstyle-plugin</artifactId>
+              <dependencies>
+                <!-- Common resources from classpath (configuration files) -->
+                <dependency>
+                  <groupId>org.pdfclown</groupId>
+                  <artifactId>pdfclown-common-build</artifactId>
+                  <version>${revision}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <configuration>
+                <docletArtifacts
+                    combine.children="append">
+                  <!-- Common resources from classpath (stylesheets, scripts, etc.) -->
+                  <artifact>
+                    <groupId>org.pdfclown</groupId>
+                    <artifactId>pdfclown-common-build</artifactId>
+                    <version>${revision}</version>
+                  </artifact>
+                </docletArtifacts>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
     </profile>
   </profiles>
 </project>
