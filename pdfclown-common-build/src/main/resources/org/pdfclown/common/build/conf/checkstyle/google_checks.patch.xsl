@@ -17,11 +17,11 @@
 
   Nodes from the dependency resource are simply copied, unless they match a patch template.
 
-  BaseFile: https://github.com/checkstyle/checkstyle/blob/bc58fc62478af80aa8490ffb6aea212988c5e2a2/src/main/resources/google_checks.xml
+  BaseFile: https://github.com/checkstyle/checkstyle/blob/7d9e9489b58531edd4447503f694a5bd4f475209/src/main/resources/google_checks.xml
 
   HISTORY (format: <`BaseFile` commit SHA> (<`com.puppycrawl.tools:checkstyle` version>, <year>)):
-  - bc58fc6 (14.3.0, 2026): current patch
-  - 0678fc6 (10.2, 2022): initial patch
+  - ebb7998 (14.3.0-14.4.0, 2026): current patch
+  - 1d29e97 (10.2, 2022): initial patch
 
   MAINTENANCE: In order to work properly, anytime `com.puppycrawl.tools:checkstyle` version is
   bumped (see `maven-checkstyle-plugin.puppycrawl.version`), this transformer MUST be updated
@@ -59,7 +59,7 @@
 
       SPDX-License-Identifier: MIT-0
 
-      BaseFile: https://github.com/checkstyle/checkstyle/blob/bc58fc62478af80aa8490ffb6aea212988c5e2a2/src/main/resources/google_checks.xml
+      BaseFile: https://github.com/checkstyle/checkstyle/blob/7d9e9489b58531edd4447503f694a5bd4f475209/src/main/resources/google_checks.xml
 
       Changes: Patched with pdfClown Common's custom settings (see [CUSTOM] tags).
       <!-- @formatter:on -->
@@ -209,8 +209,8 @@
   <xsl:template
       match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='OperatorWrap' and not(property[@name='id']/@value='OperatorWrapNL')]">
     <xsl:comment>
-      [CUSTOM] Suppress additional OperatorWrap modules (bc58fc6 (14.3.0, 2026)) to restore the good
-      old behavior (0678fc6 (10.2, 2022)), allowing to split `->` to new line on modern switch cases
+      [CUSTOM] Suppress additional OperatorWrap modules (ebb7998 (14.3.0, 2026)) to restore the good
+      old behavior (1d29e97 (10.2, 2022)), allowing to split `->` to new line on modern switch cases
       for readability, for example:
       <!-- @formatter:off -->
       return switch (platformID) {
@@ -285,7 +285,7 @@
   <xsl:template
       match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='WhitespaceAfter']/property[@name='tokens']">
     <xsl:comment>
-      [CUSTOM] Restore the old behavior (0678fc6 (10.2, 2022)).
+      [CUSTOM] Restore the old behavior (1d29e97 (10.2, 2022)).
     </xsl:comment>
     <property name="tokens" value="COMMA, SEMI, TYPECAST, LITERAL_IF, LITERAL_ELSE, LITERAL_RETURN,
                     LITERAL_WHILE, LITERAL_DO, LITERAL_FOR, LITERAL_FINALLY, DO_WHILE, ELLIPSIS,
@@ -438,7 +438,7 @@
   <xsl:template priority="2"
                 match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='LeftCurly'][1]">
     <xsl:comment>
-      [CUSTOM] Restore the good old module (0678fc6 (10.2, 2022)), to allow left curly braces
+      [CUSTOM] Restore the good old module (1d29e97 (10.2, 2022)), to allow left curly braces
       trailing switch cases.
     </xsl:comment>
     <module name="LeftCurly">
@@ -455,7 +455,7 @@
   <xsl:template priority="1"
                 match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='LeftCurly']">
     <xsl:comment>
-      [CUSTOM] Suppress additional LeftCurly modules (bc58fc6 (14.3.0, 2026)).
+      [CUSTOM] Suppress additional LeftCurly modules (ebb7998 (14.3.0, 2026)).
     </xsl:comment>
     <xsl:call-template name="comment-out"/>
   </xsl:template>
