@@ -21,6 +21,7 @@ import static org.pdfclown.common.util.Exceptions.unsupported;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.textLiteral;
 import static org.pdfclown.common.util.Strings.EMPTY;
+import static org.pdfclown.common.util.security.Securities.applyFeature;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,10 +62,11 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFunctionResolver;
 import javax.xml.xpath.XPathVariableResolver;
-import org.apache.commons.lang3.function.FailableBiConsumer;
 import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.Immutable;
 import org.pdfclown.common.util.collect.Collects;
+import org.pdfclown.common.util.security.Securities;
+import org.pdfclown.common.util.security.SecurityFeatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -130,17 +132,6 @@ public final class Xmls {
   }
 
   /**
-   * XML feature setter.
-   *
-   * @param <T>
-   *          Value type.
-   * @author Stefano Chizzolini
-   */
-  @FunctionalInterface
-  public interface FeatureSetter<T> extends FailableBiConsumer<String, T, Exception> {
-  }
-
-  /**
    * XML hardening utilities.
    * <p>
    * They are implicitly applied to all the XML objects returned by {@link Xmls} factory methods to
@@ -193,7 +184,7 @@ public final class Xmls {
      * Parsing configuration.
      *
      * @author Stefano Chizzolini
-     * @see Security#secureParsing(Object, FeatureSetter, ParsingSecuritySettings)
+     * @see Security#secureParsing(Securities.FeatureApplier , ParsingSecuritySettings)
      */
     public static class ParsingSecuritySettings {
       ExternalEntityMode externalEntityMode = ExternalEntityMode.NONE;
@@ -220,7 +211,7 @@ public final class Xmls {
     /**
      * Creates a new parsing configuration.
      *
-     * @see #secureParsing(Object, FeatureSetter, ParsingSecuritySettings)
+     * @see #secureParsing(Securities.FeatureApplier , ParsingSecuritySettings)
      */
     public static ParsingSecuritySettings parsingSettings() {
       return new ParsingSecuritySettings();
@@ -234,8 +225,9 @@ public final class Xmls {
      * - XML External Entity Prevention Cheat Sheet</a>.
      * </p>
      */
-    public static DocumentBuilderFactory secure(DocumentBuilderFactory obj) {
-      secureParsing(obj, obj::setFeature, parsingSettings());
+    public static DocumentBuilderFactory secure(DocumentBuilderFactory obj)
+        throws SecurityFeatureException {
+      secureParsing(obj::setFeature, parsingSettings());
       /*
        * (see Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks")
        */
@@ -252,8 +244,8 @@ public final class Xmls {
      * - XML External Entity Prevention Cheat Sheet</a>.
      * </p>
      */
-    public static SAXParserFactory secure(SAXParserFactory obj) {
-      secureParsing(obj, obj::setFeature, parsingSettings());
+    public static SAXParserFactory secure(SAXParserFactory obj) throws SecurityFeatureException {
+      secureParsing(obj::setFeature, parsingSettings());
       return obj;
     }
 
@@ -265,7 +257,7 @@ public final class Xmls {
      * - XML External Entity Prevention Cheat Sheet</a>.
      * </p>
      */
-    public static SchemaFactory secure(SchemaFactory obj) {
+    public static SchemaFactory secure(SchemaFactory obj) throws SecurityFeatureException {
       secureBasic(obj::setFeature);
       applyFeature(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY, obj::setProperty);
       applyFeature(XMLConstants.ACCESS_EXTERNAL_SCHEMA, EMPTY, obj::setProperty);
@@ -280,7 +272,8 @@ public final class Xmls {
      * - XML External Entity Prevention Cheat Sheet</a>.
      * </p>
      */
-    public static TransformerFactory secure(TransformerFactory obj) {
+    public static TransformerFactory secure(TransformerFactory obj)
+        throws SecurityFeatureException {
       secureBasic(obj::setFeature);
       applyFeature(XMLConstants.ACCESS_EXTERNAL_DTD, EMPTY, obj::setAttribute);
       applyFeature(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, EMPTY, obj::setAttribute);
@@ -295,8 +288,9 @@ public final class Xmls {
      * - XML External Entity Prevention Cheat Sheet</a>.
      * </p>
      */
-    public static void secureBasic(FeatureSetter<Boolean> setter) {
-      applyFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true, setter);
+    public static void secureBasic(Securities.FeatureApplier<Boolean> applier)
+        throws SecurityFeatureException {
+      applyFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true, applier);
     }
 
     // SPDX-SnippetBegin
@@ -316,19 +310,19 @@ public final class Xmls {
      * - XML External Entity Prevention Cheat Sheet</a>.
      * </p>
      * <p>
-     * Comprises {@link #secureBasic(FeatureSetter)}.
+     * Comprises {@link #secureBasic(Securities.FeatureApplier)}.
      * </p>
      */
     @SuppressWarnings("HttpUrlsUsage")
-    public static void secureParsing(Object obj, FeatureSetter<Boolean> setter,
-        ParsingSecuritySettings settings) {
-      secureBasic(setter);
+    public static void secureParsing(Securities.FeatureApplier<Boolean> applier,
+        ParsingSecuritySettings settings) throws SecurityFeatureException {
+      secureBasic(applier);
       applyFeature("http://apache.org/xml/features/disallow-doctype-decl",
-          settings.externalEntityMode == ExternalEntityMode.NONE, setter);
-      applyFeature("http://xml.org/sax/features/external-general-entities", false, setter);
-      applyFeature("http://xml.org/sax/features/external-parameter-entities", false, setter);
+          settings.externalEntityMode == ExternalEntityMode.NONE, applier);
+      applyFeature("http://xml.org/sax/features/external-general-entities", false, applier);
+      applyFeature("http://xml.org/sax/features/external-parameter-entities", false, applier);
       applyFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
-          settings.externalEntityMode == ExternalEntityMode.EXTERNAL_DTD, setter);
+          settings.externalEntityMode == ExternalEntityMode.EXTERNAL_DTD, applier);
     }
     // SPDX-SnippetEnd
 
@@ -657,7 +651,14 @@ public final class Xmls {
      * no sense for users to hack them, so we avoid to wrap them in turn.
      */
 
-    final javax.xml.xpath.XPath base = xpathFactory().newXPath();
+    final javax.xml.xpath.XPath base;
+    {
+      try {
+        base = xpathFactory().newXPath();
+      } catch (SecurityFeatureException ex) {
+        throw runtime(ex);
+      }
+    }
 
     @Override
     public XPathExpression compile(String expression) throws XPathExpressionException {
@@ -722,36 +723,6 @@ public final class Xmls {
     }
   });
 
-  // SPDX-SnippetBegin
-  // SPDX-SnippetCopyrightText: 2016 Patrick Wright and others
-  // SPDX-License-Identifier: LGPL-3.0-only
-  //
-  // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/resource/XMLResource.java#L131
-  // SourceName: com.openhtmltopdf.resource.XMLResource.trySetFeature(..)
-  // Changes:
-  // - `SetFeature` parameter type replaced by `FeatureSetter`
-  // - in case of unsupported feature, fails fast instead of logging
-  /**
-   * Applies a feature via setter.
-   *
-   * @param name
-   *          Feature name.
-   * @param value
-   *          Feature value.
-   * @param setter
-   *          Applies the feature to the target XML object.
-   * @throws RuntimeException
-   *           if the feature is not supported by the XML processor.
-   */
-  public static <T> void applyFeature(String name, T value, FeatureSetter<T> setter) {
-    try {
-      setter.accept(name, value);
-    } catch (Exception ex) {
-      throw runtime("Feature '{}' NOT supported by XML processor", name, ex);
-    }
-  }
-  // SPDX-SnippetEnd
-
   /**
    * Gets the standard representation of the node list.
    */
@@ -772,15 +743,12 @@ public final class Xmls {
   }
 
   /**
-   * Creates a hardened DOM factory.
+   * Creates a hardened DOM factory based on the builtin system-default implementation.
    * <p>
    * Applies {@link Security#secure(DocumentBuilderFactory)}.
    * </p>
-   *
-   * @throws FactoryConfigurationError
-   *           if the factory cannot be created.
    */
-  public static DocumentBuilderFactory documentFactory() {
+  public static DocumentBuilderFactory documentFactory() throws SecurityFeatureException {
     return documentFactory(null);
   }
 
@@ -792,11 +760,14 @@ public final class Xmls {
    *
    * @param className
    *          Fully-qualified factory class name that provides the implementation of
-   *          {@code DocumentBuilderFactory}.
+   *          {@code DocumentBuilderFactory} ({@code null}, for builtin system-default
+   *          implementation).
    * @throws FactoryConfigurationError
-   *           if the factory class cannot be created.
+   *           if the factory class corresponding to the defined {@code className} cannot be
+   *           created.
    */
-  public static DocumentBuilderFactory documentFactory(@Nullable String className) {
+  public static DocumentBuilderFactory documentFactory(@Nullable String className)
+      throws SecurityFeatureException {
     var ret = className != null ? DocumentBuilderFactory.newInstance(className, null)
         : DocumentBuilderFactory.newDefaultInstance();
     ret.setNamespaceAware(true);
@@ -816,10 +787,10 @@ public final class Xmls {
    * </ul>
    *
    * @param style
-   *          XSLT document to use ({@code null} for identity transformation).
+   *          XSLT document to use ({@code null}, for identity transformation).
    */
   public static Transformer fragmentTransformer(@Nullable Source style)
-      throws TransformerConfigurationException, TransformerFactoryConfigurationError {
+      throws TransformerConfigurationException, SecurityFeatureException {
     var ret = newTransformer(style);
     ret.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
     return ret;
@@ -890,7 +861,8 @@ public final class Xmls {
   /**
    * Saves an XML document to stream.
    */
-  public static void save(Document xml, OutputStream out) throws TransformerException {
+  public static void save(Document xml, OutputStream out) throws TransformerException,
+      SecurityFeatureException {
     var output = new StreamResult(out);
     var input = new DOMSource(xml);
     transformerFactory().newTransformer().transform(input, output);
@@ -899,31 +871,32 @@ public final class Xmls {
   /**
    * Saves an XML document to file.
    */
-  public static void save(Document xml, Path file) throws TransformerException, IOException {
+  public static void save(Document xml, Path file) throws TransformerException, IOException,
+      SecurityFeatureException {
     try (var out = Files.newOutputStream(file)) {
       save(xml, out);
     }
   }
 
   /**
-   * Creates a hardened SAX parser factory.
+   * Creates a hardened SAX parser factory based on the builtin system-default implementation.
    * <p>
    * Applies {@link Security#secure(SAXParserFactory)}.
    * </p>
    */
-  public static SAXParserFactory saxParserFactory() {
+  public static SAXParserFactory saxParserFactory() throws SecurityFeatureException {
     var ret = SAXParserFactory.newDefaultInstance();
     ret.setNamespaceAware(true);
     return Security.secure(ret);
   }
 
   /**
-   * Creates a hardened schema factory.
+   * Creates a hardened schema factory based on the builtin system-default implementation.
    * <p>
    * Applies {@link Security#secure(SchemaFactory)}.
    * </p>
    */
-  public static SchemaFactory schemaFactory() {
+  public static SchemaFactory schemaFactory() throws SecurityFeatureException {
     var ret = SchemaFactory.newDefaultInstance();
     return Security.secure(ret);
   }
@@ -947,7 +920,7 @@ public final class Xmls {
       var writer = new StringWriter();
       transformer(null).transform(new DOMSource(document), new StreamResult(writer));
       return writer.toString();
-    } catch (TransformerException ex) {
+    } catch (SecurityFeatureException | TransformerException ex) {
       throw runtime(ex);
     }
   }
@@ -960,7 +933,7 @@ public final class Xmls {
       var writer = new StringWriter();
       fragmentTransformer(null).transform(new DOMSource(element), new StreamResult(writer));
       return writer.toString();
-    } catch (TransformerException ex) {
+    } catch (SecurityFeatureException | TransformerException ex) {
       throw runtime(ex);
     }
   }
@@ -985,11 +958,11 @@ public final class Xmls {
    * </ul>
    *
    * @param style
-   *          XSLT document to use ({@code null} for identity transformation).
+   *          XSLT document to use ({@code null}, for identity transformation).
    */
   @SuppressWarnings("HttpUrlsUsage")
   public static Transformer transformer(@Nullable Source style)
-      throws TransformerConfigurationException, TransformerFactoryConfigurationError {
+      throws TransformerConfigurationException, SecurityFeatureException {
     var ret = newTransformer(style);
     {
       ret.setOutputProperty("http://www.oracle.com/xml/is-standalone", "yes");
@@ -1001,12 +974,12 @@ public final class Xmls {
   }
 
   /**
-   * Creates a hardened XML transformer factory.
+   * Creates a hardened XML transformer factory based on the builtin system-default implementation.
    * <p>
    * Applies {@link Security#secure(TransformerFactory)}.
    * </p>
    */
-  public static TransformerFactory transformerFactory() {
+  public static TransformerFactory transformerFactory() throws SecurityFeatureException {
     return transformerFactory(null);
   }
 
@@ -1015,8 +988,16 @@ public final class Xmls {
    * <p>
    * Applies {@link Security#secure(TransformerFactory)}.
    * </p>
+   *
+   * @param className
+   *          Fully-qualified factory class name that provides the implementation of
+   *          {@code TransformerFactory} ({@code null}, for builtin system-default implementation).
+   * @throws TransformerFactoryConfigurationError
+   *           if the factory class corresponding to the defined {@code className} cannot be
+   *           created.
    */
-  public static TransformerFactory transformerFactory(@Nullable String className) {
+  public static TransformerFactory transformerFactory(@Nullable String className)
+      throws SecurityFeatureException {
     var ret = className != null ? TransformerFactory.newInstance(className, null)
         : TransformerFactory.newDefaultInstance();
     return Security.secure(ret);
@@ -1097,7 +1078,8 @@ public final class Xmls {
    * Applies {@link Security#secure(DocumentBuilderFactory)}.
    * </p>
    */
-  public static Document xml(InputStream in) throws IOException, SAXException {
+  public static Document xml(InputStream in) throws SAXException, ParserConfigurationException,
+      IOException, SecurityFeatureException {
     return xml(in, documentFactory());
   }
 
@@ -1108,33 +1090,29 @@ public final class Xmls {
    *          <span class="important">IMPORTANT: It is caller's responsibility to ensure this
    *          factory is {@link Security#secure(DocumentBuilderFactory) hardened}</span>.
    */
-  public static Document xml(InputStream in, DocumentBuilderFactory factory)
-      throws IOException, SAXException {
+  public static Document xml(InputStream in, DocumentBuilderFactory factory) throws SAXException,
+      ParserConfigurationException, IOException {
     requireNonNull(in, "`in`");
     requireNonNull(factory, "`factory`");
 
-    try {
-      var builder = factory.newDocumentBuilder();
-      builder.setErrorHandler(new ErrorHandler() {
-        @Override
-        public void error(SAXParseException ex) throws SAXException {
-          throw ex;
-        }
+    var builder = factory.newDocumentBuilder();
+    builder.setErrorHandler(new ErrorHandler() {
+      @Override
+      public void error(SAXParseException ex) throws SAXException {
+        throw ex;
+      }
 
-        @Override
-        public void fatalError(SAXParseException ex) throws SAXException {
-          throw ex;
-        }
+      @Override
+      public void fatalError(SAXParseException ex) throws SAXException {
+        throw ex;
+      }
 
-        @Override
-        public void warning(SAXParseException ex) {
-          log.warn(ex.getMessage());
-        }
-      });
-      return builder.parse(in);
-    } catch (ParserConfigurationException ex) {
-      throw runtime(ex);
-    }
+      @Override
+      public void warning(SAXParseException ex) {
+        log.warn(ex.getMessage());
+      }
+    });
+    return builder.parse(in);
   }
 
   /**
@@ -1143,7 +1121,8 @@ public final class Xmls {
    * Applies {@link Security#secure(DocumentBuilderFactory)}.
    * </p>
    */
-  public static Document xml(Path file) throws IOException, SAXException {
+  public static Document xml(Path file) throws SAXException, ParserConfigurationException,
+      IOException, SecurityFeatureException {
     return xml(file, documentFactory());
   }
 
@@ -1154,8 +1133,8 @@ public final class Xmls {
    *          <span class="important">IMPORTANT: It is caller's responsibility to ensure this
    *          factory is {@link Security#secure(DocumentBuilderFactory) hardened}</span>.
    */
-  public static Document xml(Path file, DocumentBuilderFactory factory)
-      throws IOException, SAXException {
+  public static Document xml(Path file, DocumentBuilderFactory factory) throws SAXException,
+      ParserConfigurationException, IOException {
     requireNonNull(file, "`file`");
     requireNonNull(factory, "`factory`");
 
@@ -1171,7 +1150,7 @@ public final class Xmls {
    *          Namespace context ({@code null}, for namespace-unaware XPath evaluation).
    * @see XPath.Namespaces
    */
-  public static XPath xpath(@Nullable NamespaceContext namespaces) {
+  public static XPath xpath(@Nullable NamespaceContext namespaces) throws SecurityFeatureException {
     var ret = xpathFactory().newXPath();
     if (namespaces != null) {
       ret.setNamespaceContext(namespaces);
@@ -1182,17 +1161,17 @@ public final class Xmls {
   /**
    * Creates a hardened XPath factory.
    * <p>
-   * Applies {@link Security#secureBasic(FeatureSetter)}.
+   * Applies {@link Security#secureBasic(Securities.FeatureApplier )}.
    * </p>
    */
-  public static XPathFactory xpathFactory() {
+  public static XPathFactory xpathFactory() throws SecurityFeatureException {
     var ret = XPathFactory.newDefaultInstance();
     Security.secureBasic(ret::setFeature);
     return ret;
   }
 
   private static Transformer newTransformer(@Nullable Source style)
-      throws TransformerConfigurationException, TransformerFactoryConfigurationError {
+      throws TransformerConfigurationException, SecurityFeatureException {
     var factory = transformerFactory();
     /*
      * NOTE: Unfortunately, `newTransformer(..)` overloads have inconsistent semantics
