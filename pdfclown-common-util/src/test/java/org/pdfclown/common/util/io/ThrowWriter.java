@@ -26,7 +26,7 @@
   <https://github.com/pdfclown/pdfclown-common>
 
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
-  this file, you MUST add your own copyright notice in a separate comment block above this file
+  this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
 
   Source: https://github.com/talsma-ict/umldoclet/blob/6a7b2e09126b38e1c49103ba85754c7fdfb01db4/src/test/java/nl/talsmasoftware/umldoclet/rendering/writers/ThrowingWriter.java
