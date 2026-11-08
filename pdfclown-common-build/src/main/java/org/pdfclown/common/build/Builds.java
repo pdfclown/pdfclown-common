@@ -31,7 +31,7 @@ import static org.pdfclown.common.build.internal.temp.util.Objects.opt;
 import static org.pdfclown.common.build.internal.temp.util.Objects.sqnd;
 import static org.pdfclown.common.build.internal.temp.util.Strings.EMPTY;
 import static org.pdfclown.common.build.internal.temp.util.Strings.S;
-import static org.pdfclown.common.build.internal.temp.util.function.Functions.peek;
+import static org.pdfclown.common.build.internal.temp.util.function.Functions.tap;
 import static org.pdfclown.common.build.internal.temp.util.function.Functions.toOrNull;
 import static org.pdfclown.common.build.internal.temp.util.io.Files.FILE_EXTENSION__GROOVY;
 import static org.pdfclown.common.build.system.MavenPathResolver.FILENAME__POM;
@@ -157,7 +157,7 @@ public final class Builds {
         // 2. Dependencies.
         var error = new StringBuilder();
         var invoker = new DefaultInvoker();
-        invoker.execute(peek(new DefaultInvocationRequest(), $ -> {
+        invoker.execute(tap(new DefaultInvocationRequest(), $ -> {
           $.setMavenHome(mavenHomeOf(mavenExecAt(projectDir)
               .orElseThrow(() -> wrongState("Maven executable NOT FOUND at {}", projectDir)))
                   .orElseThrow(() -> wrongState("""

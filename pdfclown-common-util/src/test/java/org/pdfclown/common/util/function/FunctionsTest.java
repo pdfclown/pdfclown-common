@@ -98,24 +98,6 @@ public class FunctionsTest extends BaseTest {
         OBJS);
   }
 
-  @Test
-  void peek() {
-    COMBINATION.verify(
-        (obj) -> Functions.peek(obj, CONSUMER),
-        List.of("obj"),
-        // obj
-        OBJS);
-  }
-
-  @Test
-  void peekQuietly() {
-    COMBINATION.verify(
-        (obj) -> Functions.peekQuietly(obj, CONSUMER::accept),
-        List.of("obj"),
-        // obj
-        OBJS);
-  }
-
   /**
    * NOTE: {@link Functions#quietly(org.apache.commons.lang3.function.FailableRunnable)} can NEVER
    * fail per-se; if the operation fails on call, that's part of its regular execution.
@@ -144,6 +126,24 @@ public class FunctionsTest extends BaseTest {
 
     assertThat(exceptionRef.get(), instanceOf(IllegalStateException.class));
     assertThat(exceptionRef.get().getMessage(), is("FAILED"));
+  }
+
+  @Test
+  void tap() {
+    COMBINATION.verify(
+        (obj) -> Functions.tap(obj, CONSUMER),
+        List.of("obj"),
+        // obj
+        OBJS);
+  }
+
+  @Test
+  void tapQuietly() {
+    COMBINATION.verify(
+        (obj) -> Functions.tapQuietly(obj, CONSUMER::accept),
+        List.of("obj"),
+        // obj
+        OBJS);
   }
 
   @Test

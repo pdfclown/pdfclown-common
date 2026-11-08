@@ -53,10 +53,10 @@ public final class Charsets {
    * Encodes the given input.
    *
    * @return {@code null}, if the encoding failed.
-   * @see #tryGetBytes(String, Charset)
+   * @see #tryBytes(String, Charset)
    */
   @SuppressWarnings("ByteBufferBackingArray" /* ByteBuffer is safe (properly initialized) */)
-  public static byte @Nullable [] getBytesOrNull(String input, Charset charset) {
+  public static byte @Nullable [] bytesOrNull(String input, Charset charset) {
     return doGetBytes(input, charset,
         $out -> Arrays.copyOf($out.array(), $out.limit()),
         ($in, $result) -> null);
@@ -77,10 +77,10 @@ public final class Charsets {
   /**
    * Encodes the given input.
    *
-   * @see #getBytesOrNull(String, Charset)
+   * @see #bytesOrNull(String, Charset)
    */
   @SuppressWarnings("ByteBufferBackingArray" /* ByteBuffer is safe (properly initialized) */)
-  public static CodingResult<byte[]> tryGetBytes(String input, Charset charset) {
+  public static CodingResult<byte[]> tryBytes(String input, Charset charset) {
     return doGetBytes(input, charset,
         $out -> new CodingResult.Success<>(Arrays.copyOf($out.array(), $out.limit())),
         ($in, $result) -> new CodingResult.Failure<>($result.isMalformed(), $in.position(),

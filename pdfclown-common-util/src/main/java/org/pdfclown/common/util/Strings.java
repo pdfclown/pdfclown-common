@@ -195,9 +195,13 @@ public final class Strings {
   }
 
   /**
-   * Ensures a string is defined, returning empty if undefined.
+   * Normalizes a string to empty if undefined.
+   * <p>
+   * Corresponds to {@code com.google.common.base.Strings::nullToEmpty} and
+   * {@code org.apache.commons.lang3.StringUtils::defaultString}
+   * </p>
    */
-  public static String emptyIfNull(@Nullable String s) {
+  public static String emptyOr(@Nullable String s) {
     return s == null ? EMPTY : s;
   }
 
@@ -569,10 +573,14 @@ public final class Strings {
   }
 
   /**
-   * Ensures a string is undefined if empty.
+   * Normalizes a string to undefined if empty.
+   * <p>
+   * Corresponds to {@code com.google.common.base.Strings::emptyToNull} and
+   * {@code org.apache.commons.lang3.StringUtils::defaultIfEmpty}
+   * </p>
    */
-  public static @Nullable String nullIfEmpty(@Nullable String s) {
-    return s == null || s.isEmpty() ? null : s;
+  public static @Nullable String nullOr(@Nullable String s) {
+    return isEmpty(s) ? null : s;
   }
 
   /**

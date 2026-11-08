@@ -45,7 +45,7 @@ public final class Functions {
    * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
    *          applying {@code action}; same as {@link java.util.Optional#ifPresent(Consumer)}.
    * @see #ifPresentTry(Object, FailableConsumer)
-   * @see #peek(Object, Consumer)
+   * @see #tap(Object, Consumer)
    */
   public static <T> @Nullable T ifPresent(@Nullable T obj, Consumer<? super T> action) {
     if (obj != null) {
@@ -68,7 +68,7 @@ public final class Functions {
    *          applying {@code action}; same as {@link java.util.Optional#ifPresent(Consumer)},
    *          except {@code action} exceptions are muted.
    * @see #ifPresent(Object, Consumer)
-   * @see #peekQuietly(Object, FailableConsumer)
+   * @see #tapQuietly(Object, FailableConsumer)
    */
   public static <T> @Nullable T ifPresentTry(@Nullable T obj, FailableConsumer<T, ?> action) {
     if (obj != null) {
@@ -77,59 +77,6 @@ public final class Functions {
       } catch (Throwable ex) {
         //NOP
       }
-    }
-    return obj;
-  }
-
-  /**
-   * Performs an action on an object.
-   *
-   * @param <T>
-   *          Object type.
-   * @param obj
-   *          Object to consume.
-   * @param action
-   *          Action to perform.
-   * @return {@code obj}
-   * @throws NullPointerException
-   *           if {@code obj} is undefined (to avoid it, use {@link #ifPresent(Object, Consumer)}
-   *           instead).
-   * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
-   *          applying {@code action}; same as {@link java.util.stream.Stream#peek(Consumer)},
-   *          except {@code action} is executed immediately and unconditionally.
-   * @see #peekQuietly(Object, FailableConsumer)
-   * @see #ifPresent(Object, Consumer)
-   */
-  public static <T> T peek(T obj, Consumer<? super T> action) {
-    action.accept(requireNonNull(obj, "obj"));
-    return obj;
-  }
-
-  /**
-   * Quietly performs an action on an object.
-   *
-   * @param <T>
-   *          Object type.
-   * @param obj
-   *          Object to consume.
-   * @param action
-   *          Action to perform.
-   * @return {@code obj}
-   * @throws NullPointerException
-   *           if {@code obj} is undefined (to avoid it, use
-   *           {@link #ifPresentTry(Object, FailableConsumer)} instead).
-   * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
-   *          applying {@code action}; same as {@link java.util.stream.Stream#peek(Consumer)},
-   *          except {@code action} is executed immediately and its exceptions are muted.
-   * @see #peek(Object, Consumer)
-   * @see #ifPresentTry(Object, FailableConsumer)
-   */
-  public static <T> T peekQuietly(T obj, FailableConsumer<T, ?> action) {
-    requireNonNull(obj, "obj");
-    try {
-      action.accept(obj);
-    } catch (Throwable ex) {
-      //NOP
     }
     return obj;
   }
@@ -161,6 +108,57 @@ public final class Functions {
         exceptionHandler.accept(ex);
       }
     }
+  }
+
+  /**
+   * Performs an action on an object.
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to consume.
+   * @param action
+   *          Action to perform.
+   * @return {@code obj}
+   * @throws NullPointerException
+   *           if {@code obj} is undefined (to avoid it, use {@link #ifPresent(Object, Consumer)}
+   *           instead).
+   * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
+   *          applying {@code action}.
+   * @see #tapQuietly(Object, FailableConsumer)
+   * @see #ifPresent(Object, Consumer)
+   */
+  public static <T> T tap(T obj, Consumer<? super T> action) {
+    action.accept(requireNonNull(obj, "obj"));
+    return obj;
+  }
+
+  /**
+   * Quietly performs an action on an object.
+   *
+   * @param <T>
+   *          Object type.
+   * @param obj
+   *          Object to consume.
+   * @param action
+   *          Action to perform.
+   * @return {@code obj}
+   * @throws NullPointerException
+   *           if {@code obj} is undefined (to avoid it, use
+   *           {@link #ifPresentTry(Object, FailableConsumer)} instead).
+   * @apiNote Useful for fluent chaining, when {@code obj} needs to be passed downstream after
+   *          applying {@code action}.
+   * @see #tap(Object, Consumer)
+   * @see #ifPresentTry(Object, FailableConsumer)
+   */
+  public static <T> T tapQuietly(T obj, FailableConsumer<T, ?> action) {
+    requireNonNull(obj, "obj");
+    try {
+      action.accept(obj);
+    } catch (Throwable ex) {
+      //NOP
+    }
+    return obj;
   }
 
   /**

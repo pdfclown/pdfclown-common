@@ -589,26 +589,26 @@ public final class Collects {
   }
 
   /**
-   * Returns the given list, or (unmodifiable) empty if undefined.
+   * Normalizes the list to (unmodifiable) empty if undefined.
    */
   @SuppressWarnings("unchecked")
-  public static <T extends List<?>> T emptyIfNull(@Nullable T c) {
+  public static <T extends List<?>> T emptyOr(@Nullable T c) {
     return c == null ? (T) List.of() : c;
   }
 
   /**
-   * Returns the given set, or (unmodifiable) empty if undefined.
+   * Normalizes the set to (unmodifiable) empty if undefined.
    */
   @SuppressWarnings("unchecked")
-  public static <T extends Set<?>> T emptyIfNull(@Nullable T c) {
+  public static <T extends Set<?>> T emptyOr(@Nullable T c) {
     return c == null ? (T) Set.of() : c;
   }
 
   /**
-   * Returns the given map, or (unmodifiable) empty if undefined.
+   * Normalizes the map to (unmodifiable) empty if undefined.
    */
   @SuppressWarnings("unchecked")
-  public static <T extends Map<?, ?>> T emptyIfNull(@Nullable T m) {
+  public static <T extends Map<?, ?>> T emptyOr(@Nullable T m) {
     return m == null ? (T) Map.of() : m;
   }
 
@@ -779,21 +779,21 @@ public final class Collects {
   }
 
   /**
-   * Whether the collection is empty.
+   * Gets whether the collection is empty.
    */
   public static boolean isEmpty(@Nullable Collection<?> c) {
     return c == null || c.isEmpty();
   }
 
   /**
-   * Whether the map is empty.
+   * Gets whether the map is empty.
    */
   public static boolean isEmpty(@Nullable Map<?, ?> m) {
     return m == null || m.isEmpty();
   }
 
   /**
-   * Whether the array is empty.
+   * Gets whether the array is empty.
    */
   public static <T> boolean isEmpty(T @Nullable [] a) {
     return a == null || a.length == 0;
@@ -859,16 +859,16 @@ public final class Collects {
   }
 
   /**
-   * Returns the given collection, or undefined if empty.
+   * Normalizes the collection to undefined if empty.
    */
-  public static <T extends Collection<?>> @Nullable T nullIfEmpty(@Nullable T c) {
+  public static <T extends Collection<?>> @Nullable T nullOr(@Nullable T c) {
     return isEmpty(c) ? null : c;
   }
 
   /**
-   * Returns the given map, or undefined if empty.
+   * Normalizes the map to undefined if empty.
    */
-  public static <T extends Map<?, ?>> @Nullable T nullIfEmpty(@Nullable T m) {
+  public static <T extends Map<?, ?>> @Nullable T nullOr(@Nullable T m) {
     return isEmpty(m) ? null : m;
   }
 
