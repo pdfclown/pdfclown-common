@@ -26,7 +26,7 @@ import static org.apache.commons.io.file.PathUtils.fileContentEquals;
 import static org.pdfclown.common.util.Chars.BACKSLASH;
 import static org.pdfclown.common.util.Chars.DOT;
 import static org.pdfclown.common.util.Chars.SLASH;
-import static org.pdfclown.common.util.Exceptions.missingPath;
+import static org.pdfclown.common.util.Exceptions.missingFile;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Objects.INDEX__NOT_FOUND;
@@ -453,9 +453,9 @@ public final class Files {
    */
   public static Diff diff(Path dir1, Path dir2) throws IOException {
     if (!isDirectory(requireNonNull(dir1, "`dir1`")))
-      throw missingPath(dir1);
+      throw missingFile(dir1);
     else if (!isDirectory(requireNonNull(dir2, "`dir2`")))
-      throw missingPath(dir2);
+      throw missingFile(dir2);
 
     AccumulatorPathVisitor visit1 = collectFiles(dir1);
     AccumulatorPathVisitor visit2 = collectFiles(dir2);

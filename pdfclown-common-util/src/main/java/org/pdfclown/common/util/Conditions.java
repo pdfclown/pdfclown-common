@@ -15,7 +15,7 @@ package org.pdfclown.common.util;
 import static java.util.Collections.singletonList;
 import static org.pdfclown.common.util.Exceptions.missing;
 import static org.pdfclown.common.util.Exceptions.missingDependencies;
-import static org.pdfclown.common.util.Exceptions.missingPath;
+import static org.pdfclown.common.util.Exceptions.missingFile;
 import static org.pdfclown.common.util.Exceptions.wrongArg;
 import static org.pdfclown.common.util.Exceptions.wrongArgOpt;
 import static org.pdfclown.common.util.Exceptions.wrongState;
@@ -313,7 +313,7 @@ public final class Conditions {
    */
   public static Path requireDirectory(Path dir) throws FileNotFoundException {
     if (!Files.isDirectory(dir))
-      throw missingPath(dir);
+      throw missingFile(dir);
 
     return dir;
   }
@@ -421,7 +421,7 @@ public final class Conditions {
    */
   public static Path requireFile(Path file) throws FileNotFoundException {
     if (!Files.isRegularFile(file))
-      throw missingPath(file);
+      throw missingFile(file);
 
     return file;
   }

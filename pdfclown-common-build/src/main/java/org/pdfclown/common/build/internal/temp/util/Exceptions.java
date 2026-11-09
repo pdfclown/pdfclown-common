@@ -156,24 +156,46 @@ public final class Exceptions {
   }
 
   /**
-   * Creates an exception for path not found.
+   * Creates an exception for file not found.
    *
    * @param path
    *          Missing path.
    */
-  public static FileNotFoundException missingPath(Path path) {
-    return missingPath(path, null);
+  public static FileNotFoundException missingFile(Path path) {
+    return missingFile(path, null);
   }
 
   /**
-   * Creates an exception for path not found.
+   * Creates an exception for file not found.
    *
    * @param path
    *          Missing path.
    * @param description
    *          Path description.
    */
-  public static FileNotFoundException missingPath(Path path, @Nullable String description) {
+  public static FileNotFoundException missingFile(Path path, @Nullable String description) {
+    return missingFile(path.toString(), description);
+  }
+
+  /**
+   * Creates an exception for file not found.
+   *
+   * @param path
+   *          Missing path.
+   */
+  public static FileNotFoundException missingFile(String path) {
+    return missingFile(path, null);
+  }
+
+  /**
+   * Creates an exception for file not found.
+   *
+   * @param path
+   *          Missing path.
+   * @param description
+   *          Path description.
+   */
+  public static FileNotFoundException missingFile(String path, @Nullable String description) {
     var b = new StringBuilder();
     if (description != null) {
       b.append(description).append(SPACE).append(ROUND_BRACKET_OPEN);
