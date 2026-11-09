@@ -3,11 +3,14 @@ pdfClown Common <https://github.com/pdfclown/pdfclown-common>
 THIRD-PARTY NOTICES
 
 This product (see `NOTICE.txt` for its own notice) includes material from the
-third-party components listed below.
+third-party components listed below. Each component is provided under its own
+license; the full text of every license identified here below is in
+`LICENSES/<SPDX-id>.txt`.
 
-Each component is provided under its own license; the full text of every
-license identified here is in `LICENSES/<SPDX-id>.txt`. This file reproduces
-the copyright and attribution notices required by those licenses.
+This file contains the attribution notices as required by the respective
+licenses. Attribution notices for components licensed under the Apache License
+2.0, including content from upstream NOTICE files, are provided separately in
+`NOTICE.txt`.
 
 Additional information:
 * The component list below comprises the third-party components reused in any
@@ -22,8 +25,6 @@ Additional information:
   `reuse spdx` in the project source.
 * Files modified by this project carry a brief notice of the changes in their
   headers; for further details, see the version control history.
-* Notices required by the Apache License 2.0 (including content from upstream
-  NOTICE files) are reproduced in `NOTICE.txt`.
 * If you believe a notice is missing or incorrect, please open an issue in the
   project's issue tracker.
 
