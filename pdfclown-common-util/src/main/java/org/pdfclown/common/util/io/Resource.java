@@ -12,8 +12,7 @@
  */
 package org.pdfclown.common.util.io;
 
-import static org.pdfclown.common.util.function.Functions.toOrNull;
-
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -29,9 +28,6 @@ import org.pdfclown.common.util.annot.Immutable;
  * Unifies the handling of disparate kinds of resources (classpath, filesystem, web) to simplify
  * their management.
  * </p>
- * <p>
- * Resources are instantiated only if existing.
- * </p>
  *
  * @author Stefano Chizzolini
  */
@@ -45,10 +41,9 @@ public interface Resource {
    *
    * @param path
    *          Path.
-   * @return Empty, if the resource corresponding to {@code path} does not exist.
    */
-  static @Nullable PathResource of(@Nullable Path path) {
-    return path(toOrNull(path, Object::toString));
+  static PathResource of(Path path) {
+    return path(path.toString());
   }
 
   /**
@@ -59,9 +54,8 @@ public interface Resource {
    *
    * @param name
    *          Resource name.
-   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(@Nullable String name) {
+  static Resource of(String name) {
     return of(name, null, null);
   }
 
@@ -75,9 +69,8 @@ public interface Resource {
    *          Resource name.
    * @param cl
    *          Class loader for resource lookup.
-   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable Resource of(@Nullable String name, ClassLoader cl) {
+  static Resource of(String name, ClassLoader cl) {
     return of(name, cl, null);
   }
 
@@ -102,9 +95,7 @@ public interface Resource {
    *          Resolves relative filesystem paths to their absolute representation. If undefined,
    *          they are resolved against the filesystem default directory (current working
    *          directory).
-   * @return Empty, if the resource corresponding to {@code name} does not exist.
-   * @implNote {@code name} is nullable to accommodate methods like
-   *           {@link Class#getResource(String)}. Resolution algorithm:
+   * @implNote Resolution algorithm:
    *           <ol>
    *           <li><b>[explicit classpath resource]</b> if {@code name} is prefixed by
    *           {@code "classpath:"}, it is resolved through {@code cl} and returned</li>
@@ -117,14 +108,8 @@ public interface Resource {
    *           <li><b>[implicit classpath resource]</b> otherwise, {@code name} is resolved through
    *           {@code cl} and returned</li>
    *           </ol>
-   *           <p>
-   *           NOTE: In any case, the resolved resource is checked for existence before being
-   *           returned.
-   *           </p>
-   *           <p>
-   *           </p>
    */
-  static @Nullable Resource of(@Nullable String name, @Nullable ClassLoader cl,
+  static Resource of(String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver) {
     return AbstractResource.of(name, cl, fileResolver, null);
   }
@@ -134,11 +119,9 @@ public interface Resource {
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
-   *
-   * @return Empty, if the resource corresponding to {@code url} does not exist.
    */
-  static @Nullable Resource of(@Nullable URI uri) {
-    return of(toOrNull(uri, Object::toString));
+  static Resource of(URI uri) {
+    return of(uri.toString());
   }
 
   /**
@@ -146,11 +129,9 @@ public interface Resource {
    * <p>
    * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
    * </p>
-   *
-   * @return Empty, if the resource corresponding to {@code url} does not exist.
    */
-  static @Nullable Resource of(@Nullable URL url) {
-    return of(toOrNull(url, Object::toString));
+  static Resource of(URL url) {
+    return of(url.toString());
   }
 
   /**
@@ -161,9 +142,8 @@ public interface Resource {
    *
    * @param name
    *          Resource name.
-   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable PathResource path(@Nullable String name) {
+  static PathResource path(String name) {
     return path(name, null, null);
   }
 
@@ -177,9 +157,8 @@ public interface Resource {
    *          Resource name.
    * @param cl
    *          Class loader for resource lookup.
-   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable PathResource path(@Nullable String name, ClassLoader cl) {
+  static PathResource path(String name, ClassLoader cl) {
     return path(name, cl, null);
   }
 
@@ -197,9 +176,8 @@ public interface Resource {
    *          Resolves relative filesystem paths to their absolute representation. If undefined,
    *          they are resolved against the filesystem default directory (current working
    *          directory).
-   * @return Empty, if the resource corresponding to {@code name} does not exist.
    */
-  static @Nullable PathResource path(@Nullable String name, @Nullable ClassLoader cl,
+  static PathResource path(String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver) {
     return (PathResource) of(name, cl, fileResolver);
   }
@@ -210,17 +188,30 @@ public interface Resource {
   String asString();
 
   /**
+   * Whether this resource exists.
+   */
+  boolean exists();
+
+  /**
    * Original name used to retrieve this resource.
    */
   String getName();
 
   /**
    * Location of this resource.
+   *
+   * @throws IllegalStateException
+   *           if this resource does not {@linkplain #exists() exist}.
    */
   URI getUri();
 
   /**
    * Opens a connection to this resource.
+   *
+   * @throws FileNotFoundException
+   *           if this resource does not {@linkplain #exists() exist}.
+   * @throws IOException
+   *           if the connection failed.
    */
   default InputStream openStream() throws IOException {
     return getUri().toURL().openStream();

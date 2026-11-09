@@ -330,6 +330,9 @@ public final class Builds {
    *           if the current resource directory is outside any project.
    */
   public static Path projectDir() {
+    /*
+     * TODO: [util:0.9.0] update to changed `Resource` semantics.
+     */
     var resourceDir = Path.of(nonNull(Builds.class.getClassLoader().getResource(EMPTY)).getPath());
     return requireState(projectDir(resourceDir),
         () -> "Apparently, the current resource directory %s does NOT belong to any Maven project"
@@ -422,6 +425,9 @@ public final class Builds {
 
     binding.setVariable("projectDir", projectDir);
 
+    /*
+     * TODO: [util:0.9.0] update to changed `Resource` semantics.
+     */
     runScript(requireElement(Resource.of(scriptFile), scriptFile), binding);
     return true;
   }
@@ -494,6 +500,9 @@ public final class Builds {
    */
   public static void runScript(String scriptResourceName, Binding binding, ClassLoader loader)
       throws IOException {
+    /*
+     * TODO: [util:0.9.0] update to changed `Resource` semantics.
+     */
     runScript(
         requireElement(Resource.of(scriptResourceName, loader), scriptResourceName, "resource"),
         binding);

@@ -522,11 +522,10 @@ public final class Clis {
    *
    * @param name
    *          Resource name.
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    * @apiNote Useful to convert textual references to resources (such as those coming from
    *          configuration files or command-line options).
    */
-  public static @Nullable Resource parseResource(String name) {
+  public static Resource parseResource(String name) {
     return parseResource(name, null, null);
   }
 
@@ -548,11 +547,10 @@ public final class Clis {
    *          Resource name.
    * @param cl
    *          Class loader for resource lookup. If undefined, the caller's class loader is used.
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    * @apiNote Useful to convert textual references to resources (such as those coming from
    *          configuration files or command-line options).
    */
-  public static @Nullable Resource parseResource(String name, ClassLoader cl) {
+  public static Resource parseResource(String name, ClassLoader cl) {
     return parseResource(name, cl, null);
   }
 
@@ -578,11 +576,10 @@ public final class Clis {
    *          Resolves relative filesystem paths to their absolute representation. If undefined,
    *          they are resolved against the filesystem default directory (current working
    *          directory).
-   * @return {@code null}, if the resource corresponding to {@code name} does not exist.
    * @apiNote Useful to convert textual references to resources (such as those coming from
    *          configuration files or command-line options).
    */
-  public static @Nullable Resource parseResource(String name, @Nullable ClassLoader cl,
+  public static Resource parseResource(String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver) {
     return Resource.of(name, cl, fileResolver);
   }

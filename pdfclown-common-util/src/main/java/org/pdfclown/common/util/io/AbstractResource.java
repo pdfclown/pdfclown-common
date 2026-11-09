@@ -47,10 +47,9 @@ public abstract class AbstractResource implements Resource {
   /**
    * (see {@link Resource#of(String, ClassLoader, Function)})
    */
-  static @Nullable Resource of(@Nullable String name, @Nullable ClassLoader cl,
+  static Resource of(String name, @Nullable ClassLoader cl,
       @Nullable Function<Path, Path> fileResolver, @Nullable FileSystem fs) {
-    if (name == null)
-      return null;
+    requireNonNull(name, "`name`");
 
     if (fs == null) {
       fs = FileSystems.getDefault();
@@ -66,7 +65,8 @@ public abstract class AbstractResource implements Resource {
         // [filesystem resource]
         try {
           Path file = path(new URI(name), fs);
-          return Files.exists(file) ? new FileResource(name, file) : null;
+          return Files.exists(file) ? new FileResource(name, file)
+              : new UnresolvedResource(name);
         } catch (URISyntaxException ex) {
           // NOP
         }
@@ -95,7 +95,8 @@ public abstract class AbstractResource implements Resource {
       var uri = new URI(name);
       if (uri.isAbsolute())
         // [URL resource]
-        return Uris.exists(url(uri)) ? new WebResource(name, uri) : null;
+        return Uris.exists(url(uri)) ? new WebResource(name, uri)
+            : new UnresolvedResource(name);
     } catch (URISyntaxException ex) {
       // NOP
     }
@@ -110,7 +111,7 @@ public abstract class AbstractResource implements Resource {
    * @implNote Leading slash is stripped from {@code name} (see also
    *           {@link Class#getResource(String)}).
    */
-  private static @Nullable Resource ofClasspath(String name, @Nullable ClassLoader cl,
+  private static Resource ofClasspath(String name, @Nullable ClassLoader cl,
       FileSystem fs) {
     name = ResourceNames.forClassLoader(name);
     if (cl == null) {
@@ -121,13 +122,19 @@ public abstract class AbstractResource implements Resource {
     }
 
     URL url = cl.getResource(name);
-    return url != null ? new ClasspathResource(name, url, fs) : null;
+    return url != null ? new ClasspathResource(name, url, fs)
+        : new UnresolvedResource(name);
   }
 
   private final String name;
 
   protected AbstractResource(String name) {
     this.name = requireNonNull(name, "`name`");
+  }
+
+  @Override
+  public boolean exists() {
+    return true;
   }
 
   @Override

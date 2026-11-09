@@ -24,6 +24,9 @@ import org.pdfclown.common.util.annot.Immutable;
 public interface PathResource extends Resource {
   /**
    * Resource path.
+   *
+   * @throws IllegalStateException
+   *           if this resource does not {@linkplain #exists() exist}.
    */
   Path getPath();
 }
