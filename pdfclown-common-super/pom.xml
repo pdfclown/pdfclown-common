@@ -245,9 +245,6 @@ pdfclown-common-base instead)</description>
     <defaultGoal>install</defaultGoal>
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <resource>
         <targetPath>META-INF</targetPath>
         <directory>${rootdir}</directory>
         <includes>
@@ -255,13 +252,15 @@ pdfclown-common-base instead)</description>
           <include>NOTICE.txt</include>
           <include>THIRD-PARTY-NOTICES.txt</include>
         </includes>
+      </resource>
+      <!-- WARNING: This module-specific resource MUST be kept as the last one, so it can override
+        the shared, root-level ones -->
+      <resource>
+        <directory>src/main/resources</directory>
       </resource>
     </resources>
     <testResources>
       <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-      <testResource>
         <targetPath>META-INF</targetPath>
         <directory>${rootdir}</directory>
         <includes>
@@ -269,6 +268,11 @@ pdfclown-common-base instead)</description>
           <include>NOTICE.txt</include>
           <include>THIRD-PARTY-NOTICES.txt</include>
         </includes>
+      </testResource>
+      <!-- WARNING: This module-specific resource MUST be kept as the last one, so it can override
+        the shared, root-level ones -->
+      <testResource>
+        <directory>src/test/resources</directory>
       </testResource>
     </testResources>
 
