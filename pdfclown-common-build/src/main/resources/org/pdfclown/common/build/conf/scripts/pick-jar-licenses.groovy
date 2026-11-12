@@ -113,7 +113,12 @@ Files.readAllLines(sbomFile).each {
   if (it.startsWith('FileName:')) {
     current = it.substring('FileName:'.length()).trim() - ~/^\.\//
   } else if (current && it.startsWith('LicenseInfoInFile:') && current =~ includesPattern) {
-    usedLicenses << it.substring('LicenseInfoInFile:'.length()).trim()
+    def license = it.substring('LicenseInfoInFile:'.length()).trim()
+    // Purge "or later" operator from the license reference!
+    if (license.endsWith('+')) {
+      license = license.dropRight(1)
+    }
+    usedLicenses << license
   }
 }
 if (usedLicenses.isEmpty())
