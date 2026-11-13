@@ -10,11 +10,10 @@
   this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
  */
-/*
+
+/*-
   This script picks the licenses attributed to the code of the current module and puts them under
   the output directory at `META-INF/LICENSES`.
-
-  REQUIRES Python 3.13+ and `reuse` 6.2+ package.
 
   BINDING VARIABLES:
   - outputDir (REQUIRED)
@@ -22,6 +21,10 @@
   - includes (OPTIONAL): list of GLOBs relative to the source (`java`) or resource (`resources`)
     level of `sourceDir` (for example, `org/pdfclown/core/test/**`). If undefined, all files under
     `sourceDir` are included.
+
+  REQUIRES:
+  - python 3.13+
+  - reuse 6.2+ (python package)
 
   WARNING: License picking is based on a temporary SPDX report generated on the fly if missing; as
   it could become inadvertently stale, it is recommended to clean the build whenever the codebase
@@ -52,11 +55,11 @@ if (ci && !deploying) {
 
 String outputDirValue = binding.variables['outputDir']?.trim() ?: ''
 if (outputDirValue.isEmpty())
-  throw new IllegalStateException("Required property 'outputDir' is not set")
+  throw new IllegalStateException("Property 'outputDir' REQUIRED")
 
 String sourceDirValue = binding.variables['sourceDir']?.trim() ?: ''
 if (sourceDirValue.isEmpty())
-  throw new IllegalStateException("Required property 'sourceDir' is not set")
+  throw new IllegalStateException("Property 'sourceDir' REQUIRED")
 
 Path outputDir = Path.of(outputDirValue, 'META-INF/LICENSES')
 Path rootDir = normal(Path.of(project.properties['rootdir'] as String))

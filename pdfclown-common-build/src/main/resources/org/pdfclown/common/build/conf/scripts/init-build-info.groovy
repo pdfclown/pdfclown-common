@@ -10,7 +10,8 @@
   this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
  */
-/*
+
+/*-
   This script prepares information used during the build.
 
   BINDING VARIABLES:
@@ -29,7 +30,7 @@ log.info("Build information ".padRight(72, '-'))
 
 String commitTime = binding.variables['commitTime']?.trim() ?: ''
 if (commitTime.isEmpty())
-  throw new IllegalStateException("Required property 'commitTime' is not set")
+  throw new IllegalStateException("Property 'commitTime' REQUIRED")
 
 String commitIdMetadata = binding.variables['commitIdMetadata']?.trim() ?: ''
 
@@ -63,7 +64,7 @@ log.info("* buildTimestamp: " + buildTimestamp +
 def implementationVersion = project.version
 if (implementationVersion.endsWith("SNAPSHOT")) {
   if (commitIdMetadata.isEmpty())
-    throw new IllegalStateException("Required property 'commitIdMetadata' is not set")
+    throw new IllegalStateException("Property 'commitIdMetadata' REQUIRED")
 
   implementationVersion += "+" + commitIdMetadata
 }

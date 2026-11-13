@@ -10,7 +10,8 @@
   this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
  */
-/*
+
+/*-
   This script launches the project release to public artifact repository.
  */
 

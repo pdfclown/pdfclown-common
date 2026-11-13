@@ -10,12 +10,15 @@
   this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
  */
-/*
+
+/*-
   This script checks that the copyright attributions are complete, both at file level (via
   `reuse lint` command) and at project level (components listed in `THIRD-PARTY-NOTICES` file are
   checked against the codebase, thus preventing attribution drift).
 
-  REQUIRES Python 3.13+ and `reuse` 6.2+ package.
+  REQUIRES:
+  - python 3.13+
+  - reuse 6.2+ (python package)
  */
 
 // REUSE-IgnoreStart

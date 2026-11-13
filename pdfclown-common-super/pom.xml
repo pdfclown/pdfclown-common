@@ -1237,7 +1237,9 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                   Checks that the copyright attributions are complete, both at file and project
                   levels.
 
-                  REQUIRES Python 3.13+ and `reuse` 6.2+ package.
+                  REQUIRES:
+                  - python 3.13+
+                  - reuse 6.2+ (python package)
                 -->
                 <id>check-reuse</id>
                 <goals>
@@ -1555,13 +1557,15 @@ else {
               </execution>
               <execution>
                 <!--
-                  Picks the licenses attributed to the production code of the current module and puts
-                  them under the output directory at `META-INF/LICENSES`.
+                  Picks the licenses attributed to the production code of the current module and
+                  puts them under the output directory at `META-INF/LICENSES`.
 
-                  REQUIRES Python 3.13+ and `reuse` 6.2+ package.
+                  REQUIRES:
+                  - python 3.13+
+                  - reuse 6.2+ (python package)
 
-                  WARNING: License picking is based on a temporary SPDX report generated on the fly if
-                  missing; as it could become inadvertently stale, it is recommended to clean the
+                  WARNING: License picking is based on a temporary SPDX report generated on the fly
+                  if missing; as it could become inadvertently stale, it is recommended to clean the
                   build whenever the codebase may have changed.
                 -->
                 <id>pick-jar-licenses</id>
@@ -1714,7 +1718,9 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
                   Picks the licenses attributed to the test code of the current module and puts them
                   under the test output directory at `META-INF/LICENSES`.
 
-                  REQUIRES Python 3.13+ and `reuse` 6.2+ package.
+                  REQUIRES:
+                  - python 3.13+
+                  - reuse 6.2+ (python package)
 
                   WARNING: License picking is based on a temporary SPDX report generated on the fly
                   if missing; as it could become inadvertently stale, it is recommended to clean the

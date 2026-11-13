@@ -1,4 +1,17 @@
 /*
+  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-only
+
+  This file (onReleaseBegin.groovy) is part of pdfclown-common-bom module in pdfClown Common project
+  <https://github.com/pdfclown/pdfclown-common>
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block below this file
+  header, listing the main changes you applied to the original source.
+ */
+
+/*-
   This script updates project release version references in the documentation, so they are aligned
   to the release underway.
  */

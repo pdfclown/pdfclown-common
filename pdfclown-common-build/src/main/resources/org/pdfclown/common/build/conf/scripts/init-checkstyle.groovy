@@ -10,14 +10,16 @@
   this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
  */
-/*
+
+/*-
   This script patches the builtin Checkstyle configuration (namely, `google_checks.xml`) with
   custom pdfClown.org settings.
 
   BINDING VARIABLES:
   - resourcesDir (OPTIONAL)
 
-  REQUIRES `com.puppycrawl.tools:checkstyle` dependency
+  REQUIRES:
+  - com.puppycrawl.tools:checkstyle dependency
 
   NOTE: This arrangement is necessary due to license incompatibility (LGPL 2.1 vs LGPL 3.0) which
   prohibits bundling.
