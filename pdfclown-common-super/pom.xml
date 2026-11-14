@@ -100,10 +100,6 @@ pdfclown-common-base instead)</description>
 
       These properties MUST be specified in every POM inheriting from this one.
     -->
-    <!-- Path to the root project directory - NOTE: This is an ugly workaround to the notorious lack
-      of a standard way to point to the root project directory, no matter the current project
-      building in the reactor -->
-    <rootdir>${project.basedir}/..</rootdir>
 
     <!--
       THIRD-PARTY PROPERTIES
@@ -126,7 +122,7 @@ pdfclown-common-base instead)</description>
       decide either to specify their own filesystem-based resources path, or declare the build
       resources artifact (namely, pdfclown-common-build) as dependency of the plugins referencing
       those resources -->
-    <buildResourcesDir>${rootdir}/pdfclown-common-build/src/main/resources</buildResourcesDir>
+    <buildResourcesDir>${maven.multiModuleProjectDirectory}/pdfclown-common-build/src/main/resources</buildResourcesDir>
     <checkstyleSkip>false</checkstyleSkip>
     <!-- javac Error Prone options -->
     <lint.errorprone/>
@@ -217,7 +213,7 @@ pdfclown-common-base instead)</description>
     <!--
       INTERNAL
     -->
-    <internal.assemblies.basedir>${rootdir}/pdfclown-common-build/src/main/resources</internal.assemblies.basedir>
+    <internal.assemblies.basedir>${maven.multiModuleProjectDirectory}/pdfclown-common-build/src/main/resources</internal.assemblies.basedir>
     <internal.assemblies.resource.base>org/pdfclown/common/build/conf/assemblies</internal.assemblies.resource.base>
     <internal.assemblies.unpack.skip>true</internal.assemblies.unpack.skip>
     <internal.javadoc.phase>none</internal.javadoc.phase>
@@ -246,7 +242,7 @@ pdfclown-common-base instead)</description>
     <resources>
       <resource>
         <targetPath>META-INF</targetPath>
-        <directory>${rootdir}</directory>
+        <directory>${maven.multiModuleProjectDirectory}</directory>
         <includes>
           <include>LICENSE.txt</include>
           <include>NOTICE.txt</include>
@@ -262,7 +258,7 @@ pdfclown-common-base instead)</description>
     <testResources>
       <testResource>
         <targetPath>META-INF</targetPath>
-        <directory>${rootdir}</directory>
+        <directory>${maven.multiModuleProjectDirectory}</directory>
         <includes>
           <include>LICENSE.txt</include>
           <include>NOTICE.txt</include>
@@ -412,9 +408,9 @@ pdfclown-common-base instead)</description>
             <includeResources>false</includeResources>
             <includeTestResources>false</includeTestResources>
             <linkXRef>false</linkXRef>
-            <propertiesLocation>${rootdir}/src/conf/checkstyle/checkstyle.properties</propertiesLocation>
-            <suppressionsLocation>${rootdir}/src/conf/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
-            <configLocation>${rootdir}/target/checkstyle-checks.xml</configLocation>
+            <propertiesLocation>${maven.multiModuleProjectDirectory}/src/conf/checkstyle/checkstyle.properties</propertiesLocation>
+            <suppressionsLocation>${maven.multiModuleProjectDirectory}/src/conf/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+            <configLocation>${maven.multiModuleProjectDirectory}/target/checkstyle-checks.xml</configLocation>
             <skip>${checkstyleSkip}</skip>
           </configuration>
           <dependencies>
@@ -716,7 +712,7 @@ pdfclown-common-base instead)</description>
             <additionalOptions>
               <option>--jada-dir
                 "${buildResourcesDir}/org/pdfclown/common/build/conf/javadoc/jada"</option>
-              <option>--jada-dir "${rootdir}/src/main/javadoc/jada"</option>
+              <option>--jada-dir "${maven.multiModuleProjectDirectory}/src/main/javadoc/jada"</option>
               <option>--jada-exts JadaBiblio,JadaUML</option>
               <option>--jada-file-optimize-filter "**.css,/resources/**.js"</option>
               <option>--biblio-used-only</option>
@@ -725,7 +721,7 @@ pdfclown-common-base instead)</description>
               <option>--uml-package-deps-max-count 0</option>
               <!-- NOTE: maven-javadoc-plugin doesn't accept absolute paths in `addStylesheets`
                 property, so we have to feed it directly -->
-              <option>--add-stylesheet "${rootdir}/src/main/javadoc/stylesheet-ext.css"</option>
+              <option>--add-stylesheet "${maven.multiModuleProjectDirectory}/src/main/javadoc/stylesheet-ext.css"</option>
               <option>--allow-script-in-comments</option>
               <option>-tag "implSpec:a:Implementation Requirements:"</option>
               <option>-tag "implNote:a:Implementation Note:"</option>

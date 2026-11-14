@@ -31,8 +31,6 @@
   may have changed.
  */
 
-import static org.pdfclown.common.util.io.Files.normal
-
 import java.nio.charset.StandardCharsets
 import java.nio.file.*
 import java.util.regex.Pattern
@@ -62,8 +60,8 @@ if (sourceDirValue.isEmpty())
   throw new IllegalStateException("Property 'sourceDir' REQUIRED")
 
 Path outputDir = Path.of(outputDirValue, 'META-INF/LICENSES')
-Path rootDir = normal(Path.of(project.properties['rootdir'] as String))
-Path baseDir = normal(project.basedir.toPath())
+Path rootDir = session.request.multiModuleProjectDirectory.toPath()
+Path baseDir = project.basedir.toPath()
 Path sourceDir = Path.of(sourceDirValue)
 if (!sourceDir.startsWith(baseDir))
   throw new IllegalStateException("Property 'sourceDir' (${sourceDir}) MUST be under project " +

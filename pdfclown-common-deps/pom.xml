@@ -27,7 +27,6 @@
     <!--
       OVERRIDDEN PROPERTIES
     -->
-    <rootdir>${project.basedir}/..</rootdir>
 
     <!--
       VERSIONS

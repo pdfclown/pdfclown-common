@@ -53,11 +53,9 @@
         <!-- Common resources from classpath -->
         <buildResourcesDir
             combine.self="override"/>
-        <!-- Root POM context, by default -->
-        <rootdir>${project.basedir}</rootdir>
 
         <!-- Assembly unpacking -->
-        <internal.assemblies.basedir>${rootdir}/target/assemblies</internal.assemblies.basedir>
+        <internal.assemblies.basedir>${maven.multiModuleProjectDirectory}/target/assemblies</internal.assemblies.basedir>
         <internal.assemblies.unpack.skip>false</internal.assemblies.unpack.skip>
 
         <!--

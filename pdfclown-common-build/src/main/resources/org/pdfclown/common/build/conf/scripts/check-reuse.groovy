@@ -24,10 +24,9 @@
 // REUSE-IgnoreStart
 import groovy.json.JsonSlurper
 
-def rootDir = new File(project.properties['rootdir'] as String).toPath().toAbsolutePath()
-    .normalize().toFile()
+def rootDir = session.request.multiModuleProjectDirectory
 if (project.basedir != rootDir) {
-  log.warn("To execute on root module only -- execution SKIPPED")
+  log.info("To execute on root module only -- execution SKIPPED")
   return
 }
 
@@ -138,7 +137,7 @@ if (missing || unexpected) {
 def matching = actualCopyrights.intersect(expectedCopyrights) // true positives
 log.info("""[OK] Copyright entries (${matching.size()}) in `${thirdPartyNoticesFile.name}` \
 correspond to actual ones (${expectedMissing.size() + expectedUnexpected.size()} others ignored). \
-WARNING: Since REUSE metadata doesn't track the third-party component associated to a copyright \
+BEWARE: Since REUSE metadata doesn't track the third-party component associated to a copyright \
 attribution, false negatives may occur in case the copyright happens to be the same across \
 multiple components: always keep track of components as soon as they are added to or removed from \
 the codebase!""")

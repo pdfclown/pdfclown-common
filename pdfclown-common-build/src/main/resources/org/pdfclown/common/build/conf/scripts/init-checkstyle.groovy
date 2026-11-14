@@ -26,7 +26,6 @@
  */
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1
-import static org.pdfclown.common.util.io.Files.normal
 
 import javax.xml.XMLConstants
 import javax.xml.parsers.DocumentBuilderFactory
@@ -44,7 +43,7 @@ import org.w3c.dom.Document
 log.info("")
 log.info("Checkstyle configuration merger ".padRight(72, '-'))
 
-Path rootDir = normal(Path.of(project.properties['rootdir'] as String))
+Path rootDir = session.request.multiModuleProjectDirectory.toPath()
 Path targetFile = rootDir.resolve("target/checkstyle-checks.xml")
 if (Files.exists(targetFile)) {
   log.info("Merged checkstyle `${targetFile}` present -- execution SKIPPED")
