@@ -67,6 +67,19 @@
         <pluginManagement>
           <plugins>
             <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>license-maven-plugin</artifactId>
+              <dependencies>
+                <!-- Common resources from classpath (template files) -->
+                <dependency>
+                  <groupId>org.pdfclown</groupId>
+                  <artifactId>pdfclown-common-build</artifactId>
+                  <version>${revision}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+
+            <plugin>
               <groupId>com.diffplug.spotless</groupId>
               <artifactId>spotless-maven-plugin</artifactId>
               <dependencies>

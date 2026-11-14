@@ -186,6 +186,7 @@ pdfclown-common-base instead)</description>
     <git-commit-id-maven-plugin.version>10.0.1</git-commit-id-maven-plugin.version>
     <gmavenplus-plugin.version>5.1.0</gmavenplus-plugin.version>
     <jada.version>0.4.1</jada.version>
+    <license-maven-plugin.version>2.9.0</license-maven-plugin.version>
     <maven.version>3.10.0</maven.version>
     <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
@@ -349,6 +350,62 @@ pdfclown-common-base instead)</description>
               <version>${pdfclown-common.version}</version>
             </dependency>
           </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>${license-maven-plugin.version}</version>
+          <configuration>
+            <!-- Fails if any dependency has forbidden licenses -->
+            <failOnBlacklist>true</failOnBlacklist>
+            <!-- Fails if any dependency has no license -->
+            <failOnMissing>true</failOnMissing>
+            <!-- Overrides for missing or unmatching licenses -->
+            <overrideFile>src/conf/license/override-licenses.properties</overrideFile>
+
+            <!-- License allowlist -->
+            <includedLicenses>
+              <includedLicense>Apache-2.0</includedLicense>
+              <includedLicense>BSD-2-Clause</includedLicense>
+              <includedLicense>BSD-3-Clause</includedLicense>
+              <includedLicense>CDDL-1.0</includedLicense>
+              <includedLicense>CDDL-1.1</includedLicense>
+              <includedLicense>CPL-1.0</includedLicense>
+              <includedLicense>EPL-1.0</includedLicense>
+              <includedLicense>EPL-2.0</includedLicense>
+              <includedLicense>GPL-2.0-with-classpath-exception</includedLicense>
+              <includedLicense>ISC</includedLicense>
+              <includedLicense>LGPL-3.0-only</includedLicense>
+              <includedLicense>LicenseRef-Aggregate-No-GPL</includedLicense>
+              <includedLicense>LicenseRef-PublicDomain</includedLicense>
+              <includedLicense>MIT</includedLicense>
+              <includedLicense>MPL-2.0</includedLicense>
+              <includedLicense>Unicode-3.0</includedLicense>
+            </includedLicenses>
+            <!-- License aliases -->
+            <licenseMerges>
+              <licenseMerge>Apache-2.0|ASL License|Apache 2.0|Apache License 2.0|Apache License, Version 2.0|The Apache Software License, Version 2.0|The Apache Software License, version 2.0|The Apache License, Version 2.0</licenseMerge>
+              <!-- NOTE: `Eclipse Distribution License - v 1.0` is equivalent to `BSD-3-Clause` -->
+              <licenseMerge>BSD-3-Clause|BSD|The BSD License|BSD 3-Clause|BSD 3-Clause License|The BSD 3-Clause License|Eclipse Distribution License - v 1.0</licenseMerge>
+              <!-- NOTE: `CDDL-1.0` chosen from dual license -->
+              <licenseMerge>CDDL-1.0|CDDL+GPL License|CDDL/GPLv2+CE</licenseMerge>
+              <licenseMerge>CDDL-1.1|CDDL 1.1</licenseMerge>
+              <licenseMerge>CPL-1.0|Common Public License Version 1.0</licenseMerge>
+              <licenseMerge>EPL-1.0|Eclipse Public License 1.0</licenseMerge>
+              <licenseMerge>EPL-2.0|Eclipse Public License 2.0|Eclipse Public License v2.0|Eclipse Public License, Version 2.0</licenseMerge>
+              <licenseMerge>GPL-2.0-with-classpath-exception|GPL2 w/ CPE</licenseMerge>
+              <licenseMerge>LGPL-3.0-only|LGPL-3.0-or-later|GNU Lesser General Public Licence</licenseMerge>
+              <licenseMerge>LicenseRef-Aggregate-No-GPL|[aggregate, no GPL]</licenseMerge>
+              <licenseMerge>LicenseRef-PublicDomain|Public Domain</licenseMerge>
+              <licenseMerge>MIT|The MIT License|MIT License|The MIT License (MIT)</licenseMerge>
+              <licenseMerge>MPL-2.0|Mozilla Public License, Version 2.0|Mozilla Public License 2.0 (MPL-2.0)</licenseMerge>
+            </licenseMerges>
+
+            <!-- Licenses summary file -->
+            <thirdPartyFilename>dependency-licenses.xml</thirdPartyFilename>
+            <fileTemplate>${buildResourcesDir}/org/pdfclown/common/build/conf/license/third-party-xml.ftl</fileTemplate>
+          </configuration>
         </plugin>
 
         <plugin>
@@ -1613,6 +1670,24 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
 
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-dependency-licenses</id>
+                <goals>
+                  <goal>add-third-party</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <includedScopes>compile,runtime</includedScopes>
+                  <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
             <artifactId>flatten-maven-plugin</artifactId>
             <configuration>
               <flattenMode>ossrh</flattenMode>
@@ -1742,6 +1817,23 @@ try(def in = org.pdfclown.common.util.io.Resource.of(
 }
 ]]></script>
                   </scripts>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-test-dependency-licenses</id>
+                <goals>
+                  <goal>add-third-party</goal>
+                </goals>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <outputDirectory>${project.build.testOutputDirectory}/META-INF</outputDirectory>
                 </configuration>
               </execution>
             </executions>
