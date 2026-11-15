@@ -62,14 +62,13 @@ In case you want to contribute improvements to the code in the repository, pleas
 We welcome contributions created with the help of AI coding tools, provided they follow these rules:
 
 - **Human Accountability** — YOU are responsible for ALL the code you submit:
-  - DO NOT submit unreviewed or untested AI-generated code
-  - you MUST be able to explain and defend your implementation during code review
-- **Copyright Attribution** — copyright attribution belongs SOLELY to human contributors:
+  - DO submit reviewed and tested AI-generated code ONLY
+- **Copyright Attribution** — copyright attribution belongs solely to human contributors:
   - DO NOT list AI tools in file copyright headers, licenses, or API documentation
 - **License Compliance** — YOU are responsible for the legal status of what you submit:
-  - ensure that AI-generated code does NOT introduce incompatible third-party licenses
-  - ensure that AI-generated code does NOT introduce verbatim proprietary code
-- **Disclosure** — Please disclose substantial AI assistance by adding an `Assisted-by: <Tool Name>` trailer to your commit messages
+  - DO ensure that AI-generated code introduces NEITHER third-party licenses incompatible with the project's license NOR proprietary code
+- **Disclosure** — be transparent about the nature of your contribution:
+  - DO disclose substantial AI assistance by adding an `Assisted-by: <Tool Name>` trailer to your commit messages
 
 ## License
 
