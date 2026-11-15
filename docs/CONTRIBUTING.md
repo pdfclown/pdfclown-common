@@ -11,7 +11,7 @@ In case the code in the repository doesn't seem to work as expected, please foll
 2. **check if the issue has already been fixed** — try to reproduce it using the latest unreleased codebase, in any of the following alternatives:
 
    - [snapshot artifacts](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/usage.md#snapshot-artifacts) (pre-built)
-   - [source code](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#setup) (to build): check out the relevant branch (`main` for current development, or `r/`-prefixed (e.g., `r/1.5`) for release maintenance) in the repository and [build it](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#building) by yourself
+   - [source code](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#setup) (to build): check out the relevant branch (`main` for current development, or `r/`-prefixed (for example, `r/1.5`) for release maintenance) in the repository and [build it](https://github.com/pdfclown/pdfclown-common/blob/main/docs/building.md#building) by yourself
 
 3. **isolate the problem** — reduce your case to the bare minimum which still demonstrates the problem (ideally, create a test case)
 
@@ -27,7 +27,7 @@ In case the code in the repository lacks a functionality, please follow these gu
 ## Pull requests
 
 > [!IMPORTANT]
-> Before embarking on any significant pull request (e.g., implementing features, refactoring code, etc.), *please ask first* submitting a feature request with your proposal (otherwise you risk spending a lot of time working on something that the project’s developers might not want to merge into the project...).
+> Before embarking on any significant pull request (for example, implementing features, refactoring code, etc.), *please ask first* submitting a feature request with your proposal (otherwise you risk spending a lot of time working on something that the project’s developers might not want to merge into the project...).
 
 In case you want to contribute improvements to the code in the repository, please follow these guidelines:
 
@@ -56,6 +56,20 @@ In case you want to contribute improvements to the code in the repository, pleas
    ```
 8. **submit your pull request** — see ["Creating a pull request from a fork"](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
    - the title of your pull request MUST follow the corresponding [convention](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/scm.md#pull-requests)
+
+### AI-assisted contributions
+
+We welcome contributions created with the help of AI coding tools, provided they follow these rules:
+
+- **Human Accountability** — YOU are responsible for ALL the code you submit:
+  - DO NOT submit unreviewed or untested AI-generated code
+  - you MUST be able to explain and defend your implementation during code review
+- **Copyright Attribution** — copyright attribution belongs SOLELY to human contributors:
+  - DO NOT list AI tools in file copyright headers, licenses, or API documentation
+- **License Compliance** — YOU are responsible for the legal status of what you submit:
+  - ensure that AI-generated code does NOT introduce incompatible third-party licenses
+  - ensure that AI-generated code does NOT introduce verbatim proprietary code
+- **Disclosure** — Please disclose substantial AI assistance by adding an `Assisted-by: <Tool Name>` trailer to your commit messages
 
 ## License
 
