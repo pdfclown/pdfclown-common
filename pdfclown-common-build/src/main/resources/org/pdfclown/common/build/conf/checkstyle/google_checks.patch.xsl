@@ -355,7 +355,8 @@
   <xsl:template
       match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='ClassTypeParameterName']/property[@name='format']">
     <xsl:comment>
-      [CUSTOM] Allow only single capital letter (e.g., 'K') or T prefix (e.g., 'TMyType').
+      [CUSTOM] Allow only single capital letter (for example, 'K') or T prefix (for example,
+      'TMyType').
     </xsl:comment>
     <property name="format" value="(^[A-Z][0-9]?)$|(^T[A-Z][a-zA-Z0-9]+$)"/>
     <xsl:call-template name="comment-out"/>
@@ -524,8 +525,8 @@
   <xsl:template
       match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='GoogleNonConstantFieldName']">
     <xsl:comment>
-      [CUSTOM] Allow any non-capitalized name, with trailing underscore for special cases (e.g.,
-      reserved keyword conflict like "extends").
+      [CUSTOM] Allow any non-capitalized name, with trailing underscore for special cases (for
+      example, reserved keyword conflict like "extends").
     </xsl:comment>
     <module name="MemberName">
       <property

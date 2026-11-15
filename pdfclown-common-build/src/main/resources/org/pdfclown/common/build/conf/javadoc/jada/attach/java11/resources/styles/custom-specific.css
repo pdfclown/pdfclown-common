@@ -163,7 +163,7 @@ ul.blockList ul.blockList ul.blockListLast li.blockList {
 }
 
 /*
- * Headings within member details (e.g., within a method)
+ * Headings within member details (for example, within a method)
  */
 ul.blockList ul.blockList ul.blockList li.blockList h3 {
   background-color: transparent;
@@ -176,7 +176,7 @@ div.details ul.blockList ul.blockList ul.blockListLast li.blockList h4 {
 }
 
 /*
- * Section headings (e.g., "Methods")
+ * Section headings (for example, "Methods")
  */
 ul.blockList ul.blockList ul.blockList li.blockList > h3 {
   background-color: #869ab2;

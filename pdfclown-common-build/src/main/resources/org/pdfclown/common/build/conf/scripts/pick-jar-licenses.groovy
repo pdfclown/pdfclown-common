@@ -68,8 +68,8 @@ if (!sourceDir.startsWith(baseDir))
       "base directory (${baseDir})")
 
 /*
-  NOTE: `reuse` SBOM contains paths relative to the root (e.g. `module-a/src/main/...`), so the
-  matching pattern MUST be defined accordingly.
+  NOTE: `reuse` SBOM contains paths relative to the root (for example `module-a/src/main/...`), so
+  the matching pattern MUST be defined accordingly.
  */
 String includePrefix = rootDir.relativize(sourceDir).toString() + '/*/'
 def includes = binding.variables['includes']?.split(',')*.trim()?.findAll() ?: [""]

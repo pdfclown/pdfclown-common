@@ -173,10 +173,10 @@ public abstract class Verifier implements Cloneable {
 
   private Options options = new Options()
       /*
-       * NOTE: Removing trailing whitespace is necessary as certain comparators (e.g., IntelliJ)
-       * seem to silently strip it from the received file content when updating the corresponding
-       * approved file; without applying such normalization, the next verifications would fail as
-       * the received file would keep containing trailing whitespace.
+       * NOTE: Removing trailing whitespace is necessary as certain comparators (for example,
+       * IntelliJ) seem to silently strip it from the received file content when updating the
+       * corresponding approved file; without applying such normalization, the next verifications
+       * would fail as the received file would keep containing trailing whitespace.
        */
       .withScrubber($ -> $.lines()
           .map(String::stripTrailing)

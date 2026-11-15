@@ -16,8 +16,8 @@
   <suppress
     checks="AbbreviationAsWordInName|MethodName"
     message="'TODO'|'EOF'"/>
-  <!-- Allow special internal package names (useful, e.g., to mark packages containing copies of
-    classes from external projects). -->
+  <!-- Allow special internal package names (useful, for example, to mark packages containing copies
+    of classes from external projects). -->
   <suppress
     checks="PackageName"
     message=".internal."/>

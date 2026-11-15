@@ -69,7 +69,7 @@ This document provides a concise reference to useful commands for pdfClown.org p
     mvn wrapper:wrapper -Dtype=only-script -Dmaven=%MAVEN_VERSION% -DincludeDebug
     ```
 
-    where `%MAVEN_VERSION%` is the latest version available (e.g., `3.9.12`).
+    where `%MAVEN_VERSION%` is the latest version available (for example, `3.9.12`).
 
 - **update**:
 

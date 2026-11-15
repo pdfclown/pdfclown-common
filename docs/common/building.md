@@ -189,10 +189,10 @@ This document describes how to set up your development environment to build and 
 
       where:
 
-      - %MODULE% is the project module containing the tests (e.g., `pdfclown-common-util`)
+      - %MODULE% is the project module containing the tests (for example, `pdfclown-common-util`)
       - %TEST% is the unit test selector, that is, a single identifier or a comma-separated list of identifiers, each expressed in any of the following alternatives:
-          - test class (e.g., `StringsTest`) — to run all its tests
-          - test method (e.g., `StringsTest#replaceString`) — to run only the specified test
+          - test class (for example, `StringsTest`) — to run all its tests
+          - test method (for example, `StringsTest#replaceString`) — to run only the specified test
 
   - integration tests:
 
@@ -202,10 +202,10 @@ This document describes how to set up your development environment to build and 
 
       where:
 
-      - %MODULE% is the project module containing the tests (e.g., `pdfclown-common-util`)
+      - %MODULE% is the project module containing the tests (for example, `pdfclown-common-util`)
       - %IT% is the integration test selector, that is, a single identifier or a comma-separated list of identifiers, each expressed in any of the following alternatives:
-        - test class (e.g., `LayoutIT`) — to run all its tests
-        - test method (e.g., `LayoutIT#createDocument`) — to run only the specified test
+        - test class (for example, `LayoutIT`) — to run all its tests
+        - test method (for example, `LayoutIT#createDocument`) — to run only the specified test
 
 <table>
 <tr>
