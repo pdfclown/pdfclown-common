@@ -1,5 +1,7 @@
 # Contributing to pdfClown Common
 
+<!-- REUSE-IgnoreStart -->
+
 These guidelines are meant to help you contribute to the project in the most pleasant, hassle-free way: if you have any doubt or suggestion about this documentation, don't hesitate to open an issue.
 
 ## Bug reports
@@ -81,3 +83,5 @@ By contributing to the documentation, you agree to license your contribution und
 This document was inspired by:
 - [Contributing to Bootstrap](https://github.com/twbs/bootstrap/blob/e170268b3c021cdb2eec09df6f4ae6db3664a21a/.github/CONTRIBUTING.md)
 - [Mermaid Contributing Guide](https://github.com/mermaid-js/mermaid/blob/7b167cf3318766b14011ba4636fa90211015a442/packages/mermaid/src/docs/community/contributing.md)
+
+<!-- REUSE-IgnoreEnd -->
