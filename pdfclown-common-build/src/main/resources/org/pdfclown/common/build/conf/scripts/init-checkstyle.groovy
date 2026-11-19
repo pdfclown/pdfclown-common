@@ -19,7 +19,8 @@
   - resourcesDir (OPTIONAL)
 
   REQUIRES:
-  - com.puppycrawl.tools:checkstyle dependency
+  - com.puppycrawl.tools:checkstyle
+  - org.pdfclown:pdfclown-common-util
 
   NOTE: This arrangement is necessary due to license incompatibility (LGPL 2.1 vs LGPL 3.0) which
   prohibits bundling.

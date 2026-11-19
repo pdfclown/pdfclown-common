@@ -16,13 +16,33 @@
   `reuse lint` command) and at project level (components listed in `THIRD-PARTY-NOTICES` file are
   checked against the codebase, thus preventing attribution drift).
 
+  The evaluation of `THIRD-PARTY-NOTICES` file is controlled via `check-reuse.yml` configuration
+  file; when all the intended copyright attribution entries are inside `THIRD-PARTY-NOTICES`, any
+  residual entry can be suppressed via `test.expected.update` system property (the corresponding
+  entries will be registered in `third-party-*.expected.txt` files).
+
   REQUIRES:
+  - org.apache.groovy:groovy-json
+  - org.apache.groovy:groovy-yaml
+  - org.pdfclown:pdfclown-common-util
   - python 3.13+
   - reuse 6.2+ (python package)
+
+  All the configuration is under `/src/conf/check-reuse/`:
+  - `check-reuse.yml`: script settings:
+    - excludes: list of GLOBs to exclude certain files or subdirectories from SPDX evaluation for
+      entry matching in `THIRD-PARTY-NOTICES` file
+  - `third-party-missing.expected.txt`: automatically generated
+  - `third-party-unexpected.expected.txt`: automatically generated
  */
 
 // REUSE-IgnoreStart
+
 import groovy.json.JsonSlurper
+import groovy.yaml.YamlSlurper
+import java.util.function.Predicate
+import java.util.regex.Pattern
+import org.pdfclown.common.util.regex.Patterns
 
 def rootDir = session.request.multiModuleProjectDirectory
 if (project.basedir != rootDir) {
@@ -30,10 +50,22 @@ if (project.basedir != rootDir) {
   return
 }
 
-def sbomFile = new File(rootDir, "target/sbom.json")
-sbomFile.parentFile.mkdirs()
+// Configuration.
+def confDir = new File(rootDir, 'src/conf/check-reuse'); confDir.mkdirs()
+def configFile = new File(confDir, 'check-reuse.yml')
+def config = [
+    excludes: []
+] + ((configFile.exists() ? new YamlSlurper().parse(configFile) : null) ?: [:])
+Predicate<String> isExcluded = config.excludes
+    ? Pattern.compile(config.excludes.collect { "(?:${Patterns.globToRegex(it)})" }.join('|'))
+    .asMatchPredicate()
+    : { String s -> false } as Predicate<String>
+
+// --- 1. Project compliance with the REUSE Specification ------------------------------------------
 
 // Generate the SPDX report!
+def sbomFile = new File(rootDir, "target/sbom.json")
+sbomFile.parentFile.mkdirs()
 def proc = new ProcessBuilder('reuse', 'lint', '--json')
     .directory(rootDir)
     .redirectOutput(sbomFile)
@@ -54,6 +86,8 @@ log.debug("${sbomFile} GENERATED")
 log.info("")
 log.info("[OK] Project is compliant with the REUSE Specification.")
 
+// --- 2. `THIRD-PARTY-NOTICES` file entries sync to actual project SPDX ---------------------------
+
 def report = new JsonSlurper().parse(sbomFile)
 
 // Collect all reported files!
@@ -63,15 +97,16 @@ allFiles.addAll(report.files)
 // Extract expected copyright metadata from each file!
 def expectedCopyrights = [] as Set
 allFiles.each { file ->
-  /*
-    NOTE: Copyright may appear either as `copyrights` collection or as `copyright` element.
-   */
-  def fileCopyrights = file.copyrights ?: (file.copyright ? [file.copyright] : [])
-  fileCopyrights.each {
+  if (isExcluded.test(file.path))
+    return
+
+  file.copyrights.each {
     def copyrightText = it['value'].toString()
         .replace("Copyright ", "")
-        .replace("SPDX-FileCopyrightText: ", "")
-        .replace("SPDX-SnippetCopyrightText: ", "")
+        .replace("(C)", "")
+        .replace("©", "")
+        .replace("SPDX-FileCopyrightText:", "")
+        .replace("SPDX-SnippetCopyrightText:", "")
         .trim()
     if (copyrightText) {
       expectedCopyrights.add(copyrightText)
@@ -90,7 +125,6 @@ thirdPartyNoticesFile.eachLine {
 }
 
 // Diff actual end expected copyright metadata!
-def confDir = new File(rootDir, 'src/conf/check-reuse'); confDir.mkdirs()
 def expectedMissingFile = new File(confDir, 'third-party-missing.expected.txt')
 def expectedMissing = expectedMissingFile.exists()
     ? (expectedMissingFile.readLines() as Set)
@@ -107,8 +141,8 @@ if (missing || unexpected) {
   if (missing) {
     // EXPECTED missing?
     if (session.userProperties['test.expected.update']) {
-      missing += expectedMissing
-      expectedMissingFile.text = missing.join('\n')
+      expectedMissing += missing
+      expectedMissingFile.text = expectedMissing.join('\n')
       missing = null
     }
     // UNEXPECTED missing.
@@ -120,8 +154,8 @@ if (missing || unexpected) {
   if (unexpected) {
     // EXPECTED unexpected?
     if (session.userProperties['test.expected.update']) {
-      unexpected += expectedUnexpected
-      expectedUnexpectedFile.text = unexpected.join('\n')
+      expectedUnexpected += unexpected
+      expectedUnexpectedFile.text = expectedUnexpected.join('\n')
       unexpected = null
     }
     // UNEXPECTED unexpected.
@@ -141,4 +175,5 @@ BEWARE: Since REUSE metadata doesn't track the third-party component associated 
 attribution, false negatives may occur in case the copyright happens to be the same across \
 multiple components: always keep track of components as soon as they are added to or removed from \
 the codebase!""")
+
 // REUSE-IgnoreEnd

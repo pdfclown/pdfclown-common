@@ -23,6 +23,7 @@
     `sourceDir` are included.
 
   REQUIRES:
+  - org.pdfclown:pdfclown-common-util
   - python 3.13+
   - reuse 6.2+ (python package)
 

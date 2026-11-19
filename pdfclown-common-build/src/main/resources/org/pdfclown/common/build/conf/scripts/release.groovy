@@ -13,6 +13,10 @@
 
 /*-
   This script launches the project release to public artifact repository.
+
+  REQUIRES:
+  - org.pdfclown:pdfclown-common-build
+  - org.pdfclown:pdfclown-common-util
  */
 
 import static org.pdfclown.common.build.Builds.runHook
