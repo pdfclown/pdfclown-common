@@ -30,6 +30,7 @@ import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
+import static org.pdfclown.common.util.Conditions.requireElement;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Numbers.parseNumber;
@@ -50,6 +51,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serial;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -57,6 +59,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayDeque;
@@ -1061,6 +1064,41 @@ public final class Objects {
    */
   public static String pkg(@Nullable String typeName) {
     return toElse(typeName, $ -> $.substring(0, lastIndexOfElse($, DOT, 0)), EMPTY);
+  }
+
+  /**
+   * Null-safe alternative to {@link Class#getResource(String)} and
+   * {@link ClassLoader#getResource(String)}.
+   *
+   * @param name
+   *          Resource name.
+   * @param loadingHint
+   *          Either {@link ClassLoader} or an object whose {@linkplain #asType(Object)
+   *          corresponding} class is resolved from.
+   * @throws ElementNotFoundException
+   *           if the resource could not be found.
+   */
+  public static URL resource(String name, Object loadingHint) {
+    return requireElement(loadingHint instanceof ClassLoader c ? c.getResource(name)
+        : requireNonNull(asType(loadingHint), "`loadingHint`").getResource(name), name, "resource");
+  }
+
+  /**
+   * Null-safe alternative to {@link Class#getResourceAsStream(String)} and
+   * {@link ClassLoader#getResourceAsStream(String)}.
+   *
+   * @param name
+   *          Resource name.
+   * @param loadingHint
+   *          Either {@link ClassLoader} or an object whose {@linkplain #asType(Object)
+   *          corresponding} class is resolved from.
+   * @throws ElementNotFoundException
+   *           if the resource could not be found.
+   */
+  public static InputStream resourceStream(String name, Object loadingHint) {
+    return requireElement(loadingHint instanceof ClassLoader c ? c.getResourceAsStream(name)
+        : requireNonNull(asType(loadingHint), "`loadingHint`").getResourceAsStream(name), name,
+        "resource");
   }
 
   /**
