@@ -148,6 +148,7 @@ pdfclown-common-base instead)</description>
       NOTE: Brought here because of plugin-level references (otherwise, their natural place would
       be pdfclown-common-deps).
     -->
+    <apiguardian.version>1.1.2</apiguardian.version>
     <approvaltests.version>31.0.0</approvaltests.version>
     <assertj.version>3.27.7</assertj.version>
     <bytebuddy.version>1.18.17</bytebuddy.version>
@@ -897,6 +898,11 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
                 <url>https://javadoc.io/doc/net.bytebuddy/byte-buddy/${bytebuddy.version}</url>
               </link>
               <link>
+                <groupId>org.apiguardian</groupId>
+                <artifactId>apiguardian-api</artifactId>
+                <url>https://javadoc.io/doc/org.apiguardian/apiguardian-api/${apiguardian.version}</url>
+              </link>
+              <link>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
                 <url>https://logging.apache.org/log4j/2.x/javadoc/log4j-api</url>
@@ -979,7 +985,7 @@ ${buildTimestamp} (${git.commit.id.describe})</span>
               <link>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.annotation.versioning</artifactId>
-                <url>https://javadoc.io/doc/org.mockito/mockito-core/${org.osgi.annotation.versioning.version}</url>
+                <url>https://javadoc.io/doc/org.osgi/org.osgi.annotation.versioning/${org.osgi.annotation.versioning.version}</url>
               </link>
               <link>
                 <groupId>org.pdfclown</groupId>
