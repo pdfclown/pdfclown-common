@@ -1,8 +1,6 @@
 /*
  * Copyright 2016-2022 Talsma ICT
  *
- * SPDX-License-Identifier: Apache-2.0
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// SPDX-License-Identifier: Apache-2.0
+// Component: UMLDoclet @ 5b0244b
+// SourceName: nl.talsmasoftware.umldoclet.rendering.writers.ThrowingWriter
+
 /*
   CHANGES TO THE ORIGINAL FILE
 
@@ -29,16 +31,13 @@
   this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
 
-  Source: https://github.com/talsma-ict/umldoclet/blob/6a7b2e09126b38e1c49103ba85754c7fdfb01db4/src/test/java/nl/talsmasoftware/umldoclet/rendering/writers/ThrowingWriter.java
-
-  Changes: Adaptation to pdfclown-common-util.
+  Changes: adaptation to pdfclown-common-util.
  */
 package org.pdfclown.common.util.io;
 
 import java.io.IOException;
 import java.io.Writer;
 
-// SourceName: nl.talsmasoftware.umldoclet.rendering.writers.ThrowingWriter
 /**
  * Writer that throws exceptions when writing, flushing or closing.
  *

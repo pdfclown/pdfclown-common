@@ -61,7 +61,7 @@
 
       BaseFile: https://github.com/checkstyle/checkstyle/blob/7d9e9489b58531edd4447503f694a5bd4f475209/src/main/resources/google_checks.xml
 
-      Changes: Patched with pdfClown Common's custom settings (see [CUSTOM] tags).
+      Changes: patched with pdfClown Common's custom settings (see [CUSTOM] tags).
       <!-- @formatter:on -->
     </xsl:comment>
     <!-- REUSE-IgnoreEnd -->

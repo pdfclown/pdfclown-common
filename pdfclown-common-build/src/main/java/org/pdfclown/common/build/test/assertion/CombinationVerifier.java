@@ -1,8 +1,9 @@
-/*
-  SPDX-FileCopyrightText: original ApprovalTests.Java authors and contributors
+// SPDX-FileCopyrightText: original ApprovalTests.Java authors and contributors
+// SPDX-License-Identifier: Apache-2.0
+// Component: ApprovalTests.Java @ d0da181
+// SourceName: org.approvaltests.combinations.CombinationApprovals
+// SourceName: org.approvaltests.combinations.CombinationsHelper
 
-  SPDX-License-Identifier: Apache-2.0
- */
 /*
   CHANGES TO THE ORIGINAL FILE
 
@@ -16,9 +17,6 @@
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
-
-  Source: https://github.com/approvals/ApprovalTests.Java/blob/8452841b8bc430fe069f93bb413ccc913213087a/approvaltests/src/main/java/org/approvaltests/combinations/CombinationApprovals.java
-  Source: https://github.com/approvals/ApprovalTests.Java/blob/8452841b8bc430fe069f93bb413ccc913213087a/approvaltests/src/main/java/org/approvaltests/combinations/CombinationsHelper.java
 
   Changes:
   - complete refactoring as instantiable hierarchical class
@@ -47,10 +45,6 @@ import org.lambda.functions.Function8;
 import org.lambda.functions.Function9;
 import org.pdfclown.common.util.annot.Immutable;
 
-/*-
-  SourceName: org.approvaltests.combinations.CombinationApprovals
-  SourceName: org.approvaltests.combinations.CombinationsHelper
- */
 /**
  * Verifier for approval testing on input combinations (that is, Cartesian product of input
  * arguments).

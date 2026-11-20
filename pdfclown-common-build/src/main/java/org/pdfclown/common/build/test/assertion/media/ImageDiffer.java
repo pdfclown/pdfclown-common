@@ -76,10 +76,14 @@ public abstract class ImageDiffer {
       // SPDX-SnippetBegin
       // SPDX-SnippetCopyrightText: 2020 Björn Ottosson
       // SPDX-License-Identifier: MIT
-      //
+      // Component: Oklab
       // Source: https://bottosson.github.io/posts/oklab/#converting-from-linear-srgb-to-oklab
       // SourceName: linear_srgb_to_oklab
-      // Changes: integrates convertion to linear sRGB (`sRgbToLinear`)
+      //
+      // CHANGES TO THE ORIGINAL SNIPPET
+      // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+      // SPDX-License-Identifier: LGPL-3.0-only
+      // Changes: integrates convertion to linear sRGB (`sRgbToLinear`).
       /**
        * Converts an sRGB sample to Oklab color space.
        *
@@ -110,7 +114,7 @@ public abstract class ImageDiffer {
       // SPDX-SnippetBegin
       // SPDX-SnippetCopyrightText: 2020 Björn Ottosson
       // SPDX-License-Identifier: MIT
-      //
+      // Component: Oklab
       // Source: https://bottosson.github.io/posts/colorwrong/#what-can-we-do%3F
       // SourceName: f_inv
       /**

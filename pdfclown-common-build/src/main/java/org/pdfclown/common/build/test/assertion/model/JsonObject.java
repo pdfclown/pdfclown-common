@@ -35,9 +35,8 @@ import org.jspecify.annotations.Nullable;
 public class JsonObject extends JSONObject implements JsonElement {
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: NONE
-  // SPDX-License-Identifier: LicenseRef-PublicDomain
-  //
-  // Source: https://github.com/stleary/JSON-java/blob/82a02d879e9177105bb248a10cad1f18844b7964/src/main/java/org/json/JSONObject.java
+  // SPDX-License-Identifier: Unlicense
+  // Component: JSON-Java @ 1afd7cd
   // SourceName: org.json.JSONObject.NUMBER_PATTERN
   /**
    * Regular Expression Pattern that matches JSON Numbers. This is primarily used for output to
@@ -49,9 +48,8 @@ public class JsonObject extends JSONObject implements JsonElement {
 
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: NONE
-  // SPDX-License-Identifier: LicenseRef-PublicDomain
-  //
-  // Source: ibid.
+  // SPDX-License-Identifier: Unlicense
+  // Component: JSON-Java @ 1afd7cd
   // SourceName: org.json.JSONObject.indent(Writer, int)
   private static void indent(Writer writer, int indent) throws IOException {
     for (int i = 0; i < indent; i += 1) {
@@ -62,10 +60,13 @@ public class JsonObject extends JSONObject implements JsonElement {
 
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: NONE
-  // SPDX-License-Identifier: LicenseRef-PublicDomain
-  //
-  // Source: ibid.
+  // SPDX-License-Identifier: Unlicense
+  // Component: JSON-Java @ 1afd7cd
   // SourceName: org.json.JSONObject.writeValue(Writer, Object, int, int)
+  //
+  // CHANGES TO THE ORIGINAL SNIPPET
+  // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+  // SPDX-License-Identifier: LGPL-3.0-only
   // Changes: null value flaw fixed.
   @SuppressWarnings({ "PatternMatchingInstanceof", "UnusedReturnValue" })
   private static Writer writeValue(Writer writer, @Nullable Object value,
@@ -126,10 +127,13 @@ public class JsonObject extends JSONObject implements JsonElement {
 
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: NONE
-  // SPDX-License-Identifier: LicenseRef-PublicDomain
-  //
-  // Source: ibid.
+  // SPDX-License-Identifier: Unlicense
+  // Component: JSON-Java @ 1afd7cd
   // SourceName: org.json.JSONObject.write(Writer, int, int)
+  //
+  // CHANGES TO THE ORIGINAL SNIPPET
+  // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+  // SPDX-License-Identifier: LGPL-3.0-only
   // Changes: sort entries by key for serialization predictability.
   @Override
   public Writer write(Writer writer, int indentFactor, int indent) throws JSONException {

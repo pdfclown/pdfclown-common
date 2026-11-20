@@ -1,8 +1,6 @@
 /*
  *  Copyright 2003-2026 The Apache Software Foundation
  *
- *  SPDX-License-Identifier: Apache-2.0
- *
  *  Licensed to the Apache Software Foundation (ASF) under one
  *  or more contributor license agreements.  See the NOTICE file
  *  distributed with this work for additional information
@@ -20,6 +18,10 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+// SPDX-License-Identifier: Apache-2.0
+// Component: Apache Groovy @ 0d40fc0
+// SourceName: groovy.lang.Tuple8
+
 /*
   CHANGES TO THE ORIGINAL FILE
 
@@ -33,8 +35,6 @@
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
   this file, you MUST add your own copyright notice in a separate comment block below this file
   header, listing the main changes you applied to the original source.
-
-  Source: https://github.com/apache/groovy/blob/7831e9cf9e66f20c1b7fdd8f7dfff480db7cbe18/src/main/java/groovy/lang/Tuple8.java
 
   Changes:
   - constructor visibility reduced to package

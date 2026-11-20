@@ -382,10 +382,10 @@ pdfclown-common-base instead)</description>
               <includedLicense>ISC</includedLicense>
               <includedLicense>LGPL-3.0-only</includedLicense>
               <includedLicense>LicenseRef-Aggregate-No-GPL</includedLicense>
-              <includedLicense>LicenseRef-PublicDomain</includedLicense>
               <includedLicense>MIT</includedLicense>
               <includedLicense>MPL-2.0</includedLicense>
               <includedLicense>Unicode-3.0</includedLicense>
+              <includedLicense>Unlicense</includedLicense>
             </includedLicenses>
             <!-- License aliases -->
             <licenseMerges>
@@ -401,9 +401,9 @@ pdfclown-common-base instead)</description>
               <licenseMerge>GPL-2.0-with-classpath-exception|GPL2 w/ CPE</licenseMerge>
               <licenseMerge>LGPL-3.0-only|LGPL-3.0-or-later|GNU Lesser General Public Licence</licenseMerge>
               <licenseMerge>LicenseRef-Aggregate-No-GPL|[aggregate, no GPL]</licenseMerge>
-              <licenseMerge>LicenseRef-PublicDomain|Public Domain</licenseMerge>
               <licenseMerge>MIT|The MIT License|MIT License|The MIT License (MIT)</licenseMerge>
               <licenseMerge>MPL-2.0|Mozilla Public License, Version 2.0|Mozilla Public License 2.0 (MPL-2.0)</licenseMerge>
+              <licenseMerge>Unlicense|Public Domain</licenseMerge>
             </licenseMerges>
 
             <!-- Licenses summary file -->

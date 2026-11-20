@@ -1,3 +1,15 @@
+/*
+  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+
+  SPDX-License-Identifier: LGPL-3.0-only
+
+  This file (FileVerifier.java) is part of pdfclown-common-build module in pdfClown Common project
+  <https://github.com/pdfclown/pdfclown-common>
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER. If you reuse (entirely or partially)
+  this file, you MUST add your own copyright notice in a separate comment block below this file
+  header, listing the main changes you applied to the original source.
+ */
 package org.pdfclown.common.build.test.assertion;
 
 import static org.apache.commons.lang3.StringUtils.substringBefore;
@@ -120,9 +132,12 @@ public class FileVerifier extends Verifier {
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: original ApprovalTests.Java authors and contributors
   // SPDX-License-Identifier: Apache-2.0
-  //
-  // Source: https://github.com/approvals/ApprovalTests.Java/blob/e3ac34f79e430e4dc44c1ecfd70499467d9e96d5/approvaltests/src/main/java/org/approvaltests/approvers/FileApprover.java
+  // Component: ApprovalTests.Java @ d0da181
   // SourceName: org.approvaltests.approvers.FileApprover
+  //
+  // CHANGES TO THE ORIGINAL SNIPPET
+  // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+  // SPDX-License-Identifier: LGPL-3.0-only
   // Changes: `approved` file resolution based on actual received file instead of regular
   //          `org.approvaltests.namer.ApprovalNamer.getApprovedFile(String)`.
   private static class Approver implements ApprovalApprover {

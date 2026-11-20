@@ -146,8 +146,7 @@ public abstract class CallVerifier extends Verifier {
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: original ApprovalTests.Java authors and contributors
   // SPDX-License-Identifier: Apache-2.0
-  //
-  // Source: https://github.com/approvals/ApprovalTests.Java/blob/8452841b8bc430fe069f93bb413ccc913213087a/approvaltests/src/main/java/org/approvaltests/combinations/CombinationsHelper.java#L109
+  // Component: ApprovalTests.Java @ d0da181
   // SourceName: org.approvaltests.combinations.CombinationsHelper.formatInputs
   private String formatInputs(List<String> labels, @Nullable Object... objects) {
     List<Object> values = filterEmpty(objects);

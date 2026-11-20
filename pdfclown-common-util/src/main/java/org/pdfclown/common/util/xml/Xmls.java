@@ -296,9 +296,12 @@ public final class Xmls {
     // SPDX-SnippetBegin
     // SPDX-SnippetCopyrightText: 2016 Patrick Wright and others
     // SPDX-License-Identifier: LGPL-3.0-only
-    //
-    // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/resource/XMLResource.java#L150
+    // Component: Open HTML to PDF @ 1eb6cd9
     // SourceName: com.openhtmltopdf.resource.XMLResource.setSaxParserRequestedFeatures(..)
+    //
+    // CHANGES TO THE ORIGINAL SNIPPET
+    // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+    // SPDX-License-Identifier: LGPL-3.0-only
     // Changes:
     // - `settings` parameter to tune DTD surface
     // - in case of unsupported feature, fails fast instead of logging

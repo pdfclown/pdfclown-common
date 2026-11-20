@@ -31,10 +31,13 @@ public final class Numbers {
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: 2016 Patrick Wright and others
   // SPDX-License-Identifier: LGPL-3.0-only
-  //
-  // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/layout/CounterLanguage.java#L18
+  // Component: Open HTML to PDF @ 1eb6cd9
   // SourceName: com.openhtmltopdf.layout.CounterLanguage.toLatin
-  // Changes: Adaptation to pdfclown-common-util.
+  //
+  // CHANGES TO THE ORIGINAL SNIPPET
+  // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+  // SPDX-License-Identifier: LGPL-3.0-only
+  // Changes: adaptation to pdfclown-common-util.
   /**
    * Converts the number to latin-alphabet numeral.
    *
@@ -55,10 +58,13 @@ public final class Numbers {
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: 2016 Patrick Wright and others
   // SPDX-License-Identifier: LGPL-3.0-only
-  //
-  // Source: https://github.com/danfickle/openhtmltopdf/blob/780ba564839f1ad5abfa5df12e4aebb9dd6782d2/openhtmltopdf-core/src/main/java/com/openhtmltopdf/layout/CounterLanguage.java#L4
+  // Component: Open HTML to PDF @ 1eb6cd9
   // SourceName: com.openhtmltopdf.layout.CounterLanguage.toRoman
-  // Changes: Adaptation to pdfclown-common-util.
+  //
+  // CHANGES TO THE ORIGINAL SNIPPET
+  // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+  // SPDX-License-Identifier: LGPL-3.0-only
+  // Changes: adaptation to pdfclown-common-util.
   /**
    * Converts the number to roman numeral.
    *

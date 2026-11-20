@@ -312,10 +312,13 @@ public final class Strings {
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: 2001-2025 The Apache Software Foundation
   // SPDX-License-Identifier: Apache-2.0
-  //
-  // Source: https://github.com/apache/commons-lang/blob/73f99230910010c1056bb6c04b36a04261da8b7d/src/main/java/org/apache/commons/lang3/StringUtils.java#L3682
+  // Component: Apache Commons Lang @ 4650d39
   // SourceName: org.apache.commons.lang3.StringUtils.isNumeric(CharSequence)
-  // Changes: see @implNote
+  //
+  // CHANGES TO THE ORIGINAL SNIPPET
+  // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+  // SPDX-License-Identifier: LGPL-3.0-only
+  // Changes: see @implNote.
   /**
    * Gets whether the string represents a generic number.
    * <p>
