@@ -74,7 +74,7 @@ We welcome contributions created with the help of AI coding tools, provided they
 
 ## License
 
-By contributing your code, you agree to license your contribution under the [GNU Lesser General Public License (LGPL) version 3.0](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSE.txt) (`LGPL-3.0-only`).
+By contributing your code, you agree to license your contribution under the [GNU Lesser General Public License v3.0 or later](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSE.txt) (`LGPL-3.0-or-later`).
 
 By contributing to the documentation, you agree to license your contribution under the [Creative Commons Attribution-ShareAlike 4.0 License](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSES/CC-BY-SA-4.0.txt) (`CC-BY-SA-4.0`).
 

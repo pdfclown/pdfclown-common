@@ -81,7 +81,7 @@ Whenever any content from third-party projects is incorporated, it MUST be docum
 
                  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
-                 SPDX-License-Identifier: LGPL-3.0-only
+                 SPDX-License-Identifier: LGPL-3.0-or-later
 
                  This file (Tuple.java) is part of pdfclown-common-util module in pdfClown Common project
                  <https://github.com/pdfclown/pdfclown-common>
@@ -111,7 +111,7 @@ Whenever any content from third-party projects is incorporated, it MUST be docum
             //
             // CHANGES TO THE ORIGINAL SNIPPET
             // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
-            // SPDX-License-Identifier: LGPL-3.0-only
+            // SPDX-License-Identifier: LGPL-3.0-or-later
             // Changes: `approved` file resolution based on actual received file instead of regular
             //          `org.approvaltests.namer.ApprovalNamer.getApprovedFile(String)`.
             private static class Approver implements ApprovalApprover {

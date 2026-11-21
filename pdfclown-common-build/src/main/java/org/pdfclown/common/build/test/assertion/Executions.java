@@ -1,7 +1,7 @@
 /*
   SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
-  SPDX-License-Identifier: LGPL-3.0-only
+  SPDX-License-Identifier: LGPL-3.0-or-later
 
   This file (Executions.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
@@ -132,7 +132,7 @@ public final class Executions {
   //
   // CHANGES TO THE ORIGINAL SNIPPET
   // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
-  // SPDX-License-Identifier: LGPL-3.0-only
+  // SPDX-License-Identifier: LGPL-3.0-or-later
   // Changes: adaptation to pdfclown-common-build.
   /**
    * Executes a task, intercepting the output from the standard streams.

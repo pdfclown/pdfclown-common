@@ -70,6 +70,6 @@
 
 **Legal Attribution And Compliance** — tick each of the following items (even those that do not apply to your PR), to confirm the legal attribution and compliance of this contribution:
 
-- [ ] I hereby declare this contribution to be **licensed** under the [GNU Lesser General Public License (LGPL) version 3.0](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSE.txt) (`LGPL-3.0-only`) for the code, and [Creative Commons Attribution-ShareAlike 4.0 License](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSES/CC-BY-SA-4.0.txt) (`CC-BY-SA-4.0`) for the documentation
+- [ ] I hereby declare this contribution to be **licensed** under the [GNU Lesser General Public License v3.0 or later](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSE.txt) (`LGPL-3.0-or-later`) for the code, and [Creative Commons Attribution-ShareAlike 4.0 License](https://github.com/pdfclown/pdfclown-common/blob/main/LICENSES/CC-BY-SA-4.0.txt) (`CC-BY-SA-4.0`) for the documentation
 - [ ] I hereby declare any **third-party code and/or other materials** included in this contribution to be [properly documented](https://github.com/pdfclown/pdfclown-common/blob/main/docs/common/third-party.md) and compatible with the project's license
 - [ ] I hereby declare any **AI-assisted logic** included in this contribution to be compatible with the project's license

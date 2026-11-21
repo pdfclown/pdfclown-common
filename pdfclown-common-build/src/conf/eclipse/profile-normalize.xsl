@@ -2,7 +2,7 @@
 <!--
   SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
-  SPDX-License-Identifier: LGPL-3.0-only
+  SPDX-License-Identifier: LGPL-3.0-or-later
 -->
 <!--
   Eclipse profile format normalizer.

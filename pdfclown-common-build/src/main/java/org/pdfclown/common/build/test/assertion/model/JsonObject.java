@@ -1,7 +1,7 @@
 /*
   SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
-  SPDX-License-Identifier: LGPL-3.0-only
+  SPDX-License-Identifier: LGPL-3.0-or-later
 
   This file (JsonObject.java) is part of pdfclown-common-build module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
@@ -66,7 +66,7 @@ public class JsonObject extends JSONObject implements JsonElement {
   //
   // CHANGES TO THE ORIGINAL SNIPPET
   // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
-  // SPDX-License-Identifier: LGPL-3.0-only
+  // SPDX-License-Identifier: LGPL-3.0-or-later
   // Changes: null value flaw fixed.
   @SuppressWarnings({ "PatternMatchingInstanceof", "UnusedReturnValue" })
   private static Writer writeValue(Writer writer, @Nullable Object value,
@@ -133,7 +133,7 @@ public class JsonObject extends JSONObject implements JsonElement {
   //
   // CHANGES TO THE ORIGINAL SNIPPET
   // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
-  // SPDX-License-Identifier: LGPL-3.0-only
+  // SPDX-License-Identifier: LGPL-3.0-or-later
   // Changes: sort entries by key for serialization predictability.
   @Override
   public Writer write(Writer writer, int indentFactor, int indent) throws JSONException {

@@ -1,7 +1,7 @@
 /*
   SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
-  SPDX-License-Identifier: LGPL-3.0-only
+  SPDX-License-Identifier: LGPL-3.0-or-later
 
   This file (Numbers.java) is part of pdfclown-common-util module in pdfClown Common project
   <https://github.com/pdfclown/pdfclown-common>
@@ -36,7 +36,7 @@ public final class Numbers {
   //
   // CHANGES TO THE ORIGINAL SNIPPET
   // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
-  // SPDX-License-Identifier: LGPL-3.0-only
+  // SPDX-License-Identifier: LGPL-3.0-or-later
   // Changes: adaptation to pdfclown-common-util.
   /**
    * Converts the number to latin-alphabet numeral.
@@ -63,7 +63,7 @@ public final class Numbers {
   //
   // CHANGES TO THE ORIGINAL SNIPPET
   // SPDX-SnippetCopyrightText: 2025-2026 Stefano Chizzolini and contributors
-  // SPDX-License-Identifier: LGPL-3.0-only
+  // SPDX-License-Identifier: LGPL-3.0-or-later
   // Changes: adaptation to pdfclown-common-util.
   /**
    * Converts the number to roman numeral.

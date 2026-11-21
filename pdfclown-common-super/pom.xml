@@ -2,7 +2,7 @@
 <!--
   SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
 
-  SPDX-License-Identifier: LGPL-3.0-only
+  SPDX-License-Identifier: LGPL-3.0-or-later
 -->
 <!-- REUSE-IgnoreStart -->
 <project
@@ -31,8 +31,8 @@ pdfclown-common-base instead)</description>
 
   <licenses>
     <license>
-      <name>LGPL-3.0-only</name>
-      <url>https://spdx.org/licenses/LGPL-3.0-only.html</url>
+      <name>LGPL-3.0-or-later</name>
+      <url>https://spdx.org/licenses/LGPL-3.0-or-later.html</url>
     </license>
   </licenses>
 
@@ -380,7 +380,7 @@ pdfclown-common-base instead)</description>
               <includedLicense>EPL-2.0</includedLicense>
               <includedLicense>GPL-2.0-with-classpath-exception</includedLicense>
               <includedLicense>ISC</includedLicense>
-              <includedLicense>LGPL-3.0-only</includedLicense>
+              <includedLicense>LGPL</includedLicense>
               <includedLicense>LicenseRef-Aggregate-No-GPL</includedLicense>
               <includedLicense>MIT</includedLicense>
               <includedLicense>MPL-2.0</includedLicense>
@@ -399,7 +399,7 @@ pdfclown-common-base instead)</description>
               <licenseMerge>EPL-1.0|Eclipse Public License 1.0</licenseMerge>
               <licenseMerge>EPL-2.0|Eclipse Public License 2.0|Eclipse Public License v2.0|Eclipse Public License, Version 2.0</licenseMerge>
               <licenseMerge>GPL-2.0-with-classpath-exception|GPL2 w/ CPE</licenseMerge>
-              <licenseMerge>LGPL-3.0-only|LGPL-3.0-or-later|GNU Lesser General Public Licence</licenseMerge>
+              <licenseMerge>LGPL|LGPL-3.0-only|LGPL-3.0-or-later|GNU Lesser General Public Licence</licenseMerge>
               <licenseMerge>LicenseRef-Aggregate-No-GPL|[aggregate, no GPL]</licenseMerge>
               <licenseMerge>MIT|The MIT License|MIT License|The MIT License (MIT)</licenseMerge>
               <licenseMerge>MPL-2.0|Mozilla Public License, Version 2.0|Mozilla Public License 2.0 (MPL-2.0)</licenseMerge>

@@ -29,7 +29,7 @@ See [Documentation](docs/README.md) for further information about this project.
 
 ## License
 
-This project is licensed under **[GNU Lesser General Public License (LGPL), version 3.0](LICENSE.txt)**.
+This project is licensed under **[GNU Lesser General Public License v3.0 or later](LICENSE.txt)** (`LGPL-3.0-or-later`).
 
 See [NOTICE](NOTICE.txt) and [THIRD-PARTY-NOTICES](THIRD-PARTY-NOTICES.txt) for attributions.
 
