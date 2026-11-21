@@ -35,7 +35,7 @@ public class Securities {
 
   // SPDX-SnippetBegin
   // SPDX-SnippetCopyrightText: 2016 Patrick Wright and others
-  // SPDX-License-Identifier: LGPL-3.0-only
+  // SPDX-License-Identifier: LGPL-2.1-or-later
   // Component: Open HTML to PDF @ 1eb6cd9
   // SourceName: com.openhtmltopdf.resource.XMLResource.trySetFeature(..)
   //
