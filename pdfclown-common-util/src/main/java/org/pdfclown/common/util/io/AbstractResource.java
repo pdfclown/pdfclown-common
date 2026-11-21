@@ -13,6 +13,7 @@
 package org.pdfclown.common.util.io;
 
 import static java.util.Objects.requireNonNull;
+import static org.pdfclown.common.util.Objects.findResource;
 import static org.pdfclown.common.util.Objects.toStringWithValues;
 import static org.pdfclown.common.util.internal.Internals.ROOT_PACKAGE;
 import static org.pdfclown.common.util.io.Files.path;
@@ -26,7 +27,6 @@ import java.io.IOError;
 import java.lang.StackWalker.StackFrame;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -45,9 +45,9 @@ import org.pdfclown.common.util.net.Uris;
 @Immutable
 public abstract class AbstractResource implements Resource {
   /**
-   * (see {@link Resource#of(String, ClassLoader, Function)})
+   * (see {@link Resource#of(String, Object, Function)})
    */
-  static Resource of(String name, @Nullable ClassLoader cl,
+  static Resource of(String name, @Nullable Object classpathContext,
       @Nullable Function<Path, Path> fileResolver, @Nullable FileSystem fs) {
     requireNonNull(name, "`name`");
 
@@ -59,7 +59,7 @@ public abstract class AbstractResource implements Resource {
     switch (scheme) {
       case SCHEME__CLASSPATH -> {
         // [explicit classpath resource]
-        return ofClasspath(name.substring(scheme.length() + 1), cl, fs);
+        return ofClasspath(name.substring(scheme.length() + 1), classpathContext, fs);
       }
       case SCHEME__FILE -> {
         // [filesystem resource]
@@ -102,28 +102,26 @@ public abstract class AbstractResource implements Resource {
     }
 
     // [implicit classpath resource]
-    return ofClasspath(name, cl, fs);
+    return ofClasspath(name, classpathContext, fs);
   }
 
   /**
    * @param name
    *          Resource name WITHOUT scheme.
-   * @implNote Leading slash is stripped from {@code name} (see also
-   *           {@link Class#getResource(String)}).
+   * @implNote {@code name} is {@linkplain ResourceNames#forClass(String) sanitized}.
    */
-  private static Resource ofClasspath(String name, @Nullable ClassLoader cl,
+  private static Resource ofClasspath(String name, @Nullable Object classpathContext,
       FileSystem fs) {
-    name = ResourceNames.forClassLoader(name);
-    if (cl == null) {
-      cl = stackFrame($ -> !$.getClassName()
+    String sanitizedName = ResourceNames.forClass(name);
+    if (classpathContext == null) {
+      classpathContext = stackFrame($ -> !$.getClassName()
           .startsWith(ROOT_PACKAGE) /* Ignores any intermediate caller within this library */)
               .map(StackFrame::getDeclaringClass)
               .orElseThrow().getClassLoader();
     }
-
-    URL url = cl.getResource(name);
-    return url != null ? new ClasspathResource(name, url, fs)
-        : new UnresolvedResource(name);
+    return findResource(sanitizedName, classpathContext)
+        .<Resource>map($ -> new ClasspathResource(sanitizedName, $, fs))
+        .orElseGet(() -> new UnresolvedResource(sanitizedName));
   }
 
   private final String name;

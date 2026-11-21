@@ -33,7 +33,7 @@ import org.pdfclown.common.util.annot.Immutable;
  *           <p>
  *           This implementation covers all the derivative interfaces of {@link Resource} (namely,
  *           {@link PathResource}) in order to fit any demand (for example, see the cast in the
- *           implementation of {@link Resource#path(String, ClassLoader, Function)}).
+ *           implementation of {@link Resource#path(String, Object, Function)}).
  *           </p>
  */
 @Immutable

@@ -36,7 +36,7 @@ public interface Resource {
   /**
    * Gets the resource corresponding to a path.
    * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * For more information, see {@linkplain #of(String, Object, Function) main overload}.
    * </p>
    *
    * @param path
@@ -49,7 +49,7 @@ public interface Resource {
   /**
    * Gets the resource corresponding to a name.
    * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * For more information, see {@linkplain #of(String, Object, Function) main overload}.
    * </p>
    *
    * @param name
@@ -62,16 +62,18 @@ public interface Resource {
   /**
    * Gets the resource corresponding to a name.
    * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * For more information, see {@linkplain #of(String, Object, Function) main overload}.
    * </p>
    *
    * @param name
    *          Resource name.
-   * @param cl
-   *          Class loader for resource lookup.
+   * @param classpathContext
+   *          Object for classpath lookup (either {@link ClassLoader} or an object whose
+   *          {@linkplain org.pdfclown.common.util.Objects#asType(Object) corresponding class} is
+   *          used).
    */
-  static Resource of(String name, ClassLoader cl) {
-    return of(name, cl, null);
+  static Resource of(String name, Object classpathContext) {
+    return of(name, classpathContext, null);
   }
 
   /**
@@ -89,8 +91,10 @@ public interface Resource {
    *
    * @param name
    *          Resource name.
-   * @param cl
-   *          Class loader for resource lookup. If undefined, the caller's class loader is used.
+   * @param classpathContext
+   *          Object for classpath lookup (either {@link ClassLoader} or an object whose
+   *          {@linkplain org.pdfclown.common.util.Objects#asType(Object) corresponding class} is
+   *          used). If undefined, the caller's class loader is used.
    * @param fileResolver
    *          Resolves relative filesystem paths to their absolute representation. If undefined,
    *          they are resolved against the filesystem default directory (current working
@@ -98,7 +102,8 @@ public interface Resource {
    * @implNote Resolution algorithm:
    *           <ol>
    *           <li><b>[explicit classpath resource]</b> if {@code name} is prefixed by
-   *           {@code "classpath:"}, it is resolved through {@code cl} and returned</li>
+   *           {@code "classpath:"}, it is resolved through {@code classpathContext} and
+   *           returned</li>
    *           <li><b>[filesystem resource]</b> if {@code name} is prefixed by {@code "file:"}, it
    *           is resolved through {@code fileResolver} to an absolute filesystem path and
    *           returned</li>
@@ -106,18 +111,18 @@ public interface Resource {
    *           {@code fileResolver} to an absolute filesystem path, exists, it is returned</li>
    *           <li><b>[URL resource]</b> if {@code name} is an absolute URL, it is returned</li>
    *           <li><b>[implicit classpath resource]</b> otherwise, {@code name} is resolved through
-   *           {@code cl} and returned</li>
+   *           {@code classpathContext} and returned</li>
    *           </ol>
    */
-  static Resource of(String name, @Nullable ClassLoader cl,
+  static Resource of(String name, @Nullable Object classpathContext,
       @Nullable Function<Path, Path> fileResolver) {
-    return AbstractResource.of(name, cl, fileResolver, null);
+    return AbstractResource.of(name, classpathContext, fileResolver, null);
   }
 
   /**
    * Gets the resource corresponding to a URI.
    * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * For more information, see {@linkplain #of(String, Object, Function) main overload}.
    * </p>
    */
   static Resource of(URI uri) {
@@ -127,7 +132,7 @@ public interface Resource {
   /**
    * Gets the resource corresponding to a URL.
    * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * For more information, see {@linkplain #of(String, Object, Function) main overload}.
    * </p>
    */
   static Resource of(URL url) {
@@ -137,7 +142,7 @@ public interface Resource {
   /**
    * Gets the resource corresponding to a name.
    * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * For more information, see {@linkplain #of(String, Object, Function) main overload}.
    * </p>
    *
    * @param name
@@ -150,36 +155,40 @@ public interface Resource {
   /**
    * Gets the resource corresponding to a name.
    * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * For more information, see {@linkplain #of(String, Object, Function) main overload}.
    * </p>
    *
    * @param name
    *          Resource name.
-   * @param cl
-   *          Class loader for resource lookup.
+   * @param classpathContext
+   *          Object for classpath lookup (either {@link ClassLoader} or an object whose
+   *          {@linkplain org.pdfclown.common.util.Objects#asType(Object) corresponding class} is
+   *          used).
    */
-  static PathResource path(String name, ClassLoader cl) {
-    return path(name, cl, null);
+  static PathResource path(String name, Object classpathContext) {
+    return path(name, classpathContext, null);
   }
 
   /**
    * Gets the resource corresponding to a name.
    * <p>
-   * For more information, see {@linkplain #of(String, ClassLoader, Function) main overload}.
+   * For more information, see {@linkplain #of(String, Object, Function) main overload}.
    * </p>
    *
    * @param name
    *          Resource name.
-   * @param cl
-   *          Class loader for resource lookup.
+   * @param classpathContext
+   *          Object for classpath lookup (either {@link ClassLoader} or an object whose
+   *          {@linkplain org.pdfclown.common.util.Objects#asType(Object) corresponding class} is
+   *          used). If undefined, the caller's class loader is used.
    * @param fileResolver
    *          Resolves relative filesystem paths to their absolute representation. If undefined,
    *          they are resolved against the filesystem default directory (current working
    *          directory).
    */
-  static PathResource path(String name, @Nullable ClassLoader cl,
+  static PathResource path(String name, @Nullable Object classpathContext,
       @Nullable Function<Path, Path> fileResolver) {
-    return (PathResource) of(name, cl, fileResolver);
+    return (PathResource) of(name, classpathContext, fileResolver);
   }
 
   /**

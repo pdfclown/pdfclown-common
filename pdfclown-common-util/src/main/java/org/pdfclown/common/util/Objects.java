@@ -30,8 +30,8 @@ import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.SQUARE_BRACKET_OPEN;
 import static org.pdfclown.common.util.Chars.SQUOTE;
-import static org.pdfclown.common.util.Conditions.requireElement;
 import static org.pdfclown.common.util.Conditions.requireNonNullElseThrow;
+import static org.pdfclown.common.util.Exceptions.missing;
 import static org.pdfclown.common.util.Exceptions.runtime;
 import static org.pdfclown.common.util.Numbers.parseNumber;
 import static org.pdfclown.common.util.Strings.EMPTY;
@@ -100,6 +100,7 @@ import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.annot.PolyNull;
 import org.pdfclown.common.util.collect.Comparators;
 import org.pdfclown.common.util.collect.Comparators.HierarchicalTypeComparator;
+import org.pdfclown.common.util.io.ResourceNames;
 import org.pdfclown.common.util.regex.Patterns;
 import org.pdfclown.common.util.stream.Streams;
 
@@ -647,6 +648,44 @@ public final class Objects {
   }
 
   /**
+   * Finds the resource corresponding to a name.
+   *
+   * @param name
+   *          Resource name. Absolute names can be expressed with leading slash even if
+   *          {@code classpathContext} is {@link ClassLoader}.
+   * @param classpathContext
+   *          Object for classpath lookup (either {@link ClassLoader} or an object whose
+   *          {@linkplain #asType(Object) corresponding class} is resolved from).
+   * @apiNote Useful as a fluent alternative to {@link Class#getResource(String)} and
+   *          {@link ClassLoader#getResource(String)}.
+   * @see #resource(String, Object)
+   */
+  public static Optional<URL> findResource(String name, Object classpathContext) {
+    return opt(classpathContext instanceof ClassLoader c
+        ? c.getResource(ResourceNames.rel(name))
+        : requireNonNull(asType(classpathContext), "`classpathContext`").getResource(name));
+  }
+
+  /**
+   * Finds the resource stream corresponding to a name.
+   *
+   * @param name
+   *          Resource name. Absolute names can be expressed with leading slash even if
+   *          {@code classpathContext} is {@link ClassLoader}.
+   * @param classpathContext
+   *          Object for classpath lookup (either {@link ClassLoader} or an object whose
+   *          {@linkplain #asType(Object) corresponding class} is resolved from).
+   * @apiNote Useful as a fluent alternative to {@link Class#getResourceAsStream(String)} and
+   *          {@link ClassLoader#getResourceAsStream(String)}.
+   * @see #resourceStream(String, Object)
+   */
+  public static Optional<InputStream> findResourceStream(String name, Object classpathContext) {
+    return opt(classpathContext instanceof ClassLoader c
+        ? c.getResourceAsStream(ResourceNames.rel(name))
+        : requireNonNull(asType(classpathContext), "`classpathContext`").getResourceAsStream(name));
+  }
+
+  /**
    * Gets whether a zero-based index represents a match.
    *
    * @see String#indexOf(String)
@@ -750,7 +789,7 @@ public final class Objects {
    *
    * @param typeName
    *          Fully-qualified name of the class to initialize.
-   * @param loadingHint
+   * @param classpathContext
    *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
    *          resolve with the class loader of the current (that is, calling) class).
    * @return Initialized class.
@@ -759,8 +798,8 @@ public final class Objects {
    * @see #tryInit(String, Object)
    * @see #type(String, Object)
    */
-  public static Class<?> init(String typeName, @Nullable Object loadingHint) {
-    return nonNull(doLoadType(typeName, true, loadingHint, true));
+  public static Class<?> init(String typeName, @Nullable Object classpathContext) {
+    return nonNull(doLoadType(typeName, true, classpathContext, true));
   }
 
   /**
@@ -914,21 +953,21 @@ public final class Objects {
   /**
    * Gets the class loader associated to an object.
    *
-   * @param loadingHint
+   * @param classpathContext
    *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
    *          resolve with the class loader of the current (that is, calling) class).
    * @return
    *         <ul>
    *         <li>current class loader (that is, associated to the calling class), if
-   *         {@code loadingHint} is {@code null}</li>
-   *         <li>{@code loadingHint}, if it is a {@link ClassLoader} itself</li>
+   *         {@code classpathContext} is {@code null}</li>
+   *         <li>{@code classpathContext}, if it is a {@link ClassLoader} itself</li>
    *         <li>class loader of the class {@linkplain #asType(Object) corresponding} to
-   *         {@code loadingHint}, otherwise</li>
+   *         {@code classpathContext}, otherwise</li>
    *         </ul>
    */
-  public static ClassLoader loader(@Nullable Object loadingHint) {
-    return loadingHint instanceof ClassLoader c ? c
-        : nonNull(loadingHint != null ? asType(loadingHint)
+  public static ClassLoader loader(@Nullable Object classpathContext) {
+    return classpathContext instanceof ClassLoader c ? c
+        : nonNull(classpathContext != null ? asType(classpathContext)
             : stackFrame($ -> $.getDeclaringClass() != Objects.class)
                 .orElseThrow(() -> runtime("Caller NOT FOUND"))
                 .getDeclaringClass()).getClassLoader();
@@ -1067,38 +1106,41 @@ public final class Objects {
   }
 
   /**
-   * Null-safe alternative to {@link Class#getResource(String)} and
-   * {@link ClassLoader#getResource(String)}.
+   * Gets the resource corresponding to a name.
    *
    * @param name
-   *          Resource name.
-   * @param loadingHint
-   *          Either {@link ClassLoader} or an object whose {@linkplain #asType(Object)
-   *          corresponding} class is resolved from.
+   *          Resource name. Absolute names can be expressed with leading slash even if
+   *          {@code classpathContext} is {@link ClassLoader}.
+   * @param classpathContext
+   *          Object for classpath lookup (either {@link ClassLoader} or an object whose
+   *          {@linkplain #asType(Object) corresponding class} is resolved from).
    * @throws ElementNotFoundException
    *           if the resource could not be found.
+   * @apiNote Useful as null-safe alternative to {@link Class#getResource(String)} and
+   *          {@link ClassLoader#getResource(String)}.
+   * @see #findResource(String, Object)
    */
-  public static URL resource(String name, Object loadingHint) {
-    return requireElement(loadingHint instanceof ClassLoader c ? c.getResource(name)
-        : requireNonNull(asType(loadingHint), "`loadingHint`").getResource(name), name, "resource");
+  public static URL resource(String name, Object classpathContext) {
+    return findResource(name, classpathContext).orElseThrow(() -> missing(name, "resource"));
   }
 
   /**
-   * Null-safe alternative to {@link Class#getResourceAsStream(String)} and
-   * {@link ClassLoader#getResourceAsStream(String)}.
+   * Gets the resource stream corresponding to a name.
    *
    * @param name
-   *          Resource name.
-   * @param loadingHint
-   *          Either {@link ClassLoader} or an object whose {@linkplain #asType(Object)
-   *          corresponding} class is resolved from.
+   *          Resource name. Absolute names can be expressed with leading slash even if
+   *          {@code classpathContext} is {@link ClassLoader}.
+   * @param classpathContext
+   *          Object for classpath lookup (either {@link ClassLoader} or an object whose
+   *          {@linkplain #asType(Object) corresponding class} is resolved from).
    * @throws ElementNotFoundException
    *           if the resource could not be found.
+   * @apiNote Useful as null-safe alternative to {@link Class#getResourceAsStream(String)} and
+   *          {@link ClassLoader#getResourceAsStream(String)}.
+   * @see #findResourceStream(String, Object)
    */
-  public static InputStream resourceStream(String name, Object loadingHint) {
-    return requireElement(loadingHint instanceof ClassLoader c ? c.getResourceAsStream(name)
-        : requireNonNull(asType(loadingHint), "`loadingHint`").getResourceAsStream(name), name,
-        "resource");
+  public static InputStream resourceStream(String name, Object classpathContext) {
+    return findResourceStream(name, classpathContext).orElseThrow(() -> missing(name, "resource"));
   }
 
   /**
@@ -1884,15 +1926,15 @@ public final class Objects {
    *
    * @param typeName
    *          Fully-qualified name of the class to initialize.
-   * @param loadingHint
+   * @param classpathContext
    *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
    *          resolve with the class loader of the current (that is, calling) class).
    * @return Initialized class ({@code null}, if class initialization failed).
    * @see #init(String, Object)
    * @see #tryType(String, Object)
    */
-  public static @Nullable Class<?> tryInit(String typeName, @Nullable Object loadingHint) {
-    return doLoadType(typeName, true, loadingHint, false);
+  public static @Nullable Class<?> tryInit(String typeName, @Nullable Object classpathContext) {
+    return doLoadType(typeName, true, classpathContext, false);
   }
 
   /**
@@ -1920,15 +1962,15 @@ public final class Objects {
    *
    * @param typeName
    *          Fully-qualified name of the class to load.
-   * @param loadingHint
+   * @param classpathContext
    *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
    *          resolve with the class loader of the current (that is, calling) class).
    * @return {@code null}, if no class matched {@code name}.
    * @see #type(String, Object)
    * @see #tryInit(String, Object)
    */
-  public static @Nullable Class<?> tryType(String typeName, @Nullable Object loadingHint) {
-    return doLoadType(typeName, false, loadingHint, false);
+  public static @Nullable Class<?> tryType(String typeName, @Nullable Object classpathContext) {
+    return doLoadType(typeName, false, classpathContext, false);
   }
 
   /**
@@ -1967,7 +2009,7 @@ public final class Objects {
    *
    * @param typeName
    *          Fully-qualified name of the class to load.
-   * @param loadingHint
+   * @param classpathContext
    *          Object whose {@link ClassLoader} must be used as loading context ({@code null}, to
    *          resolve with the class loader of the current (that is, calling) class).
    * @return Loaded class.
@@ -1976,8 +2018,8 @@ public final class Objects {
    * @see #tryType(String, Object)
    * @see #init(String, Object)
    */
-  public static Class<?> type(String typeName, @Nullable Object loadingHint) {
-    return nonNull(doLoadType(typeName, false, loadingHint, true));
+  public static Class<?> type(String typeName, @Nullable Object classpathContext) {
+    return nonNull(doLoadType(typeName, false, classpathContext, true));
   }
 
   /**
@@ -2052,7 +2094,7 @@ public final class Objects {
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
    * @param obj
    *          Source object.
-   * @param loadingHint
+   * @param classpathContext
    *          Object whose class loader must be used as target ({@code null}, for the caller's class
    *          loader).
    * @throws ClassXCastException
@@ -2062,8 +2104,8 @@ public final class Objects {
    */
   @SuppressWarnings("TypeParameterUnusedInFormals")
   public static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj,
-      @Nullable Object loadingHint) {
-    return xcast(obj, loadingHint, null);
+      @Nullable Object classpathContext) {
+    return xcast(obj, classpathContext, null);
   }
 
   /**
@@ -2218,8 +2260,8 @@ public final class Objects {
   }
 
   private static @Nullable Class<?> doLoadType(String name, boolean initialized,
-      @Nullable Object loadingHint, boolean throwable) {
-    ClassLoader loader = loader(loadingHint);
+      @Nullable Object classpathContext, boolean throwable) {
+    ClassLoader loader = loader(classpathContext);
     try {
       return Class.forName(name, initialized, loader);
     } catch (ClassNotFoundException ex) {
@@ -2266,7 +2308,7 @@ public final class Objects {
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
    * @param obj
    *          Source object.
-   * @param loadingHint
+   * @param classpathContext
    *          Object whose class loader must be used as target ({@code null}, for the caller's class
    *          loader).
    * @param targetTypeHint
@@ -2281,11 +2323,11 @@ public final class Objects {
    */
   @SuppressWarnings({ "unchecked", "rawtypes", "TypeParameterUnusedInFormals" })
   private static <T> @PolyNull @Nullable T xcast(@PolyNull @Nullable Object obj,
-      final @Nullable Object loadingHint, final @Nullable Class<?> targetTypeHint) {
+      final @Nullable Object classpathContext, final @Nullable Class<?> targetTypeHint) {
     if (obj == null)
       return null;
 
-    ClassLoader targetLoader = loader(loadingHint);
+    ClassLoader targetLoader = loader(classpathContext);
 
     if (obj instanceof Class<?> type) {
       if (type.isPrimitive())
@@ -2490,7 +2532,7 @@ public final class Objects {
    *          Target type (useful for final casting, but irrelevant for actual cross-casting).
    * @param objs
    *          Source objects.
-   * @param loadingHint
+   * @param classpathContext
    *          Object whose class loader must be used as target.
    * @param targetTypeHints
    *          Target cast types suggested for the respective item in {@code objs}. Useful whenever
@@ -2501,22 +2543,22 @@ public final class Objects {
    *          be added to the classpath visible to the target class loader).
    */
   @SuppressWarnings({ "ReferenceEquality", "unchecked" })
-  private static <T> T @Nullable [] xcastArray(Object @Nullable [] objs, Object loadingHint,
+  private static <T> T @Nullable [] xcastArray(Object @Nullable [] objs, Object classpathContext,
       Class<?> @Nullable [] targetTypeHints) {
     if (objs == null || objs.length == 0)
       return (T[]) objs;
 
-    requireNonNull(loadingHint, "`loadingHint`");
+    requireNonNull(classpathContext, "`classpathContext`");
 
     T[] ret = null;
     for (int i = 0; i < objs.length; i++) {
       var obj = objs[i];
-      var targetObj = (T) xcast(obj, loadingHint, targetTypeHints != null ? targetTypeHints[i]
+      var targetObj = (T) xcast(obj, classpathContext, targetTypeHints != null ? targetTypeHints[i]
           : null);
       if (ret != null) {
         ret[i] = targetObj;
       } else if (targetObj != obj) {
-        ret = (T[]) Array.newInstance(xcast(objs.getClass().getComponentType(), loadingHint),
+        ret = (T[]) Array.newInstance(xcast(objs.getClass().getComponentType(), classpathContext),
             objs.length);
         if (i > 0) {
           i = -1;
