@@ -12,6 +12,6 @@ allow_branch_types = [
     "feat", "fix",
     "perf",
     "r", "refactor", "release", "revert",
-    "style",
+    "style", "sync",
     "test"
     ]
