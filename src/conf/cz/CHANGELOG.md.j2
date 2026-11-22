@@ -1,0 +1,77 @@
+{#
+  SPDX-FileCopyrightText: 2017 Santiago
+  SPDX-License-Identifier: MIT
+  Source: https://github.com/commitizen-tools/commitizen/blob/4db7478dfcdb76412329c9ffa4f0e115ffee9f89/commitizen/templates/CHANGELOG.md.j2
+
+  CHANGES TO THE ORIGINAL FILE
+  SPDX-FileCopyrightText: 2025-2026 Stefano Chizzolini and contributors
+  SPDX-License-Identifier: MIT
+  TEMPLATE-VERSION: 1.0 (2026-11-22)
+  Changes:
+  - sorting: entries within each change type are sorted by scope, followed by unscoped entries
+    sorted by message, case-insensitively.
+    NOTE: scoped and unscoped entries are handled separately because Jinja's `sort` cannot compare
+    None with a string.
+  - grouping by scope: each scope is rendered once as a top-level bullet ("- **scope**:"), with its
+    messages as plain bullets indented one level deeper. Scopes that differ only in case (for
+    example, "api" and "API") are grouped together, under the spelling that appears first. Unscoped
+    entries are rendered as plain top-level bullets after the scoped groups.
+  - deduplication: entries with an identical scope + message are shown only once per change type
+    within a release. The scope part of the comparison is case-insensitive, to match the grouping;
+    the message part is exact. The same message under different scopes (for example,
+    "api: clean up code" and "ui: clean up code") is preserved. An unscoped message is deduplicated
+    only against other unscoped entries, not against scoped ones.
+  - multi-line messages: messages spanning several lines (typically BREAKING CHANGE bodies) are
+    flattened by the `flatten` macro: line breaks are removed and the lines are joined with a single
+    space, except that each bulleted line ("- " or "* ") is kept on its own line, indented one level
+    deeper than the entry's own bullet so that it renders as a sub-item. Blank lines are dropped,
+    and a non-bulleted line following a bullet is treated as the continuation of that bullet.
+#}
+
+{% macro flatten(message, pad) -%}
+{%- set m = namespace(text="") -%}
+{%- for line in (message | replace("\r", "")).split("\n") -%}
+{%- set l = line | trim -%}
+{%- if not l -%}
+{%- elif m.text and (l.startswith("- ") or l.startswith("* ")) -%}
+{%- set m.text = m.text ~ "\n" ~ pad ~ l -%}
+{%- elif m.text -%}
+{%- set m.text = m.text ~ " " ~ l -%}
+{%- else -%}
+{%- set m.text = l -%}
+{%- endif -%}
+{%- endfor -%}
+{{ m.text }}
+{%- endmacro %}
+{% for entry in tree %}
+
+## {{ entry.version }}{% if entry.date %} ({{ entry.date }}){% endif %}
+
+{% for change_key, changes in entry.changes.items() %}
+
+{% if change_key %}
+### {{ change_key }}
+{% endif %}
+
+{% set scoped = changes | selectattr("scope") | sort(attribute="scope,message", case_sensitive=false) %}
+{% set unscoped = changes | rejectattr("scope") | sort(attribute="message", case_sensitive=false) %}
+{% set ns = namespace(scope="", seen=[]) %}
+{% for change in scoped %}
+{% set id = (change.scope | lower) ~ "|" ~ change.message %}
+{% if id not in ns.seen %}
+{% set _ = ns.seen.append(id) %}
+{% if (change.scope | lower) != ns.scope %}
+{% set ns.scope = change.scope | lower %}
+- **{{ change.scope }}**:
+{% endif %}
+  - {{ flatten(change.message, "    ") }}
+{% endif %}
+{% endfor %}
+{% for change in unscoped %}
+{% if change.message and change.message not in ns.seen %}
+{% set _ = ns.seen.append(change.message) %}
+- {{ flatten(change.message, "  ") }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endfor %}

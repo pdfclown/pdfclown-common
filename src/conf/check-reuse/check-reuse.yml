@@ -1,2 +1,3 @@
 excludes:
+  - "**src/conf/**"
   - "mvn*"
