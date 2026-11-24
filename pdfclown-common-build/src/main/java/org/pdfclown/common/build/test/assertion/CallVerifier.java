@@ -126,6 +126,13 @@ public abstract class CallVerifier extends Verifier {
       output = getOutputFormatter().apply(outputSupplier.get());
     } catch (SkipCombination ex) {
       return EMPTY;
+    } catch (AssertionError ex) {
+      /*
+       * NOTE: Assertion errors pass through, as they are consistency checks meant to fail loudly on
+       * test (otherwise, they would become part of the expected behavior of test cases, which is a
+       * contradiction in terms).
+       */
+      throw ex;
     } catch (Throwable ex) {
       output = getExceptionFormatter().apply(ex);
     }
