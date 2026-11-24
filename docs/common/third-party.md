@@ -35,7 +35,7 @@ Whenever any content from third-party projects is incorporated, it MUST be docum
        - `AssetType` (repeatable: {`OBJECT_CODE`|`RESOURCE`|`SOURCE_CODE`}): specifies what *kind of third-party asset* was reused.
        - `Component`: specifies the *name of a third-party project* whose assets are reused in the project.
        - `Copyright`: reproduces the *copyright notice* declared by the third-party project.
-       - `License`: specifies the *SPDX identifier of the license* applied to the third-party project, or a `LicenseRef-`-prefixed identifier in case of custom license.
+       - `License`: specifies the *SPDX identifier of the license* applied to the third-party project (for example, `Apache-2.0`), or a `LicenseRef-<custom-name>` identifier in case of custom license.
        - `LicenseSource`: specifies the *URL to the original license full text*, in case of custom license.
        - `Module` (repeatable): specifies a *project module* reusing the component.
 
@@ -137,4 +137,15 @@ Whenever any content from third-party projects is incorporated, it MUST be docum
    - `SourcePage`: specifies the *permalink of the page holding a reference to the original location of the third-party file*, as an alternative to unavailable `Source`. Typically, third-party content is structured in SCM-based repositories, so there is no need of this tag; sometimes, however, `Source` represents an unstable link, or it is outright unavailable because of dynamic resolution, so this tag provides a landing page from which the source can still be indirectly retrieved.
 
 3. [**verify copyright and licensing declaration compliance**](building.md#other-checks)
+
+## FAQ
+
+### What SPDX identifier to use for license information in case of assets under Public Domain?
+
+Public domain is a legal status rather than a license; the appropriate identifier depends on what determined such legal status:
+
+- the material is in the public domain **by virtue of law** (copyright expired, government work, ineligible for copyright): use `CC-PDM-1.0`.
+- the author explicitly chose a **standard license** (`CC0-1.0`, `Unlicense`, etc.) — use that license, as-is.
+- the author **informally stated in a notice** that the material is under public domain — create a custom identifier (`LicenseRef-<custom-name>`) and place the original notice in the corresponding file under `/LICENSES` directory in the project, along with the permalink to the original notice.
+
 <!-- REUSE-IgnoreEnd -->
