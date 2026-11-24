@@ -1,0 +1,12 @@
+[glob: "a[b/c]d"] => <<ParseException: "Bracket expression cannot span a directory separator in \"a[b/c]d\" at position 1">>
+[glob: "[a\\/b]"] => <<ParseException: "\"\\\\/\": Escape not allowed for slash in \"[a\\\\/b]\" at position 2">>
+[glob: "a\\/b"] => <<ParseException: "\"\\\\/\": Escape not allowed for slash in \"a\\\\/b\" at position 1">>
+[glob: "**\\/a"] => <<ParseException: "\"\\\\/\": Escape not allowed for slash in \"**\\\\/a\" at position 2">>
+[glob: "a\\\\\\/b"] => <<ParseException: "\"\\\\/\": Escape not allowed for slash in \"a\\\\\\\\\\\\/b\" at position 3">>
+[glob: "[!/]x"] => <<ParseException: "Bracket expression cannot span a directory separator in \"[!/]x\" at position 0">>
+[glob: "[]/]"] => <<ParseException: "Bracket expression cannot span a directory separator in \"[]/]\" at position 0">>
+[glob: "src/[abc/**"] => <<ParseException: "Bracket expression cannot span a directory separator in \"src/[abc/**\" at position 4">>
+[glob: "file[1.txt"] => <<ParseException: "'[': Unbalanced bracket expression delimiter in \"file[1.txt\" at position 4">>
+[glob: "[abc\\]"] => <<ParseException: "'[': Unbalanced bracket expression delimiter in \"[abc\\\\]\" at position 0">>
+[glob: "a\\"] => <<ParseException: "'\\': Dangling escape in \"a\\\\\" at position 1">>
+[glob: "{a,b"] => <<ParseException: "'{': Unbalanced alternation delimiter in \"{a,b\" at position 0">>

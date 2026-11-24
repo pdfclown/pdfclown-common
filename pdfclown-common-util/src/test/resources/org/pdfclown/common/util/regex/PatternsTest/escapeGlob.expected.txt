@@ -1,0 +1,7 @@
+[glob: "plain"] => "plain"
+[glob: "a*b?c"] => "a\\*b\\?c"
+[glob: "[x]{y,z}"] => "\\[x\\]\\{y\\,z\\}"
+[glob: "c:\\dir\\f"] => "c:\\\\dir\\\\f"
+[glob: "\\*"] => "\\\\\\*"
+[glob: "a/b"] => "a/b"
+[glob: ""] => ""
