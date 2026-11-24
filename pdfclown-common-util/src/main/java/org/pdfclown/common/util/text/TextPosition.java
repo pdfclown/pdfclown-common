@@ -41,14 +41,6 @@ public final class TextPosition implements Comparable<TextPosition> {
   /**
    * Position defined according to the given coordinates.
    *
-   * @param offset
-   *          ({@code 0}-based) Offset (if outside this range, it is undefined).
-   * @param line
-   *          ({@code 1}-based) Vertical position (if outside this range, it is undefined, and
-   *          {@code column} MUST be so, as well).
-   * @param column
-   *          ({@code 1}-based) Horizontal position (if outside this range, it is undefined, and
-   *          {@code line} MUST be so, as well).
    * @return {@link #absent()}, if all the coordinates are undefined.
    * @throws IllegalArgumentException
    *           if {@code line} and {@code column} are mutually inconsistent (they MUST be both
@@ -98,6 +90,33 @@ public final class TextPosition implements Comparable<TextPosition> {
         && this.offset == that.offset
         && this.line == that.line
         && this.column == that.column);
+  }
+
+  /**
+   * Horizontal position.
+   *
+   * @return ({@code 1}-based) If less than base, it is undefined.
+   */
+  public int getColumn() {
+    return column;
+  }
+
+  /**
+   * Vertical position.
+   *
+   * @return ({@code 1}-based) If less than base, it is undefined.
+   */
+  public int getLine() {
+    return line;
+  }
+
+  /**
+   * Absolute position.
+   *
+   * @return ({@code 0}-based) If less than base, it is undefined.
+   */
+  public int getOffset() {
+    return offset;
   }
 
   @Override
