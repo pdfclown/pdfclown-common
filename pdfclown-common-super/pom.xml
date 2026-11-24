@@ -239,6 +239,18 @@ pdfclown-common-base instead)</description>
     <internal.lint.args.errorprone.test>-Xep:NullAway:OFF ${lint.errorprone.test}</internal.lint.args.errorprone.test>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <!-- TODO: this is a vulnerability patch (CVE-2026-118042); remove this dependency as soon
+          as its dependant (com.google.jimfs:jimfs) is updated to a compatible transitive version -->
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>33.8.0-jre</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <defaultGoal>install</defaultGoal>
     <resources>
