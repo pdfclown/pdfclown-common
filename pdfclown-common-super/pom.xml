@@ -401,7 +401,7 @@ pdfclown-common-base instead)</description>
             </includedLicenses>
             <!-- License aliases -->
             <licenseMerges>
-              <licenseMerge>Apache-2.0|ASL License|Apache 2.0|Apache License 2.0|Apache License, Version 2.0|The Apache Software License, Version 2.0|The Apache Software License, version 2.0|The Apache License, Version 2.0</licenseMerge>
+              <licenseMerge>Apache-2.0|ASL License|Apache 2.0|Apache License 2.0|Apache License version 2.0|Apache License, Version 2.0|The Apache Software License, Version 2.0|The Apache Software License, version 2.0|The Apache License, Version 2.0</licenseMerge>
               <!-- NOTE: `Eclipse Distribution License - v 1.0` is equivalent to `BSD-3-Clause` -->
               <licenseMerge>BSD-3-Clause|BSD|The BSD License|BSD 3-Clause|BSD 3-Clause License|The BSD 3-Clause License|Eclipse Distribution License - v 1.0</licenseMerge>
               <!-- NOTE: `CDDL-1.0` chosen from dual license -->
@@ -414,7 +414,7 @@ pdfclown-common-base instead)</description>
               <licenseMerge>LGPL|LGPL-3.0-only|LGPL-3.0-or-later|GNU Lesser General Public Licence</licenseMerge>
               <licenseMerge>LicenseRef-Aggregate-No-GPL|[aggregate, no GPL]</licenseMerge>
               <licenseMerge>MIT|The MIT License|MIT License|The MIT License (MIT)</licenseMerge>
-              <licenseMerge>MPL-2.0|Mozilla Public License, Version 2.0|Mozilla Public License 2.0 (MPL-2.0)</licenseMerge>
+              <licenseMerge>MPL-2.0|Mozilla Public License Version 2.0|Mozilla Public License, Version 2.0|Mozilla Public License 2.0 (MPL-2.0)</licenseMerge>
               <licenseMerge>Unlicense|Public Domain</licenseMerge>
             </licenseMerges>
 
