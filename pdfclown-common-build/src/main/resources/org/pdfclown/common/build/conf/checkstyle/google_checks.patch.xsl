@@ -323,10 +323,9 @@
   <xsl:template
       match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='ParameterName']/property[@name='format']">
     <xsl:comment>
-      [CUSTOM] Allow any non-capitalized name, with trailing underscore in case of reserved keyword
-      conflict.
+      [CUSTOM] Allow any non-capitalized name, with trailing underscore in case of conflict.
     </xsl:comment>
-    <property name="format" value="^[a-z][a-zA-Z0-9]*[_]?$"/>
+    <property name="format" value="^[a-z][a-zA-Z0-9]*_?$"/>
     <xsl:call-template name="comment-out"/>
   </xsl:template>
 
@@ -340,14 +339,14 @@
     <xsl:call-template name="comment-out"/>
   </xsl:template>
 
-  <!-- module LocalVariableName / property 'format': REPLACE -->
+  <!-- module LocalVariableName | LocalFinalVariableName / property 'format': REPLACE -->
   <xsl:template
-      match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='LocalVariableName']/property[@name='format']">
+      match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='LocalVariableName' or @name='LocalFinalVariableName']/property[@name='format']">
     <xsl:comment>
-      [CUSTOM] Allow any non-capitalized name, with trailing underscore in case of reserved keyword
-      conflict.
+      [CUSTOM] Allow any non-capitalized name, with middle underscores for grouping, and trailing
+      underscore in case of conflict.
     </xsl:comment>
-    <property name="format" value="^[a-z][a-zA-Z0-9]*[_]?$"/>
+    <property name="format" value="^[a-z][a-zA-Z0-9_]*$"/>
     <xsl:call-template name="comment-out"/>
   </xsl:template>
 
@@ -525,13 +524,12 @@
   <xsl:template
       match="/module[@name='Checker']/module[@name='TreeWalker']/module[@name='GoogleNonConstantFieldName']">
     <xsl:comment>
-      [CUSTOM] Allow any non-capitalized name, with trailing underscore for special cases (for
-      example, reserved keyword conflict like "extends").
+      [CUSTOM] Allow any non-capitalized name, with trailing underscore in case of conflict.
     </xsl:comment>
     <module name="MemberName">
       <property
           name="format"
-          value="^[a-z][a-zA-Z0-9]*[_]?$"/>
+          value="^[a-z][a-zA-Z0-9]*_?$"/>
       <message
           key="name.invalidPattern"
           value="Member name ''{0}'' must match pattern ''{1}''."/>
