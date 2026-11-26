@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
+import org.jspecify.annotations.Nullable;
 import org.pdfclown.common.util.text.ParseException;
 
 /**
@@ -130,7 +131,7 @@ public class Spdx {
 
       private void checkPosition() {
         if (isEnded())
-          throw new ParseException("Unexpected end of expression");
+          throw failure("Unexpected end of expression", null);
       }
     }
 
@@ -140,6 +141,8 @@ public class Spdx {
     private static final String TOKEN__OR = "OR";
     private static final String TOKEN__WITH = "WITH";
 
+    private static final Pattern TOKENIZER = Pattern.compile("\\(|\\)|[^\\s()]+");
+
     /**
      * Creates the expression corresponding to the given raw representation.
      */
@@ -147,11 +150,17 @@ public class Spdx {
       return new LicenseExpression(expr);
     }
 
+    /**
+     * Creates a parsing exception.
+     */
+    protected static ParseException failure(@Nullable String message, @Nullable Object token) {
+      return new ParseException(message, null, token, null, null);
+    }
+
     private final List<String> tokens;
 
     protected LicenseExpression(String expr) {
-      this.tokens = Pattern.compile("\\(|\\)|[^\\s()]+")
-          .matcher(expr)
+      this.tokens = TOKENIZER.matcher(expr)
           .results()
           .map(MatchResult::group)
           .toList();
@@ -166,7 +175,7 @@ public class Spdx {
       var context = createContext(evaluator);
       var ret = evalOr(context);
       if (!context.isEnded())
-        throw new ParseException("Unexpected token", null, context.current(), null, null);
+        throw failure("Unexpected token", context.current());
 
       return ret;
     }
@@ -215,7 +224,7 @@ public class Spdx {
       if (t.equalsIgnoreCase(TOKEN__GROUP_BEGIN)) {
         var ret = evalOr(context);
         if (!context.is(TOKEN__GROUP_END))
-          throw new ParseException("Missing token", null, TOKEN__GROUP_END, null, null);
+          throw failure("Missing token", TOKEN__GROUP_END);
 
         context.moveNext();
         return ret;
@@ -224,7 +233,7 @@ public class Spdx {
       else {
         // Not an identifier?
         if (equalsAny(ucase(t), TOKEN__GROUP_END, TOKEN__AND, TOKEN__OR, TOKEN__WITH))
-          throw new ParseException("Unexpected token", null, t, null, null);
+          throw failure("Unexpected token", t);
 
         /*
          * NOTE: In case of "X WITH some-exception":, `some-exception` is skipped, and the license
@@ -233,7 +242,7 @@ public class Spdx {
         var licenseException = EMPTY;
         if (context.is(TOKEN__WITH)) {
           if (!context.moveNext())
-            throw new ParseException("Missing exception after WITH");
+            throw failure("Missing exception after WITH", null);
 
           licenseException = context.consume();
         }
