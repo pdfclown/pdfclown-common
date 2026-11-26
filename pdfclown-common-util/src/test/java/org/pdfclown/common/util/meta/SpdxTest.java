@@ -12,6 +12,8 @@
  */
 package org.pdfclown.common.util.meta;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
@@ -498,5 +500,12 @@ class SpdxTest extends BaseTest {
   private static boolean evalForbidden(String expr, String... forbiddenRegexes) {
     return Spdx.LicenseExpression.of(expr)
         .evaluate(Spdx.LicenseExpression.Evaluator.forbidden(Set.of(forbiddenRegexes)));
+  }
+
+  @Test
+  void toString_() {
+    assertThat("( MIT OR ( GPL-3.0-only AND ( GPL-2.0-only OR MIT ) ) )",
+        is(Spdx.LicenseExpression.of("(MIT OR (GPL-3.0-only AND (GPL-2.0-only OR MIT)))")
+            .toString()));
   }
 }

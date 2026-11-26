@@ -14,6 +14,7 @@ package org.pdfclown.common.util.meta;
 
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_CLOSE;
 import static org.pdfclown.common.util.Chars.ROUND_BRACKET_OPEN;
+import static org.pdfclown.common.util.Chars.SPACE;
 import static org.pdfclown.common.util.Objects.equalsAny;
 import static org.pdfclown.common.util.Strings.EMPTY;
 import static org.pdfclown.common.util.Strings.S;
@@ -153,7 +154,7 @@ public class Spdx {
     /**
      * Creates a parsing exception.
      */
-    protected static ParseException failure(@Nullable String message, @Nullable Object token) {
+    protected static ParseException failure(String message, @Nullable Object token) {
       return new ParseException(message, null, token, null, null);
     }
 
@@ -185,6 +186,11 @@ public class Spdx {
      */
     public List<String> getTokens() {
       return tokens;
+    }
+
+    @Override
+    public String toString() {
+      return String.join(S + SPACE, tokens);
     }
 
     /**
