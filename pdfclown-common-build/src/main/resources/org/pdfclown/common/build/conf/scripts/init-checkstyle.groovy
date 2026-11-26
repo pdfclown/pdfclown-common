@@ -65,8 +65,8 @@ def patchResource = Resource.of(
     "${resourcesDirValue}/org/pdfclown/common/build/conf/checkstyle/${CONFIG_FILENAME}.patch.xsl")
 
 /*
-  TODO: When `Xmls.Security` replaces logs with thrown exceptions, remove these redundant feature
-  checks.
+  TODO: [util:0.9.0] When `Xmls.Security` replaces logs with thrown exceptions, remove these
+  redundant feature checks.
  */
 // Hardened factories (NOTE: Xmls.Security only LOGS hardening failures; verify them explicitly).
 DocumentBuilderFactory dbf = Xmls.Security.secure(DocumentBuilderFactory.newDefaultInstance())

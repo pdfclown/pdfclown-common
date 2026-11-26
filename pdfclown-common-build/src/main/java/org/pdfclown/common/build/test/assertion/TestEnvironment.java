@@ -198,8 +198,8 @@ public abstract class TestEnvironment {
   }
 
   /*
-   * TODO: expose `org.pdfclown.common.util.ElementNotFoundException` instead of `RuntimeException`
-   * once available.
+   * TODO: [util:0.9.0] expose `org.pdfclown.common.util.ElementNotFoundException` instead of
+   * `RuntimeException` once available.
    */
   /**
    * Gets the absolute path of a type on source side (either test or production).

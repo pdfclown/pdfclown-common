@@ -228,7 +228,6 @@ pdfclown-common-base instead)</description>
         suppressions via `SuppressWarnings` annotations (possibly due to synthetic bridge methods?) -->
     <internal.lint.args.Xwarns>all,-cast,-fallthrough,-finally,-processing,-unchecked,${lint.Xwarns}</internal.lint.args.Xwarns>
     <internal.lint.args.Xwarns.test>-dep-ann,${lint.Xwarns.test}</internal.lint.args.Xwarns.test>
-    <!-- TODO: move shared options into reusable resource file bundled in pdfclown-common-build -->
     <!-- NOTE: Some warning specifiers are shared across the projects:
       - `-Xep:FallThrough:OFF`: excluded because already checked via checkstyle (see `FallThrough`
         module in `checkstyle-checks.xml` file)
@@ -1610,8 +1609,8 @@ org.pdfclown.common.build.Builds.runScript("/org/pdfclown/common/build/conf/scri
                   <scripts>
                     <script><![CDATA[
 /*
-  TODO: remove 'Bootstrap' conditional branch when next (0.9.0) pdfclown-common version is bumped,
-  and replace all other explicit `GroovyShell` invocations with new `Builds.runScript`.
+  TODO: [util:0.9.0] remove 'Bootstrap' conditional branch when next (0.9.0) pdfclown-common version
+  is bumped, and replace all other explicit `GroovyShell` invocations with new `Builds.runScript`.
  */
 if (org.pdfclown.common.util.Objects.respondsTo('tryType')) {
   org.pdfclown.common.build.Builds.runScript(
